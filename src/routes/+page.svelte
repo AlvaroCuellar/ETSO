@@ -1,59 +1,60 @@
-<script lang="ts">
+﻿<script lang="ts">
 	import PageHero from '$lib/components/ui/PageHero.svelte';
+	import AppButton from '$lib/components/ui/AppButton.svelte';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 </script>
 
-<div class="page-stack">
+<div class="grid gap-6">
 	<PageHero
 		eyebrow="Proyecto ETSO"
-		title="Estilometria aplicada al teatro del Siglo de Oro"
-		subtitle="Replica visual en SvelteKit de la web historica de ETSO, preparada para conectar catalogo Turso y recursos en R2."
+		title="Estilometría aplicada al teatro del Siglo de Oro"
+		subtitle="Réplica visual en SvelteKit de la web histórica de ETSO, preparada para conectar catálogo Turso y recursos en R2."
 	/>
 
-	<section class="card">
-		<h2 class="card__title">Estado de la nueva plataforma</h2>
-		<div class="metrics-grid">
-			<article class="metric">
-				<div class="metric__value">{data.stats.works}</div>
-				<div class="metric__label">Obras en maqueta</div>
+	<section class="rounded-card border border-border bg-surface p-6 shadow-soft">
+		<h2 class="mb-4 text-[1.1rem] font-semibold text-brand-blue-dark">Estado de la nueva plataforma</h2>
+		<div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+			<article class="rounded-card border border-border bg-surface-soft p-4">
+				<div class="text-[1.6rem] leading-none font-bold text-brand-blue">{data.stats.works}</div>
+				<div class="text-[0.84rem] text-text-soft">Obras en maqueta</div>
 			</article>
-			<article class="metric">
-				<div class="metric__value">{data.stats.authors}</div>
-				<div class="metric__label">Autores en maqueta</div>
+			<article class="rounded-card border border-border bg-surface-soft p-4">
+				<div class="text-[1.6rem] leading-none font-bold text-brand-blue">{data.stats.authors}</div>
+				<div class="text-[0.84rem] text-text-soft">Autores en maqueta</div>
 			</article>
-			<article class="metric">
-				<div class="metric__value">{data.stats.informes}</div>
-				<div class="metric__label">Informes de muestra</div>
+			<article class="rounded-card border border-border bg-surface-soft p-4">
+				<div class="text-[1.6rem] leading-none font-bold text-brand-blue">{data.stats.informes}</div>
+				<div class="text-[0.84rem] text-text-soft">Informes de muestra</div>
 			</article>
-			<article class="metric">
-				<div class="metric__value">{data.stats.bicuveTexts}</div>
-				<div class="metric__label">Textos BICUVE simulados</div>
+			<article class="rounded-card border border-border bg-surface-soft p-4">
+				<div class="text-[1.6rem] leading-none font-bold text-brand-blue">{data.stats.bicuveTexts}</div>
+				<div class="text-[0.84rem] text-text-soft">Textos BICUVE simulados</div>
 			</article>
 		</div>
 	</section>
 
-	<section class="card home-grid">
+	<section class="grid gap-6 rounded-card border border-border bg-surface p-6 shadow-soft lg:grid-cols-[minmax(0,2fr)_minmax(14rem,1fr)]">
 		<div>
-			<h2 class="card__title">Ruta recomendada para continuar</h2>
-			<p class="intro-copy">
-				La estructura visual ya respeta paleta, jerarquias tipograficas, tablas de resultados y patrones de
-				detalle de la web anterior. El siguiente paso sera conectar esta misma UI al SQLite real en Turso.
+			<h2 class="mb-4 text-[1.1rem] font-semibold text-brand-blue-dark">Ruta recomendada para continuar</h2>
+			<p class="text-text-soft">
+				La estructura visual ya respeta paleta, jerarquías tipográficas, tablas de resultados y patrones de detalle de
+				la web anterior. El siguiente paso será conectar esta misma UI al SQLite real en Turso.
 			</p>
-			<div class="filters-actions">
-				<a class="button button--primary" href="/examen-autorias">Ir al buscador</a>
+			<div class="mt-4 flex flex-wrap gap-2">
+				<AppButton href="/examen-autorias" variant="primary">Ir al buscador</AppButton>
 				{#if data.primaryWorkSlug}
-					<a class="button button--secondary" href={`/obras/${data.primaryWorkSlug}`}>Ver ficha de obra</a>
+					<AppButton href={`/obras/${data.primaryWorkSlug}`} variant="secondary">Ver ficha de obra</AppButton>
 				{/if}
 			</div>
 		</div>
 
 		<div>
-			<h3 class="card__title">Obras destacadas</h3>
-			<ul class="resource-list">
+			<h3 class="mb-4 text-[1.1rem] font-semibold text-brand-blue-dark">Obras destacadas</h3>
+			<ul class="grid gap-2">
 				{#each data.featuredWorks as work}
-					<li><a href={`/obras/${work.slug}`}>{work.title}</a></li>
+					<li><a class="hover:underline" href={`/obras/${work.slug}`}>{work.title}</a></li>
 				{/each}
 			</ul>
 		</div>

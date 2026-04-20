@@ -38,10 +38,35 @@
 
 	const tableClass = $derived.by(() =>
 		mode === 'informe'
-			? 'obra-table-shared obra-table-shared--informe'
-			: 'obra-table-shared obra-table-shared--standard'
+			? 'obra-table-shared obra-table-shared--informe w-full min-w-[980px] border-collapse text-[13px] max-md:block max-md:min-w-0'
+			: 'obra-table-shared obra-table-shared--standard w-full min-w-[980px] border-collapse text-[13px] max-md:block max-md:min-w-0'
 	);
 	const detailColspan = $derived.by(() => (mode === 'informe' ? 7 : 5));
+	const dataCellClass =
+		'overflow-visible px-3 py-4 align-top text-[13px] max-md:block max-md:border-0 max-md:px-3 max-md:py-[10px]';
+	const mobileCellLabelClass =
+		'mb-[6px] hidden text-[12px] font-semibold uppercase text-[#5a7a8a] max-md:block';
+	const actionButtonBaseClass = $derived.by(
+		() =>
+			`btn-action grid w-full min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 rounded-[8px] border text-left font-normal text-[#213549] no-underline transition-all ${
+				mode === 'informe' ? 'px-[9px] py-[7px] text-[11px] rounded-[7px]' : 'px-[10px] py-2 text-[12px]'
+			}`
+	);
+	const actionButtonEnabledClass = $derived.by(
+		() =>
+			`${actionButtonBaseClass} cursor-pointer border-[rgba(0,51,167,0.18)] bg-white hover:border-[rgba(0,51,167,0.34)] hover:bg-[#f6f9ff] hover:no-underline focus:no-underline focus-visible:no-underline focus:outline-3 focus:outline-[rgba(0,51,167,0.16)] focus:outline-offset-1`
+	);
+	const actionButtonDisabledClass = $derived.by(
+		() =>
+			`${actionButtonBaseClass} cursor-not-allowed border-[rgba(91,111,132,0.22)] bg-[#f8f9fb] text-[rgba(73,90,108,0.62)] opacity-[0.78]`
+	);
+	const actionLabelClass = $derived.by(
+		() =>
+			`btn-label block overflow-hidden text-ellipsis whitespace-nowrap leading-[1.2] ${
+				mode === 'informe' ? 'text-[0.77rem]' : 'text-[0.82rem]'
+			}`
+	);
+	const disabledIconClass = 'text-[rgba(114,130,145,0.75)]';
 
 	onMount(() => {
 		const onDocumentClick = (event: MouseEvent): void => {
@@ -133,8 +158,13 @@
 
 	const canLinkAuthor = (authorId: string): boolean => authorId.length > 0 && authorId !== UNRESOLVED_AUTHOR_ID;
 
-	const confidenceClass = (confidence?: Confidence): string =>
-		`confidence-${confidence ?? 'no_concluyente'}`;
+	const confidenceClass = (confidence?: Confidence): string => {
+		const baseClass =
+			'inline-block rounded-[12px] px-[7px] py-[2px] text-[10px] font-medium uppercase tracking-[0.2px] align-middle ml-1';
+		if (confidence === 'segura') return `${baseClass} bg-[#d4edda] text-[#155724]`;
+		if (confidence === 'probable') return `${baseClass} bg-[#d1ecf1] text-[#0c5460]`;
+		return `${baseClass} bg-[#fff3cd] text-[#856404]`;
+	};
 
 	const distanceValue = (row: ObraTableRow): string => {
 		if (typeof row.distancia !== 'number' || Number.isNaN(row.distancia)) return '-';
@@ -179,29 +209,67 @@
 </script>
 
 {#if rows.length === 0}
-	<div class="no-results">{emptyMessage}</div>
+	<div class="py-10 px-5 text-center text-[16px] text-[#7f8c8d]">{emptyMessage}</div>
 {:else}
-	<div class="table-wrapper obra-table-shared-container">
+	<div class="table-wrapper obra-table-shared-container min-w-0 w-full max-w-full overflow-x-auto overflow-y-visible font-['Roboto',sans-serif]">
 		<table class={tableClass}>
-			<thead>
+			<thead class="bg-[#34495e] text-white max-md:hidden">
 				<tr>
 					{#if mode === 'informe'}
-						<th class="obra-table-col--position" scope="col"></th>
-						<th class="obra-table-col--distance" scope="col">Distancia</th>
+						<th class="obra-table-col--position w-[36px] px-3 py-[14px] text-left text-[13px] font-medium tracking-[0.5px] uppercase" scope="col"></th>
+						<th class="obra-table-col--distance w-[90px] px-3 py-[14px] text-left text-[13px] font-medium tracking-[0.5px] uppercase" scope="col">
+							Distancia
+						</th>
 					{/if}
-					<th class="obra-table-col--title" scope="col">Título</th>
-					<th class="obra-table-col--trad" scope="col">Atribución tradicional</th>
-					<th class="obra-table-col--etso" scope="col">Atribución estilometría</th>
-					<th class="obra-table-col--genre" scope="col">Género</th>
-					<th class="obra-table-col--resources" scope="col">Recursos</th>
+					<th
+						class={`obra-table-col--title px-3 py-[14px] text-left text-[13px] font-medium tracking-[0.5px] uppercase ${
+							mode === 'standard' ? 'w-[29%]' : ''
+						}`}
+						scope="col"
+					>
+						Título
+					</th>
+					<th
+						class={`obra-table-col--trad px-3 py-[14px] text-left text-[13px] font-medium tracking-[0.5px] uppercase ${
+							mode === 'standard' ? 'w-[21.5%]' : ''
+						}`}
+						scope="col"
+					>
+						Atribución tradicional
+					</th>
+					<th
+						class={`obra-table-col--etso px-3 py-[14px] text-left text-[13px] font-medium tracking-[0.5px] uppercase ${
+							mode === 'standard' ? 'w-[21.5%]' : ''
+						}`}
+						scope="col"
+					>
+						Atribución estilometría
+					</th>
+					<th
+						class={`obra-table-col--genre px-3 py-[14px] text-left text-[13px] font-medium tracking-[0.5px] uppercase ${
+							mode === 'informe' ? 'w-[110px]' : 'w-[8%]'
+						}`}
+						scope="col"
+					>
+						Género
+					</th>
+					<th
+						class={`obra-table-col--resources px-3 py-[14px] text-left text-[13px] font-medium tracking-[0.5px] uppercase ${
+							mode === 'informe' ? 'w-[190px]' : 'w-[20%]'
+						}`}
+						scope="col"
+					>
+						Recursos
+					</th>
 				</tr>
 			</thead>
-			<tbody>
+			<tbody class="max-md:block">
 				{#each rows as row}
 					{@const flags = resolveFilterFlags(row)}
 					<tr
-						class="obra-row"
-						class:expanded={isRowExpanded(row.rowId)}
+						class={`obra-row cursor-pointer border-b border-[#ecf0f1] transition-colors hover:bg-[#f8f9fa] max-md:mb-3 max-md:block max-md:rounded-[8px] max-md:border max-md:border-[#e9ecef] max-md:bg-white max-md:p-2 ${
+							isRowExpanded(row.rowId) ? 'expanded border-b-[#e0e0e0] bg-[#f5f5f5]' : ''
+						}`}
 						data-obra-id={row.work.id}
 						data-title-search={normalizeForSearch([row.work.title, ...row.work.titleVariants].join(' '))}
 						data-genero={normalizeForSearch(row.work.genre)}
@@ -213,12 +281,14 @@
 						onclick={(event) => handleRowClick(event, row.rowId)}
 					>
 						{#if mode === 'informe'}
-							<td class="text-center obra-position-cell" data-label="Posición">
+							<td class={`${dataCellClass} text-center font-medium`} data-label="Posición">
+								<span class={mobileCellLabelClass}>Posición</span>
 								{row.position ?? '-'}
 							</td>
-							<td class="text-end obra-distance-cell" data-label="Distancia">
+							<td class={`${dataCellClass} text-right whitespace-nowrap`} data-label="Distancia">
+								<span class={mobileCellLabelClass}>Distancia</span>
 								<span
-									class="distance-badge"
+									class="distance-badge inline-block rounded-[12px] px-[0.55rem] py-[0.22rem] text-[0.75rem] font-medium"
 									style={`background-color: ${row.badgeColor ?? '#3366cc'}; color: #fff;`}
 								>
 									{distanceValue(row)}
@@ -226,141 +296,186 @@
 							</td>
 						{/if}
 
-						<td data-label="Título">
-							<div class="obra-title">
-								<span class="expand-icon" aria-hidden="true">
+						<td class={dataCellClass} data-label="Título">
+							<span class={mobileCellLabelClass}>Título</span>
+							<div class="obra-title flex select-none items-center gap-2 font-medium text-[#2c3e50]">
+								<span
+									class={`expand-icon inline-flex h-3 w-3 flex-shrink-0 items-center justify-center max-md:hidden ${
+										isRowExpanded(row.rowId) ? 'text-[#0033a7]' : 'text-[#7f8c8d]'
+									}`}
+									aria-hidden="true"
+								>
 									{#if isRowExpanded(row.rowId)}
-										<ChevronDown />
+										<ChevronDown class="h-3 w-3 stroke-[2.3]" />
 									{:else}
-										<ChevronRight />
+										<ChevronRight class="h-3 w-3 stroke-[2.3]" />
 									{/if}
 								</span>
-								<a href={`/obras/${row.work.slug}`}>{row.work.title}</a>
+								<a
+									href={`/obras/${row.work.slug}`}
+									class="text-[#2c3e50] visited:text-[#2c3e50] no-underline hover:underline focus:underline focus-visible:underline"
+								>
+									{row.work.title}
+								</a>
 							</div>
 							{#if row.work.titleVariants.length > 0}
-								<div class="variantes-titulo">
-									<span class="variantes-prefix" aria-hidden="true"><CornerDownRight /></span>
+								<div class="variantes-titulo mt-1.5 pl-5 text-[13px] leading-[1.4] text-[#7f8c8d] italic">
+									<span class="variantes-prefix mr-1 inline-flex align-middle text-[#7f8c8d] not-italic" aria-hidden="true">
+										<CornerDownRight class="h-3 w-3 stroke-[2.1]" />
+									</span>
 									{#each row.work.titleVariants as variante, index}
 										<span class="variante-item">{variante}</span>
 										{#if index < row.work.titleVariants.length - 1}
-											<span class="variantes-sep"> | </span>
+											<span class="variantes-sep text-[#9aa8b7]"> | </span>
 										{/if}
 									{/each}
 								</div>
 							{/if}
 						</td>
 
-						<td data-label="Atribución tradicional">
+						<td class={dataCellClass} data-label="Atribución tradicional">
+							<span class={mobileCellLabelClass}>Atribución tradicional</span>
 							{#if hasAuthorLinks(row.work.traditionalAttribution)}
-								<div class="autor-list">
+								<div class="autor-list leading-[1.6]">
 									{#each row.work.traditionalAttribution.groups as group, groupIndex}
 										<span class="autor-group">
 											{#each group.members as member, memberIndex}
 												{#if canLinkAuthor(member.authorId)}
-													<a href={`/autores/${member.authorId}`} class="autor-name">{member.authorName}</a>
+													<a
+														href={`/autores/${member.authorId}`}
+														class="autor-name font-normal text-[#2c3e50] visited:text-[#2c3e50] no-underline hover:underline focus:underline focus-visible:underline"
+													>
+														{member.authorName}
+													</a>
 												{:else}
-													<span class="autor-name">{member.authorName}</span>
+													<span class="autor-name font-normal text-[#2c3e50]">{member.authorName}</span>
 												{/if}
 												{#if memberIndex < group.members.length - 1}
-													<span class="logic-operator">Y</span>
+													<span class="logic-operator mx-1 inline-block rounded-[3px] bg-[#ecf0f1] px-1.5 py-[1px] align-middle text-[10px] font-semibold text-[#555] uppercase">
+														Y
+													</span>
 												{/if}
 											{/each}
 										</span>
 										{#if groupIndex < row.work.traditionalAttribution.groups.length - 1}
-											<span class="logic-operator">{connectorLabel(row.work.traditionalAttribution)}</span>
+											<span class="logic-operator mx-1 inline-block rounded-[3px] bg-[#ecf0f1] px-1.5 py-[1px] align-middle text-[10px] font-semibold text-[#555] uppercase">
+												{connectorLabel(row.work.traditionalAttribution)}
+											</span>
 										{/if}
 									{/each}
 								</div>
 							{:else}
-								<span class="desconocido">Desconocido</span>
+								<span class="desconocido text-[#7f8c8d] italic">Desconocido</span>
 							{/if}
 						</td>
 
-						<td data-label="Atribución estilometría">
+						<td class={dataCellClass} data-label="Atribución estilometría">
+							<span class={mobileCellLabelClass}>Atribución estilometría</span>
 							{#if row.work.stylometryAttribution.unresolved}
-								<span class="desconocido">El análisis no apunta hacia ningún autor</span>
+								<span class="desconocido text-[#7f8c8d] italic">El análisis no apunta hacia ningún autor</span>
 							{:else if row.work.stylometryAttribution.groups.length > 0}
-								<div class="autor-list">
+								<div class="autor-list leading-[1.6]">
 									{#each row.work.stylometryAttribution.groups as group, groupIndex}
 										<span class="autor-group">
 											{#each group.members as member, memberIndex}
 												{#if canLinkAuthor(member.authorId)}
-													<a href={`/autores/${member.authorId}`} class="autor-name">{member.authorName}</a>
+													<a
+														href={`/autores/${member.authorId}`}
+														class="autor-name font-normal text-[#2c3e50] visited:text-[#2c3e50] no-underline hover:underline focus:underline focus-visible:underline"
+													>
+														{member.authorName}
+													</a>
 												{:else}
-													<span class="autor-name">{member.authorName}</span>
+													<span class="autor-name font-normal text-[#2c3e50]">{member.authorName}</span>
 												{/if}
 												{#if member.confidence}
-													<span class={`confidence-badge ${confidenceClass(member.confidence)}`}>
+													<span class={confidenceClass(member.confidence)}>
 														{formatConfidence(member.confidence)}
 													</span>
 												{/if}
 												{#if memberIndex < group.members.length - 1}
-													<span class="logic-operator">Y</span>
+													<span class="logic-operator mx-1 inline-block rounded-[3px] bg-[#ecf0f1] px-1.5 py-[1px] align-middle text-[10px] font-semibold text-[#555] uppercase">
+														Y
+													</span>
 												{/if}
 											{/each}
 										</span>
 										{#if groupIndex < row.work.stylometryAttribution.groups.length - 1}
-											<span class="logic-operator">{connectorLabel(row.work.stylometryAttribution)}</span>
+											<span class="logic-operator mx-1 inline-block rounded-[3px] bg-[#ecf0f1] px-1.5 py-[1px] align-middle text-[10px] font-semibold text-[#555] uppercase">
+												{connectorLabel(row.work.stylometryAttribution)}
+											</span>
 										{/if}
 									{/each}
 								</div>
 							{:else}
-								<span class="desconocido">No disponible</span>
+								<span class="desconocido text-[#7f8c8d] italic">No disponible</span>
 							{/if}
 						</td>
 
-						<td data-label="Género">{row.work.genre || '-'}</td>
+						<td class={dataCellClass} data-label="Género">
+							<span class={mobileCellLabelClass}>Género</span>
+							{row.work.genre || '-'}
+						</td>
 
-						<td data-label="Recursos">
-							<div class="actions">
+						<td class={dataCellClass} data-label="Recursos">
+							<span class={mobileCellLabelClass}>Recursos</span>
+							<div class="actions relative flex flex-col gap-1.5 max-md:flex-wrap max-md:justify-start max-md:gap-2">
 								{#if row.work.reportId}
-									<a href={`/informes/${row.work.reportId}`} class="btn-action btn-informe">
-										<span class="btn-left">
-											<span class="btn-icon" aria-hidden="true"><ChartLine /></span>
-											<span class="btn-label">
+									<a href={`/informes/${row.work.reportId}`} class={actionButtonEnabledClass}>
+										<span class="btn-left col-span-2 flex min-w-0 items-center gap-[7px]">
+											<span class="btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-[#0033a7]" aria-hidden="true">
+												<ChartLine class="h-[14px] w-[14px] stroke-[2.1]" />
+											</span>
+											<span class={actionLabelClass}>
 												{mode === 'informe' ? 'Informe' : 'Informe estilométrico'}
 											</span>
 										</span>
-										<span class="btn-arrow" aria-hidden="true"><ChevronRight /></span>
+										<span class="btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center text-[#5b6f84]" aria-hidden="true">
+											<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
+										</span>
 									</a>
 								{:else}
-									<span class="btn-action btn-disabled">
-										<span class="btn-left">
-											<span class="btn-icon" aria-hidden="true"><ChartLine /></span>
-											<span class="btn-label">
+									<span class={actionButtonDisabledClass}>
+										<span class="btn-left col-span-2 flex min-w-0 items-center gap-[7px]">
+											<span class={`btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center ${disabledIconClass}`} aria-hidden="true">
+												<ChartLine class="h-[14px] w-[14px] stroke-[2.1]" />
+											</span>
+											<span class={actionLabelClass}>
 												{mode === 'informe' ? 'Informe' : 'Informe estilométrico'}
 											</span>
 										</span>
-										<span class="btn-arrow" aria-hidden="true"><ChevronRight /></span>
+										<span class={`btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center ${disabledIconClass}`} aria-hidden="true">
+											<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
+										</span>
 									</span>
 								{/if}
 
 								{#if row.work.textLinks.length > 0}
-									<div class="textos-dropdown-wrapper">
+									<div class="textos-dropdown-wrapper relative w-full">
 										<button
 											type="button"
-											class="btn-action btn-texto textos-toggle"
+											class={`${actionButtonEnabledClass} btn-texto textos-toggle`}
 											aria-haspopup="true"
 											aria-expanded={openDropdownRowId === row.rowId ? 'true' : 'false'}
 											use:registerTextButton={row.rowId}
 											onclick={(event) => toggleTextDropdown(event, row.rowId)}
 										>
-											<span class="btn-left">
-												<span class="btn-icon" aria-hidden="true">
-													<FolderOpen />
+											<span class="btn-left col-span-2 flex min-w-0 items-center gap-[7px]">
+												<span class="btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-[#0033a7]" aria-hidden="true">
+													<FolderOpen class="h-[14px] w-[14px] stroke-[2.1]" />
 												</span>
-												<span class="btn-label">{mode === 'informe' ? 'Texto' : 'Acceso al texto'}</span>
+												<span class={actionLabelClass}>{mode === 'informe' ? 'Texto' : 'Acceso al texto'}</span>
 											</span>
-											<span class="btn-arrow" aria-hidden="true">
+											<span class="btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center text-[#5b6f84]" aria-hidden="true">
 												{#if openDropdownRowId === row.rowId}
-													<ChevronDown />
+													<ChevronDown class="h-[13px] w-[13px] stroke-[2.2]" />
 												{:else}
-													<ChevronRight />
+													<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
 												{/if}
 											</span>
 										</button>
 										<div
-											class="textos-dropdown textos-dropdown-portal"
+											class="textos-dropdown textos-dropdown-portal fixed left-0 top-0 z-[1200] max-h-[300px] min-w-[220px] max-w-[320px] overflow-y-auto rounded-[8px] border border-[rgba(0,51,167,0.18)] bg-white p-1.5 font-['Roboto',sans-serif] shadow-[0_10px_28px_rgba(7,36,110,0.16)] max-md:min-w-[260px] max-md:max-w-[calc(100vw-20px)]"
 											data-row-id={row.rowId}
 											hidden={openDropdownRowId !== row.rowId}
 											style={dropdownStyles[row.rowId] ?? ''}
@@ -368,20 +483,20 @@
 											{#each row.work.textLinks as link}
 												<a
 													href={link.href}
-													class="textos-dropdown-item"
+													class="textos-dropdown-item grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-[6px] px-2.5 py-[9px] text-[12px] font-normal text-[#213549] no-underline transition-all hover:bg-[#f6f9ff] hover:text-[#213549] hover:no-underline focus:bg-[#f6f9ff] focus:text-[#213549] focus:no-underline focus:outline-none focus-visible:bg-[#f6f9ff] focus-visible:text-[#213549] focus-visible:no-underline focus-visible:outline-none"
 													target={link.external ? '_blank' : undefined}
 													rel={link.external ? 'noopener noreferrer' : undefined}
 												>
-													<span class="textos-dropdown-icon" aria-hidden="true">
+													<span class="textos-dropdown-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-[#0033a7]" aria-hidden="true">
 														{#if link.kind === 'bicuve'}
-															<BookOpen />
+															<BookOpen class="h-[14px] w-[14px] stroke-[2.1]" />
 														{:else}
-															<ExternalLink />
+															<ExternalLink class="h-[14px] w-[14px] stroke-[2.1]" />
 														{/if}
 													</span>
-													<span class="textos-dropdown-body">
-														<span class="textos-dropdown-label">{link.label}</span>
-														<span class="textos-dropdown-kind">
+													<span class="textos-dropdown-body flex min-w-0 flex-col gap-0.5">
+														<span class="textos-dropdown-label block overflow-hidden text-ellipsis whitespace-nowrap">{link.label}</span>
+														<span class="textos-dropdown-kind text-[0.68rem] font-normal tracking-[0.02em] text-[#6b7b8d] uppercase">
 															{#if link.kind === 'bicuve'}
 																BICUVE
 															{:else}
@@ -389,44 +504,56 @@
 															{/if}
 														</span>
 													</span>
-													<span class="textos-dropdown-item-arrow" aria-hidden="true">
-														<ChevronRight />
+													<span class="textos-dropdown-item-arrow inline-flex h-3 w-3 flex-none items-center justify-center text-[#5b6f84]" aria-hidden="true">
+														<ChevronRight class="h-3 w-3 stroke-[2.1]" />
 													</span>
 												</a>
 											{/each}
 										</div>
 									</div>
 								{:else}
-									<span class="btn-action btn-disabled">
-										<span class="btn-left">
-											<span class="btn-icon" aria-hidden="true"><FolderOpen /></span>
-											<span class="btn-label">{mode === 'informe' ? 'Texto' : 'Acceso al texto'}</span>
+									<span class={actionButtonDisabledClass}>
+										<span class="btn-left col-span-2 flex min-w-0 items-center gap-[7px]">
+											<span class={`btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center ${disabledIconClass}`} aria-hidden="true">
+												<FolderOpen class="h-[14px] w-[14px] stroke-[2.1]" />
+											</span>
+											<span class={actionLabelClass}>{mode === 'informe' ? 'Texto' : 'Acceso al texto'}</span>
 										</span>
-										<span class="btn-arrow" aria-hidden="true"><ChevronRight /></span>
+										<span class={`btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center ${disabledIconClass}`} aria-hidden="true">
+											<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
+										</span>
 									</span>
 								{/if}
 
 								{#if hasLongSummary(row.work)}
-									<a href={summaryUrl(row.work)} class="btn-action btn-resumen">
-										<span class="btn-left">
-											<span class="btn-icon" aria-hidden="true"><AlignLeft /></span>
-											<span class="btn-label">{mode === 'informe' ? 'Resumen' : 'Resumen automático'}</span>
+									<a href={summaryUrl(row.work)} class={actionButtonEnabledClass}>
+										<span class="btn-left col-span-2 flex min-w-0 items-center gap-[7px]">
+											<span class="btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-[#0033a7]" aria-hidden="true">
+												<AlignLeft class="h-[14px] w-[14px] stroke-[2.1]" />
+											</span>
+											<span class={actionLabelClass}>{mode === 'informe' ? 'Resumen' : 'Resumen automático'}</span>
 										</span>
-										<span class="btn-arrow" aria-hidden="true"><ChevronRight /></span>
+										<span class="btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center text-[#5b6f84]" aria-hidden="true">
+											<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
+										</span>
 									</a>
 								{:else}
-									<span class="btn-action btn-disabled">
-										<span class="btn-left">
-											<span class="btn-icon" aria-hidden="true"><AlignLeft /></span>
-											<span class="btn-label">{mode === 'informe' ? 'Resumen' : 'Resumen automático'}</span>
+									<span class={actionButtonDisabledClass}>
+										<span class="btn-left col-span-2 flex min-w-0 items-center gap-[7px]">
+											<span class={`btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center ${disabledIconClass}`} aria-hidden="true">
+												<AlignLeft class="h-[14px] w-[14px] stroke-[2.1]" />
+											</span>
+											<span class={actionLabelClass}>{mode === 'informe' ? 'Resumen' : 'Resumen automático'}</span>
 										</span>
-										<span class="btn-arrow" aria-hidden="true"><ChevronRight /></span>
+										<span class={`btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center ${disabledIconClass}`} aria-hidden="true">
+											<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
+										</span>
 									</span>
 								{/if}
 
-								<div class="ver-mas">
+								<div class="ver-mas mt-2 hidden text-center max-md:mt-[10px] max-md:block">
 									<span
-										class="toggle-detail"
+										class="toggle-detail inline-block rounded-[4px] bg-transparent px-2 py-1.5 text-[14px] leading-none font-semibold text-[#0033a7]"
 										role="button"
 										tabindex="0"
 										aria-expanded={isRowExpanded(row.rowId) ? 'true' : 'false'}
@@ -444,48 +571,66 @@
 									>
 										Ver más
 									</span>
-									<div class="toggle-down" aria-hidden="true"><ChevronDown /></div>
+									<div
+										class={`toggle-down mt-1.5 inline-flex items-center justify-center leading-none text-[#0033a7] transition-transform ${
+											isRowExpanded(row.rowId) ? 'rotate-180' : ''
+										}`}
+										aria-hidden="true"
+									>
+										<ChevronDown class="h-[14px] w-[14px] stroke-[2.2]" />
+									</div>
 								</div>
 							</div>
 						</td>
 					</tr>
 
-					<tr class="detail-row" class:show={isRowExpanded(row.rowId)} hidden={!isRowExpanded(row.rowId)}>
-						<td colspan={detailColspan}>
-							<div class="detail-content">
+					<tr
+						class={`${isRowExpanded(row.rowId) ? 'table-row' : 'hidden'} detail-row border-b border-[#e0e0e0] bg-[#f5f5f5] max-md:block`}
+						hidden={!isRowExpanded(row.rowId)}
+					>
+						<td colspan={detailColspan} class="max-md:block max-md:border-0 max-md:p-0">
+							<div class="detail-content animate-[works-table-slide-down_0.24s_ease] px-6 py-5">
 								{#if hasShortSummary(row.work)}
-									<div class="detail-section detail-section--resumen">
-										<div class="detail-section-title">Resumen breve automático</div>
-										<p class="resumen-text">{row.work.shortSummary}</p>
+									<div class="detail-section detail-section--resumen mb-5 border-b border-[#dfe5ee] pb-3 last:mb-0">
+										<div class="detail-section-title mb-2.5 text-[12px] font-semibold tracking-[0.5px] text-[#5a7a8a] uppercase">
+											Resumen breve automático
+										</div>
+										<p class="resumen-text mb-3 text-[14px] leading-[1.7] text-[#555]">{row.work.shortSummary}</p>
 									</div>
 								{/if}
 
-								<div class="detail-section">
-									<div class="metadata-grid">
-										<div class="metadata-item">
-											<span class="metadata-label">Texto empleado</span>
+								<div class="detail-section mb-5 last:mb-0">
+									<div class="metadata-grid grid grid-cols-3 gap-[14px] max-md:grid-cols-1">
+										<div class="metadata-item flex flex-col gap-1">
+											<span class="metadata-label mb-1 block text-[12px] font-semibold text-[#5a7a8a] uppercase">
+												Texto empleado
+											</span>
 											{#if row.work.origin}
-												<span class="metadata-value">{row.work.origin}</span>
+												<span class="metadata-value text-[14px] text-[#2c3e50]">{row.work.origin}</span>
 											{:else}
-												<span class="metadata-value not-available">No disponible</span>
+												<span class="metadata-value not-available text-[14px] text-[#7f8c8d] italic">No disponible</span>
 											{/if}
 										</div>
 
-										<div class="metadata-item">
-											<span class="metadata-label">Estado del texto</span>
+										<div class="metadata-item flex flex-col gap-1">
+											<span class="metadata-label mb-1 block text-[12px] font-semibold text-[#5a7a8a] uppercase">
+												Estado del texto
+											</span>
 											{#if row.work.textState}
-												<span class="metadata-value">{row.work.textState}</span>
+												<span class="metadata-value text-[14px] text-[#2c3e50]">{row.work.textState}</span>
 											{:else}
-												<span class="metadata-value not-available">No disponible</span>
+												<span class="metadata-value not-available text-[14px] text-[#7f8c8d] italic">No disponible</span>
 											{/if}
 										</div>
 
-										<div class="metadata-item">
-											<span class="metadata-label">Fecha de adición o modificación</span>
+										<div class="metadata-item flex flex-col gap-1">
+											<span class="metadata-label mb-1 block text-[12px] font-semibold text-[#5a7a8a] uppercase">
+												Fecha de adición o modificación
+											</span>
 											{#if row.work.addedOn}
-												<span class="metadata-value">{row.work.addedOn}</span>
+												<span class="metadata-value text-[14px] text-[#2c3e50]">{row.work.addedOn}</span>
 											{:else}
-												<span class="metadata-value not-available">No disponible</span>
+												<span class="metadata-value not-available text-[14px] text-[#7f8c8d] italic">No disponible</span>
 											{/if}
 										</div>
 									</div>
@@ -500,174 +645,37 @@
 {/if}
 
 <style>
-	.obra-table-shared-container {
-		font-family: 'Roboto', sans-serif;
-		overflow-x: auto;
-		overflow-y: visible;
-		width: 100%;
-		max-width: 100%;
-		min-width: 0;
-	}
-
-	.obra-table-shared {
-		width: 100%;
-		border-collapse: collapse;
-		font-size: 13px;
-		min-width: 980px;
-	}
-
-	.obra-table-shared thead {
-		background: #34495e;
-		color: #fff;
-	}
-
-	.obra-table-shared th {
-		padding: 14px 12px;
-		text-align: left;
-		font-weight: 500;
-		font-size: 13px;
-		text-transform: uppercase;
-		letter-spacing: 0.5px;
-	}
-
-	.obra-table-shared--standard .obra-table-col--title {
-		width: 29%;
-	}
-
-	.obra-table-shared--standard .obra-table-col--trad,
-	.obra-table-shared--standard .obra-table-col--etso {
-		width: 21.5%;
-	}
-
-	.obra-table-shared--standard .obra-table-col--genre {
-		width: 8%;
-	}
-
-	.obra-table-shared--standard .obra-table-col--resources {
-		width: 20%;
-	}
-
-	.obra-table-shared--informe .obra-table-col--position {
-		width: 36px;
-	}
-
-	.obra-table-shared--informe .obra-table-col--distance {
-		width: 90px;
-	}
-
-	.obra-table-shared--informe .obra-table-col--genre {
-		width: 110px;
-	}
-
-	.obra-table-shared--informe .obra-table-col--resources {
-		width: 190px;
-	}
-
-	.obra-row {
-		border-bottom: 1px solid #ecf0f1;
-		transition: background 0.15s;
-		cursor: pointer;
-	}
-
-	.obra-row:hover {
-		background: #f8f9fa;
-	}
-
-	.obra-row.expanded {
-		background: #f5f5f5;
-		border-bottom-color: #e0e0e0;
-	}
-
-	td {
-		padding: 16px 12px;
-		vertical-align: top;
-		font-size: 13px;
-		overflow: visible;
-	}
-
-	.obra-title {
-		font-weight: 500;
-		color: #2c3e50;
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		user-select: none;
-	}
-
-	.obra-title a {
+	.obra-table-shared-container a,
+	.obra-table-shared-container a:link,
+	.obra-table-shared-container a:visited {
 		color: inherit;
-		text-decoration: none;
 	}
 
-	.obra-title a:hover,
-	.obra-title a:focus,
-	.obra-title a:focus-visible {
+	.obra-table-shared-container a:hover,
+	.obra-table-shared-container a:focus-visible {
 		text-decoration: underline;
 	}
 
-	.expand-icon {
-		color: #7f8c8d;
-		flex-shrink: 0;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		width: 12px;
-		height: 12px;
+	.obra-table-shared-container .obra-title a,
+	.obra-table-shared-container .obra-title a:visited,
+	.obra-table-shared-container .autor-name,
+	.obra-table-shared-container .autor-name:visited {
+		color: #2c3e50;
 	}
 
-	.expand-icon :global(svg) {
-		width: 12px;
-		height: 12px;
-		stroke-width: 2.3;
+	.obra-table-shared-container .btn-action,
+	.obra-table-shared-container .textos-dropdown-item {
+		color: #213549;
 	}
 
-	.obra-row.expanded .expand-icon {
-		color: #0033a7;
+	.obra-table-shared-container .btn-action:hover,
+	.obra-table-shared-container .btn-action:focus-visible,
+	.obra-table-shared-container .textos-dropdown-item:hover,
+	.obra-table-shared-container .textos-dropdown-item:focus-visible {
+		text-decoration: none;
 	}
 
-	.variantes-titulo {
-		margin-top: 6px;
-		padding-left: 20px;
-		color: #7f8c8d;
-		font-size: 13px;
-		font-style: italic;
-		line-height: 1.4;
-	}
-
-	.variantes-prefix {
-		color: #7f8c8d;
-		margin-right: 4px;
-		font-style: normal;
-		display: inline-flex;
-		vertical-align: middle;
-	}
-
-	.variantes-prefix :global(svg) {
-		width: 12px;
-		height: 12px;
-		stroke-width: 2.1;
-	}
-
-	.variantes-sep {
-		color: #9aa8b7;
-	}
-
-	.detail-row {
-		display: none;
-		background: #f5f5f5;
-		border-bottom: 1px solid #e0e0e0;
-	}
-
-	.detail-row.show {
-		display: table-row;
-	}
-
-	.detail-content {
-		padding: 20px 24px;
-		animation: slideDown 0.24s ease;
-	}
-
-	@keyframes slideDown {
+	@keyframes works-table-slide-down {
 		from {
 			opacity: 0;
 			transform: translateY(-8px);
@@ -675,495 +683,6 @@
 		to {
 			opacity: 1;
 			transform: translateY(0);
-		}
-	}
-
-	.detail-section {
-		margin-bottom: 20px;
-	}
-
-	.detail-section:last-child {
-		margin-bottom: 0;
-	}
-
-	.detail-section--resumen {
-		border-bottom: 1px solid #dfe5ee;
-		padding-bottom: 12px;
-	}
-
-	.detail-section-title {
-		font-size: 12px;
-		font-weight: 600;
-		text-transform: uppercase;
-		color: #5a7a8a;
-		margin-bottom: 10px;
-		letter-spacing: 0.5px;
-	}
-
-	.resumen-text {
-		color: #555;
-		line-height: 1.7;
-		font-size: 14px;
-		margin-bottom: 12px;
-	}
-
-	.metadata-grid {
-		display: grid;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 14px;
-	}
-
-	.metadata-item {
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
-	}
-
-	.metadata-label {
-		display: block;
-		font-size: 12px;
-		font-weight: 600;
-		text-transform: uppercase;
-		color: #5a7a8a;
-		margin-bottom: 4px;
-	}
-
-	.metadata-value {
-		font-size: 14px;
-		color: #2c3e50;
-	}
-
-	.metadata-value.not-available,
-	.desconocido {
-		color: #7f8c8d;
-		font-style: italic;
-	}
-
-	.autor-list {
-		display: block;
-		line-height: 1.6;
-	}
-
-	.autor-group {
-		display: inline;
-	}
-
-	.autor-name {
-		color: #2c3e50;
-		font-weight: 400;
-		text-decoration: none;
-	}
-
-	.autor-name:hover,
-	.autor-name:focus,
-	.autor-name:focus-visible {
-		text-decoration: underline;
-	}
-
-	.logic-operator {
-		display: inline-block;
-		padding: 1px 6px;
-		background: #ecf0f1;
-		border-radius: 3px;
-		font-size: 10px;
-		font-weight: 600;
-		color: #555;
-		text-transform: uppercase;
-		margin: 0 4px;
-		vertical-align: middle;
-	}
-
-	.confidence-badge {
-		display: inline-block;
-		padding: 2px 7px;
-		border-radius: 12px;
-		font-size: 10px;
-		font-weight: 500;
-		text-transform: uppercase;
-		letter-spacing: 0.2px;
-		margin-left: 4px;
-		vertical-align: middle;
-	}
-
-	.confidence-segura {
-		background: #d4edda;
-		color: #155724;
-	}
-
-	.confidence-probable {
-		background: #d1ecf1;
-		color: #0c5460;
-	}
-
-	.confidence-posible {
-		background: #fff3cd;
-		color: #856404;
-	}
-
-	.confidence-no_concluyente {
-		background: #fff3cd;
-		color: #856404;
-	}
-
-	.actions {
-		display: flex;
-		flex-direction: column;
-		gap: 6px;
-		position: relative;
-	}
-
-	.btn-action {
-		display: grid;
-		grid-template-columns: auto minmax(0, 1fr) auto;
-		align-items: center;
-		column-gap: 8px;
-		padding: 8px 10px;
-		border: 1px solid rgba(0, 51, 167, 0.18);
-		border-radius: 8px;
-		font-size: 12px;
-		font-weight: 500;
-		color: #213549;
-		background: #fff;
-		text-decoration: none;
-		text-transform: none;
-		width: 100%;
-		min-width: 0;
-		transition: all 0.15s ease;
-		cursor: pointer;
-		font-family: inherit;
-		text-align: left;
-	}
-
-	.btn-action:hover:not(.btn-disabled) {
-		border-color: rgba(0, 51, 167, 0.34);
-		background: #f6f9ff;
-		color: #213549;
-	}
-
-	.btn-action:focus,
-	.btn-action:focus-visible {
-		outline: 3px solid rgba(0, 51, 167, 0.16);
-		outline-offset: 1px;
-	}
-
-	.btn-action.btn-disabled,
-	.btn-action.btn-disabled:hover,
-	.btn-action.btn-disabled:focus,
-	.btn-action.btn-disabled:focus-visible {
-		background: #f8f9fb;
-		border-color: rgba(91, 111, 132, 0.22);
-		color: rgba(73, 90, 108, 0.62);
-		cursor: not-allowed;
-		opacity: 0.78;
-	}
-
-	.btn-left {
-		display: flex;
-		align-items: center;
-		gap: 7px;
-		min-width: 0;
-		grid-column: 1 / span 2;
-	}
-
-	.btn-icon {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		color: #0033a7;
-		width: 14px;
-		height: 14px;
-		flex: 0 0 auto;
-	}
-
-	.btn-icon :global(svg) {
-		width: 14px;
-		height: 14px;
-		stroke-width: 2.1;
-	}
-
-	.btn-label {
-		display: block;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		font-size: 0.82rem;
-		line-height: 1.2;
-		color: inherit;
-	}
-
-	.btn-arrow {
-		color: #5b6f84;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		width: 13px;
-		height: 13px;
-		grid-column: 3;
-	}
-
-	.btn-arrow :global(svg) {
-		width: 13px;
-		height: 13px;
-		stroke-width: 2.2;
-	}
-
-	.btn-action.btn-disabled .btn-icon,
-	.btn-action.btn-disabled .btn-arrow {
-		color: rgba(114, 130, 145, 0.75);
-	}
-
-	.obra-table-shared--informe .btn-action {
-		padding: 7px 9px;
-		font-size: 11px;
-		border-radius: 7px;
-	}
-
-	.obra-table-shared--informe .btn-label {
-		font-size: 0.77rem;
-	}
-
-	.textos-dropdown-wrapper {
-		position: relative;
-		width: 100%;
-	}
-
-	.btn-texto {
-		width: 100%;
-	}
-
-	.textos-dropdown-portal {
-		font-family: 'Roboto', sans-serif;
-		position: fixed;
-		top: 0;
-		left: 0;
-		background: #fff;
-		border: 1px solid rgba(0, 51, 167, 0.18);
-		border-radius: 8px;
-		box-shadow: 0 10px 28px rgba(7, 36, 110, 0.16);
-		padding: 6px;
-		z-index: 1200;
-		min-width: 220px;
-		max-width: 320px;
-		max-height: 300px;
-		overflow-y: auto;
-	}
-
-	.textos-dropdown-portal[hidden] {
-		display: none;
-	}
-
-	.textos-dropdown-item {
-		display: grid;
-		grid-template-columns: auto minmax(0, 1fr) auto;
-		align-items: center;
-		gap: 8px;
-		padding: 9px 10px;
-		color: #213549;
-		text-decoration: none;
-		border-radius: 6px;
-		font-size: 12px;
-		font-weight: 600;
-		transition: all 0.15s ease;
-	}
-
-	.textos-dropdown-icon {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		color: #0033a7;
-		width: 14px;
-		height: 14px;
-		flex: 0 0 auto;
-	}
-
-	.textos-dropdown-icon :global(svg) {
-		width: 14px;
-		height: 14px;
-		stroke-width: 2.1;
-	}
-
-	.textos-dropdown-body {
-		display: flex;
-		flex-direction: column;
-		gap: 2px;
-		min-width: 0;
-	}
-
-	.textos-dropdown-label {
-		display: block;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-
-	.textos-dropdown-kind {
-		font-size: 0.68rem;
-		font-weight: 600;
-		letter-spacing: 0.02em;
-		text-transform: uppercase;
-		color: #6b7b8d;
-	}
-
-	.textos-dropdown-item-arrow {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		width: 12px;
-		height: 12px;
-		color: #5b6f84;
-		flex: 0 0 auto;
-	}
-
-	.textos-dropdown-item-arrow :global(svg) {
-		width: 12px;
-		height: 12px;
-		stroke-width: 2.1;
-	}
-
-	.textos-dropdown-item + .textos-dropdown-item {
-		margin-top: 2px;
-	}
-
-	.textos-dropdown-item:hover,
-	.textos-dropdown-item:focus,
-	.textos-dropdown-item:focus-visible {
-		background: #f6f9ff;
-		color: #0033a7;
-		outline: none;
-	}
-
-	.textos-dropdown-item:hover .textos-dropdown-kind,
-	.textos-dropdown-item:focus .textos-dropdown-kind,
-	.textos-dropdown-item:focus-visible .textos-dropdown-kind {
-		color: #476483;
-	}
-
-	.ver-mas {
-		margin-top: 8px;
-		text-align: center;
-		display: none;
-	}
-
-	.toggle-detail {
-		display: inline-block;
-		cursor: pointer;
-		font-size: 14px;
-		color: #0033a7;
-		font-weight: 600;
-		line-height: 1;
-		padding: 6px 8px;
-		border-radius: 4px;
-		background: transparent;
-		text-decoration: none;
-	}
-
-	.toggle-detail:focus,
-	.toggle-detail:focus-visible {
-		outline: 3px solid rgba(0, 51, 167, 0.12);
-		outline-offset: 2px;
-	}
-
-	.toggle-down {
-		margin-top: 6px;
-		line-height: 1;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		color: #0033a7;
-		transition: transform 0.15s ease;
-	}
-
-	.toggle-down :global(svg) {
-		width: 14px;
-		height: 14px;
-		stroke-width: 2.2;
-	}
-
-	.obra-row.expanded .toggle-down {
-		transform: rotate(180deg);
-	}
-
-	.distance-badge {
-		display: inline-block;
-		padding: 0.22rem 0.55rem;
-		border-radius: 12px;
-		font-size: 0.75rem;
-		font-weight: 500;
-	}
-
-	.obra-position-cell {
-		font-weight: 500;
-	}
-
-	.obra-distance-cell {
-		white-space: nowrap;
-	}
-
-	.no-results {
-		text-align: center;
-		padding: 40px 20px;
-		color: #7f8c8d;
-		font-size: 16px;
-	}
-
-	@media (max-width: 768px) {
-		.obra-table-shared thead {
-			display: none;
-		}
-
-		.obra-table-shared,
-		.obra-table-shared tbody,
-		.obra-table-shared tr,
-		.obra-table-shared td {
-			display: block;
-			min-width: 0;
-		}
-
-		.obra-row {
-			margin-bottom: 12px;
-			border: 1px solid #e9ecef;
-			border-radius: 8px;
-			padding: 8px;
-			background: #fff;
-		}
-
-		.obra-table-shared td {
-			border: 0;
-			padding: 10px 12px;
-		}
-
-		.obra-table-shared td[data-label]::before {
-			content: attr(data-label);
-			display: block;
-			font-size: 12px;
-			color: #5a7a8a;
-			font-weight: 600;
-			margin-bottom: 6px;
-			text-transform: uppercase;
-		}
-
-		.metadata-grid {
-			grid-template-columns: 1fr;
-		}
-
-		.actions {
-			gap: 8px;
-			flex-wrap: wrap;
-			justify-content: flex-start;
-		}
-
-		.ver-mas {
-			margin-top: 10px;
-			display: block;
-		}
-
-		.expand-icon {
-			display: none;
-		}
-
-		.textos-dropdown-portal {
-			min-width: 260px;
-			max-width: calc(100vw - 20px);
 		}
 	}
 </style>

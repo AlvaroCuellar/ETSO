@@ -39,7 +39,7 @@
 	const hasAnySummary = (): boolean => Boolean(data.work.shortSummary || data.work.longSummary);
 </script>
 
-<div class="page-stack">
+<div class="grid gap-6">
 	<Breadcrumbs
 		items={[
 			{ label: 'Inicio', href: '/' },
@@ -357,7 +357,7 @@
 
 <style>
 	.obra-view-wrapper {
-		max-width: var(--max-width);
+		max-width: 1280px;
 		margin: 0 auto;
 		font-family: 'Roboto', sans-serif;
 	}
@@ -709,7 +709,7 @@
 
 	.sticky-card {
 		position: sticky;
-		top: calc(var(--space-6) + 68px);
+		top: calc(2rem + 68px);
 	}
 
 	@media (max-width: 1024px) {
@@ -751,5 +751,7 @@
 		}
 	}
 </style>
+
+
 
 

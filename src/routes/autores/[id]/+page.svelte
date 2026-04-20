@@ -72,7 +72,7 @@
 			.trim();
 </script>
 
-<div class="page-stack">
+<div class="grid gap-6">
 	<Breadcrumbs
 		items={[
 			{ label: 'Inicio', href: '/' },
@@ -386,5 +386,6 @@
 		}
 	}
 </style>
+
 
 

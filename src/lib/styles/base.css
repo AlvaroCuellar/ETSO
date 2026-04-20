@@ -12,51 +12,16 @@ body {
 }
 
 body {
-	font-family: var(--font-reading);
-	color: var(--color-text-main);
-	background:
-		radial-gradient(75rem 38rem at -10% -15%, rgba(0, 51, 167, 0.12), transparent 70%),
-		radial-gradient(65rem 30rem at 105% -10%, rgba(105, 0, 93, 0.13), transparent 70%),
-		var(--color-bg);
 	line-height: 1.5;
 }
 
-a {
-	color: var(--color-brand-blue);
-	text-decoration: none;
-}
-
-a:hover,
-a:focus-visible {
-	text-decoration: underline;
-}
-
 img,
-svg {
+picture,
+svg,
+video,
+canvas {
 	display: block;
 	max-width: 100%;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-	margin: 0;
-	font-family: var(--font-ui);
-	color: var(--color-brand-blue);
-	line-height: 1.2;
-}
-
-p {
-	margin: 0;
-}
-
-ul,
-ol {
-	margin: 0;
-	padding: 0;
 }
 
 input,
@@ -68,15 +33,4 @@ textarea {
 
 button {
 	cursor: pointer;
-}
-
-.container {
-	width: min(100% - 2.5rem, var(--max-width));
-	margin-inline: auto;
-}
-
-@media (max-width: 720px) {
-	.container {
-		width: min(100% - 1.25rem, var(--max-width));
-	}
 }

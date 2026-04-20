@@ -1,4 +1,4 @@
-<script lang="ts">
+﻿<script lang="ts">
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import CitationSuggestionCard from '$lib/components/ui/CitationSuggestionCard.svelte';
 	import LegalCard from '$lib/components/ui/LegalCard.svelte';
@@ -13,7 +13,7 @@
 		'Cuéllar, Álvaro. "Resúmenes asistidos por modelos de lenguaje para un vasto corpus de obras literarias del Siglo de Oro". En: <i>El teatro del Siglo de Oro en el horizonte de las humanidades digitales</i>. Peter Lang, 2026 (en prensa).';
 </script>
 
-<div class="page-stack">
+<div class="grid gap-6">
 	<Breadcrumbs
 		items={[
 			{ label: 'Inicio', href: '/' },
@@ -23,7 +23,7 @@
 		]}
 	/>
 
-	<div class="mx-auto grid max-w-[var(--max-width)] gap-6">
+	<div class="mx-auto grid w-full max-w-[1280px] gap-6">
 		<PageHero compact eyebrow="Resumen automático" title={data.work.title} backgroundImage={heroBg} />
 
 		<section class="grid gap-3" aria-label="Aviso y cita">
@@ -41,9 +41,7 @@
 
 		<div class="grid gap-8">
 			<section class="grid gap-3">
-				<h2 class="m-0 text-[1.25rem] font-semibold leading-[1.2] text-[var(--color-brand-blue-dark)]">
-					Resumen automático completo
-				</h2>
+				<h2 class="m-0 text-[1.25rem] font-semibold leading-[1.2] text-brand-blue-dark">Resumen automático completo</h2>
 				{#if data.summary.resumenLargo.length > 0}
 					<div class="grid gap-3">
 						{#each data.summary.resumenLargo as paragraph}
@@ -56,17 +54,13 @@
 			</section>
 
 			<section class="grid gap-3">
-				<h2 class="m-0 text-[1.25rem] font-semibold leading-[1.2] text-[var(--color-brand-blue-dark)]">
-					Personajes principales
-				</h2>
+				<h2 class="m-0 text-[1.25rem] font-semibold leading-[1.2] text-brand-blue-dark">Personajes principales</h2>
 				{#if data.summary.personajes.length > 0}
 					<div class="grid gap-2">
 						{#each data.summary.personajes as item}
 							<article class="border-b border-[rgba(0,51,167,0.14)] py-2 last:border-b-0">
 								{#if item.nombre}
-									<h3 class="m-0 mb-1 text-base font-semibold leading-[1.28] text-[#20354b]">
-										{item.nombre}
-									</h3>
+									<h3 class="m-0 mb-1 text-base font-semibold leading-[1.28] text-[#20354b]">{item.nombre}</h3>
 								{/if}
 								{#if item.descripcion}
 									<p class="m-0 leading-[1.62] text-[#355069]">{item.descripcion}</p>
@@ -80,17 +74,13 @@
 			</section>
 
 			<section class="grid gap-3">
-				<h2 class="m-0 text-[1.25rem] font-semibold leading-[1.2] text-[var(--color-brand-blue-dark)]">
-					Espacios principales
-				</h2>
+				<h2 class="m-0 text-[1.25rem] font-semibold leading-[1.2] text-brand-blue-dark">Espacios principales</h2>
 				{#if data.summary.espacios.length > 0}
 					<div class="grid gap-2">
 						{#each data.summary.espacios as item}
 							<article class="border-b border-[rgba(0,51,167,0.14)] py-2 last:border-b-0">
 								{#if item.nombre}
-									<h3 class="m-0 mb-1 text-base font-semibold leading-[1.28] text-[#20354b]">
-										{item.nombre}
-									</h3>
+									<h3 class="m-0 mb-1 text-base font-semibold leading-[1.28] text-[#20354b]">{item.nombre}</h3>
 								{/if}
 								{#if item.descripcion}
 									<p class="m-0 leading-[1.62] text-[#355069]">{item.descripcion}</p>
@@ -104,17 +94,13 @@
 			</section>
 
 			<section class="grid gap-3">
-				<h2 class="m-0 text-[1.25rem] font-semibold leading-[1.2] text-[var(--color-brand-blue-dark)]">
-					Temáticas principales
-				</h2>
+				<h2 class="m-0 text-[1.25rem] font-semibold leading-[1.2] text-brand-blue-dark">Temáticas principales</h2>
 				{#if data.summary.tematicas.length > 0}
 					<div class="grid gap-2">
 						{#each data.summary.tematicas as item}
 							<article class="border-b border-[rgba(0,51,167,0.14)] py-2 last:border-b-0">
 								{#if item.tema}
-									<h3 class="m-0 mb-1 text-base font-semibold leading-[1.28] text-[#20354b]">
-										{item.tema}
-									</h3>
+									<h3 class="m-0 mb-1 text-base font-semibold leading-[1.28] text-[#20354b]">{item.tema}</h3>
 								{/if}
 								{#if item.descripcion}
 									<p class="m-0 leading-[1.62] text-[#355069]">{item.descripcion}</p>

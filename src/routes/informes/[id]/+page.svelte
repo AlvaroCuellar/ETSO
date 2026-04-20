@@ -143,7 +143,7 @@
 	}));
 </script>
 
-<div class="page-stack">
+<div class="grid gap-6">
 	<Breadcrumbs
 		items={[
 			{ label: 'Inicio', href: '/' },
@@ -159,30 +159,38 @@
 		title={data.informe.title}
 		backgroundImage={informeBg}
 	/>
-	<section class="informe-contexto">
-		<div class="informe-contexto-intro">
-			<p class="informe-contexto-line informe-contexto-line--principal">
+
+	<section class="grid gap-4 font-ui">
+		<div class="grid gap-2.5">
+			<p class="m-0 text-base font-medium leading-[1.55] text-[#1b2f45]">
 				<strong>{data.work.genre}</strong>
-				{attributedWord(data.work.genre)} a <strong>{traditionalAttributionText(data.work.traditionalAttribution)}</strong>.
+				{attributedWord(data.work.genre)} a <strong>{traditionalAttributionText(data.work.traditionalAttribution)}</strong
+				>.
 			</p>
-			<div class="informe-contexto-bloque">
-				<div class="informe-mini-title ui-title-kicker">Procedencia</div>
-				<p class="informe-contexto-line informe-contexto-line--secundaria">{procedeValue}</p>
+			<div class="grid gap-1">
+				<div class="m-0 text-[0.72rem] font-bold uppercase tracking-[0.06em] text-[#4c6177]">Procedencia</div>
+				<p class="m-0 text-base leading-[1.55] text-[#3e556d]">{procedeValue}</p>
 			</div>
 		</div>
-		<div class="informe-metodologia-card">
-			<p class="informe-metodologia-text">{methodologyLead}</p>
+		<div
+			class="rounded-[10px] border border-[rgba(0,51,167,0.16)] px-4 py-3 max-md:px-[0.85rem] max-md:py-[0.8rem]"
+			style="background: linear-gradient(180deg, rgba(0, 51, 167, 0.06), rgba(0, 51, 167, 0.03));"
+		>
+			<p class="m-0 text-[0.97rem] font-normal leading-[1.55] text-[#1a2f45]">{methodologyLead}</p>
 		</div>
 	</section>
 
-	<section class="informe-obras-section">
-		<h2 class="informe-obras-title ui-title-section">Obras más cercanas por ámbito</h2>
+	<section class="mt-1">
+		<h2 class="mb-4 mt-0 text-[clamp(1.2rem,2vw,1.45rem)] font-semibold leading-[1.2] text-[#1b2f45]">
+			Obras más cercanas por ámbito
+		</h2>
 
-		<div class="obras-cercanas-tabs mt-4">
+		<div class="font-ui">
 			{#if availableAmbitos.length > 1}
-				<div class="mobile-tab-selector mb-3">
+				<div class="mb-3 md:hidden">
 					<select
 						id="mobile-acto-selector"
+						class="w-full cursor-pointer rounded-[8px] border-2 border-[#0d6efd] bg-[#f8f9fa] px-4 py-3 font-semibold text-[#0d6efd] transition-all focus:outline-none focus:ring-4 focus:ring-[rgba(13,110,253,0.25)]"
 						value={activeAmbito}
 						onchange={(event) => {
 							activeAmbito = (event.currentTarget as HTMLSelectElement).value as Ambito;
@@ -194,31 +202,41 @@
 					</select>
 				</div>
 
-				<ul class="nav nav-tabs" role="tablist">
+				<ul class="mb-6 hidden list-none gap-2 border-b-2 border-[#dee2e6] p-0 md:flex" role="tablist">
 					{#each availableAmbitos as ambito}
-						<li class="nav-item">
+						<li class="-mb-[2px]">
 							<button
 								type="button"
-								class="nav-link"
-								class:active={activeAmbito === ambito}
+								class={`cursor-pointer border-b-2 bg-transparent px-6 py-3 text-[0.95rem] transition-all ${
+									activeAmbito === ambito
+										? 'border-[#0d6efd] font-semibold text-[#0d6efd]'
+										: 'border-transparent text-[#6c757d] hover:text-[#495057]'
+								}`}
 								data-tab={`acto-${ambito}`}
 								onclick={() => {
 									activeAmbito = ambito;
 								}}
 							>
-								{ambitoLabels[ambito]} <span class="badge">{rowsByAmbito[ambito].length}</span>
+								{ambitoLabels[ambito]}
+								<span
+									class="ml-2 inline-flex rounded-[10px] bg-[#6c757d] px-2 py-1 text-[0.75rem] leading-none text-white"
+								>
+									{rowsByAmbito[ambito].length}
+								</span>
 							</button>
 						</li>
 					{/each}
 				</ul>
 			{/if}
 
-			<div class="tab-content">
+			<div>
 				{#if availableAmbitos.length === 0}
-					<div class="alert alert-info">No hay distancias disponibles para este informe.</div>
+					<div class="rounded-[10px] border border-[rgba(0,51,167,0.15)] bg-[rgba(0,51,167,0.07)] p-4 text-[#29445f]">
+						No hay distancias disponibles para este informe.
+					</div>
 				{:else}
 					{#each availableAmbitos as ambito}
-						<div class="tab-pane" id={`acto-${ambito}`} class:active={activeAmbito === ambito}>
+						<div class={activeAmbito === ambito ? 'block' : 'hidden'} id={`acto-${ambito}`}>
 							<WorksTable
 								rows={rowsByAmbito[ambito]}
 								mode="informe"
@@ -231,25 +249,37 @@
 		</div>
 	</section>
 
-	<section class="informe-resultados">
-		<h2 class="informe-resultados-title ui-title-section">Resultados</h2>
+	<section class="grid gap-3 font-ui">
+		<h2 class="m-0 text-[clamp(1.2rem,2vw,1.45rem)] font-semibold leading-[1.2] text-[#1b2f45]">Resultados</h2>
 		{#if data.work.result1}
-			<p class="informe-resultado-item">{data.work.result1}</p>
+			<p
+				class="m-0 rounded-[8px] border border-[rgba(0,51,167,0.14)] bg-[rgba(0,51,167,0.04)] px-[0.95rem] py-3 text-base leading-[1.55] text-[#22384f] max-md:px-[0.8rem] max-md:py-[0.7rem]"
+			>
+				{data.work.result1}
+			</p>
 		{/if}
 		{#if data.work.result2}
-			<p class="informe-resultado-item">{data.work.result2}</p>
+			<p
+				class="m-0 rounded-[8px] border border-[rgba(0,51,167,0.14)] bg-[rgba(0,51,167,0.04)] px-[0.95rem] py-3 text-base leading-[1.55] text-[#22384f] max-md:px-[0.8rem] max-md:py-[0.7rem]"
+			>
+				{data.work.result2}
+			</p>
 		{/if}
 	</section>
 
-	<section class="informe-bibliografia">
-		<div class="informe-bibliografia-header">
-			<h2 class="informe-bibliografia-title ui-title-section">Referencias</h2>
+	<section class="grid gap-4 font-ui">
+		<div class="flex flex-wrap items-center justify-between gap-4">
+			<h2 class="m-0 text-[clamp(1.2rem,2vw,1.45rem)] font-semibold leading-[1.2] text-[#1b2f45]">
+				Referencias
+			</h2>
 		</div>
 
 		{#if data.bibliography.sections.length === 0}
-			<div class="alert alert-info">No hay referencias disponibles para este informe.</div>
+			<div class="rounded-[10px] border border-[rgba(0,51,167,0.15)] bg-[rgba(0,51,167,0.07)] p-4 text-[#29445f]">
+				No hay referencias disponibles para este informe.
+			</div>
 		{:else}
-			<div class="informe-bibliografia-grid">
+			<div class="grid gap-3.5">
 				{#if citationEntry}
 					<CitationSuggestionCard
 						citation={citationEntry.text}
@@ -259,14 +289,14 @@
 						emptyCitationMessage="No hay cita ETSO disponible."
 						copyErrorMessage="No se pudo copiar automáticamente."
 					>
-						<p class="informe-bibliografia-entry">
+						<p class="m-0 text-[0.95rem] leading-[1.52] text-[#263f58]">
 							{#each citationEntry.parts as part}
 								{#if part.kind === 'link'}
 									<a
 										href={part.href ?? part.value}
 										target="_blank"
 										rel="noopener noreferrer"
-										class="informe-bibliografia-link"
+										class="break-words text-[#0033a7] underline hover:text-[#00287f] focus-visible:text-[#00287f]"
 									>
 										{part.value}
 									</a>
@@ -281,19 +311,24 @@
 				{/if}
 
 				{#if citationSection && citationSectionEntries.length > 0}
-					<section class="informe-bibliografia-section" aria-label={citationSection.lead}>
-						<p class="informe-bibliografia-lead">{citationSection.lead}</p>
-						<ol class="informe-bibliografia-list">
+					<section
+						class="rounded-[10px] border border-[rgba(0,51,167,0.12)] bg-[rgba(0,51,167,0.03)] px-[0.9rem] py-[0.8rem] max-md:px-[0.8rem] max-md:py-[0.75rem]"
+						aria-label={citationSection.lead}
+					>
+						<p class="mb-[0.65rem] mt-0 text-[0.95rem] font-medium leading-[1.45] text-[#22384f]">
+							{citationSection.lead}
+						</p>
+						<ol class="m-0 grid gap-[0.55rem] pl-[1.2rem]">
 							{#each citationSectionEntries as entry}
-								<li>
-									<p class="informe-bibliografia-entry">
+								<li class="m-0">
+									<p class="m-0 text-[0.95rem] leading-[1.52] text-[#263f58]">
 										{#each entry.parts as part}
 											{#if part.kind === 'link'}
 												<a
 													href={part.href ?? part.value}
 													target="_blank"
 													rel="noopener noreferrer"
-													class="informe-bibliografia-link"
+													class="break-words text-[#0033a7] underline hover:text-[#00287f] focus-visible:text-[#00287f]"
 												>
 													{part.value}
 												</a>
@@ -311,19 +346,24 @@
 				{/if}
 
 				{#each extraRegularSections as section}
-					<section class="informe-bibliografia-section" aria-label={section.lead}>
-						<p class="informe-bibliografia-lead">{section.lead}</p>
-						<ol class="informe-bibliografia-list">
+					<section
+						class="rounded-[10px] border border-[rgba(0,51,167,0.12)] bg-[rgba(0,51,167,0.03)] px-[0.9rem] py-[0.8rem] max-md:px-[0.8rem] max-md:py-[0.75rem]"
+						aria-label={section.lead}
+					>
+						<p class="mb-[0.65rem] mt-0 text-[0.95rem] font-medium leading-[1.45] text-[#22384f]">
+							{section.lead}
+						</p>
+						<ol class="m-0 grid gap-[0.55rem] pl-[1.2rem]">
 							{#each section.entries as entry}
-								<li>
-									<p class="informe-bibliografia-entry">
+								<li class="m-0">
+									<p class="m-0 text-[0.95rem] leading-[1.52] text-[#263f58]">
 										{#each entry.parts as part}
 											{#if part.kind === 'link'}
 												<a
 													href={part.href ?? part.value}
 													target="_blank"
 													rel="noopener noreferrer"
-													class="informe-bibliografia-link"
+													class="break-words text-[#0033a7] underline hover:text-[#00287f] focus-visible:text-[#00287f]"
 												>
 													{part.value}
 												</a>
@@ -341,28 +381,39 @@
 				{/each}
 
 				{#each collapsibleSections as section}
-					<details class="informe-bibliografia-disclosure" open={section.defaultOpen === true}>
-						<summary class="informe-bibliografia-summary">
-							<span class="informe-bibliografia-summary-inner">
-								<span class="informe-bibliografia-summary-icon" aria-hidden="true">
-									<ChevronRight />
+					<details
+						class="informe-bibliografia-disclosure overflow-hidden rounded-[10px] border border-[rgba(0,51,167,0.2)] bg-[rgba(0,51,167,0.03)]"
+						open={section.defaultOpen === true}
+					>
+						<summary class="informe-bibliografia-summary cursor-pointer list-none px-[0.9rem] py-[0.65rem] text-[0.9rem] font-semibold text-[#1f344a] max-md:px-[0.8rem] max-md:py-[0.6rem]">
+							<span class="inline-flex items-center gap-[0.35rem]">
+								<span
+									class="informe-bibliografia-summary-icon inline-flex h-[13px] w-[13px] items-center justify-center text-[#0033a7] transition-transform"
+									aria-hidden="true"
+								>
+									<ChevronRight size={13} strokeWidth={2.2} />
 								</span>
 								<span>{section.collapsibleLabel || 'Más información'}</span>
 							</span>
 						</summary>
-						<div class="informe-bibliografia-disclosure-body" aria-label={section.lead}>
-							<p class="informe-bibliografia-lead">{section.lead}</p>
-							<ol class="informe-bibliografia-list">
+						<div
+							class="border-t border-[rgba(0,51,167,0.12)] px-[0.9rem] pb-[0.8rem] pt-0 max-md:px-[0.8rem] max-md:pb-[0.75rem]"
+							aria-label={section.lead}
+						>
+							<p class="mb-[0.65rem] mt-0 text-[0.95rem] font-medium leading-[1.45] text-[#22384f]">
+								{section.lead}
+							</p>
+							<ol class="m-0 grid gap-[0.55rem] pl-[1.2rem]">
 								{#each section.entries as entry}
-									<li>
-										<p class="informe-bibliografia-entry">
+									<li class="m-0">
+										<p class="m-0 text-[0.95rem] leading-[1.52] text-[#263f58]">
 											{#each entry.parts as part}
 												{#if part.kind === 'link'}
 													<a
 														href={part.href ?? part.value}
 														target="_blank"
 														rel="noopener noreferrer"
-														class="informe-bibliografia-link"
+														class="break-words text-[#0033a7] underline hover:text-[#00287f] focus-visible:text-[#00287f]"
 													>
 														{part.value}
 													</a>
@@ -385,128 +436,6 @@
 </div>
 
 <style>
-	.obras-cercanas-tabs,
-	.obras-cercanas-tabs .nav-link,
-	.obras-cercanas-tabs .badge,
-	.mobile-tab-selector select {
-		font-family: 'Roboto', sans-serif;
-	}
-
-	.mobile-tab-selector {
-		margin-bottom: 1rem;
-	}
-
-	.informe-contexto {
-		font-family: 'Roboto', sans-serif;
-		display: grid;
-		gap: 0.9rem;
-	}
-
-	.informe-contexto-intro {
-		display: grid;
-		gap: 0.55rem;
-	}
-
-	.informe-contexto-bloque {
-		display: grid;
-		gap: 0.2rem;
-	}
-
-	.informe-mini-title {
-		margin: 0;
-	}
-
-	.informe-contexto-line {
-		margin: 0;
-		font-size: 1rem;
-		line-height: 1.55;
-		color: #1f344a;
-	}
-
-	.informe-contexto-line--principal {
-		font-weight: 500;
-		color: #1b2f45;
-	}
-
-	.informe-contexto-line--secundaria {
-		color: #3e556d;
-	}
-
-	.informe-metodologia-card {
-		border: 1px solid rgba(0, 51, 167, 0.16);
-		border-radius: 10px;
-		background: linear-gradient(180deg, rgba(0, 51, 167, 0.06), rgba(0, 51, 167, 0.03));
-		padding: 0.9rem 1rem;
-	}
-
-	.informe-metodologia-text {
-		margin: 0;
-		font-size: 0.97rem;
-		line-height: 1.55;
-		color: #1a2f45;
-		font-weight: 400;
-	}
-
-	.informe-resultados {
-		display: grid;
-		gap: 0.65rem;
-		font-family: 'Roboto', sans-serif;
-	}
-
-	.informe-resultados-title {
-		margin: 0 0 0.1rem;
-	}
-
-	.informe-resultado-item {
-		margin: 0;
-		padding: 0.75rem 0.95rem;
-		font-size: 1rem;
-		line-height: 1.55;
-		color: #22384f;
-		background: rgba(0, 51, 167, 0.04);
-		border: 1px solid rgba(0, 51, 167, 0.14);
-		border-radius: 8px;
-	}
-
-	.informe-bibliografia {
-		display: grid;
-		gap: 0.9rem;
-		font-family: 'Roboto', sans-serif;
-	}
-
-	.informe-bibliografia-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 0.9rem;
-		flex-wrap: wrap;
-	}
-
-	.informe-bibliografia-title {
-		margin: 0;
-	}
-
-	.informe-bibliografia-grid {
-		display: grid;
-		gap: 0.85rem;
-	}
-
-	.informe-bibliografia-disclosure {
-		border: 1px solid rgba(0, 51, 167, 0.2);
-		border-radius: 10px;
-		background: rgba(0, 51, 167, 0.03);
-		overflow: hidden;
-	}
-
-	.informe-bibliografia-summary {
-		cursor: pointer;
-		padding: 0.65rem 0.9rem;
-		font-size: 0.9rem;
-		font-weight: 600;
-		color: #1f344a;
-		list-style: none;
-	}
-
 	.informe-bibliografia-summary::-webkit-details-marker {
 		display: none;
 	}
@@ -515,190 +444,9 @@
 		content: '';
 	}
 
-	.informe-bibliografia-summary-inner {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.35rem;
-	}
-
-	.informe-bibliografia-summary-icon {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		width: 13px;
-		height: 13px;
-		color: #0033a7;
-		transition: transform 0.15s ease;
-	}
-
-	.informe-bibliografia-summary-icon :global(svg) {
-		width: 13px;
-		height: 13px;
-		stroke-width: 2.2;
-	}
-
 	.informe-bibliografia-disclosure[open] .informe-bibliografia-summary-icon {
 		transform: rotate(90deg);
 	}
-
-	.informe-bibliografia-disclosure-body {
-		padding: 0 0.9rem 0.8rem;
-		border-top: 1px solid rgba(0, 51, 167, 0.12);
-	}
-
-	.informe-bibliografia-section {
-		border: 1px solid rgba(0, 51, 167, 0.12);
-		background: rgba(0, 51, 167, 0.03);
-		border-radius: 10px;
-		padding: 0.8rem 0.9rem;
-	}
-
-	.informe-bibliografia-lead {
-		margin: 0 0 0.65rem;
-		font-size: 0.95rem;
-		font-weight: 500;
-		line-height: 1.45;
-		color: #22384f;
-	}
-
-	.informe-bibliografia-list {
-		margin: 0;
-		padding-left: 1.2rem;
-		display: grid;
-		gap: 0.55rem;
-	}
-
-	.informe-bibliografia-list li {
-		margin: 0;
-	}
-
-	.informe-bibliografia-entry {
-		margin: 0;
-		font-size: 0.95rem;
-		line-height: 1.52;
-		color: #263f58;
-	}
-
-	.informe-bibliografia-entry em {
-		font-style: italic;
-	}
-
-	.informe-bibliografia-link {
-		color: #0033a7;
-		text-decoration: underline;
-		word-break: break-word;
-	}
-
-	.informe-bibliografia-link:hover,
-	.informe-bibliografia-link:focus-visible {
-		color: #00287f;
-	}
-
-	.mobile-tab-selector select {
-		width: 100%;
-		font-weight: 600;
-		color: #0d6efd;
-		border: 2px solid #0d6efd;
-		border-radius: 8px;
-		padding: 0.75rem 1rem;
-		background-color: #f8f9fa;
-		cursor: pointer;
-		transition: all 0.2s ease;
-	}
-
-	.mobile-tab-selector select:focus {
-		box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-		outline: none;
-	}
-
-	.obras-cercanas-tabs .nav-tabs {
-		list-style: none;
-		padding: 0;
-		display: flex;
-		gap: 0.5rem;
-		border-bottom: 2px solid #dee2e6;
-		margin-bottom: 1.5rem;
-	}
-
-	.obras-cercanas-tabs .nav-item {
-		margin-bottom: -2px;
-	}
-
-	.obras-cercanas-tabs .nav-link {
-		border: none;
-		color: #6c757d;
-		padding: 0.75rem 1.5rem;
-		cursor: pointer;
-		background: none;
-		transition: all 0.2s ease;
-	}
-
-	.obras-cercanas-tabs .nav-link:hover {
-		color: #495057;
-	}
-
-	.obras-cercanas-tabs .nav-link.active {
-		color: #0d6efd;
-		border-bottom: 2px solid #0d6efd;
-		font-weight: 600;
-	}
-
-	.obras-cercanas-tabs .badge {
-		background: #6c757d;
-		color: #fff;
-		font-size: 0.75rem;
-		padding: 0.25rem 0.5rem;
-		border-radius: 10px;
-		margin-left: 0.5rem;
-	}
-
-	.obras-cercanas-tabs .tab-pane {
-		display: none;
-	}
-
-	.obras-cercanas-tabs .tab-pane.active {
-		display: block;
-	}
-
-	.alert.alert-info {
-		border: 1px solid rgba(0, 51, 167, 0.15);
-		background: rgba(0, 51, 167, 0.07);
-		color: #29445f;
-		border-radius: 10px;
-		padding: 1rem;
-		font-family: 'Roboto', sans-serif;
-	}
-
-	.informe-obras-section {
-		margin-top: 0.25rem;
-	}
-
-	.informe-obras-title {
-		margin: 0 0 0.9rem;
-	}
-
-	@media (max-width: 768px) {
-		.informe-metodologia-card {
-			padding: 0.8rem 0.85rem;
-		}
-
-		.informe-resultado-item {
-			padding: 0.7rem 0.8rem;
-		}
-
-		.informe-bibliografia-section {
-			padding: 0.75rem 0.8rem;
-		}
-
-		.informe-bibliografia-summary {
-			padding: 0.6rem 0.8rem;
-		}
-
-		.informe-bibliografia-disclosure-body {
-			padding: 0 0.8rem 0.75rem;
-		}
-	}
 </style>
-
 
 

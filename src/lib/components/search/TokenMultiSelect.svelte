@@ -1,5 +1,7 @@
 ﻿<script lang="ts">
 	import { onMount } from 'svelte';
+	import Plus from 'lucide-svelte/icons/plus';
+	import X from 'lucide-svelte/icons/x';
 
 	interface TokenOption {
 		id: string;
@@ -50,6 +52,7 @@
 	const selectedSet = $derived.by(() => new Set(selectedIds));
 	const optionMap = $derived.by(() => new Map(options.map((option) => [option.id, option.label] as const)));
 	const normalizedQuery = $derived.by(() => normalizeForSearch(query));
+	const showAddHint = $derived.by(() => selectedIds.length > 0 && query.trim() === '' && !disabled);
 	const filteredOptions = $derived.by(() => {
 		const baseOptions = options.filter((option) => !selectedSet.has(option.id));
 		if (!normalizedQuery) return baseOptions.slice(0, 80);
@@ -184,24 +187,31 @@
 						disabled={disabled}
 						onclick={() => removeOption(selectedId)}
 					>
-						x
+						<X />
 					</button>
 				</span>
 			{/each}
 		</div>
 
-		<input
-			id={inputId}
-			type="text"
-			class={inputClass}
-			placeholder={placeholder}
-			value={query}
-			disabled={disabled}
-			onfocus={openDropdown}
-			onclick={openDropdown}
-			oninput={handleInput}
-			onkeydown={handleKeyDown}
-		/>
+		<div class="author-input-row">
+			{#if showAddHint}
+				<span class="author-add-hint" aria-hidden="true">
+					<Plus />
+				</span>
+			{/if}
+			<input
+				id={inputId}
+				type="text"
+				class={inputClass}
+				placeholder={selectedIds.length > 0 ? '' : placeholder}
+				value={query}
+				disabled={disabled}
+				onfocus={openDropdown}
+				onclick={openDropdown}
+				oninput={handleInput}
+				onkeydown={handleKeyDown}
+			/>
+		</div>
 
 		{#if isOpen && filteredOptions.length > 0}
 			<div class="autocomplete-dropdown">
@@ -274,6 +284,7 @@
 		color: #3d4c63;
 		font-size: 12px;
 		line-height: 1.35;
+		font-weight: 400;
 		box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
 		display: none;
 		z-index: 20;
@@ -330,10 +341,45 @@
 		border: 0;
 		background: transparent;
 		color: inherit;
-		font-size: 14px;
-		line-height: 1;
 		cursor: pointer;
 		padding: 0;
+		width: 14px;
+		height: 14px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		flex: 0 0 auto;
+	}
+
+	.author-chip-remove :global(svg) {
+		width: 12px;
+		height: 12px;
+		stroke-width: 2.2;
+	}
+
+	.author-input-row {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+
+	.author-add-hint {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 18px;
+		height: 18px;
+		border: 1px solid #c9dbff;
+		border-radius: 999px;
+		background: #eef4ff;
+		color: #0033a7;
+		flex: 0 0 auto;
+	}
+
+	.author-add-hint :global(svg) {
+		width: 12px;
+		height: 12px;
+		stroke-width: 2.2;
 	}
 
 	input.js-author-multiselect,
@@ -390,5 +436,7 @@
 		color: #0033a7;
 	}
 </style>
+
+
 
 

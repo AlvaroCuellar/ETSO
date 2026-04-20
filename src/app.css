@@ -1,5 +1,4 @@
 @import './lib/styles/tailwind.css';
-@import './lib/styles/tokens.css';
 @import './lib/styles/base.css';
 @import './lib/styles/layout.css';
 @import './lib/styles/modules.css';

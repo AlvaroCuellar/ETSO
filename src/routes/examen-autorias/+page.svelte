@@ -2,6 +2,7 @@
 	import MatchToggle from '$lib/components/search/MatchToggle.svelte';
 	import TokenMultiSelect from '$lib/components/search/TokenMultiSelect.svelte';
 	import WorksTable from '$lib/components/search/WorksTable.svelte';
+	import AppButton from '$lib/components/ui/AppButton.svelte';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import fondoLogo from '$lib/assets/fondos/fondo-logo.png';
 	import BookOpen from 'lucide-svelte/icons/book-open';
@@ -239,31 +240,36 @@
 	};
 </script>
 
-<div class="page-stack">
+<div class="grid gap-6">
 	<Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'Examen de autorías' }]} />
 
-	<section class="buscador-overview" style={`--overview-bg: url('${fondoLogo}')`}>
-		<div class="buscador-overview__content">
-			<h2 class="buscador-overview__title">Examen de Autorías</h2>
-			<p class="buscador-overview__lead">
+	<section
+		class="grid items-start gap-[2.1rem] rounded-[14px] bg-[#ececf0] p-[clamp(1.2rem,2.4vw,2rem)] [background-repeat:no-repeat,no-repeat] [background-size:auto,min(130vw,720px)_auto] [background-position:center,right_-120px_bottom_-35px] md:[background-size:auto,min(90vw,680px)_auto] md:[background-position:center,right_-80px_bottom_-58px] min-[1201px]:grid-cols-[minmax(0,1.9fr)_minmax(320px,1fr)] min-[1201px]:[background-size:auto,min(60vw,860px)_auto] min-[1201px]:[background-position:center,right_-56px_bottom_-66px]"
+		style={`background-image: linear-gradient(100deg, rgba(239,240,244,0.95) 0%, rgba(236,237,242,0.88) 46%, rgba(236,237,242,0.52) 70%, rgba(236,237,242,0.22) 100%), url('${fondoLogo}')`}
+	>
+		<div class="flex flex-col">
+			<h2 class="mb-0 mt-0 text-[clamp(2rem,4.3vw,2.85rem)] leading-[1.05] font-bold text-[#0033a7]">
+				Examen de Autorías
+			</h2>
+			<p class="mt-[1.05rem] mb-0 max-w-none text-[clamp(1.28rem,2.2vw,1.78rem)] leading-[1.22] font-semibold text-[#003aa5] min-[1201px]:max-w-[25ch]">
 				Análisis estilométrico de obras teatrales del Siglo de Oro
 			</p>
-			<p class="buscador-overview__copy">
+			<p class="mt-[1.8rem] mb-0 max-w-[64ch] font-['Lora',serif] text-[1.01rem] leading-[1.62] text-[#17293f]">
 				Examen de Autorías es un espacio dedicado a la <b>atribución computacional</b> de autoría en el teatro
 				del Siglo de Oro a gran escala. La plataforma, desarrollada por Álvaro Cuéllar y Germán Vega
 				García-Luengos, ofrece resultados estilométricos sobre un corpus en expansión de unas 3.000 obras
 				pertenecientes a más de 350 dramaturgos, con el propósito de facilitar la investigación y el
 				contraste de hipótesis autorales.
 			</p>
-			<p class="buscador-overview__copy">
-				Los textos han sido modernizados y regularizados para hacer posible su comparación, y se han
-				depurado en lo posible para reducir interferencias (por ejemplo, acotaciones y marcas de
-				intervención). A partir de esta base, el sitio permite confrontar atribuciones transmitidas por la
-				tradición con propuestas derivadas del análisis cuantitativo del estilo. El objetivo no es sustituir
-				la lectura filológica, sino aportar evidencia adicional, reproducible y acumulativa que ayude a
-				orientar futuras comprobaciones documentales y críticas.
+			<p class="mt-[1.25rem] mb-0 max-w-[64ch] font-['Lora',serif] text-[1.01rem] leading-[1.62] text-[#17293f]">
+				Los textos han sido modernizados y regularizados para hacer posible su comparación, y se han depurado
+				en lo posible para reducir interferencias (por ejemplo, acotaciones y marcas de intervención). A
+				partir de esta base, el sitio permite confrontar atribuciones transmitidas por la tradición con
+				propuestas derivadas del análisis cuantitativo del estilo. El objetivo no es sustituir la lectura
+				filológica, sino aportar evidencia adicional, reproducible y acumulativa que ayude a orientar futuras
+				comprobaciones documentales y críticas.
 			</p>
-			<p class="buscador-overview__copy">
+			<p class="mt-[1.25rem] mb-0 max-w-[64ch] font-['Lora',serif] text-[1.01rem] leading-[1.62] text-[#17293f]">
 				El corpus se nutre de fuentes abiertas y de aportaciones de investigadores y grupos, e integra
 				también textos procedentes de transcripciones automáticas de impresos y manuscritos antiguos. Se
 				aceptan consultas, colaboraciones y propuestas de ampliación: si dispones de una obra o conoces cómo
@@ -271,48 +277,69 @@
 				correspondiente y a compartir los resultados del análisis.
 			</p>
 		</div>
-		<div class="buscador-overview__stats" aria-label="Indicadores del catálogo">
-			<article class="overview-stat-card">
-				<div class="overview-stat-icon" aria-hidden="true">
-					<BookOpen />
+
+		<div
+			class="grid w-full max-w-[420px] grid-cols-1 content-center items-end gap-[1.05rem] self-center justify-self-center md:max-w-[520px] md:grid-cols-2 md:justify-self-start min-[1201px]:max-w-[420px] min-[1201px]:justify-self-center"
+			aria-label="Indicadores del catálogo"
+		>
+			<article
+				class="flex min-h-[170px] flex-col items-start gap-[0.65rem] rounded-[10px] border border-[rgba(6,33,93,0.08)] bg-[rgba(249,249,251,0.88)] px-[1.1rem] pb-[1.1rem] pt-[1.35rem] shadow-[0_8px_20px_rgba(25,37,77,0.08)] lg:-translate-y-[14px]"
+			>
+				<div class="inline-flex h-[2.2rem] w-[2.2rem] items-center justify-center text-[#70006b]" aria-hidden="true">
+					<BookOpen class="h-[1.9rem] w-[1.9rem] stroke-[2.2]" />
 				</div>
 				<div>
-					<div class="overview-stat-value">{totalWorks}</div>
-					<div class="overview-stat-label">Obras</div>
+					<div class="text-[clamp(2rem,3vw,2.35rem)] leading-none font-bold text-[#0033a7]">{totalWorks}</div>
+					<div class="font-['Lora',serif] text-[1.04rem] font-medium text-[#1f2f45]">Obras</div>
 				</div>
 			</article>
 
-			<article class="overview-stat-card">
-				<div class="overview-stat-icon" aria-hidden="true">
-					<Feather />
+			<article
+				class="flex min-h-[170px] flex-col items-start gap-[0.65rem] rounded-[10px] border border-[rgba(6,33,93,0.08)] bg-[rgba(249,249,251,0.88)] px-[1.1rem] pb-[1.1rem] pt-[1.35rem] shadow-[0_8px_20px_rgba(25,37,77,0.08)] lg:translate-y-[14px]"
+			>
+				<div class="inline-flex h-[2.2rem] w-[2.2rem] items-center justify-center text-[#70006b]" aria-hidden="true">
+					<Feather class="h-[1.9rem] w-[1.9rem] stroke-[2.2]" />
 				</div>
 				<div>
-					<div class="overview-stat-value">{totalDramaturgos}</div>
-					<div class="overview-stat-label">Dramaturgos</div>
+					<div class="text-[clamp(2rem,3vw,2.35rem)] leading-none font-bold text-[#0033a7]">{totalDramaturgos}</div>
+					<div class="font-['Lora',serif] text-[1.04rem] font-medium text-[#1f2f45]">Dramaturgos</div>
 				</div>
 			</article>
 		</div>
 	</section>
 
-	<div class="etso-buscador">
-		<div class="etso-buscador__shell">
-			<form class="buscador-form" onsubmit={applySearch}>
-				<div class="filters-section">
-					<div class="search-primary">
-						<div class="filter-section-title">Búsqueda</div>
+	<div class="font-['Roboto',sans-serif] leading-[1.6] text-[#333]">
+		<div class="min-w-0">
+			<form onsubmit={applySearch}>
+				<div class="mb-[1.6rem]">
+					<div class="mb-[0.9rem]">
+						<div class="mb-[15px] border-b-2 border-[#ecf0f1] pb-2 text-[14px] font-bold tracking-[0.5px] text-[#34495e] uppercase">
+							Búsqueda
+						</div>
 
-						<div class="filter-row two-cols row-title-genero">
-							<div class="filter-group field-with-help">
-								<label class="field-label-with-help" for="filtro-titulo">
+						<div class="mb-[15px] grid grid-cols-1 gap-5 min-[1201px]:grid-cols-[3fr_1fr]">
+							<div class="relative flex flex-col">
+								<label class="mb-[6px] inline-flex items-center gap-1 text-[14px] font-semibold text-[#555]" for="filtro-titulo">
 									Título
-									<span class="field-help-anchor">
-										<span class="field-help-trigger" role="button" tabindex="0">?</span>
-										<span class="field-help-popover">Busca por palabras del título.</span>
+									<span class="group relative inline-flex items-center">
+										<span
+											class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-[#c6d1e4] bg-[#f2f6ff] text-[12px] leading-none font-bold text-[#0033a7]"
+											role="button"
+											tabindex="0"
+										>
+											?
+										</span>
+										<span
+											class="invisible absolute top-[calc(100%+8px)] left-0 z-20 w-[min(320px,78vw)] rounded-[6px] border border-[#d8e0ea] bg-white px-[10px] py-2 text-[12px] leading-[1.35] font-normal text-[#3d4c63] opacity-0 shadow-[0_8px_18px_rgba(0,0,0,0.08)] transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
+										>
+											Busca por palabras del título.
+										</span>
 									</span>
 								</label>
 								<input
 									id="filtro-titulo"
 									type="text"
+									class="rounded-[4px] border border-[#ddd] px-3 py-[10px] text-[14px] transition focus:border-[#5a9fd4] focus:shadow-[0_0_0_3px_rgba(90,159,212,0.1)] focus:outline-none"
 									placeholder="Ej: cada paso peligro, verdades amor..."
 									bind:value={title}
 								/>
@@ -332,7 +359,7 @@
 							/>
 						</div>
 
-						<div class="filter-row full row-autor-principal">
+						<div class="mb-0 grid grid-cols-1 gap-5">
 							<TokenMultiSelect
 								name="autor_ids"
 								label="Atribución"
@@ -349,25 +376,38 @@
 						</div>
 					</div>
 
-					<div class="advanced-filters">
+					<div class="mt-[0.9rem] overflow-hidden rounded-[8px] border border-[#d8e0ea] bg-white">
 						<button
 							type="button"
-							class="advanced-toggle"
+							class="w-full cursor-pointer border-0 bg-transparent px-4 py-[0.9rem] text-left text-[14px] font-semibold text-[#0033a7] transition hover:bg-[#eef3ff]"
 							data-target="advanced-content"
 							aria-expanded={advancedOpen ? 'true' : 'false'}
 							onclick={() => {
 								advancedOpen = !advancedOpen;
 							}}
 						>
-							Más filtros
-							<span class="advanced-toggle__icon" aria-hidden="true"><ChevronDown /></span>
+							<span class="flex items-center justify-between">
+								Más filtros
+								<span class={`inline-flex items-center justify-center transition-transform duration-200 ${advancedOpen ? 'rotate-180' : ''}`} aria-hidden="true">
+									<ChevronDown class="h-[14px] w-[14px] stroke-[2.2]" />
+								</span>
+							</span>
 						</button>
 
-						<div id="advanced-content" class="advanced-content" class:hidden={!advancedOpen}>
-							<div class="filter-section">
-								<div class="filter-section-title">Filtros de autoría</div>
+						<div
+							id="advanced-content"
+							class={`overflow-hidden border-t px-4 transition-[max-height,padding,opacity] duration-300 ease-out ${
+								advancedOpen
+									? 'max-h-[1200px] border-[#d8e0ea] py-[0.9rem] opacity-100'
+									: 'max-h-0 border-transparent py-0 opacity-0'
+							}`}
+						>
+							<div class="mb-[0.8rem] bg-transparent py-[0.8rem]">
+								<div class="mb-[15px] border-b-2 border-[#ecf0f1] pb-2 text-[14px] font-bold tracking-[0.5px] text-[#34495e] uppercase">
+									Filtros de autoría
+								</div>
 
-								<div class="filter-row full autoria-general-row">
+								<div class="mb-[18px] grid grid-cols-1 gap-5 rounded-[8px] border border-dashed border-[#d6dde8] bg-[#fafcff] p-3">
 									<TokenMultiSelect
 										name="tipo_autoria"
 										label="Tipo de autoría"
@@ -382,8 +422,8 @@
 									/>
 								</div>
 
-								<div class="autoria-columns">
-									<div class="autoria-card autoria-card--tradicional">
+								<div class="grid grid-cols-1 gap-4 min-[1201px]:grid-cols-2">
+									<div class="flex flex-col gap-3 rounded-[8px] border border-[#e4e9ef] bg-[#fbfcfe] p-[14px]">
 										<TokenMultiSelect
 											name="autor_trad_ids"
 											label="Atribución tradicional"
@@ -407,7 +447,7 @@
 										/>
 									</div>
 
-									<div class="autoria-card autoria-card--estilometria">
+									<div class="flex flex-col gap-3 rounded-[8px] border border-[#e4e9ef] bg-[#fbfcfe] p-[14px]">
 										<TokenMultiSelect
 											name="autor_esto_ids"
 											label="Atribución estilometría"
@@ -421,7 +461,7 @@
 											}}
 										/>
 
-										<div class="filter-row two-cols row-esto-controls">
+										<div class="mb-0 grid grid-cols-1 items-start gap-4 md:grid-cols-2">
 											<MatchToggle
 												name="autor_match_esto"
 												value={estoMatch}
@@ -448,10 +488,12 @@
 								</div>
 							</div>
 
-							<div class="filter-section">
-								<div class="filter-section-title">Filtros técnicos</div>
+							<div class="mb-[0.8rem] bg-transparent py-[0.8rem]">
+								<div class="mb-[15px] border-b-2 border-[#ecf0f1] pb-2 text-[14px] font-bold tracking-[0.5px] text-[#34495e] uppercase">
+									Filtros técnicos
+								</div>
 
-								<div class="filter-row two-cols">
+								<div class="mb-[15px] grid grid-cols-1 gap-5 md:grid-cols-2">
 									<TokenMultiSelect
 										name="estado"
 										label="Estado del texto"
@@ -479,59 +521,85 @@
 									/>
 								</div>
 
-								<div class="filter-row two-cols">
-									<div class="filter-group field-with-help">
-										<label class="field-label-with-help" for="filtro-fecha-desde">
+								<div class="mb-[15px] grid grid-cols-1 gap-5 md:grid-cols-2">
+									<div class="relative flex flex-col">
+										<label class="mb-[6px] inline-flex items-center gap-1 text-[14px] font-semibold text-[#555]" for="filtro-fecha-desde">
 											Fecha de adición o modificación (desde)
-											<span class="field-help-anchor">
-												<span class="field-help-trigger" role="button" tabindex="0">?</span>
-												<span class="field-help-popover">
+											<span class="group relative inline-flex items-center">
+												<span
+													class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-[#c6d1e4] bg-[#f2f6ff] text-[12px] leading-none font-bold text-[#0033a7]"
+													role="button"
+													tabindex="0"
+												>
+													?
+												</span>
+												<span
+													class="invisible absolute top-[calc(100%+8px)] left-0 z-20 w-[min(320px,78vw)] rounded-[6px] border border-[#d8e0ea] bg-white px-[10px] py-2 text-[12px] leading-[1.35] font-normal text-[#3d4c63] opacity-0 shadow-[0_8px_18px_rgba(0,0,0,0.08)] transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
+												>
 													Incluye obras añadidas o modificadas desde esta fecha.
 												</span>
 											</span>
 										</label>
-										<input id="filtro-fecha-desde" type="date" bind:value={dateFrom} />
+										<input
+											id="filtro-fecha-desde"
+											type="date"
+											class="rounded-[4px] border border-[#ddd] px-3 py-[10px] text-[14px] transition focus:border-[#5a9fd4] focus:shadow-[0_0_0_3px_rgba(90,159,212,0.1)] focus:outline-none"
+											bind:value={dateFrom}
+										/>
 									</div>
 
-									<div class="filter-group field-with-help">
-										<label class="field-label-with-help" for="filtro-fecha-hasta">
+									<div class="relative flex flex-col">
+										<label class="mb-[6px] inline-flex items-center gap-1 text-[14px] font-semibold text-[#555]" for="filtro-fecha-hasta">
 											Fecha de adición o modificación (hasta)
-											<span class="field-help-anchor">
-												<span class="field-help-trigger" role="button" tabindex="0">?</span>
-												<span class="field-help-popover">
+											<span class="group relative inline-flex items-center">
+												<span
+													class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-[#c6d1e4] bg-[#f2f6ff] text-[12px] leading-none font-bold text-[#0033a7]"
+													role="button"
+													tabindex="0"
+												>
+													?
+												</span>
+												<span
+													class="invisible absolute top-[calc(100%+8px)] left-0 z-20 w-[min(320px,78vw)] rounded-[6px] border border-[#d8e0ea] bg-white px-[10px] py-2 text-[12px] leading-[1.35] font-normal text-[#3d4c63] opacity-0 shadow-[0_8px_18px_rgba(0,0,0,0.08)] transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
+												>
 													Incluye obras añadidas o modificadas hasta esta fecha.
 												</span>
 											</span>
 										</label>
-										<input id="filtro-fecha-hasta" type="date" bind:value={dateTo} />
+										<input
+											id="filtro-fecha-hasta"
+											type="date"
+											class="rounded-[4px] border border-[#ddd] px-3 py-[10px] text-[14px] transition focus:border-[#5a9fd4] focus:shadow-[0_0_0_3px_rgba(90,159,212,0.1)] focus:outline-none"
+											bind:value={dateTo}
+										/>
 									</div>
 								</div>
 
 								{#if dateRangeError}
-									<div class="description" role="alert">{dateRangeError}</div>
+									<div class="mt-1 text-[12px] text-[#7f8c8d] italic" role="alert">{dateRangeError}</div>
 								{/if}
 							</div>
 						</div>
 					</div>
 
-					<div class="button-group">
-						<a
+					<div class="mt-5 flex flex-col gap-[10px] md:flex-row md:justify-end">
+						<AppButton
 							href="/examen-autorias"
-							class="btn-secondary button"
+							variant="secondary"
 							onclick={(event) => {
 								event.preventDefault();
 								resetFilters();
 							}}
 						>
 							Limpiar campos
-						</a>
-						<button type="submit" class="btn-primary">Buscar</button>
+						</AppButton>
+						<AppButton type="submit" variant="primary">Buscar</AppButton>
 					</div>
 				</div>
 			</form>
 
 			<div
-				class="etso-buscador__results"
+				class="relative outline-none"
 				aria-live="polite"
 				aria-busy="false"
 				role="region"
@@ -539,8 +607,8 @@
 				tabindex="-1"
 			>
 				{#if tableRows.length > 0}
-					<div class="results-header">
-						<div class="results-count"><strong>{works.length}</strong> resultados</div>
+					<div class="mb-5 flex items-center justify-between border-b-2 border-[#ecf0f1] pb-[15px]">
+						<div class="text-[16px] text-[#555]"><strong class="text-[20px] text-[#2c3e50]">{works.length}</strong> resultados</div>
 					</div>
 				{/if}
 				<WorksTable
@@ -553,515 +621,3 @@
 	</div>
 </div>
 
-<style>
-	.buscador-overview {
-		display: grid;
-		grid-template-columns: minmax(0, 1.9fr) minmax(320px, 1fr);
-		gap: 2.1rem;
-		align-items: start;
-		padding: clamp(1.2rem, 2.4vw, 2rem);
-		border-radius: 14px;
-		background-color: #ececf0;
-		background-image:
-			linear-gradient(
-				100deg,
-				rgba(239, 240, 244, 0.95) 0%,
-				rgba(236, 237, 242, 0.88) 46%,
-				rgba(236, 237, 242, 0.52) 70%,
-				rgba(236, 237, 242, 0.22) 100%
-			),
-			var(--overview-bg);
-		background-size: auto, min(60vw, 860px) auto;
-		background-position: center, right -56px bottom -66px;
-		background-repeat: no-repeat, no-repeat;
-	}
-
-	.buscador-overview__title {
-		margin: 0 0 0.85rem;
-		font-size: clamp(2rem, 4.3vw, 2.85rem);
-		line-height: 1.05;
-		font-weight: 700;
-		color: #0033a7;
-	}
-
-	.buscador-overview__lead {
-		margin: 0 0 1.15rem;
-		font-size: clamp(1.28rem, 2.2vw, 1.78rem);
-		line-height: 1.22;
-		font-weight: 600;
-		color: #003aa5;
-		max-width: 25ch;
-	}
-
-	.buscador-overview__copy {
-		margin: 0 0 1rem;
-		max-width: 64ch;
-		font-family: 'Lora', serif;
-		font-size: 1.01rem;
-		line-height: 1.45;
-		color: #17293f;
-	}
-
-	.buscador-overview__copy:last-child {
-		margin-bottom: 0;
-	}
-
-	.buscador-overview__stats {
-		display: grid;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 1.05rem;
-		align-content: center;
-		align-items: end;
-		padding-top: 0;
-		align-self: center;
-		justify-self: center;
-		width: min(420px, 100%);
-	}
-
-	.overview-stat-card {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 0.65rem;
-		min-height: 170px;
-		padding: 1.35rem 1.1rem 1.1rem;
-		border-radius: 10px;
-		border: 1px solid rgba(6, 33, 93, 0.08);
-		background: rgba(249, 249, 251, 0.88);
-		box-shadow: 0 8px 20px rgba(25, 37, 77, 0.08);
-		transform: translateY(0);
-	}
-
-	.overview-stat-card:first-child {
-		transform: translateY(-10px);
-	}
-
-	.overview-stat-card:nth-child(2) {
-		margin-top: 0;
-		margin-left: 0;
-		transform: translateY(10px);
-	}
-
-	.overview-stat-icon {
-		width: 2.2rem;
-		height: 2.2rem;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		color: #70006b;
-	}
-
-	.overview-stat-icon :global(svg) {
-		width: 1.9rem;
-		height: 1.9rem;
-		stroke-width: 2.2;
-	}
-
-	.overview-stat-value {
-		font-size: clamp(2rem, 3vw, 2.35rem);
-		font-weight: 700;
-		line-height: 1;
-		color: #0033a7;
-	}
-
-	.overview-stat-label {
-		font-family: 'Lora', serif;
-		font-size: 1.04rem;
-		font-weight: 500;
-		color: #1f2f45;
-	}
-
-	.etso-buscador {
-		font-family: 'Roboto', sans-serif;
-		color: #333;
-		line-height: 1.6;
-	}
-
-	.etso-buscador__shell {
-		min-width: 0;
-	}
-
-	.filters-section {
-		background: transparent;
-		padding: 0;
-		border-radius: 0;
-		margin-bottom: 1.6rem;
-		box-shadow: none;
-	}
-
-	.search-primary {
-		background: transparent;
-		padding: 0;
-		border-radius: 0;
-		margin-bottom: 0.9rem;
-		border: 0;
-	}
-
-	.filter-section {
-		margin-bottom: 0.8rem;
-		padding: 0.8rem 0;
-		background: transparent;
-		border-radius: 0;
-	}
-
-	.filter-section-title {
-		font-size: 14px;
-		font-weight: 700;
-		text-transform: uppercase;
-		color: #34495e;
-		margin-bottom: 15px;
-		letter-spacing: 0.5px;
-		border-bottom: 2px solid #ecf0f1;
-		padding-bottom: 8px;
-	}
-
-	.filter-row {
-		display: grid;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 20px;
-		margin-bottom: 15px;
-	}
-
-	.filter-row.two-cols {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
-
-	.filter-row.full {
-		grid-template-columns: 1fr;
-	}
-
-	.search-primary .filter-row.row-title-genero {
-		grid-template-columns: 3fr 1fr;
-	}
-
-	.search-primary .filter-row.row-autor-principal {
-		grid-template-columns: 1fr;
-		margin-bottom: 0;
-	}
-
-	.filter-group {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.filter-group label {
-		font-weight: 600;
-		margin-bottom: 6px;
-		font-size: 14px;
-		color: #555;
-	}
-
-	.filter-group input[type='text'],
-	.filter-group input[type='date'] {
-		padding: 10px 12px;
-		border: 1px solid #ddd;
-		border-radius: 4px;
-		font-size: 14px;
-		transition: border-color 0.2s;
-	}
-
-	.filter-group input[type='text']:focus,
-	.filter-group input[type='date']:focus {
-		outline: none;
-		border-color: #5a9fd4;
-		box-shadow: 0 0 0 3px rgba(90, 159, 212, 0.1);
-	}
-
-	.field-with-help {
-		position: relative;
-	}
-
-	.field-label-with-help {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.25rem;
-	}
-
-	.field-help-anchor {
-		position: relative;
-		display: inline-flex;
-		align-items: center;
-	}
-
-	.field-help-trigger {
-		width: 20px;
-		height: 20px;
-		border: 1px solid #c6d1e4;
-		border-radius: 999px;
-		background: #f2f6ff;
-		color: #0033a7;
-		font-size: 12px;
-		font-weight: 700;
-		line-height: 1;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		cursor: help;
-	}
-
-	.field-help-popover {
-		position: absolute;
-		top: calc(100% + 8px);
-		left: 0;
-		width: min(320px, 78vw);
-		padding: 8px 10px;
-		border: 1px solid #d8e0ea;
-		border-radius: 6px;
-		background: #fff;
-		color: #3d4c63;
-		font-size: 12px;
-		line-height: 1.35;
-		box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
-		display: none;
-		z-index: 20;
-	}
-
-	.field-help-anchor:hover .field-help-popover,
-	.field-help-anchor:focus-within .field-help-popover {
-		display: block;
-	}
-
-	.autoria-general-row {
-		margin-bottom: 18px;
-		padding: 12px;
-		border: 1px dashed #d6dde8;
-		border-radius: 8px;
-		background: #fafcff;
-	}
-
-	.autoria-columns {
-		display: grid;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 16px;
-	}
-
-	.autoria-card {
-		border: 1px solid #e4e9ef;
-		border-radius: 8px;
-		background: #fbfcfe;
-		padding: 14px;
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
-	}
-
-	.autoria-card--estilometria .row-esto-controls {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 16px;
-		align-items: start;
-		margin-bottom: 0;
-	}
-
-	.advanced-filters {
-		margin-top: 0.9rem;
-		border: 1px solid #d8e0ea;
-		border-radius: 8px;
-		background: #fff;
-		overflow: hidden;
-	}
-
-	.advanced-toggle {
-		width: 100%;
-		background: transparent;
-		border: 0;
-		border-radius: 0;
-		color: #0033a7;
-		font-size: 14px;
-		font-weight: 600;
-		cursor: pointer;
-		padding: 0.9rem 1rem;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		transition: all 0.2s;
-		margin-bottom: 0;
-	}
-
-	.advanced-toggle:hover {
-		background: #eef3ff;
-	}
-
-	.advanced-toggle__icon {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		transition: transform 0.2s ease;
-	}
-
-	.advanced-toggle__icon :global(svg) {
-		width: 14px;
-		height: 14px;
-		stroke-width: 2.2;
-	}
-
-	.advanced-toggle[aria-expanded='true'] .advanced-toggle__icon {
-		transform: rotate(180deg);
-	}
-
-	.advanced-content {
-		background: transparent;
-		border-top: 1px solid #d8e0ea;
-		padding: 0.9rem 1rem;
-		max-height: 1200px;
-		overflow: hidden;
-		transition: max-height 0.3s ease, padding 0.3s ease, opacity 0.2s ease;
-		opacity: 1;
-	}
-
-	.advanced-content.hidden {
-		max-height: 0;
-		padding-top: 0;
-		padding-bottom: 0;
-		border-top-color: transparent;
-		opacity: 0;
-	}
-
-	.button-group {
-		display: flex;
-		gap: 10px;
-		margin-top: 20px;
-		justify-content: flex-end;
-	}
-
-	.button-group button,
-	.button-group .button {
-		padding: 12px 24px;
-		border: none;
-		border-radius: 4px;
-		font-size: 14px;
-		font-weight: 600;
-		cursor: pointer;
-		transition: all 0.2s;
-		text-decoration: none;
-		display: inline-block;
-	}
-
-	.btn-primary {
-		background: #0033a7;
-		color: #fff;
-	}
-
-	.btn-primary:hover {
-		background: #002266;
-	}
-
-	.btn-secondary {
-		background: #fff;
-		color: #34495e;
-		border: 1px solid #d2d8de;
-	}
-
-	.btn-secondary:hover {
-		background: #eef2f6;
-		border-color: #bac4cf;
-	}
-
-	.description {
-		font-size: 12px;
-		color: #7f8c8d;
-		font-style: italic;
-		margin-top: 4px;
-	}
-
-	.etso-buscador__results {
-		position: relative;
-		outline: none;
-	}
-
-	.results-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		margin-bottom: 20px;
-		padding-bottom: 15px;
-		border-bottom: 2px solid #ecf0f1;
-	}
-
-	.results-count {
-		font-size: 16px;
-		color: #555;
-	}
-
-	.results-count strong {
-		color: #2c3e50;
-		font-size: 20px;
-	}
-
-	@media (max-width: 1200px) {
-		.buscador-overview {
-			grid-template-columns: 1fr;
-			background-size: auto, min(90vw, 680px) auto;
-			background-position: center, right -80px bottom -58px;
-		}
-
-		.buscador-overview__stats {
-			grid-template-columns: repeat(2, minmax(180px, 1fr));
-			max-width: 520px;
-			transform: none;
-			justify-self: start;
-		}
-
-		.overview-stat-card:nth-child(2) {
-			margin-top: 1.1rem;
-			transform: translateY(0);
-		}
-
-		.overview-stat-card:first-child {
-			transform: translateY(0);
-		}
-
-		.filter-row {
-			grid-template-columns: repeat(2, minmax(0, 1fr));
-		}
-
-		.search-primary .filter-row {
-			grid-template-columns: 1fr;
-		}
-
-		.autoria-columns {
-			grid-template-columns: 1fr;
-		}
-	}
-
-	@media (max-width: 768px) {
-		.buscador-overview {
-			background-size: auto, min(130vw, 720px) auto;
-			background-position: center, right -120px bottom -35px;
-		}
-
-		.buscador-overview__lead {
-			max-width: none;
-		}
-
-		.buscador-overview__stats {
-			grid-template-columns: 1fr;
-		}
-
-		.overview-stat-card:nth-child(2) {
-			margin-top: 0;
-			transform: translateY(0);
-		}
-
-		.overview-stat-card:first-child {
-			transform: translateY(0);
-		}
-
-		.filters-section {
-			padding: 20px;
-		}
-
-		.filter-row,
-		.filter-row.two-cols {
-			grid-template-columns: 1fr;
-		}
-
-		.autoria-card--estilometria .row-esto-controls {
-			grid-template-columns: 1fr;
-		}
-
-		.button-group {
-			justify-content: stretch;
-			flex-direction: column;
-		}
-	}
-</style>

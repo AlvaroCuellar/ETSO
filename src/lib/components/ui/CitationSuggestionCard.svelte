@@ -1,4 +1,4 @@
-<script lang="ts">
+﻿<script lang="ts">
 	import { onDestroy } from 'svelte';
 	import type { Snippet } from 'svelte';
 
@@ -111,110 +111,39 @@
 	onDestroy(clearToastTimer);
 </script>
 
-<section class={`citation-suggestion-card ${className}`}>
-	<div class="citation-suggestion-card__head">
-		<p class="citation-suggestion-card__label">{label}</p>
-		<button type="button" class="citation-suggestion-card__copy-button" onclick={copyCitation}>
+<section class={`grid gap-2 rounded-card border border-[rgba(0,51,167,0.24)] bg-[linear-gradient(180deg,#f4f8ff,#eef4ff)] p-4 shadow-soft ${className}`}>
+	<div class="flex flex-wrap items-center justify-between gap-3">
+		<p class="m-0 font-ui text-[0.8rem] font-bold uppercase tracking-[0.04em] text-brand-blue-dark">{label}</p>
+		<button
+			type="button"
+			class="rounded-md border border-[rgba(0,51,167,0.28)] bg-white px-3 py-2 text-[0.82rem] leading-none font-bold text-brand-blue-dark transition hover:bg-[#f3f7ff]"
+			onclick={copyCitation}
+		>
 			{buttonLabel}
 		</button>
 	</div>
 
-	<div class="citation-suggestion-card__content">
+	<div class="grid gap-2 text-[0.97rem] leading-[1.65] text-text-main">
 		{#if children}
 			{@render children()}
 		{:else if allowHtml}
-			<p class="citation-suggestion-card__text">{@html citation}</p>
+			<p class="m-0">{@html citation}</p>
 		{:else}
-			<p class="citation-suggestion-card__text">{citation}</p>
+			<p class="m-0">{citation}</p>
 		{/if}
 	</div>
 </section>
 
 {#if toastStatus !== 'idle' && toastMessage}
-	<p class="copy-toast" class:is-error={toastStatus === 'error'} role="status" aria-live="polite">
+	<p
+		class={`fixed right-[max(1rem,env(safe-area-inset-right))] bottom-[max(1rem,env(safe-area-inset-bottom))] z-[140] m-0 rounded-md border px-3 py-2 font-ui text-[0.84rem] font-semibold shadow-soft ${
+			toastStatus === 'error'
+				? 'border-[rgba(187,45,59,0.24)] bg-[#fff4f5] text-[#8c1d2a]'
+				: 'border-[rgba(24,121,78,0.24)] bg-[#f1fbf5] text-[#145c3c]'
+		}`}
+		role="status"
+		aria-live="polite"
+	>
 		{toastMessage}
 	</p>
 {/if}
-
-<style>
-	.citation-suggestion-card {
-		display: grid;
-		gap: var(--space-2);
-		padding: var(--space-4);
-		border-radius: var(--radius-md);
-		border: 1px solid rgba(0, 51, 167, 0.24);
-		background: linear-gradient(180deg, #f4f8ff, #eef4ff);
-		box-shadow: var(--shadow-soft);
-	}
-
-	.citation-suggestion-card__head {
-		display: flex;
-		gap: var(--space-3);
-		align-items: center;
-		justify-content: space-between;
-		flex-wrap: wrap;
-	}
-
-	.citation-suggestion-card__label {
-		margin: 0;
-		font-family: var(--font-ui);
-		font-size: 0.8rem;
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
-		color: var(--color-brand-blue-dark);
-	}
-
-	.citation-suggestion-card__copy-button {
-		border: 1px solid rgba(0, 51, 167, 0.28);
-		background: #fff;
-		color: var(--color-brand-blue-dark);
-		font-family: var(--font-ui);
-		font-size: 0.82rem;
-		font-weight: 700;
-		line-height: 1;
-		padding: 0.45rem 0.7rem;
-		border-radius: var(--radius-sm);
-	}
-
-	.citation-suggestion-card__copy-button:hover,
-	.citation-suggestion-card__copy-button:focus-visible {
-		background: #f3f7ff;
-		text-decoration: none;
-	}
-
-	.citation-suggestion-card__content {
-		display: grid;
-		gap: var(--space-2);
-	}
-
-	.citation-suggestion-card__content :global(p) {
-		margin: 0;
-		font-size: 0.97rem;
-		line-height: 1.65;
-		color: var(--color-text-main);
-	}
-
-	.copy-toast {
-		position: fixed;
-		right: max(1rem, env(safe-area-inset-right));
-		bottom: max(1rem, env(safe-area-inset-bottom));
-		margin: 0;
-		padding: 0.62rem 0.82rem;
-		border-radius: var(--radius-sm);
-		border: 1px solid rgba(24, 121, 78, 0.24);
-		background: #f1fbf5;
-		color: #145c3c;
-		font-family: var(--font-ui);
-		font-size: 0.84rem;
-		font-weight: 600;
-		box-shadow: var(--shadow-soft);
-		z-index: 140;
-	}
-
-	.copy-toast.is-error {
-		border-color: rgba(187, 45, 59, 0.24);
-		background: #fff4f5;
-		color: #8c1d2a;
-	}
-</style>

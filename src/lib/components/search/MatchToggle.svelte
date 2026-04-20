@@ -72,11 +72,19 @@
 </fieldset>
 
 <style>
+	.radio-group {
+		border: 0;
+		margin: 0;
+		padding: 0;
+		min-inline-size: 0;
+	}
+
 	.fieldset-legend {
 		font-weight: 600;
 		font-size: 14px;
 		color: #555;
 		margin-bottom: 6px;
+		padding: 0;
 		display: inline-flex;
 		align-items: center;
 		gap: 0.25rem;
@@ -116,6 +124,7 @@
 		color: #3d4c63;
 		font-size: 12px;
 		line-height: 1.35;
+		font-weight: 400;
 		box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
 		display: none;
 		z-index: 20;

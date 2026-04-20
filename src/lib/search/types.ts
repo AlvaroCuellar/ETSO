@@ -1,4 +1,6 @@
-﻿export interface TexoroManifestShard {
+﻿import type { AttributionSet } from '$lib/domain/catalog';
+
+export interface TexoroManifestShard {
 	id: string;
 	file: string;
 	termMin?: string;
@@ -168,6 +170,7 @@ export interface TexoroWorkMeta {
 	slug: string;
 	genre: string;
 	shortSummary: string;
+	stylometryAttribution: AttributionSet;
 }
 
 export interface ParsedQueryTerm {
@@ -197,6 +200,7 @@ export interface SearchResultMatch {
 export interface SearchResult {
 	workId: string;
 	docId: number;
+	docTokenCount: number;
 	score: number;
 	meta?: TexoroWorkMeta;
 	snippet?: string;
@@ -235,3 +239,6 @@ export interface SearchOptions {
 	maxPhraseVerificationDocs?: number;
 	snippetRadius?: number;
 }
+
+
+

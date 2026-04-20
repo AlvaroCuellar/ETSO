@@ -1,6 +1,12 @@
 ﻿<script lang="ts">
 	import { onMount } from 'svelte';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
+	import AttributionView from '$lib/components/ui/AttributionView.svelte';
+	import AppButton from '$lib/components/ui/AppButton.svelte';
+	import ChartModeToggle from '$lib/components/search/ChartModeToggle.svelte';
+	import ComparisonMetricToggle from '$lib/components/search/ComparisonMetricToggle.svelte';
+	import TexoroLiveChart from '$lib/components/search/TexoroLiveChart.svelte';
+	import TexoroComparisonChart from '$lib/components/search/TexoroComparisonChart.svelte';
 	import fondoLogo from '$lib/assets/fondos/fondo-logo.png';
 	import BookOpen from 'lucide-svelte/icons/book-open';
 	import Feather from 'lucide-svelte/icons/feather';
@@ -10,6 +16,7 @@
 	import { TexoroSearchEngine, buildWorkMetaMap, normalizePattern, normalizePlainText } from '$lib/search';
 
 	import type {
+		ParsedQueryClause,
 		SearchExecution,
 		SearchMatchOccurrences,
 		SearchResult,
@@ -21,6 +28,7 @@
 
 	const worksMetaMap = $derived.by(() => buildWorkMetaMap(data.worksMeta));
 	const numberFormatter = new Intl.NumberFormat('es-ES');
+	const decimalFormatter = new Intl.NumberFormat('es-ES', { maximumFractionDigits: 1 });
 	const highlightPalette = [
 		{
 			chip: 'background-color:#fff6df;border-color:#f2c46d;color:#7a4f00;',
@@ -63,6 +71,49 @@
 		details: SearchMatchOccurrences | null;
 	}
 
+	interface ChartRow {
+		label: string;
+		value: number;
+		percentage: number;
+		color: string;
+	}
+
+	interface ChartBlock {
+		rows: ChartRow[];
+		total: number;
+	}
+
+	interface ComparisonTerm {
+		key: string;
+		label: string;
+		color: string;
+	}
+
+	interface ComparisonAccumulator {
+		label: string;
+		occurrencesByTerm: Map<string, number>;
+		frequency10kByTerm: Map<string, number>;
+		totalOccurrences: number;
+	}
+
+	interface ComparisonChartRow {
+		label: string;
+		occurrences: number[];
+		frequency10k: number[];
+		totalOccurrences: number;
+	}
+
+	interface ComparisonChartBlock {
+		rows: ComparisonChartRow[];
+		series: ComparisonTerm[];
+	}
+
+	type ChartKey = 'author' | 'genre';
+	type ChartMode = 'bars' | 'pie';
+	type ComparisonMetric = 'frequency10k' | 'occurrences' | 'share';
+
+	const chartPalette = ['#1f5fbf', '#2f8fca', '#3aa6a0', '#59a55c', '#d38f38', '#9a69c6', '#c45e92'];
+
 	let engine = $state<TexoroSearchEngine | null>(null);
 	let isEngineReady = $state(false);
 	let query = $state('');
@@ -74,6 +125,424 @@
 	let occurrenceModal = $state<OccurrenceModalState | null>(null);
 	let occurrenceLoading = $state(false);
 	let occurrenceError = $state('');
+	let chartMode = $state<ChartMode>('bars');
+	let comparisonMetric = $state<ComparisonMetric>('frequency10k');
+	let chartCopyPending = $state<Record<ChartKey, boolean>>({ author: false, genre: false });
+	let authorChartRef = $state<TexoroLiveChart | null>(null);
+	let genreChartRef = $state<TexoroLiveChart | null>(null);
+	let infoModalOpen = $state(false);
+
+	const sumResultOccurrences = (result: SearchResult): number =>
+		result.matches.reduce((sum, match) => sum + (match.occurrences ?? 0), 0);
+
+	const collectStylometryAuthors = (result: SearchResult): string[] => {
+		const set = result.meta?.stylometryAttribution;
+		if (!set || set.unresolved) return [];
+		const authorById = new Map<string, string>();
+		for (const group of set.groups) {
+			for (const member of group.members) {
+				const id = member.authorId?.trim();
+				const name = member.authorName?.trim();
+				if (!id || !name) continue;
+				if (!authorById.has(id)) authorById.set(id, name);
+			}
+		}
+		return Array.from(authorById.values());
+	};
+
+	const toChartBlock = (source: Map<string, number>, limit: number): ChartBlock => {
+		const sorted = Array.from(source.entries())
+			.filter((entry) => entry[1] > 0)
+			.sort((a, b) => b[1] - a[1]);
+
+		const top = sorted.slice(0, limit).map(([label, value]) => ({ label, value }));
+		if (sorted.length > limit) {
+			const others = sorted.slice(limit).reduce((sum, entry) => sum + entry[1], 0);
+			if (others > 0) {
+				top.push({ label: 'Otros', value: others });
+			}
+		}
+
+		const total = top.reduce((sum, row) => sum + row.value, 0);
+
+		return {
+			total,
+			rows: top.map((row, index) => ({
+				label: row.label,
+				value: row.value,
+				percentage: total > 0 ? (row.value / total) * 100 : 0,
+				color: chartPalette[index % chartPalette.length]
+			}))
+		};
+	};
+
+	const liveCharts = $derived.by(() => {
+		if (!searchExecution || searchExecution.results.length === 0) {
+			return null;
+		}
+
+		const byAuthor = new Map<string, number>();
+		const byGenre = new Map<string, number>();
+
+		for (const result of searchExecution.results) {
+			const occurrences = sumResultOccurrences(result);
+			if (occurrences <= 0) continue;
+
+			const genre = result.meta?.genre?.trim() || 'Sin género';
+			byGenre.set(genre, (byGenre.get(genre) ?? 0) + occurrences);
+
+			const authors = collectStylometryAuthors(result);
+			if (authors.length === 0) {
+				byAuthor.set(
+					'Sin atribución estilométrica',
+					(byAuthor.get('Sin atribución estilométrica') ?? 0) + occurrences
+				);
+				continue;
+			}
+
+			const proportionalShare = occurrences / authors.length;
+			for (const author of authors) {
+				byAuthor.set(author, (byAuthor.get(author) ?? 0) + proportionalShare);
+			}
+		}
+
+		return {
+			author: toChartBlock(byAuthor, 10),
+			genre: toChartBlock(byGenre, 8)
+		};
+	});
+
+	const chartTitles: Record<ChartKey, string> = {
+		author: 'Concurrencias por autor',
+		genre: 'Concurrencias por género'
+	};
+
+	const chartEmptyMessages: Record<ChartKey, string> = {
+		author: 'No hay datos de autoría estilométrica para graficar.',
+		genre: 'No hay datos de género para graficar.'
+	};
+
+	const queryClauseSource = (clause: ParsedQueryClause): string =>
+		clause.kind === 'phrase' ? `"${clause.literal.trim()}"` : clause.pattern.trim();
+
+	const queryClauseKey = (clause: ParsedQueryClause): string => `${clause.kind}:${queryClauseSource(clause)}`;
+
+	const queryClauseLabel = (clause: ParsedQueryClause): string => {
+		return queryClauseSource(clause);
+	};
+
+	const queryClauseCount = $derived.by(() => {
+		if (!searchExecution) return 0;
+		let count = 0;
+		for (const group of searchExecution.parsed.groups) {
+			count += group.length;
+		}
+		return count;
+	});
+
+	const queryLabelNoun = $derived.by(() => (queryClauseCount === 1 ? 'Término' : 'Términos'));
+
+	const queryTermsLabel = $derived.by(() => {
+		if (!searchExecution) return '';
+		const groups = searchExecution.parsed.groups
+			.map((group) => group.map((clause) => queryClauseLabel(clause)).filter((label) => label.length > 0))
+			.filter((group) => group.length > 0);
+		if (groups.length === 0) return searchExecution.query.trim();
+
+		const expression = groups.map((group) => group.join(' AND ')).join(' OR ');
+		return expression.length > 240 ? `${expression.slice(0, 237)}...` : expression;
+	});
+
+	const comparisonTerms = $derived.by(() => {
+		if (!searchExecution) return [] as ComparisonTerm[];
+		const output: ComparisonTerm[] = [];
+		const seen = new Set<string>();
+		for (const group of searchExecution.parsed.groups) {
+			for (const clause of group) {
+				const key = queryClauseKey(clause);
+				if (seen.has(key)) continue;
+				seen.add(key);
+				output.push({
+					key,
+					label: queryClauseLabel(clause),
+					color: chartPalette[output.length % chartPalette.length]
+				});
+			}
+		}
+		return output.slice(0, 6);
+	});
+
+	const comparisonTermsOverflow = $derived.by(() => {
+		if (!searchExecution) return false;
+		const seen = new Set<string>();
+		for (const group of searchExecution.parsed.groups) {
+			for (const clause of group) seen.add(queryClauseKey(clause));
+		}
+		return seen.size > comparisonTerms.length;
+	});
+
+	const ensureComparisonAccumulator = (
+		target: Map<string, ComparisonAccumulator>,
+		label: string
+	): ComparisonAccumulator => {
+		const existing = target.get(label);
+		if (existing) return existing;
+		const created: ComparisonAccumulator = {
+			label,
+			occurrencesByTerm: new Map<string, number>(),
+			frequency10kByTerm: new Map<string, number>(),
+			totalOccurrences: 0
+		};
+		target.set(label, created);
+		return created;
+	};
+
+	const addComparisonValue = (
+		acc: ComparisonAccumulator,
+		term: ComparisonTerm,
+		occurrences: number,
+		frequency10k: number
+	): void => {
+		if (occurrences <= 0) return;
+		acc.occurrencesByTerm.set(term.key, (acc.occurrencesByTerm.get(term.key) ?? 0) + occurrences);
+		acc.frequency10kByTerm.set(term.key, (acc.frequency10kByTerm.get(term.key) ?? 0) + frequency10k);
+		acc.totalOccurrences += occurrences;
+	};
+
+	const toComparisonChartBlock = (
+		source: Map<string, ComparisonAccumulator>,
+		terms: ComparisonTerm[],
+		limit: number
+	): ComparisonChartBlock => {
+		const sorted = Array.from(source.values())
+			.filter((entry) => entry.totalOccurrences > 0)
+			.sort((a, b) => b.totalOccurrences - a.totalOccurrences || a.label.localeCompare(b.label, 'es'));
+
+		const top = sorted.slice(0, limit);
+		if (sorted.length > limit) {
+			const others: ComparisonAccumulator = {
+				label: 'Otros',
+				occurrencesByTerm: new Map<string, number>(),
+				frequency10kByTerm: new Map<string, number>(),
+				totalOccurrences: 0
+			};
+			for (const row of sorted.slice(limit)) {
+				others.totalOccurrences += row.totalOccurrences;
+				for (const term of terms) {
+					others.occurrencesByTerm.set(
+						term.key,
+						(others.occurrencesByTerm.get(term.key) ?? 0) + (row.occurrencesByTerm.get(term.key) ?? 0)
+					);
+					others.frequency10kByTerm.set(
+						term.key,
+						(others.frequency10kByTerm.get(term.key) ?? 0) + (row.frequency10kByTerm.get(term.key) ?? 0)
+					);
+				}
+			}
+			if (others.totalOccurrences > 0) top.push(others);
+		}
+
+		return {
+			series: terms,
+			rows: top.map((row) => ({
+				label: row.label,
+				occurrences: terms.map((term) => row.occurrencesByTerm.get(term.key) ?? 0),
+				frequency10k: terms.map((term) => row.frequency10kByTerm.get(term.key) ?? 0),
+				totalOccurrences: row.totalOccurrences
+			}))
+		};
+	};
+
+	const multiTermComparison = $derived.by(() => {
+		if (!searchExecution || searchExecution.results.length === 0) return null;
+		if (comparisonTerms.length < 2) return null;
+
+		const byAuthor = new Map<string, ComparisonAccumulator>();
+		const byGenre = new Map<string, ComparisonAccumulator>();
+
+		for (const result of searchExecution.results) {
+			const matchesByKey = new Map<string, number>(
+				result.matches.map((match) => [`${match.kind}:${match.source}`, match.occurrences])
+			);
+
+			const tokenCount = Math.max(1, result.docTokenCount || 0);
+			const genre = result.meta?.genre?.trim() || 'Sin género';
+			const genreAcc = ensureComparisonAccumulator(byGenre, genre);
+
+			const authors = collectStylometryAuthors(result);
+			const authorLabels = authors.length > 0 ? authors : ['Sin atribución estilométrica'];
+			const authorShare = 1 / authorLabels.length;
+			const authorAccs = authorLabels.map((label) => ensureComparisonAccumulator(byAuthor, label));
+
+			for (const term of comparisonTerms) {
+				const occurrences = matchesByKey.get(term.key) ?? 0;
+				if (occurrences <= 0) continue;
+				const frequency10k = (occurrences * 10_000) / tokenCount;
+
+				addComparisonValue(genreAcc, term, occurrences, frequency10k);
+
+				const authorOccurrences = occurrences * authorShare;
+				const authorFrequency10k = frequency10k * authorShare;
+				for (const authorAcc of authorAccs) {
+					addComparisonValue(authorAcc, term, authorOccurrences, authorFrequency10k);
+				}
+			}
+		}
+
+		return {
+			author: toComparisonChartBlock(byAuthor, comparisonTerms, 10),
+			genre: toComparisonChartBlock(byGenre, comparisonTerms, 8)
+		};
+	});
+
+	const comparisonMetricLabel = $derived.by(() => {
+		if (comparisonMetric === 'occurrences') return 'Concurrencias';
+		if (comparisonMetric === 'share') return 'Reparto porcentual';
+		return 'Frecuencia por 10.000 palabras';
+	});
+
+	const chartTitleWithQuery = (chartKey: ChartKey): string => {
+		const suffix = queryTermsLabel.trim();
+		return suffix ? `${chartTitles[chartKey]} · ${queryLabelNoun}: ${suffix}` : chartTitles[chartKey];
+	};
+
+	const resultAuthorLabel = (result: SearchResult): string => {
+		const authors = collectStylometryAuthors(result);
+		if (authors.length === 0) return 'autoría no resuelta';
+		if (authors.length <= 2) return authors.join(' / ');
+		return `${authors[0]} / ${authors[1]} +${authors.length - 2}`;
+	};
+
+	const drawWrappedText = (
+		ctx: CanvasRenderingContext2D,
+		text: string,
+		x: number,
+		y: number,
+		maxWidth: number,
+		lineHeight: number
+	): number => {
+		const words = text.split(/\s+/);
+		const lines: string[] = [];
+		let current = '';
+		for (const word of words) {
+			const candidate = current ? `${current} ${word}` : word;
+			if (ctx.measureText(candidate).width <= maxWidth || !current) {
+				current = candidate;
+			} else {
+				lines.push(current);
+				current = word;
+			}
+		}
+		if (current) lines.push(current);
+		for (let i = 0; i < lines.length; i += 1) {
+			ctx.fillText(lines[i], x, y + i * lineHeight);
+		}
+		return y + lines.length * lineHeight;
+	};
+
+	const toCanvasBlob = async (canvas: HTMLCanvasElement): Promise<Blob> =>
+		new Promise((resolve, reject) => {
+			canvas.toBlob((blob) => {
+				if (blob) {
+					resolve(blob);
+					return;
+				}
+				reject(new Error('No se pudo generar el PNG'));
+			}, 'image/png');
+		});
+
+	const loadImageFromDataUrl = async (dataUrl: string): Promise<HTMLImageElement> =>
+		new Promise((resolve, reject) => {
+			const image = new Image();
+			image.onload = () => resolve(image);
+			image.onerror = () => reject(new Error('No se pudo renderizar la imagen del gráfico'));
+			image.src = dataUrl;
+		});
+
+	const getChartRefByKey = (chartKey: ChartKey): TexoroLiveChart | null =>
+		chartKey === 'author' ? authorChartRef : genreChartRef;
+
+	const downloadChartPng = async (chartKey: ChartKey, chart: ChartBlock): Promise<void> => {
+		if (!searchExecution || chart.rows.length === 0) return;
+		chartCopyPending[chartKey] = true;
+
+		try {
+			const chartRef = getChartRefByKey(chartKey);
+			if (!chartRef) throw new Error('El gráfico aún no está listo');
+			const chartDataUrl = chartRef.getPngDataUrl(5);
+			if (!chartDataUrl) throw new Error('No se pudo generar el gráfico para exportación');
+			const chartImage = await loadImageFromDataUrl(chartDataUrl);
+
+			const canvas = document.createElement('canvas');
+			canvas.width = 1680;
+			canvas.height = 1220;
+			const ctx = canvas.getContext('2d');
+			if (!ctx) throw new Error('Canvas no disponible');
+
+			ctx.fillStyle = '#ffffff';
+			ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+			ctx.fillStyle = '#f6f9fe';
+			ctx.fillRect(56, 176, 1568, 760);
+
+			const exportTitle = chartTitleWithQuery(chartKey);
+			ctx.fillStyle = '#163860';
+			ctx.font = '700 44px Roboto, sans-serif';
+			const subtitleTop = drawWrappedText(ctx, exportTitle, 64, 84, 1554, 50) + 4;
+
+			const summaryTop = subtitleTop + 6;
+
+			ctx.fillStyle = '#355682';
+			ctx.font = '600 22px Roboto, sans-serif';
+			ctx.fillText(
+				`Total de concurrencias en gráfico: ${decimalFormatter.format(chart.total)} · Modo: ${
+					chartMode === 'bars' ? 'Barras' : 'Circular %'
+				}`,
+				64,
+				summaryTop
+			);
+
+			const drawFrame = {
+				x: 78,
+				y: 192,
+				width: 1524,
+				height: 728
+			};
+			const scale = Math.min(drawFrame.width / chartImage.width, drawFrame.height / chartImage.height);
+			const drawWidth = chartImage.width * scale;
+			const drawHeight = chartImage.height * scale;
+			const drawX = drawFrame.x + (drawFrame.width - drawWidth) / 2;
+			const drawY = drawFrame.y + (drawFrame.height - drawHeight) / 2;
+			ctx.drawImage(chartImage, drawX, drawY, drawWidth, drawHeight);
+
+			const now = new Date();
+			const dateText = now.toLocaleString('es-ES');
+			const sourceUrl = typeof window !== 'undefined' ? `${window.location.origin}/texoro` : '/texoro';
+			const indexVersion = engine?.manifest?.indexVersion ?? 'n/d';
+			const citation =
+				`Cita sugerida: ETSO, TEXORO. "${exportTitle}". ` +
+				`Consulta: "${searchExecution.query}". ` +
+				`Generado el ${dateText}. ` +
+				`Resultados: ${searchExecution.textsWithOccurrences} textos, ${decimalFormatter.format(searchExecution.totalOccurrences)} concurrencias. ` +
+				`Índice: ${indexVersion}. Fuente: ${sourceUrl}.`;
+
+			ctx.fillStyle = '#2f4669';
+			ctx.font = '500 18px Roboto, sans-serif';
+			drawWrappedText(ctx, citation, 64, 986, 1554, 28);
+
+			const blob = await toCanvasBlob(canvas);
+			const url = URL.createObjectURL(blob);
+			const link = document.createElement('a');
+			link.href = url;
+			link.download = `texoro-${chartKey}-${chartMode}.png`;
+			link.click();
+			URL.revokeObjectURL(url);
+		} catch {
+			// Evita ruido en UI si la descarga falla.
+		} finally {
+			chartCopyPending[chartKey] = false;
+		}
+	};
 
 	const wildcardPatternToRegex = (pattern: string): RegExp => {
 		let expression = '^';
@@ -180,7 +649,7 @@
 		result: SearchResult,
 		assignment: MatchAssignment
 	): Promise<void> => {
-		if (!engine || assignment.match.occurrences <= 1) return;
+		if (!engine) return;
 		occurrenceError = '';
 		occurrenceLoading = true;
 		occurrenceModal = {
@@ -217,6 +686,10 @@
 		}
 	};
 
+	const closeInfoModal = (): void => {
+		infoModalOpen = false;
+	};
+
 	onMount(async () => {
 		try {
 			const created = new TexoroSearchEngine();
@@ -240,6 +713,7 @@
 		event.preventDefault();
 		searchError = '';
 		searchExecution = null;
+		chartCopyPending = { author: false, genre: false };
 		if (!engine) {
 			searchError = 'Motor de búsqueda no disponible todavía';
 			return;
@@ -282,6 +756,16 @@
 			<p class="mt-[1.25rem] mb-0 max-w-[64ch] font-['Lora',serif] text-[1.01rem] leading-[1.62] text-[#17293f]">
 				La búsqueda funciona en dos fases: primero recupera obras candidatas con índices ligeros; después verifica frase exacta y patrones complejos sobre los TXT candidatos.
 			</p>
+			<div class="mt-[1.25rem]">
+				<AppButton
+					type="button"
+					variant="secondary"
+					className="!h-[38px] !rounded-[10px] !px-4 !py-1.5 font-['Roboto',sans-serif] text-[0.83rem] font-semibold"
+					onclick={() => (infoModalOpen = true)}
+				>
+					Más info
+				</AppButton>
+			</div>
 		</div>
 
 		<div
@@ -289,7 +773,7 @@
 			aria-label="Indicadores de TEXORO"
 		>
 			<article
-				class="flex min-h-[170px] flex-col items-start gap-[0.65rem] rounded-[10px] border border-[rgba(6,33,93,0.08)] bg-[rgba(249,249,251,0.88)] px-[1.1rem] pb-[1.1rem] pt-[1.35rem] shadow-[0_8px_20px_rgba(25,37,77,0.08)] lg:-translate-y-[14px]"
+				class="flex min-h-[170px] flex-col items-start gap-[0.65rem] rounded-[10px] bg-white px-[1.1rem] pb-[1.1rem] pt-[1.35rem] shadow-[0_8px_20px_rgba(25,37,77,0.08)] lg:-translate-y-[14px]"
 			>
 				<div class="inline-flex h-[2.2rem] w-[2.2rem] items-center justify-center text-[#70006b]" aria-hidden="true">
 					<BookOpen class="h-[1.9rem] w-[1.9rem] stroke-[2.2]" />
@@ -303,7 +787,7 @@
 			</article>
 
 			<article
-				class="flex min-h-[170px] flex-col items-start gap-[0.65rem] rounded-[10px] border border-[rgba(6,33,93,0.08)] bg-[rgba(249,249,251,0.88)] px-[1.1rem] pb-[1.1rem] pt-[1.35rem] shadow-[0_8px_20px_rgba(25,37,77,0.08)] lg:translate-y-[14px]"
+				class="flex min-h-[170px] flex-col items-start gap-[0.65rem] rounded-[10px] bg-white px-[1.1rem] pb-[1.1rem] pt-[1.35rem] shadow-[0_8px_20px_rgba(25,37,77,0.08)] lg:translate-y-[14px]"
 			>
 				<div class="inline-flex h-[2.2rem] w-[2.2rem] items-center justify-center text-[#70006b]" aria-hidden="true">
 					<Feather class="h-[1.9rem] w-[1.9rem] stroke-[2.2]" />
@@ -318,7 +802,7 @@
 		</div>
 	</section>
 
-	<section class="rounded-[14px] border border-[#d8dee7] bg-white p-5 shadow-[0_6px_20px_rgba(16,42,84,0.08)]">
+	<section class="rounded-[14px] p-5">
 		<h2 class="m-0 font-['Roboto',sans-serif] text-[1.45rem] font-bold text-[#1f3f7a]">Buscar en TEXORO</h2>
 		<p class="mt-2 mb-0 text-[0.98rem] text-[#38516f]">
 			Consulta palabras, frases con comillas, comodines (`*`, `?`) y combinaciones con AND/OR.
@@ -330,16 +814,17 @@
 					type="search"
 					bind:value={query}
 					placeholder='Ejemplos: amor | "amor constante" | am* OR "amor const*"'
-					class="h-[46px] w-full rounded-[10px] border border-[#b9c6d8] bg-white px-11 py-2 text-[15px] text-[#1a3356] outline-none transition focus:border-[#0033a7] focus:ring-2 focus:ring-[#0033a7]/15"
+					class="h-[46px] w-full appearance-none rounded-[10px] border border-[#ddd] bg-white px-11 py-2 text-[15px] text-[#1a3356] outline-none shadow-none transition focus:border-[#5a9fd4] focus:shadow-none focus:outline-none focus-visible:border-[#5a9fd4] focus-visible:outline-none"
 				/>
 				<span class="pointer-events-none absolute inset-y-0 left-3 inline-flex items-center text-[#4a5f7e]">
 					<Search class="h-4.5 w-4.5" />
 				</span>
 			</div>
-			<button
+			<AppButton
 				type="submit"
+				variant="primary"
 				disabled={!isEngineReady || isSearching}
-				class="inline-flex h-[46px] min-w-[180px] items-center justify-center gap-2 rounded-[10px] border border-[#0033a7] bg-[#0033a7] px-5 font-['Roboto',sans-serif] text-[0.93rem] font-semibold tracking-[0.02em] text-white transition disabled:cursor-not-allowed disabled:opacity-70"
+				className="!h-[46px] !min-w-[180px] gap-2 !rounded-[10px] !px-5 !py-2 font-['Roboto',sans-serif] text-[0.93rem] font-semibold tracking-[0.02em]"
 			>
 				{#if isSearching}
 					<LoaderCircle class="h-4.5 w-4.5 animate-spin" />
@@ -347,7 +832,7 @@
 				{:else}
 					Buscar
 				{/if}
-			</button>
+			</AppButton>
 		</form>
 
 		{#if searchError}
@@ -375,23 +860,174 @@
 					</p>
 				{/if}
 
+				{#if liveCharts}
+					<div class="grid gap-3 rounded-[12px] border border-[#d5deea] bg-[#f9fbff] p-3">
+						<div class="flex flex-wrap items-start justify-between gap-3">
+							<div>
+								<h3 class="m-0 font-['Roboto',sans-serif] text-[1rem] font-semibold text-[#173f72]">
+									Distribución general de concurrencias
+								</h3>
+								<p class="mt-1 mb-0 text-[0.78rem] text-[#3d5f86]">
+									{queryLabelNoun}:
+									<span class="font-['Roboto',sans-serif] font-semibold text-[#0d3f91]">{queryTermsLabel}</span>
+								</p>
+							</div>
+							<ChartModeToggle value={chartMode} onchange={(value) => (chartMode = value)} />
+						</div>
+
+						<div class="grid gap-3 md:grid-cols-2">
+							<article class="rounded-[11px] bg-white px-4 py-3 shadow-[0_6px_16px_rgba(25,46,80,0.07)]">
+								<div>
+									<h3 class="m-0 font-['Roboto',sans-serif] text-[1rem] font-semibold text-[#173f72]">
+										{chartTitles.author}
+									</h3>
+								</div>
+
+								{#if liveCharts.author.rows.length === 0}
+									<p class="mt-2 mb-0 text-[0.88rem] text-[#5f7694]">{chartEmptyMessages.author}</p>
+								{:else}
+									<TexoroLiveChart
+										bind:this={authorChartRef}
+										className="mt-3"
+										mode={chartMode}
+										rows={liveCharts.author.rows}
+										total={liveCharts.author.total}
+										height={chartMode === 'bars' ? 334 : 354}
+									/>
+								{/if}
+
+								<div class="mt-2 flex justify-end">
+									<AppButton
+										type="button"
+										variant="ghost"
+										className="!h-[29px] !min-w-[108px] !rounded-[7px] !px-2 !py-0 font-['Roboto',sans-serif] text-[0.71rem] font-semibold"
+										disabled={chartCopyPending.author || liveCharts.author.rows.length === 0}
+										onclick={() => downloadChartPng('author', liveCharts.author)}
+									>
+										{chartCopyPending.author ? 'Generando...' : 'Descargar PNG'}
+									</AppButton>
+								</div>
+							</article>
+
+							<article class="rounded-[11px] bg-white px-4 py-3 shadow-[0_6px_16px_rgba(25,46,80,0.07)]">
+								<div>
+									<h3 class="m-0 font-['Roboto',sans-serif] text-[1rem] font-semibold text-[#173f72]">
+										{chartTitles.genre}
+									</h3>
+								</div>
+
+								{#if liveCharts.genre.rows.length === 0}
+									<p class="mt-2 mb-0 text-[0.88rem] text-[#5f7694]">{chartEmptyMessages.genre}</p>
+								{:else}
+									<TexoroLiveChart
+										bind:this={genreChartRef}
+										className="mt-3"
+										mode={chartMode}
+										rows={liveCharts.genre.rows}
+										total={liveCharts.genre.total}
+										height={chartMode === 'bars' ? 334 : 354}
+									/>
+								{/if}
+
+								<div class="mt-2 flex justify-end">
+									<AppButton
+										type="button"
+										variant="ghost"
+										className="!h-[29px] !min-w-[108px] !rounded-[7px] !px-2 !py-0 font-['Roboto',sans-serif] text-[0.71rem] font-semibold"
+										disabled={chartCopyPending.genre || liveCharts.genre.rows.length === 0}
+										onclick={() => downloadChartPng('genre', liveCharts.genre)}
+									>
+										{chartCopyPending.genre ? 'Generando...' : 'Descargar PNG'}
+									</AppButton>
+								</div>
+							</article>
+						</div>
+					</div>
+				{/if}
+
+				{#if multiTermComparison}
+					<div class="grid gap-3 rounded-[12px] border border-[#d5deea] bg-[#f9fbff] p-3">
+						<div class="flex flex-wrap items-start justify-between gap-3">
+							<div>
+								<h3 class="m-0 font-['Roboto',sans-serif] text-[1rem] font-semibold text-[#173f72]">
+									Comparativa por términos
+								</h3>
+								<p class="mt-1 mb-0 text-[0.78rem] text-[#3d5f86]">
+									{queryLabelNoun}:
+									<span class="font-['Roboto',sans-serif] font-semibold text-[#0d3f91]">{queryTermsLabel}</span>
+								</p>
+								<p class="mt-1 mb-0 text-[0.78rem] text-[#4a6384]">Métrica activa: {comparisonMetricLabel}</p>
+								{#if comparisonTermsOverflow}
+									<p class="mt-1 mb-0 text-[0.74rem] text-[#607896]">Se muestran los primeros 6 términos de la consulta.</p>
+								{/if}
+							</div>
+							<ComparisonMetricToggle
+								value={comparisonMetric}
+								onchange={(value) => (comparisonMetric = value)}
+							/>
+						</div>
+
+						<div class="grid gap-3 md:grid-cols-2">
+							<article class="rounded-[11px] bg-white px-4 py-3 shadow-[0_6px_16px_rgba(25,46,80,0.07)]">
+								<h4 class="m-0 font-['Roboto',sans-serif] text-[0.92rem] font-semibold text-[#173f72]">
+									Uso de términos por autor
+								</h4>
+								{#if multiTermComparison.author.rows.length === 0}
+									<p class="mt-2 mb-0 text-[0.88rem] text-[#5f7694]">
+										No hay datos suficientes de autoría para comparar términos.
+									</p>
+								{:else}
+									<TexoroComparisonChart
+										className="mt-2"
+										metric={comparisonMetric}
+										series={multiTermComparison.author.series}
+										rows={multiTermComparison.author.rows}
+										height={362}
+									/>
+								{/if}
+							</article>
+
+							<article class="rounded-[11px] bg-white px-4 py-3 shadow-[0_6px_16px_rgba(25,46,80,0.07)]">
+								<h4 class="m-0 font-['Roboto',sans-serif] text-[0.92rem] font-semibold text-[#173f72]">
+									Uso de términos por género
+								</h4>
+								{#if multiTermComparison.genre.rows.length === 0}
+									<p class="mt-2 mb-0 text-[0.88rem] text-[#5f7694]">
+										No hay datos suficientes de género para comparar términos.
+									</p>
+								{:else}
+									<TexoroComparisonChart
+										className="mt-2"
+										metric={comparisonMetric}
+										series={multiTermComparison.genre.series}
+										rows={multiTermComparison.genre.rows}
+										height={362}
+									/>
+								{/if}
+							</article>
+						</div>
+					</div>
+				{/if}
+
 				{#if searchExecution.results.length === 0}
 					<p class="m-0 text-[0.96rem] text-[#526887]">No se encontraron coincidencias.</p>
 				{:else}
 					<ul class="m-0 grid list-none gap-3 p-0">
 						{#each searchExecution.results as result}
 							{@const assignments = buildMatchAssignments(result.matches)}
-							<li class="rounded-[11px] border border-[#d8e0ec] bg-[#fbfcfe] px-4 py-3">
+							<li class="rounded-[11px] bg-white px-4 py-3 shadow-[0_6px_16px_rgba(25,46,80,0.07)]">
 								<div class="flex flex-wrap items-start justify-between gap-3">
 									<div class="min-w-0">
 										<h3 class="m-0 font-['Roboto',sans-serif] text-[1.03rem] font-semibold leading-[1.25] text-[#143660]">
 											{#if result.meta}
-												<a href={`/obras/${result.meta.slug}`} class="text-[#0d3f91] hover:underline">{result.meta.title}</a>
+												<a href={`/obras/${result.meta.slug}`} class="text-[#0d3f91] no-underline hover:text-[#073a8f]">{result.meta.title}</a>
+												<span class="ml-1 text-[0.86rem] font-medium text-[#597290]">
+													· {resultAuthorLabel(result)}
+												</span>
 											{:else}
-												{result.workId}
+												Obra sin metadatos
 											{/if}
 										</h3>
-										<p class="mt-1 mb-0 text-[0.9rem] text-[#4f6686]">{result.workId}</p>
 									</div>
 									<span class="shrink-0 rounded-full bg-[#eaf0fb] px-2.5 py-1 text-[0.8rem] font-semibold text-[#264a7b]">
 										score {result.score.toFixed(1)}
@@ -406,26 +1042,16 @@
 
 								<div class="mt-2 flex flex-wrap gap-1.5">
 									{#each assignments as assignment}
-										{#if assignment.match.occurrences > 1}
-											<button
-												type="button"
-												class="rounded-full border px-2 py-[2px] font-['Roboto',sans-serif] text-[0.76rem] font-medium hover:brightness-95"
-												style={`${assignment.chipStyle} cursor:pointer;`}
-												onclick={() => openOccurrenceModal(result, assignment)}
-												title="Ver todas las concurrencias"
-											>
-												{assignment.match.kind === 'phrase' ? 'Frase' : 'Término'}: {assignment.match.source}
-												({numberFormatter.format(assignment.match.occurrences)})
-											</button>
-										{:else}
-											<span
-												class="rounded-full border px-2 py-[2px] font-['Roboto',sans-serif] text-[0.76rem] font-medium"
-												style={assignment.chipStyle}
-											>
-												{assignment.match.kind === 'phrase' ? 'Frase' : 'Término'}: {assignment.match.source}
-												({numberFormatter.format(assignment.match.occurrences)})
-											</span>
-										{/if}
+										<button
+											type="button"
+											class="rounded-full border px-2 py-[2px] font-['Roboto',sans-serif] text-[0.76rem] font-medium hover:brightness-95"
+											style={`${assignment.chipStyle} cursor:pointer;`}
+											onclick={() => openOccurrenceModal(result, assignment)}
+											title="Ver concurrencias"
+										>
+											{assignment.match.kind === 'phrase' ? 'Frase' : 'Término'}: {assignment.match.source}
+											({numberFormatter.format(assignment.match.occurrences)})
+										</button>
 									{/each}
 								</div>
 							</li>
@@ -452,13 +1078,14 @@
 						{/if}
 					</p>
 				</div>
-				<button
+				<AppButton
 					type="button"
-					class="rounded-[8px] border border-[#c8d5ea] px-2.5 py-1 font-['Roboto',sans-serif] text-[0.8rem] font-medium text-[#35557d] hover:bg-[#f3f7fd]"
+					variant="ghost"
+					className="!rounded-[8px] !px-2.5 !py-1 font-['Roboto',sans-serif] text-[0.8rem] font-medium"
 					onclick={closeOccurrenceModal}
 				>
 					Cerrar
-				</button>
+				</AppButton>
 			</div>
 
 			<div class="max-h-[72vh] overflow-auto px-4 py-3">
@@ -488,6 +1115,53 @@
 				{:else}
 					<p class="m-0 text-[0.93rem] text-[#4d6485]">No hay concurrencias para mostrar.</p>
 				{/if}
+			</div>
+		</div>
+	</div>
+{/if}
+
+{#if infoModalOpen}
+	<div class="fixed inset-0 z-40 flex items-center justify-center bg-[#112742]/55 px-3 py-4">
+		<div class="max-h-[88vh] w-full max-w-[900px] overflow-hidden rounded-[12px] bg-white shadow-[0_16px_40px_rgba(4,24,56,0.33)]">
+			<div class="flex items-start justify-between gap-3 border-b border-[#d8e0ec] px-4 py-3">
+				<div>
+					<h3 class="m-0 font-['Roboto',sans-serif] text-[1.02rem] font-semibold text-[#163860]">
+						Cómo funciona TEXORO
+					</h3>
+					<p class="mt-1 mb-0 text-[0.9rem] text-[#476385]">
+						Búsqueda textual por capas sobre corpus del Siglo de Oro.
+					</p>
+				</div>
+				<AppButton
+					type="button"
+					variant="ghost"
+					className="!rounded-[8px] !px-2.5 !py-1 font-['Roboto',sans-serif] text-[0.8rem] font-medium"
+					onclick={closeInfoModal}
+				>
+					Cerrar
+				</AppButton>
+			</div>
+
+			<div class="max-h-[72vh] overflow-auto px-4 py-3">
+				<p class="m-0 text-[0.94rem] leading-[1.55] text-[#2b4568]">
+					El buscador recupera primero obras candidatas con un índice ligero y, después, verifica coincidencias exactas sobre los TXT candidatos para confirmar frase y mostrar contexto.
+				</p>
+				<h4 class="mb-0 mt-4 font-['Roboto',sans-serif] text-[0.94rem] font-semibold text-[#1f3f7a]">Consultas disponibles</h4>
+				<ul class="mb-0 mt-2 pl-5 text-[0.92rem] leading-[1.52] text-[#2b4568]">
+					<li>Palabra exacta: <code>amor</code>.</li>
+					<li>Frase exacta: <code>"amor constante"</code>.</li>
+					<li>Comodines: <code>am*</code>, <code>a*or</code>, <code>am?r</code>, <code>???</code>.</li>
+					<li>Operadores booleanos: <code>AND</code> y <code>OR</code>.</li>
+				</ul>
+				<h4 class="mb-0 mt-4 font-['Roboto',sans-serif] text-[0.94rem] font-semibold text-[#1f3f7a]">Lectura de gráficos</h4>
+				<ul class="mb-0 mt-2 pl-5 text-[0.92rem] leading-[1.52] text-[#2b4568]">
+					<li>Los gráficos se calculan en vivo con las concurrencias de los resultados mostrados.</li>
+					<li>En autoría, la concurrencia de cada obra se reparte proporcionalmente entre autores asignados.</li>
+					<li>En género, se suma el total de concurrencias por género textual.</li>
+					<li>En consultas con varios términos se activa una comparativa por autor y género con métrica seleccionable.</li>
+					<li>La métrica <code>Frecuencia/10k</code> se calcula directamente por obra y se agrega en el gráfico.</li>
+					<li>Los botones permiten alternar entre barras y circular porcentual, y descargar en PNG con cita.</li>
+				</ul>
 			</div>
 		</div>
 	</div>

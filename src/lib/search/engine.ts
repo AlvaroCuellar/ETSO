@@ -286,6 +286,7 @@ export class TexoroSearchEngine {
 			rawResults.push({
 				workId,
 				docId,
+				docTokenCount: row[4],
 				score: (retrievalScores.get(docId) ?? 0) + matchedGroups,
 				meta: workMetaById.get(workId),
 				snippet,

@@ -71,7 +71,7 @@
 <header class="sticky top-0 z-20 border-b border-[rgba(0,51,167,0.1)] bg-[rgba(255,255,255,0.94)] backdrop-blur-[6px]">
 	<div class="mx-auto w-full max-w-7xl px-4 sm:px-5 lg:px-6">
 		<div class="flex min-h-[4.75rem] items-center justify-between gap-4">
-			<a class="inline-flex items-center" href="/examen-autorias">
+			<a class="inline-flex items-center" href="/">
 				<img class="block h-[2.35rem] w-auto" src={logoEtso} alt="ETSO" />
 			</a>
 

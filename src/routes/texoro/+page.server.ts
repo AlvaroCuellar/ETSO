@@ -8,7 +8,8 @@ export const load: PageServerLoad = () => {
 		title: work.title,
 		slug: work.slug,
 		genre: work.genre,
-		shortSummary: work.shortSummary
+		shortSummary: work.shortSummary,
+		stylometryAttribution: work.stylometryAttribution
 	}));
 
 	return {

@@ -47,3 +47,84 @@
 		{/each}
 	</div>
 {/if}
+
+<style>
+	.unresolved-copy {
+		margin: 0;
+		color: #4f6686;
+		font-size: 0.82rem;
+	}
+
+	.attribution-expression {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35rem 0.45rem;
+		align-items: center;
+		font-size: 0.82rem;
+		line-height: 1.45;
+		color: #2f4668;
+	}
+
+	.attribution-group {
+		display: inline-flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.28rem;
+	}
+
+	.attribution-group a {
+		color: #224e8e;
+		text-decoration: none;
+		font-weight: 500;
+	}
+
+	.attribution-group a:hover {
+		text-decoration: underline;
+	}
+
+	.logic-operator {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0.1rem 0.3rem;
+		border-radius: 0.25rem;
+		background: #edf2f7;
+		color: #4a5f7d;
+		font-size: 0.67rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		line-height: 1;
+	}
+
+	.confidence-chip {
+		display: inline-flex;
+		align-items: center;
+		padding: 0.12rem 0.4rem;
+		border-radius: 999px;
+		font-size: 0.65rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.015em;
+		line-height: 1;
+	}
+
+	.confidence-chip--segura {
+		background: #d4edda;
+		color: #155724;
+	}
+
+	.confidence-chip--probable {
+		background: #d1ecf1;
+		color: #0c5460;
+	}
+
+	.confidence-chip--posible {
+		background: #e9ecef;
+		color: #495057;
+	}
+
+	.confidence-chip--no_concluyente {
+		background: #fff3cd;
+		color: #856404;
+	}
+</style>

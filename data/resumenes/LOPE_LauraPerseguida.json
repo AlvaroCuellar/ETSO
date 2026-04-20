@@ -1,0 +1,104 @@
+{
+  "archivo": "LOPE_LauraPerseguida.txt",
+  "titulo": "Laura perseguida",
+  "resumen_largo": [
+    "La acción se inicia con el conflicto entre el príncipe Oranteo y su padre, el rey Periandro, a causa del amor que el heredero siente por Laura, mujer noble pero de condición inferior a la suya y, por ello, juzgada como enlace indigno para la sucesión del reino. El conde Rufino prende a Oranteo por mandato del rey, que pretende apartarlo de esa relación y conducirlo a un matrimonio político con la infanta Porcia. Mientras el rey ordena registrar el palacio para encontrar a Laura, esta conversa con Leonarda y con el secretario Otavio, que le advierte del peligro y la ayuda a escapar disfrazada de paje. El disfraz le permite burlar momentáneamente al rey, pero la persecución no cesa. Oranteo, por su parte, rompe luego su prisión al saber que su padre busca a Laura para matarla. Cuando ambos se reencuentran, renuevan su fidelidad y procuran esconderse, aunque el rey insiste en desacreditar a Laura ante su hijo, negando su nobleza, su honestidad e incluso la legitimidad de los hijos que Oranteo afirma haber tenido con ella. En este primer enfrentamiento decisivo, el rey propone probar la supuesta deshonra de Laura; si lo consigue, Oranteo promete dejarla y obedecerle.",
+    "A partir de ese pacto se desencadena una serie de engaños urdidos sobre todo por Otavio, personaje de lealtad ambigua que finge servir al rey y al príncipe mientras persigue su propio provecho. Para atraer al rey, Laura disfrazada comparece ante él con el nombre fingido de Lisandra y le cuenta una falsa historia de violencia para burlarlo y demostrarle su hermosura; la burla enfurece al monarca y agrava su deseo de venganza. Después, para convencer a Oranteo de que Laura es inconstante, el rey y Otavio organizan otra traza: Leonarda se viste con las ropas de Laura y aparenta requerir a Otavio, mientras el príncipe, escondido con el rey y Rufino, cree ver con sus propios ojos la traición de su amada. Desengañado en apariencia, Oranteo se humilla ante su padre, acepta casarse con Porcia y promete olvidar a Laura, aunque en realidad sigue consumido por los celos y el deseo. Laura padece entonces las consecuencias más duras de la intriga: es acusada, encarcelada durante largo tiempo, separada de sus hijos pequeños y entregada a la opinión infamante de la corte y del vulgo. Aunque logra recuperar a los niños con ayuda de un labrador llamado Belardo, su situación empeora cuando Otavio, ya abiertamente movido por su deseo, intenta forzarla a casarse con él, manda que la traten como mujer infame y contribuye a que sus bienes y sus hijos vuelvan a quedar en peligro. Desesperada, Laura llega a intentar darse muerte en presencia de Oranteo y Porcia, pero sobrevive y sigue defendiendo su inocencia.",
+    "El desenlace se produce cuando Laura consigue hablar con Oranteo y deshacer el engaño principal, revelándole que la escena de su supuesta traición fue una ficción preparada por Otavio con ayuda de Leonarda. La propia Leonarda confirma la verdad, y así el príncipe comprende que ha sido víctima de una doble manipulación: la del rey, que quería apartarlo de Laura, y la de Otavio, que deseaba quedarse con ella. Arrepentido, Oranteo reconoce públicamente la honra de Laura, reafirma que es su verdadera mujer y decide casarse con ella sin más demora, retirándose ambos al castillo de Laura. El rey, al saberlo, marcha airado con tropas y con Porcia, dispuesto a impedir la unión; sin embargo, al llegar encuentra a la pareja ya casada y, sobre todo, se ve desarmado cuando Oranteo y Laura le presentan a sus dos hijos, sus propios nietos, convertidos en argumento decisivo de legitimidad, continuidad y ternura familiar. El conde Rufino le aconseja entonces una salida conciliadora: que perdone al príncipe, reciba a Laura y se case él mismo con Porcia. El rey acaba aceptando esta solución, depone su enemistad, integra a Laura en la familia real, perdona también a Otavio a petición de Leonarda y cierra la obra con una reconciliación general en la que el odio cede, el honor se recompone y la protagonista, tras innumerables persecuciones, ve reconocida su verdad."
+  ],
+  "resumen_breve": [
+    "En una corte regia no identificada con plena seguridad en el texto conservado, el príncipe Oranteo ama a Laura y desafía a su padre, el rey Periandro, que lo prende y la persigue porque quiere casarlo con la infanta Porcia.",
+    "Entre palacio, prisiones y el castillo de Laura, el rey y Otavio urden engaños para probar que Laura es deshonesta, y Oranteo, engañado por una falsa escena de traición, la abandona mientras ella sufre cárcel, infamia y la separación de sus hijos.",
+    "Cuando se descubre la trama de Otavio y Leonarda, Oranteo restituye la honra de Laura, se casa con ella y, ante la presencia de sus hijos, el rey termina por perdonar a la pareja y reconciliarse con su heredero."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Laura",
+      "descripcion": "Protagonista de la obra; amada y perseguida, defiende su honor frente al rey, la corte y los engaños que la presentan como mujer inconstante o infame."
+    },
+    {
+      "nombre": "Oranteo",
+      "descripcion": "Príncipe heredero e hijo del rey Periandro; ama firmemente a Laura, aunque llega a dudar de ella por los engaños ajenos, y acaba restaurando su honra."
+    },
+    {
+      "nombre": "Rey Periandro",
+      "descripcion": "Padre de Oranteo y principal perseguidor de Laura; intenta separar a los amantes para asegurar un matrimonio político y preservar, según su criterio, el honor y la sucesión del reino."
+    },
+    {
+      "nombre": "Otavio",
+      "descripcion": "Secretario del príncipe y gran artífice de las intrigas; primero aparenta servir al rey contra Laura y después intenta obtenerla para sí, desencadenando gran parte del conflicto."
+    },
+    {
+      "nombre": "Conde Rufino",
+      "descripcion": "Noble cercano al rey, ejecutor de órdenes y consejero político; prende a Oranteo, participa en las trazas contra Laura y contribuye finalmente a la solución reconciliadora."
+    },
+    {
+      "nombre": "Leonarda",
+      "descripcion": "Mujer vinculada al círculo de Laura y de Otavio; interviene en los engaños, en especial fingiendo ser Laura en la escena que induce a error a Oranteo, y más tarde ayuda a esclarecer la verdad."
+    },
+    {
+      "nombre": "Porcia",
+      "descripcion": "Infanta destinada por el rey a casarse con Oranteo; representa la alianza política y la opción dinástica que compite con el amor del príncipe por Laura."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Palacio real",
+      "descripcion": "Centro del poder y de la intriga cortesana; allí se ordenan las prisiones, se organizan los engaños contra Laura y se negocian los matrimonios políticos."
+    },
+    {
+      "nombre": "Prisión o torre de Oranteo",
+      "descripcion": "Lugar donde el príncipe es encerrado por mandato de su padre, mostrando la gravedad del conflicto entre obediencia filial y amor."
+    },
+    {
+      "nombre": "Cárcel pública",
+      "descripcion": "Espacio de humillación y sufrimiento de Laura, cuya reclusión prolongada materializa la persecución social y política que padece."
+    },
+    {
+      "nombre": "Casa o aposento de Laura en la ciudad",
+      "descripcion": "Lugar de encuentros, sospechas y vigilias nocturnas; allí se concentran los celos de Oranteo y varias de las maniobras de Otavio."
+    },
+    {
+      "nombre": "Castillo de Laura",
+      "descripcion": "Espacio vinculado a su linaje y a su nobleza; se convierte en refugio final de la pareja y en escenario de la resolución familiar y política."
+    },
+    {
+      "nombre": "La corte y la ciudad",
+      "descripcion": "Marco colectivo donde circulan rumores, juicios del vulgo y presiones sobre el honor, decisivos para agravar la caída de Laura."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Honor y honra femenina",
+      "descripcion": "La acción gira en torno a la defensa de la honestidad de Laura frente a acusaciones, apariencias engañosas y castigos desproporcionados."
+    },
+    {
+      "tema": "Amor perseguido",
+      "descripcion": "La relación entre Laura y Oranteo se sostiene contra la oposición del rey, la desigualdad social, la cárcel y los engaños cortesanos."
+    },
+    {
+      "tema": "Poder paterno y obediencia",
+      "descripcion": "El rey intenta imponer su autoridad sobre el príncipe, y la obra muestra el choque entre el mandato del padre y la voluntad amorosa del hijo."
+    },
+    {
+      "tema": "Engaño y apariencia",
+      "descripcion": "Disfraces, fingimientos y escenas preparadas alteran la percepción de los personajes y provocan decisiones erróneas de gran alcance."
+    },
+    {
+      "tema": "Desigualdad social y matrimonio",
+      "descripcion": "El conflicto nace en buena medida de la resistencia del rey a aceptar que el heredero se una a una mujer tenida por inferior en estado, pese a su nobleza y virtud."
+    },
+    {
+      "tema": "Sucesión y razón de Estado",
+      "descripcion": "El matrimonio con Porcia se plantea como solución política para asegurar la continuidad del reino, frente a la unión amorosa con Laura."
+    },
+    {
+      "tema": "Celos y manipulación emocional",
+      "descripcion": "Los celos de Oranteo, alimentados por lo que cree ver y oír, son explotados por el rey y por Otavio para apartarlo de Laura."
+    },
+    {
+      "tema": "Persecución e injusticia",
+      "descripcion": "La protagonista sufre prisión, despojo, infamia pública y amenazas de muerte, lo que convierte su historia en un proceso continuado de hostigamiento."
+    }
+  ]
+}

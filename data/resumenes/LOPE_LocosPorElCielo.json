@@ -1,0 +1,120 @@
+{
+  "archivo": "LOPE_LocosPorElCielo.txt",
+  "titulo": "Locos por el cielo, Los",
+  "resumen_largo": [
+    "La acción se sitúa en el Imperio romano, principalmente en Nicomedia, bajo el gobierno de Maximiano, que interpreta las derrotas militares y los males públicos como castigo de los dioses por la difusión del cristianismo. Aconsejado por sus allegados, decide perseguir a los cristianos y, en especial, prender a su obispo Cirilo, pues considera que eliminando al pastor dispersará al rebaño. Antes de partir a la guerra consulta el oráculo de Apolo por medio de la sacerdotisa Dona, criada en palacio y muy cercana al César. La respuesta del ídolo, «Cristo vive», produce el efecto contrario al esperado: mientras Maximiano la entiende como confirmación de que debe exterminar a los cristianos, Dona queda interiormente turbada y empieza a preguntarse si Cristo es el verdadero Dios. Poco después halla de manera prodigiosa un libro con epístolas de san Pablo, lee un pasaje que interpreta como llamada personal y, movida por esa experiencia y por la ayuda de Ágapes, cristiana ya bautizada, busca a Cirilo para recibir instrucción y el bautismo. Indes, enamorado de Dona, primero se siente herido por sus celos y por el cambio de conducta de la joven, pero al seguirla y presenciar su bautismo experimenta también una conversión súbita y pide entrar en la Iglesia.",
+    "Ya convertidos, Dona e Indes hacen voto de castidad y se reconocen como esposos del alma al servicio de Cristo. La persecución, sin embargo, se intensifica: Licinio los denuncia, Doroteo los sorprende adorando la cruz y los hace prender. Encerrados para morir de hambre, reciben milagrosamente alimento celestial, episodio que confirma su fe y provoca aún más admiración y desconcierto entre sus perseguidores. Doroteo, que al principio se mantiene fiel al mandato imperial, vacila ante lo que ve; mientras tanto, Indes y Dona, para soportar mejor la presión y protegerse de sus enemigos, fingen locura religiosa, multiplicando discursos aparentemente disparatados sobre los misterios cristianos. Antimo, sucesor de Cirilo, comprende la situación y los acoge para seguir instruyéndolos. Maximiano regresa victorioso de la guerra y recrudece la represión, irritado además por un castigo celeste en forma de tormenta que sobreviene cuando blasfema contra Cristo. Ordena nuevos edictos, manda destruir templos cristianos y prende a numerosos fieles. En paralelo, se representa en secreto una fiesta de Navidad dentro de una iglesia repleta de cristianos; la celebración es interrumpida por las fuerzas imperiales, y el texto conservado muestra a la comunidad disponiéndose al martirio colectivo antes que sacrificar a Júpiter.",
+    "En la parte final, la tragedia se concentra en los principales convertidos. Cirilo ha muerto, Antimo sostiene a los fieles desde la clandestinidad y entrega a Dona una carta para confortar a Indes y a Doroteo, ambos encarcelados. Doroteo, transformado por la visión del alma de un mártir que sube al cielo, confiesa públicamente a Cristo y pasa de perseguidor a perseguido. Maximiano manda que Antimo, Indes y Doroteo sean ejecutados y arrojados al mar con peso; después, unos pescadores sacan sus cuerpos en las redes, episodio que Dona contempla con dolor y veneración. Refugiada y disfrazada en distintos momentos para escapar de la vigilancia, ella acaba buscando también el martirio. Cuando unos soldados la encuentran en la playa, se abraza a una cruz para morir unida a Cristo; Atilio la hiere con una lanza y queda clavada o sujeta a la cruz en una imagen final de fuerte intensidad devocional. Así, la obra concluye con la muerte gloriosa de Dona, después de las de Indes, Doroteo y Antimo, y presenta la persecución imperial como ocasión de victoria espiritual para estos \"locos por el cielo\", cuyo aparente desvarío es en realidad firmeza de fe."
+  ],
+  "resumen_breve": [
+    "En la Nicomedia imperial de Maximiano, la persecución contra los cristianos se desencadena cuando el César atribuye los males de Roma a la expansión del nombre de Cristo y decide castigar a la comunidad.",
+    "Dona, sacerdotisa de Apolo criada en palacio, se convierte al cristianismo tras oír el oráculo «Cristo vive», leer las epístolas de san Pablo y buscar a Cirilo; Indes y luego Doroteo siguen el mismo camino entre cárceles, milagros y fingida locura.",
+    "Entre palacio, templos, prisiones, monasterios, montes y la playa final, la obra culmina en una cadena de martirios que exalta la fe, el bautismo, la castidad y la victoria espiritual sobre la violencia pagana."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Dona",
+      "descripcion": "Sacerdotisa de Apolo y figura central de la obra; criada por Maximiano, se convierte al cristianismo, guía a otros hacia la fe y culmina en el martirio."
+    },
+    {
+      "nombre": "Maximiano",
+      "descripcion": "César romano y principal perseguidor de los cristianos; interpreta los males del imperio como castigo divino y ordena la represión que articula la acción."
+    },
+    {
+      "nombre": "Indes",
+      "descripcion": "Servidor del César y enamorado de Dona; tras los celos iniciales se convierte, hace voto casto con ella y muere mártir."
+    },
+    {
+      "nombre": "Doroteo",
+      "descripcion": "Oficial al servicio del emperador, encargado de perseguir cristianos; pasa gradualmente de perseguidor a converso y acaba confesando a Cristo hasta la muerte."
+    },
+    {
+      "nombre": "Antimo",
+      "descripcion": "Obispo que sucede a Cirilo; sostiene a la comunidad cristiana, instruye y consuela a los fieles y termina también martirizado."
+    },
+    {
+      "nombre": "Cirilo",
+      "descripcion": "Obispo cristiano de Nicomedia, presentado como pastor principal al comienzo; su autoridad espiritual impulsa la conversión de Dona, aunque luego muere fuera de escena."
+    },
+    {
+      "nombre": "Ágapes",
+      "descripcion": "Cristiana que ayuda decisivamente a Dona a comprender el libro de san Pablo y la conduce hasta Cirilo para su bautismo."
+    },
+    {
+      "nombre": "Licinio",
+      "descripcion": "Personaje hostil a los conversos que denuncia a Dona, Ágapes e Indes como cristianos y contribuye al desarrollo de la persecución."
+    },
+    {
+      "nombre": "Teofila",
+      "descripcion": "Abadesa o superiora de un ámbito monástico femenino donde Dona se refugia; protege a la protagonista frente a la violencia de los perseguidores."
+    },
+    {
+      "nombre": "Atilio",
+      "descripcion": "Ministro o soldado del poder imperial; participa en arrestos y en la violencia final, siendo quien hiere mortalmente a Dona."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Nicomedia",
+      "descripcion": "Ciudad principal de la acción y sede del poder imperial; en ella se desarrollan la persecución, las conversiones y buena parte de los enfrentamientos entre paganismo y cristianismo."
+    },
+    {
+      "nombre": "Palacio de Maximiano",
+      "descripcion": "Espacio político desde el que se dictan edictos, se organizan castigos y se muestra la cercanía inicial de Dona al mundo pagano imperial."
+    },
+    {
+      "nombre": "Templo de Apolo",
+      "descripcion": "Lugar del oráculo decisivo de «Cristo vive»; funciona como punto de inflexión en la crisis espiritual de Dona y como símbolo del paganismo en decadencia."
+    },
+    {
+      "nombre": "Iglesia o espacios de culto cristiano",
+      "descripcion": "Ámbito de bautismo, oración y celebración comunitaria, incluido el templo donde se representa la fiesta de Navidad y donde la comunidad se prepara para el martirio."
+    },
+    {
+      "nombre": "Prisión o aposento de encierro",
+      "descripcion": "Lugar de tormento y prueba para Dona e Indes, donde reciben alimento milagroso y afianzan su fe en medio de la persecución."
+    },
+    {
+      "nombre": "Monasterio o casa de religiosas",
+      "descripcion": "Refugio temporal de Dona entre santas mujeres, bajo la protección de Teofila, frente a la búsqueda de los agentes imperiales."
+    },
+    {
+      "nombre": "Monte y cueva de Antimo",
+      "descripcion": "Espacio de clandestinidad y retiro donde el obispo se esconde, escribe cartas de consuelo y desde el que se organiza la resistencia espiritual cristiana."
+    },
+    {
+      "nombre": "Playa y mar",
+      "descripcion": "Escenario final del hallazgo de los cuerpos de Antimo, Indes y Doroteo, y también del martirio de Dona abrazada a la cruz."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Martirio cristiano",
+      "descripcion": "La obra presenta la muerte sufrida por los fieles como victoria espiritual y cumplimiento supremo de la fe, especialmente en los casos de Indes, Doroteo, Antimo y Dona."
+    },
+    {
+      "tema": "Conversión religiosa",
+      "descripcion": "El núcleo de la acción es el paso del paganismo al cristianismo, sobre todo en Dona, cuya transformación arrastra a otros personajes."
+    },
+    {
+      "tema": "Persecución imperial",
+      "descripcion": "La violencia de Maximiano contra los cristianos estructura la trama y convierte la vida pública de Nicomedia en un escenario de miedo, denuncias y castigos."
+    },
+    {
+      "tema": "Milagro y providencia",
+      "descripcion": "Visiones, libros hallados de forma prodigiosa, alimento celestial, tormentas y señales sobrenaturales muestran la intervención de Dios en la historia de los personajes."
+    },
+    {
+      "tema": "Verdadero Dios frente a idolatría",
+      "descripcion": "La obra contrapone constantemente a Cristo con Apolo, Júpiter y los dioses romanos, presentando a estos como falsos o demoníacos frente al Dios vivo."
+    },
+    {
+      "tema": "Castidad y amor espiritual",
+      "descripcion": "La relación entre Dona e Indes se redefine tras la conversión como unión casta orientada a Dios, por encima del deseo y del matrimonio mundano."
+    },
+    {
+      "tema": "Locura divina",
+      "descripcion": "El título y varios episodios insisten en que lo que el mundo pagano llama locura es, en realidad, sabiduría de fe y desapego de lo terrenal."
+    }
+  ]
+}

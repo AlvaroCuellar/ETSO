@@ -1,0 +1,104 @@
+{
+  "archivo": "AGUILAR_AmantesDeCartago.txt",
+  "titulo": "Amantes de Cartago, Los",
+  "resumen_largo": [
+    "La acción se sitúa en el marco de la guerra entre Cartago, Numidia y Roma, y arranca con la disputa por el matrimonio de Sofonisba, hija de Asdrúbal. Siface, enamorado de ella, espera que el Senado cartaginés lo elija como esposo y aliado político frente a la amenaza de Escipión, pero la decisión favorece a Macinisa, a quien se entrega Sofonisba junto con la alianza de Cartago. La alegría del vencedor dura muy poco, porque un capitán anuncia que Siface ha invadido y ocupado su reino mientras él celebraba las bodas. En consecuencia, el Senado revoca de inmediato el enlace, pues Macinisa ya no puede servir como rey confederado, y Sofonisba, aunque amaba a Macinisa, es forzada por su padre a casarse con Siface por utilidad política. La joven sale de Cartago hacia Numidia entre lamentos, consciente de que sacrifica su voluntad al interés de la ciudad y de su linaje, mientras Siface, humillado primero y luego repuesto por la fortuna, convierte su unión con Sofonisba en signo de su triunfo.",
+    "Despojado de reino y de esposa, Macinisa cae en la desesperación y busca incluso la muerte, pero termina llegando al campamento romano, donde se da a conocer ante Escipión. Allí refiere la traición de Cartago y obtiene del cónsul amistad, apoyo militar y el mando de tropas para recobrar sus estados y vengarse de Siface. Mientras tanto, Sofonisba, ya casada con Siface, declara con habilidad que el amor verdadero había sido para Macinisa y que, si muestra obediencia al nuevo marido, es por obligación más que por afecto. Cuando Macinisa vuelve con fuerzas romanas, se desencadena la guerra; Siface intenta resistir, pero es vencido, y Sofonisba queda en manos del antiguo amante. En el encuentro entre ambos se restablece la fidelidad mutua: ella asegura que ha guardado su fe para él aun dentro del matrimonio impuesto, y él le da palabra de esposo en secreto. Sin embargo, la situación se complica cuando Amatilde, hermana de Siface, se ofrece también a Macinisa con reino, cuerpo y alma, y Sofonisba, que presencia parte de la escena sin comprenderla del todo, cree verse traicionada. A ello se suma la intervención de Escipión, que al saber de la extraordinaria hermosura de Sofonisba y al considerarla botín y cautiva de Roma, decide apartarla de Macinisa y reservarla bajo su autoridad, provocando los celos, el dolor y la abierta ruptura entre los antiguos amantes y el cónsul romano.",
+    "La fase final concentra la destrucción de Cartago y el desenlace trágico de Sofonisba. Asdrúbal intenta negociar con Escipión, pero el romano mantiene el cerco; al cabo, la ciudad, acosada por el hambre y sin salida, termina aniquilándose, de manera que sus habitantes mueren por espada, veneno o necesidad antes que entregarse del todo. En el plano amoroso, Macinisa, abatido porque Escipión le arrebata a Sofonisba, recibe luego una orden decisiva: debe dar muerte a su esposa para evitar que quede en poder romano. Para cumplir sin deshonrarla, le envía un vaso con veneno, y Sofonisba lo bebe con resolución, interpretando la muerte como vía para conservar su libertad, su honor y su fidelidad amorosa. Macinisa llega demasiado tarde para salvarla y la encuentra muerta, por lo que intenta suicidarse y es contenido por los romanos. Escipión, ya arrepentido de su dureza y movido también por consideraciones políticas, acaba reparando el daño: se descubre que Lelio había sustituido el veneno por un brebaje que solo hizo parecer muerta a Sofonisba durante un tiempo, de modo que la reina revive y queda restituida a Macinisa. Como cierre conciliador, Escipión dispone además que Lelio se case con Amatilde y se embarca triunfante hacia Roma, mientras la obra concluye uniendo la resolución amorosa con la victoria militar y la ruina definitiva de la ciudad cartaginesa."
+  ],
+  "resumen_breve": [
+    "En el norte de África, durante la guerra entre Cartago, Numidia y Roma, Sofonisba ama a Macinisa, pero las mudanzas políticas del Senado cartaginés la hacen pasar primero de prometida de Macinisa a esposa forzada de Siface.",
+    "Tras perder su reino y recuperarlo con ayuda de Escipión, Macinisa derrota a Siface y vuelve a unirse secretamente con Sofonisba, aunque los celos, la cautividad de la reina y la autoridad romana agravan el conflicto.",
+    "Entre Cartago sitiada, el campamento romano y la corte numidia, la obra desarrolla temas de amor, honor, alianza política y traición, y concluye con la destrucción de Cartago, la aparente muerte y posterior restitución de Sofonisba, y la reconciliación final."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Macinisa",
+      "descripcion": "Rey numidio y principal protagonista masculino; ama a Sofonisba, pierde su reino por atender a sus bodas, lo recobra con ayuda romana y lucha por conservar a la amada frente a Siface y frente a Escipión."
+    },
+    {
+      "nombre": "Sofonisba",
+      "descripcion": "Hija de Asdrúbal y eje del conflicto amoroso y político; ama a Macinisa, es entregada por interés de Estado a Siface, queda cautiva tras la derrota de este y su destino determina el desenlace de la obra."
+    },
+    {
+      "nombre": "Siface",
+      "descripcion": "Rey rival de Macinisa y enamorado de Sofonisba; primero es rechazado por el Senado, luego invade el reino de su competidor, logra casarse con Sofonisba y finalmente es vencido y muere."
+    },
+    {
+      "nombre": "Escipión",
+      "descripcion": "Cónsul romano que interviene como gran poder militar y político; auxilia a Macinisa contra Cartago y Siface, pero también reclama autoridad sobre Sofonisba y condiciona decisivamente la resolución final."
+    },
+    {
+      "nombre": "Asdrúbal",
+      "descripcion": "Padre de Sofonisba y figura dirigente de Cartago; fuerza a su hija a aceptar el matrimonio político con Siface y aparece después como negociador ante el cerco romano."
+    },
+    {
+      "nombre": "Lelio",
+      "descripcion": "Capitán romano cercano a Escipión; participa en la custodia de Sofonisba y, en el desenlace, su intervención permite que la supuesta muerte de la reina se revele reversible."
+    },
+    {
+      "nombre": "Amatilde",
+      "descripcion": "Hermana de Siface; queda vinculada a Macinisa tras la victoria, provoca los celos de Sofonisba por un malentendido y termina destinada a Lelio."
+    },
+    {
+      "nombre": "Teleuco",
+      "descripcion": "Confidente de Siface al comienzo de la obra; escucha sus quejas amorosas y trata de moderar su desesperación."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Cartago",
+      "descripcion": "Centro político de la acción y ciudad cuyo Senado decide los matrimonios y alianzas; termina cercada por Roma y destruida, lo que da marco al desenlace bélico."
+    },
+    {
+      "nombre": "Campamento romano",
+      "descripcion": "Espacio de poder de Escipión y de reorganización militar; allí Macinisa obtiene ayuda, se decide la guerra contra Cartago y se resuelve la cuestión de Sofonisba."
+    },
+    {
+      "nombre": "Reino de Macinisa en Numidia",
+      "descripcion": "Territorio disputado entre Macinisa y Siface; su pérdida y recuperación impulsan buena parte del conflicto político y amoroso."
+    },
+    {
+      "nombre": "Palacio o corte de Siface",
+      "descripcion": "Lugar probable de la vida conyugal impuesta de Sofonisba y del encuentro entre ella y Siface antes de la ofensiva de Macinisa; el texto conservado no siempre lo precisa de forma inequívoca, pero se infiere por la acción."
+    },
+    {
+      "nombre": "Templo o aras del casamiento",
+      "descripcion": "Espacio ceremonial donde iba a celebrarse la boda de Macinisa y Sofonisba y donde irrumpe la noticia de la pérdida del reino, frustrando públicamente la unión."
+    },
+    {
+      "nombre": "Tienda de Sofonisba",
+      "descripcion": "Ámbito íntimo dentro del real romano donde la reina cautiva conversa con Lelio, recibe el vaso enviado por Macinisa y se desarrolla la escena de su aparente muerte."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Amor sometido a la política",
+      "descripcion": "La relación entre Sofonisba y Macinisa queda continuamente condicionada por las decisiones del Senado, las alianzas entre reinos y la guerra, de modo que el sentimiento privado depende del interés público."
+    },
+    {
+      "tema": "Honor y fidelidad",
+      "descripcion": "Los personajes miden sus actos por la lealtad a la palabra dada, al linaje y al vínculo amoroso; Sofonisba y Macinisa presentan su unión como una fe que debe preservarse incluso ante la muerte."
+    },
+    {
+      "tema": "Traición e inestabilidad política",
+      "descripcion": "Cartago cambia de aliado y de criterio según su conveniencia, y esa falta de firmeza desencadena invasiones, rupturas matrimoniales y venganzas militares."
+    },
+    {
+      "tema": "Guerra y conquista",
+      "descripcion": "La obra muestra campañas, asedios, derrotas, cautiverios y destrucción de ciudades, integrando la historia militar en el desarrollo del conflicto dramático."
+    },
+    {
+      "tema": "Poder romano",
+      "descripcion": "Escipión aparece como árbitro de la suerte de los reyes africanos, capaz de elevar, someter o separar a los protagonistas según los intereses de Roma."
+    },
+    {
+      "tema": "Celos y malentendidos amorosos",
+      "descripcion": "La sospecha de infidelidad, especialmente en torno a Amatilde y a la custodia de Sofonisba, provoca crisis emocionales que complican aún más el desenlace."
+    },
+    {
+      "tema": "Muerte aparente y restitución final",
+      "descripcion": "La obra lleva el conflicto al extremo con el vaso que Sofonisba bebe para no caer en poder ajeno, pero finalmente transforma la tragedia en reparación mediante su recuperación."
+    }
+  ]
+}

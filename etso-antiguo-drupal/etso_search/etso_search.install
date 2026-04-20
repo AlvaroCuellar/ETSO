@@ -1,0 +1,1008 @@
+<?php
+
+declare(strict_types=1);
+
+use Drupal\block_content\Entity\BlockContent;
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\menu_link_content\Entity\MenuLinkContent;
+use Drupal\node\Entity\Node;
+use Drupal\paragraphs\Entity\Paragraph;
+use Drupal\path_alias\Entity\PathAlias;
+use Drupal\redirect\Entity\Redirect;
+use Drupal\taxonomy\Entity\Vocabulary;
+
+/**
+ * Creates and wires the definitive Examen de autorias experience.
+ */
+function etso_search_update_9001(): string {
+  $langcode = \Drupal::languageManager()->getDefaultLanguage()->getId();
+
+  $intro_block = etso_search_ensure_intro_block($langcode);
+  \Drupal::state()->set('etso_search.examen_autorias_intro_block_uuid', $intro_block->uuid());
+
+  $bicuve_node = etso_search_ensure_bicuve_page();
+  etso_search_ensure_alias('/node/' . $bicuve_node->id(), '/bicuve', $langcode);
+
+  $menu_name = 'main';
+  $more_info = etso_search_ensure_menu_link($menu_name, 'Más información', 'internal:/#', [
+    'weight' => -46,
+    'expanded' => TRUE,
+    'parent' => '',
+  ]);
+  $parent_plugin_id = 'menu_link_content:' . $more_info->uuid();
+
+  etso_search_ensure_menu_link($menu_name, 'EXAMEN DE AUTORÍAS', 'internal:/examen-autorias', [
+    'weight' => -50,
+    'expanded' => FALSE,
+    'parent' => '',
+  ]);
+  etso_search_ensure_menu_link($menu_name, 'TEXORO', 'entity:node/2990', [
+    'weight' => -49,
+    'expanded' => FALSE,
+    'parent' => '',
+  ]);
+  etso_search_ensure_menu_link($menu_name, 'BICUVE', 'entity:node/' . $bicuve_node->id(), [
+    'weight' => -48,
+    'expanded' => FALSE,
+    'parent' => '',
+  ]);
+  etso_search_ensure_menu_link($menu_name, 'Cómo citarnos', 'entity:node/9', [
+    'weight' => -47,
+    'expanded' => FALSE,
+    'parent' => '',
+  ]);
+
+  etso_search_move_secondary_links_under_parent($menu_name, $parent_plugin_id, [
+    'EXAMEN DE AUTORÍAS',
+    'TEXORO',
+    'BICUVE',
+    'Cómo citarnos',
+    'Más información',
+  ]);
+
+  etso_search_remove_alias('/cetso');
+
+  if (\Drupal::moduleHandler()->moduleExists('redirect')) {
+    etso_search_ensure_redirect('buscador-examen-de-autorias', 'internal:/examen-autorias', $langcode);
+    etso_search_ensure_redirect('cetso', 'internal:/examen-autorias', $langcode);
+  }
+
+  return 'Examen de autorias moved to /examen-autorias with intro block, menu updates and redirects.';
+}
+
+/**
+ * Ensures intro custom block exists and stores initial content.
+ */
+function etso_search_ensure_intro_block(string $langcode): BlockContent {
+  $uuid = \Drupal::state()->get('etso_search.examen_autorias_intro_block_uuid');
+  if (!empty($uuid)) {
+    $ids = \Drupal::entityTypeManager()
+      ->getStorage('block_content')
+      ->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('uuid', $uuid)
+      ->range(0, 1)
+      ->execute();
+    if (!empty($ids)) {
+      $block = BlockContent::load((int) reset($ids));
+      if ($block) {
+        return $block;
+      }
+    }
+  }
+
+  $existing_ids = \Drupal::entityTypeManager()
+    ->getStorage('block_content')
+    ->getQuery()
+    ->accessCheck(FALSE)
+    ->condition('type', 'basic')
+    ->condition('info', 'Intro Examen de autorías')
+    ->range(0, 1)
+    ->execute();
+  if (!empty($existing_ids)) {
+    $block = BlockContent::load((int) reset($existing_ids));
+    if ($block) {
+      return $block;
+    }
+  }
+
+  $format = etso_search_get_preferred_text_format();
+  $initial_html = etso_search_get_cetso_intro_markup();
+  if ($initial_html === '') {
+    $initial_html = '<p>Contenido introductorio editable del Examen de autorías.</p>';
+  }
+
+  $block = BlockContent::create([
+    'type' => 'basic',
+    'langcode' => $langcode,
+    'info' => 'Intro Examen de autorías',
+    'reusable' => TRUE,
+    'body' => [
+      'value' => $initial_html,
+      'format' => $format,
+    ],
+  ]);
+  $block->save();
+
+  return $block;
+}
+
+/**
+ * Returns initial intro markup based on the legacy CETSO page content.
+ */
+function etso_search_get_cetso_intro_markup(): string {
+  $node = Node::load(4);
+  if (!$node) {
+    return '';
+  }
+
+  if ($node->hasField('field_paragraphs') && !$node->get('field_paragraphs')->isEmpty()) {
+    $view_builder = \Drupal::entityTypeManager()->getViewBuilder('node');
+    $build = $view_builder->viewField($node->get('field_paragraphs'));
+    return (string) \Drupal::service('renderer')->renderRoot($build);
+  }
+
+  if ($node->hasField('body') && !$node->get('body')->isEmpty()) {
+    return (string) $node->get('body')->value;
+  }
+
+  return '';
+}
+
+/**
+ * Ensures a published BICUVE page exists.
+ */
+function etso_search_ensure_bicuve_page(): Node {
+  $ids = \Drupal::entityTypeManager()
+    ->getStorage('node')
+    ->getQuery()
+    ->accessCheck(FALSE)
+    ->condition('type', 'page')
+    ->condition('title', 'BICUVE')
+    ->range(0, 1)
+    ->execute();
+
+  if (!empty($ids)) {
+    $node = Node::load((int) reset($ids));
+    if ($node) {
+      if (!$node->isPublished()) {
+        $node->setPublished(TRUE);
+        $node->save();
+      }
+      return $node;
+    }
+  }
+
+  $node = Node::create([
+    'type' => 'page',
+    'title' => 'BICUVE',
+    'status' => 1,
+    'body' => [
+      'value' => '<p>Contenido en preparación.</p>',
+      'format' => etso_search_get_preferred_text_format(),
+    ],
+  ]);
+  $node->save();
+
+  return $node;
+}
+
+/**
+ * Creates or updates an alias for a system path.
+ */
+function etso_search_ensure_alias(string $path, string $alias, string $langcode): void {
+  $storage = \Drupal::entityTypeManager()->getStorage('path_alias');
+  $ids = $storage->getQuery()
+    ->accessCheck(FALSE)
+    ->condition('alias', $alias)
+    ->range(0, 1)
+    ->execute();
+
+  if (!empty($ids)) {
+    $entity = PathAlias::load((int) reset($ids));
+    if ($entity) {
+      if ($entity->getPath() !== $path || $entity->language()->getId() !== $langcode) {
+        $entity->setPath($path);
+        $entity->set('langcode', $langcode);
+        $entity->save();
+      }
+      return;
+    }
+  }
+
+  $alias_entity = PathAlias::create([
+    'path' => $path,
+    'alias' => $alias,
+    'langcode' => $langcode,
+  ]);
+  $alias_entity->save();
+}
+
+/**
+ * Removes all aliases matching a given alias path.
+ */
+function etso_search_remove_alias(string $alias): void {
+  $storage = \Drupal::entityTypeManager()->getStorage('path_alias');
+  $ids = $storage->getQuery()
+    ->accessCheck(FALSE)
+    ->condition('alias', $alias)
+    ->execute();
+
+  if (empty($ids)) {
+    return;
+  }
+
+  $aliases = $storage->loadMultiple($ids);
+  foreach ($aliases as $item) {
+    $item->delete();
+  }
+}
+
+/**
+ * Ensures a main menu link exists and has expected properties.
+ */
+function etso_search_ensure_menu_link(string $menu_name, string $title, string $uri, array $overrides = []): MenuLinkContent {
+  $ids = \Drupal::entityTypeManager()
+    ->getStorage('menu_link_content')
+    ->getQuery()
+    ->accessCheck(FALSE)
+    ->condition('menu_name', $menu_name)
+    ->condition('title', $title)
+    ->range(0, 1)
+    ->execute();
+
+  $defaults = [
+    'parent' => '',
+    'weight' => 0,
+    'expanded' => FALSE,
+    'enabled' => TRUE,
+  ];
+  $values = $overrides + $defaults;
+
+  if (!empty($ids)) {
+    $link = MenuLinkContent::load((int) reset($ids));
+    if ($link) {
+      $link->set('link', ['uri' => $uri]);
+      $link->set('parent', $values['parent']);
+      $link->set('weight', $values['weight']);
+      $link->set('expanded', $values['expanded']);
+      $link->set('enabled', $values['enabled']);
+      $link->save();
+      return $link;
+    }
+  }
+
+  $link = MenuLinkContent::create([
+    'title' => $title,
+    'menu_name' => $menu_name,
+    'link' => ['uri' => $uri],
+    'parent' => $values['parent'],
+    'weight' => $values['weight'],
+    'expanded' => $values['expanded'],
+    'enabled' => $values['enabled'],
+  ]);
+  $link->save();
+
+  return $link;
+}
+
+/**
+ * Moves secondary top-level links under a parent menu link.
+ */
+function etso_search_move_secondary_links_under_parent(string $menu_name, string $parent_plugin_id, array $keep_titles): void {
+  $storage = \Drupal::entityTypeManager()->getStorage('menu_link_content');
+  $ids = $storage->getQuery()
+    ->accessCheck(FALSE)
+    ->condition('menu_name', $menu_name)
+    ->condition('enabled', 1)
+    ->execute();
+
+  if (empty($ids)) {
+    return;
+  }
+
+  /** @var \Drupal\menu_link_content\Entity\MenuLinkContent[] $links */
+  $links = $storage->loadMultiple($ids);
+  $children = [];
+  foreach ($links as $link) {
+    $parent = (string) $link->get('parent')->value;
+    if ($parent !== '') {
+      continue;
+    }
+    if (in_array($link->getTitle(), $keep_titles, TRUE)) {
+      continue;
+    }
+    $children[] = $link;
+  }
+
+  usort($children, static function (MenuLinkContent $a, MenuLinkContent $b): int {
+    return $a->getWeight() <=> $b->getWeight();
+  });
+
+  $weight = 0;
+  foreach ($children as $child) {
+    $child->set('parent', $parent_plugin_id);
+    $child->set('weight', $weight++);
+    $child->save();
+  }
+}
+
+/**
+ * Creates or updates a 301 redirect.
+ */
+function etso_search_ensure_redirect(string $source_path, string $destination_uri, string $langcode): void {
+  $source_path = ltrim($source_path, '/');
+
+  $storage = \Drupal::entityTypeManager()->getStorage('redirect');
+  $ids = $storage->getQuery()
+    ->accessCheck(FALSE)
+    ->condition('redirect_source.path', $source_path)
+    ->condition('language', $langcode)
+    ->range(0, 1)
+    ->execute();
+
+  if (!empty($ids)) {
+    $redirect = Redirect::load((int) reset($ids));
+    if ($redirect) {
+      $redirect->set('redirect_redirect', ['uri' => $destination_uri]);
+      $redirect->setStatusCode(301);
+      $redirect->save();
+      return;
+    }
+  }
+
+  $redirect = Redirect::create([
+    'redirect_source' => [
+      'path' => $source_path,
+      'query' => [],
+    ],
+    'redirect_redirect' => [
+      'uri' => $destination_uri,
+      'options' => [],
+    ],
+    'language' => $langcode,
+    'status_code' => 301,
+  ]);
+  $redirect->save();
+}
+
+/**
+ * Makes node/4 the canonical Examen de autorias page with embedded search.
+ */
+function etso_search_update_9002(): string {
+  $langcode = \Drupal::languageManager()->getDefaultLanguage()->getId();
+
+  etso_search_ensure_alias('/node/4', '/examen-autorias', $langcode);
+  etso_search_remove_alias('/cetso');
+
+  etso_search_ensure_menu_link('main', 'EXAMEN DE AUTORÍAS', 'entity:node/4', [
+    'weight' => -50,
+    'expanded' => FALSE,
+    'parent' => '',
+  ]);
+
+  $changed = etso_search_replace_legacy_cetso_blocks_in_node4();
+
+  if (\Drupal::moduleHandler()->moduleExists('redirect')) {
+    etso_search_ensure_redirect('buscador-examen-de-autorias', 'internal:/examen-autorias', $langcode);
+    etso_search_ensure_redirect('cetso', 'internal:/examen-autorias', $langcode);
+  }
+
+  return 'Node 4 restored as canonical /examen-autorias with embedded new search. Paragraph changes: ' . $changed;
+}
+
+/**
+ * Fixes nested CETSO legacy blocks replacement inside node/4 paragraphs.
+ */
+function etso_search_update_9003(): string {
+  $changed = etso_search_replace_legacy_cetso_blocks_nested_in_node4();
+  return 'Nested paragraph migration for node/4 executed. Changes: ' . $changed;
+}
+
+/**
+ * Replaces legacy CETSO view blocks in node/4 with the new search block.
+ */
+function etso_search_replace_legacy_cetso_blocks_in_node4(): string {
+  $node = Node::load(4);
+  if (!$node || !$node->hasField('field_paragraphs')) {
+    return 'node-4-not-available';
+  }
+
+  $legacy_plugins = [
+    'views_block:cetso-block_1',
+    'views_block:cetso-block_2',
+  ];
+  $new_plugin = 'etso_search_examen_autorias_block';
+  $new_settings = [
+    'id' => $new_plugin,
+    'label' => '',
+    'label_display' => FALSE,
+    'provider' => 'etso_search',
+  ];
+
+  $kept_refs = [];
+  $legacy_removed = 0;
+  $has_new_block = FALSE;
+
+  foreach ($node->get('field_paragraphs')->referencedEntities() as $paragraph) {
+    $keep = TRUE;
+
+    if ($paragraph->bundle() === 'block' && $paragraph->hasField('field_paragraphs_block') && !$paragraph->get('field_paragraphs_block')->isEmpty()) {
+      $plugin_id = (string) $paragraph->get('field_paragraphs_block')->first()->plugin_id;
+      if (in_array($plugin_id, $legacy_plugins, TRUE)) {
+        $keep = FALSE;
+        $legacy_removed++;
+      }
+      elseif ($plugin_id === $new_plugin) {
+        $has_new_block = TRUE;
+      }
+    }
+
+    if ($keep) {
+      $kept_refs[] = [
+        'target_id' => $paragraph->id(),
+        'target_revision_id' => $paragraph->getRevisionId(),
+      ];
+    }
+  }
+
+  $added_new = 0;
+  if (!$has_new_block) {
+    $paragraph = Paragraph::create([
+      'type' => 'block',
+      'field_paragraphs_block' => [
+        'plugin_id' => $new_plugin,
+        'settings' => $new_settings,
+      ],
+    ]);
+    $paragraph->save();
+
+    $kept_refs[] = [
+      'target_id' => $paragraph->id(),
+      'target_revision_id' => $paragraph->getRevisionId(),
+    ];
+    $added_new = 1;
+  }
+
+  if ($legacy_removed === 0 && $added_new === 0) {
+    return 'already-updated';
+  }
+
+  $node->setNewRevision(TRUE);
+  $node->setRevisionLogMessage('Replace CETSO legacy blocks with embedded Examen de autorías search block.');
+  $node->set('field_paragraphs', $kept_refs);
+  $node->save();
+
+  return 'legacy-removed:' . $legacy_removed . ',new-added:' . $added_new;
+}
+
+/**
+ * Replaces nested legacy CETSO blocks and ensures one embedded block exists.
+ */
+function etso_search_replace_legacy_cetso_blocks_nested_in_node4(): string {
+  $node = Node::load(4);
+  if (!$node || !$node->hasField('field_paragraphs')) {
+    return 'node-4-not-available';
+  }
+
+  $legacy_plugins = [
+    'views_block:cetso-block_1',
+    'views_block:cetso-block_2',
+  ];
+  $new_plugin = 'etso_search_examen_autorias_block';
+  $new_settings = [
+    'id' => $new_plugin,
+    'label' => '',
+    'label_display' => FALSE,
+    'provider' => 'etso_search',
+  ];
+  $nested_fields = ['field_paragraph_content', 'field_paragraph_content2', 'field_paragraph_content3'];
+
+  $parents_kept = [];
+  $node_changed = FALSE;
+  $top_level_new_removed = 0;
+  $legacy_removed = 0;
+  $has_new_nested = FALSE;
+  $insert_parent = NULL;
+
+  foreach ($node->get('field_paragraphs')->referencedEntities() as $parent) {
+    $is_top_level_new = FALSE;
+    if ($parent->bundle() === 'block' && $parent->hasField('field_paragraphs_block') && !$parent->get('field_paragraphs_block')->isEmpty()) {
+      $plugin_id = (string) $parent->get('field_paragraphs_block')->first()->plugin_id;
+      if ($plugin_id === $new_plugin) {
+        $is_top_level_new = TRUE;
+      }
+    }
+
+    if ($is_top_level_new) {
+      $top_level_new_removed++;
+      $node_changed = TRUE;
+      continue;
+    }
+
+    $parent_changed = FALSE;
+
+    foreach ($nested_fields as $field_name) {
+      if (!$parent->hasField($field_name)) {
+        continue;
+      }
+      if ($parent->get($field_name)->isEmpty()) {
+        continue;
+      }
+
+      $child_refs = [];
+      foreach ($parent->get($field_name)->referencedEntities() as $child) {
+        $is_block = $child->bundle() === 'block' && $child->hasField('field_paragraphs_block') && !$child->get('field_paragraphs_block')->isEmpty();
+        if ($is_block) {
+          $plugin_id = (string) $child->get('field_paragraphs_block')->first()->plugin_id;
+          if (in_array($plugin_id, $legacy_plugins, TRUE)) {
+            $legacy_removed++;
+            $parent_changed = TRUE;
+            $insert_parent = $parent;
+            continue;
+          }
+          if ($plugin_id === $new_plugin) {
+            $has_new_nested = TRUE;
+          }
+        }
+
+        $child_refs[] = [
+          'target_id' => $child->id(),
+          'target_revision_id' => $child->getRevisionId(),
+        ];
+      }
+
+      if ($parent_changed) {
+        $parent->set($field_name, $child_refs);
+      }
+    }
+
+    if ($parent_changed) {
+      $parent->setNewRevision(TRUE);
+      $parent->save();
+      $node_changed = TRUE;
+    }
+
+    $parents_kept[] = $parent;
+  }
+
+  $added_new = 0;
+  if (!$has_new_nested) {
+    if (!$insert_parent) {
+      foreach ($parents_kept as $candidate) {
+        if ($candidate->hasField('field_paragraph_content')) {
+          $insert_parent = $candidate;
+        }
+      }
+    }
+
+    if ($insert_parent && $insert_parent->hasField('field_paragraph_content')) {
+      $new_block_paragraph = Paragraph::create([
+        'type' => 'block',
+        'field_paragraphs_block' => [
+          'plugin_id' => $new_plugin,
+          'settings' => $new_settings,
+        ],
+      ]);
+      $new_block_paragraph->save();
+
+      $existing_refs = [];
+      foreach ($insert_parent->get('field_paragraph_content')->referencedEntities() as $child) {
+        $existing_refs[] = [
+          'target_id' => $child->id(),
+          'target_revision_id' => $child->getRevisionId(),
+        ];
+      }
+      $existing_refs[] = [
+        'target_id' => $new_block_paragraph->id(),
+        'target_revision_id' => $new_block_paragraph->getRevisionId(),
+      ];
+
+      $insert_parent->set('field_paragraph_content', $existing_refs);
+      $insert_parent->setNewRevision(TRUE);
+      $insert_parent->save();
+      $node_changed = TRUE;
+      $added_new = 1;
+    }
+  }
+
+  if (!$node_changed && $legacy_removed === 0 && $added_new === 0) {
+    return 'already-updated';
+  }
+
+  $node_refs = [];
+  foreach ($parents_kept as $parent) {
+    $node_refs[] = [
+      'target_id' => $parent->id(),
+      'target_revision_id' => $parent->getRevisionId(),
+    ];
+  }
+
+  $node->set('field_paragraphs', $node_refs);
+  $node->setNewRevision(TRUE);
+  $node->setRevisionLogMessage('Normalize nested CETSO blocks to embedded Examen de autorías block.');
+  $node->save();
+
+  return 'legacy-removed:' . $legacy_removed . ',nested-new-added:' . $added_new . ',top-level-new-removed:' . $top_level_new_removed;
+}
+
+/**
+ * Adds Repercusion under "Mas informacion" and ensures dropdown depth.
+ */
+function etso_search_update_9004(): string {
+  $summary = [];
+
+  $menu_storage = \Drupal::entityTypeManager()->getStorage('menu_link_content');
+  $more_info_ids = $menu_storage->getQuery()
+    ->accessCheck(FALSE)
+    ->condition('menu_name', 'main')
+    ->condition('title', 'Más información')
+    ->range(0, 1)
+    ->execute();
+
+  if (!empty($more_info_ids)) {
+    $more_info = MenuLinkContent::load((int) reset($more_info_ids));
+    if ($more_info) {
+      $parent = 'menu_link_content:' . $more_info->uuid();
+
+      $repercusion_ids = $menu_storage->getQuery()
+        ->accessCheck(FALSE)
+        ->condition('menu_name', 'main')
+        ->condition('title', 'Repercusión')
+        ->range(0, 1)
+        ->execute();
+
+      if (!empty($repercusion_ids)) {
+        $repercusion = MenuLinkContent::load((int) reset($repercusion_ids));
+        if ($repercusion) {
+          $changed = FALSE;
+          if ((int) $repercusion->get('enabled')->value !== 1) {
+            $repercusion->set('enabled', TRUE);
+            $changed = TRUE;
+          }
+          if ((string) $repercusion->get('parent')->value !== $parent) {
+            $repercusion->set('parent', $parent);
+            $changed = TRUE;
+          }
+          if ((int) $repercusion->getWeight() !== 2) {
+            $repercusion->set('weight', 2);
+            $changed = TRUE;
+          }
+          if ($changed) {
+            $repercusion->save();
+            $summary[] = 'repercusion-updated';
+          }
+          else {
+            $summary[] = 'repercusion-already-ok';
+          }
+        }
+      }
+      else {
+        $summary[] = 'repercusion-not-found';
+      }
+    }
+  }
+  else {
+    $summary[] = 'mas-informacion-not-found';
+  }
+
+  $menu_block = \Drupal::configFactory()->getEditable('block.block.etso_main_menu');
+  if ($menu_block->get('settings.depth') !== 2) {
+    $menu_block->set('settings.depth', 2)->save(TRUE);
+    $summary[] = 'menu-depth-set-2';
+  }
+  else {
+    $summary[] = 'menu-depth-already-2';
+  }
+
+  return implode(', ', $summary);
+}
+
+/**
+ * Enables "incluir en examen de autorias" for all current obra nodes.
+ */
+function etso_search_update_9005(): string {
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $bundle_info = \Drupal::service('entity_type.bundle.info');
+
+  $node_bundles = $bundle_info->getBundleInfo('node');
+  if (!isset($node_bundles['obra'])) {
+    return 'obra-bundle-not-found';
+  }
+
+  $field_definitions = \Drupal::service('entity_field.manager')->getFieldDefinitions('node', 'obra');
+  if (!isset($field_definitions['field_incluir_examen_autorias'])) {
+    return 'field-incluir-examen-autorias-not-found';
+  }
+
+  $storage = $entity_type_manager->getStorage('node');
+  $nids = $storage->getQuery()
+    ->accessCheck(FALSE)
+    ->condition('type', 'obra')
+    ->sort('nid')
+    ->execute();
+
+  if (empty($nids)) {
+    return 'no-obra-nodes-found';
+  }
+
+  $updated = 0;
+  $already_enabled = 0;
+  $processed = 0;
+
+  foreach (array_chunk($nids, 100) as $chunk) {
+    /** @var \Drupal\node\NodeInterface[] $nodes */
+    $nodes = $storage->loadMultiple($chunk);
+    foreach ($nodes as $node) {
+      $processed++;
+      $current_value = (int) $node->get('field_incluir_examen_autorias')->value;
+      if ($current_value === 1) {
+        $already_enabled++;
+        continue;
+      }
+
+      $node->set('field_incluir_examen_autorias', 1);
+      $node->save();
+      $updated++;
+    }
+  }
+
+  return sprintf(
+    'processed:%d, updated:%d, already-enabled:%d',
+    $processed,
+    $updated,
+    $already_enabled
+  );
+}
+
+/**
+ * Adds editable display title field and populates it for existing obras.
+ */
+function etso_search_update_9006(): string {
+  $summary = [];
+
+  $storage = FieldStorageConfig::loadByName('node', 'field_titulo_mostrado');
+  if (!$storage) {
+    FieldStorageConfig::create([
+      'field_name' => 'field_titulo_mostrado',
+      'entity_type' => 'node',
+      'type' => 'string',
+      'cardinality' => 1,
+      'translatable' => FALSE,
+      'settings' => [
+        'max_length' => 512,
+      ],
+    ])->save();
+    $summary[] = 'storage-created';
+  }
+  else {
+    $summary[] = 'storage-exists';
+  }
+
+  $field = FieldConfig::loadByName('node', 'obra', 'field_titulo_mostrado');
+  if (!$field) {
+    FieldConfig::create([
+      'field_name' => 'field_titulo_mostrado',
+      'entity_type' => 'node',
+      'bundle' => 'obra',
+      'label' => 'Título mostrado',
+      'description' => 'Título visible (editable) para buscador y ficha. Si está vacío, se usa el título original.',
+      'required' => FALSE,
+      'translatable' => FALSE,
+      'settings' => [],
+    ])->save();
+    $summary[] = 'field-created';
+  }
+  else {
+    $summary[] = 'field-exists';
+  }
+
+  $form_display = EntityFormDisplay::load('node.obra.default');
+  if ($form_display) {
+    $form_display->setComponent('field_titulo_mostrado', [
+      'type' => 'string_textfield',
+      'weight' => 4,
+      'settings' => [
+        'size' => 120,
+        'placeholder' => '',
+      ],
+      'third_party_settings' => [],
+    ])->save();
+    $summary[] = 'form-display-updated';
+  }
+
+  $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+  $nids = $node_storage->getQuery()
+    ->accessCheck(FALSE)
+    ->condition('type', 'obra')
+    ->sort('nid')
+    ->execute();
+
+  $updated = 0;
+  $kept = 0;
+  foreach (array_chunk($nids, 100) as $chunk) {
+    $nodes = $node_storage->loadMultiple($chunk);
+    foreach ($nodes as $node) {
+      if (!$node->hasField('field_titulo_mostrado')) {
+        continue;
+      }
+      $current = trim((string) $node->get('field_titulo_mostrado')->value);
+      if ($current !== '') {
+        $kept++;
+        continue;
+      }
+
+      $title = (string) $node->getTitle();
+      $display = etso_search_titulo_mostrado_desde_original($title);
+      if ($display === '') {
+        continue;
+      }
+      $node->set('field_titulo_mostrado', $display);
+      $node->save();
+      $updated++;
+    }
+  }
+
+  $summary[] = 'updated:' . $updated;
+  $summary[] = 'kept:' . $kept;
+
+  return implode(', ', $summary);
+}
+
+/**
+ * Picks the best available text format.
+ */
+function etso_search_get_preferred_text_format(): string {
+  $candidates = ['full_html', 'basic_html', 'filtered_html', 'plain_text'];
+  $storage = \Drupal::entityTypeManager()->getStorage('filter_format');
+
+  foreach ($candidates as $candidate) {
+    $format = $storage->load($candidate);
+    if ($format) {
+      return $candidate;
+    }
+  }
+
+  $formats = $storage->loadMultiple();
+  if (!empty($formats)) {
+    return (string) array_key_first($formats);
+  }
+
+  return 'plain_text';
+}
+
+/**
+ * Converts trailing-article title style into display style.
+ */
+function etso_search_titulo_mostrado_desde_original(string $titulo): string {
+  if (function_exists('_etso_normalizer_titulo_mostrado')) {
+    return _etso_normalizer_titulo_mostrado($titulo);
+  }
+
+  $titulo = trim($titulo);
+  if ($titulo === '') {
+    return '';
+  }
+
+  if (!preg_match('/^(.+?),\s*(el|la|los|las|lo)(\s*\(.*\))?$/iu', $titulo, $matches)) {
+    return $titulo;
+  }
+
+  $nucleo = trim($matches[1]);
+  $articulo = mb_convert_case(trim($matches[2]), MB_CASE_TITLE, 'UTF-8');
+  $sufijo = isset($matches[3]) ? trim((string) $matches[3]) : '';
+  $primera = mb_substr($nucleo, 0, 1, 'UTF-8');
+  $resto = mb_substr($nucleo, 1, NULL, 'UTF-8');
+  $nucleo = mb_strtolower($primera, 'UTF-8') . $resto;
+
+  return trim($articulo . ' ' . $nucleo . ($sufijo !== '' ? ' ' . $sufijo : ''));
+}
+
+/**
+ * Removes unused obra title taxonomy field and its empty vocabulary.
+ */
+function etso_search_update_9007(): string {
+  $summary = [];
+  $field_name = 'field_titulo_de_obra';
+
+  $field = FieldConfig::loadByName('node', 'obra', $field_name);
+  if ($field) {
+    $field->delete();
+    $summary[] = 'field-deleted';
+  }
+  else {
+    $summary[] = 'field-missing';
+  }
+
+  $form_display_storage = \Drupal::entityTypeManager()->getStorage('entity_form_display');
+  $form_display = $form_display_storage->load('node.obra.default');
+  if ($form_display && $form_display->getComponent($field_name)) {
+    $form_display->removeComponent($field_name);
+    $form_display->save();
+    $summary[] = 'form-display-cleaned';
+  }
+  else {
+    $summary[] = 'form-display-unchanged';
+  }
+
+  $view_display_storage = \Drupal::entityTypeManager()->getStorage('entity_view_display');
+  $view_displays = $view_display_storage->loadByProperties([
+    'targetEntityType' => 'node',
+    'bundle' => 'obra',
+  ]);
+  $view_display_cleaned = 0;
+  foreach ($view_displays as $view_display) {
+    if ($view_display->getComponent($field_name)) {
+      $view_display->removeComponent($field_name);
+      $view_display->save();
+      $view_display_cleaned++;
+    }
+  }
+  $summary[] = 'view-displays-cleaned:' . $view_display_cleaned;
+
+  $storage = FieldStorageConfig::loadByName('node', $field_name);
+  if ($storage) {
+    $storage->delete();
+    $summary[] = 'storage-deleted';
+  }
+  else {
+    $summary[] = 'storage-missing';
+  }
+
+  $vocabulary = Vocabulary::load('obra_titulo');
+  if ($vocabulary) {
+    $vocabulary->delete();
+    $summary[] = 'vocabulary-deleted';
+  }
+  else {
+    $summary[] = 'vocabulary-missing';
+  }
+
+  return implode(', ', $summary);
+}
+
+/**
+ * Removes "Pie Informes" block placement and source block content.
+ */
+function etso_search_update_9008(): string {
+  $summary = [];
+
+  $block_storage = \Drupal::entityTypeManager()->getStorage('block');
+  foreach (['pieinformes', 'stark_pieinformes'] as $block_id) {
+    $block = $block_storage->load($block_id);
+    if ($block) {
+      $block->delete();
+      $summary[] = 'block-deleted:' . $block_id;
+    }
+    else {
+      $summary[] = 'block-missing:' . $block_id;
+    }
+  }
+
+  $content_storage = \Drupal::entityTypeManager()->getStorage('block_content');
+  $deleted_content = 0;
+
+  $by_uuid = $content_storage->loadByProperties([
+    'uuid' => 'caa57329-1d25-4afd-9529-cb11f1400fd4',
+  ]);
+  foreach ($by_uuid as $block_content) {
+    $block_content->delete();
+    $deleted_content++;
+  }
+
+  if ($deleted_content === 0) {
+    $by_info = $content_storage->loadByProperties([
+      'info' => 'Pie Informes',
+    ]);
+    foreach ($by_info as $block_content) {
+      $block_content->delete();
+      $deleted_content++;
+    }
+  }
+
+  $summary[] = 'block-content-deleted:' . $deleted_content;
+
+  return implode(', ', $summary);
+}

@@ -1,0 +1,469 @@
+{#
+/**
+ * @file
+ * Template mejorado para visualización de Obra
+ */
+#}
+{{ attach_library('bootstrap_barrio/node') }}
+{{ attach_library('etso/obra') }}
+
+{%
+  set classes = [
+    'node',
+    'node--type-' ~ node.bundle|clean_class,
+    node.isPromoted() ? 'node--promoted',
+    node.isSticky() ? 'node--sticky',
+    not node.isPublished() ? 'node--unpublished',
+    view_mode ? 'node--view-mode-' ~ view_mode|clean_class,
+    'clearfix',
+  ]
+%}
+
+<article{{ attributes.addClass(classes) }}>
+  {{ title_prefix }}
+  {{ title_suffix }}
+
+  <div{{ content_attributes.addClass('node__content') }}>
+    <div class="obra-view-wrapper">
+
+      {% set breadcrumb_items = [
+        {'title': 'Examen de autorías', 'url': '/examen-autorias'},
+        {'title': node.field_titulo_mostrado.value|default(obra_titulo|default(node.getTitle())), 'url': null},
+      ] %}
+      {% include '@etso/includes/node-breadcrumb.html.twig' with { items: breadcrumb_items } only %}
+
+      {# Header con información principal #}
+      <div class="obra-header">
+        <div class="obra-header-content">
+          <div class="obra-title-wrapper">
+            {% set obra_variantes_html %}
+              {% if node.field_variantes_de_titulo is not empty %}
+                <div class="obra-variantes-titulo">
+                  <span class="obra-variantes-prefix" aria-hidden="true">↳</span>
+                  {% for variante in node.field_variantes_de_titulo %}
+                    <span class="obra-variante-item">{{ variante.value }}</span>{% if not loop.last %}<span class="obra-variantes-sep"> | </span>{% endif %}
+                  {% endfor %}
+                </div>
+              {% endif %}
+            {% endset %}
+
+            {% include '@etso/includes/node-title-header.html.twig' with {
+              title: node_title_display|default(node.field_titulo_mostrado.value|default(node.getTitle())),
+              prefix: node_title_prefix|default(''),
+              variant: node_title_variant|default('default'),
+              background_image: node_title_bg_image|default(''),
+              extra_html: obra_variantes_html|trim
+            } only %}
+          </div>
+        </div>
+      </div>
+
+      {# Grid principal: 2 columnas en desktop #}
+      <div class="obra-main-grid">
+
+        {# Columna izquierda: Información principal #}
+        <div class="obra-main-content">
+
+          {# 1. ATRIBUCIONES - Card destacado #}
+          <div class="obra-card obra-atribuciones-card">
+            <div class="obra-card-header">
+              <h2 class="obra-card-title">
+                <i class="fas fa-user-edit"></i>
+                Atribución de autoría
+              </h2>
+            </div>
+            <div class="obra-card-body">
+              
+              {# Atribución Tradicional #}
+              {% if atrib_trad_grupos is not empty %}
+                <div class="atribucion-block atribucion-tradicional">
+                  <div class="atribucion-label">
+                    <span class="badge badge-secondary">Atribución tradicional</span>
+                  </div>
+                  <div class="atribucion-content">
+                    <div class="autor-list">
+                      {% for grupo in atrib_trad_grupos %}
+                        <div class="autor-group">
+                          {% for autor in grupo.autores %}
+                            <a href="{{ autor.url }}" class="autor-name">{{ autor.title }}</a>{% if not loop.last %} <span class="logic-operator">y</span> {% endif %}
+                          {% endfor %}
+                        </div>
+                        {% if not loop.last %}
+                          <span class="logic-operator">o</span>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+
+              {# Atribución estilometría (prioritaria) #}
+              {% if atrib_etso_grupos is not empty or atrib_etso_sin_autor %}
+                <div class="atribucion-block atribucion-etso">
+                  <div class="atribucion-label">
+                    <span class="badge badge-primary">Atribución estilometría</span>
+                  </div>
+                  <div class="atribucion-content">
+                    <div class="autor-list">
+                      {% if atrib_etso_sin_autor %}
+                        <div class="autor-group">
+                          <span class="autor-name desconocido">Autoría no determinada</span>
+                          <span class="confidence-badge confidence-no_concluyente">No concluyente</span>
+                        </div>
+                      {% endif %}
+
+                      {% for grupo in atrib_etso_grupos %}
+                        <div class="autor-group">
+                          {% set confianza_class = '' %}
+                          {% set confianza_text = '' %}
+                          {% if grupo.confianza == 'segura' %}
+                            {% set confianza_class = 'confidence-segura' %}
+                            {% set confianza_text = 'Segura' %}
+                          {% elseif grupo.confianza == 'probable' %}
+                            {% set confianza_class = 'confidence-probable' %}
+                            {% set confianza_text = 'Probable' %}
+                          {% elseif grupo.confianza == 'posible' %}
+                            {% set confianza_class = 'confidence-posible' %}
+                            {% set confianza_text = 'Posible' %}
+                          {% elseif grupo.confianza == 'no_concluyente' %}
+                            {% set confianza_class = 'confidence-no_concluyente' %}
+                            {% set confianza_text = 'No concluyente' %}
+                          {% endif %}
+                          <a href="{{ grupo.autor.url }}" class="autor-name">{{ grupo.autor.title }}</a>
+                          {% if confianza_text %}
+                            <span class="confidence-badge {{ confianza_class }}">{{ confianza_text }}</span>
+                          {% endif %}
+                        </div>
+                        {% if not loop.last %}
+                          <span class="logic-operator">y</span>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+
+              {# Si no hay atribuciones #}
+              {% if atrib_etso_grupos is empty and atrib_trad_grupos is empty and not atrib_etso_sin_autor %}
+                <div class="alert alert-info">
+                  <i class="fas fa-info-circle"></i>
+                  No hay información de autoría disponible.
+                </div>
+              {% endif %}
+            </div>
+          </div>
+
+          {# 2. INFORMES RELACIONADOS (móvil) #}
+          {% if informes_relacionados is not empty %}
+            <div class="obra-card obra-informes-card obra-informes-card--mobile">
+              <div class="obra-card-header">
+                <h2 class="obra-card-title">
+                  <i class="fas fa-file-alt"></i>
+                  Informe de análisis estilométrico
+                </h2>
+                <div class="informe-context">Consulta el informe para contextualizar la atribución de esta obra</div>
+              </div>
+              <div class="obra-card-body">
+                <div class="informes-list">
+                  {% for informe in informes_relacionados %}
+                    <a href="{{ informe.url }}" class="informe-link-card">
+                      <div class="informe-icon">
+                        <i class="fas fa-chart-line"></i>
+                      </div>
+                      <div class="informe-info">
+                        <div class="informe-title">Informe</div>
+                        <div class="informe-meta text-muted">Ver análisis completo</div>
+                      </div>
+                      <div class="informe-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                      </div>
+                    </a>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          {% endif %}
+
+          {# 2b. ACCESO AL TEXTO (moved to sidebar) #}
+          <!-- Tarjeta de acceso al texto movida a la barra lateral. -->
+
+          {# 3. RESÚMENES - Card con resumen breve + enlace a resumen completo #}
+          {% if node.field_resumen_breve.value or resumen_relacionado %}
+            <div class="obra-card obra-resumenes-card">
+              <div class="obra-card-header">
+                <h2 class="obra-card-title">
+                  <i class="fas fa-align-left"></i>
+                  Resumen automático de la obra
+                </h2>
+              </div>
+              <div class="obra-card-body">
+                
+                {# Resumen breve (campo en OBRA) #}
+                {% if node.field_resumen_breve.value %}
+                  <div class="resumen-breve-wrapper">
+                    <div class="resumen-content">
+                      {{ node.field_resumen_breve.value|raw }}
+                    </div>
+                  </div>
+                {% endif %}
+
+                {# Enlace a resumen completo (tipo de contenido RESUMEN) #}
+                {% if resumen_relacionado %}
+                  <div class="resumen-completo-link-wrapper">
+                    <a href="{{ resumen_relacionado.url }}" class="resumen-link-card">
+                      <div class="resumen-icon">
+                        <i class="fas fa-align-left"></i>
+                      </div>
+                      <div class="resumen-info">
+                        <div class="resumen-title">Leer resumen automático completo</div>
+                        <div class="resumen-meta text-muted">Descripción extensa de la obra</div>
+                      </div>
+                      <div class="resumen-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                      </div>
+                    </a>
+                  </div>
+                {% endif %}
+
+                {# Si no hay resumen #}
+                {% if not node.field_resumen_breve.value and not resumen_relacionado %}
+                  <div class="alert alert-info mb-0">
+                    <i class="fas fa-info-circle"></i>
+                    No hay resumen disponible para esta obra.
+                  </div>
+                {% endif %}
+
+              </div>
+            </div>
+          {% endif %}
+
+
+          {# ACCESO AL TEXTO (mobile) - duplicado en main column para control de orden en móviles #}
+          {% if bicuve_enlaces is not empty or texto_externo_enlaces is not empty or texto_access_message %}
+            <div class="obra-card obra-texto-access obra-texto-access--mobile">
+              <div class="obra-card-header">
+                <h3 class="obra-card-title">
+                  <i class="fas fa-book"></i>
+                  Acceso al texto
+                </h3>
+              </div>
+              <div class="obra-card-body">
+                
+                {# Enlaces BICUVE #}
+                {% if bicuve_enlaces is not empty %}
+                  {% for bicuve in bicuve_enlaces %}
+                    <a href="{{ bicuve.url }}" class="texto-link-card">
+                      <div class="texto-icon">
+                        <i class="fas fa-book-open" aria-hidden="true"></i>
+                      </div>
+                      <div class="texto-info">
+                        <div class="texto-title">{{ bicuve.title }}</div>
+                        <div class="texto-meta text-muted">BICUVE</div>
+                      </div>
+                      <div class="texto-arrow">
+                        <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                      </div>
+                    </a>
+                  {% endfor %}
+                {% endif %}
+
+                {# Enlaces externos #}
+                {% if texto_externo_enlaces is not empty %}
+                  {% for externo in texto_externo_enlaces %}
+                    <a href="{{ externo.url }}" class="texto-link-card" target="_blank" rel="noopener noreferrer">
+                      <div class="texto-icon">
+                        <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                      </div>
+                      <div class="texto-info">
+                        <div class="texto-title">Leer texto</div>
+                        <div class="texto-meta text-muted">{{ externo.title }}</div>
+                      </div>
+                      <div class="texto-arrow">
+                        <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                      </div>
+                    </a>
+                  {% endfor %}
+                {% endif %}
+
+                {# Mensaje si no hay textos #}
+                {% if bicuve_enlaces is empty and texto_externo_enlaces is empty %}
+                  <div class="alert alert-secondary mb-0">{{ texto_access_message }}</div>
+                {% endif %}
+
+              </div>
+            </div>
+          {% endif %}
+
+
+
+        </div> 
+
+        {# Columna derecha: Sidebar con metadatos #}
+        <aside class="obra-sidebar">
+
+          {# 2 (desktop). INFORMES RELACIONADOS (desktop) - colocada en sidebar arriba #}
+          {% if informes_relacionados is not empty %}
+            <div class="obra-card obra-informes-card obra-informes-card--desktop">
+              <div class="obra-card-header">
+                <h3 class="obra-card-title">
+                  <i class="fas fa-file-alt"></i>
+                  Informe de análisis estilométrico
+                </h3>
+                <div class="informe-context">Consulta el informe para contextualizar la atribución de esta obra</div>
+              </div>
+              <div class="obra-card-body">
+                <div class="informes-list">
+                  {% for informe in informes_relacionados %}
+                    <a href="{{ informe.url }}" class="informe-link-card">
+                      <div class="informe-icon">
+                        <i class="fas fa-chart-line"></i>
+                      </div>
+                      <div class="informe-info">
+                        <div class="informe-title">Informe</div>
+                        <div class="informe-meta text-muted">Ver análisis completo</div>
+                      </div>
+                      <div class="informe-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                      </div>
+                    </a>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          {% endif %}
+
+          {# 2b. ACCESO AL TEXTO (sidebar - desktop) #}
+          {% if bicuve_enlaces is not empty or texto_externo_enlaces is not empty or texto_access_message %}
+            <div class="obra-card obra-texto-access obra-texto-access--desktop">
+              <div class="obra-card-header">
+                <h3 class="obra-card-title">
+                  <i class="fas fa-book"></i>
+                  Acceso al texto
+                </h3>
+              </div>
+              <div class="obra-card-body">
+                
+                {# Enlaces BICUVE #}
+                {% if bicuve_enlaces is not empty %}
+                  {% for bicuve in bicuve_enlaces %}
+                    <a href="{{ bicuve.url }}" class="texto-link-card">
+                      <div class="texto-icon">
+                        <i class="fas fa-book-open" aria-hidden="true"></i>
+                      </div>
+                      <div class="texto-info">
+                        <div class="texto-title">{{ bicuve.title }}</div>
+                        <div class="texto-meta text-muted">BICUVE</div>
+                      </div>
+                      <div class="texto-arrow">
+                        <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                      </div>
+                    </a>
+                  {% endfor %}
+                {% endif %}
+
+                {# Enlaces externos #}
+                {% if texto_externo_enlaces is not empty %}
+                  {% for externo in texto_externo_enlaces %}
+                    <a href="{{ externo.url }}" class="texto-link-card" target="_blank" rel="noopener noreferrer">
+                      <div class="texto-icon">
+                        <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                      </div>
+                      <div class="texto-info">
+                        <div class="texto-title">Leer texto</div>
+                        <div class="texto-meta text-muted">{{ externo.title }}</div>
+                      </div>
+                      <div class="texto-arrow">
+                        <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                      </div>
+                    </a>
+                  {% endfor %}
+                {% endif %}
+
+                {# Mensaje si no hay textos #}
+                {% if bicuve_enlaces is empty and texto_externo_enlaces is empty %}
+                  <div class="alert alert-secondary mb-0">{{ texto_access_message }}</div>
+                {% endif %}
+
+              </div>
+            </div>
+          {% endif %}
+
+
+          {# 5. INFORMACIÓN DE LA OBRA #}
+          <div class="obra-card obra-metadatos-card sticky-card">
+            <div class="obra-card-header">
+              <h3 class="obra-card-title">
+                <i class="fas fa-info-circle"></i>
+                Información de la obra
+              </h3>
+            </div>
+            <div class="obra-card-body">
+              <dl class="metadatos-list">
+                
+                {# Género #}
+                {% if node.field_obra_genero.0 and node.field_obra_genero.0.entity %}
+                  <div class="metadato-item">
+                    <dt class="metadato-label">
+                      <i class="fas fa-theater-masks"></i>
+                      Género
+                    </dt>
+                    <dd class="metadato-value">
+                      {{ node.field_obra_genero.0.entity.name.value }}
+                    </dd>
+                  </div>
+                {% endif %}
+
+                {# Estado #}
+                {% if node.field_obra_estado.0 and node.field_obra_estado.0.entity %}
+                  <div class="metadato-item">
+                    <dt class="metadato-label">
+                      <i class="fas fa-check-circle"></i>
+                      Estado del texto
+                    </dt>
+                    <dd class="metadato-value">
+                      {{ node.field_obra_estado.0.entity.name.value }}
+                    </dd>
+                  </div>
+                {% endif %}
+
+                {# Procedencia #}
+                {% if node.field_obra_procedencia.0 and node.field_obra_procedencia.0.entity %}
+                  <div class="metadato-item">
+                    <dt class="metadato-label">
+                      <i class="fas fa-archive"></i>
+                      Procedencia
+                    </dt>
+                    <dd class="metadato-value">
+                      {{ node.field_obra_procedencia.0.entity.name.value }}
+                      {% if node.field_documento.0 and node.field_documento.0.value %}
+                        <small class="metadato-subvalue text-muted">{{ node.field_documento.0.processed|raw }}</small>
+                      {% endif %}
+                    </dd>
+                  </div>
+                {% endif %}
+
+                {# Fecha de adición #}
+                {% if node.field_obra_adicion.0 and node.field_obra_adicion.0.value %}
+                  <div class="metadato-item">
+                    <dt class="metadato-label">
+                      <i class="fas fa-calendar-alt"></i>
+                      Fecha de adición
+                    </dt>
+                    <dd class="metadato-value">
+                      {{ node.field_obra_adicion.0.value|date('d/m/Y') }}
+                    </dd>
+                  </div>
+                {% endif %}
+
+              </dl>
+            </div>
+          </div>
+
+
+        </aside>
+
+      </div>
+
+    </div>
+  </div>
+</article>

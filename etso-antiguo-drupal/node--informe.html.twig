@@ -1,0 +1,257 @@
+{#
+/**
+ * @file
+ * Bootstrap Barrio's theme implementation to display a node.
+ *
+ * Template modificado con toggle para campos libres vs autogenerados
+ */
+#}
+{{ attach_library('bootstrap_barrio/node') }}
+{{ attach_library('etso_search/obra_table_shared') }}
+
+{%
+  set classes = [
+    'node',
+    'node--type-' ~ node.bundle|clean_class,
+    node.isPromoted() ? 'node--promoted',
+    node.isSticky() ? 'node--sticky',
+    not node.isPublished() ? 'node--unpublished',
+    view_mode ? 'node--view-mode-' ~ view_mode|clean_class,
+    'clearfix',
+    'container',
+    'px-0',
+  ]
+%}
+<article{{ attributes.addClass(classes) }}>
+  <header>
+    {{ title_prefix }}
+    {% if label and not page %}
+      <h2{{ title_attributes.addClass('node__title') }}>
+        <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+      </h2>
+    {% endif %}
+    {{ title_suffix }}
+    {% if display_submitted %}
+      <div class="node__meta">
+        {{ author_picture }}
+        {% block submitted %}
+          <em{{ author_attributes }}>
+            {% trans %}Submitted by {{ author_name }} on {{ date }}{% endtrans %}
+          </em>
+        {% endblock %}
+        {{ metadata }}
+      </div>
+    {% endif %}
+  </header>
+
+  <div{{ content_attributes.addClass('node__content', 'clearfix') }}>
+    {% set breadcrumb_items = [
+      {'title': 'Examen de autorías', 'url': '/examen-autorias'},
+    ] %}
+    {% if node.field_obra_informe.entity %}
+      {% set breadcrumb_items = breadcrumb_items|merge([
+        {'title': node.field_obra_informe.entity.label, 'url': path('entity.node.canonical', {'node': node.field_obra_informe.entity.id})}
+      ]) %}
+    {% endif %}
+    {% set breadcrumb_items = breadcrumb_items|merge([
+      {'title': 'Informe', 'url': null}
+    ]) %}
+    {% include '@etso/includes/node-breadcrumb.html.twig' with { items: breadcrumb_items } only %}
+
+    {% include '@etso/includes/node-title-header.html.twig' with {
+      title: node_title_display|default(label|render|striptags|trim|replace({'Análisis estilométrico de':''})),
+      prefix: node_title_prefix|default('Informe estilométrico de'),
+      variant: node_title_variant|default('hero'),
+      background_image: node_title_bg_image|default('')
+    } only %}
+
+    {% if node.field_usar_campos_libres.value %}
+      {% if node.field_introduccion_libre.value is not empty %}
+        <div class="introduccion-libre mb-4">
+          {{ node.field_introduccion_libre.processed|raw }}
+        </div>
+      {% else %}
+        <div class="alert alert-warning" role="alert">
+          <strong>⚠️ Introducción pendiente de redacción</strong>
+        </div>
+      {% endif %}
+
+      {{ _self.renderTablaObras(obras_por_acto) }}
+
+      {% if node.field_conclusion_informe.value is not empty %}
+        <div class="conclusion-informe mt-4">
+          {{ node.field_conclusion_informe.processed|raw }}
+        </div>
+      {% endif %}
+    {% else %}
+      <p>Se ofrecen las 20 obras con usos léxicos más cercanos a <strong><em>{{ label|render|striptags|trim|replace({'Análisis estilométrico de':''}) }}</em></strong>, atribuida a <strong>{{ node.field_informe_atribucion.value }}</strong>, utilizando el corpus <a href="/examen-autorias" target="_blank" title="ETSO: Examen de autorías">CETSO</a> a día <strong>{{ content.field_informe_cetso_fecha|render|striptags|trim }}</strong>, constituido por <strong>{{ node.field_informe_cetso_obras.value }}</strong> obras de <strong>{{ node.field_informe_cetso_autores.value }}</strong> autores diferentes.</p>
+
+      {{ _self.parrafoMetodologia() }}
+
+      {% if content.body|render|striptags|trim %}
+        <div class="body-content mb-4">
+          {{ content.body }}
+        </div>
+      {% endif %}
+
+      {{ _self.renderTablaObras(obras_por_acto) }}
+
+      {% if content.field_informe_resultado|render|striptags|trim %}
+        {{ content.field_informe_resultado }}
+      {% endif %}
+    {% endif %}
+
+    {% if content.field_informe_citar|render|striptags|trim %}
+      <div class="bibliografia mt-5">
+        {{ content.field_informe_citar }}
+      </div>
+    {% endif %}
+
+    {% if content.field_youtube|render|striptags|trim %}
+      <div class="youtube-video mt-4">
+        {{ content.field_youtube }}
+      </div>
+    {% endif %}
+
+    {% if content.field_paragraphs|render|striptags|trim %}
+      <div class="paragraphs-content mt-4">
+        {{ content.field_paragraphs }}
+      </div>
+    {% endif %}
+  </div>
+</article>
+
+{% macro parrafoMetodologia() %}
+  <p>Las distancias han sido calculadas a través de la librería <a href="http://maciejeder.org/projects/stylo/" target="_blank">Stylo</a> para R (Eder, Rybicki y Kestemont 2016) usando las 500 palabras más frecuentes en el corpus de <a href="/examen-autorias" target="_blank" title="ETSO: Examen de autorías">CETSO</a> (exceptuando las que pueden presentar problemas en las transcripciones automáticas del tipo que/qué, de/dé, etc.), con el método Classic Delta (versión propuesta por Burrows) y 0% culling (las palabras no tienen que aparecer en un porcentaje mínimo de textos). Cuanto mayor cercanía hay a 0,0 es mayor la afinidad.</p>
+{% endmacro %}
+
+{% macro renderTablaObras(obras_por_acto) %}
+  {% set acto_labels = {
+    '0': 'Obra completa',
+    '1': 'Acto 1',
+    '2': 'Acto 2',
+    '3': 'Acto 3',
+    '4': 'Acto 4',
+    '5': 'Acto 5'
+  } %}
+
+  {% set actos_con_obras = [] %}
+  {% for acto_num, obras in obras_por_acto %}
+    {% if obras|length > 0 %}
+      {% set actos_con_obras = actos_con_obras|merge([acto_num]) %}
+    {% endif %}
+  {% endfor %}
+
+  {% if actos_con_obras|length > 0 %}
+    <div class="obras-cercanas-tabs mt-4">
+      {% if actos_con_obras|length > 1 %}
+        <div class="mobile-tab-selector d-md-none mb-3">
+          <select class="form-select" id="mobile-acto-selector">
+            {% for acto_num in actos_con_obras %}
+              <option value="acto-{{ acto_num }}">{{ acto_labels[acto_num] }} ({{ obras_por_acto[acto_num]|length }})</option>
+            {% endfor %}
+          </select>
+        </div>
+      {% endif %}
+
+      {% if actos_con_obras|length > 1 %}
+        <ul class="nav nav-tabs d-none d-md-flex" role="tablist">
+          {% for acto_num in actos_con_obras %}
+            <li class="nav-item">
+              <button class="nav-link {{ loop.first ? 'active' : '' }}" data-tab="acto-{{ acto_num }}">
+                {{ acto_labels[acto_num] }} <span class="badge">{{ obras_por_acto[acto_num]|length }}</span>
+              </button>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      <div class="tab-content">
+        {% for acto_num in actos_con_obras %}
+          {% set obras = obras_por_acto[acto_num] %}
+          <div class="tab-pane {{ loop.first ? 'active' : '' }}" id="acto-{{ acto_num }}">
+            <div class="table-responsive obra-table-shared-container">
+              <table class="obras-table obra-table-shared obra-table-shared--informe">
+                <thead>
+                  <tr>
+                    <th scope="col" class="text-center obra-table-col--position"></th>
+                    <th scope="col" class="text-end obra-table-col--distance">{{ 'Distancia'|t }}</th>
+                    <th scope="col" class="obra-table-col--title">{{ 'Título'|t }}</th>
+                    <th scope="col" class="obra-table-col--trad">{{ 'Atribución tradicional'|t }}</th>
+                    <th scope="col" class="obra-table-col--etso">{{ 'Atribución estilometría'|t }}</th>
+                    <th scope="col" class="obra-table-col--genre">{{ 'Género'|t }}</th>
+                    <th scope="col" class="obra-table-col--resources">{{ 'Recursos'|t }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for obra in obras %}
+                    {% include '@etso_search/includes/obra-table-row.html.twig' with {
+                      obra: obra,
+                      is_informe: true,
+                      position: loop.index,
+                      detail_colspan: 7
+                    } only %}
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const firstTab = document.querySelector('.obras-cercanas-tabs .nav-link');
+      if (firstTab) {
+        firstTab.classList.add('active');
+        const targetId = firstTab.getAttribute('data-tab');
+        const targetPane = document.getElementById(targetId);
+        if (targetPane) {
+          targetPane.classList.add('active');
+        }
+        const mobileSelector = document.getElementById('mobile-acto-selector');
+        if (mobileSelector) {
+          mobileSelector.value = targetId;
+        }
+      }
+
+      document.querySelectorAll('.obras-cercanas-tabs .nav-link').forEach(button => {
+        button.addEventListener('click', function() {
+          document.querySelectorAll('.obras-cercanas-tabs .nav-link').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('.obras-cercanas-tabs .tab-pane').forEach(p => p.classList.remove('active'));
+          this.classList.add('active');
+          const targetId = this.getAttribute('data-tab');
+          const targetPane = document.getElementById(targetId);
+          if (targetPane) {
+            targetPane.classList.add('active');
+          }
+          const mobileSelector = document.getElementById('mobile-acto-selector');
+          if (mobileSelector) {
+            mobileSelector.value = targetId;
+          }
+        });
+      });
+
+      const mobileSelector = document.getElementById('mobile-acto-selector');
+      if (mobileSelector) {
+        mobileSelector.addEventListener('change', function(e) {
+          const targetId = e.target.value;
+          document.querySelectorAll('.obras-cercanas-tabs .tab-pane').forEach(p => p.classList.remove('active'));
+          const targetPane = document.getElementById(targetId);
+          if (targetPane) {
+            targetPane.classList.add('active');
+          }
+          document.querySelectorAll('.obras-cercanas-tabs .nav-link').forEach(b => {
+            if (b.getAttribute('data-tab') === targetId) {
+              b.classList.add('active');
+            } else {
+              b.classList.remove('active');
+            }
+          });
+        });
+      }
+    });
+  </script>
+{% endmacro %}

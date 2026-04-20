@@ -1,0 +1,9 @@
+name: 'ETSO Search'
+type: module
+description: 'Buscador "Examen de autorías" - Búsqueda avanzada de obras con filtros de autoría y metadata'
+core_version_requirement: ^10
+package: 'ETSO'
+dependencies:
+  - drupal:node
+  - paragraphs:paragraphs
+  - etso_normalizer:etso_normalizer

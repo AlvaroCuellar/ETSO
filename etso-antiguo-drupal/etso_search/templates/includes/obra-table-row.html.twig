@@ -1,0 +1,236 @@
+{% set is_informe = is_informe|default(false) %}
+{% set detail_colspan = detail_colspan|default(5) %}
+{% set row_obra_id = obra.id|default(obra.obra_nid|default('')) %}
+{% set title_value = obra.title_highlighted|default(obra.title_display|default(obra.obra_titulo_display|default(obra.title|default(obra.obra_titulo|default(''))))) %}
+{% set title_raw = obra.title_highlighted is defined %}
+{% set title_search = [
+  obra.title_display|default(obra.obra_titulo_display|default(obra.title|default(obra.obra_titulo|default('')))),
+  obra.variantes_de_titulo|default([])|join(' ')
+]|join(' ')|striptags|lower|trim %}
+
+<tr class="obra-row"
+    data-obra-id="{{ row_obra_id }}"
+    data-title-search="{{ title_search }}"
+    data-genero="{{ obra.genero|default('')|lower|trim }}"
+    data-filter-related-any="{{ obra.in_filter_related_any|default(true) ? '1' : '0' }}"
+    data-filter-trad-any="{{ obra.in_filter_trad_any|default(false) ? '1' : '0' }}"
+    data-filter-etso-yes="{{ obra.in_filter_etso_yes|default(false) ? '1' : '0' }}"
+    data-filter-only-etso="{{ obra.in_filter_only_etso|default(false) ? '1' : '0' }}"
+    data-filter-only-trad="{{ obra.in_filter_only_trad|default(false) ? '1' : '0' }}">
+  {% if is_informe %}
+    <td class="text-center obra-position-cell" data-label="{{ 'Posición'|t }}">{{ position|default('') }}</td>
+    <td class="text-end obra-distance-cell" data-label="{{ 'Distancia'|t }}">
+      <span class="distance-badge" style="background-color: {{ obra.badge_color|default('#3366cc') }}; color: #fff;">{{ obra.distancia|default('') }}</span>
+    </td>
+  {% endif %}
+
+  <td data-label="{{ 'Título'|t }}">
+    <div class="obra-title">
+      <i class="fas fa-chevron-right expand-icon"></i>
+      {% if obra.url|default('') %}
+        <a href="{{ obra.url }}" target="_blank" rel="noopener">{% if title_raw %}{{ title_value|raw }}{% else %}{{ title_value }}{% endif %}</a>
+      {% else %}
+        <span>{% if title_raw %}{{ title_value|raw }}{% else %}{{ title_value }}{% endif %}</span>
+      {% endif %}
+    </div>
+
+    {% set variantes_render = obra.variantes_de_titulo_highlighted|default(obra.variantes_de_titulo|default([])) %}
+    {% if variantes_render is not empty %}
+      <div class="variantes-titulo">
+        <span class="variantes-prefix" aria-hidden="true">↳</span>
+        {% for variante in variantes_render %}
+          <span class="variante-item">{{ variante|raw }}</span>{% if not loop.last %}<span class="variantes-sep"> | </span>{% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </td>
+
+  <td data-label="{{ 'Atribución tradicional'|t }}">
+    {% if obra.atrib_trad_grupos is not empty %}
+      <div class="autor-list">
+        {% for grupo in obra.atrib_trad_grupos %}
+          <span class="autor-group">
+            {% for autor in grupo.autores %}
+              {% if autor.url|default('') %}
+                <a href="{{ autor.url }}" class="autor-name">{{ autor.title }}</a>
+              {% else %}
+                <span class="autor-name">{{ autor.title }}</span>
+              {% endif %}
+              {% if not loop.last %}<span class="logic-operator">Y</span>{% endif %}
+            {% endfor %}
+          </span>
+          {% if not loop.last %}<span class="logic-operator">O</span>{% endif %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <span class="desconocido">{{ 'Desconocido'|t }}</span>
+    {% endif %}
+  </td>
+
+  <td data-label="{{ 'Atribución estilometría'|t }}">
+    {% if obra.atrib_etso_sin_autor %}
+      <span class="desconocido">{{ 'El análisis no apunta hacia ningún autor'|t }}</span>
+    {% elseif obra.atrib_etso_grupos is not empty %}
+      <div class="autor-list">
+        {% for grupo in obra.atrib_etso_grupos %}
+          <span class="autor-group">
+            {% if grupo.autor.url|default('') %}
+              <a href="{{ grupo.autor.url }}" class="autor-name">{{ grupo.autor.title }}</a>
+            {% else %}
+              <span class="autor-name">{{ grupo.autor.title }}</span>
+            {% endif %}
+            {% if grupo.confianza %}
+              <span class="confidence-badge confidence-{{ grupo.confianza }}">
+                {{ grupo.confianza|replace({'_':' '})|capitalize }}
+              </span>
+            {% endif %}
+          </span>
+          {% if not loop.last %}<span class="logic-operator">Y</span>{% endif %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <span class="desconocido">{{ 'No disponible'|t }}</span>
+    {% endif %}
+  </td>
+
+  <td data-label="{{ 'Género'|t }}">{{ obra.genero|default('—') }}</td>
+
+  <td data-label="{{ 'Recursos'|t }}">
+    <div class="actions">
+      {% set informe_button_label = is_informe|default(false) ? 'INFORME'|t : 'INFORME ESTILOMÉTRICO'|t %}
+      {% if obra.tiene_informe and obra.informe_url|default('') %}
+        <a href="{{ obra.informe_url }}" class="btn-action btn-informe" target="_blank" rel="noopener" title="{{ 'INFORME ESTILOMÉTRICO'|t }}" aria-label="{{ 'INFORME ESTILOMÉTRICO'|t }}">
+          <span class="btn-left">
+            <i class="fas fa-chart-line"></i>
+            <span class="btn-label">{{ informe_button_label }}</span>
+          </span>
+          <i class="fas fa-chevron-right btn-arrow"></i>
+        </a>
+      {% else %}
+        <span class="btn-action btn-disabled">
+          <span class="btn-left">
+            <i class="fas fa-chart-line"></i>
+            <span class="btn-label">{{ 'Informe pendiente'|t }}</span>
+          </span>
+        </span>
+      {% endif %}
+
+      {% set tiene_textos = obra.bicuve_enlaces is not empty or obra.texto_externo_enlaces is not empty %}
+      {% if tiene_textos %}
+        <div class="textos-dropdown-wrapper">
+          <button type="button" class="btn-action btn-texto textos-toggle" aria-haspopup="true" aria-expanded="false">
+            <span class="btn-left">
+              <i class="fas fa-book"></i>
+              <span class="btn-label">{{ 'ACCESO AL TEXTO'|t }}</span>
+            </span>
+            <i class="fas fa-chevron-right btn-arrow"></i>
+          </button>
+          <div class="textos-dropdown" hidden>
+            {% if obra.bicuve_enlaces is not empty %}
+              {% for enlace in obra.bicuve_enlaces %}
+                <a href="{{ enlace.url }}" class="textos-dropdown-item" target="_blank" rel="noopener">
+                  <i class="fas fa-book-open"></i>
+                  <span>{{ enlace.title }}</span>
+                </a>
+              {% endfor %}
+            {% endif %}
+            {% if obra.texto_externo_enlaces is not empty %}
+              {% for enlace in obra.texto_externo_enlaces %}
+                <a href="{{ enlace.url }}" class="textos-dropdown-item" target="_blank" rel="noopener">
+                  <i class="fas fa-external-link-alt"></i>
+                  <span>{{ enlace.title }}</span>
+                </a>
+              {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+      {% else %}
+        <span class="btn-action btn-disabled">
+          <span class="btn-left">
+            <i class="fas fa-book"></i>
+            <span class="btn-label">{{ 'ACCESO AL TEXTO'|t }}</span>
+          </span>
+        </span>
+      {% endif %}
+
+      {% set resumen_url = obra.resumen_url|default('') %}
+      {% if not resumen_url and (obra.resumen_breve|default('') or obra.resumen_completo|default('')) and obra.url|default('') %}
+        {% set resumen_url = obra.url ~ '/resumen' %}
+      {% endif %}
+
+      {% if resumen_url %}
+        <a href="{{ resumen_url }}" class="btn-action btn-resumen" target="_blank" rel="noopener">
+          <span class="btn-left">
+            <i class="fas fa-file-alt"></i>
+            <span class="btn-label">{{ 'RESUMEN AUTOMÁTICO'|t }}</span>
+          </span>
+          <i class="fas fa-chevron-right btn-arrow"></i>
+        </a>
+      {% else %}
+        <span class="btn-action btn-disabled">
+          <span class="btn-left">
+            <i class="fas fa-file-alt"></i>
+            <span class="btn-label">{{ 'RESUMEN AUTOMÁTICO'|t }}</span>
+          </span>
+        </span>
+      {% endif %}
+
+      <div class="ver-mas">
+        <span class="toggle-detail" role="button" tabindex="0" aria-expanded="false" aria-label="{{ 'Ver más información sobre'|t }} {{ obra.title|default(obra.title_display|default(obra.obra_titulo_display|default(''))) }}">
+          {{ 'Ver más'|t }}
+        </span>
+        <div class="toggle-down"><i class="fas fa-chevron-down"></i></div>
+      </div>
+    </div>
+  </td>
+
+</tr>
+
+<tr class="detail-row">
+  <td colspan="{{ detail_colspan }}">
+    <div class="detail-content">
+      {% if obra.resumen_breve|default('') or obra.resumen_completo|default('') %}
+        <div class="detail-section detail-section--resumen">
+          <div class="detail-section-title">{{ 'Resumen breve automático'|t }}</div>
+          <p class="resumen-text">
+            {{ obra.resumen_breve|default(obra.resumen_completo)|striptags }}
+          </p>
+        </div>
+      {% endif %}
+
+      <div class="detail-section">
+        <div class="metadata-grid">
+          <div class="metadata-item">
+            <span class="metadata-label">{{ 'Texto empleado'|t }}</span>
+            {% if obra.metadata.procedencia is defined and obra.metadata.procedencia %}
+              <span class="metadata-value">{{ obra.metadata.procedencia }}</span>
+            {% else %}
+              <span class="metadata-value not-available">{{ 'No disponible'|t }}</span>
+            {% endif %}
+            {% if obra.metadata.documento is defined and obra.metadata.documento %}
+              <small class="metadata-subvalue text-muted">{{ obra.metadata.documento|raw }}</small>
+            {% endif %}
+          </div>
+
+          <div class="metadata-item">
+            <span class="metadata-label">{{ 'Estado del texto'|t }}</span>
+            {% if obra.metadata.estado is defined and obra.metadata.estado %}
+              <span class="metadata-value">{{ obra.metadata.estado }}</span>
+            {% else %}
+              <span class="metadata-value not-available">{{ 'No disponible'|t }}</span>
+            {% endif %}
+          </div>
+
+          <div class="metadata-item">
+            <span class="metadata-label">{{ 'Fecha de adición o modificación'|t }}</span>
+            {% if obra.metadata.fecha_adicion is defined and obra.metadata.fecha_adicion %}
+              <span class="metadata-value">{{ obra.metadata.fecha_adicion }}</span>
+            {% else %}
+              <span class="metadata-value not-available">{{ 'No disponible'|t }}</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr>

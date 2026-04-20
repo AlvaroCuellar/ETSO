@@ -1,0 +1,108 @@
+{
+  "archivo": "LOPE_LocosDeValencia.txt",
+  "titulo": "Locos de Valencia, Los",
+  "resumen_largo": [
+    "La obra comienza con la llegada de Floriano a Valencia tras huir desde Zaragoza, donde cree haber matado en duelo al príncipe Reinero a causa de una rivalidad amorosa vinculada a una dama. Perseguido por la justicia y por el poder del conde padre del príncipe, acude a su amigo Valerio, quien, viendo imposible esconderlo de forma segura, idea un recurso extremo: fingirse loco e ingresar en el famoso hospital de Valencia para dementes, donde nadie sospecharía de un caballero fugitivo. Paralelamente llega a la ciudad Erífila, joven noble que ha abandonado la casa de su padre con Leonato, criado de condición inferior a quien siguió más por rechazo a un matrimonio impuesto que por verdadero amor. Ya en Valencia, Leonato se muestra celoso, codicioso y violento: le quita sus joyas, la despoja de sus vestidos y la abandona sola, pobre y desamparada. Cuando Erífila, semidesnuda y desesperada, pide auxilio, quienes la encuentran la toman por loca y la llevan también al hospital. Valerio, que ha acompañado a Floriano al encierro fingido, queda impresionado por la hermosura de la recién llegada y empieza a enamorarse de ella, de modo que el espacio concebido como refugio se convierte también en escenario de nuevas pasiones y equívocos.",
+    "En el hospital se desarrolla una red de amores cruzados y fingimientos. Floriano, bajo el nombre de Beltrán y con conducta de loco, conoce a Erífila, a quien al principio todos creen demente, y entre ambos nace una fuerte atracción, pues ella también comprende que él no ha perdido del todo el juicio. A su alrededor actúan los administradores, criados, locos y sirvientes del establecimiento, que vigilan, interpretan mal cuanto ocurre y alimentan el enredo. Fedra, sobrina del administrador, se enamora a su vez de Beltrán por su presencia y sus palabras, y Laida, criada de la casa, cae igualmente rendida por el mismo supuesto loco. Para conservarse cerca de él, Fedra y luego Laida fingen o exageran su propia locura, de manera que el hospital se llena de amores disparatados, celos y simulaciones. Mientras tanto, Valerio confiesa a Floriano que también ama a la hermosa internada y piensa incluso solicitarla como parienta para sacarla del hospital, lo que provoca en Floriano temor de perderla. Erífila y Floriano llegan a revelarse mutuamente su verdadera identidad: ella cuenta cómo fue engañada por Leonato, y él confiesa que se oculta en el hospital para salvar la vida tras haber dado muerte, según cree, a Reinero. Cuando ambos empiezan a unirse más claramente, son separados por la disciplina del lugar y por el deseo del administrador de controlar el escándalo provocado por las mujeres enamoradas del loco.",
+    "En el tramo final, el enredo se complica con la llegada de buscadores aragoneses que llevan el retrato de Floriano, lo que aumenta el peligro de ser descubierto. Para curar a Fedra, el médico aconseja contentar su imaginación amorosa y fingir su boda con Beltrán durante la fiesta de los Santos Inocentes, aprovechando el ambiente festivo del hospital. Erífila, celosa al oír hablar de ese casamiento, abandona momentáneamente el lugar con Valerio, que la protege, pero regresa movida por el amor y la sospecha. En medio del simulacro nupcial, ella descubre públicamente que Beltrán es en realidad Floriano, supuesto matador del príncipe Reinero, y parece precipitar su ruina. Sin embargo, el conflicto se resuelve de forma inesperada cuando aparece el propio Reinero, vivo, y explica que la muerte divulgada fue un engaño urdido por él mismo: el muerto era un paje vestido con su nombre y sus insignias, y todo se había fingido para probar la reacción de Celia, dama de quien estaba enamorado. Queda así libre Floriano de la acusación capital. Leonato reconoce su culpa y devuelve el honor y las joyas de Erífila, pero ella no vuelve con él. Reinero dispone entonces tres matrimonios que ordenan el caos amoroso: Floriano con Erífila, Valerio con Fedra —que confiesa haber fingido su locura para alcanzar ese enlace— y Laida con el propio Leonato, solución que recompone honor, amistad y deseo. La comedia concluye así convirtiendo el hospital de locos en espacio de refugio, confusión y finalmente restauración social."
+  ],
+  "resumen_breve": [
+    "En la Valencia contemporánea de la acción, Floriano huye desde Zaragoza creyendo haber matado al príncipe Reinero y se oculta fingiendo locura en el hospital de los locos, mientras Erífila llega engañada por Leonato, que la roba y abandona y acaba también recluida allí por supuesta demente.",
+    "Dentro del hospital nacen y se cruzan varios amores: Floriano y Erífila se enamoran, Valerio ama también a Erífila, y Fedra y Laida pierden el seso o fingen perderlo por Beltrán, nombre con que Floriano se disfraza, de modo que el encierro se vuelve espacio de celos, engaños y deseo.",
+    "Durante una falsa boda organizada para curar a Fedra se descubre la identidad de Floriano, pero la aparición de Reinero, vivo, aclara el engaño de su supuesta muerte y permite un desenlace matrimonial que restablece honor, amistad y orden."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Floriano",
+      "descripcion": "Caballero fugitivo que llega desde Zaragoza creyéndose culpable de la muerte del príncipe Reinero; para salvar la vida se finge loco en el hospital de Valencia bajo el nombre de Beltrán y allí se enamora de Erífila."
+    },
+    {
+      "nombre": "Erífila",
+      "descripcion": "Joven noble que huye de casa con Leonato, es engañada, robada y abandonada en Valencia, y termina internada como loca; en el hospital se enamora de Floriano y acaba revelando su verdadera identidad."
+    },
+    {
+      "nombre": "Valerio",
+      "descripcion": "Amigo íntimo de Floriano, principal apoyo del fugitivo y autor del plan de esconderlo en el hospital; se enamora de Erífila, pero finalmente acepta otro enlace cuando se resuelve el conflicto."
+    },
+    {
+      "nombre": "Fedra",
+      "descripcion": "Sobrina del administrador del hospital, enamorada de Beltrán por su hermosura y donaire; su pasión provoca un fingido desposorio y al final confiesa que solo aparentó locura para casarse con Valerio."
+    },
+    {
+      "nombre": "Leonato",
+      "descripcion": "Criado de la casa del padre de Erífila y responsable de su fuga; movido por celos, interés y cobardía la roba y abandona, y su conducta desencadena buena parte del infortunio inicial de la joven."
+    },
+    {
+      "nombre": "Reinero",
+      "descripcion": "Príncipe cuya muerte pone en marcha la huida de Floriano; aparece al final vivo y explica que todo fue un engaño preparado por él mismo, con lo que deshace la acusación principal."
+    },
+    {
+      "nombre": "Laida",
+      "descripcion": "Criada de la casa del administrador, también enamorada de Beltrán; su locura parece en parte amorosa y en parte fingida, y acaba integrada en la solución matrimonial final."
+    },
+    {
+      "nombre": "Administrador del hospital",
+      "descripcion": "Responsable principal de la casa de locos de Valencia; ordena internamientos, supervisa a los enfermos y acepta remedios fingidos para curar a Fedra y encauzar el desorden amoroso."
+    },
+    {
+      "nombre": "Médico",
+      "descripcion": "Figura de autoridad que interpreta la melancolía y el furor amoroso de Fedra y propone como remedio el simulacro de boda con Beltrán, decisivo para el desenlace."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Hospital de los locos de Valencia",
+      "descripcion": "Espacio central de la comedia; sirve a la vez de refugio para Floriano, prisión para Erífila, lugar de observación social y escenario donde se desarrollan los amores, fingimientos y reconocimientos."
+    },
+    {
+      "nombre": "Valencia",
+      "descripcion": "Marco urbano general de la acción, descrito al llegar los personajes; ciudad a la que confluyen fugitivos, enamorados y buscadores, y cuyo hospital da sentido a la trama."
+    },
+    {
+      "nombre": "Zaragoza",
+      "descripcion": "Lugar de procedencia de Floriano y de Reinero; allí ocurrió el duelo amoroso y la supuesta muerte del príncipe que motiva la huida y la persecución."
+    },
+    {
+      "nombre": "Calles y puerta de entrada de Valencia",
+      "descripcion": "Espacio de transición donde Erífila y Leonato llegan a la ciudad, discuten y se produce el abandono que conduce al internamiento de la joven."
+    },
+    {
+      "nombre": "Casa o entorno de una dama en Zaragoza",
+      "descripcion": "Lugar recordado por Floriano como escenario del combate con Reinero, originado por una rivalidad amorosa; no se identifica con plena seguridad más allá de esa función narrativa."
+    },
+    {
+      "nombre": "Casa de Valerio",
+      "descripcion": "Espacio probable de acogida inicial y de deliberación entre amigos, desde donde se concibe el plan de fingir la locura, aunque el texto conservado no siempre permite precisarlo de forma inequívoca."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Locura fingida y locura de amor",
+      "descripcion": "La acción se articula sobre personajes que simulan estar locos para salvarse, para permanecer cerca del amado o para conseguir un matrimonio, junto a otros cuya pasión amorosa se presenta como verdadera enajenación."
+    },
+    {
+      "tema": "Amor, celos y deseo",
+      "descripcion": "Los vínculos amorosos mueven casi todos los conflictos: la rivalidad amorosa origina la fuga de Floriano, el abandono de Erífila nace de una relación desigual y los celos multiplican los equívocos dentro del hospital."
+    },
+    {
+      "tema": "Honor y restitución social",
+      "descripcion": "Erífila pierde protección, bienes y reputación al huir; Floriano teme la muerte y la deshonra por la supuesta muerte de Reinero; el desenlace busca recomponer esas quiebras mediante revelaciones y matrimonios."
+    },
+    {
+      "tema": "Disfraz, engaño y ocultación de la identidad",
+      "descripcion": "Floriano adopta nombre y conducta fingidos, Fedra y Laida alteran o simulan su estado mental, Reinero ha fingido su muerte y varios personajes esconden su verdad para protegerse o alcanzar sus fines."
+    },
+    {
+      "tema": "Amistad y lealtad",
+      "descripcion": "La relación entre Floriano y Valerio sostiene el inicio de la acción, pues la ayuda del amigo permite la supervivencia del fugitivo, aunque esa misma amistad se tensiona cuando ambos desean a Erífila."
+    },
+    {
+      "tema": "Desigualdad social en el amor",
+      "descripcion": "La fuga de Erífila con su criado Leonato pone en primer plano los riesgos de una relación desigual, asociada en la obra a la pérdida de honra, al engaño y al desorden."
+    },
+    {
+      "tema": "El hospital como microcosmos social",
+      "descripcion": "El manicomio reúne nobles, criados, médicos, administradores y locos de diversa condición, y convierte el encierro en un espacio donde se mezclan vigilancia, espectáculo, caridad y conflicto."
+    }
+  ]
+}

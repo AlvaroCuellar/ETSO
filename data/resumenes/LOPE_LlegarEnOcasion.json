@@ -1,0 +1,108 @@
+{
+  "archivo": "LOPE_LlegarEnOcasion.txt",
+  "titulo": "Llegar en ocasión, El",
+  "resumen_largo": [
+    "En Ferrara, el Marqués persigue amorosamente a Laura, viuda reciente de Rugero, y confía en que la muerte del marido hará posible una relación que antes ella rechazaba. Laura, retirada en su hacienda de Castilguillermo con sus criadas y criados, reconoce ante Fenisa que, muerto Rugero, su resistencia al Marqués se debilita y llega a aceptar una entrevista nocturna, alentada también por la esperanza de mejorar su estado. El Marqués prepara la visita, pero cuando se dispone a acudir recibe noticia de una conjuración contra su vida en Ferrara, por lo que debe regresar con urgencia. Laura queda frustrada y humillada por la ocasión perdida. Esa misma noche, sin embargo, llega a su casa un caballero robado por unos salteadores, casi desnudo y aterido de frío. Por compasión, Laura lo acoge, lo baña, lo viste con ropas de su difunto marido y le da de cenar. El desconocido, que se presenta como Otavio aunque primero oculta su verdadera calidad, causa inmediata impresión en Laura por su cortesía, su presencia y su ingenio, hasta el punto de que la compasión se transforma rápidamente en atracción.",
+    "La cercanía forzosa durante la noche precipita los acontecimientos: Laura cuenta luego a Fenisa que, tras acostarse el huésped en la casa, acabó rindiéndose a él, y al amanecer teme por su honra y por la divulgación del caso. Fenisa le propone ocultar al forastero entre los labradores de la hacienda, y así Otavio pasa a vestir de villano mientras Laura averigua quién es realmente y contempla incluso la posibilidad de casarse con él para reparar su honor. Desde entonces la comedia multiplica los enredos: el Marqués vuelve y Laura, para proteger a Otavio, finge parentescos y enfermedades, retrasa citas y aprovecha todo género de ardides domésticos; Tirso, criado rústico, sospecha confusamente la identidad del supuesto Pascual; y el propio Marqués alterna los celos amorosos con los problemas políticos de Ferrara. Paralelamente se desarrolla otra trama decisiva: Federico, primo del Marqués, había intentado atentar contra él por agravios de honor relacionados probablemente con Camila, hermana de Federico y hermana también del Marqués según se declara al final. Federico escapa de prisión con ayuda de Diana y, huyendo de la persecución, entra ocultamente en casa de Laura, donde permanece escondido sin que todos conozcan su presencia. De este modo, la casa rural de Laura se convierte en espacio de refugio, engaño y peligro para varios personajes a la vez.",
+    "La situación se complica cuando el Marqués sospecha que Laura le oculta a un enemigo y decide llevársela a Ferrara. Para ganar tiempo y apartarlo, Laura y Otavio improvisan nuevas tretas, entre ellas la del fingido desmayo por la aparición del marido difunto y, más tarde, la fingida rabia del supuesto villano. Al final, acosado por los celos y creyéndose traicionado por Laura, Otavio se descubre públicamente: declara que es hijo de un senador de Ferrara, explica que llegó robado a la casa en el momento oportuno y afirma que Laura lo había favorecido mientras entretenía al Marqués. Su arrebato parece comprometerla, pero la aparición de Federico aclara la verdad de varios malentendidos: él era el hombre escondido que el Marqués creyó ver como fantasma y confirma la inocencia de Laura en ese punto. Entonces se resuelve también el conflicto político y familiar. Federico reconoce su culpa pasada, pero se sabe ya ligado a Diana o Camila, y el Marqués, en un gesto final de nobleza, renuncia a Laura, perdona a los implicados y acepta las nuevas uniones. Laura da la mano a Otavio; Federico queda reconciliado con el Marqués; Fabio recibe a Fenisa; y Tirso es prometido a Sirena. La obra concluye subrayando que el azar favorable de llegar en el momento oportuno ha alterado por completo deseos, jerarquías y destinos amorosos."
+  ],
+  "resumen_breve": [
+    "En la Ferrara y la hacienda rural de Castilguillermo, Laura, viuda de Rugero, se dispone a favorecer al Marqués, pero la cita nocturna se frustra cuando él debe volver con urgencia a la ciudad por una conjuración contra su vida.",
+    "Esa misma noche llega a la casa un caballero robado, Otavio, a quien Laura socorre; la hospitalidad se transforma en relación amorosa y ambos lo esconden bajo disfraz de villano mientras sortean visitas, celos y engaños del Marqués.",
+    "Con la aparición del fugitivo Federico y la aclaración de los equívocos, el Marqués renuncia a Laura, se reconcilian los agravios de honor y la comedia termina con varios matrimonios, mostrando el poder decisivo de la ocasión y la fortuna."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Laura",
+      "descripcion": "Viuda de Rugero y señora de una hacienda cercana a Ferrara; es el centro de la acción amorosa y de los enredos, pues oscila entre aceptar al Marqués y proteger luego a Otavio, con quien acaba casándose."
+    },
+    {
+      "nombre": "Otavio",
+      "descripcion": "Caballero ferrarés, hijo de un senador, que llega robado y desnudo a casa de Laura; acogido por compasión, se convierte en su amante y después en su esposo, ocultándose bajo disfraz de villano."
+    },
+    {
+      "nombre": "El Marqués de Ferrara",
+      "descripcion": "Noble poderoso enamorado de Laura; su deseo de conquistarla impulsa gran parte de la trama, pero sus deberes políticos y los engaños sufridos le hacen perder sucesivamente la ocasión y renunciar al final."
+    },
+    {
+      "nombre": "Fenisa",
+      "descripcion": "Criada y confidente de Laura; aconseja, media entre los amantes y sostiene muchos de los engaños que permiten ocultar a Otavio y retrasar al Marqués."
+    },
+    {
+      "nombre": "Fabio",
+      "descripcion": "Servidor principal y confidente del Marqués; participa en los recados amorosos y en las maniobras prácticas de su señor, y al final queda emparejado con Fenisa."
+    },
+    {
+      "nombre": "Federico",
+      "descripcion": "Primo del Marqués y fugitivo perseguido por haber atentado contra su vida; su presencia escondida en la casa de Laura provoca nuevos equívocos y su aparición final permite aclarar la trama de honor."
+    },
+    {
+      "nombre": "Tirso",
+      "descripcion": "Labrador o criado rústico de la hacienda de Laura; aporta la dimensión cómica, sospecha sin comprender del todo el disfraz de Otavio y termina unido a Sirena."
+    },
+    {
+      "nombre": "Sirena",
+      "descripcion": "Criada de Laura, vinculada sobre todo al servicio doméstico y al plano cómico; interviene en la preparación de comidas, cuidados y engaños, y acaba destinada a Tirso."
+    },
+    {
+      "nombre": "Tancredo",
+      "descripcion": "Criado del Marqués, encargado de mensajes y avisos; comunica noticias decisivas, como la conjuración de Ferrara, y contribuye al desarrollo de la acción cortesana."
+    },
+    {
+      "nombre": "Diana",
+      "descripcion": "Mujer noble relacionada con Federico, probablemente hermana del Marqués según el desenlace; facilita su libertad y hace posible la reconciliación final entre los linajes."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "La hacienda o casa de Laura en Castilguillermo",
+      "descripcion": "Espacio central de la comedia; allí Laura se retira como viuda, llega Otavio robado, se esconden personajes, se fingen enfermedades y se decide el desenlace amoroso."
+    },
+    {
+      "nombre": "Ferrara",
+      "descripcion": "Marco político y cortesano de referencia; de allí parten el Marqués y Otavio, allí se origina la conjuración y allí se sitúan los conflictos de honor y linaje que repercuten en la acción rural."
+    },
+    {
+      "nombre": "El castillo del Marqués",
+      "descripcion": "Lugar desde el que el Marqués intenta cortejar a Laura cuando ella se instala en su hacienda y desde el que organiza visitas, cacerías y movimientos de sus criados."
+    },
+    {
+      "nombre": "Los caminos y el monte cercano",
+      "descripcion": "Espacios de tránsito y peligro donde Otavio es asaltado, el Marqués caza o finge cazar y los personajes se desplazan entre la ciudad y la aldea; hacen posible el motivo del 'llegar en ocasión'."
+    },
+    {
+      "nombre": "La prisión o torre del Águila",
+      "descripcion": "Lugar donde es encerrado Federico tras la conjuración; aunque aparece menos en escena, resulta clave para entender su fuga y la segunda línea argumental de la obra."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "La ocasión y la fortuna",
+      "descripcion": "La obra muestra cómo un encuentro fortuito en el momento preciso cambia por completo el curso de los afectos y de la vida social de los personajes."
+    },
+    {
+      "tema": "Amor, deseo y mudanza",
+      "descripcion": "Los sentimientos se transforman con rapidez: Laura pasa del duelo y la disposición hacia el Marqués al amor por Otavio, mientras el Marqués experimenta esperanza, celos y renuncia."
+    },
+    {
+      "tema": "Honor femenino y reparación",
+      "descripcion": "Buena parte de la acción gira en torno al temor de Laura por su honra tras acoger y amar a Otavio, y a la búsqueda de una salida legítima mediante el matrimonio."
+    },
+    {
+      "tema": "Engaño, disfraz y enredo",
+      "descripcion": "Disfraces de labrador, parentescos fingidos, desmayos, apariciones supuestas y enfermedades simuladas sostienen la intriga y permiten a los personajes ganar tiempo o protegerse."
+    },
+    {
+      "tema": "Poder nobiliario y conflicto político",
+      "descripcion": "El amor del Marqués no puede separarse de su autoridad sobre Ferrara, de las conjuras contra su vida y de los agravios entre casas nobles que desembocan en perdón y reconciliación."
+    },
+    {
+      "tema": "Hospitalidad y compasión",
+      "descripcion": "La piedad de Laura hacia el desconocido robado desencadena toda la trama posterior y convierte la ayuda al necesitado en origen inesperado del vínculo amoroso."
+    },
+    {
+      "tema": "Matrimonio como resolución social",
+      "descripcion": "El desenlace recompone los desórdenes amorosos y de honor mediante enlaces que integran a nobles y criados y restauran el equilibrio final."
+    }
+  ]
+}

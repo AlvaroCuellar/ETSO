@@ -1,0 +1,96 @@
+{
+  "archivo": "AGUILAR_NueraHumilde(Transk-IMPR).txt",
+  "titulo": "Nuera humilde, La",
+  "resumen_largo": [
+    "El príncipe Enrico, de caza en un paraje montañoso y despoblado de Hungría, se separa de su séquito y llega con su criado y cazador mayor Rosardo al castillo de Conrrado, un duque pariente suyo que vive retirado después de haber perdido su estado por mandato del rey. Allí, recibido con cortesía, conoce a Leonora, hija de Conrrado, cuya humildad, discreción y hermosura le causan un enamoramiento inmediato. Enrico decide quedarse en el castillo y, pese a la advertencia de Rosardo, que le recuerda que el rey su padre le tiene destinada por esposa a Lavinia, princesa de Francia, da palabra de matrimonio a Leonora. La joven corresponde con honestidad y amor, mientras Conrrado consiente la unión. La relación nace así en un espacio apartado de la corte y se funda en la atracción amorosa, la nobleza moral de Leonora y la tensión entre el deseo personal del príncipe y sus deberes dinásticos.",
+    "Entretanto, en la corte, la ausencia de Enrico inquieta al rey, que espera la llegada de Lavinia desde Francia con el conde Augusto. Una carta perdida revela finalmente que el príncipe se ha casado con Leonora, y el rey, sintiéndose desobedecido y agraviado en su autoridad, ordena a Rosardo prender a Conrrado, incendiar su castillo y llevarle a Leonora para darle muerte. Rosardo, sin embargo, ambiciona a Leonora para sí y comienza una cadena de engaños: finge ante el rey que la joven se ha despeñado y muerto, mientras oculta a Leonora bajo el nombre de Fortuna y la hace entrar al servicio de Lavinia. Enrico, creyendo muerta a su esposa, cae en desesperación; al mismo tiempo, Rosardo intenta persuadirle de que Leonora le ha olvidado y también trata de seducir a la propia Leonora, llegando incluso a pedirle que, al haberla salvado de la muerte, se considere libre de su primer vínculo. La intriga se complica con los celos de Lavinia, la presencia de Augusto, enamorado de ella, y la imposibilidad de consumar el nuevo matrimonio proyectado entre Enrico y la princesa francesa, pues el príncipe sigue dominado por el recuerdo de Leonora.",
+    "La verdad acaba por salir a la luz cuando Rosardo, acorralado por sus propias contradicciones y por la intervención decisiva de Augusto, confiesa que mintió sobre la muerte de Leonora y sobre su supuesta infidelidad. Enrico descubre entonces que su esposa vive y que ha permanecido fiel, mientras el rey recupera a Conrrado de su prisión al necesitar su lealtad y valor ante un conflicto con Francia, provocado probablemente por el agravio hecho a Lavinia. Reunidos todos ante el rey, Leonora es reconocida públicamente; Enrico afirma que ya está casado con ella y vuelve a darle la mano, defendiendo la legitimidad de su unión y el mérito de su esposa. El rey termina aceptando el matrimonio, honra a Augusto por haber salvado la vida de su hijo y dispone que Lavinia se case con él, con grandes mercedes y estado. A petición de Augusto, también perdona a Rosardo, aunque lo destierra. La comedia concluye así con la restauración del orden: la nuera humilde es admitida por fin en la familia real, la lealtad queda vindicada y la soberbia o la intriga reciben corrección sin destruir del todo la posibilidad de clemencia."
+  ],
+  "resumen_breve": [
+    "En la Hungría regia, entre un castillo retirado en el monte y la corte, el príncipe Enrico se enamora de Leonora, hija del desterrado duque Conrrado, y se casa con ella contra los planes de su padre, que esperaba darle por esposa a Lavinia de Francia.",
+    "La noticia provoca la ira del rey y abre una trama de engaños, prisiones y celos, pues Rosardo finge la muerte de Leonora, la oculta bajo otro nombre y trata de apartar a Enrico de su primer vínculo mientras se prepara un segundo matrimonio imposible.",
+    "Al descubrirse la verdad, se reconoce la fidelidad de Leonora, el rey acepta finalmente a su humilde nuera, Augusto obtiene la mano de Lavinia y Rosardo, culpable de la intriga, es perdonado con destierro."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Enrico",
+      "descripcion": "Príncipe de Hungría y motor principal de la acción; se enamora de Leonora, la desposa en secreto o de forma no aceptada por su padre y oscila entre la pasión, el duelo y la afirmación final de ese matrimonio."
+    },
+    {
+      "nombre": "Leonora",
+      "descripcion": "Hija de Conrrado y esposa de Enrico; destaca por su humildad, nobleza moral y constancia amorosa, y padece los engaños de Rosardo y la persecución regia sin perder su fidelidad."
+    },
+    {
+      "nombre": "Rosardo",
+      "descripcion": "Cazador mayor y criado cercano de Enrico; actúa como mediador inicial, pero luego se convierte en principal intrigante, miente al rey, oculta a Leonora y pretende aprovecharse de la situación para poseerla."
+    },
+    {
+      "nombre": "El Rey de Hungría",
+      "descripcion": "Padre de Enrico; representa la autoridad política y dinástica, se opone al enlace con Leonora por razones de estado y solo al final admite a la nuera humilde y restablece el orden."
+    },
+    {
+      "nombre": "Conrrado",
+      "descripcion": "Duque valiente y honrado, despojado de su estado y retirado en un castillo serrano; es padre de Leonora y su honra resulta decisiva para legitimar el matrimonio de su hija."
+    },
+    {
+      "nombre": "Lavinia",
+      "descripcion": "Princesa de Francia destinada por el rey a casarse con Enrico; su llegada activa el conflicto diplomático y amoroso, y finalmente acepta casarse con Augusto."
+    },
+    {
+      "nombre": "Augusto",
+      "descripcion": "Conde, primo del rey de Francia y enamorado de Lavinia; acompaña a la princesa, interviene en momentos decisivos y salva a Enrico, por lo que es recompensado con Lavinia y honores."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Castillo de Conrrado",
+      "descripcion": "Espacio central de la primera parte de la acción, situado en un ámbito montañoso y retirado; allí se conocen Enrico y Leonora, nace el amor y se inicia el conflicto con la autoridad regia."
+    },
+    {
+      "nombre": "Corte o palacio del Rey de Hungría",
+      "descripcion": "Centro del poder político y dinástico, donde se decide el matrimonio con Lavinia, se conocen las supuestas traiciones y se produce la resolución pública de la trama."
+    },
+    {
+      "nombre": "Monte y parajes despoblados de caza",
+      "descripcion": "Marco del encuentro inicial y de varios desplazamientos decisivos; funciona como espacio de extravío, ocultamiento, persecución y transición entre el castillo y la corte."
+    },
+    {
+      "nombre": "Prisión o castillo fuerte",
+      "descripcion": "Lugar de castigo al que es llevado Conrrado y en el que también queda encerrada Leonora bajo identidad encubierta; expresa la violencia de la autoridad y la vulnerabilidad de los inocentes."
+    },
+    {
+      "nombre": "Camino de llegada desde Francia",
+      "descripcion": "Espacio vinculado a la entrada de Lavinia y Augusto en Hungría y a la dimensión diplomática del argumento, pues conecta la trama amorosa con las alianzas entre reinos."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Amor frente a razón de estado",
+      "descripcion": "La obra enfrenta el matrimonio por amor entre Enrico y Leonora con la obligación política de casarse con la princesa francesa para conveniencia del reino."
+    },
+    {
+      "tema": "Humildad y nobleza verdadera",
+      "descripcion": "Leonora aparece como una mujer socialmente menos poderosa que la novia prevista para el príncipe, pero su virtud demuestra que la verdadera nobleza no depende solo del rango o la riqueza."
+    },
+    {
+      "tema": "Honra y fidelidad conyugal",
+      "descripcion": "La acción gira en torno a la palabra dada, la legitimidad del matrimonio y la constancia de Leonora, que se mantiene fiel incluso cuando todos la creen olvidada o muerta."
+    },
+    {
+      "tema": "Engaño e intriga cortesana",
+      "descripcion": "Rosardo altera el curso de los hechos mediante cartas ocultas, noticias falsas, disfraces de identidad y manipulaciones destinadas a obtener provecho amoroso y político."
+    },
+    {
+      "tema": "Autoridad paterna y obediencia",
+      "descripcion": "El conflicto entre el rey y su hijo muestra el choque entre la voluntad del padre soberano y la decisión personal del heredero, con consecuencias públicas para toda la corte."
+    },
+    {
+      "tema": "Celos, mudanza y arrepentimiento",
+      "descripcion": "Los personajes padecen sospechas, cambios de ánimo y rectificaciones; la obra muestra cómo la inconstancia y los celos pueden destruir, pero también cómo el arrepentimiento permite recomponer el orden."
+    },
+    {
+      "tema": "Clemencia final y restauración del orden",
+      "descripcion": "Tras las violencias y errores, el desenlace se resuelve mediante reconocimiento, perdón y nuevos enlaces, de modo que la justicia se combina con la misericordia regia."
+    }
+  ]
+}

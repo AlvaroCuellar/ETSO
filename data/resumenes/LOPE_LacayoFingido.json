@@ -1,0 +1,108 @@
+{
+  "archivo": "LOPE_LacayoFingido.txt",
+  "titulo": "Lacayo fingido, El",
+  "resumen_largo": [
+    "La acción se inicia con el incendio de la casa del Marqués Arnasto, tutor y tío de Rosarda, justo en vísperas de su boda con el duque Rosimundo. En medio de la confusión, Leonardo declara a Rosarda que él mismo ha provocado el fuego para impedir ese matrimonio y poder sacarla en brazos de la casa; sin embargo, enseguida confiesa que actuaba por mandato del Rey, enamorado de la joven, que quería apoderarse de ella antes de que se casase. El Rey aparece de inmediato, toma a Rosarda bajo su poder y ordena que sea llevada a un lugar secreto. Desde ese momento, Leonardo, aunque ha servido al monarca, empieza a debatirse entre la obediencia debida y el peso moral de haber colaborado en el rapto. Para encubrir el hecho, engaña por separado al Marqués y a Rosimundo: al primero le hace creer que el Duque ha robado a Rosarda para gozarla por fuerza, y al segundo le hace creer que el culpable es el Marqués. De este modo, ambos nobles se enfrentan públicamente, se acusan mutuamente de haber fingido el incendio y de haberse llevado a la dama, y solo la intervención de terceros evita que resuelvan el conflicto por las armas en ese primer momento.",
+    "Mientras Rosarda permanece encerrada en una torre o aposento fortificado de una quinta real, vigilada por el alcaide, se desarrolla una compleja intriga cortesana y cómica. El Rey pretende vencer la resistencia de la joven con ruegos y perseverancia, y afirma que no quiere usar de fuerza si ella no consiente; aun así, la mantiene cautiva y busca una salida política que justifique su conducta. Leonardo le advierte con franqueza del daño moral y político de esa empresa, y el propio monarca acaba considerando incluso devolver a Rosarda a Rosimundo para vengarse de su desdén. Paralelamente aparece en Francia una supuesta lacayo llamada Sancho, que en realidad es Leonora, dama española abandonada tiempo atrás por Rosimundo en vísperas de sus bodas. Disfrazada y extraordinariamente ingeniosa, decide aprovechar el enredo para acercarse al Duque, favorecer a Rosarda y labrarse reconocimiento. Para ganar acceso a la quinta y al círculo del Rey, urde primero una burla contra el alcaide fingiendo un caso monstruoso de adulterio y parto de un pollino; después, junto con su padre, introduce la ficción de una tela mágica que solo pueden ver los hijos legítimos. Nadie se atreve a confesar que no la ve, de modo que el engaño triunfa, el Rey paga generosamente por una tela inexistente y la falsa lacayo gana autoridad y libertad de movimientos dentro del espacio donde Rosarda está presa.",
+    "El conflicto principal se resuelve cuando Sancho-Leonora pasa a dirigir activamente la salida del laberinto amoroso y político. Por una parte, obtiene de Rosarda y de Leonardo los papeles firmados en que ambos se habían dado palabra de matrimonio, y logra que el alcaide, ya manipulado y confundido, permita la entrada de Leonardo en la torre. Por otra, hace llegar a la Reina noticias de la cautividad de Rosarda, de modo que la esposa del Rey irrumpe en el momento decisivo, movida por los celos y la sospecha. Cuando sorprende al Rey, a Rosarda y a Leonardo en la torre, Sancho revela que la presencia de Leonardo no obedece a una traición al monarca, sino al cumplimiento de una promesa matrimonial previa entre los dos jóvenes. Los papeles intercambiados prueban ese vínculo, y la situación obliga a deshacer el plan del Rey. Casi al mismo tiempo, comparecen el Marqués y Rosimundo, convocados con el pretexto de asistir a las bodas de Rosarda, y se descubre también la burla de la tela invisible, ante la cual algunos personajes acaban admitiendo públicamente que no veían nada. Finalmente se reconoce que Rosarda y Leonardo quedan legítimamente unidos, Rosimundo es reconducido hacia Leonora, cuya constancia y nobleza se revelan al final del todo cuando abandona el disfraz de lacayo, y la comedia concluye con un doble reajuste amoroso y social que restablece el honor, deshace los engaños y da cierre festivo a la historia."
+  ],
+  "resumen_breve": [
+    "En una corte francesa no precisada del todo, aunque así se declara en varios pasajes, el incendio fingido de la casa del Marqués permite al Rey raptar a Rosarda la noche anterior a sus bodas con el duque Rosimundo.",
+    "Mientras Rosarda permanece escondida en una torre de una quinta real, Leonardo engaña al Marqués y al Duque para enfrentarles, y Leonora, disfrazada de lacayo con el nombre de Sancho, introduce varias burlas para acercarse al Rey y socorrer a los amantes.",
+    "La irrupción final de la Reina en la torre, junto con los papeles de promesa matrimonial entre Rosarda y Leonardo y el descubrimiento del disfraz de Leonora, deshace la intriga y encamina dos uniones: Rosarda con Leonardo y Rosimundo con Leonora."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Sancho / Leonora",
+      "descripcion": "Dama española disfrazada de lacayo que impulsa la resolución de toda la intriga; busca a Rosimundo, que la abandonó, ayuda a Rosarda y trama las burlas decisivas, incluida la de la tela invisible."
+    },
+    {
+      "nombre": "Rosarda",
+      "descripcion": "Sobrina y heredera del Marqués, pretendida por Rosimundo y raptada por orden del Rey; resiste su cautiverio y mantiene una promesa amorosa con Leonardo."
+    },
+    {
+      "nombre": "Leonardo",
+      "descripcion": "Caballero cercano al Rey que ejecuta el incendio y el rapto por obediencia, pero luego se debate entre lealtad, honor y amor, hasta quedar unido con Rosarda."
+    },
+    {
+      "nombre": "El Rey",
+      "descripcion": "Monarca enamorado de Rosarda que ordena el incendio y la reclusión de la dama; su deseo desencadena el conflicto principal, aunque al final su plan fracasa."
+    },
+    {
+      "nombre": "Rosimundo",
+      "descripcion": "Duque que iba a casarse con Rosarda y que antes había abandonado a Leonora; resulta engañado durante gran parte de la acción y termina orientado hacia Leonora."
+    },
+    {
+      "nombre": "El Marqués Arnasto",
+      "descripcion": "Tío, tutor y probable jefe de la casa de Rosarda, cuya vivienda arde al comienzo; acusa y es acusado del rapto de su sobrina hasta descubrirse la responsabilidad regia."
+    },
+    {
+      "nombre": "La Reina",
+      "descripcion": "Esposa del Rey, cuya sospecha y posterior intervención en la torre precipitan el desenlace y frustran la ocultación del caso."
+    },
+    {
+      "nombre": "El alcaide",
+      "descripcion": "Guardián de la quinta y de la torre donde se encierra a Rosarda; figura cómica y manipulable, central en varias burlas de Sancho."
+    },
+    {
+      "nombre": "Eleandro",
+      "descripcion": "Confidente de Leonora que le trae noticias de Francia y sirve de apoyo para situar su pasado con Rosimundo y sus planes en la quinta."
+    },
+    {
+      "nombre": "Partenio",
+      "descripcion": "Padre de Leonora, asociado a la burla de la tela y colaborador importante en el engaño que da acceso y crédito a su hija."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "La quinta real",
+      "descripcion": "Residencia campestre del Rey en Francia donde se concentra gran parte de la acción media y final; allí se oculta a Rosarda y se organizan los engaños de Sancho."
+    },
+    {
+      "nombre": "La torre de la quinta",
+      "descripcion": "Lugar de reclusión de Rosarda, vigilado por el alcaide; funciona como núcleo del conflicto amoroso y político y como escenario del desenlace."
+    },
+    {
+      "nombre": "La casa del Marqués",
+      "descripcion": "Espacio inicial de la obra, incendiado de forma intencionada para facilitar el rapto de Rosarda y desencadenar las acusaciones entre Marqués y Duque."
+    },
+    {
+      "nombre": "La corte francesa",
+      "descripcion": "Marco general de la acción, donde circulan rumores, se sustancia el pleito entre el Marqués y Rosimundo y se hace visible la autoridad del Rey y de la Reina."
+    },
+    {
+      "nombre": "Los caminos y accesos entre la corte y la quinta",
+      "descripcion": "Espacios de tránsito usados para emboscadas, encuentros y desplazamientos secretos, especialmente en las burlas contra el alcaide y en la llegada de los personajes al final."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Amor, deseo y matrimonio impuesto",
+      "descripcion": "La acción gira en torno a quién debe casarse con Rosarda y bajo qué condiciones, enfrentando deseo personal, coacción y promesas previas de matrimonio."
+    },
+    {
+      "tema": "Honor femenino y reputación familiar",
+      "descripcion": "El rapto de Rosarda, su encierro y las sospechas sobre su destino afectan directamente al honor de la dama, de su tío y de los hombres que la pretenden."
+    },
+    {
+      "tema": "Poder real y abuso de autoridad",
+      "descripcion": "El Rey utiliza su posición para ordenar un incendio, secuestrar a Rosarda y retenerla, lo que muestra el conflicto entre voluntad del soberano y límites morales o jurídicos."
+    },
+    {
+      "tema": "Engaño, disfraz y traza ingeniosa",
+      "descripcion": "La obra se sostiene sobre identidades fingidas, mentiras estratégicas y artificios cómicos, desde el lacayo fingido hasta la tela inexistente que nadie se atreve a negar."
+    },
+    {
+      "tema": "Lealtad y conflicto de obediencias",
+      "descripcion": "Leonardo encarna la tensión entre servir al Rey, preservar su propia honra y responder a sus sentimientos, mientras otros personajes vacilan entre secreto, amistad y justicia."
+    },
+    {
+      "tema": "Celos y vigilancia conyugal",
+      "descripcion": "La intervención de la Reina nace de la sospecha y los celos, y resulta decisiva para desmontar la intriga y sacar a la luz lo que el Rey mantenía oculto."
+    },
+    {
+      "tema": "Restitución final del orden social",
+      "descripcion": "Tras los enredos, la comedia recompone las alianzas amorosas y familiares de modo que el honor queda reparado y las parejas se reordenan en un cierre festivo."
+    }
+  ]
+}

@@ -1,0 +1,128 @@
+{
+  "archivo": "LOPE_LimpiezaNoManchada.txt",
+  "titulo": "Limpieza no manchada, La",
+  "resumen_largo": [
+    "La obra se organiza como un auto alegórico en el que la Duda, expulsada de la casa de la Quietud y transformada en hombre para poder andar por el mundo, busca dónde encaminarse hasta que la Contemplación la conduce a un monasterio en el que vive santa Brígida. Allí, la santa se halla inquieta por una cuestión doctrinal: cómo se transmite a todos los descendientes de Adán el pecado original y por qué incluso el niño recién nacido participa de esa mancha. El Cuidado, el Silencio y la misma Contemplación intervienen como mediadores de su búsqueda, mientras la Duda expone que acompaña a toda condición humana, desde labradores y soldados hasta letrados y pretendientes. Para responder a la inquietud de Brígida, la acción recurre a ejemplos bíblicos y doctrinales: Job maldice la noche en que fue concebido, y su lamento se interpreta como queja contra el pecado original; luego se explica que el bautismo lava una mancha previa, visible no por los sentidos sino por sus efectos, y que la herencia de Adán implica culpa, enfermedad, muerte y rebelión de la carne. También David, en su arrepentimiento, reconoce haber sido concebido en culpa, reforzando así la universalidad del pecado heredado.",
+    "A partir de ese punto, la indagación de Brígida se eleva hacia un problema más preciso y decisivo: si todos nacen sujetos al pecado original, qué ocurrió con la Virgen María. La obra dramatiza entonces la acción del Pecado original como poder tiránico que pretende marcar a todos los hombres como esclavos suyos; frente a él comparece el Género humano, que recuerda la fuerza liberadora del bautismo. Para poner a prueba la excepción mariana, aparecen casos extraordinarios como Jeremías, santificado en el vientre de su madre, y san Juan Bautista, que salta en el seno de Isabel al sentir la presencia de Cristo y recibe allí la gracia. Sin embargo, estos ejemplos no bastan a Brígida, porque ambos fueron concebidos con pecado y santificados después. El ángel o mensajero celestial le aclara entonces que María tuvo las gracias de los santos y un privilegio mayor, singular y sin ejemplo. La Alegoría organiza después una fiesta doctrinal en la que representa la historia de Ester ante Asuero: así como la reina, al acercarse al rey, parece caer y es sostenida por su esposo con clemencia real, del mismo modo la Virgen fue preservada por Dios en el mismo instante en que, de otro modo, habría caído bajo la ley común. La explicación permite distinguir entre una redención curativa y otra preservativa: María también fue redimida por Cristo, pero de modo excelentísimo, siendo preservada de la culpa antes de contraerla.",
+    "Resuelta la cuestión, la Duda se transforma en Desengaño y pasa a defender con vehemencia la limpia Concepción de María frente al Pecado original, al que ridiculiza y derrota verbalmente, insistiendo en que la Virgen nació libre de su mordedura y quebró con su pie la cabeza de la serpiente. La última parte del auto amplía el caso individual de Brígida hasta convertirlo en proclamación pública y universal. La Piedad encomienda a la Fama pregonar por Europa, Asia, África y América la opinión piadosa de que María fue concebida sin pecado original, y varias naciones cristianas, entre ellas España, Francia y Alemania, se suman a la celebración. El Tiempo hace avanzar la acción hasta la monarquía de Felipe III y, de manera muy señalada, hasta la Universidad de Salamanca, presentada como defensora solemne de esta doctrina mediante juramento académico. Se suceden entonces fiestas, músicas, danzas, glosas estudiantiles y desfiles de reinos y provincias, con especial elogio de España, Portugal, Castilla, Andalucía y Salamanca. El auto concluye así uniendo revelación espiritual, argumentación teológica y celebración política y universitaria en una afirmación jubilosa de la Inmaculada Concepción, concebida como excepción única otorgada por Dios a la Virgen y motivo de regocijo para toda la cristiandad."
+  ],
+  "resumen_breve": [
+    "En un marco alegórico y religioso, probablemente situado entre el monasterio de santa Brígida y varios espacios visionarios, la Duda busca respuesta a cómo afecta el pecado original a todos los hombres y llega guiada por la Contemplación hasta la santa.",
+    "Brígida examina con ayuda de ejemplos bíblicos, como Job, David, Jeremías y san Juan Bautista, la transmisión de la culpa de Adán, hasta que una alegoría de Ester y Asuero le permite entender que la Virgen María fue redimida de modo preservativo y concebida sin mancha.",
+    "La obra concluye con la derrota simbólica del Pecado original, la transformación de la Duda en Desengaño y una gran proclamación festiva, situada en la cristiandad contemporánea del autor y centrada en España y la Universidad de Salamanca, en defensa de la limpia Concepción."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Brígida",
+      "descripcion": "Santa contemplativa cuya duda sobre el pecado original y la pureza de la Virgen articula la acción principal del auto."
+    },
+    {
+      "nombre": "Duda / Desengaño",
+      "descripcion": "Figura alegórica que, tras ser expulsada por la Quietud, acompaña la búsqueda doctrinal y termina convertida en Desengaño al aceptar la Concepción inmaculada de María."
+    },
+    {
+      "nombre": "Contemplación",
+      "descripcion": "Alegoría que acoge a la Duda, la conduce junto a Brígida y orienta el proceso de conocimiento espiritual."
+    },
+    {
+      "nombre": "Pecado original",
+      "descripcion": "Personificación del mal hereditario de Adán, presentado como tirano que marca a los hombres y se opone con furia a la excepción mariana."
+    },
+    {
+      "nombre": "Alegoría",
+      "descripcion": "Figura que revela a Brígida el sentido profundo del misterio mediante la representación de Ester y Asuero."
+    },
+    {
+      "nombre": "Cuidado",
+      "descripcion": "Alegoría cercana a Brígida que expresa su inquietud intelectual y espiritual durante la indagación."
+    },
+    {
+      "nombre": "Quietud",
+      "descripcion": "Alegoría que expulsa de su casa a la Duda al comienzo del auto y establece el conflicto inicial."
+    },
+    {
+      "nombre": "Piedad",
+      "descripcion": "Figura alegórica que impulsa la proclamación pública de la doctrina y encarga a la Fama su difusión universal."
+    },
+    {
+      "nombre": "Fama",
+      "descripcion": "Personificación encargada de pregonar por el mundo la opinión piadosa de la Concepción sin pecado de María."
+    },
+    {
+      "nombre": "Ester",
+      "descripcion": "Reina bíblica cuya historia se representa como figura central para explicar de manera simbólica la preservación de la Virgen."
+    },
+    {
+      "nombre": "Asuero",
+      "descripcion": "Rey de la representación alegórica de Ester; su gesto de sostener a la reina sirve como imagen de la gracia preservativa de Dios."
+    },
+    {
+      "nombre": "Silencio",
+      "descripcion": "Figura alegórica que, según se infiere del texto conservado, colabora en la revelación de los misterios que inquietan a Brígida."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Monasterio de santa Brígida",
+      "descripcion": "Espacio principal de la búsqueda espiritual, donde Brígida contempla, pregunta y recibe las revelaciones sobre el pecado original y la Virgen."
+    },
+    {
+      "nombre": "Casa de la Quietud",
+      "descripcion": "Lugar alegórico del inicio, del que la Duda es expulsada, y que sirve para plantear el conflicto entre sosiego y cuestionamiento."
+    },
+    {
+      "nombre": "Ámbito de la contemplación y las visiones bíblicas",
+      "descripcion": "Espacio dramático mutable en el que comparecen Job, David, Jeremías, san Juan Bautista y otras escenas reveladoras evocadas por la contemplación."
+    },
+    {
+      "nombre": "Corte de Asuero",
+      "descripcion": "Escenario de la representación de Ester, fundamental para explicar figuradamente la preservación de María en su concepción."
+    },
+    {
+      "nombre": "Mundo bajo el poder del Pecado original",
+      "descripcion": "Espacio simbólico donde el Pecado marca al Género humano y se dramatiza la necesidad del bautismo y de la redención."
+    },
+    {
+      "nombre": "España y la cristiandad universal",
+      "descripcion": "Marco expansivo del desenlace, en el que la Fama y las naciones celebran públicamente la doctrina de la Inmaculada Concepción."
+    },
+    {
+      "nombre": "Universidad de Salamanca",
+      "descripcion": "Lugar destacado de la parte final, presentado como centro académico y ceremonial que jura defender la limpia Concepción de María."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "La Inmaculada Concepción de María",
+      "descripcion": "Es el núcleo de toda la obra: se defiende que la Virgen fue concebida sin la mancha del pecado original por singular privilegio divino."
+    },
+    {
+      "tema": "El pecado original y su transmisión",
+      "descripcion": "La acción examina cómo la culpa de Adán alcanza a todos los hombres desde su concepción y cuáles son sus efectos sobre la humanidad."
+    },
+    {
+      "tema": "La redención preservativa",
+      "descripcion": "La obra distingue entre ser limpiado después de caer y ser preservado de caer, para explicar el caso único de María."
+    },
+    {
+      "tema": "Búsqueda de conocimiento religioso",
+      "descripcion": "Brígida, guiada por la Contemplación y atravesando la Duda, persigue una comprensión más segura de un misterio doctrinal."
+    },
+    {
+      "tema": "Relación entre duda, fe y desengaño",
+      "descripcion": "La duda no aparece solo como error, sino como paso previo hacia una verdad más firme, culminada en el desengaño espiritual."
+    },
+    {
+      "tema": "Poder del bautismo y de la gracia",
+      "descripcion": "El bautismo se presenta como remedio eficaz contra la mancha heredada y como signo de la victoria de Cristo sobre el pecado."
+    },
+    {
+      "tema": "Autoridad bíblica y ejemplaridad sagrada",
+      "descripcion": "Job, David, Jeremías, san Juan Bautista y Ester sirven para fundamentar y hacer comprensible la doctrina defendida."
+    },
+    {
+      "tema": "Celebración pública y política de la doctrina",
+      "descripcion": "La verdad teológica se convierte al final en fiesta colectiva, pregón universal y afirmación institucional en naciones y universidades católicas."
+    }
+  ]
+}

@@ -1,0 +1,120 @@
+{
+  "archivo": "AGUILAR_SanLuisBertran.txt",
+  "titulo": "San Luis Bertrán",
+  "resumen_largo": [
+    "La obra presenta primero la figura de Luis Bertrán desde su juventud en Valencia y en el ámbito familiar, donde ya se manifiestan su elocuencia religiosa, su valentía espiritual y una inclinación radical a la vida divina. Tras un episodio inicial en que reprende a unos hombres que temen a un león y los exhorta a temer más al demonio que a las fieras, aparece su relación con su padre, que cree que su hijo va a casarse con una dama noble por mediación de fray Juan Micón. El equívoco se resuelve cuando se descubre que ese “casamiento” alude en realidad a su entrada en religión. Luis recibe el hábito con entusiasmo, acepta los oficios más humildes y convierte la obediencia y la mortificación en centro de su vida. Una mujer llamada Marcela, que parece haber estado ligada al proyecto matrimonial anterior, intenta verlo al tomar él el hábito, pero acaba renunciando y orientando su afecto hacia devoción más espiritual. El prior, admirado por el exceso de penitencias del novicio, le recuerda que la verdadera humildad debe ir unida a la obediencia y trata de moderar sus austeridades, aunque reconoce desde muy pronto la altura excepcional de su vida religiosa.",
+    "Ya en el convento y después como prior en Albaida, Luis Bertrán aparece rodeado de fama de santidad. El texto acumula testimonios de su virtud: conoce secretos de conciencia, mueve a confesión a un hombre que ocultaba un pecado grave, descubre que fray Pedro había escondido limosnas y, sobre todo, apaga milagrosamente un gran incendio al hacer la señal de la cruz. A la vez, se perfila su misión apostólica: desea pasar al Nuevo Mundo para predicar y parte acompañado por fray Pedro. En tierras americanas, donde gobierna la reina Teolinda y actúan varios indígenas principales como Laupí, Leucotón, Lautaro, Ardán y Tegualda, Bertrán se enfrenta a una sociedad pagana que adora al sol. Allí predica la doctrina cristiana, explica la Trinidad, la creación y la redención mediante la imagen de Cristo crucificado, bautiza a un niño moribundo cuya alma sube gloriosamente al cielo, salva a fray Pedro de un indígena que fingía querer comérselo, convierte a numerosos indios y logra que enemigos inicialmente violentos se rindan ante su paciencia. También sufre intentos de agresión: un hombre en España había tratado de matarlo por resentimiento amoroso, y en las Indias varias intrigas buscan su muerte o su caída moral. Sin embargo, su firmeza desarma a los agresores: Leucotón depone la espada, pide perdón y se bautiza; Tegualda intenta tentarlo, pero al oír sus disciplinas y ver visiones celestes reconoce su santidad; y Teolinda, que había promovido hostilidad contra él, termina arrepintiéndose.",
+    "La culminación de la acción americana llega cuando Bertrán acepta beber un veneno para demostrar la verdad de la fe que predica; sobrevive gracias al auxilio divino y del vaso sale una serpiente, signo prodigioso que provoca conversiones masivas. Teolinda y Laupí abrazan también la nueva religión, y el santo dispone incluso su matrimonio antes de partir, dejando establecida la fe en aquellas tierras. De vuelta a Valencia, la fama de Luis Bertrán crece todavía más: se le atribuyen nuevos milagros, entre ellos curaciones, la expulsión pública de Luzbel disfrazado de ciego y la sanación de un loco por medio de un jirón de su hábito. Elegido prior, procura atribuir el cargo a san Vicente Ferrer en un episodio visionario, presentándose solo como sustituto y manteniendo su humildad. En la parte final, dialoga con fray Nicolás y le anuncia por revelación su muerte próxima, fijada para el día de san Dionís. También consuela y prepara para morir a un príncipe traído milagrosamente ante él. Cuando llega su tránsito, el convento y la ciudad se llenan de signos extraordinarios: luz sobrenatural en la celda, resplandor del cadáver, afluencia tumultuosa del pueblo y grandes personajes que acuden a venerarlo. Fray Nicolás, arrebatado en éxtasis, contempla simbólicamente la gloria de Bertrán en un carro de fuego semejante al de Elías, con lo que la obra concluye exaltando su santidad, su poder milagroso y su triunfo celestial."
+  ],
+  "resumen_breve": [
+    "En Valencia, probablemente en el siglo XVI, Luis Bertrán abandona la expectativa de un matrimonio mundano, entra en religión dominica y se distingue desde el principio por su humildad, obediencia y extrema penitencia.",
+    "En el convento y luego en Albaida obra conversiones y milagros, y después viaja al Nuevo Mundo, donde predica entre indígenas, vence intrigas, tentaciones y violencias, y logra numerosas conversiones, incluida la de la reina Teolinda.",
+    "De regreso a Valencia, su fama de santo se confirma con nuevas curaciones y exorcismos, hasta que anuncia su propia muerte, muere rodeado de prodigios y queda venerado por el pueblo como triunfador en la gloria celestial."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "San Luis Bertrán",
+      "descripcion": "Protagonista absoluto de la obra; fraile dominico, predicador y misionero cuya vida de humildad, obediencia, milagros y conversiones conduce al reconocimiento final de su santidad."
+    },
+    {
+      "nombre": "Fray Pedro",
+      "descripcion": "Compañero frecuente de Bertrán, con función a veces cómica y a veces testimonial; lo acompaña en el convento y en la misión americana, y sirve para resaltar la virtud del santo por contraste."
+    },
+    {
+      "nombre": "El prior",
+      "descripcion": "Superior religioso que recibe a Luis en el convento, modera sus penitencias y reconoce muy pronto su valor espiritual y ejemplaridad dentro de la comunidad."
+    },
+    {
+      "nombre": "Teolinda",
+      "descripcion": "Reina indígena del Nuevo Mundo que primero se enfrenta a la predicación cristiana y participa en maniobras contra el santo, pero termina convertida y sometida espiritualmente a su autoridad."
+    },
+    {
+      "nombre": "Laupí",
+      "descripcion": "Indígena enamorado de Teolinda que pasa de servir a la reina pagana a abrazar la fe cristiana; finalmente es destinado por Bertrán a casarse con ella."
+    },
+    {
+      "nombre": "Leucotón",
+      "descripcion": "Guerrero o principal indígena que acude con amenazas contra Bertrán, pero queda vencido por su humildad, pide perdón y se convierte al cristianismo."
+    },
+    {
+      "nombre": "Fray Nicolás",
+      "descripcion": "Religioso muy cercano al santo en la parte final; conversa con él sobre su muerte, recibe promesa de señales celestiales y actúa como testigo extático de su glorificación."
+    },
+    {
+      "nombre": "Marcela",
+      "descripcion": "Mujer vinculada al proyecto matrimonial abandonado por Luis; su breve intervención muestra la renuncia amorosa y la transformación de un afecto humano en veneración espiritual."
+    },
+    {
+      "nombre": "Padre de Luis Bertrán",
+      "descripcion": "Figura familiar relevante al comienzo, que interpreta erróneamente la situación de su hijo como un matrimonio humano y expresa el lazo afectivo y social del que el santo se separa."
+    },
+    {
+      "nombre": "Luzbel",
+      "descripcion": "Adversario espiritual central, mencionado desde el inicio como verdadero enemigo del alma y presente al final en forma visible cuando intenta engañar al santo y es desenmascarado."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "El convento dominico de Valencia",
+      "descripcion": "Espacio principal de la primera y última parte de la obra; allí se produce la entrada de Luis en religión, su formación ascética, su regreso de Indias, sus milagros finales y su muerte."
+    },
+    {
+      "nombre": "Albaida y su convento",
+      "descripcion": "Lugar asociado a su priorato y a la consolidación pública de su fama; allí confiesa pecadores, corrige frailes y apaga milagrosamente el incendio que amenaza la tierra del conde."
+    },
+    {
+      "nombre": "El Nuevo Mundo o las Indias",
+      "descripcion": "Gran marco misionero de la segunda parte, donde Bertrán predica entre pueblos indígenas, combate la idolatría, realiza bautismos y logra conversiones colectivas."
+    },
+    {
+      "nombre": "La corte o poblado de Teolinda",
+      "descripcion": "Espacio político y religioso fundamental dentro de la misión americana; concentra la resistencia pagana, las disputas doctrinales, las tentaciones y la conversión final de la reina y su entorno."
+    },
+    {
+      "nombre": "La cabaña o celda de Bertrán en tierras americanas",
+      "descripcion": "Lugar de retiro, oración y penitencia donde se manifiestan visiones sobrenaturales y se pone a prueba su castidad frente a la tentativa de seducción."
+    },
+    {
+      "nombre": "El río y la fuente bautismales",
+      "descripcion": "Espacios funcionales de la acción misionera, ligados al bautismo de niños y adultos y a la implantación material de la nueva fe cristiana."
+    },
+    {
+      "nombre": "La ciudad y los alrededores de Valencia",
+      "descripcion": "Marco urbano más amplio en el que circula la fama del santo, se producen curaciones públicas y acude el pueblo a venerar su cuerpo tras la muerte."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Santidad ejemplar",
+      "descripcion": "La obra construye la vida de Luis Bertrán como modelo de perfección cristiana mediante humildad, obediencia, penitencia, caridad y firmeza ante toda prueba."
+    },
+    {
+      "tema": "Conversión y evangelización",
+      "descripcion": "Gran parte de la acción se centra en la predicación de la fe, el abandono de la idolatría y el bautismo de nuevos cristianos, sobre todo en la misión americana."
+    },
+    {
+      "tema": "Milagro y poder divino",
+      "descripcion": "Los prodigios confirman constantemente la autoridad espiritual del protagonista: apaga incendios, descubre secretos, cura enfermos, resiste venenos y expulsa al demonio."
+    },
+    {
+      "tema": "Lucha contra el demonio y el pecado",
+      "descripcion": "Desde el discurso inicial sobre el león y Luzbel hasta la expulsión final del demonio, la obra presenta la vida cristiana como combate espiritual continuo."
+    },
+    {
+      "tema": "Humildad y obediencia religiosa",
+      "descripcion": "El texto insiste en que la grandeza del santo no consiste solo en la penitencia, sino en obedecer, aceptar oficios bajos y huir de la vanidad incluso cuando todos lo veneran."
+    },
+    {
+      "tema": "Renuncia al mundo",
+      "descripcion": "La entrada en religión de Luis implica dejar atrás expectativas familiares, prestigio social y posible matrimonio, sustituyendo el vínculo humano por la entrega total a Dios."
+    },
+    {
+      "tema": "Martirio interior y disciplina corporal",
+      "descripcion": "Aunque no muere mártir en misión, el protagonista busca una forma de martirio espiritual mediante ayuno, azotes y sufrimiento ofrecido a Dios, siempre sometido a la regla religiosa."
+    },
+    {
+      "tema": "Muerte santa y gloria celestial",
+      "descripcion": "El desenlace convierte la muerte de Bertrán en culminación triunfal de su trayectoria, acompañada de revelaciones, luces, éxtasis y veneración colectiva."
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "archivo": "LOPE_LealCriado.txt",
+  "titulo": "Leal criado, El",
+  "resumen_largo": [
+    "La acción se inicia en París, adonde Leonardo ha llegado desde Roán movido únicamente por la fama de la hermosura de Serafina. Su criado y amigo Julio intenta reprenderlo por una empresa tan novelesca, pero Leonardo defiende que el amor basta para justificar el viaje. Pronto localizan la casa de la joven, vigilada por su padre Galerio y, sobre todo, por su tía Riberia, mujer celosa y áspera. La mediadora decisiva es Belarda, tendera vecina de Serafina, con quien Leonardo entra en conversación fingiendo compras y a quien confía su pasión, su nombre y un anillo para la dama. Belarda acepta llevar el mensaje y, gracias a su trato familiar con Serafina, descubre que la joven ha quedado impresionada por la presencia del forastero incluso antes de oír su declaración. Desde ese momento la tendera actúa como tercera amorosa: intercambia anillos, comunica a cada uno el deseo del otro y organiza encuentros bajo pretexto de compras y visitas. Aprovechando una ocasión en que Serafina queda encerrada en casa de Belarda, Leonardo, oculto allí, logra hablarle a solas; ambos se reconocen inclinados desde la primera vista, se prometen como esposos y sellan su unión amorosa de manera íntima y apresurada, empujados por la pasión y por la presión del encierro en que vive la joven.",
+    "Tras esta unión, el conflicto se agrava. Leonardo debe ausentarse a Roán por negocios relacionados con la falsa noticia de la muerte de su padre, y allí confiesa a su amigo Dionisio que Serafina ha quedado embarazada. Mientras tanto, en París, Riberia advierte el estado de la joven y Galerio, temiendo la deshonra, ordena a su criado Uberto que la mate en un camino fingiendo un ataque de ladrones. Sin embargo, Uberto, criado fidelísimo en apariencia al padre pero moralmente compasivo, rehúsa consumar el crimen: simula el asalto, hiere levemente la situación con una ficción verosímil y entrega a Serafina a unos labradores para ponerla a salvo. Después vuelve a París y engaña a Galerio y a la ciudad con la noticia de que la joven ha sido robada y asesinada por salteadores. Leonardo, de regreso, cae en desesperación al creer muerta a su esposa, pero Uberto le revela en secreto la verdad y lo conduce hasta ella. En la aldea Serafina ha dado a luz, y Uberto idea entonces la traza central del resto de la obra: trocar a los niños nacidos casi al mismo tiempo en su casa y en la de la dama, de modo que el hijo de Leonardo y Serafina sea criado por Galerio como heredero, mientras el de Uberto quede fuera del peligro inmediato. Con este artificio se gana tiempo, se protege la vida de los amantes y se preserva la línea sucesoria que el padre ignora sostener.",
+    "Pasados siete años, el enredo alcanza su máxima complejidad. Serafina vive apartada y luego vuelve sin ser reconocida por su padre, bajo figura de viuda pobre llamada probablemente Lisarda según el pasaje conservado, llevando consigo a la niña que en realidad es hija de Uberto; mientras tanto, Galerio cría como nieto propio al verdadero hijo de Serafina y ha decidido hacerlo heredero. El mismo Uberto continúa administrando la confusión para salvaguardar a todos, aunque nuevas amenazas surgen cuando Felisardo, labrador que la había acogido, la expulsa por temor a que su ejemplo amoroso influya en su hija Tirrena. En la parte final, Leonardo desea recobrar abiertamente a su esposa, pero Galerio, todavía engañado, le ofrece casarlo con aquella supuesta labradora y al mismo tiempo le pide que mate a Uberto, creyéndolo autor de su deshonra. Este falso diagnóstico provoca una cadena de malentendidos y acusaciones hasta que Belarda interviene y descubre el antiguo concierto; luego una niña y las propias palabras de los implicados permiten a Galerio comprender que Serafina vive, que Uberto no la traicionó, sino que la salvó, y que el hijo criado en su casa es verdaderamente suyo. El desenlace restituye el orden: Galerio perdona a su hija y reconoce a Leonardo como hijo; alaba la lealtad extraordinaria de Uberto; asegura la herencia mediante el matrimonio futuro de los dos niños, Serafín y Lisarda, y se anuncia además la boda de Julio con Belarda. Así, la comedia concluye transformando una historia de encierro, violencia y engaño en una reconciliación familiar fundada en la fidelidad del criado que da título a la obra."
+  ],
+  "resumen_breve": [
+    "En el París cortesano de la obra, Leonardo viaja desde Roán enamorado por fama de Serafina, y con ayuda de Belarda logra conocerla, prometerse con ella y unirse amorosamente pese a la vigilancia del padre y de la tía.",
+    "Cuando Serafina queda embarazada, Galerio manda a Uberto matarla para salvar el honor, pero el criado la protege, finge su muerte en un camino fuera de la ciudad y organiza un complejo trueque de niños para ocultarla y preservar al heredero.",
+    "Siete años después, entre la aldea y París, los engaños salen a la luz, se reconoce la inocencia y lealtad de Uberto, Galerio recupera a su hija y a su nieto, y la obra se cierra con perdones, restitución familiar y matrimonios presentes o futuros."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Uberto",
+      "descripcion": "Criado de Galerio y figura central del desenlace; aparenta obediencia, pero salva a Serafina, urde los engaños necesarios para protegerla y restablece finalmente el honor y la herencia familiar."
+    },
+    {
+      "nombre": "Leonardo",
+      "descripcion": "Caballero de Roán enamorado de Serafina por su fama; viaja a París, logra unirse con ella y atraviesa largos años de separación y confusión hasta ser reconocido como esposo legítimo."
+    },
+    {
+      "nombre": "Serafina",
+      "descripcion": "Joven parisina de gran hermosura, hija de Galerio; vive sometida a encierro, corresponde al amor de Leonardo, sufre el peligro de muerte y el destierro, y acaba reintegrada en su familia."
+    },
+    {
+      "nombre": "Galerio",
+      "descripcion": "Padre de Serafina, viejo avaro y celoso del honor; ordena la muerte de su hija al creerla deshonrada, cría sin saberlo a su nieto y termina reconociendo su error."
+    },
+    {
+      "nombre": "Belarda",
+      "descripcion": "Tendera vecina de Serafina y mediadora amorosa; facilita el primer contacto entre los amantes, transmite mensajes y ayuda a aclarar el enredo final."
+    },
+    {
+      "nombre": "Julio",
+      "descripcion": "Criado y compañero de Leonardo; le acompaña desde Roán, participa en las gestiones amorosas y termina vinculado a Belarda en el desenlace."
+    },
+    {
+      "nombre": "Riberia",
+      "descripcion": "Tía de Serafina y guardiana de su recogimiento; encarna la vigilancia doméstica que dificulta el acercamiento amoroso y precipita la presión sobre la joven."
+    },
+    {
+      "nombre": "Felisardo",
+      "descripcion": "Labrador que acoge durante un tiempo a Serafina en la aldea; después la expulsa por miedo al descrédito y por la influencia que atribuye a su caso sobre su hija Tirrena."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "París",
+      "descripcion": "Marco urbano principal de la comedia; allí se sitúan la casa de Serafina, la tienda de Belarda y los primeros encuentros, engaños y reconocimientos."
+    },
+    {
+      "nombre": "Tienda y casa de Belarda",
+      "descripcion": "Espacio decisivo de mediación amorosa donde Leonardo conoce noticias de Serafina, se conciertan mensajes y se produce el encuentro íntimo de los amantes."
+    },
+    {
+      "nombre": "Casa de Galerio",
+      "descripcion": "Lugar del encierro de Serafina y centro del conflicto de honor, la vigilancia familiar y la posterior restitución final."
+    },
+    {
+      "nombre": "Camino y monte o pinar a las afueras",
+      "descripcion": "Espacio nocturno donde debía ejecutarse el asesinato de Serafina; allí Uberto finge el asalto y desvía la tragedia hacia la salvación secreta."
+    },
+    {
+      "nombre": "Aldea y casa de los labradores",
+      "descripcion": "Refugio provisional de Serafina tras la falsa muerte; en este ámbito rural se produce el parto y se desarrollan los engaños relativos al intercambio de niños y al exilio de la dama."
+    },
+    {
+      "nombre": "Roán",
+      "descripcion": "Ciudad de origen de Leonardo; funciona como punto de partida del enamoramiento por fama y como lugar al que él se ve obligado a volver antes de regresar a resolver la trama."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Lealtad del criado",
+      "descripcion": "La obra convierte a Uberto en ejemplo máximo de fidelidad inteligente, pues protege la vida de Serafina, modera la violencia del padre y recompone el orden familiar."
+    },
+    {
+      "tema": "Honor y deshonra familiar",
+      "descripcion": "El temor a la deshonra mueve a Galerio a ordenar la muerte de su hija y desencadena casi todos los engaños, ocultamientos y conflictos posteriores."
+    },
+    {
+      "tema": "Amor por fama y amor correspondido",
+      "descripcion": "Leonardo se enamora sin haber visto a Serafina, solo por la celebridad de su hermosura, y ese amor acaba siendo compartido y confirmado en la acción."
+    },
+    {
+      "tema": "Encierro y vigilancia de la mujer",
+      "descripcion": "Serafina vive sometida a la custodia del padre y de la tía, lo que obliga a recurrir a mediadoras, fingimientos y encuentros secretos."
+    },
+    {
+      "tema": "Engaño, traza y ocultación",
+      "descripcion": "Cartas fingidas, identidades veladas, noticias falsas, simulación de muerte e intercambio de niños sostienen el desarrollo de la comedia y permiten evitar una tragedia."
+    },
+    {
+      "tema": "Paternidad, linaje y herencia",
+      "descripcion": "El reconocimiento del nieto, la transmisión de la hacienda y la legitimidad de la descendencia son cuestiones decisivas en la resolución final."
+    },
+    {
+      "tema": "Perdón y reconciliación",
+      "descripcion": "Tras años de errores, violencia y sospechas, la obra concluye con el reconocimiento de la verdad, el perdón del padre y la reintegración de los personajes en un orden común."
+    }
+  ]
+}

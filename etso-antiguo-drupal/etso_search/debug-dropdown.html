@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Dropdown de Textos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .code {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 3px;
+            font-family: monospace;
+            overflow-x: auto;
+        }
+        .test-area {
+            border: 2px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Debug: Dropdown de Textos - ETSO Search</h1>
+    
+    <div class="info">
+        <h2>Instrucciones</h2>
+        <p>Abre la consola del navegador (F12) y ejecuta estos comandos en la página del buscador:</p>
+    </div>
+
+    <div class="test-area">
+        <h3>1. Verificar si existen los elementos</h3>
+        <div class="code">
+console.log('Botones textos-toggle:', document.querySelectorAll('.textos-toggle'));
+console.log('Wrappers:', document.querySelectorAll('.textos-dropdown-wrapper'));
+console.log('Dropdowns:', document.querySelectorAll('.textos-dropdown'));
+        </div>
+        <button onclick="navigator.clipboard.writeText(this.previousElementSibling.textContent)">Copiar</button>
+    </div>
+
+    <div class="test-area">
+        <h3>2. Verificar estructura HTML de un dropdown</h3>
+        <div class="code">
+var wrapper = document.querySelector('.textos-dropdown-wrapper');
+if (wrapper) {
+    console.log('Wrapper HTML:', wrapper.outerHTML);
+    console.log('Botón:', wrapper.querySelector('.textos-toggle'));
+    console.log('Dropdown:', wrapper.querySelector('.textos-dropdown'));
+} else {
+    console.log('No se encontró wrapper');
+}
+        </div>
+        <button onclick="navigator.clipboard.writeText(this.previousElementSibling.textContent)">Copiar</button>
+    </div>
+
+    <div class="test-area">
+        <h3>3. Verificar si el behavior está cargado</h3>
+        <div class="code">
+console.log('Drupal behaviors:', Drupal.behaviors);
+console.log('etsoSearchBuscador:', Drupal.behaviors.etsoSearchBuscador);
+        </div>
+        <button onclick="navigator.clipboard.writeText(this.previousElementSibling.textContent)">Copiar</button>
+    </div>
+
+    <div class="test-area">
+        <h3>4. Probar manualmente el toggle</h3>
+        <div class="code">
+var button = document.querySelector('.textos-toggle');
+if (button) {
+    var wrapper = button.closest('.textos-dropdown-wrapper');
+    var dropdown = wrapper.querySelector('.textos-dropdown');
+    console.log('Dropdown hidden:', dropdown.hasAttribute('hidden'));
+    
+    // Toggle manualmente
+    if (dropdown.hasAttribute('hidden')) {
+        dropdown.removeAttribute('hidden');
+        console.log('Dropdown mostrado');
+    } else {
+        dropdown.setAttribute('hidden', '');
+        console.log('Dropdown ocultado');
+    }
+} else {
+    console.log('No se encontró botón');
+}
+        </div>
+        <button onclick="navigator.clipboard.writeText(this.previousElementSibling.textContent)">Copiar</button>
+    </div>
+
+    <div class="test-area">
+        <h3>5. Verificar event listeners</h3>
+        <div class="code">
+var button = document.querySelector('.textos-toggle');
+if (button) {
+    console.log('Event listeners en el botón (no se pueden listar directamente)');
+    console.log('Probar click manualmente:', button.click());
+} else {
+    console.log('No se encontró botón');
+}
+        </div>
+        <button onclick="navigator.clipboard.writeText(this.previousElementSibling.textContent)">Copiar</button>
+    </div>
+
+    <div class="test-area">
+        <h3>6. Re-ejecutar el behavior manualmente</h3>
+        <div class="code">
+if (typeof Drupal !== 'undefined' && Drupal.behaviors.etsoSearchBuscador) {
+    Drupal.behaviors.etsoSearchBuscador.attach(document, drupalSettings);
+    console.log('Behavior re-ejecutado');
+} else {
+    console.log('Behavior no disponible');
+}
+        </div>
+        <button onclick="navigator.clipboard.writeText(this.previousElementSibling.textContent)">Copiar</button>
+    </div>
+
+    <div class="test-area">
+        <h3>7. Verificar errores en consola</h3>
+        <p>Mira la consola para ver si hay errores JavaScript. Los errores comunes incluyen:</p>
+        <ul>
+            <li><code>Cannot read property 'querySelector' of null</code> - El wrapper no existe</li>
+            <li><code>Cannot read property 'textContent' of null</code> - El .btn-arrow no existe</li>
+            <li><code>once is not defined</code> - La librería once no está cargada</li>
+        </ul>
+    </div>
+
+    <div class="info">
+        <h2>Posibles problemas y soluciones</h2>
+        <ul>
+            <li><strong>El dropdown no se muestra:</strong> Verifica que el CSS no tenga <code>display: none !important</code></li>
+            <li><strong>El behavior no se ejecuta:</strong> Verifica que la librería esté cargada en etso_search.libraries.yml</li>
+            <li><strong>Los elementos no existen:</strong> Verifica que el template Twig esté generando el HTML correctamente</li>
+            <li><strong>Click no funciona:</strong> Verifica que no haya propagación de eventos desde la fila de la tabla</li>
+        </ul>
+    </div>
+</body>
+</html>

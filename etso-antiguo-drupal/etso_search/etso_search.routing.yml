@@ -1,0 +1,14 @@
+etso_search.buscador:
+  path: '/_internal/etso-search'
+  defaults:
+    _controller: '\Drupal\etso_search\Controller\BuscadorObrasController::page'
+    _title: 'Examen de autorías'
+  requirements:
+    _permission: 'access content'
+
+etso_search.autocomplete_autor:
+  path: '/etso-search/autocomplete/autor'
+  defaults:
+    _controller: '\Drupal\etso_search\Controller\BuscadorObrasController::autocompleteAutor'
+  requirements:
+    _permission: 'access content'

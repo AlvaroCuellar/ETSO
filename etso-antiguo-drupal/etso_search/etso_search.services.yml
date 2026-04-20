@@ -1,0 +1,7 @@
+services:
+  etso_search.buscador_service:
+    class: Drupal\etso_search\Service\BuscadorObrasService
+    arguments: ['@entity_type.manager', '@database']
+  etso_search.page_builder:
+    class: Drupal\etso_search\Service\BuscadorObrasPageBuilder
+    arguments: ['@form_builder', '@etso_search.buscador_service', '@pager.manager', '@path_alias.manager', '@state', '@entity_type.manager']

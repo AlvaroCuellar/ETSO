@@ -1,0 +1,242 @@
+{
+	"entriesByKey": {
+		"etso-web": {
+			"entryType": "webpage",
+			"author": "Cuéllar, Álvaro y Germán Vega García-Luengos",
+			"title": "ETSO: Estilometría aplicada al Teatro del Siglo de Oro",
+			"details": "2017-2026",
+			"publisher": "Recurso web",
+			"url": "http://etso.es/"
+		},
+		"texoro-web": {
+			"entryType": "webpage",
+			"author": "Cuéllar, Álvaro y Germán Vega García-Luengos",
+			"title": "TEXORO: Textos del Siglo de Oro",
+			"details": "2022",
+			"publisher": "Recurso web",
+			"url": "http://etso.es/texoro"
+		},
+		"cetso-web": {
+			"entryType": "webpage",
+			"author": "Cuéllar, Álvaro y Germán Vega García-Luengos",
+			"title": "CETSO: Corpus de Estilometría aplicada al Teatro del Siglo de Oro",
+			"details": "2017-2023",
+			"publisher": "Recurso web",
+			"url": "http://etso.es/cetso/"
+		},
+		"vega-2023-confirmaciones-ii": {
+			"entryType": "article",
+			"author": "Vega García-Luengos, Germán",
+			"year": "2023",
+			"title": "«Para la delimitación del repertorio de comedias auténticas de Lope: confirmaciones de autoría y nuevas atribuciones desde la estilometría (II)»",
+			"journal": "Anuario Lope de Vega. Texto, literatura, cultura",
+			"details": "XXIX, pp. 469-544",
+			"doi": "10.5565/rev/anuariolopedevega.477"
+		},
+		"cuellar-2023-ia-rescate": {
+			"entryType": "article",
+			"author": "Cuéllar, Álvaro",
+			"year": "2023",
+			"title": "«La Inteligencia Artificial al rescate del Siglo de Oro. Transcripción y modernización automática de mil trescientos impresos y manuscritos teatrales»",
+			"journal": "Hipogrifo. Revista de literatura y cultura del Siglo de Oro",
+			"details": "vol. 11, núm. 1, pp. 101-115",
+			"doi": "10.13035/H.2023.11.01.08"
+		},
+		"cuellar-2024-stylometry": {
+			"entryType": "incollection",
+			"author": "Cuéllar, Álvaro",
+			"year": "2024",
+			"title": "Stylometry and Spanish Golden Age Theatre: An Evaluation of Authorship Attribution in a Control Group of One Hundred Undisputed Plays",
+			"containerTitle": "Digital Stylistics in Romance Studies and Beyond",
+			"details": "In R. Hesselbach, J. Calvo Tello, U. Henny-Krahmer, C. Schöch, & D. Schlör (Hrsg.), pp. 101-117",
+			"publisher": "Heidelberg University Publishing",
+			"doi": "10.17885/heiup.1157.c19368"
+		},
+		"cuellar-vega-2023-francesa-laura-libro": {
+			"entryType": "book",
+			"author": "Cuéllar, Álvaro y Germán Vega García-Luengos",
+			"year": "2023",
+			"title": "La francesa Laura",
+			"note": "Bibl. Lope De Vega",
+			"publisher": "Gredos",
+			"url": "https://www.rbalibros.com/gredos/la-francesa-laura_7132"
+		},
+		"cuellar-vega-2023-francesa-laura-articulo": {
+			"entryType": "article",
+			"author": "Cuéllar, Álvaro y Germán Vega García-Luengos",
+			"year": "2023",
+			"title": "«La francesa Laura. El hallazgo de una nueva comedia del Lope de Vega último»",
+			"journal": "Anuario Lope de Vega. Texto, literatura, cultura",
+			"details": "XXIX, pp. 131-198",
+			"doi": "10.5565/rev/anuariolopedevega.492"
+		},
+		"cuellar-vega-2023-claramonte": {
+			"entryType": "article",
+			"author": "Cuéllar, Álvaro y Germán Vega García-Luengos",
+			"year": "2023",
+			"title": "«Un nuevo repertorio dramático para Andrés de Claramonte»",
+			"journal": "Hipogrifo. Revista de literatura y cultura del Siglo de Oro",
+			"details": "vol. 11, núm. 1, pp. 117-172",
+			"doi": "10.13035/H.2023.11.01.09"
+		},
+		"cuellar-2023-cronologia-estilometria": {
+			"entryType": "article",
+			"author": "Cuéllar, Álvaro",
+			"year": "2023",
+			"title": "«Cronología y estilometría: datación automática de comedias de Lope de Vega»",
+			"journal": "Anuario Lope de Vega. Texto, literatura, cultura",
+			"details": "XXIX, pp. 97-130",
+			"doi": "10.5565/rev/anuariolopedevega.483"
+		},
+		"martinez-carro-cuellar-2023-moretiana": {
+			"entryType": "incollection",
+			"author": "Martínez Carro, Elena y Álvaro Cuéllar",
+			"year": "2023",
+			"title": "«El periodo final de la dramaturgia moretiana (1655-1659): apuntes desde la estilometría»",
+			"details": "En Escudero Baztán, Juan Manuel (ed.), Bajo la égida calderoniana. Calderón y los dramaturgos de la segunda mitad del siglo XVII, pp. 165-198",
+			"publisher": "Iberoamericana / Vervuert",
+			"url": "https://www.academia.edu/114162230/El_periodo_final_de_la_dramaturgia_moretiana_1655_1699_Apuntes_desde_la_estilometr%C3%ADa"
+		},
+		"cuellar-2022-tesis": {
+			"entryType": "thesis",
+			"author": "Cuéllar, Álvaro",
+			"year": "2022",
+			"title": "«Propuestas de autoría y datación en el teatro de Lope de Vega a la luz de la Inteligencia Artificial»",
+			"containerTitle": "Theses and Dissertations--Hispanic Studies",
+			"details": "55",
+			"doi": "10.13023/etd.2022.428"
+		},
+		"campion-cuellar-2021-refundicion": {
+			"entryType": "article",
+			"author": "Campión Larumbe, Miguel y Álvaro Cuéllar",
+			"year": "2021",
+			"title": "«Discernir entre original y refundición en el teatro del Siglo de Oro a través de la estilometría: el caso de El mejor amigo, el muerto»",
+			"journal": "Talía. Revista de Estudios Teatrales",
+			"details": "3, pp. 59-69",
+			"doi": "10.5209/tret.74021"
+		},
+		"vega-2021-confirmaciones-i": {
+			"entryType": "article",
+			"author": "Vega García-Luengos, Germán",
+			"year": "2021",
+			"title": "«Las comedias de Lope de Vega: confirmaciones de autoría y nuevas atribuciones desde la estilometría (I)»",
+			"journal": "Talía. Revista de Estudios Teatrales",
+			"details": "3, pp. 91-108",
+			"doi": "10.5209/tret.74625"
+		},
+		"vega-2021-monja-alferez": {
+			"entryType": "incollection",
+			"author": "Vega García-Luengos, Germán",
+			"year": "2021",
+			"title": "«Juan Ruiz de Alarcón recupera \"La monja alférez\".»",
+			"containerTitle": "Sor Juana Inés de la Cruz y el teatro novohispano: XLII Jornadas de teatro clásico, Almagro, 9, 10 y 11 de julio de 2019",
+			"publisher": "Ediciones de la Universidad de Castilla-La Mancha",
+			"details": "pp. 89-159",
+			"url": "https://ruidera.uclm.es/xmlui/handle/10578/28570"
+		},
+		"cuellar-2021-transkribus-prints": {
+			"entryType": "article",
+			"author": "Cuéllar, Álvaro",
+			"year": "2021",
+			"title": "«Spanish Golden Age Prints 1.0»",
+			"publisher": "Transkribus"
+		},
+		"cuellar-2021-transkribus-prints-modernization": {
+			"entryType": "article",
+			"author": "Cuéllar, Álvaro",
+			"year": "2021",
+			"title": "«Spanish Golden Age Prints (Spelling Modernization) 1.0»",
+			"publisher": "Transkribus"
+		},
+		"cuellar-2021-transkribus-manuscripts-modernization": {
+			"entryType": "article",
+			"author": "Cuéllar, Álvaro",
+			"year": "2021",
+			"title": "«Spanish Golden Age Manuscripts (Spelling Modernization) 1.0»",
+			"publisher": "Transkribus"
+		}
+	},
+	"views": {
+		"informes": {
+			"base": {
+				"sections": [
+					{
+						"id": "bibliografia-uso",
+						"lead": "Para utilizar esta información, por favor, incluye en la bibliografía:",
+						"entryKeys": [
+							"etso-web",
+							"vega-2023-confirmaciones-ii",
+							"cuellar-2023-ia-rescate",
+							"cuellar-2024-stylometry"
+						]
+					},
+					{
+						"id": "bibliografia-metodologia",
+						"lead": "Se puede obtener más información sobre cómo trabaja ETSO en las tareas de atribución de obras dramáticas del Siglo de Oro en:",
+						"collapsible": true,
+						"collapsibleLabel": "Más información",
+						"defaultOpen": false,
+						"entryKeys": [
+							"cuellar-vega-2023-francesa-laura-libro",
+							"cuellar-vega-2023-francesa-laura-articulo",
+							"cuellar-vega-2023-claramonte",
+							"cuellar-2023-cronologia-estilometria",
+							"cuellar-2022-tesis",
+							"campion-cuellar-2021-refundicion",
+							"vega-2021-confirmaciones-i",
+							"vega-2021-monja-alferez"
+						]
+					}
+				]
+			},
+			"overridesByInformeId": {}
+		},
+		"comoCitarnos": {
+			"intro": "Para poder seguir nuestra labor es importante que el trabajo del proyecto sea citado. Por favor, incluye en la bibliografía alguna de estas referencias si el portal te ha ayudado en tu investigación.",
+			"sections": [
+				{
+					"id": "proyecto",
+					"title": "Proyecto",
+					"entryKeys": ["etso-web"]
+				},
+				{
+					"id": "texoro",
+					"title": "TEXORO",
+					"entryKeys": ["texoro-web"]
+				},
+				{
+					"id": "algunos-trabajos",
+					"title": "Algunos trabajos",
+					"entryKeys": [
+						"cuellar-vega-2023-francesa-laura-articulo",
+						"vega-2023-confirmaciones-ii",
+						"cuellar-2023-cronologia-estilometria",
+						"cuellar-vega-2023-claramonte",
+						"cuellar-2023-ia-rescate",
+						"cuellar-2024-stylometry",
+						"cuellar-vega-2023-francesa-laura-libro",
+						"martinez-carro-cuellar-2023-moretiana",
+						"cuellar-2022-tesis",
+						"campion-cuellar-2021-refundicion",
+						"vega-2021-confirmaciones-i",
+						"vega-2021-monja-alferez"
+					]
+				},
+				{
+					"id": "modelos-transcripcion-automatica",
+					"title": "Modelos para la transcripción automática",
+					"entryKeys": [
+						"cuellar-2021-transkribus-prints",
+						"cuellar-2021-transkribus-prints-modernization",
+						"cuellar-2021-transkribus-manuscripts-modernization"
+					]
+				},
+				{
+					"id": "corpus",
+					"title": "Corpus",
+					"entryKeys": ["cetso-web"]
+				}
+			]
+		}
+	}
+}

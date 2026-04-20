@@ -1,0 +1,62 @@
+/* Global design tokens.
+   Consolidated around reusable semantic scales. */
+
+:root {
+  /* Typography scale */
+  --ui-font-size-root: 16px;
+  --ui-text-2xs: 0.625rem; /* 10px */
+  --ui-text-xs: 0.75rem; /* 12px */
+  --ui-text-sm: 0.875rem; /* 14px */
+  --ui-text-md: 0.9375rem; /* 15px */
+  --ui-text-base: 1rem; /* 16px */
+  --ui-text-lg: 1.125rem; /* 18px */
+  --ui-text-xl: 1.25rem; /* 20px */
+  --ui-text-2xl: 1.5rem; /* 24px */
+  --ui-text-3xl: 2rem; /* 32px */
+  --ui-text-display: 2.5rem; /* 40px */
+  --ui-text-hero: 3rem; /* 48px */
+
+  /* Spacing scale */
+  --ui-space-0: 0;
+  --ui-space-1: 0.25rem; /* 4px */
+  --ui-space-2: 0.5rem; /* 8px */
+  --ui-space-3: 0.75rem; /* 12px */
+  --ui-space-4: 1rem; /* 16px */
+  --ui-space-5: 1.5rem; /* 24px */
+  --ui-space-6: 2rem; /* 32px */
+  --ui-space-7: 2.5rem; /* 40px */
+  --ui-space-8: 3rem; /* 48px */
+  --ui-space-9: 4rem; /* 64px */
+  --ui-space-10: 5rem; /* 80px */
+
+  /* Size and layout */
+  --ui-size-icon-sm: 1rem;
+  --ui-size-icon-md: 1.25rem;
+  --ui-size-icon-lg: 1.5rem;
+  --ui-size-icon-box: 3rem; /* 48px */
+  --ui-size-back-to-top: 3.75rem; /* 60px */
+  --ui-size-navbar-logo: 3.4375rem; /* 55px */
+  --ui-size-sticky-top: 1.5rem; /* 24px */
+  --ui-container-max-wide: 87.5rem; /* 1400px */
+  --ui-layout-sidebar-width: 23.75rem; /* 380px */
+  --ui-height-hero-mobile: 39.375rem; /* 630px */
+
+  /* Radius and shadows */
+  --ui-radius-sm: 0.25rem;
+  --ui-radius-md: 0.5rem;
+  --ui-radius-pill: 999px;
+  --ui-shadow-soft: 0 1px 6px rgba(0, 0, 0, 0.06);
+  --ui-shadow-soft-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --ui-shadow-brand-hover: 0 6px 14px rgba(0, 51, 167, 0.12);
+}
+
+html {
+  font-size: var(--ui-font-size-root);
+}
+
+html.ui-scale-compact {
+  --ui-font-size-root: 15px;
+  --ui-size-navbar-logo: 2.75rem; /* 44px */
+  --ui-space-5: 1.25rem; /* 20px */
+  --ui-space-8: 2.5rem; /* 40px */
+}

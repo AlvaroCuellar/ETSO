@@ -1,0 +1,108 @@
+{
+  "archivo": "LOPE_LocuraPorElAlma(Auto).txt",
+  "titulo": "Locura por el alma, La",
+  "resumen_largo": [
+    "La obra presenta alegóricamente a Blanca, figura del alma, ya desposada con el Sosiego tras haber recibido la gracia divina y haberse apartado del deleite humano. En ese estado de paz espiritual, acompañada por la Conciencia, el Contento y otras potencias o afectos ordenados, celebra una vida interior fundada en Dios y en la quietud del alma. Frente a esa unión se alzan el Príncipe de las tinieblas y Deleite, que lamentan no haber podido entrar en ella cuando vivía más sujeta a lo sensible y deciden vencerla inquietando sus sentidos, aprovechando la flaqueza de su condición humana. Mientras el Sosiego se retira por un tiempo y exhorta a Blanca a guardar sus sentidos, los enemigos del alma preparan su entrada por la imaginación, la memoria, la voluntad y el entendimiento, con la intención de sembrar deseo, curiosidad y turbación.",
+    "A partir de esa estrategia, Blanca empieza a escuchar los requerimientos del Príncipe, primero con resistencia verbal y luego con una complacencia cada vez más peligrosa. En conversación con Apetito, confiesa que la ocasión la ha vencido por los ojos y los oídos, y termina dando entrada nocturna al tentador cuando el sol se pone, imagen de la ausencia de Cristo en su conciencia. La Conciencia advierte inútilmente del peligro y presencia con dolor la caída, mientras el Sosiego, que había partido a la soledad y a la contemplación, regresa movido por una sospecha interior. Al conocer la deslealtad de Blanca, comprende que el alma ha perdido la paz por haber oído al enemigo de Cristo. Entonces se desencadena una crisis espiritual: el Sosiego quiere herir al alma adúltera, la Conciencia intenta conducirla al arrepentimiento y el propio Sosiego, unido al Entendimiento, enloquece de celos santos y de dolor por la ofensa hecha a Dios. Esa locura no es mero desorden, sino efecto de la pérdida de la paz interior cuando el alma se aparta de su verdadero esposo.",
+    "La acción entra entonces en una fase de penitencia y restauración. Mientras el Sosiego y el Entendimiento recorren alegóricamente el mundo y la casa de los locos, denunciando la vanidad de honras, confianzas y apariencias terrenas, Blanca queda sola, negra por el pecado y sin descanso. En ese estado oye de noche la voz de su verdadero esposo, Cristo, que viene a buscarla personalmente, llama a su puerta, la despierta del engaño y la mueve a reconocer su culpa. El pasaje disponible permite afirmar que la salvación se consuma por la confesión, las lágrimas y el arrepentimiento de Blanca, que recupera su blancura al ser perdonada. Cristo manda al Sosiego volver a abrazarla, el Entendimiento recobra su orden y el alma es reintegrada a la gracia. El desenlace culmina en clave sacramental, pues Cristo invita al alma a su mesa y la hace digna del pan eucarístico, cerrando la obra con la exaltación del Santísimo Sacramento, la misericordia divina y la necesidad de perseverar en fe, esperanza y amor."
+  ],
+  "resumen_breve": [
+    "En un marco alegórico y espiritual propio del auto sacramental, Blanca, figura del alma, vive en paz con el Sosiego hasta que el Príncipe de las tinieblas intenta vencerla entrando por sus sentidos y potencias interiores.",
+    "La acción se desplaza entre la casa o interior del alma, espacios de soledad contemplativa y un recorrido por el mundo entendido como ámbito de locura y vanidad, donde se escenifica la pérdida del sosiego tras la caída en la tentación.",
+    "Finalmente Cristo, esposo verdadero del alma, acude de noche a buscar a Blanca, provoca su arrepentimiento, la devuelve a la gracia y restablece el sosiego, subrayando los temas de pecado, conciencia, penitencia y Eucaristía."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Blanca",
+      "descripcion": "Figura alegórica del alma cristiana; pasa de la paz inicial con el Sosiego a la caída por tentación, y finalmente se arrepiente y recupera la gracia."
+    },
+    {
+      "nombre": "Sosiego",
+      "descripcion": "Esposo alegórico de Blanca y representación de la paz interior del alma en gracia; su pérdida desencadena la locura y su retorno confirma la reconciliación."
+    },
+    {
+      "nombre": "Cristo",
+      "descripcion": "Verdadero esposo del alma y fuente del Sosiego; busca a Blanca cuando ha caído, la perdona y la readmite en su mesa sacramental."
+    },
+    {
+      "nombre": "Príncipe de las tinieblas / Luzbel",
+      "descripcion": "Principal antagonista; seduce al alma mediante engaños, sentidos y potencias interiores, y se presenta como enemigo declarado de Cristo."
+    },
+    {
+      "nombre": "Conciencia",
+      "descripcion": "Hermana del Sosiego y guardiana moral del alma; advierte a Blanca, denuncia su caída y la orienta hacia el arrepentimiento."
+    },
+    {
+      "nombre": "Entendimiento",
+      "descripcion": "Potencia del alma estrechamente unida al Sosiego; participa en la crisis causada por el pecado y en el posterior reconocimiento del desorden y la restitución final."
+    },
+    {
+      "nombre": "Apetito",
+      "descripcion": "Figura de la inclinación sensitiva que favorece la entrada del tentador y anima a Blanca a entretener su deseo en vez de resistirlo."
+    },
+    {
+      "nombre": "Deleite",
+      "descripcion": "Compañero del Príncipe y representación del placer humano engañoso; ayuda a trazar la estrategia para inquietar al alma."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "La casa o interior del alma de Blanca",
+      "descripcion": "Espacio dramático central donde se representan el matrimonio con el Sosiego, la entrada de la tentación, la caída, la penitencia y la reconciliación final."
+    },
+    {
+      "nombre": "La soledad o el campo de contemplación",
+      "descripcion": "Lugar al que se retira el Sosiego y desde el cual se exalta la contemplación de la creación y de Dios; funciona como contraste con la inquietud posterior."
+    },
+    {
+      "nombre": "La noche ante la puerta o ventana de Blanca",
+      "descripcion": "Escenario decisivo del arrepentimiento, donde Cristo llama desde fuera y busca reingresar en el alma que lo ha ofendido."
+    },
+    {
+      "nombre": "El mundo como casa de locos",
+      "descripcion": "Espacio alegórico recorrido por Sosiego y Entendimiento para mostrar la vanidad, la falsa honra y la desordenada condición humana apartada de Dios."
+    },
+    {
+      "nombre": "Los montes de Sion",
+      "descripcion": "Lugar mencionado como ámbito de caza y soledad espiritual; se infiere como proyección simbólica del retiro elevado donde el Sosiego busca mejor a Dios."
+    },
+    {
+      "nombre": "La mesa o banquete sacramental",
+      "descripcion": "Espacio final de restauración, asociado al pan eucarístico y a la readmisión del alma en la gracia de Cristo."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "La caída del alma por la tentación",
+      "descripcion": "La obra muestra cómo el alma, aun casada con el Sosiego, puede ser vencida si permite que los sentidos, el apetito y la imaginación den entrada al enemigo."
+    },
+    {
+      "tema": "La pérdida y recuperación del sosiego espiritual",
+      "descripcion": "El sosiego aparece como señal de la presencia de Dios en el alma; el pecado lo destruye y el arrepentimiento lo restituye."
+    },
+    {
+      "tema": "La lucha entre Cristo y el demonio por el alma",
+      "descripcion": "Toda la acción se organiza como un combate espiritual entre el verdadero esposo del alma y el Príncipe de las tinieblas que quiere arrebatarla."
+    },
+    {
+      "tema": "Conciencia, arrepentimiento y confesión",
+      "descripcion": "La Conciencia reprende, descubre la culpa y prepara la vuelta del alma a Dios, que se consuma mediante reconocimiento del pecado, lágrimas y confesión."
+    },
+    {
+      "tema": "La fragilidad humana y el peligro de los sentidos",
+      "descripcion": "El texto insiste en que la flaqueza corporal y el desorden sensitivo abren puertas a la caída, especialmente por la vista, el oído y el gusto del deleite."
+    },
+    {
+      "tema": "La vanidad del mundo y de la honra humana",
+      "descripcion": "El recorrido por el mundo como casa de locos denuncia falsas seguridades como la honra mundana, la confianza vana, la ambición y las apariencias sociales."
+    },
+    {
+      "tema": "La misericordia divina",
+      "descripcion": "Pese a la gravedad de la ofensa, Cristo sale a buscar al alma y la perdona, subrayando que el perdón divino supera el engaño y la desesperación."
+    },
+    {
+      "tema": "La Eucaristía y el Santísimo Sacramento",
+      "descripcion": "El desenlace vincula la restauración del alma con la mesa de Cristo y con el pan sacramental, núcleo doctrinal del auto."
+    }
+  ]
+}

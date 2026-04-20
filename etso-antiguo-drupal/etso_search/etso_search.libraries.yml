@@ -1,0 +1,23 @@
+obra_table_shared:
+  version: 1.0
+  css:
+    theme:
+      css/obra-table-shared.css: {}
+  js:
+    js/obra-table-shared.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+
+buscador_obras:
+  version: 1.0
+  css:
+    theme:
+      css/buscador-obras.css: {}
+  js:
+    js/buscador-obras.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+    - core/jquery
+    - etso_search/obra_table_shared

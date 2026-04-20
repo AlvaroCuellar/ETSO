@@ -1,0 +1,104 @@
+{
+  "archivo": "AGUILAR_MercaderAmante.txt",
+  "titulo": "Mercader amante, El",
+  "resumen_largo": [
+    "La obra se abre con un largo relato retrospectivo sobre el origen de Belisario. Se cuenta que Matilde, condesa de Lunago, peregrina embarazada a Santiago junto a su marido; al llegar a la ermita de un anciano religioso, da a luz en condiciones extremas y muere, mientras el niño sobrevive de manera casi milagrosa y es criado por una cierva y por el ermitaño. Muerto también el conde poco después, el muchacho crece apartado del mundo durante quince años, hasta que el viejo lo lleva a León y le descubre la ciudad, los hombres y las mujeres. Esa experiencia no desemboca en una continuación lineal de su vida en escena, pues el texto pasa a la trama principal ya con Belisario convertido en un riquísimo mercader de gran crédito social. Dos damas nobles, Labinia y Lidora, desean casarse con él, y sus respectivos escuderos, Cabrera y Loaisa, llegan incluso a reñir sobre cuál lo merece. Belisario, incapaz de escoger entre ambas por su igualdad de hermosura, linaje y discreción, idea entonces una prueba: fingirá haber perdido su fortuna para descubrir cuál lo ama por sí mismo y no por su dinero. Para ejecutar el plan entrega secretamente la administración de su hacienda a su criado Astolfo y le ordena divulgar la noticia de una ruina marítima y comercial.",
+    "La fingida quiebra se pone en marcha con habilidad. Astolfo hace correr la voz de que cinco naves de Belisario se han perdido y de que otros mercaderes le han causado grandes daños; incluso se simulan ventas de bienes y almonedas para hacer verosímil su empobrecimiento. Belisario visita primero a Labinia y a Lidora para comprobar sus reacciones. Lidora, al verlo pobre, lo desprecia con dureza, le reprocha su atrevimiento y le niega cualquier esperanza; por ese desengaño, Belisario concluye que su amor era interesado. Labinia, en cambio, se compadece sinceramente de su caída, lamenta el daño como si fuera propio y, movida por un afecto que parece verdadero, le ofrece una cadena de oro para socorrerlo sin humillarlo. Convencido de haber hallado en ella firmeza amorosa, Belisario decide restituirse la hacienda y casarse con Labinia. Sin embargo, el plan se complica porque Astolfo, escudado en la orden de negar el depósito si alguien podía oír la conversación, se queda con los bienes y finge no deberle nada. Paralelamente, Lidora, al creer rico a Astolfo, se inclina hacia él; Astolfo acepta ese juego y llega a prometerle matrimonio, aunque sus acciones muestran un propósito más complejo. Por su parte, don García, galán noble que pretende a Labinia, insiste en desplazar a Belisario y presiona a la dama, mientras el padre de esta quiere casarla según conveniencias de honra y riqueza.",
+    "La parte final intensifica los enredos amorosos y patrimoniales. Belisario, todavía sin recuperar públicamente su caudal, escucha mal una conversación entre Labinia y don García y cree, por celos, que ella le ha dado palabra de amor; desesperado, la acusa de mudanza, aunque después se aclara que Labinia se mantiene fiel y llega incluso a resistir con valentía la violencia de su padre, que pretende forzarla a casarse con don García y amenaza con matarla. Astolfo, que conoce por Loaisa el mandato secreto de Belisario y también la situación de Labinia, maniobra para impedir ese matrimonio: hace creer por un tiempo que piensa casarse él mismo con la dama, provoca los celos de Lidora y conduce a don García a traer a Belisario al lugar del supuesto desposorio. Entonces revela la verdad: la riqueza que posee no es suya, sino de Belisario, a quien la devuelve íntegramente; además declara que su vínculo verdadero es con Lidora. Restituida la hacienda, queda desenmascarado el interés de Lidora y confirmada la constancia de Labinia, cuyo amor ha resistido la pobreza aparente. El padre de Labinia acepta finalmente la unión de su hija con Belisario, mientras don García, frustrado, cierra la comedia reconociendo su derrota amorosa. El desenlace restablece a Belisario en su fortuna y en su honor, premia la lealtad amorosa y transforma la fingida pobreza en instrumento de verdad y elección matrimonial."
+  ],
+  "resumen_breve": [
+    "En León, y tras un remoto origen milagroso recordado al comienzo, Belisario, rico mercader amado por Labinia y Lidora, finge su ruina para averiguar cuál lo quiere por su persona y no por su hacienda.",
+    "La prueba muestra que Lidora lo desprecia al creerlo pobre, mientras Labinia lo socorre con constancia; pero el engaño complica la acción cuando Astolfo administra y oculta la fortuna, y don García y el padre de Labinia intentan imponer otro matrimonio.",
+    "Al final, entre casas urbanas, calles y posadas de la ciudad, Astolfo devuelve los bienes a Belisario, se aclaran los malentendidos y se premia el amor firme con la boda de Belisario y Labinia, quedando frustrados los pretendientes interesados."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Belisario",
+      "descripcion": "Mercader riquísimo y protagonista de la comedia, que finge haber perdido su fortuna para probar la firmeza amorosa de Labinia y Lidora y poder escoger esposa con certeza."
+    },
+    {
+      "nombre": "Labinia",
+      "descripcion": "Dama noble que ama de manera constante a Belisario y demuestra su lealtad cuando lo cree pobre, resistiendo además la presión paterna y la amenaza de un matrimonio impuesto."
+    },
+    {
+      "nombre": "Astolfo",
+      "descripcion": "Criado y hombre de confianza de Belisario, receptor fingido de su hacienda; su conducta provoca gran confusión, aunque finalmente restituye los bienes y contribuye a evitar el casamiento de Labinia con don García."
+    },
+    {
+      "nombre": "Lidora",
+      "descripcion": "Dama noble pretendida por Belisario al comienzo, cuya mudanza queda patente cuando lo desprecia en la pobreza y se inclina hacia Astolfo al creerlo rico."
+    },
+    {
+      "nombre": "Don García",
+      "descripcion": "Galán noble rival de Belisario en el amor de Labinia, insistente y celoso, que intenta obtenerla con el apoyo paterno pero termina derrotado."
+    },
+    {
+      "nombre": "Padre de Labinia",
+      "descripcion": "Padre autoritario que quiere decidir el matrimonio de su hija según conveniencias sociales y económicas, y que llega a amenazarla para imponerle esposo."
+    },
+    {
+      "nombre": "Loaisa",
+      "descripcion": "Escudero vinculado a Lidora y figura activa en los recados y equívocos amorosos; su intervención sirve para descubrir conversaciones, transmitir noticias y mover la intriga."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "León",
+      "descripcion": "Ciudad donde se desarrolla la trama principal de amores, pruebas, noticias de ruina, almonedas y negociaciones matrimoniales."
+    },
+    {
+      "nombre": "Casas y posadas urbanas",
+      "descripcion": "Espacios interiores donde se reciben cartas, se conciertan entrevistas, se fingen ventas de bienes y se producen los principales engaños y reconocimientos."
+    },
+    {
+      "nombre": "Calles y espacios públicos de la ciudad",
+      "descripcion": "Lugar de paso, encuentros, rumores y escenas de observación donde circulan las noticias sobre la fortuna de Belisario y donde varias conversaciones quedan expuestas a terceros."
+    },
+    {
+      "nombre": "Casa de Labinia",
+      "descripcion": "Ámbito decisivo para los conflictos familiares y amorosos, donde se enfrentan Belisario, don García y el padre de la dama, y donde se aclara finalmente su fidelidad."
+    },
+    {
+      "nombre": "Casa o ámbito de Lidora",
+      "descripcion": "Espacio relevante para mostrar la mudanza de Lidora y sus tratos con Astolfo, así como para desarrollar parte del contraste entre amor e interés."
+    },
+    {
+      "nombre": "Ermita y monte cercano a Santiago",
+      "descripcion": "Espacio del relato inicial donde nacen y se salvan milagrosamente el futuro Belisario y donde transcurre su crianza apartada del mundo."
+    },
+    {
+      "nombre": "Santiago de Compostela",
+      "descripcion": "Meta de la peregrinación de los padres de Belisario y marco religioso del episodio originario que explica su nacimiento y primera fortuna vital."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Amor frente a interés",
+      "descripcion": "La acción entera gira en torno a comprobar si el afecto de las damas nace del amor verdadero o de la riqueza del mercader."
+    },
+    {
+      "tema": "Prueba de la firmeza amorosa",
+      "descripcion": "Belisario recurre a una pobreza fingida para poner a prueba a Labinia y Lidora, de modo que la verdad sentimental solo se revela mediante el engaño."
+    },
+    {
+      "tema": "Riqueza, honra y matrimonio",
+      "descripcion": "La obra muestra cómo el dinero condiciona el prestigio social y las decisiones matrimoniales, tanto en las damas como en los padres y pretendientes."
+    },
+    {
+      "tema": "Engaño y apariencia social",
+      "descripcion": "Cartas, rumores, fingidas pérdidas, ventas simuladas y conversaciones oídas a medias sostienen una intriga en la que casi nadie parece ser lo que públicamente muestra."
+    },
+    {
+      "tema": "Autoridad paterna y libertad de la hija",
+      "descripcion": "El conflicto de Labinia con su padre presenta la tensión entre la obediencia familiar y la elección personal del esposo."
+    },
+    {
+      "tema": "Mudanza y constancia",
+      "descripcion": "La comedia contrapone la inconstancia de Lidora con la perseverancia de Labinia y convierte ese contraste en criterio moral del desenlace."
+    },
+    {
+      "tema": "Lealtad y servicio",
+      "descripcion": "La relación entre Belisario y Astolfo problematiza la fidelidad del criado, primero puesta en duda y después recompuesta cuando devuelve la hacienda y ayuda al amo."
+    }
+  ]
+}

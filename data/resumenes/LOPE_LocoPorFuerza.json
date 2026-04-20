@@ -1,0 +1,116 @@
+{
+  "archivo": "LOPE_LocoPorFuerza.txt",
+  "titulo": "Loco por fuerza, El",
+  "resumen_largo": [
+    "La acción se inicia en Zaragoza, adonde llega de paso Feliciano, hidalgo castellano que se dirige a Italia. Allí es prendido por orden de la justicia aragonesa porque ha sido visto con una dama cuyo estado no se conoce. Esa dama es Clarinda, también castellana y natural de Toledo, con quien Feliciano ha huido para evitar el matrimonio que su padre había concertado con otro hombre. Mientras es conducido, Feliciano logra escapar mediante una burla: finge herir con un cuchillo a los alguaciles cuando en realidad los golpea con el dedo, y se refugia en una iglesia. En ese espacio de asilo conoce a Osuna, soldado andaluz de tono cómico, a quien cuenta su historia: vio a Clarinda en la fiesta toledana de San Pedro de Sahelices, ambos se enamoraron, ella fue prometida por su padre a un heredero y, tras dos años, decidió huir con él. Feliciano insiste en que no ha deshonrado a Clarinda, pues no le ha tomado siquiera una mano sin matrimonio. Entretanto, el Justicia deposita a Clarinda en casa de Leonardo, noble aragonés, donde también vive su hermana Rosela; tanto el Justicia como Leonardo quedan impresionados por la nobleza, hermosura y reserva de la joven, y Leonardo comienza a enamorarse de ella.",
+    "En la casa de Leonardo se multiplican las tensiones amorosas y los intentos de control sobre Clarinda. Leonardo procura galantearla con cortesía, aunque ella mantiene su lealtad a Feliciano. Rosela, por su parte, ama a Leonardo, y Albano, relacionado con la casa, se siente atraído por Clarinda; esta red de deseos cruzados complica la situación. El Justicia consigue sacar a Feliciano del sagrado prometiéndole no llevarlo a la cárcel, pero incumple el sentido del juramento al enviarlo al hospital de locos, donde queda recluido como si estuviera demente. Allí también entra Osuna, por acompañarle y por un nuevo equívoco, y ambos sufren la humillación del encierro y del vestido de loco. La noticia de que Clarinda ha desaparecido del depósito, unida a los celos y a la presión de la prisión, acaba alterando de veras a Feliciano, que pasa de fingido o supuesto loco a una furia amorosa que los demás ya consideran verdadera. Clarinda, desesperada por saberlo encerrado, llega a decir que ella también se volverá loca por amor. En paralelo surge otra trama decisiva: Fulgencia, hermana de Feliciano, viaja a Zaragoza en busca de su hermano y de Clarinda, perseguida por Fenicio, el hombre a quien su familia había destinado como esposo de Clarinda y que la engañó a ella para vengarse. Con la ayuda de Celio y una carta de recomendación, Fulgencia entra en relación con Albano, quien la acoge, aunque pronto se insinúa también sobre ella el peligro de nuevos deseos masculinos y de nuevas confusiones.",
+    "Desde el hospital, Feliciano y Osuna idean la fuga aprovechando las salidas de los locos a pedir limosna; disfrazados aún con sus hábitos, logran escapar con ayuda de Rosela, que les da ropa y armas y revela que el caballero que lleva consigo a Fulgencia es Albano, a quien ella consideraba su prometido. Mientras tanto, Clarinda, acosada por la persecución de su padre Torcato, por Fenicio y por las pretensiones del Justicia y de Leonardo, es conducida por este último a una heredad apartada y luego al entorno montañoso ligado a la gente de Lupercio de Latrás y de Marín Félix. Allí convergen los personajes: Albano intenta forzar a Fulgencia; Marín Félix y sus hombres la hallan; llegan también Feliciano y Osuna, que son atados por los soldados, y poco después comparecen Clarinda y Leonardo. La escena produce nuevos celos y acusaciones, pues Feliciano interpreta erróneamente lo que ve y Clarinda hace lo mismo al hallarlo con Fulgencia vestida de hombre. Finalmente se aclaran las identidades: Fulgencia es hermana de Feliciano y esposa legítima o prometida principal de Albano según se desprende de sus palabras; Clarinda sigue fiel a Feliciano; y Fenicio aparece como el verdadero causante de varios engaños. Cuando el Justicia llega con tropas para prender a la compañía, Marín Félix hace publicar un perdón real para los hombres de Lupercio si entran al servicio del rey en Italia o Flandes. Gracias a ese bando se desactiva el conflicto militar y Feliciano queda amparado por pertenecer ya a esa bandera, de modo que no puede ser preso. Torcato recupera a su hija, pero Fenicio pierde su pretensión al oponerse Clarinda y al revelarse su conducta. La comedia concluye con la restitución principal de los amantes y con la conciencia de que Feliciano ha sido llevado a la locura no por naturaleza, sino por la fuerza de la injusticia, los celos y los enredos amorosos."
+  ],
+  "resumen_breve": [
+    "En la Zaragoza de la comedia, probablemente contemporánea al tiempo de Lope, el castellano Feliciano es preso por huir con Clarinda desde Toledo y, tras refugiarse en una iglesia, acaba engañado por el Justicia y encerrado en un hospital de locos.",
+    "Mientras Clarinda queda depositada en casa de Leonardo, donde surgen nuevas pretensiones amorosas, Feliciano y Osuna padecen el encierro, los celos y la humillación, y la llegada de Fulgencia, hermana de Feliciano, complica aún más la red de persecuciones y engaños.",
+    "La acción se desplaza luego a casas urbanas, caminos y montes aragoneses, donde se cruzan fugas, disfraces y rescates, hasta que un perdón real deshace el peligro mayor y permite encaminar la restitución del honor, el amor legítimo y la libertad de los protagonistas."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Feliciano",
+      "descripcion": "Hidalgo castellano y protagonista de la comedia; huye con Clarinda, es perseguido por la justicia zaragozana y termina recluido en un hospital, donde su amor y sus celos lo convierten en “loco por fuerza”."
+    },
+    {
+      "nombre": "Clarinda",
+      "descripcion": "Dama toledana enamorada de Feliciano, prometida por su padre a otro hombre; huye con su amado, defiende su honor y su fidelidad y sufre el acoso de varios pretendientes y autoridades."
+    },
+    {
+      "nombre": "Osuna",
+      "descripcion": "Soldado andaluz de función cómica y a la vez auxiliar decisivo; conoce a Feliciano en la iglesia, le acompaña en sus desventuras, entra también en el hospital y colabora en la fuga."
+    },
+    {
+      "nombre": "Leonardo",
+      "descripcion": "Noble aragonés encargado de custodiar a Clarinda; se enamora de ella, oscila entre la cortesía y el deseo, y participa activamente en los conflictos de honor y rivalidad amorosa."
+    },
+    {
+      "nombre": "El Justicia de Zaragoza",
+      "descripcion": "Autoridad que ordena la prisión de Feliciano y el depósito de Clarinda; su actuación desencadena buena parte del enredo al encerrar al protagonista en el hospital de locos mediante una interpretación engañosa de su promesa."
+    },
+    {
+      "nombre": "Fulgencia",
+      "descripcion": "Hermana de Feliciano, llegada desde Castilla a Zaragoza; relata cómo fue engañada por Fenicio y acaba entrelazada en la acción principal como figura perseguida y confundida con rival amorosa."
+    },
+    {
+      "nombre": "Rosela",
+      "descripcion": "Hermana de Leonardo, enamorada de él según se infiere de la acción; escucha a Clarinda, media en algunos lances y ayuda a la fuga de Feliciano y Osuna desde el hospital."
+    },
+    {
+      "nombre": "Albano",
+      "descripcion": "Caballero vinculado a Leonardo y Rosela; pretende a Clarinda y después aparece ligado a Fulgencia, a la que conduce fuera de la ciudad, provocando nuevas sospechas y conflictos."
+    },
+    {
+      "nombre": "Fenicio",
+      "descripcion": "Hombre destinado inicialmente para casar con Clarinda y responsable del engaño sufrido por Fulgencia; representa la venganza, la persecución y la pretensión ilegítima sobre las mujeres de la trama."
+    },
+    {
+      "nombre": "Torcato",
+      "descripcion": "Padre de Clarinda, defensor del matrimonio concertado y de la autoridad familiar, cuya presencia reactiva al final la dimensión pública y doméstica del conflicto de honor."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Zaragoza",
+      "descripcion": "Marco urbano principal de la acción, donde se producen la prisión inicial de Feliciano, el depósito de Clarinda y la mayor parte de los enredos amorosos y judiciales."
+    },
+    {
+      "nombre": "Hospital de locos",
+      "descripcion": "Espacio central del segundo tramo de la comedia; allí Feliciano es recluido injustamente, sufre humillaciones, se intensifican sus celos y se fragua la fuga con Osuna."
+    },
+    {
+      "nombre": "Iglesia o sagrado",
+      "descripcion": "Lugar de refugio de Feliciano tras escapar de los alguaciles; en este espacio protegido relata su historia a Osuna y se plantea el conflicto entre asilo, palabra dada y justicia."
+    },
+    {
+      "nombre": "Casa de Leonardo",
+      "descripcion": "Espacio doméstico donde Clarinda queda depositada y donde se desarrollan las conversaciones sobre su identidad, las pretensiones de Leonardo y Albano y la ayuda de Rosela."
+    },
+    {
+      "nombre": "Toledo y la ribera del Tajo",
+      "descripcion": "Espacio recordado en los relatos, decisivo para el origen de la acción: allí nace el amor entre Feliciano y Clarinda durante la fiesta de San Pedro de Sahelices."
+    },
+    {
+      "nombre": "Montes y heredades de Aragón, en torno a Moncayo y al campamento de Lupercio/Marín Félix",
+      "descripcion": "Ámbito rural y serrano del desenlace, donde confluyen fugitivos, soldados y bandoleros, se producen capturas y reconocimientos y se resuelve el conflicto mediante el perdón real."
+    },
+    {
+      "nombre": "Caminos y mesones entre Castilla y Aragón",
+      "descripcion": "Espacios de tránsito que sostienen las huidas, persecuciones y desplazamientos de Feliciano, Clarinda, Fulgencia y los demás personajes."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Amor y locura",
+      "descripcion": "La obra muestra cómo el amor, unido a los celos, la ausencia y la injusticia, conduce a Feliciano a una locura impuesta por las circunstancias más que a una demencia natural."
+    },
+    {
+      "tema": "Honor femenino y masculino",
+      "descripcion": "La defensa del honor de Clarinda, de Fulgencia y de los hombres que las pretenden o protegen organiza gran parte de la acción y explica fugas, duelos verbales, persecuciones y reclamaciones familiares."
+    },
+    {
+      "tema": "Abuso y ambigüedad de la justicia",
+      "descripcion": "El Justicia actúa en nombre del orden, pero su conducta resulta problemática, pues manipula su promesa y convierte una causa de honor en reclusión y castigo desproporcionados."
+    },
+    {
+      "tema": "Fuga, persecución y asilo",
+      "descripcion": "Los personajes pasan de la huida amorosa al refugio en sagrado, al encierro y a nuevas evasiones, de modo que la movilidad constante sostiene el enredo dramático."
+    },
+    {
+      "tema": "Celos y rivalidades amorosas",
+      "descripcion": "Leonardo, Albano, Rosela, Fenicio y el propio Feliciano alimentan una red de deseos no correspondidos, malentendidos y sospechas que agravan el conflicto principal."
+    },
+    {
+      "tema": "Identidad, disfraz y engaño",
+      "descripcion": "La acción se apoya en fingimientos, falsas apariencias, vestidos de loco o de hombre y lecturas equivocadas de la realidad, recursos que provocan tanto comicidad como peligro."
+    },
+    {
+      "tema": "Libertad frente a coerción social",
+      "descripcion": "El amor de Feliciano y Clarinda choca con la autoridad paterna, los matrimonios concertados y las imposiciones de quienes desean disponer de la voluntad ajena."
+    }
+  ]
+}

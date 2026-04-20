@@ -1,0 +1,76 @@
+{#
+/**
+ * @file
+ * Template para el tipo de contenido BICUVE (textos).
+ */
+#}
+{{ attach_library('bootstrap_barrio/node') }}
+{{ attach_library('etso/bicuve') }}
+
+{%
+  set classes = [
+    'node',
+    'node--type-' ~ node.bundle|clean_class,
+    node.isPromoted() ? 'node--promoted',
+    node.isSticky() ? 'node--sticky',
+    not node.isPublished() ? 'node--unpublished',
+    view_mode ? 'node--view-mode-' ~ view_mode|clean_class,
+    'clearfix',
+  ]
+%}
+
+<article{{ attributes.addClass(classes) }}>
+  {{ title_prefix }}
+  {{ title_suffix }}
+
+  <div{{ content_attributes.addClass('node__content') }}>
+    <div class="bicuve-view-wrapper">
+
+      {# BREADCRUMBS #}
+      {% set breadcrumb_items = [
+        {'title': 'Examen de autorías', 'url': '/examen-autorias'},
+      ] %}
+      {% if obra_relacionada %}
+        {% set breadcrumb_items = breadcrumb_items|merge([
+          {'title': obra_relacionada.title, 'url': obra_relacionada.url}
+        ]) %}
+      {% endif %}
+      {% set breadcrumb_items = breadcrumb_items|merge([
+        {'title': 'BICUVE', 'url': null}
+      ]) %}
+      {% include '@etso/includes/node-breadcrumb.html.twig' with { items: breadcrumb_items } only %}
+
+      {# HEADER - TÍTULO #}
+      <div class="bicuve-header">
+        {% include '@etso/includes/node-title-header.html.twig' with {
+          title: node_title_display|default(node.getTitle()),
+          prefix: node_title_prefix|default('Texto digital de'),
+          variant: node_title_variant|default('default'),
+          background_image: node_title_bg_image|default('')
+        } only %}
+      </div>
+
+      {# GRID PRINCIPAL #}
+      <div class="bicuve-main-grid">
+
+        {# COLUMNA PRINCIPAL - CONTENIDO #}
+        <div class="bicuve-main-content">
+
+          {# TEXTO BICUVE #}
+          {% if node.field_texto_bicuve.value %}
+            <div class="bicuve-texto">
+              {{ node.field_texto_bicuve.value|raw }}
+            </div>
+          {% else %}
+            <div class="alert alert-info">
+              <i class="fas fa-info-circle"></i>
+              No hay contenido disponible para este texto.
+            </div>
+          {% endif %}
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</article>

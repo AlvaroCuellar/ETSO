@@ -1,0 +1,112 @@
+{
+  "archivo": "AGUILAR_SuerteSinEsperanza(Transk-IMPR).txt",
+  "titulo": "Suerte sin esperanza, La",
+  "resumen_largo": [
+    "La acción comienza en Zaragoza, cuando Lamberto sufre una grave caída de caballo junto a la casa de Mauricio. Este lo acoge generosamente y ordena que lo curen en su propia casa; allí también interviene su hermana Leonarda, que pasa de la compasión al enamoramiento. Mientras tanto, otra línea de la trama revela el conflicto de Teobaldo, caballero procedente de Barcelona que ama a Lavinia, dama valenciana. Por su pobreza no se ha atrevido a pretenderla, y el padre de la joven la ha destinado a Lamberto, amigo suyo. La mayor desdicha de Teobaldo consiste en haber recibido poderes de Lamberto para casarse por él con Lavinia, de modo que se ve obligado a entregar a la mujer que ama a otro. Consumado el desposorio por poder en Valencia, Lamberto, ya restablecido, permanece hospedado en casa de Mauricio y acaba enamorándose de Leonarda. El propio Mauricio empieza a sospechar esa inclinación y urde una traza con un baile de máscaras para comprobarla. Durante esa fiesta, Lamberto se declara a Leonarda y llega a tocarle la mano; Mauricio los sorprende, se siente traicionado en su hospitalidad y, aunque se aplaca al oír a Lamberto defender su nobleza, los obliga a casarse de inmediato y los expulsa de su casa.",
+    "Camino de Valencia, Lamberto confiesa a Leonarda que ya estaba casado por poder con Lavinia antes de aquel matrimonio forzado. Leonarda, desesperada, prefiere seguirlo aun degradada a condición servil antes que separarse de él, y acepta fingirse esclava muda bajo el nombre de María. Ya en Valencia, Teobaldo continúa atormentado por los celos, pues debe ver a Lavinia y a Lamberto juntos; en un convite en el Grao intenta dominarse, mientras busca ocasión para apartar a Lamberto y quizá servirse de la supuesta esclava como mediadora. Lamberto, por su parte, vive dividido entre su obligación con Lavinia y su amor por Leonarda. Lavinia concibe sospechas contra María y luego, tras un violento acceso de celos, descubre de boca de la propia Leonarda toda la verdad: el amor nacido en Zaragoza, el matrimonio forzado, el engaño de la esclavitud y la condición previa de marido de Lamberto. Contra lo esperado, Lavinia se conmueve, reconoce el desvarío que causan los celos y perdona a Leonarda, llegando a poner a salvo incluso al hijo que ha tenido de Lamberto. Sin embargo, cuando Lamberto teme que Leonarda haya revelado el secreto y que todo se precipite, la hiere con una daga. Mauricio, que había venido a Valencia movido por un papel insolente de Lamberto en que le revelaba la afrenta, encuentra a su hermana malherida, se dispone a vengarse, pero primero la retira y la cura en secreto, de modo que todos la creen muerta.",
+    "La supuesta muerte de Leonarda conduce a la prisión de Lamberto y a la petición de justicia por parte de Mauricio. No obstante, este rechaza que la honra se resuelva solo por vía judicial y pide al rey don Fernando que suspenda la ejecución y conceda un desafío campal: Mauricio y Teobaldo combatirán contra Lamberto y el compañero que este nombre. Lamberto acepta, pero nadie quiere ampararlo por considerar injusta su causa, de modo que comparece solo en la estacada, asistido apenas por su padre y por Lavinia. Cuando parece perdido, entra un caballero cubierto que resulta ser la propia Leonarda, viva, dispuesta no a condenar a su hermano ni a salvar ciegamente a Lamberto, sino a declarar públicamente la verdad. Su relato demuestra que Mauricio obró como hermano ofendido, que Lamberto fue noble al confesar su matrimonio previo y al preservar la honra de Leonarda sin consumar el enlace forzado, y que ella misma ha mantenido intacta su honestidad. Deshecho así el fundamento del combate, se reconoce que el segundo matrimonio de Lamberto con Leonarda no vale por ser forzado y por existir el vínculo anterior con Lavinia. Entonces Mauricio pide que Teobaldo se case con Leonarda, y el rey lo aprueba y se ofrece como padrino. También se concierta el matrimonio de Inés con Olfos, mientras todos celebran el inesperado desenlace que da sentido al título: una fortuna favorable llega cuando ya no parecía quedar esperanza alguna."
+  ],
+  "resumen_breve": [
+    "Entre Zaragoza, el camino hacia Valencia y la ciudad de Valencia —con episodios en el Grao y en un bosque o paraje campestre—, Lamberto cae en casa de Mauricio, se enamora de Leonarda y, pese a estar ya casado por poder con Lavinia, acaba unido a Leonarda por fuerza y bajo engaño.",
+    "Teobaldo, enamorado de Lavinia desde antes y obligado a desposarla en nombre de su amigo Lamberto, sufre celos y desdicha, mientras Lavinia sospecha de la falsa esclava María, que en realidad es Leonarda, oculta en la casa de su rival y amada de Lamberto.",
+    "Cuando Leonarda parece morir a manos de Lamberto, Mauricio obtiene del rey un duelo para vengar su honra, pero la reaparición de la joven aclara la verdad, anula el matrimonio forzado y permite un final de perdón, restitución del honor y nuevos enlaces."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Lamberto",
+      "descripcion": "Caballero aragonés, amigo de Mauricio y esposo por poder de Lavinia, cuya caída inicial desencadena la acción; ama a Leonarda, oculta su presencia como esclava y termina envuelto en un conflicto de honra, amor y aparente crimen."
+    },
+    {
+      "nombre": "Leonarda",
+      "descripcion": "Hermana de Mauricio, enamorada de Lamberto tras acogerlo en su casa; es forzada a casarse con él, viaja a Valencia disfrazada de esclava llamada María y, al final, restablece la verdad con su testimonio."
+    },
+    {
+      "nombre": "Mauricio",
+      "descripcion": "Caballero aragonés y hermano de Leonarda, hospedador de Lamberto; sospecha de la relación entre ambos, fuerza el matrimonio para reparar su honra y luego pide al rey un duelo para vengar la supuesta muerte de su hermana."
+    },
+    {
+      "nombre": "Lavinia",
+      "descripcion": "Dama valenciana casada por poder con Lamberto y amada por Teobaldo; pasa de los celos violentos hacia María a comprender la historia de Leonarda y a perdonarla."
+    },
+    {
+      "nombre": "Teobaldo",
+      "descripcion": "Caballero venido de Barcelona a Valencia, enamorado de Lavinia; por amistad con Lamberto y por desdicha personal se casa por poder con ella en nombre de su rival y después interviene en el desafío y en el desenlace final."
+    },
+    {
+      "nombre": "Olfos",
+      "descripcion": "Criado o gracioso muy presente en la acción, acompañante de varios personajes, comentarista de los sucesos y finalmente emparejado con Inés."
+    },
+    {
+      "nombre": "Inés",
+      "descripcion": "Criada vinculada a Lavinia y al entorno doméstico, participante en conversaciones decisivas y prometida final de Olfos."
+    },
+    {
+      "nombre": "Rey don Fernando",
+      "descripcion": "Monarca que entra en la parte final de la obra, escucha la demanda de Mauricio, autoriza el desafío y sanciona la resolución pública y matrimonial del conflicto."
+    },
+    {
+      "nombre": "Ascanio",
+      "descripcion": "Personaje secundario del entorno de Teobaldo y Lavinia, útil para recados, desplazamientos y episodios del convite y sus consecuencias."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Valencia",
+      "descripcion": "Marco urbano principal de la obra, donde se desarrollan el matrimonio por poder de Lavinia, la convivencia conflictiva de Lamberto con su esposa y con Leonarda disfrazada, la prisión final y la resolución ante el rey."
+    },
+    {
+      "nombre": "Casa de Mauricio en Zaragoza",
+      "descripcion": "Lugar donde Lamberto es recogido tras la caída, se cura de sus heridas, nace el amor de Leonarda y se produce el descubrimiento que lleva al matrimonio forzado y a la expulsión de la pareja."
+    },
+    {
+      "nombre": "Zaragoza",
+      "descripcion": "Ciudad de origen de Mauricio y Leonarda y primer marco relevante de la acción; desde allí parte el conflicto amoroso y de honra que luego se traslada a Valencia."
+    },
+    {
+      "nombre": "El Grao de Valencia",
+      "descripcion": "Espacio festivo junto al mar donde se organiza un convite decisivo; allí se intensifican los celos de Teobaldo y Lavinia y se producen separaciones y malentendidos importantes."
+    },
+    {
+      "nombre": "Camino entre Zaragoza y Valencia",
+      "descripcion": "Espacio de tránsito donde Lamberto revela a Leonarda que ya estaba casado por poder y donde ambos acuerdan el fingimiento de la esclavitud."
+    },
+    {
+      "nombre": "Bosque o paraje campestre",
+      "descripcion": "Lugar de un episodio intermedio con pastores y agresiones, útil para mostrar desplazamientos, peligros y conversaciones íntimas entre Lamberto y Leonarda."
+    },
+    {
+      "nombre": "Estacada o palestra real",
+      "descripcion": "Espacio ceremonial del desenlace, dispuesto para el duelo autorizado por el rey; allí la aparición de Leonarda transforma la violencia prevista en esclarecimiento público."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Honor y honra",
+      "descripcion": "La acción gira constantemente en torno a la reparación del honor personal y familiar, ya sea por la hospitalidad traicionada, por el contacto amoroso, por el matrimonio forzado o por la supuesta muerte de Leonarda."
+    },
+    {
+      "tema": "Amor contradictorio",
+      "descripcion": "Los personajes aman a quien no deben o no pueden poseer: Lamberto a Leonarda estando ya ligado a Lavinia, Teobaldo a Lavinia mientras la entrega a otro, y Lavinia vive entre amor, celos y resentimiento."
+    },
+    {
+      "tema": "Celos",
+      "descripcion": "Los celos impulsan sospechas, engaños, persecuciones y explosiones de violencia, especialmente en Lavinia y Teobaldo, y agravan la confusión creada por la presencia de Leonarda como falsa esclava."
+    },
+    {
+      "tema": "Matrimonio, consentimiento y validez",
+      "descripcion": "La obra muestra varios modos problemáticos de unión: el matrimonio por poder, el enlace forzado para reparar una afrenta y la discusión final sobre cuál de esos vínculos tiene verdadera validez."
+    },
+    {
+      "tema": "Apariencia, disfraz y ocultamiento",
+      "descripcion": "Leonarda vive oculta como María, se finge esclava y muda, y gran parte del conflicto depende de secretos, identidades encubiertas y verdades reveladas tardíamente."
+    },
+    {
+      "tema": "Fortuna adversa y giro inesperado",
+      "descripcion": "La trayectoria de los personajes parece gobernada por una suerte cruel, pero el final muestra un vuelco favorable e imprevisto, acorde con la idea de una dicha llegada cuando ya no se esperaba."
+    },
+    {
+      "tema": "Nobleza y conducta",
+      "descripcion": "Los personajes juzgan constantemente si sus actos corresponden o no a su linaje; la obra insiste en que la verdadera nobleza debe manifestarse en la generosidad, la lealtad, la valentía y el dominio de sí."
+    }
+  ]
+}

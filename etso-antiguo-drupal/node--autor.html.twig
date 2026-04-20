@@ -1,0 +1,215 @@
+{#
+/**
+ * @file
+ * Template para visualización de Autor.
+ */
+#}
+{{ attach_library('bootstrap_barrio/node') }}
+{{ attach_library('etso_search/obra_table_shared') }}
+{{ attach_library('etso/tooltip') }}
+
+{%
+  set classes = [
+    'node',
+    'node--type-' ~ node.bundle|clean_class,
+    node.isPromoted() ? 'node--promoted',
+    node.isSticky() ? 'node--sticky',
+    not node.isPublished() ? 'node--unpublished',
+    view_mode ? 'node--view-mode-' ~ view_mode|clean_class,
+    'clearfix',
+  ]
+%}
+
+{% set autor_profile = autor_profile|default({
+  author: {
+    title: node.getTitle(),
+    variantes: [],
+  },
+  metrics: {
+    related_any: 0,
+    trad_any: 0,
+    etso_yes: 0,
+    only_etso: 0,
+    only_trad: 0,
+  },
+  obras: [],
+}) %}
+{% set autor_generos = [] %}
+{% for obra in autor_profile.obras %}
+  {% set genero_value = obra.genero|default('')|trim %}
+  {% if genero_value and genero_value != '—' and genero_value not in autor_generos %}
+    {% set autor_generos = autor_generos|merge([genero_value]) %}
+  {% endif %}
+{% endfor %}
+{% set autor_generos = autor_generos|sort %}
+{% set autor_filter_tooltips = {
+  related_any: 'Todas las obras relacionadas con el autor.',
+  trad_any: 'Obras que la tradición filológica ha relacionado con el autor.',
+  etso_yes: 'Obras cuya atribución respalda positivamente la estilometría',
+  only_trad: 'Obras que la tradición filológica relacionaba con el autor pero que la estilometría no respalda.',
+  only_etso: 'Obras cuya autoría respalda la estilometría, pero que tradicionalmente se relacionaban con otro autor.'
+} %}
+
+<article{{ attributes.addClass(classes) }}>
+  {{ title_prefix }}
+  {{ title_suffix }}
+
+  <div{{ content_attributes.addClass('node__content') }}>
+    <div class="autor-view-wrapper obra-view-wrapper">
+
+      {% set breadcrumb_items = [
+        {'title': 'Examen de autorías', 'url': '/examen-autorias'},
+        {'title': autor_profile.author.title|default(node.getTitle()), 'url': null},
+      ] %}
+      {% include '@etso/includes/node-breadcrumb.html.twig' with { items: breadcrumb_items } only %}
+
+      <div class="obra-header autor-header">
+        <div class="obra-header-content">
+          <div class="obra-title-wrapper">
+            {% set autor_variantes_html %}
+              {% if autor_profile.author.variantes is not empty %}
+                <div class="autor-variantes-nombre">
+                  <span class="autor-variantes-prefix" aria-hidden="true">↳</span>
+                  {% for variante in autor_profile.author.variantes %}
+                    <span class="autor-variante-item">{{ variante }}</span>{% if not loop.last %}<span class="autor-variantes-sep"> | </span>{% endif %}
+                  {% endfor %}
+                </div>
+              {% endif %}
+            {% endset %}
+
+            {% include '@etso/includes/node-title-header.html.twig' with {
+              title: node_title_display|default(autor_profile.author.title|default(node.getTitle())),
+              prefix: node_title_prefix|default(''),
+              variant: node_title_variant|default('default'),
+              background_image: node_title_bg_image|default(''),
+              extra_html: autor_variantes_html|trim
+            } only %}
+          </div>
+        </div>
+      </div>
+
+      <div class="autor-main-grid obra-main-grid">
+        <div class="obra-main-content autor-main-content">
+          <div class="autor-metricas-row">
+            <div class="autor-stats-grid autor-stats-grid--primary">
+              <div class="autor-stat-card-shell">
+                <button type="button" class="autor-stat-card autor-stat-card--primary is-active" data-filter="related_any" aria-pressed="true">
+                  <div class="autor-stat-value">{{ autor_profile.metrics.related_any|default(0) }}</div>
+                  <div class="autor-stat-label">{{ 'Obras relacionadas con el autor'|t }}</div>
+                </button>
+                <span class="etso-tooltip">
+                  <span class="etso-tooltip-anchor">
+                    <button type="button" class="etso-tooltip-trigger" aria-label="{{ 'Ayuda sobre Obras relacionadas con el autor'|t }}" aria-expanded="false" aria-controls="autor-tooltip-related-any">?</button>
+                    <span class="etso-tooltip-popover" id="autor-tooltip-related-any" role="tooltip">{{ autor_filter_tooltips.related_any|t }}</span>
+                  </span>
+                </span>
+              </div>
+              <div class="autor-stat-card-shell">
+                <button type="button" class="autor-stat-card autor-stat-card--primary" data-filter="trad_any" aria-pressed="false">
+                  <div class="autor-stat-value">{{ autor_profile.metrics.trad_any|default(0) }}</div>
+                  <div class="autor-stat-label">{{ 'Obras respaldadas por la tradición'|t }}</div>
+                </button>
+                <span class="etso-tooltip">
+                  <span class="etso-tooltip-anchor">
+                    <button type="button" class="etso-tooltip-trigger" aria-label="{{ 'Ayuda sobre Obras respaldadas por la tradición'|t }}" aria-expanded="false" aria-controls="autor-tooltip-trad-any">?</button>
+                    <span class="etso-tooltip-popover" id="autor-tooltip-trad-any" role="tooltip">{{ autor_filter_tooltips.trad_any|t }}</span>
+                  </span>
+                </span>
+              </div>
+              <div class="autor-stat-card-shell">
+                <button type="button" class="autor-stat-card autor-stat-card--primary" data-filter="etso_yes" aria-pressed="false">
+                  <div class="autor-stat-value">{{ autor_profile.metrics.etso_yes|default(0) }}</div>
+                  <div class="autor-stat-label">{{ 'Obras respaldadas por la estilometría'|t }}</div>
+                </button>
+                <span class="etso-tooltip">
+                  <span class="etso-tooltip-anchor">
+                    <button type="button" class="etso-tooltip-trigger" aria-label="{{ 'Ayuda sobre Obras respaldadas por la estilometría'|t }}" aria-expanded="false" aria-controls="autor-tooltip-etso-yes">?</button>
+                    <span class="etso-tooltip-popover" id="autor-tooltip-etso-yes" role="tooltip">{{ autor_filter_tooltips.etso_yes|t }}</span>
+                  </span>
+                </span>
+              </div>
+            </div>
+            <div class="autor-stats-grid autor-stats-grid--secondary">
+              <div class="autor-stat-card-shell">
+                <button type="button" class="autor-stat-card" data-filter="only_trad" aria-pressed="false">
+                  <div class="autor-stat-value">{{ autor_profile.metrics.only_trad|default(0) }}</div>
+                  <div class="autor-stat-label">{{ 'Obras respaldadas solo por la tradición'|t }}</div>
+                </button>
+                <span class="etso-tooltip">
+                  <span class="etso-tooltip-anchor">
+                    <button type="button" class="etso-tooltip-trigger" aria-label="{{ 'Ayuda sobre Obras respaldadas solo por la tradición'|t }}" aria-expanded="false" aria-controls="autor-tooltip-only-trad">?</button>
+                    <span class="etso-tooltip-popover" id="autor-tooltip-only-trad" role="tooltip">{{ autor_filter_tooltips.only_trad|t }}</span>
+                  </span>
+                </span>
+              </div>
+              <div class="autor-stat-card-shell">
+                <button type="button" class="autor-stat-card" data-filter="only_etso" aria-pressed="false">
+                  <div class="autor-stat-value">{{ autor_profile.metrics.only_etso|default(0) }}</div>
+                  <div class="autor-stat-label">{{ 'Obras atribuidas a partir de la estilometría'|t }}</div>
+                </button>
+                <span class="etso-tooltip">
+                  <span class="etso-tooltip-anchor">
+                    <button type="button" class="etso-tooltip-trigger" aria-label="{{ 'Ayuda sobre Obras atribuidas a partir de la estilometría'|t }}" aria-expanded="false" aria-controls="autor-tooltip-only-etso">?</button>
+                    <span class="etso-tooltip-popover" id="autor-tooltip-only-etso" role="tooltip">{{ autor_filter_tooltips.only_etso|t }}</span>
+                  </span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="autor-obras-card">
+            <div class="autor-obras-toolbar">
+              <label class="autor-search-field">
+                <span class="autor-search-label">{{ 'Buscar por título'|t }}</span>
+                <input type="search" class="autor-search-input" placeholder="{{ 'Buscar por título'|t }}" aria-label="{{ 'Buscar por título'|t }}">
+              </label>
+              <label class="autor-filter-field">
+                <span class="autor-filter-label">{{ 'Filtrar por género'|t }}</span>
+                <select class="autor-genero-select" aria-label="{{ 'Filtrar por género'|t }}">
+                  <option value="">{{ 'Todos los géneros'|t }}</option>
+                  {% for genero in autor_generos %}
+                    <option value="{{ genero }}">{{ genero }}</option>
+                  {% endfor %}
+                </select>
+              </label>
+            </div>
+
+            {% if autor_profile.obras is not empty %}
+              <div class="table-wrapper obra-table-shared-container">
+                <table class="obra-table-shared obra-table-shared--standard">
+                  <thead>
+                    <tr>
+                      <th class="obra-table-col--title">{{ 'Título'|t }}</th>
+                      <th class="obra-table-col--trad">{{ 'Atribución tradicional'|t }}</th>
+                      <th class="obra-table-col--etso">{{ 'Atribución estilometría'|t }}</th>
+                      <th class="obra-table-col--genre">{{ 'Género'|t }}</th>
+                      <th class="obra-table-col--resources">{{ 'Recursos'|t }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for obra in autor_profile.obras %}
+                      {% include '@etso_search/includes/obra-table-row.html.twig' with {
+                        obra: obra,
+                        is_informe: false,
+                        detail_colspan: 5
+                      } only %}
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              <div class="autor-table-empty-state alert alert-info" hidden>
+                <i class="fas fa-info-circle"></i>
+                {{ 'No hay obras que coincidan con el filtro actual.'|t }}
+              </div>
+            {% else %}
+              <div class="alert alert-info mb-0">
+                <i class="fas fa-info-circle"></i>
+                {{ 'No hay obras asociadas a este autor en el corpus.'|t }}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>

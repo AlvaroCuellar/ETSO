@@ -1,0 +1,67 @@
+{# /**
+ * @file
+ * Template para el buscador de obras "Examen de autorías".
+ *
+ * Variables disponibles:
+ * - intro_block: Bloque editable con la intro del examen de autorías.
+ * - embedded: TRUE cuando el buscador va embebido en una página de nodo.
+ * - form: Formulario de filtros.
+ * - obras: Array de obras procesadas.
+ * - total_resultados: Total de resultados encontrados.
+ * - pager: Render array del pager.
+ */ #}
+
+<div class="etso-buscador">
+  <div class="etso-buscador__shell{{ embedded ? ' etso-buscador__shell--embedded' : '' }}">
+    {% if intro_block %}
+      <div class="etso-buscador-intro">
+        {{ intro_block }}
+      </div>
+    {% endif %}
+
+    {% if not embedded %}
+      <h1>{{ 'Buscador de obras e informes estilométricos'|t }}</h1>
+    {% endif %}
+
+    {{ form }}
+
+    <div class="etso-buscador__results" aria-live="polite" aria-busy="false" role="region" aria-label="{{ 'Resultados de búsqueda'|t }}" tabindex="-1">
+      {% if obras is not empty %}
+        <div class="results-header">
+          <div class="results-count">{{ results_count_label }}</div>
+        </div>
+
+        <div class="table-wrapper obra-table-shared-container">
+          <table class="obra-table-shared obra-table-shared--standard">
+            <thead>
+              <tr>
+                <th class="obra-table-col--title">{{ 'Título'|t }}</th>
+                <th class="obra-table-col--trad">{{ 'Atribución tradicional'|t }}</th>
+                <th class="obra-table-col--etso">{{ 'Atribución estilometría'|t }}</th>
+                <th class="obra-table-col--genre">{{ 'Género'|t }}</th>
+                <th class="obra-table-col--resources">{{ 'Recursos'|t }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for obra in obras %}
+                {% include '@etso_search/includes/obra-table-row.html.twig' with {
+                  obra: obra,
+                  is_informe: false,
+                  detail_colspan: 5
+                } only %}
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        {% if pager %}
+          {{ pager }}
+        {% endif %}
+      {% else %}
+        <div class="no-results">
+          {{ 'No se encontraron obras que coincidan con los criterios de búsqueda.'|t }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>

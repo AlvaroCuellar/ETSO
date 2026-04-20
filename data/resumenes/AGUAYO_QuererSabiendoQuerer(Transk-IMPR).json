@@ -1,0 +1,108 @@
+{
+  "archivo": "AGUAYO_QuererSabiendoQuerer(Transk-IMPR).txt",
+  "titulo": "Querer sabiendo querer y gran reina de Tinacria",
+  "resumen_largo": [
+    "La obra se abre con un doble peligro: un naufragio y un incendio. Astolfo, hermano del emperador Mauricio de Constantinopla, llega a una playa desconocida tras la tormenta junto con su criado Colmillo. Apenas pisa tierra oye voces de socorro procedentes de un edificio en llamas y, movido por su valor, entra a socorrer a una dama que se hallaba encerrada y enmascarada. La rescata del fuego, pero en la confusión pierde un retrato femenino que guardaba como prenda amorosa. Poco después se sabe que la dama salvada es la reina Diana de Tinacria, isla o reino sobre el que recae la acción principal. Astolfo cuenta entonces su historia: había encontrado tiempo atrás en el mar el retrato de una mujer desconocida y se enamoró de esa imagen; después fue enviado por su hermano a Tinacria como embajador para reclamar el tributo debido al Imperio o, en su defecto, declarar la guerra. Al descubrir ante la corte que la reina Diana es la mujer del retrato, su misión política entra en conflicto con su pasión amorosa. Diana, agradecida por haber sido salvada, manda hospedarle y averiguar quién es, mientras él vacila entre la embajada, el amor y el deseo de vengar la pérdida del retrato, creyendo al principio que el fuego ha destruido la imagen que adoraba.",
+    "En la corte de Tinacria se desarrolla al mismo tiempo una intriga interna. Floripes, hermana de Diana, y Enrique, primo de la reina, mantienen amores secretos y comparten una ambición política más grave: Enrique considera injusto que reine Diana y no él, y ambos han tramado matarla aprovechando el incendio del sarao cortesano. Enrique había fingido galantear a la reina para encubrir mejor la conjura, y en el tumulto cerró la puerta de la estancia donde ella quedó expuesta al fuego. Fracasado este primer intento gracias al socorro de Astolfo, la tensión se desplaza al terreno amoroso y político. Diana escucha debates cortesanos sobre el amor y los celos y proclama que solo merece estimación quien sabe querer con respeto, sin ofensa ni sospecha. Aunque empieza a sentir inclinación hacia Astolfo, la razón de estado y su decoro la obligan a despedirlo de Tinacria. En el momento de la despedida se produce una escena de equívocos con el retrato y un guante, signos materiales del vínculo entre ambos, y Astolfo decide no partir. Esa permanencia facilita nuevas sospechas, pues de noche se oyen conversaciones en el jardín relativas a la muerte de Diana y a una posible alianza con el Imperio. La reina, que presencia parte de esas palabras sin entender de inmediato toda la trama, termina creyendo que Astolfo mantiene tratos amorosos ocultos y quizá conspiraciones contra ella. Como lo encuentra además en situación comprometida dentro del palacio, ordena prenderlo en una torre, donde su permanencia se agrava por nuevas apariencias engañosas.",
+    "En la tercera jornada las confusiones alcanzan su punto máximo. Floripes hace llegar a Astolfo un papel para implicarlo en la conspiración y Vencislao, otro primo de la reina y personaje leal, intenta a la vez agradecer a Astolfo la vida que le debe y evitar que la traición prospere. Diana llega a leer el papel comprometedor y, al sorprender además a Astolfo en circunstancias que interpreta como atentado a su honor y a su vida, manda que se le dé muerte en secreto, aunque interiormente queda desgarrada. La ejecución se suspende de manera imprevista porque una armada imperial se aproxima a Tinacria y la reina debe atender a la defensa del reino. Astolfo escapa de la prisión y, lejos de unirse al ataque enemigo, sale a combatir por Diana; en la batalla derrota a los invasores, muere Enrique y la victoria de Tinacria se debe principalmente a un soldado cubierto que lleva por señal el guante de la reina. Reconocido finalmente como ese campeón, Astolfo explica que su conducta no había sido traidora y Floripes promete descubrir al verdadero culpable. Restablecida la verdad, Diana reconoce la lealtad amorosa y política de Astolfo y le entrega simbólicamente su mano. La obra concluye con la unión de Diana y Astolfo, el castigo del traidor principal ya muerto y el anuncio del futuro matrimonio de Vencislao y Floripes, cerrando así los conflictos de amor, poder y fidelidad en Tinacria."
+  ],
+  "resumen_breve": [
+    "En la corte de Tinacria, probablemente en un tiempo legendario vinculado a Constantinopla, Astolfo llega tras un naufragio, salva del incendio a la reina Diana y descubre que ella es la mujer cuyo retrato había amado desde lejos.",
+    "Mientras la razón de estado enfrenta a la reina con el embajador imperial, Enrique y Floripes sostienen una intriga secreta contra Diana, y los celos, los equívocos nocturnos del jardín y un papel comprometedor hacen que Astolfo sea tenido por traidor.",
+    "Cuando una armada imperial ataca Tinacria, Astolfo combate por Diana, prueba su lealtad, cae la conjura y la obra concluye con la unión de los protagonistas y con la afirmación de un amor regido por el respeto y la fidelidad."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Diana",
+      "descripcion": "Reina de Tinacria y eje de la acción. Es salvada del incendio por Astolfo, se debate entre el amor y la razón de estado, y termina reconociendo la lealtad del héroe."
+    },
+    {
+      "nombre": "Astolfo",
+      "descripcion": "Hermano del emperador Mauricio y embajador de Constantinopla. Llega a Tinacria tras un naufragio, se enamora de Diana a partir de su retrato y, pese a ser sospechoso, demuestra su fidelidad defendiendo el reino."
+    },
+    {
+      "nombre": "Floripes",
+      "descripcion": "Hermana de Diana. Mantiene un amor secreto con Enrique y participa en la conjura contra la reina, aunque en el desenlace ayuda a aclarar la verdad sobre Astolfo."
+    },
+    {
+      "nombre": "Enrique",
+      "descripcion": "Primo de Diana y antagonista principal. Ambiciona el trono, finge amar a la reina para acercarse a ella y trama su muerte, primero en el incendio y luego mediante alianza con el Imperio."
+    },
+    {
+      "nombre": "Vencislao",
+      "descripcion": "Primo de Diana, pretendiente y personaje de lealtad más firme. Debe custodiar a Astolfo, pero procura obrar con nobleza y servir a la reina en la crisis."
+    },
+    {
+      "nombre": "Ricardo",
+      "descripcion": "Servidor o consejero de la reina, encargado de hospedar a Astolfo y de ejecutar varias órdenes palaciegas. Interviene como mediador en la información política y cortesana."
+    },
+    {
+      "nombre": "Colmillo",
+      "descripcion": "Criado de Astolfo. Acompaña a su amo desde el naufragio y aporta una mirada cómica sobre los peligros, los enredos amorosos y las decisiones arriesgadas del protagonista."
+    },
+    {
+      "nombre": "Celia",
+      "descripcion": "Dama o criada cercana a la reina, presente en escenas de vigilancia, música y comunicación dentro del palacio. Su papel es secundario pero funcional en los enredos cortesanos."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Tinacria",
+      "descripcion": "Reino insular donde se desarrolla la acción principal. Es el marco político del conflicto entre la soberanía de Diana y las pretensiones del Imperio y de los conjurados internos."
+    },
+    {
+      "nombre": "Palacio de Diana",
+      "descripcion": "Espacio central de la corte, donde tienen lugar el incendio inicial, las audiencias con Astolfo, las sospechas de la reina y buena parte de los malentendidos de honor y gobierno."
+    },
+    {
+      "nombre": "Jardín o vergel del palacio",
+      "descripcion": "Lugar de encuentros nocturnos, músicas, señales y conversaciones ocultas. Allí se cruzan los amores secretos y se oyen indicios de la conspiración contra Diana."
+    },
+    {
+      "nombre": "Torre o prisión del palacio",
+      "descripcion": "Lugar de encierro de Astolfo y núcleo de la tercera jornada. En ese espacio se concentran el papel comprometedor, las visitas encubiertas y la condena casi fatal del héroe."
+    },
+    {
+      "nombre": "Playa y ribera de Tinacria",
+      "descripcion": "Lugar de llegada de Astolfo tras el naufragio y punto de contacto entre el mundo exterior y la isla. También se vincula al embarque, la posible huida y la llegada de la armada enemiga."
+    },
+    {
+      "nombre": "Mar y ámbito naval",
+      "descripcion": "Espacio decisivo aunque no siempre escénico. En él se produce el hallazgo inicial del retrato, el naufragio de Astolfo y el ataque final de las fuerzas imperiales."
+    },
+    {
+      "nombre": "Campo de batalla junto a las murallas y la costa",
+      "descripcion": "Espacio del desenlace bélico, donde Astolfo demuestra públicamente su lealtad luchando por Tinacria contra las tropas del Imperio."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Amor sometido al respeto",
+      "descripcion": "La obra insiste en que no basta querer, sino querer con prudencia, recato y nobleza. Esa idea guía las palabras de Diana y da sentido al título."
+    },
+    {
+      "tema": "Razón de estado y sentimiento personal",
+      "descripcion": "Diana y Astolfo ven enfrentados sus afectos con sus obligaciones políticas. La reina debe proteger su reino y su decoro, mientras Astolfo representa al Imperio pero actúa movido por el amor."
+    },
+    {
+      "tema": "Lealtad y traición",
+      "descripcion": "La trama contrapone la fidelidad verdadera de Astolfo y Vencislao a la conjura de Enrique y Floripes. Buena parte del conflicto nace de no saber distinguir a tiempo entre leales y traidores."
+    },
+    {
+      "tema": "Apariencia, equívoco y ocultamiento",
+      "descripcion": "Retratos, mascarillas, papeles, voces nocturnas y escenas vistas a medias provocan errores de interpretación. La acción avanza mediante confusiones que solo se aclaran al final."
+    },
+    {
+      "tema": "Honor femenino y recato cortesano",
+      "descripcion": "Diana valora de modo extremo la protección de su honor y censura cualquier acción que lo comprometa, incluso cuando procede de quien la ama. El respeto al decoro pesa tanto como la seguridad del reino."
+    },
+    {
+      "tema": "Ambición dinástica y lucha por el poder",
+      "descripcion": "Enrique no acepta plenamente el gobierno de Diana y su deseo de corona alimenta la conspiración. El conflicto amoroso está unido a una disputa sucesoria y política."
+    },
+    {
+      "tema": "Guerra entre Tinacria y el Imperio",
+      "descripcion": "La amenaza exterior estructura la acción desde la llegada del embajador hasta la batalla final. El desenlace militar sirve para probar públicamente la verdad de las lealtades."
+    }
+  ]
+}

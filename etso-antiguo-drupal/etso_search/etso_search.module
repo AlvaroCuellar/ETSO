@@ -1,0 +1,193 @@
+<?php
+
+/**
+ * @file
+ * ETSO Search module - Buscador "Examen de autorías".
+ *
+ * Proporciona funcionalidad de búsqueda avanzada para obras
+ * con filtros de autoría, género, confianza y metadata.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\node\NodeInterface;
+
+/**
+ * Implements hook_help().
+ */
+function etso_search_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.etso_search':
+      $output = '<h3>' . t('Acerca del módulo ETSO Search') . '</h3>';
+      $output .= '<p>' . t('El módulo ETSO Search proporciona un buscador avanzado de obras teatrales con filtros de autoría, género, confianza y metadata.') . '</p>';
+      $output .= '<h4>' . t('Características') . '</h4>';
+      $output .= '<ul>';
+      $output .= '<li>' . t('Búsqueda flexible por título con normalización automática') . '</li>';
+      $output .= '<li>' . t('Filtros de autoría tradicional y ETSO') . '</li>';
+      $output .= '<li>' . t('Búsqueda por nivel de confianza (segura, probable)') . '</li>';
+      $output .= '<li>' . t('Filtros avanzados de metadata (género, procedencia, estado)') . '</li>';
+      $output .= '<li>' . t('Vista expandible con detalles de cada obra') . '</li>';
+      $output .= '</ul>';
+      $output .= '<h4>' . t('Uso') . '</h4>';
+      $output .= '<p>' . t('Accede al buscador en: <a href="@url">/examen-autorias</a>', [
+        '@url' => '/examen-autorias',
+      ]) . '</p>';
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function etso_search_theme($existing, $type, $theme, $path) {
+  return [
+    'buscador_obras' => [
+      'variables' => [
+        'form' => NULL,
+        'intro_block' => NULL,
+        'embedded' => FALSE,
+        'obras' => [],
+        'total_resultados' => 0,
+        'results_count_label' => '',
+        'pager' => NULL,
+      ],
+      'template' => 'buscador-obras',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for buscador_obras.
+ */
+function etso_search_preprocess_buscador_obras(&$variables) {
+  // Procesamiento adicional de variables si es necesario
+  // Por ejemplo, formatear fechas, traducir valores, etc.
+}
+
+/**
+ * Implements hook_preprocess_node().
+ */
+function etso_search_preprocess_node(&$variables) {
+  $node = $variables['node'];
+  
+  // Preprocesamiento para tipo de contenido OBRA
+  if ($node->bundle() === 'obra') {
+    
+    // 1. BUSCAR RESUMEN RELACIONADO
+    $query = \Drupal::entityQuery('node')
+      ->condition('type', 'resumen')
+      ->condition('field_relacion_resumen_obra', $node->id())
+      ->accessCheck(TRUE)
+      ->range(0, 1);
+    
+    $resumen_ids = $query->execute();
+    
+    if (!empty($resumen_ids)) {
+      $resumen_id = reset($resumen_ids);
+      $resumen_node = \Drupal::entityTypeManager()
+        ->getStorage('node')
+        ->load($resumen_id);
+      
+      if ($resumen_node && $resumen_node->access('view')) {
+        $variables['resumen_relacionado'] = [
+          'id' => $resumen_id,
+          'title' => $resumen_node->getTitle(),
+          'url' => $resumen_node->toUrl()->toString(),
+        ];
+      }
+    }
+
+    // 2. PROCESAR ENLACES BICUVE (field_relacion_obra_bicuve - paragraphs repetibles)
+    $variables['bicuve_enlaces'] = [];
+    if ($node->hasField('field_relacion_obra_bicuve') && !$node->get('field_relacion_obra_bicuve')->isEmpty()) {
+      foreach ($node->get('field_relacion_obra_bicuve')->referencedEntities() as $paragraph) {
+        // Obtener la referencia al BICUVE
+        if ($paragraph->hasField('field_texto_bicuve') && !$paragraph->get('field_texto_bicuve')->isEmpty()) {
+          $bicuve_node = $paragraph->get('field_texto_bicuve')->entity;
+          
+          if ($bicuve_node && $bicuve_node->access('view')) {
+            // Obtener anchor text personalizado o usar el título del BICUVE
+            $anchor_text = '';
+            if ($paragraph->hasField('field_link_text_bicuve') && !$paragraph->get('field_link_text_bicuve')->isEmpty()) {
+              $anchor_text = $paragraph->get('field_link_text_bicuve')->value;
+            }
+            
+            $variables['bicuve_enlaces'][] = [
+              'id' => $bicuve_node->id(),
+              'title' => $anchor_text ?: $bicuve_node->getTitle(),
+              'url' => $bicuve_node->toUrl()->toString(),
+            ];
+          }
+        }
+      }
+    }
+
+    // 3. PROCESAR ENLACES EXTERNOS (field_texto_externo - repetible)
+    $variables['texto_externo_enlaces'] = [];
+    if ($node->hasField('field_texto_externo') && !$node->get('field_texto_externo')->isEmpty()) {
+      foreach ($node->get('field_texto_externo') as $link_item) {
+        if (!empty($link_item->uri)) {
+          $variables['texto_externo_enlaces'][] = [
+            'url' => $link_item->uri,
+            'title' => $link_item->title ?: 'Biblioteca externa',
+          ];
+        }
+      }
+    }
+
+    // 4. MENSAJE SI NO HAY ACCESO A TEXTO
+    $has_bicuve = !empty($variables['bicuve_enlaces']);
+    $has_externo = !empty($variables['texto_externo_enlaces']);
+    
+    if (!$has_bicuve && !$has_externo) {
+      $variables['texto_access_message'] = 'No hay texto disponible en este momento.';
+    }
+  }
+  
+  // Preprocesamiento para tipo de contenido BICUVE
+  if ($node->bundle() === 'bicuve') {
+    
+    // BUSCAR OBRA QUE REFERENCIA A ESTE BICUVE (ahora a través de paragraph)
+    $nid = $node->id();
+    
+    // Buscar paragraphs que referencian este BICUVE
+    $paragraph_storage = \Drupal::entityTypeManager()->getStorage('paragraph');
+    $paragraph_ids = $paragraph_storage->getQuery()
+      ->condition('type', 'relacion_obra_bicuve')
+      ->condition('field_texto_bicuve', $nid)
+      ->accessCheck(TRUE)
+      ->execute();
+    
+    if (!empty($paragraph_ids)) {
+      $paragraphs = $paragraph_storage->loadMultiple($paragraph_ids);
+      
+      // Buscar la obra que contiene este paragraph
+      foreach ($paragraphs as $paragraph) {
+        $parent_id = $paragraph->parent_id->value;
+        $parent_type = $paragraph->parent_type->value;
+        
+        if ($parent_type === 'node') {
+          $obra_node = \Drupal::entityTypeManager()
+            ->getStorage('node')
+            ->load($parent_id);
+          
+          if ($obra_node && $obra_node->bundle() === 'obra' && $obra_node->access('view')) {
+            $obra_title_display = $obra_node->getTitle();
+            if ($obra_node->hasField('field_titulo_mostrado') && !$obra_node->get('field_titulo_mostrado')->isEmpty()) {
+              $candidate = trim((string) $obra_node->get('field_titulo_mostrado')->value);
+              if ($candidate !== '') {
+                $obra_title_display = $candidate;
+              }
+            }
+            $variables['obra_relacionada'] = [
+              'id' => $obra_node->id(),
+              'title' => $obra_title_display,
+              'url' => $obra_node->toUrl()->toString(),
+            ];
+            break; // Solo necesitamos la primera obra
+          }
+        }
+      }
+    }
+  }
+}

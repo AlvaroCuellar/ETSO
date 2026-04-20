@@ -1,0 +1,100 @@
+{
+  "archivo": "AGUILAR_FuerzaDelInteres(Transk-IMPR).txt",
+  "titulo": "Fuerza del interés, La",
+  "resumen_largo": [
+    "La acción gira en torno a Grisanto, criado o privado del marqués Ludovico, enamorado de Emilia, hija de Mauricio. Emilia rechaza al principio ese amor y también desdeña al propio marqués, mientras su entorno discute sobre la posibilidad de querer por interés, por nobleza o por conveniencia. Ludovico, que también pretende a Emilia, descubre que Mauricio le debe mil ducados y, aconsejado por Grisanto, decide usar esa deuda para obligar al padre a favorecer su causa. Sin embargo, cuando el alguacil va a prender a Mauricio, Grisanto, movido por su pasión por Emilia, entrega dinero para que la deuda se pague y consigue así la gratitud del padre. A partir de ese pago, Mauricio, agradecido pero también condicionado por la necesidad, empieza a inclinarse a favorecer a Grisanto ante su hija. Paralelamente, Márcela, hermana del marqués, ama a Grisanto y le entrega dinero y promesas, mientras el conde Urbano corteja a la propia Márcela sin ser correspondido. Desde el comienzo queda así trabado un sistema de amores cruzados y desiguales, en el que la dependencia económica y la jerarquía social pesan sobre todos los vínculos.",
+    "La pieza desarrolla entonces una serie de engaños y pruebas en las que el interés material se convierte en instrumento amoroso. Grisanto, con ayuda de un joyero, compra o hace llevar a Emilia una tienda entera de joyas y mercaderías, fingiendo generosidad extrema para vencer su dureza. Emilia, que antes lo despreciaba, queda deslumbrada por esa riqueza y acaba mudando de actitud, de modo que acepta a Grisanto y reconoce que el valor de sus dádivas ha transformado su sentimiento. Esa mudanza despierta los celos y la ira de Márcela, que se siente traicionada porque Grisanto solo la buscaba para obtener dinero; también Mauricio oscila entre la defensa de la honra de su hija y la aceptación de tratos que el dinero vuelve posibles. Entretanto, Ludovico averigua que las joyas entregadas a Emilia eran suyas y acusa a Grisanto de traición, pues este había usado en provecho propio bienes de su señor para conquistar a la dama. La revelación provoca confusiones, falsas confesiones, amenazas de cárcel y de muerte, y un encadenamiento de escenas en las que Emilia, Márcela, Mauricio, Ludovico, Urbano y hasta el joyero quedan atrapados en una red de sospechas, favores comprados y lealtades quebradas por el oro.",
+    "En la parte final, el conflicto se concentra en el enfrentamiento entre amor, honra e interés. Emilia llega a defender abiertamente a Grisanto ante el marqués y reconoce su amor por él, mientras Ludovico, pese a la ofensa recibida, prefiere negociar antes que destruirlo y le ofrece incluso restituirle su favor e integrarlo de nuevo en su casa, con tal de que renuncie a Emilia. Como Grisanto se mantiene firme, el conde Urbano interviene con una propuesta más extrema: ofrece a Grisanto una gran suma de dinero, casa, lugar, vasallos, vestidos y caballos si olvida a Emilia y deja el campo libre a Ludovico. En una resolución abiertamente regida por la lógica del título, Grisanto acepta de inmediato, declara que olvida a Emilia por interés y entrega simbólicamente a Urbano la posibilidad de casarse con Márcela. Emilia, herida, comprende entonces que el mismo interés que la llevó a amar es también la causa de su abandono; Grisanto justifica su conducta afirmando que ella quiso por interés y él olvida por interés. El desenlace no restablece un orden sentimental ideal, sino que muestra de forma tajante cómo el dinero y la conveniencia tuercen la fidelidad, compran voluntades y deciden el curso de los afectos y de las alianzas sociales."
+  ],
+  "resumen_breve": [
+    "En un marco urbano cortesano que el texto no localiza con plena seguridad, Grisanto, servidor del marqués Ludovico, pretende a Emilia, hija de Mauricio, mientras la deuda del padre y la circulación de dinero y joyas condicionan las relaciones amorosas.",
+    "La acción se desarrolla principalmente entre casas nobles, aposentos y espacios de trato mercantil, donde Grisanto usa riquezas ajenas y favores económicos para vencer la resistencia de Emilia, al tiempo que Márcela y el conde Urbano alimentan nuevos celos y conflictos.",
+    "Al final, cuando Ludovico y Urbano intentan apartarlo de Emilia, Grisanto acepta una gran recompensa por olvidarla, y la obra concluye mostrando que el interés económico domina sobre el amor, la lealtad y la honra."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Grisanto",
+      "descripcion": "Galán central de la acción y criado o privado del marqués Ludovico; ama a Emilia, utiliza dinero y joyas para conquistarla y finalmente la abandona por una recompensa mayor."
+    },
+    {
+      "nombre": "Emilia",
+      "descripcion": "Hija de Mauricio y principal dama de la obra; primero rechaza a Grisanto y al marqués, pero luego cede ante la ostentación de riqueza y termina siendo víctima del mismo interés que la había movido."
+    },
+    {
+      "nombre": "Ludóvico",
+      "descripcion": "Marqués y señor de Grisanto, también enamorado de Emilia; su poder económico impulsa buena parte de la trama y sufre la traición de su criado al ver usadas sus joyas para cortejar a la dama."
+    },
+    {
+      "nombre": "Márcela",
+      "descripcion": "Hermana del marqués Ludovico, enamorada de Grisanto; lo socorre con dinero y favores, pero sus celos y su desengaño revelan con especial claridad el carácter interesado del amor del galán."
+    },
+    {
+      "nombre": "Mauricio",
+      "descripcion": "Padre de Emilia, endeudado con Ludovico; su deuda lo vuelve vulnerable y lo lleva a negociar con la honra y el porvenir de su hija."
+    },
+    {
+      "nombre": "Conde Urbano",
+      "descripcion": "Pretendiente de Márcela y figura activa en el tramo final; interviene como mediador interesado y compra la renuncia amorosa de Grisanto con una oferta de riqueza y ascenso."
+    },
+    {
+      "nombre": "Joyero",
+      "descripcion": "Personaje secundario pero decisivo en la trama material del cortejo; sirve de intermediario en el envío de las joyas y facilita la circulación de los bienes que alteran los afectos."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Casa de Emilia y Mauricio",
+      "descripcion": "Espacio principal del conflicto amoroso y familiar, donde se producen los encuentros entre Grisanto y Emilia, las presiones del padre y buena parte de los giros de la acción."
+    },
+    {
+      "nombre": "Casa o ámbito del marqués Ludóvico",
+      "descripcion": "Lugar de poder nobiliario desde el que se ordenan pagos, prisiones, pesquisas y negociaciones, y donde se hace visible la dependencia de Grisanto respecto de su señor."
+    },
+    {
+      "nombre": "Aposentos y salas de visita",
+      "descripcion": "Espacios interiores cortesanos en los que se desarrollan conversaciones privadas, fingimientos amorosos, pruebas de fidelidad y maniobras de mediación entre personajes."
+    },
+    {
+      "nombre": "Tienda del joyero",
+      "descripcion": "Espacio mercantil decisivo, pues allí se origina la compra de la tienda entera y el despliegue de riqueza que transforma la actitud de Emilia."
+    },
+    {
+      "nombre": "Cárcel y ámbito judicial",
+      "descripcion": "Espacio de amenaza y coerción asociado a las deudas y a la acusación contra Grisanto; su función dramática es mostrar cómo el poder legal refuerza los intereses económicos."
+    },
+    {
+      "nombre": "Calle o espacio urbano de tránsito",
+      "descripcion": "Lugar de pasos, encuentros y traslados, especialmente en escenas de detención, seguimiento y comunicación entre casas y negocios."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Poder del dinero sobre los afectos",
+      "descripcion": "La obra muestra de forma constante que el dinero, las deudas, los regalos y las recompensas determinan el nacimiento, la mudanza y la ruptura del amor."
+    },
+    {
+      "tema": "Amor interesado",
+      "descripcion": "Los vínculos amorosos aparecen contaminados por la conveniencia material, hasta el punto de que querer y olvidar pueden comprarse."
+    },
+    {
+      "tema": "Conflicto entre honra y conveniencia",
+      "descripcion": "Los personajes invocan la honra familiar y personal, pero una y otra vez la subordinan a necesidades económicas o a ventajas sociales."
+    },
+    {
+      "tema": "Jerarquía social y dependencia",
+      "descripcion": "La relación entre señor y criado, así como la vulnerabilidad de quienes dependen del crédito o del favor, estructura el desarrollo del conflicto."
+    },
+    {
+      "tema": "Deuda, favor y obligación",
+      "descripcion": "Las obligaciones económicas generan nuevas obligaciones morales y afectivas, y convierten el agradecimiento en instrumento de presión sobre padres, hijas y pretendientes."
+    },
+    {
+      "tema": "Engaño y mediación",
+      "descripcion": "El argumento avanza mediante fingimientos, mensajes alterados, regalos presentados en nombre ajeno e intermediarios que desfiguran la verdad para obtener ventaja."
+    },
+    {
+      "tema": "Inestabilidad de la fidelidad amorosa",
+      "descripcion": "La obra insiste en que la constancia amorosa es frágil cuando entra en juego el interés, de modo que promesas y juramentos se deshacen con rapidez."
+    }
+  ]
+}

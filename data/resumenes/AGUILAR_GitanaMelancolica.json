@@ -1,0 +1,100 @@
+{
+  "archivo": "AGUILAR_GitanaMelancolica.txt",
+  "titulo": "Gitana melancólica, La",
+  "resumen_largo": [
+    "La acción se sitúa, según se desprende del texto, durante el cerco romano de Jerusalén bajo el mando de Tito. Al comienzo, Irene y Numa mantienen un diálogo amoroso interrumpido por la llamada a las armas: Numa, obligado por el honor y por su vínculo con el ejército romano, parte al asalto de la ciudad pese a las súplicas de Irene. La ofensiva termina con grandes bajas y con la captura de Numa dentro de Jerusalén, noticia que causa a Irene un desmayo y una profunda alteración anímica. Los médicos diagnostican su mal como melancolía y recomiendan distraerla con fiestas, juegos y espectáculos militares. Tito, padre de Irene, ordena celebraciones y premios para quien consiga alegrarla, pero nada logra apartarla de su tristeza, que nace de la separación de Numa y del temor por su suerte. Paralelamente, en la ciudad sitiada aparecen Josefo, su hija Aber y Unías, prometido de esta. La extrema hambre de Jerusalén se hace visible en escenas de escasez, y se perfila también el conflicto colectivo entre la necesidad de salvar la ciudad y los vínculos afectivos de sus habitantes.",
+    "Dentro de Jerusalén, Josefo salva a Numa de ser ejecutado por la multitud y, admirado por su valentía, le concede salir como embajador ante Tito con la sola garantía de su palabra de regresar. Numa cumple la embajada con nobleza, pero Tito, presionado además por órdenes imperiales, rechaza cualquier pacto y exige la rendición por la fuerza. Aun así, Numa decide volver voluntariamente a su cautiverio, porque entiende que su honor depende de cumplir lo prometido, y ni los ruegos de Tito, de los romanos ni de la propia Irene consiguen detenerlo. Mientras tanto, el consejo de Jerusalén, buscando un remedio desesperado para romper el cerco, escoge por suerte a Aber para que salga al campamento enemigo, seduzca a Tito y lo mate, a imitación de la Judit bíblica. Aber obedece a su padre pese al dolor de separarse de Unías, y este, consumido por los celos y el miedo, corre a advertir a Tito. Sin embargo, por una confusión de identidades y jerarquías, Aber mata a Mario creyendo que es Tito. Cuando descubre su error, pide la muerte; pero el verdadero Tito, admirado por su valor, le perdona y llega incluso a ofrecer paces a Jerusalén.",
+    "La tregua se frustra de inmediato por un nuevo golpe de la guerra: durante unas fiestas en honor de la diosa de la guerra, los sitiados atacan, se produce una matanza y la propia Irene cae prisionera. En respuesta, Tito ordena el asalto definitivo de Jerusalén. Se encadenan entonces varios episodios de combate y sacrificio: Josefo se ofrece como defensor extremo de la ciudad; Aber y Unías, heridos y acosados por la ruina general, son finalmente casados por Josefo antes de que este intente darles muerte para librarlos del cautiverio, aunque Tito lo impide y transforma esa violencia en reconciliación. Al mismo tiempo, Numa logra entrar disfrazado en el templo de Salomón, donde Irene iba a ser sacrificada por un pontífice judío, vence a los que la guardan y la libera. Tito se reúne con Irene y reconoce la grandeza de Numa y de Josefo. Ya restablecida la paz entre los principales personajes y superada la melancolía de Irene, Numa recuerda a Tito la promesa hecha en campaña de darle por esposa a su dama. Tito, entendiendo que se trata de su propia hija Irene, consiente el matrimonio y une las manos de ambos, con lo que se cierra la obra entre victoria militar, reconciliación y enlace amoroso."
+  ],
+  "resumen_breve": [
+    "Durante el cerco de Jerusalén por Tito, Numa parte al combate, cae cautivo en la ciudad e Irene, hija del general romano, enferma de melancolía por su ausencia pese a las fiestas y diversiones del campamento.",
+    "En la Jerusalén hambrienta, Josefo salva a Numa, lo envía como embajador y Aber, hija de Josefo, es escogida para salir al real romano y matar a Tito, aunque por error da muerte a Mario y provoca nuevos conflictos de amor, honor y guerra.",
+    "Tras el ataque final a la ciudad, el cautiverio de Irene y su inminente sacrificio en el templo de Salomón, Numa la rescata, Tito se reconcilia con Josefo y premia la lealtad del romano concediendo a Irene por esposa a Numa."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Numa",
+      "descripcion": "Caballero y capitán romano enamorado de Irene; su acción se articula en torno al amor, el honor militar, la embajada a Jerusalén, el regreso voluntario al cautiverio y el rescate final de la protagonista."
+    },
+    {
+      "nombre": "Irene",
+      "descripcion": "Hija de Tito y amada de Numa; su melancolía por la ausencia del héroe impulsa buena parte de la acción y culmina con su cautiverio y liberación final."
+    },
+    {
+      "nombre": "Tito",
+      "descripcion": "General romano que cerca Jerusalén y padre de Irene; combina severidad militar, preocupación paternal y capacidad de clemencia en el desenlace."
+    },
+    {
+      "nombre": "Josefo",
+      "descripcion": "Caudillo de Jerusalén que salva a Numa, negocia con él y encarna la defensa de la ciudad, así como el conflicto entre razón política, paternidad y derrota."
+    },
+    {
+      "nombre": "Aber",
+      "descripcion": "Hija de Josefo y prometida de Unías; es elegida para seducir y matar a Tito, mata por error a Mario y representa el sacrificio femenino por la patria."
+    },
+    {
+      "nombre": "Unías",
+      "descripcion": "Prometido de Aber; sufre por la misión de su amada, la advierte y termina unido con ella en medio de la caída de Jerusalén."
+    },
+    {
+      "nombre": "Mario",
+      "descripcion": "Personaje principal del bando romano que recibe el bastón de mando de Tito y muere a manos de Aber, confundido con el general."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Jerusalén",
+      "descripcion": "Espacio central de la obra, ciudad sitiada y hambrienta donde se desarrollan el cautiverio de Numa, las deliberaciones de Josefo y la ruina final."
+    },
+    {
+      "nombre": "Campamento o real romano",
+      "descripcion": "Lugar desde el que Tito dirige el asedio, donde se intenta curar la melancolía de Irene con fiestas y donde llegan la embajada de Numa y la salida de Aber."
+    },
+    {
+      "nombre": "Murallas y puertas de Jerusalén",
+      "descripcion": "Zona decisiva de combate, embajadas, cautiverios y asaltos, especialmente importante en la captura de Numa y en la entrada final de los romanos."
+    },
+    {
+      "nombre": "Templo de Salomón",
+      "descripcion": "Espacio sagrado al que es llevada Irene para ser sacrificada y donde Numa logra rescatarla en el tramo final."
+    },
+    {
+      "nombre": "Círculo magno o lugar de fiestas militares",
+      "descripcion": "Recinto de espectáculos y juegos romanos en honor de la diosa de la guerra, que sirve de marco para la diversión de Irene y para el ataque sorpresivo de los sitiados."
+    },
+    {
+      "nombre": "Tiendas del campamento romano",
+      "descripcion": "Espacio de encuentro reservado dentro del real, relevante en la escena en que Aber es conducida ante quien cree que es Tito y acaba matando a Mario."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Amor y honor",
+      "descripcion": "La obra enfrenta constantemente la pasión amorosa con las obligaciones públicas y militares, sobre todo en las decisiones de Numa, Irene, Aber y Unías."
+    },
+    {
+      "tema": "Guerra y asedio",
+      "descripcion": "El cerco de Jerusalén organiza toda la acción mediante combates, hambre, cautiverios, embajadas, asaltos y episodios de violencia colectiva."
+    },
+    {
+      "tema": "Melancolía",
+      "descripcion": "La tristeza de Irene por la ausencia de Numa se convierte en motor dramático y justifica fiestas, cuidados médicos y varias decisiones de Tito."
+    },
+    {
+      "tema": "Lealtad y cumplimiento de la palabra",
+      "descripcion": "Numa destaca por su empeño en volver al cautiverio y cumplir lo prometido, mientras la confianza entre enemigos se presenta como valor moral decisivo."
+    },
+    {
+      "tema": "Sacrificio por la comunidad",
+      "descripcion": "Aber acepta arriesgar su vida para salvar Jerusalén, Josefo antepone la ciudad a sus afectos y varios personajes subordinan su interés personal al bien común."
+    },
+    {
+      "tema": "Clemencia frente a venganza",
+      "descripcion": "Aunque la guerra impulsa deseos de castigo, Tito y Josefo muestran en momentos clave una capacidad de perdón que permite el desenlace reconciliador."
+    },
+    {
+      "tema": "Padres e hijos en conflicto",
+      "descripcion": "Las relaciones entre Tito e Irene y entre Josefo y Aber articulan tensiones entre autoridad paterna, afecto y decisiones impuestas por la guerra."
+    }
+  ]
+}

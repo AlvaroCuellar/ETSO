@@ -1,0 +1,112 @@
+{
+  "archivo": "AGUAYO_GranCapitan(Transk-MSS).txt",
+  "titulo": "Gran capitán, El",
+  "resumen_largo": [
+    "La comedia se abre en Nápoles, bajo el gobierno de Gonzalo Fernández de Córdoba, el Gran Capitán, cuando diversos personajes aluden a las intrigas que se están urdiendo contra él ante el rey Fernando. Se le acusa falsamente de ambicionar el reino napolitano, de entenderse con el archiduque Felipe y de retrasar su regreso a Castilla por interés propio. Frente a estas murmuraciones, la acción muestra al Gran Capitán como un gobernador leal y prudente, mientras en su entorno cortesano se desarrolla una trama amorosa entre su sobrino don Juan de Córdoba, la dama napolitana Pompeya, Julia y el caballero Fabricio Ursino. Pompeya y Julia comentan los pretendientes que la rodean; don Juan corteja a Pompeya y compite con Fabricio tanto en ingenio como en prestigio, mientras afloran los celos y rivalidades. Una discusión sobre la superioridad de España o Italia, unida a la competencia amorosa por Pompeya, lleva a Fabricio y don Juan a concertar un desafío secreto junto al río, circunstancia que queda enlazada con el problema mayor de la honra, la fama y la posición del linaje del virrey.",
+    "Cuando el Gran Capitán y García de Paredes advierten indicios del duelo, procuran impedirlo, pero don Juan insiste en acudir solo para no deslucir su reputación. En la otra orilla, Fabricio explica a un acompañante que su enemistad nace de haber perdido el favor de Pompeya en beneficio del español. Al intentar cruzar para el combate, la embarcación zozobra; según se dice primero, don Juan se ahoga y esto hace creer a sus contrarios y al propio virrey que ha muerto. Sin embargo, don Juan logra llegar nadando a la orilla, mata a Fabricio en defensa de su honra y queda comprometido por este resultado. Paralelamente, el Gran Capitán afronta de modo directo a quienes han escrito contra él, especialmente a Espinelo, a quien acusa de enviar informes falsos al rey; aunque podría castigarlo con dureza, prefiere contenerse y confiar en la fuerza de la verdad. Esa misma templanza se manifiesta cuando, llegado al lugar del desafío, evita una resolución precipitada y afirma que su lealtad y sus servicios valen más que las calumnias. Entretanto, desde Castilla se intensifica la sospecha regia, don Juan es finalmente encarcelado por la muerte de Fabricio y el propio Gran Capitán recibe la noticia de que el rey ha mandado prenderlo, aunque poco después esa amenaza se resuelve en una inesperada merced: Fernando le concede el maestrazgo de Santiago y reconoce públicamente su fidelidad.",
+    "En la parte final, la obra desplaza su centro a la relación entre el Gran Capitán y Fernando el Católico. El rey, movido por informaciones contradictorias, vacila entre el recelo y el reconocimiento, pero termina por admitir que ha sido mal informado por envidiosos. Aunque todavía se pide al Gran Capitán que rinda cuentas de los gastos de la guerra de Nápoles, el episodio se resuelve en clave de exaltación: sus cuentas incluyen limosnas, espías, correos, pólvora y todo cuanto fue necesario para conquistar y conservar el reino, y la escena sirve para subrayar que su servicio excede cualquier cómputo mezquino. A la vez, se revisa el proceso contra don Juan, cuya prisión deriva de nuevas maniobras de Julia, Alberico y Espinelo; finalmente el rey entiende la verdad, restituye el honor del sobrino y confirma el favor debido al virrey. Fernando decide volver a España por la alteración de Castilla y lleva consigo al Gran Capitán, dejando Nápoles bajo otro gobierno. Ya en Marsella, durante una escala del viaje, el rey y la reina honran extraordinariamente al héroe, lo sientan a su mesa y le entregan una rica vajilla, que él reparte entre sus soldados, reafirmando así su generosidad. El desenlace culmina con el perdón de don Juan, su unión con Pompeya y la reconciliación general, incluida la absolución de los enemigos que habían alimentado la envidia contra el Gran Capitán."
+  ],
+  "resumen_breve": [
+    "En la Nápoles gobernada por el Gran Capitán, mientras se traman en Castilla falsas acusaciones de deslealtad, don Juan de Córdoba rivaliza con Fabricio Ursino por Pompeya y acaba viéndose envuelto en un duelo junto al río.",
+    "El desafío, los celos amorosos y las intrigas políticas se cruzan cuando don Juan mata a Fabricio tras sobrevivir al naufragio de la barca, y cuando el Gran Capitán debe defender su honra frente a cartas, rumores y sospechas del rey Fernando.",
+    "Entre Nápoles, Castilla y finalmente Marsella, la obra concluye con el reconocimiento de la lealtad del Gran Capitán, la liberación y perdón de don Juan, y la restauración del orden político, amoroso y honorífico."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Gonzalo Fernández de Córdoba, el Gran Capitán",
+      "descripcion": "Protagonista de la comedia, virrey de Nápoles y gran caudillo militar cuya lealtad es puesta en duda por intrigas cortesanas, pero acaba siendo reconocida por el rey."
+    },
+    {
+      "nombre": "Don Juan de Córdoba",
+      "descripcion": "Sobrino del Gran Capitán, galán español enamorado de Pompeya; su rivalidad con Fabricio provoca el duelo central y su prisión posterior."
+    },
+    {
+      "nombre": "Pompeya",
+      "descripcion": "Dama napolitana amada por don Juan y pretendida también por Fabricio; su favor amoroso desencadena celos, disputas y parte esencial de la acción."
+    },
+    {
+      "nombre": "Fernando el Católico",
+      "descripcion": "Rey de Castilla y Aragón, inicialmente receloso por las informaciones contra el Gran Capitán, pero finalmente convencido de su fidelidad y magnitud de sus servicios."
+    },
+    {
+      "nombre": "García de Paredes",
+      "descripcion": "Soldado valiente y leal servidor del Gran Capitán, de tono a menudo jocoso, que lo defiende con energía y participa en varias escenas decisivas."
+    },
+    {
+      "nombre": "Fabricio Ursino",
+      "descripcion": "Caballero napolitano rival de don Juan en amores y en honor, cuya enemistad conduce al desafío y a su muerte."
+    },
+    {
+      "nombre": "Julia",
+      "descripcion": "Dama vinculada al enredo amoroso, celosa y activa en la acusación contra don Juan; en la tercera jornada comparece además como viuda de Fabricio para pedir justicia."
+    },
+    {
+      "nombre": "Espinelo",
+      "descripcion": "Escribiente o informador que difama al Gran Capitán ante el rey; representa la pluma envidiosa y la manipulación política."
+    },
+    {
+      "nombre": "Morata",
+      "descripcion": "Criado de don Juan, personaje cómico y acompañante fiel que comenta con humor los sucesos amorosos, bélicos y judiciales."
+    },
+    {
+      "nombre": "Alberico",
+      "descripcion": "Personaje cortesano asociado a Espinelo y a las intrigas contra el Gran Capitán y don Juan; su función principal es reforzar el bloque de los envidiosos."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Nápoles",
+      "descripcion": "Espacio central de la acción, sede del virreinato del Gran Capitán y lugar donde se cruzan el conflicto político con la Corona y los enredos amorosos."
+    },
+    {
+      "nombre": "Palacio o casa del Gran Capitán en Nápoles",
+      "descripcion": "Lugar de gobierno, recepción y vida cortesana donde se discuten las acusaciones, se produce la detención de don Juan y se visualiza el prestigio del protagonista."
+    },
+    {
+      "nombre": "La ribera y el río del desafío",
+      "descripcion": "Espacio decisivo donde don Juan y Fabricio concertan su duelo, zozobra la barca y se desencadena la muerte de Fabricio."
+    },
+    {
+      "nombre": "Castilla y la corte del rey Fernando",
+      "descripcion": "Marco político desde el que parten las sospechas, cartas y decisiones regias; aunque no siempre visible escénicamente, condiciona toda la trama napolitana."
+    },
+    {
+      "nombre": "Castil Novo",
+      "descripcion": "Lugar de reclusión al que es conducido don Juan, importante para mostrar las consecuencias judiciales del duelo y el alcance de la sospecha real."
+    },
+    {
+      "nombre": "Marsella",
+      "descripcion": "Puerto y ciudad de la escala final del viaje a España, donde el rey honra públicamente al Gran Capitán y se consuma la reconciliación general."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Lealtad y servicio al rey",
+      "descripcion": "La acción gira sobre la necesidad de probar que el Gran Capitán sigue siendo fiel a Fernando pese a las acusaciones de ambición y traición."
+    },
+    {
+      "tema": "Envidia cortesana y calumnia",
+      "descripcion": "Las murmuraciones, cartas falsas y testimonios interesados desencadenan tanto la sospecha política sobre el virrey como la persecución de don Juan."
+    },
+    {
+      "tema": "Honor y fama",
+      "descripcion": "Los personajes actúan constantemente para defender su reputación pública, ya sea en el campo militar, en el duelo o en las relaciones amorosas."
+    },
+    {
+      "tema": "Amor, celos y competencia galante",
+      "descripcion": "El vínculo entre don Juan y Pompeya, junto con los celos de Julia y la rivalidad de Fabricio, impulsa gran parte del conflicto dramático."
+    },
+    {
+      "tema": "Armas frente a pluma",
+      "descripcion": "La obra contrapone el valor militar y los servicios reales del Gran Capitán con el poder dañino de los escritos, informes y manipulaciones de secretarios e intrigantes."
+    },
+    {
+      "tema": "Generosidad del héroe militar",
+      "descripcion": "El Gran Capitán aparece no solo como vencedor, sino como gobernante magnánimo, prudente con sus enemigos y liberal con sus soldados y allegados."
+    },
+    {
+      "tema": "Justicia regia y reconocimiento tardío",
+      "descripcion": "El rey comete errores movido por malas informaciones, pero al final rectifica, premia a quien lo merece y restablece el orden político y familiar."
+    }
+  ]
+}

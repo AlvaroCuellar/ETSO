@@ -16,13 +16,9 @@
 	--color-surface: #ffffff;
 	--color-surface-soft: #f5f8ff;
 	--color-surface-accent: #edf2ff;
-	--color-page-bg: #f7f9fe;
 
 	--shadow-soft: 0 6px 20px rgba(7, 36, 110, 0.08);
 	--shadow-strong: 0 14px 30px rgba(9, 34, 98, 0.15);
 
 	--radius-card: 0.75rem;
-	--radius-pill: 999px;
-
-	--max-w-content: 1280px;
 }

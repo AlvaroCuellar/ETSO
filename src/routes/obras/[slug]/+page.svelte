@@ -1,4 +1,4 @@
-﻿<script lang="ts">
+<script lang="ts">
 	import { formatConfidence, type AttributionSet, type Confidence } from '$lib/domain/catalog';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import PageHero from '$lib/components/ui/PageHero.svelte';
@@ -20,11 +20,11 @@
 	const connectorLabel = (connector: 'and' | 'or'): string => (connector === 'and' ? 'y' : 'o');
 
 	const confidenceClass = (confidence?: Confidence): string => {
-		if (confidence === 'segura') return 'confidence-segura';
-		if (confidence === 'probable') return 'confidence-probable';
-		if (confidence === 'posible') return 'confidence-posible';
-		if (confidence === 'no_concluyente') return 'confidence-no_concluyente';
-		return '';
+		if (confidence === 'segura') return 'bg-[#d4edda] text-[#155724]';
+		if (confidence === 'probable') return 'bg-[#d1ecf1] text-[#0c5460]';
+		if (confidence === 'posible') return 'bg-[#e9ecef] text-[#495057]';
+		if (confidence === 'no_concluyente') return 'bg-[#fff3cd] text-[#856404]';
+		return 'bg-[#e9ecef] text-[#495057]';
 	};
 
 	const hasTraditionalAttribution = (set: AttributionSet): boolean => !set.unresolved && set.groups.length > 0;
@@ -37,6 +37,13 @@
 
 	const hasTextAccess = (): boolean => data.work.textLinks.length > 0;
 	const hasAnySummary = (): boolean => Boolean(data.work.shortSummary || data.work.longSummary);
+
+	const cardShellClass = 'mb-5 overflow-hidden rounded-[10px] border border-black/10 bg-white shadow-soft';
+	const cardHeaderClass = 'border-b border-black/5 bg-[#f8f9fa] px-[0.85rem] py-[0.85rem] md:px-4 md:py-4';
+	const cardTitleClass = 'm-0 text-base font-semibold text-[#343a40]';
+	const cardBodyClass = 'px-[0.85rem] py-[0.85rem] md:px-4 md:py-4';
+	const actionLinkClass =
+		'grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-[0.65rem] rounded-lg border border-brand-blue/20 bg-white px-[0.85rem] py-3 text-inherit no-underline transition hover:border-brand-blue/35 hover:bg-[#f6f9ff] hover:no-underline';
 </script>
 
 <div class="grid gap-6">
@@ -56,32 +63,46 @@
 		backgroundImage={heroBg}
 	/>
 
-	<div class="obra-view-wrapper">
-		<div class="obra-main-grid">
-			<div class="obra-main-content">
-				<section class="obra-card obra-atribuciones-card">
-					<header class="obra-card-header">
-						<h2 class="obra-card-title">Atribución de autoría</h2>
+	<div class="mx-auto w-full max-w-[1280px] px-[0.35rem] font-ui md:px-0">
+		<div class="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(19rem,24rem)]">
+			<div class="min-w-0">
+				<section class={cardShellClass}>
+					<header class={cardHeaderClass}>
+						<h2 class={cardTitleClass}>Atribución de autoría</h2>
 					</header>
-					<div class="obra-card-body">
+					<div class={cardBodyClass}>
 						{#if hasTraditionalAttribution(data.work.traditionalAttribution)}
-							<div class="atribucion-block atribucion-tradicional">
-								<div class="atribucion-label">
-									<span class="badge badge-secondary">Atribución tradicional</span>
+							<div
+								class="mb-4 rounded-[10px] border border-[#e9ecef] bg-[linear-gradient(to_right,rgba(108,117,125,0.06),transparent)] p-[0.85rem] last:mb-0 md:p-4"
+							>
+								<div class="mb-3">
+									<span
+										class="inline-flex rounded-full bg-[#6c757d]/15 px-[0.7rem] py-[0.35rem] text-[0.76rem] font-bold tracking-[0.03em] text-[#495057] uppercase"
+										>Atribución tradicional</span
+									>
 								</div>
-								<div class="atribucion-content">
-									<div class="autor-list">
+								<div class="text-[0.97rem] leading-[1.6] text-[#495057]">
+									<div class="flex flex-col items-start gap-[0.65rem]">
 										{#each data.work.traditionalAttribution.groups as group, groupIndex}
-											<div class="autor-group">
+											<div class="flex flex-wrap items-center gap-3">
 												{#each group.members as member, memberIndex}
-													<a href={`/autores/${member.authorId}`} class="autor-name">{member.authorName}</a>
+													<a
+														href={`/autores/${member.authorId}`}
+														class="font-medium text-[#343a40] no-underline hover:text-brand-blue hover:underline"
+														>{member.authorName}</a
+													>
 													{#if memberIndex < group.members.length - 1}
-														<span class="logic-operator">y</span>
+														<span
+															class="inline-flex rounded bg-[#ecf0f1] px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-[#555] lowercase"
+															>y</span
+														>
 													{/if}
 												{/each}
 											</div>
 											{#if groupIndex < data.work.traditionalAttribution.groups.length - 1}
-												<span class="logic-operator">
+												<span
+													class="inline-flex rounded bg-[#ecf0f1] px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-[#555] lowercase"
+												>
 													{connectorLabel(data.work.traditionalAttribution.connector)}
 												</span>
 											{/if}
@@ -92,37 +113,55 @@
 						{/if}
 
 						{#if hasStylometryAttribution(data.work.stylometryAttribution)}
-							<div class="atribucion-block atribucion-etso">
-								<div class="atribucion-label">
-									<span class="badge badge-primary">Atribución estilometría</span>
+							<div
+								class="mb-4 rounded-[10px] border border-[#e9ecef] bg-[linear-gradient(to_right,rgba(102,126,234,0.07),transparent)] p-[0.85rem] last:mb-0 md:p-4"
+							>
+								<div class="mb-3">
+									<span
+										class="inline-flex rounded-full bg-brand-blue/[0.12] px-[0.7rem] py-[0.35rem] text-[0.76rem] font-bold tracking-[0.03em] text-brand-blue uppercase"
+										>Atribución estilometría</span
+									>
 								</div>
-								<div class="atribucion-content">
-									<div class="autor-list">
+								<div class="text-[0.97rem] leading-[1.6] text-[#495057]">
+									<div class="flex flex-col items-start gap-[0.65rem]">
 										{#if data.work.stylometryAttribution.unresolved}
-											<div class="autor-group">
-												<span class="autor-name desconocido">Autoría no determinada</span>
-												<span class="confidence-badge confidence-no_concluyente">No concluyente</span>
+											<div class="flex flex-wrap items-center gap-3">
+												<span class="font-medium text-[#6c757d] italic">Autoría no determinada</span>
+												<span
+													class="inline-flex rounded-full px-[0.55rem] py-[0.24rem] text-[0.72rem] font-bold tracking-[0.02em] uppercase {confidenceClass('no_concluyente')}"
+												>
+													No concluyente
+												</span>
 											</div>
 										{/if}
 
 										{#each data.work.stylometryAttribution.groups as group, groupIndex}
-											<div class="autor-group">
+											<div class="flex flex-wrap items-center gap-3">
 												{#each group.members as member, memberIndex}
-													<a href={`/autores/${member.authorId}`} class="autor-name">{member.authorName}</a>
+													<a
+														href={`/autores/${member.authorId}`}
+														class="font-medium text-[#343a40] no-underline hover:text-brand-blue hover:underline"
+														>{member.authorName}</a
+													>
 													{#if member.confidence}
 														<span
-															class={`confidence-badge ${confidenceClass(member.confidence)}`}
+															class={`inline-flex rounded-full px-[0.55rem] py-[0.24rem] text-[0.72rem] font-bold tracking-[0.02em] uppercase ${confidenceClass(member.confidence)}`}
 														>
 															{formatConfidence(member.confidence)}
 														</span>
 													{/if}
 													{#if memberIndex < group.members.length - 1}
-														<span class="logic-operator">y</span>
+														<span
+															class="inline-flex rounded bg-[#ecf0f1] px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-[#555] lowercase"
+															>y</span
+														>
 													{/if}
 												{/each}
 											</div>
 											{#if groupIndex < data.work.stylometryAttribution.groups.length - 1}
-												<span class="logic-operator">
+												<span
+													class="inline-flex rounded bg-[#ecf0f1] px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-[#555] lowercase"
+												>
 													{connectorLabel(data.work.stylometryAttribution.connector)}
 												</span>
 											{/if}
@@ -133,31 +172,35 @@
 						{/if}
 
 						{#if !hasAnyAttribution()}
-							<div class="alert alert-info">No hay información de autoría disponible.</div>
+							<div
+								class="rounded-lg border border-brand-blue/20 bg-brand-blue/[0.08] px-4 py-3.5 text-[0.92rem] text-[#24425d]"
+							>
+								No hay información de autoría disponible.
+							</div>
 						{/if}
 					</div>
 				</section>
 
 				{#if data.informe}
-					<section class="obra-card obra-informes-card obra-informes-card--mobile">
-						<header class="obra-card-header">
-							<h2 class="obra-card-title">Informe de análisis estilométrico</h2>
-							<p class="informe-context">
+					<section class={`${cardShellClass} lg:hidden`}>
+						<header class={cardHeaderClass}>
+							<h2 class={cardTitleClass}>Informe de análisis estilométrico</h2>
+							<p class="mt-[0.65rem] text-[0.8rem] text-[#516273]">
 								Consulta el informe para contextualizar la atribución de esta obra.
 							</p>
 						</header>
-						<div class="obra-card-body">
-							<div class="informes-list">
-								<a href={`/informes/${data.informe.id}`} class="informe-link-card">
-									<div class="informe-icon" aria-hidden="true">
-										<ChartLine class="icon icon--link" />
+						<div class={cardBodyClass}>
+							<div class="flex flex-col gap-2.5">
+								<a href={`/informes/${data.informe.id}`} class={actionLinkClass}>
+									<div class="inline-flex items-center justify-center text-brand-blue" aria-hidden="true">
+										<ChartLine class="h-[0.9rem] w-[0.9rem] stroke-2" />
 									</div>
-									<div class="informe-info">
-										<div class="informe-title">Informe</div>
-										<div class="informe-meta">Ver análisis completo</div>
+									<div class="min-w-0 justify-self-start text-left">
+										<div class="text-[0.93rem] font-semibold text-[#213549]">Informe</div>
+										<div class="text-[0.78rem] text-[#62758a]">Ver análisis completo</div>
 									</div>
-									<div class="informe-arrow" aria-hidden="true">
-										<ChevronRight class="icon icon--arrow" />
+									<div class="text-[#5b6f84]" aria-hidden="true">
+										<ChevronRight class="h-[0.78rem] w-[0.78rem] stroke-2" />
 									</div>
 								</a>
 							</div>
@@ -165,14 +208,16 @@
 					</section>
 				{/if}
 
-				<section class="obra-card obra-resumenes-card" id="resumen-automatico">
-					<header class="obra-card-header">
-						<h2 class="obra-card-title">Resumen automático de la obra</h2>
+				<section class={cardShellClass} id="resumen-automatico">
+					<header class={cardHeaderClass}>
+						<h2 class={cardTitleClass}>Resumen automático de la obra</h2>
 					</header>
-					<div class="obra-card-body">
+					<div class={cardBodyClass}>
 						{#if hasAnySummary()}
-							<div class="resumen-breve-wrapper">
-								<div class="resumen-content">
+							<div class="mb-4">
+								<div
+									class="[&>p]:m-0 grid gap-[0.85rem] font-reading text-base leading-[1.65] text-[#495057]"
+								>
 									{#if data.work.shortSummary}
 										<p>{data.work.shortSummary}</p>
 									{/if}
@@ -180,89 +225,97 @@
 							</div>
 
 							{#if data.work.longSummary}
-								<div class="resumen-completo-link-wrapper">
-									<a href={`/obras/${data.work.slug}/resumen`} class="resumen-link-card">
-										<div class="resumen-icon" aria-hidden="true">
-											<AlignLeft class="icon icon--link" />
+								<div class="mt-4">
+									<a href={`/obras/${data.work.slug}/resumen`} class={actionLinkClass}>
+										<div class="inline-flex items-center justify-center text-brand-blue" aria-hidden="true">
+											<AlignLeft class="h-[0.9rem] w-[0.9rem] stroke-2" />
 										</div>
-										<div class="resumen-info">
-											<div class="resumen-title">Leer resumen automático completo</div>
-											<div class="resumen-meta">Descripción extensa de la obra</div>
+										<div class="min-w-0 justify-self-start text-left">
+											<div class="text-[0.93rem] font-semibold text-[#213549]">
+												Leer resumen automático completo
+											</div>
+											<div class="text-[0.78rem] text-[#62758a]">Descripción extensa de la obra</div>
 										</div>
-										<div class="resumen-arrow" aria-hidden="true">
-											<ChevronRight class="icon icon--arrow" />
+										<div class="text-[#5b6f84]" aria-hidden="true">
+											<ChevronRight class="h-[0.78rem] w-[0.78rem] stroke-2" />
 										</div>
 									</a>
 								</div>
 							{/if}
 						{:else}
-							<div class="alert alert-info">No hay resumen disponible para esta obra.</div>
+							<div
+								class="rounded-lg border border-brand-blue/20 bg-brand-blue/[0.08] px-4 py-3.5 text-[0.92rem] text-[#24425d]"
+							>
+								No hay resumen disponible para esta obra.
+							</div>
 						{/if}
 					</div>
 				</section>
 
-				<section class="obra-card obra-texto-access obra-texto-access--mobile">
-					<header class="obra-card-header">
-						<h3 class="obra-card-title">Acceso al texto</h3>
+				<section class={`${cardShellClass} lg:hidden`}>
+					<header class={cardHeaderClass}>
+						<h3 class={cardTitleClass}>Acceso al texto</h3>
 					</header>
-					<div class="obra-card-body">
+					<div class={cardBodyClass}>
 						{#if hasTextAccess()}
 							{#each data.work.textLinks as link}
 								<a
 									href={link.href}
-									class="texto-link-card"
+									class={`${actionLinkClass} mb-2.5 last:mb-0`}
 									target={link.external ? '_blank' : undefined}
 									rel={link.external ? 'noopener noreferrer' : undefined}
 								>
-									<div class="texto-icon" aria-hidden="true">
+									<div class="inline-flex items-center justify-center text-brand-blue" aria-hidden="true">
 										{#if link.kind === 'bicuve'}
-											<BookOpen class="icon icon--link" />
+											<BookOpen class="h-[0.9rem] w-[0.9rem] stroke-2" />
 										{:else}
-											<ExternalLink class="icon icon--link" />
+											<ExternalLink class="h-[0.9rem] w-[0.9rem] stroke-2" />
 										{/if}
 									</div>
-									<div class="texto-info">
+									<div class="min-w-0 justify-self-start text-left">
 										{#if link.kind === 'bicuve'}
-											<div class="texto-title">{link.label}</div>
-											<div class="texto-meta">BICUVE</div>
+											<div class="text-[0.93rem] font-semibold text-[#213549]">{link.label}</div>
+											<div class="text-[0.78rem] text-[#62758a]">BICUVE</div>
 										{:else}
-											<div class="texto-title">Leer texto</div>
-											<div class="texto-meta">{link.label}</div>
+											<div class="text-[0.93rem] font-semibold text-[#213549]">Leer texto</div>
+											<div class="text-[0.78rem] text-[#62758a]">{link.label}</div>
 										{/if}
 									</div>
-									<div class="texto-arrow" aria-hidden="true">
-										<ChevronRight class="icon icon--arrow" />
+									<div class="text-[#5b6f84]" aria-hidden="true">
+										<ChevronRight class="h-[0.78rem] w-[0.78rem] stroke-2" />
 									</div>
 								</a>
 							{/each}
 						{:else}
-							<div class="alert alert-secondary">No hay acceso al texto disponible para esta obra.</div>
+							<div class="rounded-lg border border-[#dee5ee] bg-[#f5f7fa] px-4 py-3.5 text-[0.92rem] text-[#4f5f6f]">
+								No hay acceso al texto disponible para esta obra.
+							</div>
 						{/if}
 					</div>
 				</section>
 			</div>
 
-			<aside class="obra-sidebar">
+			<aside class="min-w-0">
 				{#if data.informe}
-					<section class="obra-card obra-informes-card obra-informes-card--desktop">
-						<header class="obra-card-header">
-							<h3 class="obra-card-title">Informe de análisis estilométrico</h3>
-							<p class="informe-context">
+					<section class={`${cardShellClass} hidden lg:block`}>
+						<header class={cardHeaderClass}>
+							<h3 class={cardTitleClass}>Informe de análisis estilométrico</h3>
+							<p class="mt-[0.65rem] text-[0.8rem] text-[#516273]">
 								Consulta el informe para contextualizar la atribución de esta obra.
 							</p>
 						</header>
-						<div class="obra-card-body">
-							<div class="informes-list">
-								<a href={`/informes/${data.informe.id}`} class="informe-link-card">
-									<div class="informe-icon" aria-hidden="true">
-										<ChartLine class="icon icon--link" />
+						<div class={cardBodyClass}>
+							<div class="flex flex-col gap-2.5">
+								<a href={`/informes/${data.informe.id}`} class={actionLinkClass}>
+									<div class="inline-flex items-center justify-center text-brand-blue" aria-hidden="true">
+										<ChartLine class="h-[0.9rem] w-[0.9rem] stroke-2" />
 									</div>
-									<div class="informe-info">
-										<div class="informe-title">Informe</div>
-										<div class="informe-meta">Ver análisis completo</div>
+									<div class="min-w-0 justify-self-start text-left">
+										<div class="text-[0.93rem] font-semibold text-[#213549]">Informe</div>
+										<div class="text-[0.78rem] text-[#62758a]">Ver análisis completo</div>
 									</div>
-									<div class="informe-arrow" aria-hidden="true">
-										<ChevronRight class="icon icon--arrow" />
+									<div class="text-[#5b6f84]" aria-hidden="true">
+										<ChevronRight class="h-[0.78rem] w-[0.78rem] stroke-2" />
 									</div>
 								</a>
 							</div>
@@ -270,82 +323,92 @@
 					</section>
 				{/if}
 
-				<section class="obra-card obra-texto-access obra-texto-access--desktop">
-					<header class="obra-card-header">
-						<h3 class="obra-card-title">Acceso al texto</h3>
+				<section class={`${cardShellClass} hidden lg:block`}>
+					<header class={cardHeaderClass}>
+						<h3 class={cardTitleClass}>Acceso al texto</h3>
 					</header>
-					<div class="obra-card-body">
+					<div class={cardBodyClass}>
 						{#if hasTextAccess()}
 							{#each data.work.textLinks as link}
 								<a
 									href={link.href}
-									class="texto-link-card"
+									class={`${actionLinkClass} mb-2.5 last:mb-0`}
 									target={link.external ? '_blank' : undefined}
 									rel={link.external ? 'noopener noreferrer' : undefined}
 								>
-									<div class="texto-icon" aria-hidden="true">
+									<div class="inline-flex items-center justify-center text-brand-blue" aria-hidden="true">
 										{#if link.kind === 'bicuve'}
-											<BookOpen class="icon icon--link" />
+											<BookOpen class="h-[0.9rem] w-[0.9rem] stroke-2" />
 										{:else}
-											<ExternalLink class="icon icon--link" />
+											<ExternalLink class="h-[0.9rem] w-[0.9rem] stroke-2" />
 										{/if}
 									</div>
-									<div class="texto-info">
+									<div class="min-w-0 justify-self-start text-left">
 										{#if link.kind === 'bicuve'}
-											<div class="texto-title">{link.label}</div>
-											<div class="texto-meta">BICUVE</div>
+											<div class="text-[0.93rem] font-semibold text-[#213549]">{link.label}</div>
+											<div class="text-[0.78rem] text-[#62758a]">BICUVE</div>
 										{:else}
-											<div class="texto-title">Leer texto</div>
-											<div class="texto-meta">{link.label}</div>
+											<div class="text-[0.93rem] font-semibold text-[#213549]">Leer texto</div>
+											<div class="text-[0.78rem] text-[#62758a]">{link.label}</div>
 										{/if}
 									</div>
-									<div class="texto-arrow" aria-hidden="true">
-										<ChevronRight class="icon icon--arrow" />
+									<div class="text-[#5b6f84]" aria-hidden="true">
+										<ChevronRight class="h-[0.78rem] w-[0.78rem] stroke-2" />
 									</div>
 								</a>
 							{/each}
 						{:else}
-							<div class="alert alert-secondary">No hay acceso al texto disponible para esta obra.</div>
+							<div class="rounded-lg border border-[#dee5ee] bg-[#f5f7fa] px-4 py-3.5 text-[0.92rem] text-[#4f5f6f]">
+								No hay acceso al texto disponible para esta obra.
+							</div>
 						{/if}
 					</div>
 				</section>
 
-				<section class="obra-card obra-metadatos-card sticky-card">
-					<header class="obra-card-header">
-						<h3 class="obra-card-title">Información de la obra</h3>
+				<section class={`${cardShellClass} lg:sticky lg:top-[calc(2rem+68px)]`}>
+					<header class={cardHeaderClass}>
+						<h3 class={cardTitleClass}>Información de la obra</h3>
 					</header>
-					<div class="obra-card-body">
-						<dl class="metadatos-list">
-							<div class="metadato-item">
-								<dt class="metadato-label">
-									<Drama class="icon icon--meta" aria-hidden="true" />
+					<div class={cardBodyClass}>
+						<dl class="m-0">
+							<div class="flex flex-col gap-[0.45rem] border-b border-[#e9ecef] py-[0.9rem] first:pt-0 last:border-b-0 last:pb-0">
+								<dt
+									class="m-0 flex items-center gap-[0.35rem] text-[0.77rem] font-semibold tracking-[0.03em] text-[#6c757d] uppercase"
+								>
+									<Drama class="h-[0.82rem] w-[0.82rem] text-[#667eea] stroke-2" aria-hidden="true" />
 									Género
 								</dt>
-								<dd class="metadato-value">{data.work.genre}</dd>
+								<dd class="m-0 text-[0.96rem] text-[#2c3e50]">{data.work.genre}</dd>
 							</div>
 
-							<div class="metadato-item">
-								<dt class="metadato-label">
-									<CircleCheck class="icon icon--meta" aria-hidden="true" />
+							<div class="flex flex-col gap-[0.45rem] border-b border-[#e9ecef] py-[0.9rem] first:pt-0 last:border-b-0 last:pb-0">
+								<dt
+									class="m-0 flex items-center gap-[0.35rem] text-[0.77rem] font-semibold tracking-[0.03em] text-[#6c757d] uppercase"
+								>
+									<CircleCheck class="h-[0.82rem] w-[0.82rem] text-[#667eea] stroke-2" aria-hidden="true" />
 									Estado del texto
 								</dt>
-								<dd class="metadato-value">{data.work.textState}</dd>
+								<dd class="m-0 text-[0.96rem] text-[#2c3e50]">{data.work.textState}</dd>
 							</div>
 
-							<div class="metadato-item">
-								<dt class="metadato-label">
-									<Archive class="icon icon--meta" aria-hidden="true" />
+							<div class="flex flex-col gap-[0.45rem] border-b border-[#e9ecef] py-[0.9rem] first:pt-0 last:border-b-0 last:pb-0">
+								<dt
+									class="m-0 flex items-center gap-[0.35rem] text-[0.77rem] font-semibold tracking-[0.03em] text-[#6c757d] uppercase"
+								>
+									<Archive class="h-[0.82rem] w-[0.82rem] text-[#667eea] stroke-2" aria-hidden="true" />
 									Procedencia
 								</dt>
-								<dd class="metadato-value">{data.work.origin}</dd>
+								<dd class="m-0 text-[0.96rem] text-[#2c3e50]">{data.work.origin}</dd>
 							</div>
 
-							<div class="metadato-item">
-								<dt class="metadato-label">
-									<Calendar class="icon icon--meta" aria-hidden="true" />
+							<div class="flex flex-col gap-[0.45rem] border-b border-[#e9ecef] py-[0.9rem] first:pt-0 last:border-b-0 last:pb-0">
+								<dt
+									class="m-0 flex items-center gap-[0.35rem] text-[0.77rem] font-semibold tracking-[0.03em] text-[#6c757d] uppercase"
+								>
+									<Calendar class="h-[0.82rem] w-[0.82rem] text-[#667eea] stroke-2" aria-hidden="true" />
 									Fecha de adición
 								</dt>
-								<dd class="metadato-value">{data.work.addedOn}</dd>
+								<dd class="m-0 text-[0.96rem] text-[#2c3e50]">{data.work.addedOn}</dd>
 							</div>
 						</dl>
 					</div>
@@ -354,404 +417,3 @@
 		</div>
 	</div>
 </div>
-
-<style>
-	.obra-view-wrapper {
-		max-width: 1280px;
-		margin: 0 auto;
-		font-family: 'Roboto', sans-serif;
-	}
-
-	.obra-main-grid {
-		display: grid;
-		grid-template-columns: minmax(0, 1fr) minmax(19rem, 24rem);
-		gap: 2rem;
-	}
-
-	.obra-main-content {
-		min-width: 0;
-	}
-
-	.obra-sidebar {
-		min-width: 0;
-	}
-
-	.obra-card {
-		background: #fff;
-		border-radius: 10px;
-		border: 1px solid rgba(52, 58, 64, 0.08);
-		box-shadow: 0 4px 14px rgba(7, 36, 110, 0.06);
-		margin-bottom: 1.25rem;
-		overflow: hidden;
-	}
-
-	.obra-card-header {
-		background: #f8f9fa;
-		border-bottom: 1px solid rgba(52, 58, 64, 0.06);
-		padding: 1rem;
-	}
-
-	.obra-card-title {
-		margin: 0;
-		font-size: 1rem;
-		font-weight: 600;
-		color: #343a40;
-	}
-
-	.obra-card-body {
-		padding: 1rem;
-	}
-
-	.atribucion-block {
-		padding: 1rem;
-		border-radius: 10px;
-		margin-bottom: 1rem;
-		border: 1px solid #e9ecef;
-		background: #fafbfc;
-	}
-
-	.atribucion-block:last-child {
-		margin-bottom: 0;
-	}
-
-	.atribucion-tradicional {
-		background: linear-gradient(to right, rgba(108, 117, 125, 0.06), transparent);
-	}
-
-	.atribucion-etso {
-		background: linear-gradient(to right, rgba(102, 126, 234, 0.07), transparent);
-	}
-
-	.atribucion-label {
-		margin-bottom: 0.75rem;
-	}
-
-	.badge {
-		display: inline-block;
-		padding: 0.35rem 0.7rem;
-		border-radius: 999px;
-		font-size: 0.76rem;
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: 0.03em;
-	}
-
-	.badge-secondary {
-		background: rgba(108, 117, 125, 0.14);
-		color: #495057;
-	}
-
-	.badge-primary {
-		background: rgba(0, 51, 167, 0.12);
-		color: #0033a7;
-	}
-
-	.atribucion-content {
-		font-size: 0.97rem;
-		line-height: 1.6;
-		color: #495057;
-	}
-
-	.autor-list {
-		display: flex;
-		flex-direction: column;
-		gap: 0.65rem;
-		align-items: flex-start;
-	}
-
-	.autor-group {
-		display: flex;
-		align-items: center;
-		gap: 0.75rem;
-		flex-wrap: wrap;
-	}
-
-	.autor-name {
-		color: #343a40;
-		font-weight: 500;
-		text-decoration: none;
-	}
-
-	.autor-name:hover {
-		color: #0033a7;
-		text-decoration: underline;
-	}
-
-	.desconocido {
-		color: #6c757d;
-		font-style: italic;
-	}
-
-	.logic-operator {
-		display: inline-block;
-		padding: 0.2rem 0.45rem;
-		background: #ecf0f1;
-		border-radius: 4px;
-		font-size: 0.72rem;
-		font-weight: 700;
-		color: #555;
-		text-transform: lowercase;
-	}
-
-	.confidence-badge {
-		display: inline-block;
-		padding: 0.24rem 0.55rem;
-		border-radius: 999px;
-		font-size: 0.72rem;
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: 0.02em;
-	}
-
-	.confidence-segura {
-		background: #d4edda;
-		color: #155724;
-	}
-
-	.confidence-probable {
-		background: #d1ecf1;
-		color: #0c5460;
-	}
-
-	.confidence-posible {
-		background: #e9ecef;
-		color: #495057;
-	}
-
-	.confidence-no_concluyente {
-		background: #fff3cd;
-		color: #856404;
-	}
-
-	.informes-list {
-		display: flex;
-		flex-direction: column;
-		gap: 0.6rem;
-	}
-
-	.informe-context {
-		margin: 0.65rem 0 0;
-		font-size: 0.8rem;
-		color: #516273;
-	}
-
-	.informe-link-card,
-	.texto-link-card,
-	.resumen-link-card {
-		display: grid;
-		grid-template-columns: auto minmax(0, 1fr) auto;
-		align-items: center;
-		column-gap: 0.65rem;
-		padding: 0.75rem 0.85rem;
-		border: 1px solid rgba(0, 51, 167, 0.18);
-		border-radius: 8px;
-		background: #fff;
-		text-decoration: none;
-		color: inherit;
-		transition: border-color 0.15s ease, background-color 0.15s ease;
-	}
-
-	.informe-icon,
-	.texto-icon,
-	.resumen-icon {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		color: #0033a7;
-		flex: 0 0 auto;
-	}
-
-	.informe-arrow,
-	.texto-arrow,
-	.resumen-arrow {
-		color: #5b6f84;
-		flex: 0 0 auto;
-	}
-
-	.informe-info,
-	.texto-info,
-	.resumen-info {
-		min-width: 0;
-		text-align: left;
-		justify-self: start;
-	}
-
-	.informe-link-card:hover,
-	.texto-link-card:hover,
-	.resumen-link-card:hover {
-		border-color: rgba(0, 51, 167, 0.34);
-		background: #f6f9ff;
-		text-decoration: none;
-	}
-
-	.informe-title,
-	.texto-title,
-	.resumen-title {
-		font-size: 0.93rem;
-		font-weight: 600;
-		color: #213549;
-	}
-
-	.informe-meta,
-	.texto-meta,
-	.resumen-meta {
-		font-size: 0.78rem;
-		color: #62758a;
-	}
-
-	.resumen-breve-wrapper {
-		margin-bottom: 1rem;
-	}
-
-	.resumen-content {
-		font-family: 'Lora', serif;
-		font-size: 1rem;
-		line-height: 1.65;
-		color: #495057;
-		display: grid;
-		gap: 0.85rem;
-	}
-
-	.resumen-content p {
-		margin: 0;
-	}
-
-	.resumen-completo-link-wrapper {
-		margin-top: 1rem;
-	}
-
-	.metadatos-list {
-		margin: 0;
-	}
-
-	.metadato-item {
-		padding: 0.9rem 0;
-		border-bottom: 1px solid #e9ecef;
-		display: flex;
-		flex-direction: column;
-		gap: 0.45rem;
-	}
-
-	.metadato-item:first-child {
-		padding-top: 0;
-	}
-
-	.metadato-item:last-child {
-		border-bottom: none;
-		padding-bottom: 0;
-	}
-
-	.metadato-label {
-		font-weight: 600;
-		color: #6c757d;
-		font-size: 0.77rem;
-		text-transform: uppercase;
-		letter-spacing: 0.03em;
-		margin: 0;
-		display: flex;
-		align-items: center;
-		gap: 0.35rem;
-	}
-
-	.metadato-value {
-		font-size: 0.96rem;
-		color: #2c3e50;
-		margin: 0;
-	}
-
-	.alert {
-		border-radius: 8px;
-		padding: 0.85rem 1rem;
-		font-size: 0.92rem;
-	}
-
-	:global(svg.icon) {
-		stroke-width: 2;
-	}
-
-	:global(svg.icon--meta) {
-		width: 0.82rem;
-		height: 0.82rem;
-		color: #667eea;
-	}
-
-	:global(svg.icon--link) {
-		width: 0.9rem;
-		height: 0.9rem;
-	}
-
-	:global(svg.icon--arrow) {
-		width: 0.78rem;
-		height: 0.78rem;
-	}
-
-	.alert-info {
-		background: rgba(0, 51, 167, 0.08);
-		color: #24425d;
-		border: 1px solid rgba(0, 51, 167, 0.18);
-	}
-
-	.alert-secondary {
-		background: #f5f7fa;
-		color: #4f5f6f;
-		border: 1px solid #dee5ee;
-	}
-
-	.obra-informes-card--mobile,
-	.obra-texto-access--mobile {
-		display: none;
-	}
-
-	.obra-informes-card--desktop,
-	.obra-texto-access--desktop {
-		display: block;
-	}
-
-	.sticky-card {
-		position: sticky;
-		top: calc(2rem + 68px);
-	}
-
-	@media (max-width: 1024px) {
-		.obra-main-grid {
-			grid-template-columns: 1fr;
-		}
-
-		.obra-informes-card--mobile,
-		.obra-texto-access--mobile {
-			display: block;
-		}
-
-		.obra-informes-card--desktop,
-		.obra-texto-access--desktop {
-			display: none;
-		}
-
-		.sticky-card {
-			position: static;
-		}
-	}
-
-	@media (max-width: 768px) {
-		.obra-view-wrapper {
-			padding-inline: 0.35rem;
-		}
-
-		.obra-header {
-			padding: 0.75rem;
-		}
-
-		.obra-card-body,
-		.obra-card-header {
-			padding: 0.85rem;
-		}
-
-		.atribucion-block {
-			padding: 0.85rem;
-		}
-	}
-</style>
-
-
-
-

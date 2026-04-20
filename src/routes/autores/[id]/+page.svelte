@@ -1,4 +1,4 @@
-﻿<script lang="ts">
+<script lang="ts">
 	import WorksTable from '$lib/components/search/WorksTable.svelte';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import PageHero from '$lib/components/ui/PageHero.svelte';
@@ -67,9 +67,16 @@
 			}));
 	});
 
-	const cardClass = (filter: AuthorFilterKey): string =>
-		`autor-stat-card ${filter === 'related_any' || filter === 'trad_any' || filter === 'etso_yes' ? 'autor-stat-card--primary' : ''} ${activeFilter === filter ? 'is-active' : ''}`
-			.trim();
+	const statCardBase =
+		'block h-full w-full cursor-pointer appearance-none rounded-[10px] border border-black/10 bg-brand-blue/5 text-left font-ui transition [padding-right:3rem] hover:border-brand-blue/30 hover:bg-brand-blue/10 hover:shadow-[0_8px_20px_rgba(0,51,167,0.10)] focus-visible:border-brand-blue/30 focus-visible:bg-brand-blue/10 focus-visible:shadow-[0_8px_20px_rgba(0,51,167,0.10)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue/25';
+	const statCardPrimaryPadding = 'px-5 py-[1.15rem] [padding-right:3.25rem]';
+	const statCardSecondaryPadding = 'px-4 py-4';
+	const statCardActive = 'border-brand-blue/30 bg-brand-blue/10 shadow-[0_8px_20px_rgba(0,51,167,0.10)]';
+
+	const cardClass = (filter: AuthorFilterKey): string => {
+		const isPrimary = filter === 'related_any' || filter === 'trad_any' || filter === 'etso_yes';
+		return `${statCardBase} ${isPrimary ? statCardPrimaryPadding : statCardSecondaryPadding} ${activeFilter === filter ? statCardActive : ''}`.trim();
+	};
 </script>
 
 <div class="grid gap-6">
@@ -89,12 +96,12 @@
 		backgroundImage={autorBg}
 	/>
 
-	<div class="autor-view-wrapper obra-view-wrapper">
-		<div class="autor-main-grid obra-main-grid">
-			<div class="autor-main-content obra-main-content">
-				<div class="autor-metricas-row">
-					<div class="autor-stats-grid autor-stats-grid--primary">
-						<div class="autor-stat-card-shell">
+	<div class="mx-auto w-full max-w-[1280px] font-ui">
+		<div class="grid grid-cols-1">
+			<div class="min-w-0">
+				<div class="mb-5">
+					<div class="mb-[0.9rem] grid grid-cols-1 gap-[0.9rem] md:grid-cols-2 lg:grid-cols-3">
+						<div class="min-w-0">
 							<button
 								type="button"
 								class={cardClass('related_any')}
@@ -104,12 +111,16 @@
 									activeFilter = 'related_any';
 								}}
 							>
-								<div class="autor-stat-value">{data.metrics.relatedAny}</div>
-								<div class="autor-stat-label">Obras relacionadas con el autor</div>
+								<div class="text-[clamp(1.6rem,2.8vw,2rem)] leading-none font-bold text-brand-blue">
+									{data.metrics.relatedAny}
+								</div>
+								<div class="mt-[0.45rem] text-[0.9rem] leading-[1.35] font-medium text-[#5a6c7d]">
+									Obras relacionadas con el autor
+								</div>
 							</button>
 						</div>
 
-						<div class="autor-stat-card-shell">
+						<div class="min-w-0">
 							<button
 								type="button"
 								class={cardClass('trad_any')}
@@ -119,12 +130,16 @@
 									activeFilter = 'trad_any';
 								}}
 							>
-								<div class="autor-stat-value">{data.metrics.tradAny}</div>
-								<div class="autor-stat-label">Obras respaldadas por la tradición</div>
+								<div class="text-[clamp(1.6rem,2.8vw,2rem)] leading-none font-bold text-brand-blue">
+									{data.metrics.tradAny}
+								</div>
+								<div class="mt-[0.45rem] text-[0.9rem] leading-[1.35] font-medium text-[#5a6c7d]">
+									Obras respaldadas por la tradición
+								</div>
 							</button>
 						</div>
 
-						<div class="autor-stat-card-shell">
+						<div class="min-w-0">
 							<button
 								type="button"
 								class={cardClass('etso_yes')}
@@ -134,14 +149,18 @@
 									activeFilter = 'etso_yes';
 								}}
 							>
-								<div class="autor-stat-value">{data.metrics.etsoYes}</div>
-								<div class="autor-stat-label">Obras respaldadas por la estilometría</div>
+								<div class="text-[clamp(1.6rem,2.8vw,2rem)] leading-none font-bold text-brand-blue">
+									{data.metrics.etsoYes}
+								</div>
+								<div class="mt-[0.45rem] text-[0.9rem] leading-[1.35] font-medium text-[#5a6c7d]">
+									Obras respaldadas por la estilometría
+								</div>
 							</button>
 						</div>
 					</div>
 
-					<div class="autor-stats-grid autor-stats-grid--secondary">
-						<div class="autor-stat-card-shell">
+					<div class="grid grid-cols-1 gap-[0.9rem] md:grid-cols-2">
+						<div class="min-w-0">
 							<button
 								type="button"
 								class={cardClass('only_trad')}
@@ -151,12 +170,16 @@
 									activeFilter = 'only_trad';
 								}}
 							>
-								<div class="autor-stat-value">{data.metrics.onlyTrad}</div>
-								<div class="autor-stat-label">Obras respaldadas solo por la tradición</div>
+								<div class="text-[clamp(1.6rem,2.8vw,2rem)] leading-none font-bold text-brand-blue">
+									{data.metrics.onlyTrad}
+								</div>
+								<div class="mt-[0.45rem] text-[0.9rem] leading-[1.35] font-medium text-[#5a6c7d]">
+									Obras respaldadas solo por la tradición
+								</div>
 							</button>
 						</div>
 
-						<div class="autor-stat-card-shell">
+						<div class="min-w-0">
 							<button
 								type="button"
 								class={cardClass('only_etso')}
@@ -166,28 +189,36 @@
 									activeFilter = 'only_etso';
 								}}
 							>
-								<div class="autor-stat-value">{data.metrics.onlyEtso}</div>
-								<div class="autor-stat-label">Obras atribuidas a partir de la estilometría</div>
+								<div class="text-[clamp(1.6rem,2.8vw,2rem)] leading-none font-bold text-brand-blue">
+									{data.metrics.onlyEtso}
+								</div>
+								<div class="mt-[0.45rem] text-[0.9rem] leading-[1.35] font-medium text-[#5a6c7d]">
+									Obras atribuidas a partir de la estilometría
+								</div>
 							</button>
 						</div>
 					</div>
 				</div>
 
-				<div class="autor-obras-section">
-					<div class="autor-obras-toolbar">
-						<label class="autor-search-field">
-							<span class="autor-search-label">Buscar por título</span>
+				<div class="mt-1">
+					<div class="mb-4 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+						<label class="flex w-full max-w-none flex-col gap-1.5 md:max-w-[360px]">
+							<span class="text-[0.9rem] leading-[1.2] font-medium text-[#30465e]">Buscar por título</span>
 							<input
 								type="search"
-								class="autor-search-input"
+								class="w-full rounded-lg border border-black/15 bg-white px-3.5 py-2.5 text-[0.95rem] text-[#23384d] transition focus:border-brand-blue/35 focus:outline-none focus:ring-[3px] focus:ring-brand-blue/10"
 								placeholder="Buscar por título"
 								aria-label="Buscar por título"
 								bind:value={titleFilter}
 							/>
 						</label>
-						<label class="autor-filter-field">
-							<span class="autor-filter-label">Filtrar por género</span>
-							<select class="autor-genero-select" aria-label="Filtrar por género" bind:value={genreFilter}>
+						<label class="flex w-full max-w-none flex-col gap-1.5 md:min-w-[220px] md:max-w-[280px]">
+							<span class="text-[0.9rem] leading-[1.2] font-medium text-[#30465e]">Filtrar por género</span>
+							<select
+								class="w-full rounded-lg border border-black/15 bg-white px-3.5 py-2.5 text-[0.95rem] text-[#23384d] transition focus:border-brand-blue/35 focus:outline-none focus:ring-[3px] focus:ring-brand-blue/10"
+								aria-label="Filtrar por género"
+								bind:value={genreFilter}
+							>
 								<option value="">Todos los géneros</option>
 								{#each genreOptions as genre}
 									<option value={genre}>{genre}</option>
@@ -199,7 +230,7 @@
 					<WorksTable rows={tableRows} mode="standard" emptyMessage="" />
 
 					{#if tableRows.length === 0}
-						<div class="autor-table-empty-state alert alert-info">
+						<div class="mt-4 rounded-[10px] border border-brand-blue/20 bg-brand-blue/10 px-4 py-4 text-[#29445f]">
 							No hay obras que coincidan con el filtro actual.
 						</div>
 					{/if}
@@ -208,184 +239,3 @@
 		</div>
 	</div>
 </div>
-
-<style>
-	.autor-view-wrapper {
-		font-family: 'Roboto', sans-serif;
-	}
-
-	.autor-main-grid {
-		display: grid;
-		grid-template-columns: 1fr;
-	}
-
-	.autor-main-content {
-		min-width: 0;
-	}
-
-	.autor-metricas-row {
-		margin-bottom: 1.25rem;
-	}
-
-	.autor-stats-grid {
-		display: grid;
-		gap: 0.9rem;
-	}
-
-	.autor-stats-grid--primary {
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-		margin-bottom: 0.9rem;
-	}
-
-	.autor-stats-grid--secondary {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
-
-	.autor-stat-card-shell {
-		position: relative;
-		min-width: 0;
-	}
-
-	.autor-stat-card {
-		display: block;
-		width: 100%;
-		border: 1px solid rgba(52, 58, 64, 0.08);
-		border-radius: 10px;
-		background-color: rgba(0, 51, 167, 0.05);
-		padding: 1rem;
-		padding-right: 3rem;
-		text-align: left;
-		cursor: pointer;
-		transition: border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
-		appearance: none;
-		font-family: 'Roboto', sans-serif;
-		height: 100%;
-	}
-
-	.autor-stat-card--primary {
-		padding: 1.15rem 3.25rem 1.15rem 1.25rem;
-	}
-
-	.autor-stat-card:hover,
-	.autor-stat-card:focus-visible,
-	.autor-stat-card.is-active {
-		border-color: rgba(0, 51, 167, 0.28);
-		background-color: rgba(0, 51, 167, 0.12);
-		box-shadow: 0 8px 20px rgba(0, 51, 167, 0.1);
-	}
-
-	.autor-stat-card:focus-visible {
-		outline: 2px solid rgba(0, 51, 167, 0.22);
-		outline-offset: 2px;
-	}
-
-	.autor-stat-value {
-		color: #0033a7;
-		font-size: clamp(1.6rem, 2.8vw, 2rem);
-		font-weight: 700;
-		line-height: 1;
-	}
-
-	.autor-stat-label {
-		margin-top: 0.45rem;
-		color: #5a6c7d;
-		font-size: 0.9rem;
-		font-weight: 500;
-		line-height: 1.35;
-	}
-
-	.autor-obras-section {
-		margin-top: 0.2rem;
-	}
-
-	.autor-obras-toolbar {
-		display: flex;
-		align-items: flex-end;
-		justify-content: space-between;
-		gap: 1rem;
-		margin-bottom: 1rem;
-	}
-
-	.autor-search-field,
-	.autor-filter-field {
-		display: flex;
-		flex-direction: column;
-		gap: 0.35rem;
-		width: 100%;
-		font-family: 'Roboto', sans-serif;
-	}
-
-	.autor-search-field {
-		max-width: 360px;
-	}
-
-	.autor-filter-field {
-		min-width: 220px;
-		max-width: 280px;
-	}
-
-	.autor-search-label,
-	.autor-filter-label {
-		color: #30465e;
-		font-size: 0.9rem;
-		font-weight: 500;
-		line-height: 1.2;
-	}
-
-	.autor-search-input,
-	.autor-genero-select {
-		width: 100%;
-		border: 1px solid rgba(52, 58, 64, 0.12);
-		border-radius: 8px;
-		background-color: #fff;
-		padding: 0.7rem 0.85rem;
-		color: #23384d;
-		font-size: 0.95rem;
-		font-family: 'Roboto', sans-serif;
-		transition: border-color 0.18s ease, box-shadow 0.18s ease;
-	}
-
-	.autor-search-input:focus,
-	.autor-genero-select:focus {
-		border-color: rgba(0, 51, 167, 0.35);
-		box-shadow: 0 0 0 3px rgba(0, 51, 167, 0.1);
-		outline: none;
-	}
-
-	.autor-table-empty-state {
-		margin-top: 1rem;
-		border: 1px solid rgba(0, 51, 167, 0.15);
-		background: rgba(0, 51, 167, 0.07);
-		color: #29445f;
-		border-radius: 10px;
-		padding: 1rem;
-	}
-
-	@media (max-width: 1024px) {
-		.autor-stats-grid--primary,
-		.autor-stats-grid--secondary {
-			grid-template-columns: repeat(2, minmax(0, 1fr));
-		}
-	}
-
-	@media (max-width: 768px) {
-		.autor-obras-toolbar {
-			align-items: stretch;
-			flex-direction: column;
-		}
-
-		.autor-search-field,
-		.autor-filter-field {
-			min-width: 0;
-			max-width: none;
-		}
-
-		.autor-stats-grid--primary,
-		.autor-stats-grid--secondary {
-			grid-template-columns: 1fr;
-		}
-	}
-</style>
-
-
-

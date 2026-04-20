@@ -248,10 +248,10 @@
 		style={`background-image: linear-gradient(100deg, rgba(239,240,244,0.95) 0%, rgba(236,237,242,0.88) 46%, rgba(236,237,242,0.52) 70%, rgba(236,237,242,0.22) 100%), url('${fondoLogo}')`}
 	>
 		<div class="flex flex-col">
-			<h2 class="mb-0 mt-0 text-[clamp(2rem,4.3vw,2.85rem)] leading-[1.05] font-bold text-[#0033a7]">
+			<h2 class="mb-0 mt-0 font-ui text-[clamp(2rem,4.3vw,2.85rem)] leading-[1.05] font-bold text-[#0033a7]">
 				Examen de Autorías
 			</h2>
-			<p class="mt-[1.05rem] mb-0 max-w-none text-[clamp(1.28rem,2.2vw,1.78rem)] leading-[1.22] font-semibold text-[#003aa5] min-[1201px]:max-w-[25ch]">
+			<p class="mt-[1.05rem] mb-0 max-w-none font-ui text-[clamp(1.28rem,2.2vw,1.78rem)] leading-[1.22] font-semibold text-[#003aa5] min-[1201px]:max-w-[25ch]">
 				Análisis estilométrico de obras teatrales del Siglo de Oro
 			</p>
 			<p class="mt-[1.8rem] mb-0 max-w-[64ch] font-['Lora',serif] text-[1.01rem] leading-[1.62] text-[#17293f]">
@@ -290,7 +290,7 @@
 				</div>
 				<div>
 					<div class="text-[clamp(2rem,3vw,2.35rem)] leading-none font-bold text-[#0033a7]">{totalWorks}</div>
-					<div class="font-['Lora',serif] text-[1.04rem] font-medium text-[#1f2f45]">Obras</div>
+					<div class="font-['Roboto'] text-[1.04rem] font-medium text-[#1f2f45]">Obras</div>
 				</div>
 			</article>
 
@@ -302,7 +302,7 @@
 				</div>
 				<div>
 					<div class="text-[clamp(2rem,3vw,2.35rem)] leading-none font-bold text-[#0033a7]">{totalDramaturgos}</div>
-					<div class="font-['Lora',serif] text-[1.04rem] font-medium text-[#1f2f45]">Dramaturgos</div>
+					<div class="font-['Roboto'] text-[1.04rem] font-medium text-[#1f2f45]">Dramaturgos</div>
 				</div>
 			</article>
 		</div>
@@ -620,4 +620,3 @@
 		</div>
 	</div>
 </div>
-

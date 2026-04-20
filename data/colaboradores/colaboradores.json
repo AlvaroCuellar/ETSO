@@ -1,0 +1,1143 @@
+{
+  "team": [
+    {
+      "name": "Álvaro Cuéllar",
+      "affiliations": [
+        "Universitat Autònoma de Barcelona"
+      ]
+    },
+    {
+      "name": "Germán Vega García-Luengos",
+      "affiliations": [
+        "Universidad de Valladolid"
+      ]
+    }
+  ],
+  "collaborators": {
+    "people": [
+      {
+        "name": "Abraham Madroñal Durán",
+        "affiliations": [
+          "Université de Genève"
+        ]
+      },
+      {
+        "name": "Adrián Sáez",
+        "affiliations": [
+          "Université de Neuchâtel"
+        ]
+      },
+      {
+        "name": "Adrián Velasco Sainz",
+        "affiliations": [
+          "Universidad de Valladolid"
+        ]
+      },
+      {
+        "name": "Alberto Gutiérrez Gil",
+        "affiliations": [
+          "Universidad de Castilla-La Mancha"
+        ]
+      },
+      {
+        "name": "Alejandra Ulla",
+        "affiliations": [
+          "Universidad Internacional de La Rioja"
+        ]
+      },
+      {
+        "name": "Alejandro García Reidy",
+        "affiliations": [
+          "Universidad de Salamanca"
+        ]
+      },
+      {
+        "name": "Alfredo Hermenegildo",
+        "affiliations": [
+          "Université de Montréal"
+        ]
+      },
+      {
+        "name": "Alicia Vara",
+        "affiliations": [
+          "Universidad de Córdoba"
+        ]
+      },
+      {
+        "name": "Almudena García González",
+        "affiliations": [
+          "Universidad de Castilla-La Mancha"
+        ]
+      },
+      {
+        "name": "Anna Benvenuti",
+        "affiliations": [
+          "Università degli Studi di Milan"
+        ]
+      },
+      {
+        "name": "Antonio Cortijo Ocaña",
+        "affiliations": [
+          "University of California"
+        ]
+      },
+      {
+        "name": "Antonio Serrano",
+        "affiliations": [
+          "Jornadas de Teatro del Siglo de Oro de Almería"
+        ]
+      },
+      {
+        "name": "Arianna Fiore",
+        "affiliations": [
+          "Università degli Studi di Firenze"
+        ]
+      },
+      {
+        "name": "Aurelio Valladares",
+        "affiliations": [
+          "Aula-Biblioteca Mira de Amescua"
+        ]
+      },
+      {
+        "name": "Beata Baczynska",
+        "affiliations": [
+          "Uniwersytet Wrocławski"
+        ]
+      },
+      {
+        "name": "Carles Márquez-Molins",
+        "affiliations": [
+          "Universitat de València"
+        ]
+      },
+      {
+        "name": "Carmelina Salvati",
+        "affiliations": [
+          "Università degli Studi di Salerno"
+        ]
+      },
+      {
+        "name": "Carmen Pinillos Salvador",
+        "affiliations": [
+          "Universidad de Navarra"
+        ]
+      },
+      {
+        "name": "Carmen Santana Bustamante",
+        "affiliations": [
+          "Universidad de Castilla-La Mancha"
+        ]
+      },
+      {
+        "name": "Catalina Buezo",
+        "affiliations": [
+          "Universidad de La Rioja"
+        ]
+      },
+      {
+        "name": "Cipriano López",
+        "affiliations": [
+          "Universitat Autònoma de Barcelona. Prolope"
+        ]
+      },
+      {
+        "name": "Clara Monzó Ribes",
+        "affiliations": [
+          "Universitat de València"
+        ]
+      },
+      {
+        "name": "Claudia Dematté",
+        "affiliations": [
+          "Università degli Studi di Trento"
+        ]
+      },
+      {
+        "name": "Cristina Barreda",
+        "affiliations": [
+          "Universitat de València"
+        ]
+      },
+      {
+        "name": "Daniel Fernández Rodríguez",
+        "affiliations": [
+          "Universitat de València"
+        ]
+      },
+      {
+        "name": "Daniele Crivellari",
+        "affiliations": [
+          "Universitá degli studi di Salerno"
+        ]
+      },
+      {
+        "name": "David J. Amelang",
+        "affiliations": [
+          "Universidad Autónoma de Madrid"
+        ]
+      },
+      {
+        "name": "David Mañero Lozano",
+        "affiliations": [
+          "Universidad de Jaén"
+        ]
+      },
+      {
+        "name": "David Merino Recalde",
+        "affiliations": [
+          "Universidad Nacional de Educación a Distancia"
+        ]
+      },
+      {
+        "name": "Delia Gavela",
+        "affiliations": [
+          "Universidad de La Rioja"
+        ]
+      },
+      {
+        "name": "Diego Símini",
+        "affiliations": [
+          "Università del Salento"
+        ]
+      },
+      {
+        "name": "Elena Di Pinto",
+        "affiliations": [
+          "Universidad Complutense de Madrid"
+        ]
+      },
+      {
+        "name": "Elena Martínez Carro",
+        "affiliations": [
+          "Universidad Internacional de La Rioja"
+        ]
+      },
+      {
+        "name": "Elena Muñoz Rodríguez",
+        "affiliations": [
+          "Universidad del País Vasco/Euskal Herriko Unibertsitatea"
+        ]
+      },
+      {
+        "name": "Emma Marcos Rodríguez",
+        "affiliations": [
+          "Universidad de Valladolid"
+        ]
+      },
+      {
+        "name": "Erik Coenen",
+        "affiliations": [
+          "Universidad Complutense de Madrid"
+        ]
+      },
+      {
+        "name": "Esperanza Rivera Salmerón",
+        "affiliations": [
+          "Universidad de Valladolid"
+        ]
+      },
+      {
+        "name": "Esther Borrego",
+        "affiliations": [
+          "Universidad Complutense de Madrid"
+        ]
+      },
+      {
+        "name": "Fernando Cantalapiedra Erostarbe",
+        "affiliations": [
+          "Investigador"
+        ]
+      },
+      {
+        "name": "Fernando Rodríguez-Gallego",
+        "affiliations": [
+          "Universitat de les Illes Balears"
+        ]
+      },
+      {
+        "name": "Francisco Domínguez Matito",
+        "affiliations": [
+          "Universidad de La Rioja"
+        ]
+      },
+      {
+        "name": "Francisco Sáez Raposo",
+        "affiliations": [
+          "Universidad Complutense de Madrid"
+        ]
+      },
+      {
+        "name": "Fructuoso Atencia",
+        "affiliations": [
+          "Universidad Complutense de Madrid"
+        ]
+      },
+      {
+        "name": "Félix Blanco Campos",
+        "affiliations": [
+          "Universidad de Valladolid"
+        ]
+      },
+      {
+        "name": "Gaston Gilabert",
+        "affiliations": [
+          "Universitat de Barcelona"
+        ]
+      },
+      {
+        "name": "Gema Cienfuegos Antelo",
+        "affiliations": [
+          "Universidad de Valladolid"
+        ]
+      },
+      {
+        "name": "Gema Gómez Rubio",
+        "affiliations": [
+          "Universidad de Castilla-La Mancha"
+        ]
+      },
+      {
+        "name": "George Peale",
+        "affiliations": [
+          "California State University"
+        ]
+      },
+      {
+        "name": "Gonzalo Pontón",
+        "affiliations": [
+          "Universitat Autònoma de Barcelona. Prolope"
+        ]
+      },
+      {
+        "name": "Guillermo Carrascón",
+        "affiliations": [
+          "Università degli Studi di Torino"
+        ]
+      },
+      {
+        "name": "Guillermo Gómez Sánchez-Ferrer",
+        "affiliations": [
+          "Universidad Complutense de Madrid"
+        ]
+      },
+      {
+        "name": "Guillermo Schmidhuber",
+        "affiliations": [
+          "Universidad de Guadalajara"
+        ]
+      },
+      {
+        "name": "Guillermo Serés Guillén",
+        "affiliations": [
+          "Universitat Autònoma de Barcelona"
+        ]
+      },
+      {
+        "name": "Héctor Brioso Santos",
+        "affiliations": [
+          "Universidad de Alcalá de Henares"
+        ]
+      },
+      {
+        "name": "Héctor Urzáiz Tortajada",
+        "affiliations": [
+          "Universidad de Valladolid"
+        ]
+      },
+      {
+        "name": "Ilaria Resta",
+        "affiliations": [
+          "Università degli studi Roma Tre"
+        ]
+      },
+      {
+        "name": "Irene González Escudero",
+        "affiliations": [
+          "Universidad de Valladolid"
+        ]
+      },
+      {
+        "name": "Iván Gómez Caballero",
+        "affiliations": [
+          "Universidad de Castilla-La Mancha"
+        ]
+      },
+      {
+        "name": "Javier Castrillo Alaguero",
+        "affiliations": [
+          "Universidad de Burgos"
+        ]
+      },
+      {
+        "name": "Javier Huerta Calvo",
+        "affiliations": [
+          "Universidad Complutense de Madrid"
+        ]
+      },
+      {
+        "name": "Javier J. González Martínez",
+        "affiliations": [
+          "Universidad de Valladolid"
+        ]
+      },
+      {
+        "name": "Javier Rubiera",
+        "affiliations": [
+          "Université de Montréal"
+        ]
+      },
+      {
+        "name": "Javier de la Rosa",
+        "affiliations": [
+          "Nasjonalbiblioteket"
+        ]
+      },
+      {
+        "name": "Jean-Baptiste Camps",
+        "affiliations": [
+          "École nationale des chartes - PSL"
+        ]
+      },
+      {
+        "name": "Jorge Ferreira Barrocal",
+        "affiliations": [
+          "Universidad de Valladolid"
+        ]
+      },
+      {
+        "name": "José Cano Navarro",
+        "affiliations": [
+          "Consejería de Educación de la Comunidad de Madrid"
+        ]
+      },
+      {
+        "name": "José Javier Rodríguez",
+        "affiliations": [
+          "Universidad del País Vasco/Euskal Herriko Unibertsitatea"
+        ]
+      },
+      {
+        "name": "Juan Antonio Martínez Berbel",
+        "affiliations": [
+          "Universidad de La Rioja"
+        ]
+      },
+      {
+        "name": "Juan Manuel Carmona Tierno",
+        "affiliations": [
+          "Universidad de Sevilla"
+        ]
+      },
+      {
+        "name": "Juan Matas Caballero",
+        "affiliations": [
+          "Universidad de León"
+        ]
+      },
+      {
+        "name": "Judith Farré Vidal",
+        "affiliations": [
+          "Consejo Superior de Investigaciones Científicas"
+        ]
+      },
+      {
+        "name": "Julio Vélez Sainz",
+        "affiliations": [
+          "Universidad Complutense de Madrid"
+        ]
+      },
+      {
+        "name": "Jörg Lehmann",
+        "affiliations": [
+          "Eberhard Karls Universität Tübingen"
+        ]
+      },
+      {
+        "name": "Kelly Ferguson",
+        "affiliations": [
+          "University of Kentucky"
+        ]
+      },
+      {
+        "name": "Leonardo Sarría Muzio",
+        "affiliations": [
+          "Universidad de La Habana"
+        ]
+      },
+      {
+        "name": "Luis Iglesias Feijoo",
+        "affiliations": [
+          "Universidad de Santiago de Compostela. GIC"
+        ]
+      },
+      {
+        "name": "Luisa Rosselló Castillo",
+        "affiliations": [
+          "Universitat de les Illes Balears"
+        ]
+      },
+      {
+        "name": "Marcella Trambaioli",
+        "affiliations": [
+          "Università del Piemonte Orientale"
+        ]
+      },
+      {
+        "name": "Marco Pannarale",
+        "affiliations": [
+          "Università di Bologna"
+        ]
+      },
+      {
+        "name": "Marco Presotto",
+        "affiliations": [
+          "Università di Bologna"
+        ]
+      },
+      {
+        "name": "Mark Lauersdorf",
+        "affiliations": [
+          "University of Kentucky"
+        ]
+      },
+      {
+        "name": "María Cimadevilla Abadíe",
+        "affiliations": [
+          "Universidad Complutense de Madrid"
+        ]
+      },
+      {
+        "name": "María Luisa Lobato",
+        "affiliations": [
+          "Universidad de Burgos. Proteo"
+        ]
+      },
+      {
+        "name": "María Rosa Álvarez Sellers",
+        "affiliations": [
+          "Universitat de València"
+        ]
+      },
+      {
+        "name": "María del Pilar Chouza-Calo",
+        "affiliations": [
+          "Central Michigan University"
+        ]
+      },
+      {
+        "name": "Miguel Betti",
+        "affiliations": [
+          "Université de Genève"
+        ]
+      },
+      {
+        "name": "Miguel Campión",
+        "affiliations": [
+          "Universidad Autónoma de Madrid"
+        ]
+      },
+      {
+        "name": "Miguel García-Bermejo Giner",
+        "affiliations": [
+          "Universidad de Salamanca"
+        ]
+      },
+      {
+        "name": "Miguel Zugasti",
+        "affiliations": [
+          "Universidad de Navarra"
+        ]
+      },
+      {
+        "name": "Míriam Martínez Gutiérrez",
+        "affiliations": [
+          "Universidad de Burgos"
+        ]
+      },
+      {
+        "name": "Natalia Fernández",
+        "affiliations": [
+          "Universidad Complutense de Madrid"
+        ]
+      },
+      {
+        "name": "Noelia Iglesias Iglesias",
+        "affiliations": [
+          "Universidad de Santiago de Compostela"
+        ]
+      },
+      {
+        "name": "Paolo Pintacuda",
+        "affiliations": [
+          "Università di Pavia"
+        ]
+      },
+      {
+        "name": "Paula Casariego Castiñeira",
+        "affiliations": [
+          "Universidad de Santiago de Compostela"
+        ]
+      },
+      {
+        "name": "Piedad Bolaños",
+        "affiliations": [
+          "Universidad de Sevilla"
+        ]
+      },
+      {
+        "name": "Rafael González Cañal",
+        "affiliations": [
+          "Universidad de Castilla-La Mancha"
+        ]
+      },
+      {
+        "name": "Rafael Massanet Rodríguez",
+        "affiliations": [
+          "Universitat de les Illes Balears"
+        ]
+      },
+      {
+        "name": "Rafael Ramos",
+        "affiliations": [
+          "Universitat de Girona"
+        ]
+      },
+      {
+        "name": "Ramón Valdés Gázquez",
+        "affiliations": [
+          "Universitat Autònoma de Barcelona. Prolope"
+        ]
+      },
+      {
+        "name": "Ricardo Enguix Barber",
+        "affiliations": [
+          "Kaunas University of Technology",
+          "Edition Reichenberger"
+        ]
+      },
+      {
+        "name": "Ricardo Serrano Deza",
+        "affiliations": [
+          "Universidad de La Rioja"
+        ]
+      },
+      {
+        "name": "Roberta Alviti",
+        "affiliations": [
+          "Università degli studi di Cassino e del Lazio Meridionale"
+        ]
+      },
+      {
+        "name": "Rocío Alonso Medel",
+        "affiliations": [
+          "Universidad Complutense de Madrid"
+        ]
+      },
+      {
+        "name": "Rosa Illán de Haro",
+        "affiliations": [
+          "Università di Pavia"
+        ]
+      },
+      {
+        "name": "Salomé Vuelta García",
+        "affiliations": [
+          "Università di Firenze"
+        ]
+      },
+      {
+        "name": "Santiago Fernández Mosquera",
+        "affiliations": [
+          "Universidad de Santiago de Compostela. GIC"
+        ]
+      },
+      {
+        "name": "Sergio Rodríguez Nicolás",
+        "affiliations": [
+          "Universidad de León"
+        ]
+      },
+      {
+        "name": "Simon Kroll",
+        "affiliations": [
+          "Universität Wien"
+        ]
+      },
+      {
+        "name": "Sofía Cantalapiedra Delgado",
+        "affiliations": [
+          "Universitat de Barcelona"
+        ]
+      },
+      {
+        "name": "Stefano De Capitani",
+        "affiliations": [
+          "Università degli Studi di Milano"
+        ]
+      },
+      {
+        "name": "Tania De Miguel Magro",
+        "affiliations": [
+          "West Virginia University"
+        ]
+      },
+      {
+        "name": "Teresa Ferrer Valls",
+        "affiliations": [
+          "Universitat de València"
+        ]
+      },
+      {
+        "name": "Valeria Marrella",
+        "affiliations": [
+          "Università Ca' Foscari Venezia"
+        ]
+      },
+      {
+        "name": "Zaida Vila Carneiro",
+        "affiliations": [
+          "Universidad de La Rioja"
+        ]
+      },
+      {
+        "name": "Álvaro Bustos",
+        "affiliations": [
+          "Universidad Complutense de Madrid"
+        ]
+      },
+      {
+        "name": "Óscar García Fernández",
+        "affiliations": [
+          "Universidad de León"
+        ]
+      }
+    ],
+    "organizations": [
+      {
+        "name": "Grupo de Investigación Calderón (GIC)",
+        "affiliations": [
+          "Universidad de Santiago de Compostela"
+        ]
+      },
+      {
+        "name": "Prolope",
+        "affiliations": [
+          "Universidad Autónoma de Barcelona"
+        ]
+      }
+    ]
+  },
+  "students": {
+    "group": "Estudiantes de los Grados en Estudios Clásicos y en Español: Lengua y Literatura",
+    "institution": "Universidad de Valladolid",
+    "people": [
+      {
+        "name": "Tania Alba Martín"
+      },
+      {
+        "name": "Gabriela Albertos Escudero"
+      },
+      {
+        "name": "Leillane Almeida"
+      },
+      {
+        "name": "Noelia Alonso"
+      },
+      {
+        "name": "Elena Alonso del Río"
+      },
+      {
+        "name": "Simona Andreea Gaia"
+      },
+      {
+        "name": "Amanda Aparicio"
+      },
+      {
+        "name": "Génesis Aquino Berroa"
+      },
+      {
+        "name": "Marina Arenas Guerra"
+      },
+      {
+        "name": "Alicia Barajas Delgado"
+      },
+      {
+        "name": "Mario Benito Delgado"
+      },
+      {
+        "name": "Laín Burgos Cuadrado"
+      },
+      {
+        "name": "Francisco Cabañas Centeno"
+      },
+      {
+        "name": "Dolores Cádiz"
+      },
+      {
+        "name": "Pablo Calle Martín"
+      },
+      {
+        "name": "Fabián Calvo De Santiago"
+      },
+      {
+        "name": "Estefanía Casadevall Stefanova"
+      },
+      {
+        "name": "Eduardo Camero"
+      },
+      {
+        "name": "Elena Caminero"
+      },
+      {
+        "name": "Diego Castro García"
+      },
+      {
+        "name": "Paula Castro Herrero"
+      },
+      {
+        "name": "Rodrigo Castro San José"
+      },
+      {
+        "name": "Raúl Crespo Valdivieso"
+      },
+      {
+        "name": "Berta Cuadrado De la Fuente"
+      },
+      {
+        "name": "Cristina Cuiñas Dios"
+      },
+      {
+        "name": "Sandra Díaz López"
+      },
+      {
+        "name": "Héctor Erazo Bernal"
+      },
+      {
+        "name": "Carlota Esteban Cabreros"
+      },
+      {
+        "name": "Sofía Farto García"
+      },
+      {
+        "name": "Alba Fernández"
+      },
+      {
+        "name": "Mario Fernández Lázaro"
+      },
+      {
+        "name": "Lydia Fernández Martín"
+      },
+      {
+        "name": "Laura Fernández Rodríguez"
+      },
+      {
+        "name": "María Ferreira Sevillano"
+      },
+      {
+        "name": "Juan Figueros Sahagún"
+      },
+      {
+        "name": "Luz Glez. Frechilla"
+      },
+      {
+        "name": "Elena de la Fuente"
+      },
+      {
+        "name": "Sara Isabel de la Fuente Martínez"
+      },
+      {
+        "name": "Ángela García"
+      },
+      {
+        "name": "Claudia García"
+      },
+      {
+        "name": "Paula García Alcolea"
+      },
+      {
+        "name": "Ana García de la Fuente"
+      },
+      {
+        "name": "Marta García Gutiérrez"
+      },
+      {
+        "name": "Elena García Muñoz"
+      },
+      {
+        "name": "María Magdalena García Pérez"
+      },
+      {
+        "name": "Erica García Sánchez"
+      },
+      {
+        "name": "Irene Garres Pelaz"
+      },
+      {
+        "name": "Isabel Garrido Rivas"
+      },
+      {
+        "name": "Esther Garrote Robledo"
+      },
+      {
+        "name": "Miguel Gil Gracia"
+      },
+      {
+        "name": "Lucía Gómez"
+      },
+      {
+        "name": "Anaïs Gómez García"
+      },
+      {
+        "name": "Paula Gómez Juárez"
+      },
+      {
+        "name": "Ana Rosa González"
+      },
+      {
+        "name": "Marta González"
+      },
+      {
+        "name": "Alba González Anibarro"
+      },
+      {
+        "name": "Míriam González Ríos"
+      },
+      {
+        "name": "Daniel González Varela"
+      },
+      {
+        "name": "Julia Gromowska Swiatkowska"
+      },
+      {
+        "name": "Jesús Güemes Ramírez"
+      },
+      {
+        "name": "Diego Gutiérrez"
+      },
+      {
+        "name": "Carmen Henar León Moro"
+      },
+      {
+        "name": "Isaías Hernández Galeano"
+      },
+      {
+        "name": "Judit Hernández Toledano"
+      },
+      {
+        "name": "Ana Belén Hidalgo González"
+      },
+      {
+        "name": "Inés Izquierdo Archidona"
+      },
+      {
+        "name": "Curtis Kouame"
+      },
+      {
+        "name": "Sandra Laguna García"
+      },
+      {
+        "name": "Cristina Manrique Balmori"
+      },
+      {
+        "name": "Samuel Marina Franco"
+      },
+      {
+        "name": "Álvaro Magdaleno García"
+      },
+      {
+        "name": "Aarón Marqués González"
+      },
+      {
+        "name": "Irene Martín"
+      },
+      {
+        "name": "Olivia Martín"
+      },
+      {
+        "name": "Alba Martín Terán"
+      },
+      {
+        "name": "Isabel de Mata Gutiérrez"
+      },
+      {
+        "name": "Rut Matilla Cortezón"
+      },
+      {
+        "name": "Marina Mayor Rocher"
+      },
+      {
+        "name": "Pedro Méndez Montes"
+      },
+      {
+        "name": "Susana Merillas Benito"
+      },
+      {
+        "name": "Lucía Merino Montes"
+      },
+      {
+        "name": "María Molina Mera"
+      },
+      {
+        "name": "Alicia Monge Olivares"
+      },
+      {
+        "name": "Jimena Muñoz Abad"
+      },
+      {
+        "name": "Esther Nicolás Bolívar"
+      },
+      {
+        "name": "Jacinta María de Onuva López de San Román Alves"
+      },
+      {
+        "name": "Ana Ortega Gutiérrez"
+      },
+      {
+        "name": "Paula Peña Navarro"
+      },
+      {
+        "name": "Esther Pérez"
+      },
+      {
+        "name": "Pablo Pérez"
+      },
+      {
+        "name": "Claudia Pérez Conde"
+      },
+      {
+        "name": "Eva Poblador"
+      },
+      {
+        "name": "Ana Porres"
+      },
+      {
+        "name": "Cristina Pozo"
+      },
+      {
+        "name": "Andrea Redondo Nebreda"
+      },
+      {
+        "name": "Andrea Revilla"
+      },
+      {
+        "name": "Irene Rico"
+      },
+      {
+        "name": "Marta Riesco Valdés"
+      },
+      {
+        "name": "Julia Rodríguez"
+      },
+      {
+        "name": "Noa Rodríguez"
+      },
+      {
+        "name": "Ana Rodríguez Rebollo"
+      },
+      {
+        "name": "Álvaro Luis Rodríguez Sanz"
+      },
+      {
+        "name": "Lucía Sáez"
+      },
+      {
+        "name": "Paula Salas Durántez"
+      },
+      {
+        "name": "Patricia San Miguel Molinilla"
+      },
+      {
+        "name": "Claudia Sánchez"
+      },
+      {
+        "name": "Urko Sánchez Astorgano"
+      },
+      {
+        "name": "Daniel Sánchez Loma"
+      },
+      {
+        "name": "Manuel Sanchís"
+      },
+      {
+        "name": "Helena Santos Martín"
+      },
+      {
+        "name": "Ana Simón Miguélez"
+      },
+      {
+        "name": "Blanca Suárez González"
+      },
+      {
+        "name": "María Dolores Tejada Benavides"
+      },
+      {
+        "name": "Sheila Toquero Pascual"
+      },
+      {
+        "name": "Elena Toral Martín"
+      },
+      {
+        "name": "Ada Valdivieso del Pozo"
+      },
+      {
+        "name": "Lara Vallejo"
+      },
+      {
+        "name": "Marta Vaquero Herrero"
+      },
+      {
+        "name": "Jana Velasco"
+      },
+      {
+        "name": "Mario Villalba"
+      },
+      {
+        "name": "Domingo Vladimir Consuegra"
+      },
+      {
+        "name": "Nadia Ziyí Gutiérrez Nuevo"
+      }
+    ]
+  },
+  "open_corpora": [
+    {
+      "name": "Artelope",
+      "description": "Base de datos y Argumentos del teatro de Lope de Vega",
+      "source_label": "ETSO - Colaboradores - Artelope"
+    },
+    {
+      "name": "Association for Hispanic Classical Theater",
+      "description": "Promoting appreciation for the Spain's classical theater in production",
+      "source_label": "ETSO - Colaboradores - Association for Hispanic Classical Theater"
+    },
+    {
+      "name": "Aula-Biblioteca Mira de Amescua"
+    },
+    {
+      "name": "Canon 60",
+      "description": "La colección esencial del TC/12"
+    },
+    {
+      "name": "Cervantes Virtual",
+      "description": "Biblioteca Virtual Miguel de Cervantes",
+      "source_label": "ETSO - Colaboradores - Cervantes Virtual"
+    },
+    {
+      "name": "Moretianos",
+      "description": "Repositorios universitarios",
+      "source_label": "ETSO - Colaboradores - Moretianos"
+    },
+    {
+      "name": "TESEO",
+      "description": "Base de datos de tesis doctorales"
+    }
+  ],
+  "acknowledgments": {
+    "text": "We would thank the University of Kentucky Center for Computational Sciences and Information Technology Services Research Computing for their support and use of the Lipscomb Compute Cluster and associated research computing resources.",
+    "organizations": [
+      "University of Kentucky",
+      "Center for Computational Sciences and Information Technology Services Research Computing"
+    ]
+  }
+}

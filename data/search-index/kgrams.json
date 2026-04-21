@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "etso-search-kgrams-v1",
+  "indexVersion": "v1-2026-04-20T14-03-16-018Z",
+  "generatedAt": "2026-04-20T14:03:16.018Z",
+  "k": 3,
+  "boundary": "$",
+  "totalKgrams": 3552,
+  "shards": [
+    {
+      "id": "kg-0000",
+      "file": "kgram-shards/kg-0000.json",
+      "gramMin": "$0$",
+      "gramMax": "din",
+      "gramsCount": 877,
+      "estimatedBytes": 255599
+    },
+    {
+      "id": "kg-0001",
+      "file": "kgram-shards/kg-0001.json",
+      "gramMin": "dio",
+      "gramMax": "nef",
+      "gramsCount": 1247,
+      "estimatedBytes": 255912
+    },
+    {
+      "id": "kg-0002",
+      "file": "kgram-shards/kg-0002.json",
+      "gramMin": "neg",
+      "gramMax": "veo",
+      "gramsCount": 1212,
+      "estimatedBytes": 255214
+    },
+    {
+      "id": "kg-0003",
+      "file": "kgram-shards/kg-0003.json",
+      "gramMin": "ver",
+      "gramMax": "ñue",
+      "gramsCount": 216,
+      "estimatedBytes": 16385
+    }
+  ]
+}

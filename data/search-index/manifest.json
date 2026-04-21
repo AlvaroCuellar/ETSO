@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "etso-search-index-v1",
+  "indexVersion": "v1-2026-04-20T14-03-16-018Z",
+  "generatedAt": "2026-04-20T14:03:16.018Z",
+  "build": {
+    "node": "v24.13.0",
+    "inputDir": "C:\\Users\\david\\Documents\\Projects\\etso\\data\\texts",
+    "outputDir": "C:\\Users\\david\\Documents\\Projects\\etso\\data\\search-index",
+    "cli": {
+      "encoding": "utf8",
+      "kgram": 3,
+      "vocabShardTargetBytes": 256000,
+      "postingsShardTargetBytes": 512000,
+      "kgramShardTargetBytes": 256000,
+      "preserveEnie": true,
+      "pretty": true
+    }
+  },
+  "normalization": {
+    "lowercase": true,
+    "removeDiacritics": true,
+    "preserveEnie": true
+  },
+  "tokenization": {
+    "regex": "[\\p{L}\\p{N}]+",
+    "unicode": true
+  },
+  "stats": {
+    "works": 20,
+    "tokens": 294072,
+    "chars": 1653085,
+    "vocabSize": 19020,
+    "totalPostingsPairs": 58226,
+    "totalKgrams": 3552
+  },
+  "files": {
+    "manifest": "manifest.json",
+    "works": "works.json",
+    "vocab": "vocab.json",
+    "kgrams": "kgrams.json",
+    "wildcardLengths": "wildcard-lengths.json"
+  },
+  "directories": {
+    "postings": "postings",
+    "vocabShards": "vocab-shards",
+    "kgramShards": "kgram-shards"
+  },
+  "shards": {
+    "postings": [
+      {
+        "id": "p-0000",
+        "file": "postings/p-0000.json",
+        "termMin": "0",
+        "termMax": "tiomomando",
+        "minTermId": 0,
+        "maxTermId": 17523,
+        "termsCount": 17524,
+        "estimatedBytes": 511996
+      },
+      {
+        "id": "p-0001",
+        "file": "postings/p-0001.json",
+        "termMin": "tira",
+        "termMax": "ñudos",
+        "minTermId": 17524,
+        "maxTermId": 19019,
+        "termsCount": 1496,
+        "estimatedBytes": 49962
+      }
+    ],
+    "vocab": [
+      {
+        "id": "v-0000",
+        "file": "vocab-shards/v-0000.json",
+        "termMin": "0",
+        "termMax": "estarla",
+        "minTermId": 0,
+        "maxTermId": 7802,
+        "termsCount": 7803,
+        "estimatedBytes": 255978
+      },
+      {
+        "id": "v-0001",
+        "file": "vocab-shards/v-0001.json",
+        "termMin": "estarme",
+        "termMax": "representacion",
+        "minTermId": 7803,
+        "maxTermId": 15495,
+        "termsCount": 7693,
+        "estimatedBytes": 255989
+      },
+      {
+        "id": "v-0002",
+        "file": "vocab-shards/v-0002.json",
+        "termMin": "representado",
+        "termMax": "ñudos",
+        "minTermId": 15496,
+        "maxTermId": 19019,
+        "termsCount": 3524,
+        "estimatedBytes": 117378
+      }
+    ],
+    "kgrams": [
+      {
+        "id": "kg-0000",
+        "file": "kgram-shards/kg-0000.json",
+        "gramMin": "$0$",
+        "gramMax": "din",
+        "gramsCount": 877,
+        "estimatedBytes": 255599
+      },
+      {
+        "id": "kg-0001",
+        "file": "kgram-shards/kg-0001.json",
+        "gramMin": "dio",
+        "gramMax": "nef",
+        "gramsCount": 1247,
+        "estimatedBytes": 255912
+      },
+      {
+        "id": "kg-0002",
+        "file": "kgram-shards/kg-0002.json",
+        "gramMin": "neg",
+        "gramMax": "veo",
+        "gramsCount": 1212,
+        "estimatedBytes": 255214
+      },
+      {
+        "id": "kg-0003",
+        "file": "kgram-shards/kg-0003.json",
+        "gramMin": "ver",
+        "gramMax": "ñue",
+        "gramsCount": 216,
+        "estimatedBytes": 16385
+      }
+    ]
+  }
+}

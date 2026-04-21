@@ -23,4 +23,4 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
 # Generated search index artifacts
-data/search-index/
+# data/search-index/

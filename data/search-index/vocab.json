@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "etso-search-vocab-v1",
+  "indexVersion": "v1-2026-04-20T14-03-16-018Z",
+  "generatedAt": "2026-04-20T14:03:16.018Z",
+  "shardStrategy": "adaptive-lexical",
+  "totalTerms": 19020,
+  "shards": [
+    {
+      "id": "v-0000",
+      "file": "vocab-shards/v-0000.json",
+      "termMin": "0",
+      "termMax": "estarla",
+      "minTermId": 0,
+      "maxTermId": 7802,
+      "termsCount": 7803,
+      "estimatedBytes": 255978
+    },
+    {
+      "id": "v-0001",
+      "file": "vocab-shards/v-0001.json",
+      "termMin": "estarme",
+      "termMax": "representacion",
+      "minTermId": 7803,
+      "maxTermId": 15495,
+      "termsCount": 7693,
+      "estimatedBytes": 255989
+    },
+    {
+      "id": "v-0002",
+      "file": "vocab-shards/v-0002.json",
+      "termMin": "representado",
+      "termMax": "ñudos",
+      "minTermId": 15496,
+      "maxTermId": 19019,
+      "termsCount": 3524,
+      "estimatedBytes": 117378
+    }
+  ],
+  "lookup": {
+    "byLexicalRange": true,
+    "byTermIdRange": true
+  }
+}

@@ -36,6 +36,12 @@ interface MatchOccurrencesOptions {
 	snippetRadius?: number;
 }
 
+interface WarmupOptions {
+	vocabBudgetBytes?: number;
+	postingsBudgetBytes?: number;
+	kgramBudgetBytes?: number;
+}
+
 interface TermMeta {
 	term: string;
 	termId: number;
@@ -66,6 +72,9 @@ interface PreparedText {
 const DEFAULT_LIMIT = 30;
 const DEFAULT_MAX_PHRASE_VERIFY_DOCS = 200;
 const DEFAULT_SNIPPET_RADIUS = 110;
+const DEFAULT_WARMUP_VOCAB_BUDGET = 900_000;
+const DEFAULT_WARMUP_POSTINGS_BUDGET = 900_000;
+const DEFAULT_WARMUP_KGRAM_BUDGET = 800_000;
 
 const stripTrailingSlash = (value: string): string => value.replace(/\/+$/, '');
 const joinUrl = (base: string, path: string): string => `${stripTrailingSlash(base)}/${path.replace(/^\/+/, '')}`;
@@ -111,6 +120,33 @@ const rangeIntersectsPrefix = (termMin: string, termMax: string, prefix: string)
 	return termMax >= prefix && termMin <= prefixUpper;
 };
 
+const shardCoverage = (shard: { termsCount?: number; gramsCount?: number; estimatedBytes: number }): number =>
+	shard.termsCount ?? shard.gramsCount ?? shard.estimatedBytes;
+
+const selectShardsForBudget = <T extends { estimatedBytes: number; termsCount?: number; gramsCount?: number }>(
+	shards: T[],
+	budgetBytes: number
+): T[] => {
+	if (!Number.isFinite(budgetBytes) || budgetBytes <= 0) return [];
+
+	const sorted = [...shards].sort((left, right) => {
+		const coverageDelta = shardCoverage(right) - shardCoverage(left);
+		if (coverageDelta !== 0) return coverageDelta;
+		return left.estimatedBytes - right.estimatedBytes;
+	});
+
+	const selected: T[] = [];
+	let usedBytes = 0;
+	for (const shard of sorted) {
+		if (selected.length > 0 && usedBytes + shard.estimatedBytes > budgetBytes) continue;
+		selected.push(shard);
+		usedBytes += shard.estimatedBytes;
+		if (usedBytes >= budgetBytes) break;
+	}
+
+	return selected;
+};
+
 export class TexoroSearchEngine {
 	readonly #indexBaseUrl: string;
 	readonly #textsBaseUrl: string;
@@ -131,6 +167,11 @@ export class TexoroSearchEngine {
 	#termMetaById = new Map<number, TermMeta>();
 	#patternTermIds = new Map<string, number[]>();
 	#preparedTexts = new Map<number, PreparedText>();
+	#vocabShardLoads = new Map<string, Promise<TexoroVocabShard>>();
+	#kgramShardLoads = new Map<string, Promise<TexoroKgramShard>>();
+	#postingsShardLoads = new Map<string, Promise<Map<number, Array<[number, number]>>>>();
+	#firstSearchWarmupPromise: Promise<void> | null = null;
+	#wildcardWarmupPromise: Promise<void> | null = null;
 
 	#docRowById = new Map<number, [number, string, string, string, number, number]>();
 	#allTermIdsCache: number[] | null = null;
@@ -146,6 +187,34 @@ export class TexoroSearchEngine {
 
 	get manifest(): TexoroIndexManifest | null {
 		return this.#manifest;
+	}
+
+	async warmupForFirstSearch(options: WarmupOptions = {}): Promise<void> {
+		if (this.#firstSearchWarmupPromise) return this.#firstSearchWarmupPromise;
+
+		this.#firstSearchWarmupPromise = (async () => {
+			await this.initialize();
+			await Promise.all([
+				this.#warmupVocabShards(options.vocabBudgetBytes ?? DEFAULT_WARMUP_VOCAB_BUDGET),
+				this.#warmupPostingsShards(options.postingsBudgetBytes ?? DEFAULT_WARMUP_POSTINGS_BUDGET)
+			]);
+		})();
+
+		return this.#firstSearchWarmupPromise;
+	}
+
+	async warmupWildcardSupport(options: WarmupOptions = {}): Promise<void> {
+		if (this.#wildcardWarmupPromise) return this.#wildcardWarmupPromise;
+
+		this.#wildcardWarmupPromise = (async () => {
+			await this.initialize();
+			await Promise.all([
+				this.warmupForFirstSearch(options),
+				this.#warmupKgramShards(options.kgramBudgetBytes ?? DEFAULT_WARMUP_KGRAM_BUDGET)
+			]);
+		})();
+
+		return this.#wildcardWarmupPromise;
 	}
 
 	async initialize(): Promise<void> {
@@ -802,38 +871,92 @@ export class TexoroSearchEngine {
 	async #loadVocabShard(shardId: string): Promise<TexoroVocabShard> {
 		const cached = this.#vocabShards.get(shardId);
 		if (cached) return cached;
+		const pending = this.#vocabShardLoads.get(shardId);
+		if (pending) return pending;
 		const shardMeta = this.#vocabRoot?.shards.find((item) => item.id === shardId);
 		if (!shardMeta) {
 			throw new Error(`Missing vocab shard metadata for ${shardId}`);
 		}
-		const shard = await this.#fetchJson<TexoroVocabShard>(shardMeta.file, this.#manifest?.indexVersion ?? null);
-		this.#vocabShards.set(shardId, shard);
-		return shard;
+		const loadPromise = (async () => {
+			const shard = await this.#fetchJson<TexoroVocabShard>(shardMeta.file, this.#manifest?.indexVersion ?? null);
+			this.#vocabShards.set(shardId, shard);
+			return shard;
+		})();
+		this.#vocabShardLoads.set(shardId, loadPromise);
+		try {
+			return await loadPromise;
+		} finally {
+			this.#vocabShardLoads.delete(shardId);
+		}
 	}
 
 	async #loadKgramShard(shardId: string): Promise<TexoroKgramShard> {
 		const cached = this.#kgramShards.get(shardId);
 		if (cached) return cached;
+		const pending = this.#kgramShardLoads.get(shardId);
+		if (pending) return pending;
 		const shardMeta = this.#kgramsRoot?.shards.find((item) => item.id === shardId);
 		if (!shardMeta) {
 			throw new Error(`Missing kgram shard metadata for ${shardId}`);
 		}
-		const shard = await this.#fetchJson<TexoroKgramShard>(shardMeta.file, this.#manifest?.indexVersion ?? null);
-		this.#kgramShards.set(shardId, shard);
-		return shard;
+		const loadPromise = (async () => {
+			const shard = await this.#fetchJson<TexoroKgramShard>(shardMeta.file, this.#manifest?.indexVersion ?? null);
+			this.#kgramShards.set(shardId, shard);
+			return shard;
+		})();
+		this.#kgramShardLoads.set(shardId, loadPromise);
+		try {
+			return await loadPromise;
+		} finally {
+			this.#kgramShardLoads.delete(shardId);
+		}
 	}
 
 	async #loadPostingsShard(shardId: string): Promise<Map<number, Array<[number, number]>>> {
 		const cached = this.#postingsShards.get(shardId);
 		if (cached) return cached;
+		const pending = this.#postingsShardLoads.get(shardId);
+		if (pending) return pending;
 		const shardMeta = this.#manifest?.shards.postings.find((item) => item.id === shardId);
 		if (!shardMeta) {
 			throw new Error(`Missing postings shard metadata for ${shardId}`);
 		}
-		const shard = await this.#fetchJson<TexoroPostingsShard>(shardMeta.file, this.#manifest?.indexVersion ?? null);
-		const map = new Map<number, Array<[number, number]>>(shard.postings);
-		this.#postingsShards.set(shardId, map);
-		return map;
+		const loadPromise = (async () => {
+			const shard = await this.#fetchJson<TexoroPostingsShard>(shardMeta.file, this.#manifest?.indexVersion ?? null);
+			const map = new Map<number, Array<[number, number]>>(shard.postings);
+			this.#postingsShards.set(shardId, map);
+			return map;
+		})();
+		this.#postingsShardLoads.set(shardId, loadPromise);
+		try {
+			return await loadPromise;
+		} finally {
+			this.#postingsShardLoads.delete(shardId);
+		}
+	}
+
+	async #warmupVocabShards(budgetBytes: number): Promise<void> {
+		const shards = this.#vocabRoot?.shards ?? [];
+		if (shards.length === 0) return;
+		const selected = selectShardsForBudget(shards, budgetBytes);
+		if (selected.length === 0) return;
+		await Promise.all(selected.map((shard) => this.#loadVocabShard(shard.id)));
+	}
+
+	async #warmupPostingsShards(budgetBytes: number): Promise<void> {
+		const shards = this.#manifest?.shards.postings ?? [];
+		if (shards.length === 0) return;
+		const selected = selectShardsForBudget(shards, budgetBytes);
+		if (selected.length === 0) return;
+		await Promise.all(selected.map((shard) => this.#loadPostingsShard(shard.id)));
+	}
+
+	async #warmupKgramShards(budgetBytes: number): Promise<void> {
+		const shards = this.#kgramsRoot?.shards ?? [];
+		if (shards.length === 0) return;
+		const selected = selectShardsForBudget(shards, budgetBytes);
+		if (selected.length === 0) return;
+		await Promise.all(selected.map((shard) => this.#loadKgramShard(shard.id)));
 	}
 
 	#getAllTermIds(): number[] {

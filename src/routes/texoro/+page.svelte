@@ -137,6 +137,42 @@
 	let authorChartRef = $state<TexoroLiveChart | null>(null);
 	let genreChartRef = $state<TexoroLiveChart | null>(null);
 	let infoModalOpen = $state(false);
+	let initialWarmupQueued = false;
+	let wildcardWarmupQueued = false;
+	let initialWarmupTimer: number | null = null;
+	let wildcardWarmupTimer: number | null = null;
+
+	interface NavigatorConnectionLike {
+		saveData?: boolean;
+		effectiveType?: string;
+	}
+
+	const shouldSkipBackgroundWarmup = (): boolean => {
+		if (typeof navigator === 'undefined') return true;
+		const connection = (navigator as Navigator & { connection?: NavigatorConnectionLike }).connection;
+		if (!connection) return false;
+		if (connection.saveData) return true;
+		return connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g';
+	};
+
+	const queueInitialWarmup = (searchEngine: TexoroSearchEngine): void => {
+		if (typeof window === 'undefined' || initialWarmupQueued || shouldSkipBackgroundWarmup()) return;
+		initialWarmupQueued = true;
+		initialWarmupTimer = window.setTimeout(() => {
+			initialWarmupTimer = null;
+			void searchEngine.warmupForFirstSearch().catch(() => {});
+		}, 350);
+	};
+
+	const queueWildcardWarmup = (): void => {
+		if (typeof window === 'undefined' || wildcardWarmupQueued || shouldSkipBackgroundWarmup()) return;
+		if (!engine || !/[*?]/.test(query)) return;
+		wildcardWarmupQueued = true;
+		wildcardWarmupTimer = window.setTimeout(() => {
+			wildcardWarmupTimer = null;
+			void engine?.warmupWildcardSupport().catch(() => {});
+		}, 120);
+	};
 
 	const sumResultOccurrences = (result: SearchResult): number =>
 		result.matches.reduce((sum, match) => sum + (match.occurrences ?? 0), 0);
@@ -696,23 +732,39 @@
 		infoModalOpen = false;
 	};
 
-	onMount(async () => {
-		try {
-			const created = new TexoroSearchEngine();
-			await created.initialize();
-			engine = created;
-			isEngineReady = true;
-			if (created.manifest) {
-				indexStats = {
-					works: created.manifest.stats.works,
-					tokens: created.manifest.stats.tokens,
-					vocabSize: created.manifest.stats.vocabSize
-				};
-				preserveEnieForHighlight = created.manifest.normalization.preserveEnie;
+	$effect(() => {
+		queueWildcardWarmup();
+	});
+
+	onMount(() => {
+		void (async () => {
+			try {
+				const created = new TexoroSearchEngine();
+				await created.initialize();
+				engine = created;
+				isEngineReady = true;
+				if (created.manifest) {
+					indexStats = {
+						works: created.manifest.stats.works,
+						tokens: created.manifest.stats.tokens,
+						vocabSize: created.manifest.stats.vocabSize
+					};
+					preserveEnieForHighlight = created.manifest.normalization.preserveEnie;
+				}
+				queueInitialWarmup(created);
+			} catch (cause) {
+				searchError = cause instanceof Error ? cause.message : 'No se pudo inicializar TEXORO';
 			}
-		} catch (cause) {
-			searchError = cause instanceof Error ? cause.message : 'No se pudo inicializar TEXORO';
-		}
+		})();
+
+		return () => {
+			if (initialWarmupTimer !== null) {
+				window.clearTimeout(initialWarmupTimer);
+			}
+			if (wildcardWarmupTimer !== null) {
+				window.clearTimeout(wildcardWarmupTimer);
+			}
+		};
 	});
 
 	const submitSearch = async (event: SubmitEvent): Promise<void> => {

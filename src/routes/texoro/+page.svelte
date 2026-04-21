@@ -774,7 +774,7 @@
 		{#snippet stats()}
 			<HeroStatCard Icon={BookOpen} value={numberFormatter.format(indexStats?.works ?? data.stats.works)} label="Obras indexadas" desktopOffset="up" />
 
-			<HeroStatCard Icon={Feather} value={indexStats ? numberFormatter.format(indexStats.tokens) : '--'} label="Tokens indexados" desktopOffset="down" />
+			<HeroStatCard Icon={Feather} value={indexStats ? numberFormatter.format(indexStats.tokens) : '--'} label="Palabras indexadas" desktopOffset="down" />
 		{/snippet}
 	</FeatureHeroSection>
 

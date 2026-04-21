@@ -28,6 +28,13 @@ import {
 	type ComoCitarnosBibliographySection,
 	type ComoCitarnosBibliographyView,
 	type DistanceRow,
+	type EditorialItem,
+	type EditorialLink,
+	type EditorialSection,
+	type EditorialSectionPresentation,
+	type EditorialEntryStatus,
+	type EditorialEntryType,
+	type ImpactRelationTag,
 	type ImpactPageView,
 	type ImpactReferenceItem,
 	type ImpactReferenceLink,
@@ -212,6 +219,39 @@ interface ImpactSourceRaw {
 	sections?: unknown;
 }
 
+interface EditorialLinkRaw {
+	label?: unknown;
+	href?: unknown;
+	kind?: unknown;
+}
+
+interface EditorialItemRaw {
+	id?: unknown;
+	title?: unknown;
+	summary?: unknown;
+	type?: unknown;
+	status?: unknown;
+	year?: unknown;
+	people?: unknown;
+	organizations?: unknown;
+	tags?: unknown;
+	links?: unknown;
+	image?: unknown;
+}
+
+interface EditorialSectionRaw {
+	id?: unknown;
+	title?: unknown;
+	description?: unknown;
+	presentation?: unknown;
+	items?: unknown;
+}
+
+interface EditorialPageRaw {
+	intro?: unknown;
+	sections?: unknown;
+}
+
 interface BibliographySectionConfigNormalized {
 	id: string;
 	title: string;
@@ -326,33 +366,9 @@ const emptyImpactView = (): ImpactPageView => ({
 	sections: []
 });
 
-const buildEmptyCollaboratorSections = (): CollaboratorSection[] => [
-	{
-		id: 'team',
-		title: 'Equipo',
-		cards: []
-	},
-	{
-		id: 'collaborators',
-		title: 'Colaboradores',
-		cards: []
-	},
-	{
-		id: 'organizations',
-		title: 'Organizaciones colaboradoras',
-		cards: []
-	},
-	{
-		id: 'open-corpora',
-		title: 'Open corpora',
-		cards: []
-	}
-];
-
 const emptyCollaboratorsPageView = (): CollaboratorsPageView => ({
-	sections: buildEmptyCollaboratorSections(),
-	students: null,
-	acknowledgments: null
+	intro: '',
+	sections: []
 });
 
 const BIBLIO_URL_PATTERN = /https?:\/\/[^\s<>()]+/gi;
@@ -973,24 +989,156 @@ const parseBibliographySource = ():
 	}
 };
 
-const parseImpactSource = (): ImpactPageView | null => {
-	if (!existsSync(IMPACT_PATH)) return null;
+const EDITORIAL_PRESENTATIONS = new Set<EditorialSectionPresentation>([
+	'timeline',
+	'compact_list',
+	'featured_cards',
+	'media_cards',
+	'multi_column_list',
+	'callout'
+]);
+
+const EDITORIAL_STATUSES = new Set<EditorialEntryStatus>(['active', 'in_progress']);
+
+const EDITORIAL_TYPES = new Set<EditorialEntryType>([
+	'article',
+	'book',
+	'thesis',
+	'edition',
+	'news',
+	'conference',
+	'seminar',
+	'exhibition',
+	'award',
+	'project',
+	'other',
+	'person',
+	'organization',
+	'student',
+	'resource',
+	'acknowledgment'
+]);
+
+const IMPACT_TAGS = new Set<ImpactRelationTag>([
+	'colaboracion',
+	'mencion',
+	'cita',
+	'difusion',
+	'resultado',
+	'reconocimiento'
+]);
+
+const normalizeEditorialPresentation = (value: unknown): EditorialSectionPresentation =>
+	typeof value === 'string' && EDITORIAL_PRESENTATIONS.has(value as EditorialSectionPresentation)
+		? (value as EditorialSectionPresentation)
+		: 'compact_list';
+
+const normalizeEditorialStatus = (value: unknown): EditorialEntryStatus =>
+	typeof value === 'string' && EDITORIAL_STATUSES.has(value as EditorialEntryStatus)
+		? (value as EditorialEntryStatus)
+		: 'active';
+
+const normalizeEditorialType = (value: unknown): EditorialEntryType =>
+	typeof value === 'string' && EDITORIAL_TYPES.has(value as EditorialEntryType)
+		? (value as EditorialEntryType)
+		: 'other';
+
+const normalizeEditorialTags = (value: unknown): ImpactRelationTag[] =>
+	Array.isArray(value)
+		? value
+				.map((item) => (typeof item === 'string' ? item.trim() : ''))
+				.filter((item): item is ImpactRelationTag => IMPACT_TAGS.has(item as ImpactRelationTag))
+		: [];
+
+const normalizeEditorialLink = (value: unknown): EditorialLink | null => {
+	if (!value || typeof value !== 'object') return null;
+	const raw = value as EditorialLinkRaw;
+	const label = normalizeImpactText(raw.label);
+	const href = asFieldString(raw.href);
+	const kindRaw = asFieldString(raw.kind);
+	const kind = kindRaw === 'related' ? 'related' : 'primary';
+	if (!label || !href) return null;
+	return {
+		label,
+		href,
+		kind
+	};
+};
+
+const normalizeEditorialItem = (value: unknown, index: number, sectionId: string): EditorialItem | null => {
+	if (!value || typeof value !== 'object') return null;
+	const raw = value as EditorialItemRaw;
+	const title = normalizeImpactText(raw.title);
+	const summary = normalizeImpactText(raw.summary);
+	const itemId = asFieldString(raw.id) || `${sectionId}-${index + 1}`;
+	const people = asFieldStringList(raw.people);
+	const organizations = asFieldStringList(raw.organizations);
+	const linksRaw = Array.isArray(raw.links) ? raw.links : [];
+	const links = linksRaw
+		.map((link) => normalizeEditorialLink(link))
+		.filter((link): link is EditorialLink => Boolean(link));
+	const yearRaw =
+		typeof raw.year === 'number'
+			? raw.year
+			: typeof raw.year === 'string' && /^\d{4}$/.test(raw.year.trim())
+				? Number(raw.year.trim())
+				: null;
+
+	if (!title && !summary && people.length === 0 && organizations.length === 0 && links.length === 0) {
+		return null;
+	}
+
+	return {
+		id: itemId,
+		title: title || summary || itemId,
+		summary,
+		type: normalizeEditorialType(raw.type),
+		status: normalizeEditorialStatus(raw.status),
+		year: Number.isInteger(yearRaw) ? yearRaw : null,
+		people,
+		organizations,
+		tags: normalizeEditorialTags(raw.tags),
+		links,
+		image: asPublicImagePath(raw.image) ?? null
+	};
+};
+
+const normalizeEditorialSection = (value: unknown, index: number): EditorialSection | null => {
+	if (!value || typeof value !== 'object') return null;
+	const raw = value as EditorialSectionRaw;
+	const title = normalizeImpactText(raw.title);
+	if (!title) return null;
+
+	const sectionId = asFieldString(raw.id) || slugify(title) || `section-${index + 1}`;
+	const itemsRaw = Array.isArray(raw.items) ? raw.items : [];
+	const items = itemsRaw
+		.map((item, itemIndex) => normalizeEditorialItem(item, itemIndex, sectionId))
+		.filter((item): item is EditorialItem => Boolean(item));
+
+	return {
+		id: sectionId,
+		title,
+		description: normalizeImpactText(raw.description) || null,
+		presentation: normalizeEditorialPresentation(raw.presentation),
+		items
+	};
+};
+
+const parseEditorialPage = (filePath: string): { intro: string; sections: EditorialSection[] } | null => {
+	if (!existsSync(filePath)) return null;
 
 	try {
-		const raw = readFileSync(IMPACT_PATH, 'utf8');
-		const parsed = JSON.parse(raw) as ImpactSourceRaw;
+		const raw = readFileSync(filePath, 'utf8');
+		const parsed = JSON.parse(raw) as EditorialPageRaw;
 		if (!parsed || typeof parsed !== 'object') return null;
 
-		const intro = normalizeImpactText(parsed.intro);
 		const sectionsRaw = Array.isArray(parsed.sections) ? parsed.sections : [];
 		const sections = sectionsRaw
-			.map((section, index) => normalizeImpactSection(section, index))
-			.filter((section): section is ImpactReferenceSection => Boolean(section));
-
-		if (!intro && sections.length === 0) return null;
+			.map((section, index) => normalizeEditorialSection(section, index))
+			.filter((section): section is EditorialSection => Boolean(section));
 
 		return {
-			intro,
+			intro: normalizeImpactText(parsed.intro),
 			sections
 		};
 	} catch {
@@ -998,63 +1146,9 @@ const parseImpactSource = (): ImpactPageView | null => {
 	}
 };
 
-const normalizeCollaboratorsAcknowledgments = (value: unknown): CollaboratorsAcknowledgments | null => {
-	if (!value || typeof value !== 'object') return null;
-	const raw = value as CollaboratorsAcknowledgmentsRaw;
-	const text = asFieldString(raw.text) || undefined;
-	const organizations = asFieldStringList(raw.organizations);
-	if (!text && organizations.length === 0) return null;
-	return {
-		text,
-		organizations
-	};
-};
+const parseImpactSource = (): ImpactPageView | null => parseEditorialPage(IMPACT_PATH);
 
-const parseCollaboratorsSource = (): CollaboratorsPageView | null => {
-	if (!existsSync(COLLABORATORS_PATH)) return null;
-
-	try {
-		const raw = readFileSync(COLLABORATORS_PATH, 'utf8');
-		const parsed = JSON.parse(raw) as CollaboratorsFileRaw;
-		if (!parsed || typeof parsed !== 'object') return null;
-
-		const collaboratorsRaw =
-			parsed.collaborators && typeof parsed.collaborators === 'object'
-				? (parsed.collaborators as CollaboratorsGroupsRaw)
-				: undefined;
-
-		const sections: CollaboratorSection[] = [
-			{
-				id: 'team',
-				title: 'Equipo',
-				cards: normalizeCollaboratorCards(parsed.team)
-			},
-			{
-				id: 'collaborators',
-				title: 'Colaboradores',
-				cards: normalizeCollaboratorCards(collaboratorsRaw?.people)
-			},
-			{
-				id: 'organizations',
-				title: 'Organizaciones colaboradoras',
-				cards: normalizeCollaboratorCards(collaboratorsRaw?.organizations)
-			},
-			{
-				id: 'open-corpora',
-				title: 'Open corpora',
-				cards: normalizeCollaboratorCards(parsed.open_corpora)
-			}
-		];
-
-		return {
-			sections,
-			students: normalizeCollaboratorsStudents(parsed.students),
-			acknowledgments: normalizeCollaboratorsAcknowledgments(parsed.acknowledgments)
-		};
-	} catch {
-		return null;
-	}
-};
+const parseCollaboratorsSource = (): CollaboratorsPageView | null => parseEditorialPage(COLLABORATORS_PATH);
 
 const slugify = (value: string): string =>
 	value

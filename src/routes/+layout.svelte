@@ -23,9 +23,7 @@
 	/>
 </svelte:head>
 
-<div
-	class="flex min-h-screen flex-col bg-[radial-gradient(75rem_38rem_at_-10%_-15%,rgba(0,51,167,0.12),transparent_70%),radial-gradient(65rem_30rem_at_105%_-10%,rgba(105,0,93,0.13),transparent_70%),#f7f9fe] font-reading text-text-main"
->
+<div class="flex min-h-screen flex-col bg-white font-reading text-text-main">
 	<SiteHeader />
 	<main class="flex-1 py-8 lg:py-12">
 		<div class="mx-auto w-full max-w-7xl px-4 sm:px-5 lg:px-6">

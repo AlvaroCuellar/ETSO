@@ -1,7 +1,10 @@
 <script lang="ts">
+	import type { ComponentType } from 'svelte';
 	import { onMount } from 'svelte';
 	import ChevronLeft from 'lucide-svelte/icons/chevron-left';
 	import ChevronRight from 'lucide-svelte/icons/chevron-right';
+	import Globe from 'lucide-svelte/icons/globe';
+	import Mail from 'lucide-svelte/icons/mail';
 	import estilometriaHero from '$lib/assets/heros/estilometria.png';
 	import texoroHero from '$lib/assets/heros/texoro.png';
 	import transcripcionHero from '$lib/assets/heros/transcripcion.jpeg';
@@ -15,6 +18,20 @@
 		title: string;
 		description: string;
 		alt: string;
+	}
+
+	interface TeamMember {
+		title: string;
+		organizations: string[];
+		summary: string;
+		image: string;
+		links: TeamLink[];
+	}
+
+	interface TeamLink {
+		label: string;
+		href: string;
+		icon: ComponentType;
 	}
 
 	const slides: HomeSlide[] = [
@@ -35,6 +52,40 @@
 			title: 'Transcripción y modernización automática de impresos y manuscritos',
 			description: 'Consulta nuestros procesos de transcripción automática.',
 			alt: 'Proceso de transcripción automática de textos antiguos'
+		}
+	];
+
+	const teamMembers: TeamMember[] = [
+		{
+			title: 'Álvaro Cuéllar',
+			organizations: ['Universitat Autònoma de Barcelona'],
+			summary: '',
+			image: '/images/colaboradores/FotoAlvaroCuellar.png',
+			links: [
+				{
+					label: 'Correo de Álvaro Cuéllar',
+					href: 'mailto:alvaro.cuellar@uab.cat',
+					icon: Mail
+				},
+				{
+					label: 'Web de Álvaro Cuéllar',
+					href: 'https://www.alvarocuellar.com/',
+					icon: Globe
+				}
+			]
+		},
+		{
+			title: 'Germán Vega García-Luengos',
+			organizations: ['Universidad de Valladolid'],
+			summary: '',
+			image: '/images/colaboradores/FotoGermanVega.jpg',
+			links: [
+				{
+					label: 'Correo de Germán Vega García-Luengos',
+					href: 'mailto:german.vega@uva.es',
+					icon: Mail
+				}
+			]
 		}
 	];
 
@@ -113,7 +164,7 @@
 			{#each slides as slide}
 				<article class="relative h-full min-w-full">
 					<img src={slide.image} alt={slide.alt} class="h-full w-full object-cover" loading="eager" />
-					<div class="absolute inset-0 bg-[linear-gradient(110deg,rgba(8,21,52,0.75)_18%,rgba(8,21,52,0.45)_55%,rgba(8,21,52,0.18)_100%)]"></div>
+					<div class="absolute inset-0 bg-[rgba(8,21,52,0.48)]"></div>
 
 					<div class="absolute inset-0 flex items-end pb-12 md:items-center md:pb-0">
 						<div class="mx-auto w-full max-w-7xl px-4 sm:px-5 lg:px-6">
@@ -131,25 +182,23 @@
 			{/each}
 		</div>
 
-		<div class="pointer-events-none absolute inset-0 mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-5 lg:px-6">
-			<button
-				type="button"
-				class="pointer-events-auto inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/45 bg-black/20 text-white opacity-0 transition duration-200 hover:bg-black/32 group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-				onclick={goToPrevious}
-				aria-label="Ver diapositiva anterior"
-			>
-				<ChevronLeft class="h-5 w-5" aria-hidden="true" />
-			</button>
+		<button
+			type="button"
+			class="pointer-events-auto absolute top-1/2 left-[max(0.75rem,env(safe-area-inset-left))] z-10 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/45 bg-black/20 text-white opacity-0 transition duration-200 hover:bg-black/32 group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:left-[max(1rem,env(safe-area-inset-left))] lg:left-[max(1.25rem,env(safe-area-inset-left))]"
+			onclick={goToPrevious}
+			aria-label="Ver diapositiva anterior"
+		>
+			<ChevronLeft class="h-5 w-5" aria-hidden="true" />
+		</button>
 
-			<button
-				type="button"
-				class="pointer-events-auto inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/45 bg-black/20 text-white opacity-0 transition duration-200 hover:bg-black/32 group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-				onclick={goToNext}
-				aria-label="Ver diapositiva siguiente"
-			>
-				<ChevronRight class="h-5 w-5" aria-hidden="true" />
-			</button>
-		</div>
+		<button
+			type="button"
+			class="pointer-events-auto absolute top-1/2 right-[max(0.75rem,env(safe-area-inset-right))] z-10 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/45 bg-black/20 text-white opacity-0 transition duration-200 hover:bg-black/32 group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:right-[max(1rem,env(safe-area-inset-right))] lg:right-[max(1.25rem,env(safe-area-inset-right))]"
+			onclick={goToNext}
+			aria-label="Ver diapositiva siguiente"
+		>
+			<ChevronRight class="h-5 w-5" aria-hidden="true" />
+		</button>
 
 		<div class="absolute bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-2">
 			{#each slides as _, index}
@@ -208,6 +257,9 @@
 <section class="mx-auto mt-6 w-full max-w-7xl p-5 md:p-6 lg:p-8">
 	<div class="grid items-stretch gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,35%)] lg:gap-8">
 		<div class="grid gap-4 rounded-card bg-brand-blue px-5 py-5 text-white shadow-soft md:px-6 md:py-6 lg:px-8 lg:py-8">
+			<p class="m-0 font-ui text-[0.78rem] font-semibold uppercase tracking-[0.05em] text-white/85">
+				Humanidades digitales
+			</p>
 			<p class="m-0 font-ui text-[1.18rem] font-semibold leading-[1.35]">
 				Estilometría, Inteligencia Artificial, Transcripción automática (HTR)...
 			</p>
@@ -241,7 +293,7 @@
 
 <section
 	class="relative left-1/2 right-1/2 mt-8 w-screen -translate-x-1/2 overflow-hidden bg-cover bg-center bg-no-repeat"
-	style={`background-image: linear-gradient(120deg, rgba(9, 56, 142, 0.52), rgba(3, 34, 96, 0.3)), url('${fondoEscritura}')`}
+	style={`background-image: linear-gradient(rgba(0, 38, 129, 0.52), rgba(0, 38, 129, 0.52)), url('${fondoEscritura}')`}
 >
 	<div class="mx-auto w-full max-w-7xl px-4 py-14 text-center text-white sm:px-5 md:py-16 lg:px-6 lg:py-20">
 		<div class="mx-auto max-w-5xl">
@@ -325,6 +377,56 @@
 					Contacta con nosotros
 				</a>
 			</div>
+		</div>
+	</div>
+</section>
+
+<section class="mx-auto mt-8 w-full max-w-7xl p-5 md:p-6 lg:p-8">
+		<div class="grid gap-4">
+			<div class="grid gap-1 text-center">
+				<h2 class="m-0 font-ui text-[clamp(1.4rem,2.6vw,2rem)] font-semibold leading-[1.2] text-brand-blue-dark">
+					ETSO es un proyecto de
+				</h2>
+			</div>
+
+		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+			{#each teamMembers as member}
+				<article class="group overflow-hidden rounded-card border border-border bg-surface shadow-soft transition md:mx-auto md:w-full md:max-w-[24rem]">
+					<div class="relative">
+						<img src={member.image} alt={`Imagen de ${member.title}`} class="block h-auto w-full" loading="lazy" />
+
+						{#if member.links.length > 0}
+							<div
+								class="pointer-events-none absolute inset-0 bg-[rgba(248,248,250,0.42)] opacity-0 transition duration-200 group-hover:opacity-100 group-focus-within:opacity-100"
+							></div>
+							<div
+								class="absolute inset-x-0 bottom-4 flex justify-center gap-3 opacity-0 transition duration-200 group-hover:opacity-100 group-focus-within:opacity-100"
+							>
+								{#each member.links as link}
+									<a
+										href={link.href}
+										target={link.href.startsWith('http') ? '_blank' : undefined}
+										rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+										aria-label={link.label}
+										title={link.label}
+										class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/60 bg-white/92 text-text-accent-purple no-underline shadow-soft transition hover:bg-white hover:text-brand-purple-dark hover:no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+									>
+										<link.icon class="h-[1.05rem] w-[1.05rem]" aria-hidden="true" />
+									</a>
+								{/each}
+							</div>
+						{/if}
+					</div>
+
+					<div class="grid gap-2 p-4">
+						<h3 class="m-0 font-ui text-[1rem] font-semibold leading-[1.3] text-brand-blue-dark">{member.title}</h3>
+						<p class="m-0 text-[0.92rem] leading-[1.55] text-text-soft">{member.organizations.join(' | ')}</p>
+						{#if member.summary}
+							<p class="m-0 text-[0.96rem] leading-[1.62] text-text-main">{member.summary}</p>
+						{/if}
+					</div>
+				</article>
+			{/each}
 		</div>
 	</div>
 </section>

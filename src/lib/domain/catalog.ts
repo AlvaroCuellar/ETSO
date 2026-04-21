@@ -117,6 +117,74 @@ export interface ComoCitarnosBibliographyView {
 	sections: ComoCitarnosBibliographySection[];
 }
 
+export type EditorialSectionPresentation =
+	| 'timeline'
+	| 'compact_list'
+	| 'featured_cards'
+	| 'media_cards'
+	| 'multi_column_list'
+	| 'callout';
+
+export type EditorialEntryStatus = 'active' | 'in_progress';
+
+export type ImpactReferenceType =
+	| 'article'
+	| 'book'
+	| 'thesis'
+	| 'edition'
+	| 'news'
+	| 'conference'
+	| 'seminar'
+	| 'exhibition'
+	| 'award'
+	| 'project'
+	| 'other';
+
+export type CollaboratorEntryType =
+	| 'person'
+	| 'organization'
+	| 'student'
+	| 'resource'
+	| 'acknowledgment';
+
+export type EditorialEntryType = ImpactReferenceType | CollaboratorEntryType;
+
+export type ImpactRelationTag =
+	| 'colaboracion'
+	| 'mencion'
+	| 'cita'
+	| 'difusion'
+	| 'resultado'
+	| 'reconocimiento';
+
+export interface EditorialLink {
+	label: string;
+	href: string;
+	kind: 'primary' | 'related';
+}
+
+export interface EditorialItem {
+	id: string;
+	title: string;
+	summary: string;
+	type: EditorialEntryType;
+	status: EditorialEntryStatus;
+	year: number | null;
+	people: string[];
+	organizations: string[];
+	tags: ImpactRelationTag[];
+	links: EditorialLink[];
+	image: string | null;
+}
+
+export interface EditorialSection {
+	id: string;
+	title: string;
+	description: string | null;
+	presentation: EditorialSectionPresentation;
+	items: EditorialItem[];
+}
+
 export interface CollaboratorCard {
 	name: string;
 	affiliations: string[];
@@ -143,9 +211,8 @@ export interface CollaboratorsStudentsView {
 }
 
 export interface CollaboratorsPageView {
-	sections: CollaboratorSection[];
-	students: CollaboratorsStudentsView | null;
-	acknowledgments: CollaboratorsAcknowledgments | null;
+	intro: string;
+	sections: EditorialSection[];
 }
 
 export interface ImpactReferenceLink {
@@ -169,7 +236,7 @@ export interface ImpactReferenceSection {
 
 export interface ImpactPageView {
 	intro: string;
-	sections: ImpactReferenceSection[];
+	sections: EditorialSection[];
 }
 
 export interface CatalogBicuve {

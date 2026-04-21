@@ -32,6 +32,10 @@
 	let resizeObserver: ResizeObserver | null = null;
 	let echartsModule: typeof import('echarts') | null = null;
 
+	const brandBlueDark = '#002681';
+	const textSoft = '#4f5562';
+	const borderAccentBlue = '#c9d9f3';
+
 	const decimalFormatter = new Intl.NumberFormat('es-ES', { maximumFractionDigits: 1 });
 
 	const truncateLabel = (value: string, maxLength = 34): string =>
@@ -99,12 +103,12 @@
 				itemWidth: 11,
 				itemHeight: 11,
 				textStyle: {
-					color: '#284d7b',
+					color: brandBlueDark,
 					fontFamily: 'Roboto',
 					fontSize: 11.5
 				},
 				pageTextStyle: {
-					color: '#4f6686',
+					color: textSoft,
 					fontFamily: 'Roboto'
 				},
 				formatter: (name: string): string => truncateLabel(name, 22)
@@ -112,7 +116,7 @@
 			tooltip: {
 				trigger: 'axis',
 				axisPointer: { type: 'shadow' },
-				backgroundColor: 'rgba(16,39,71,0.94)',
+				backgroundColor: 'rgba(0,38,129,0.94)',
 				borderWidth: 0,
 				textStyle: { color: '#f4f8ff', fontFamily: 'Roboto' },
 				formatter: (params: unknown): string => tooltipFormatter(params)
@@ -122,14 +126,14 @@
 				max: shareMetric ? 100 : undefined,
 				minInterval: shareMetric ? 5 : 0.1,
 				axisLabel: {
-					color: '#5a7395',
+					color: textSoft,
 					fontFamily: 'Roboto',
 					fontSize: 11,
 					formatter: (value: number): string => xAxisLabel(value)
 				},
 				splitLine: {
 					lineStyle: {
-						color: '#e5ecf7'
+						color: borderAccentBlue
 					}
 				}
 			},
@@ -140,7 +144,7 @@
 				axisTick: { show: false },
 				axisLine: { show: false },
 				axisLabel: {
-					color: '#264a78',
+					color: brandBlueDark,
 					fontFamily: 'Roboto',
 					fontSize: 12,
 					margin: 12
@@ -220,7 +224,7 @@
 
 <div
 	bind:this={host}
-	class={`w-full rounded-[9px] bg-[#ffffff] ${className}`.trim()}
+	class={`w-full rounded-[9px] ${className}`.trim()}
 	style={`height:${height}px;`}
 	aria-label="Grafico comparativo por términos"
 ></div>

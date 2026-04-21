@@ -3,6 +3,8 @@
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import AttributionView from '$lib/components/ui/AttributionView.svelte';
 	import AppButton from '$lib/components/ui/AppButton.svelte';
+	import FeatureHeroSection from '$lib/components/ui/FeatureHeroSection.svelte';
+	import HeroStatCard from '$lib/components/ui/HeroStatCard.svelte';
 	import ChartModeToggle from '$lib/components/search/ChartModeToggle.svelte';
 	import ComparisonMetricToggle from '$lib/components/search/ComparisonMetricToggle.svelte';
 	import TexoroLiveChart from '$lib/components/search/TexoroLiveChart.svelte';
@@ -113,6 +115,10 @@
 	type ComparisonMetric = 'frequency10k' | 'occurrences' | 'share';
 
 	const chartPalette = ['#1f5fbf', '#2f8fca', '#3aa6a0', '#59a55c', '#d38f38', '#9a69c6', '#c45e92'];
+	const exportSurface = '#edf2ff';
+	const exportTitle = '#002681';
+	const exportText = '#4f5562';
+	const exportTextStrong = '#243b63';
 
 	let engine = $state<TexoroSearchEngine | null>(null);
 	let isEngineReady = $state(false);
@@ -482,17 +488,17 @@
 			ctx.fillStyle = '#ffffff';
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-			ctx.fillStyle = '#f6f9fe';
+			ctx.fillStyle = exportSurface;
 			ctx.fillRect(56, 176, 1568, 760);
 
 			const exportTitle = chartTitleWithQuery(chartKey);
-			ctx.fillStyle = '#163860';
+			ctx.fillStyle = exportTitle;
 			ctx.font = '700 44px Roboto, sans-serif';
 			const subtitleTop = drawWrappedText(ctx, exportTitle, 64, 84, 1554, 50) + 4;
 
 			const summaryTop = subtitleTop + 6;
 
-			ctx.fillStyle = '#355682';
+			ctx.fillStyle = exportTextStrong;
 			ctx.font = '600 22px Roboto, sans-serif';
 			ctx.fillText(
 				`Total de concurrencias en gráfico: ${decimalFormatter.format(chart.total)} · Modo: ${
@@ -526,7 +532,7 @@
 				`Resultados: ${searchExecution.textsWithOccurrences} textos, ${decimalFormatter.format(searchExecution.totalOccurrences)} concurrencias. ` +
 				`Índice: ${indexVersion}. Fuente: ${sourceUrl}.`;
 
-			ctx.fillStyle = '#2f4669';
+			ctx.fillStyle = exportText;
 			ctx.font = '500 18px Roboto, sans-serif';
 			drawWrappedText(ctx, citation, 64, 986, 1554, 28);
 
@@ -741,70 +747,40 @@
 <div class="grid gap-6">
 	<Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'TEXORO' }]} />
 
-	<section
-		class="grid items-start gap-[2.1rem] rounded-[14px] bg-[#ececf0] p-[clamp(1.2rem,2.4vw,2rem)] [background-repeat:no-repeat,no-repeat] [background-size:auto,min(130vw,720px)_auto] [background-position:center,right_-120px_bottom_-35px] md:[background-size:auto,min(90vw,680px)_auto] md:[background-position:center,right_-80px_bottom_-58px] min-[1201px]:grid-cols-[minmax(0,1.9fr)_minmax(320px,1fr)] min-[1201px]:[background-size:auto,min(60vw,860px)_auto] min-[1201px]:[background-position:center,right_-56px_bottom_-66px]"
-		style={`background-image: linear-gradient(100deg, rgba(239,240,244,0.95) 0%, rgba(236,237,242,0.88) 46%, rgba(236,237,242,0.52) 70%, rgba(236,237,242,0.22) 100%), url('${fondoLogo}')`}
+	<FeatureHeroSection
+		eyebrow="Exploración textual"
+		title="TEXORO"
+		subtitle="Búsquedas textuales en 3000 obras del Siglo de Oro"
+		backgroundImage={fondoLogo}
+		statsAriaLabel="Indicadores de TEXORO"
 	>
-		<div class="flex flex-col">
-			<h1 class="mb-0 mt-0 font-ui text-[clamp(2rem,4.3vw,2.85rem)] leading-[1.05] font-bold text-[#0033a7]">TEXORO</h1>
-			<p class="mt-[1.05rem] mb-0 max-w-none font-ui text-[clamp(1.28rem,2.2vw,1.78rem)] leading-[1.22] font-semibold text-[#003aa5] min-[1201px]:max-w-[25ch]">
-				Búsquedas textuales en 3000 obras del Siglo de Oro
-			</p>
-			<p class="mt-[1.8rem] mb-0 max-w-[64ch] font-['Lora',serif] text-[1.01rem] leading-[1.62] text-[#17293f]">
-				TEXORO es una plataforma de búsqueda textual que permite consultar de forma unificada una amplia colección de textos del Siglo de Oro. El sistema ofrece acceso directo a obras teatrales y otros textos literarios procedentes de distintas tradiciones editoriales y documentales, con el objetivo de facilitar la exploración, localización y análisis del patrimonio textual aurisecular.
-			</p>
-			<p class="mt-[1.25rem] mb-0 max-w-[64ch] font-['Lora',serif] text-[1.01rem] leading-[1.62] text-[#17293f]">
-				La búsqueda funciona en dos fases: primero recupera obras candidatas con índices ligeros; después verifica frase exacta y patrones complejos sobre los TXT candidatos.
-			</p>
-			<div class="mt-[1.25rem]">
-				<AppButton
-					type="button"
-					variant="secondary"
-					className="!h-[38px] !rounded-[10px] !px-4 !py-1.5 font-['Roboto',sans-serif] text-[0.83rem] font-semibold"
-					onclick={() => (infoModalOpen = true)}
-				>
-					Más info
-				</AppButton>
-			</div>
+		<p class="mt-[1.8rem] mb-0 max-w-[64ch] font-['Lora',serif] text-[1.01rem] leading-[1.62] text-text-main">
+			TEXORO es una plataforma de búsqueda textual que permite consultar de forma unificada una amplia colección de textos del Siglo de Oro. El sistema ofrece acceso directo a obras teatrales y otros textos literarios procedentes de distintas tradiciones editoriales y documentales, con el objetivo de facilitar la exploración, localización y análisis del patrimonio textual aurisecular.
+		</p>
+		<p class="mt-[1.25rem] mb-0 max-w-[64ch] font-['Lora',serif] text-[1.01rem] leading-[1.62] text-text-main">
+			La búsqueda funciona en dos fases: primero recupera obras candidatas con índices ligeros; después verifica frase exacta y patrones complejos sobre los TXT candidatos.
+		</p>
+		<div class="mt-[1.25rem]">
+			<AppButton
+				type="button"
+				variant="secondary"
+				className="!h-[38px] !rounded-[10px] !px-4 !py-1.5 font-['Roboto',sans-serif] text-[0.83rem] font-semibold"
+				onclick={() => (infoModalOpen = true)}
+			>
+				Más info
+			</AppButton>
 		</div>
 
-		<div
-			class="grid w-full max-w-[420px] grid-cols-1 content-center items-end gap-[1.05rem] self-center justify-self-center md:max-w-[520px] md:grid-cols-2 md:justify-self-start min-[1201px]:max-w-[420px] min-[1201px]:justify-self-center"
-			aria-label="Indicadores de TEXORO"
-		>
-			<article
-				class="flex min-h-[170px] flex-col items-start gap-[0.65rem] rounded-[10px] bg-white px-[1.1rem] pb-[1.1rem] pt-[1.35rem] shadow-[0_8px_20px_rgba(25,37,77,0.08)] lg:-translate-y-[14px]"
-			>
-				<div class="inline-flex h-[2.2rem] w-[2.2rem] items-center justify-center text-[#70006b]" aria-hidden="true">
-					<BookOpen class="h-[1.9rem] w-[1.9rem] stroke-[2.2]" />
-				</div>
-				<div>
-					<div class="text-[clamp(2rem,3vw,2.35rem)] leading-none font-bold text-[#0033a7]">
-						{numberFormatter.format(indexStats?.works ?? data.stats.works)}
-					</div>
-					<div class="font-['Roboto'] text-[1.04rem] font-medium text-[#1f2f45]">Obras indexadas</div>
-				</div>
-			</article>
+		{#snippet stats()}
+			<HeroStatCard Icon={BookOpen} value={numberFormatter.format(indexStats?.works ?? data.stats.works)} label="Obras indexadas" desktopOffset="up" />
 
-			<article
-				class="flex min-h-[170px] flex-col items-start gap-[0.65rem] rounded-[10px] bg-white px-[1.1rem] pb-[1.1rem] pt-[1.35rem] shadow-[0_8px_20px_rgba(25,37,77,0.08)] lg:translate-y-[14px]"
-			>
-				<div class="inline-flex h-[2.2rem] w-[2.2rem] items-center justify-center text-[#70006b]" aria-hidden="true">
-					<Feather class="h-[1.9rem] w-[1.9rem] stroke-[2.2]" />
-				</div>
-				<div>
-					<div class="text-[clamp(2rem,3vw,2.35rem)] leading-none font-bold text-[#0033a7]">
-						{indexStats ? numberFormatter.format(indexStats.tokens) : '--'}
-					</div>
-					<div class="font-['Roboto'] text-[1.04rem] font-medium text-[#1f2f45]">Tokens indexados</div>
-				</div>
-			</article>
-		</div>
-	</section>
+			<HeroStatCard Icon={Feather} value={indexStats ? numberFormatter.format(indexStats.tokens) : '--'} label="Tokens indexados" desktopOffset="down" />
+		{/snippet}
+	</FeatureHeroSection>
 
 	<section class="rounded-[14px] p-5">
-		<h2 class="m-0 font-['Roboto',sans-serif] text-[1.45rem] font-bold text-[#1f3f7a]">Buscar en TEXORO</h2>
-		<p class="mt-2 mb-0 text-[0.98rem] text-[#38516f]">
+		<h2 class="m-0 font-['Roboto',sans-serif] text-[1.45rem] font-bold text-brand-blue-dark">Buscar en TEXORO</h2>
+		<p class="mt-2 mb-0 text-[0.98rem] text-text-soft">
 			Consulta palabras, frases con comillas, comodines (`*`, `?`) y combinaciones con AND/OR.
 		</p>
 
@@ -814,9 +790,9 @@
 					type="search"
 					bind:value={query}
 					placeholder='Ejemplos: amor | "amor constante" | am* OR "amor const*"'
-					class="h-[46px] w-full appearance-none rounded-[10px] border border-[#ddd] bg-white px-11 py-2 text-[15px] text-[#1a3356] outline-none shadow-none transition focus:border-[#5a9fd4] focus:shadow-none focus:outline-none focus-visible:border-[#5a9fd4] focus-visible:outline-none"
+					class="h-[46px] w-full appearance-none rounded-[10px] border border-border bg-white px-11 py-2 text-[15px] text-text-main outline-none shadow-none transition focus:border-brand-blue/35 focus:shadow-none focus:outline-none focus-visible:border-brand-blue/35 focus-visible:outline-none"
 				/>
-				<span class="pointer-events-none absolute inset-y-0 left-3 inline-flex items-center text-[#4a5f7e]">
+				<span class="pointer-events-none absolute inset-y-0 left-3 inline-flex items-center text-text-accent-purple">
 					<Search class="h-4.5 w-4.5" />
 				</span>
 			</div>
@@ -841,50 +817,50 @@
 
 		{#if searchExecution}
 			<div class="mt-4 grid gap-4">
-				<div class="flex flex-wrap items-center gap-2 font-['Roboto',sans-serif] text-[0.9rem] text-[#335275]">
-					<span class="rounded-full bg-[#eef3fb] px-3 py-1">
+				<div class="flex flex-wrap items-center gap-2 font-['Roboto',sans-serif] text-[0.9rem] text-brand-blue-dark">
+					<span class="rounded-full bg-surface-accent-blue px-3 py-1">
 						{numberFormatter.format(searchExecution.textsWithOccurrences)} textos con concurrencias
 					</span>
-					<span class="rounded-full bg-[#eef3fb] px-3 py-1">
+					<span class="rounded-full bg-surface-accent-blue px-3 py-1">
 						{numberFormatter.format(searchExecution.totalOccurrences)} concurrencias totales
 					</span>
-					<span class="rounded-full bg-[#eef3fb] px-3 py-1">
+					<span class="rounded-full bg-surface-accent-blue px-3 py-1">
 						Mostrando {numberFormatter.format(searchExecution.results.length)}
 					</span>
-					<span class="rounded-full bg-[#eef3fb] px-3 py-1">{searchExecution.elapsedMs} ms</span>
+					<span class="rounded-full bg-surface-accent-purple px-3 py-1 text-text-accent-purple">{searchExecution.elapsedMs} ms</span>
 				</div>
 
 				{#if searchExecution.parsed.warnings.length > 0}
-					<p class="m-0 rounded-[9px] border border-[#d4d9e2] bg-[#f8f9fb] px-3 py-2 text-[0.88rem] text-[#4c607d]">
+					<p class="m-0 rounded-[9px] border border-border bg-surface px-3 py-2 text-[0.88rem] text-text-soft">
 						{searchExecution.parsed.warnings.join(' · ')}
 					</p>
 				{/if}
 
 				{#if liveCharts}
-					<div class="grid gap-3 rounded-[12px] border border-[#d5deea] bg-[#f9fbff] p-3">
+					<div class="grid gap-3 rounded-[12px] border border-border-accent-blue bg-white p-3">
 						<div class="flex flex-wrap items-start justify-between gap-3">
 							<div>
-								<h3 class="m-0 font-['Roboto',sans-serif] text-[1rem] font-semibold text-[#173f72]">
+								<h3 class="m-0 font-['Roboto',sans-serif] text-[1rem] font-semibold text-brand-blue-dark">
 									Distribución general de concurrencias
 								</h3>
-								<p class="mt-1 mb-0 text-[0.78rem] text-[#3d5f86]">
+								<p class="mt-1 mb-0 text-[0.78rem] text-text-soft">
 									{queryLabelNoun}:
-									<span class="font-['Roboto',sans-serif] font-semibold text-[#0d3f91]">{queryTermsLabel}</span>
+									<span class="font-['Roboto',sans-serif] font-semibold text-brand-blue">{queryTermsLabel}</span>
 								</p>
 							</div>
 							<ChartModeToggle value={chartMode} onchange={(value) => (chartMode = value)} />
 						</div>
 
 						<div class="grid gap-3 md:grid-cols-2">
-							<article class="rounded-[11px] bg-white px-4 py-3 shadow-[0_6px_16px_rgba(25,46,80,0.07)]">
+							<article class="rounded-[11px] border border-border-accent-blue bg-white px-4 py-3 shadow-[0_6px_16px_rgba(25,46,80,0.07)]">
 								<div>
-									<h3 class="m-0 font-['Roboto',sans-serif] text-[1rem] font-semibold text-[#173f72]">
+									<h3 class="m-0 font-['Roboto',sans-serif] text-[1rem] font-semibold text-brand-blue-dark">
 										{chartTitles.author}
 									</h3>
 								</div>
 
 								{#if liveCharts.author.rows.length === 0}
-									<p class="mt-2 mb-0 text-[0.88rem] text-[#5f7694]">{chartEmptyMessages.author}</p>
+									<p class="mt-2 mb-0 text-[0.88rem] text-text-soft">{chartEmptyMessages.author}</p>
 								{:else}
 									<TexoroLiveChart
 										bind:this={authorChartRef}
@@ -909,15 +885,15 @@
 								</div>
 							</article>
 
-							<article class="rounded-[11px] bg-white px-4 py-3 shadow-[0_6px_16px_rgba(25,46,80,0.07)]">
+							<article class="rounded-[11px] border border-border-accent-blue bg-white px-4 py-3 shadow-[0_6px_16px_rgba(25,46,80,0.07)]">
 								<div>
-									<h3 class="m-0 font-['Roboto',sans-serif] text-[1rem] font-semibold text-[#173f72]">
+									<h3 class="m-0 font-['Roboto',sans-serif] text-[1rem] font-semibold text-brand-blue-dark">
 										{chartTitles.genre}
 									</h3>
 								</div>
 
 								{#if liveCharts.genre.rows.length === 0}
-									<p class="mt-2 mb-0 text-[0.88rem] text-[#5f7694]">{chartEmptyMessages.genre}</p>
+									<p class="mt-2 mb-0 text-[0.88rem] text-text-soft">{chartEmptyMessages.genre}</p>
 								{:else}
 									<TexoroLiveChart
 										bind:this={genreChartRef}
@@ -946,19 +922,19 @@
 				{/if}
 
 				{#if multiTermComparison}
-					<div class="grid gap-3 rounded-[12px] border border-[#d5deea] bg-[#f9fbff] p-3">
+					<div class="grid gap-3 rounded-[12px] border border-border-accent-blue bg-surface p-3">
 						<div class="flex flex-wrap items-start justify-between gap-3">
 							<div>
-								<h3 class="m-0 font-['Roboto',sans-serif] text-[1rem] font-semibold text-[#173f72]">
+								<h3 class="m-0 font-['Roboto',sans-serif] text-[1rem] font-semibold text-brand-blue-dark">
 									Comparativa por términos
 								</h3>
-								<p class="mt-1 mb-0 text-[0.78rem] text-[#3d5f86]">
+								<p class="mt-1 mb-0 text-[0.78rem] text-text-soft">
 									{queryLabelNoun}:
-									<span class="font-['Roboto',sans-serif] font-semibold text-[#0d3f91]">{queryTermsLabel}</span>
+									<span class="font-['Roboto',sans-serif] font-semibold text-brand-blue">{queryTermsLabel}</span>
 								</p>
-								<p class="mt-1 mb-0 text-[0.78rem] text-[#4a6384]">Métrica activa: {comparisonMetricLabel}</p>
+								<p class="mt-1 mb-0 text-[0.78rem] text-text-accent-purple">Métrica activa: {comparisonMetricLabel}</p>
 								{#if comparisonTermsOverflow}
-									<p class="mt-1 mb-0 text-[0.74rem] text-[#607896]">Se muestran los primeros 6 términos de la consulta.</p>
+									<p class="mt-1 mb-0 text-[0.74rem] text-text-soft">Se muestran los primeros 6 términos de la consulta.</p>
 								{/if}
 							</div>
 							<ComparisonMetricToggle
@@ -968,12 +944,12 @@
 						</div>
 
 						<div class="grid gap-3 md:grid-cols-2">
-							<article class="rounded-[11px] bg-white px-4 py-3 shadow-[0_6px_16px_rgba(25,46,80,0.07)]">
-								<h4 class="m-0 font-['Roboto',sans-serif] text-[0.92rem] font-semibold text-[#173f72]">
+							<article class="rounded-[11px] border border-border-accent-blue bg-white px-4 py-3 shadow-[0_6px_16px_rgba(25,46,80,0.07)]">
+								<h4 class="m-0 font-['Roboto',sans-serif] text-[0.92rem] font-semibold text-brand-blue-dark">
 									Uso de términos por autor
 								</h4>
 								{#if multiTermComparison.author.rows.length === 0}
-									<p class="mt-2 mb-0 text-[0.88rem] text-[#5f7694]">
+									<p class="mt-2 mb-0 text-[0.88rem] text-text-soft">
 										No hay datos suficientes de autoría para comparar términos.
 									</p>
 								{:else}
@@ -987,12 +963,12 @@
 								{/if}
 							</article>
 
-							<article class="rounded-[11px] bg-white px-4 py-3 shadow-[0_6px_16px_rgba(25,46,80,0.07)]">
-								<h4 class="m-0 font-['Roboto',sans-serif] text-[0.92rem] font-semibold text-[#173f72]">
+							<article class="rounded-[11px] border border-border-accent-blue bg-white px-4 py-3 shadow-[0_6px_16px_rgba(25,46,80,0.07)]">
+								<h4 class="m-0 font-['Roboto',sans-serif] text-[0.92rem] font-semibold text-brand-blue-dark">
 									Uso de términos por género
 								</h4>
 								{#if multiTermComparison.genre.rows.length === 0}
-									<p class="mt-2 mb-0 text-[0.88rem] text-[#5f7694]">
+									<p class="mt-2 mb-0 text-[0.88rem] text-text-soft">
 										No hay datos suficientes de género para comparar términos.
 									</p>
 								{:else}
@@ -1010,18 +986,18 @@
 				{/if}
 
 				{#if searchExecution.results.length === 0}
-					<p class="m-0 text-[0.96rem] text-[#526887]">No se encontraron coincidencias.</p>
+					<p class="m-0 text-[0.96rem] text-text-soft">No se encontraron coincidencias.</p>
 				{:else}
 					<ul class="m-0 grid list-none gap-3 p-0">
 						{#each searchExecution.results as result}
 							{@const assignments = buildMatchAssignments(result.matches)}
-							<li class="rounded-[11px] bg-white px-4 py-3 shadow-[0_6px_16px_rgba(25,46,80,0.07)]">
+							<li class="rounded-[11px] border border-border-accent-blue bg-white px-4 py-3 shadow-[0_6px_16px_rgba(25,46,80,0.07)]">
 								<div class="flex flex-wrap items-start justify-between gap-3">
 									<div class="min-w-0">
-										<h3 class="m-0 font-['Roboto',sans-serif] text-[1.03rem] font-semibold leading-[1.25] text-[#143660]">
+										<h3 class="m-0 font-['Roboto',sans-serif] text-[1.03rem] font-semibold leading-[1.25] text-brand-blue-dark">
 											{#if result.meta}
-												<a href={`/obras/${result.meta.slug}`} class="text-[#0d3f91] no-underline hover:text-[#073a8f]">{result.meta.title}</a>
-												<span class="ml-1 text-[0.86rem] font-medium text-[#597290]">
+												<a href={`/obras/${result.meta.slug}`} class="text-brand-blue no-underline hover:text-brand-blue-dark">{result.meta.title}</a>
+												<span class="ml-1 text-[0.86rem] font-medium text-text-soft">
 													· {resultAuthorLabel(result)}
 												</span>
 											{:else}
@@ -1029,13 +1005,13 @@
 											{/if}
 										</h3>
 									</div>
-									<span class="shrink-0 rounded-full bg-[#eaf0fb] px-2.5 py-1 text-[0.8rem] font-semibold text-[#264a7b]">
+									<span class="shrink-0 rounded-full bg-surface-accent-purple px-2.5 py-1 text-[0.8rem] font-semibold text-text-accent-purple">
 										score {result.score.toFixed(1)}
 									</span>
 								</div>
 
 								{#if result.snippet}
-									<p class="mt-2 mb-0 text-[0.95rem] leading-[1.5] text-[#243a59]">
+									<p class="mt-2 mb-0 text-[0.95rem] leading-[1.5] text-text-main">
 										{@html highlightSnippet(result.snippet, assignments)}
 									</p>
 								{/if}
@@ -1064,14 +1040,14 @@
 </div>
 
 {#if occurrenceModal}
-	<div class="fixed inset-0 z-40 flex items-center justify-center bg-[#112742]/55 px-3 py-4">
-		<div class="max-h-[88vh] w-full max-w-[880px] overflow-hidden rounded-[12px] bg-white shadow-[0_16px_40px_rgba(4,24,56,0.33)]">
-			<div class="flex items-start justify-between gap-3 border-b border-[#d8e0ec] px-4 py-3">
+	<div class="fixed inset-0 z-40 flex items-center justify-center bg-black/45 px-3 py-4">
+		<div class="max-h-[88vh] w-full max-w-[880px] overflow-hidden rounded-[12px] border border-border-accent-blue bg-white shadow-[0_16px_40px_rgba(4,24,56,0.33)]">
+			<div class="flex items-start justify-between gap-3 border-b border-border-accent-blue px-4 py-3">
 				<div>
-					<h3 class="m-0 font-['Roboto',sans-serif] text-[1.02rem] font-semibold text-[#163860]">
+					<h3 class="m-0 font-['Roboto',sans-serif] text-[1.02rem] font-semibold text-brand-blue-dark">
 						{occurrenceModal.assignment.match.kind === 'phrase' ? 'Concurrencias de frase' : 'Concurrencias de término'}
 					</h3>
-					<p class="mt-1 mb-0 text-[0.9rem] text-[#476385]">
+					<p class="mt-1 mb-0 text-[0.9rem] text-text-soft">
 						{occurrenceModal.assignment.match.source}
 						{#if occurrenceModal.details}
 							({numberFormatter.format(occurrenceModal.details.count)})
@@ -1090,7 +1066,7 @@
 
 			<div class="max-h-[72vh] overflow-auto px-4 py-3">
 				{#if occurrenceLoading}
-					<p class="m-0 text-[0.93rem] text-[#4d6485]">Cargando concurrencias...</p>
+					<p class="m-0 text-[0.93rem] text-text-soft">Cargando concurrencias...</p>
 				{:else if occurrenceError}
 					<p class="m-0 rounded-[9px] border border-[#f3c0ca] bg-[#fff5f7] px-3 py-2 text-[0.9rem] text-[#8f1e36]">
 						{occurrenceError}
@@ -1098,22 +1074,22 @@
 				{:else if occurrenceModal.details && occurrenceModal.details.items.length > 0}
 					<ul class="m-0 grid list-none gap-2 p-0">
 						{#each occurrenceModal.details.items as item, index}
-							<li class="rounded-[9px] border border-[#dde6f2] bg-[#f9fbfe] px-3 py-2">
-								<p class="m-0 text-[0.79rem] font-semibold text-[#5a7395]">#{index + 1}</p>
-								<p class="mt-1 mb-0 text-[0.93rem] leading-[1.5] text-[#243a59]">
+							<li class="rounded-[9px] border border-border-accent-blue bg-surface px-3 py-2">
+								<p class="m-0 text-[0.79rem] font-semibold text-text-accent-purple">#{index + 1}</p>
+								<p class="mt-1 mb-0 text-[0.93rem] leading-[1.5] text-text-main">
 									{@html highlightSnippet(item.snippet, [occurrenceModal.assignment])}
 								</p>
 							</li>
 						{/each}
 					</ul>
 					{#if occurrenceModal.details.truncated}
-						<p class="mt-3 mb-0 text-[0.84rem] text-[#5a7395]">
+						<p class="mt-3 mb-0 text-[0.84rem] text-text-soft">
 							Se muestran las primeras {numberFormatter.format(occurrenceModal.details.items.length)} concurrencias de
 							{numberFormatter.format(occurrenceModal.details.count)}.
 						</p>
 					{/if}
 				{:else}
-					<p class="m-0 text-[0.93rem] text-[#4d6485]">No hay concurrencias para mostrar.</p>
+					<p class="m-0 text-[0.93rem] text-text-soft">No hay concurrencias para mostrar.</p>
 				{/if}
 			</div>
 		</div>
@@ -1121,14 +1097,14 @@
 {/if}
 
 {#if infoModalOpen}
-	<div class="fixed inset-0 z-40 flex items-center justify-center bg-[#112742]/55 px-3 py-4">
-		<div class="max-h-[88vh] w-full max-w-[900px] overflow-hidden rounded-[12px] bg-white shadow-[0_16px_40px_rgba(4,24,56,0.33)]">
-			<div class="flex items-start justify-between gap-3 border-b border-[#d8e0ec] px-4 py-3">
+	<div class="fixed inset-0 z-40 flex items-center justify-center bg-black/45 px-3 py-4">
+		<div class="max-h-[88vh] w-full max-w-[900px] overflow-hidden rounded-[12px] border border-border-accent-blue bg-white shadow-[0_16px_40px_rgba(4,24,56,0.33)]">
+			<div class="flex items-start justify-between gap-3 border-b border-border-accent-blue px-4 py-3">
 				<div>
-					<h3 class="m-0 font-['Roboto',sans-serif] text-[1.02rem] font-semibold text-[#163860]">
+					<h3 class="m-0 font-['Roboto',sans-serif] text-[1.02rem] font-semibold text-brand-blue-dark">
 						Cómo funciona TEXORO
 					</h3>
-					<p class="mt-1 mb-0 text-[0.9rem] text-[#476385]">
+					<p class="mt-1 mb-0 text-[0.9rem] text-text-soft">
 						Búsqueda textual por capas sobre corpus del Siglo de Oro.
 					</p>
 				</div>
@@ -1143,18 +1119,18 @@
 			</div>
 
 			<div class="max-h-[72vh] overflow-auto px-4 py-3">
-				<p class="m-0 text-[0.94rem] leading-[1.55] text-[#2b4568]">
+				<p class="m-0 text-[0.94rem] leading-[1.55] text-text-main">
 					El buscador recupera primero obras candidatas con un índice ligero y, después, verifica coincidencias exactas sobre los TXT candidatos para confirmar frase y mostrar contexto.
 				</p>
-				<h4 class="mb-0 mt-4 font-['Roboto',sans-serif] text-[0.94rem] font-semibold text-[#1f3f7a]">Consultas disponibles</h4>
-				<ul class="mb-0 mt-2 pl-5 text-[0.92rem] leading-[1.52] text-[#2b4568]">
+				<h4 class="mb-0 mt-4 font-['Roboto',sans-serif] text-[0.94rem] font-semibold text-text-accent-purple">Consultas disponibles</h4>
+				<ul class="mb-0 mt-2 pl-5 text-[0.92rem] leading-[1.52] text-text-main">
 					<li>Palabra exacta: <code>amor</code>.</li>
 					<li>Frase exacta: <code>"amor constante"</code>.</li>
 					<li>Comodines: <code>am*</code>, <code>a*or</code>, <code>am?r</code>, <code>???</code>.</li>
 					<li>Operadores booleanos: <code>AND</code> y <code>OR</code>.</li>
 				</ul>
-				<h4 class="mb-0 mt-4 font-['Roboto',sans-serif] text-[0.94rem] font-semibold text-[#1f3f7a]">Lectura de gráficos</h4>
-				<ul class="mb-0 mt-2 pl-5 text-[0.92rem] leading-[1.52] text-[#2b4568]">
+				<h4 class="mb-0 mt-4 font-['Roboto',sans-serif] text-[0.94rem] font-semibold text-text-accent-purple">Lectura de gráficos</h4>
+				<ul class="mb-0 mt-2 pl-5 text-[0.92rem] leading-[1.52] text-text-main">
 					<li>Los gráficos se calculan en vivo con las concurrencias de los resultados mostrados.</li>
 					<li>En autoría, la concurrencia de cada obra se reparte proporcionalmente entre autores asignados.</li>
 					<li>En género, se suma el total de concurrencias por género textual.</li>

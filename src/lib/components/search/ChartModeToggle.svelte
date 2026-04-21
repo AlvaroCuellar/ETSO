@@ -20,12 +20,12 @@
 	const buttonClass = (active: boolean): string =>
 		`!h-[32px] !rounded-full !px-3.5 !py-1.5 !font-['Roboto',sans-serif] !text-[0.78rem] !font-semibold !border-0 !shadow-none ${
 			active
-				? '!bg-[#174ea6] !text-white hover:!bg-[#174ea6]'
-				: '!bg-transparent !text-[#355a88] hover:!bg-[#dfe9f8]'
+				? '!bg-brand-blue !text-white hover:!bg-brand-blue'
+				: '!bg-transparent !text-brand-blue hover:!bg-surface-accent-blue'
 		}`;
 </script>
 
-<div class={`inline-flex rounded-full border border-[#d2deef] bg-[#edf3fc] p-1 ${className}`.trim()}>
+<div class={`inline-flex rounded-full border border-border-accent-blue bg-surface-accent-blue p-1 ${className}`.trim()}>
 	<AppButton
 		type="button"
 		variant="ghost"

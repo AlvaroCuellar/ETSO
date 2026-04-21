@@ -15,11 +15,14 @@
 	const infoItems = [
 		{ href: '/transcripciones-automaticas', label: 'Transcripciones automáticas' },
 		{ href: '/colaboradores', label: 'Colaboradores' },
-		{ href: '/repercusion', label: 'Repercusión' }
+		{ href: '/repercusion', label: 'Repercusión' },
+		{ href: '/contacto', label: 'Contacto' }
 	] as const;
 
+	let desktopMoreInfoOpen = $state(false);
 	let mobileMenuOpen = $state(false);
 	let mobileMoreInfoOpen = $state(false);
+	let desktopMoreInfoElement: HTMLDetailsElement | null = null;
 
 	const isActive = (href: string): boolean => {
 		const path = page.url.pathname;
@@ -34,22 +37,22 @@
 	const navLinkClass = (active: boolean): string =>
 		`inline-flex items-center rounded-card border px-4 py-2 text-[0.9rem] font-ui font-medium text-brand-blue no-underline transition hover:no-underline focus-visible:no-underline ${
 			active
-				? 'border-[rgba(0,51,167,0.28)] bg-[linear-gradient(135deg,rgba(0,51,167,0.15),rgba(105,0,93,0.14))]'
-				: 'border-transparent hover:bg-surface-accent'
+				? 'border-border-accent-purple bg-surface-accent-purple text-brand-blue-dark'
+				: 'border-transparent hover:bg-surface-accent-blue'
 		}`;
 
 	const menuLinkClass = (active: boolean): string =>
 		`block rounded-md border px-2.5 py-2 text-[0.86rem] font-ui font-medium text-brand-blue no-underline transition hover:no-underline focus-visible:no-underline ${
 			active
-				? 'border-[rgba(0,51,167,0.28)] bg-[linear-gradient(135deg,rgba(0,51,167,0.15),rgba(105,0,93,0.14))]'
-				: 'border-transparent hover:bg-surface-accent'
+				? 'border-border-accent-purple bg-surface-accent-purple text-brand-blue-dark'
+				: 'border-transparent hover:bg-surface-accent-blue'
 		}`;
 
 	const mobileLinkClass = (active: boolean): string =>
 		`block rounded-card border px-4 py-2.5 text-[0.94rem] font-ui font-medium text-brand-blue no-underline transition hover:no-underline focus-visible:no-underline ${
 			active
-				? 'border-[rgba(0,51,167,0.28)] bg-[linear-gradient(135deg,rgba(0,51,167,0.15),rgba(105,0,93,0.14))]'
-				: 'border-[rgba(0,51,167,0.14)] bg-white hover:bg-surface-accent'
+				? 'border-border-accent-purple bg-surface-accent-purple text-brand-blue-dark'
+				: 'border-border-accent-blue bg-white hover:bg-surface-accent-blue'
 		}`;
 
 	function closeMobileMenu(): void {
@@ -57,21 +60,36 @@
 		mobileMoreInfoOpen = false;
 	}
 
+	function closeDesktopDropdown(): void {
+		desktopMoreInfoOpen = false;
+	}
+
 	function handleWindowKeydown(event: KeyboardEvent): void {
 		if (event.key !== 'Escape') return;
-		if (!mobileMenuOpen && !mobileMoreInfoOpen) return;
+		if (!desktopMoreInfoOpen && !mobileMenuOpen && !mobileMoreInfoOpen) return;
+		closeDesktopDropdown();
 		closeMobileMenu();
+	}
+
+	function handleWindowClick(event: MouseEvent): void {
+		const target = event.target;
+		if (!(target instanceof Node)) return;
+		if (!desktopMoreInfoOpen || !desktopMoreInfoElement) return;
+		if (desktopMoreInfoElement.contains(target)) return;
+
+		closeDesktopDropdown();
 	}
 
 	$effect(() => {
 		page.url.pathname;
+		closeDesktopDropdown();
 		closeMobileMenu();
 	});
 </script>
 
-<svelte:window onkeydown={handleWindowKeydown} />
+<svelte:window onkeydown={handleWindowKeydown} onclick={handleWindowClick} />
 
-<header class="sticky top-0 z-20 border-b border-[rgba(0,51,167,0.1)] bg-[rgba(255,255,255,0.94)] backdrop-blur-[6px]">
+<header class="sticky top-0 z-20 border-b border-border-accent-blue bg-[rgba(255,255,255,0.94)] backdrop-blur-[6px]">
 	<div class="mx-auto w-full max-w-7xl px-4 sm:px-5 lg:px-6">
 		<div class="flex min-h-[4.75rem] items-center justify-between gap-4">
 			<a class="inline-flex items-center" href="/">
@@ -83,7 +101,7 @@
 					<a class={navLinkClass(isActive(item.href))} href={item.href}>{item.label}</a>
 				{/each}
 
-				<details class="group relative">
+				<details class="group relative" bind:open={desktopMoreInfoOpen} bind:this={desktopMoreInfoElement}>
 					<summary
 						class={`${navLinkClass(isMoreInfoActive())} list-none cursor-pointer gap-[0.4rem] [&::-webkit-details-marker]:hidden`}
 					>
@@ -92,7 +110,15 @@
 					</summary>
 					<div class="absolute right-0 top-[calc(100%+0.35rem)] z-30 grid min-w-64 gap-1 rounded-card border border-border bg-white p-1.5 shadow-soft">
 						{#each infoItems as item}
-							<a class={menuLinkClass(isActive(item.href))} href={item.href}>{item.label}</a>
+							<a
+								class={menuLinkClass(isActive(item.href))}
+								href={item.href}
+								onclick={() => {
+									closeDesktopDropdown();
+								}}
+							>
+								{item.label}
+							</a>
 						{/each}
 					</div>
 				</details>
@@ -100,7 +126,7 @@
 
 			<button
 				type="button"
-				class="inline-flex h-10 w-10 items-center justify-center rounded-card border border-[rgba(0,51,167,0.18)] bg-white text-brand-blue transition hover:bg-surface-accent focus-visible:outline-2 focus-visible:outline-[rgba(0,51,167,0.3)] min-[860px]:hidden"
+				class="inline-flex h-10 w-10 items-center justify-center rounded-card border border-border-accent-blue bg-white text-brand-blue transition hover:bg-surface-accent-blue focus-visible:outline-2 focus-visible:outline-brand-blue/25 min-[860px]:hidden"
 				aria-controls="mobile-primary-nav"
 				aria-expanded={mobileMenuOpen ? 'true' : 'false'}
 				aria-label={mobileMenuOpen ? 'Cerrar menú principal' : 'Abrir menú principal'}
@@ -119,7 +145,7 @@
 		</div>
 
 		{#if mobileMenuOpen}
-			<div id="mobile-primary-nav" class="border-t border-[rgba(0,51,167,0.12)] py-3 min-[860px]:hidden">
+			<div id="mobile-primary-nav" class="border-t border-border-accent-blue py-3 min-[860px]:hidden">
 				<nav class="grid gap-2 font-ui" aria-label="Navegación principal móvil">
 					{#each navItems as item}
 						<a
@@ -133,10 +159,10 @@
 						</a>
 					{/each}
 
-					<div class="rounded-card border border-[rgba(0,51,167,0.14)] bg-white p-1.5">
+					<div class="rounded-card border border-border-accent-blue bg-white p-1.5">
 						<button
 							type="button"
-							class="flex w-full items-center justify-between rounded-md px-2.5 py-2 text-left text-[0.9rem] font-medium text-brand-blue transition hover:bg-surface-accent focus-visible:outline-2 focus-visible:outline-[rgba(0,51,167,0.25)]"
+							class="flex w-full items-center justify-between rounded-md px-2.5 py-2 text-left text-[0.9rem] font-medium text-brand-blue transition hover:bg-surface-accent-blue focus-visible:outline-2 focus-visible:outline-brand-blue/20"
 							aria-expanded={mobileMoreInfoOpen ? 'true' : 'false'}
 							aria-controls="mobile-more-info"
 							onclick={() => {

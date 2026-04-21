@@ -1,1141 +1,3801 @@
 {
-  "team": [
+  "intro": "Equipo, colaboradores y entidades que participan o colaboran con el proyecto ETSO.",
+  "sections": [
     {
-      "name": "Álvaro Cuéllar",
-      "affiliations": [
-        "Universitat Autònoma de Barcelona"
-      ],
-      "image": "/images/colaboradores/FotoAlvaroCuellar.png"
+      "id": "team",
+      "title": "Equipo",
+      "description": "Investigadores responsables del proyecto",
+      "presentation": "featured_cards",
+      "items": [
+        {
+          "id": "team-alvaro-cuellar",
+          "title": "Álvaro Cuéllar",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universitat Autònoma de Barcelona"
+          ],
+          "tags": [],
+          "links": [],
+          "image": "/images/colaboradores/FotoAlvaroCuellar.png"
+        },
+        {
+          "id": "team-german-vega-garcia-luengos",
+          "title": "Germán Vega García-Luengos",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": "/images/colaboradores/FotoGermanVega.jpg"
+        }
+      ]
     },
     {
-      "name": "Germán Vega García-Luengos",
-      "affiliations": [
-        "Universidad de Valladolid"
-      ],
-      "image": "/images/colaboradores/FotoGermanVega.jpg"
+      "id": "collaborators",
+      "title": "Colaboradores",
+      "description": "Investigadores y especialistas que colaboran con el proyecto",
+      "presentation": "compact_list",
+      "items": [
+        {
+          "id": "collaborator-abraham-madronal-duran",
+          "title": "Abraham Madroñal Durán",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Université de Genève"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-adrian-saez",
+          "title": "Adrián Sáez",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Université de Neuchâtel"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-adrian-velasco-sainz",
+          "title": "Adrián Velasco Sainz",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-alberto-gutierrez-gil",
+          "title": "Alberto Gutiérrez Gil",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Castilla-La Mancha"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-alejandra-ulla",
+          "title": "Alejandra Ulla",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad Internacional de La Rioja"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-alejandro-garcia-reidy",
+          "title": "Alejandro García Reidy",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Salamanca"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-alfredo-hermenegildo",
+          "title": "Alfredo Hermenegildo",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Université de Montréal"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-alicia-vara",
+          "title": "Alicia Vara",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Córdoba"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-almudena-garcia-gonzalez",
+          "title": "Almudena García González",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Castilla-La Mancha"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-anna-benvenuti",
+          "title": "Anna Benvenuti",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Università degli Studi di Milan"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-antonio-cortijo-ocana",
+          "title": "Antonio Cortijo Ocaña",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "University of California"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-antonio-serrano",
+          "title": "Antonio Serrano",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Jornadas de Teatro del Siglo de Oro de Almería"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-arianna-fiore",
+          "title": "Arianna Fiore",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Università degli Studi di Firenze"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-aurelio-valladares",
+          "title": "Aurelio Valladares",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Aula-Biblioteca Mira de Amescua"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-beata-baczynska",
+          "title": "Beata Baczynska",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Uniwersytet Wrocławski"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-carles-marquez-molins",
+          "title": "Carles Márquez-Molins",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universitat de València"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-carmelina-salvati",
+          "title": "Carmelina Salvati",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Università degli Studi di Salerno"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-carmen-pinillos-salvador",
+          "title": "Carmen Pinillos Salvador",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Navarra"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-carmen-santana-bustamante",
+          "title": "Carmen Santana Bustamante",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Castilla-La Mancha"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-catalina-buezo",
+          "title": "Catalina Buezo",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de La Rioja"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-cipriano-lopez",
+          "title": "Cipriano López",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universitat Autònoma de Barcelona. Prolope"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-clara-monzo-ribes",
+          "title": "Clara Monzó Ribes",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universitat de València"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-claudia-dematte",
+          "title": "Claudia Dematté",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Università degli Studi di Trento"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-cristina-barreda",
+          "title": "Cristina Barreda",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universitat de València"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-daniel-fernandez-rodriguez",
+          "title": "Daniel Fernández Rodríguez",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universitat de València"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-daniele-crivellari",
+          "title": "Daniele Crivellari",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universitá degli studi di Salerno"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-david-j-amelang",
+          "title": "David J. Amelang",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad Autónoma de Madrid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-david-manero-lozano",
+          "title": "David Mañero Lozano",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Jaén"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-david-merino-recalde",
+          "title": "David Merino Recalde",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad Nacional de Educación a Distancia"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-delia-gavela",
+          "title": "Delia Gavela",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de La Rioja"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-diego-simini",
+          "title": "Diego Símini",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Università del Salento"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-elena-di-pinto",
+          "title": "Elena Di Pinto",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad Complutense de Madrid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-elena-martinez-carro",
+          "title": "Elena Martínez Carro",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad Internacional de La Rioja"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-elena-munoz-rodriguez",
+          "title": "Elena Muñoz Rodríguez",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad del País Vasco/Euskal Herriko Unibertsitatea"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-emma-marcos-rodriguez",
+          "title": "Emma Marcos Rodríguez",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-erik-coenen",
+          "title": "Erik Coenen",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad Complutense de Madrid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-esperanza-rivera-salmeron",
+          "title": "Esperanza Rivera Salmerón",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-esther-borrego",
+          "title": "Esther Borrego",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad Complutense de Madrid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-fernando-cantalapiedra-erostarbe",
+          "title": "Fernando Cantalapiedra Erostarbe",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Investigador"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-fernando-rodriguez-gallego",
+          "title": "Fernando Rodríguez-Gallego",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universitat de les Illes Balears"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-francisco-dominguez-matito",
+          "title": "Francisco Domínguez Matito",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de La Rioja"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-francisco-saez-raposo",
+          "title": "Francisco Sáez Raposo",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad Complutense de Madrid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-fructuoso-atencia",
+          "title": "Fructuoso Atencia",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad Complutense de Madrid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-felix-blanco-campos",
+          "title": "Félix Blanco Campos",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-gaston-gilabert",
+          "title": "Gaston Gilabert",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universitat de Barcelona"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-gema-cienfuegos-antelo",
+          "title": "Gema Cienfuegos Antelo",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-gema-gomez-rubio",
+          "title": "Gema Gómez Rubio",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Castilla-La Mancha"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-george-peale",
+          "title": "George Peale",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "California State University"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-gonzalo-ponton",
+          "title": "Gonzalo Pontón",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universitat Autònoma de Barcelona. Prolope"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-guillermo-carrascon",
+          "title": "Guillermo Carrascón",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Università degli Studi di Torino"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-guillermo-gomez-sanchez-ferrer",
+          "title": "Guillermo Gómez Sánchez-Ferrer",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad Complutense de Madrid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-guillermo-schmidhuber",
+          "title": "Guillermo Schmidhuber",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Guadalajara"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-guillermo-seres-guillen",
+          "title": "Guillermo Serés Guillén",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universitat Autònoma de Barcelona"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-hector-brioso-santos",
+          "title": "Héctor Brioso Santos",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Alcalá de Henares"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-hector-urzaiz-tortajada",
+          "title": "Héctor Urzáiz Tortajada",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-ilaria-resta",
+          "title": "Ilaria Resta",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Università degli studi Roma Tre"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-irene-gonzalez-escudero",
+          "title": "Irene González Escudero",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-ivan-gomez-caballero",
+          "title": "Iván Gómez Caballero",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Castilla-La Mancha"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-javier-castrillo-alaguero",
+          "title": "Javier Castrillo Alaguero",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Burgos"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-javier-huerta-calvo",
+          "title": "Javier Huerta Calvo",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad Complutense de Madrid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-javier-j-gonzalez-martinez",
+          "title": "Javier J. González Martínez",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-javier-rubiera",
+          "title": "Javier Rubiera",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Université de Montréal"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-javier-de-la-rosa",
+          "title": "Javier de la Rosa",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Nasjonalbiblioteket"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-jean-baptiste-camps",
+          "title": "Jean-Baptiste Camps",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "École nationale des chartes - PSL"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-jorge-ferreira-barrocal",
+          "title": "Jorge Ferreira Barrocal",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-jose-cano-navarro",
+          "title": "José Cano Navarro",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Consejería de Educación de la Comunidad de Madrid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-jose-javier-rodriguez",
+          "title": "José Javier Rodríguez",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad del País Vasco/Euskal Herriko Unibertsitatea"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-juan-antonio-martinez-berbel",
+          "title": "Juan Antonio Martínez Berbel",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de La Rioja"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-juan-manuel-carmona-tierno",
+          "title": "Juan Manuel Carmona Tierno",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Sevilla"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-juan-matas-caballero",
+          "title": "Juan Matas Caballero",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de León"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-judith-farre-vidal",
+          "title": "Judith Farré Vidal",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Consejo Superior de Investigaciones Científicas"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-julio-velez-sainz",
+          "title": "Julio Vélez Sainz",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad Complutense de Madrid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-jorg-lehmann",
+          "title": "Jörg Lehmann",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Eberhard Karls Universität Tübingen"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-kelly-ferguson",
+          "title": "Kelly Ferguson",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "University of Kentucky"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-leonardo-sarria-muzio",
+          "title": "Leonardo Sarría Muzio",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de La Habana"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-luis-iglesias-feijoo",
+          "title": "Luis Iglesias Feijoo",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Santiago de Compostela. GIC"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-luisa-rossello-castillo",
+          "title": "Luisa Rosselló Castillo",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universitat de les Illes Balears"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-marcella-trambaioli",
+          "title": "Marcella Trambaioli",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Università del Piemonte Orientale"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-marco-pannarale",
+          "title": "Marco Pannarale",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Università di Bologna"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-marco-presotto",
+          "title": "Marco Presotto",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Università di Bologna"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-mark-lauersdorf",
+          "title": "Mark Lauersdorf",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "University of Kentucky"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-maria-cimadevilla-abadie",
+          "title": "María Cimadevilla Abadíe",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad Complutense de Madrid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-maria-luisa-lobato",
+          "title": "María Luisa Lobato",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Burgos. Proteo"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-maria-rosa-alvarez-sellers",
+          "title": "María Rosa Álvarez Sellers",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universitat de València"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-maria-del-pilar-chouza-calo",
+          "title": "María del Pilar Chouza-Calo",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Central Michigan University"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-miguel-betti",
+          "title": "Miguel Betti",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Université de Genève"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-miguel-campion",
+          "title": "Miguel Campión",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad Autónoma de Madrid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-miguel-garcia-bermejo-giner",
+          "title": "Miguel García-Bermejo Giner",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Salamanca"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-miguel-zugasti",
+          "title": "Miguel Zugasti",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Navarra"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-miriam-martinez-gutierrez",
+          "title": "Míriam Martínez Gutiérrez",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Burgos"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-natalia-fernandez",
+          "title": "Natalia Fernández",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad Complutense de Madrid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-noelia-iglesias-iglesias",
+          "title": "Noelia Iglesias Iglesias",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Santiago de Compostela"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-paolo-pintacuda",
+          "title": "Paolo Pintacuda",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Università di Pavia"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-paula-casariego-castineira",
+          "title": "Paula Casariego Castiñeira",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Santiago de Compostela"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-piedad-bolanos",
+          "title": "Piedad Bolaños",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Sevilla"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-rafael-gonzalez-canal",
+          "title": "Rafael González Cañal",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Castilla-La Mancha"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-rafael-massanet-rodriguez",
+          "title": "Rafael Massanet Rodríguez",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universitat de les Illes Balears"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-rafael-ramos",
+          "title": "Rafael Ramos",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universitat de Girona"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-ramon-valdes-gazquez",
+          "title": "Ramón Valdés Gázquez",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universitat Autònoma de Barcelona. Prolope"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-ricardo-enguix-barber",
+          "title": "Ricardo Enguix Barber",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Kaunas University of Technology",
+            "Edition Reichenberger"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-ricardo-serrano-deza",
+          "title": "Ricardo Serrano Deza",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de La Rioja"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-roberta-alviti",
+          "title": "Roberta Alviti",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Università degli studi di Cassino e del Lazio Meridionale"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-rocio-alonso-medel",
+          "title": "Rocío Alonso Medel",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad Complutense de Madrid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-rosa-illan-de-haro",
+          "title": "Rosa Illán de Haro",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Università di Pavia"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-salome-vuelta-garcia",
+          "title": "Salomé Vuelta García",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Università di Firenze"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-santiago-fernandez-mosquera",
+          "title": "Santiago Fernández Mosquera",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Santiago de Compostela. GIC"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-sergio-rodriguez-nicolas",
+          "title": "Sergio Rodríguez Nicolás",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de León"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-simon-kroll",
+          "title": "Simon Kroll",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universität Wien"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-sofia-cantalapiedra-delgado",
+          "title": "Sofía Cantalapiedra Delgado",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universitat de Barcelona"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-stefano-de-capitani",
+          "title": "Stefano De Capitani",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Università degli Studi di Milano"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-tania-de-miguel-magro",
+          "title": "Tania De Miguel Magro",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "West Virginia University"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-teresa-ferrer-valls",
+          "title": "Teresa Ferrer Valls",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universitat de València"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-valeria-marrella",
+          "title": "Valeria Marrella",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Università Ca' Foscari Venezia"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-zaida-vila-carneiro",
+          "title": "Zaida Vila Carneiro",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de La Rioja"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-alvaro-bustos",
+          "title": "Álvaro Bustos",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad Complutense de Madrid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "collaborator-oscar-garcia-fernandez",
+          "title": "Óscar García Fernández",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de León"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        }
+      ]
+    },
+    {
+      "id": "organizations",
+      "title": "Organizaciones colaboradoras",
+      "description": "Grupos y equipos que colaboran con el proyecto.",
+      "presentation": "compact_list",
+      "items": [
+        {
+          "id": "organization-grupo-de-investigacion-calderon-gic",
+          "title": "Grupo de Investigación Calderón (GIC)",
+          "summary": "",
+          "type": "organization",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Santiago de Compostela"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "organization-prolope",
+          "title": "Prolope",
+          "summary": "",
+          "type": "organization",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad Autónoma de Barcelona"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        }
+      ]
+    },
+    {
+      "id": "students",
+      "title": "Estudiantes",
+      "description": "Estudiantes de los Grados en Estudios Clásicos y en Español: Lengua y Literatura. Universidad de Valladolid",
+      "presentation": "multi_column_list",
+      "items": [
+        {
+          "id": "student-tania-alba-martin",
+          "title": "Tania Alba Martín",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-gabriela-albertos-escudero",
+          "title": "Gabriela Albertos Escudero",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-leillane-almeida",
+          "title": "Leillane Almeida",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-noelia-alonso",
+          "title": "Noelia Alonso",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-elena-alonso-del-rio",
+          "title": "Elena Alonso del Río",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-simona-andreea-gaia",
+          "title": "Simona Andreea Gaia",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-amanda-aparicio",
+          "title": "Amanda Aparicio",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-genesis-aquino-berroa",
+          "title": "Génesis Aquino Berroa",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-marina-arenas-guerra",
+          "title": "Marina Arenas Guerra",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-alicia-barajas-delgado",
+          "title": "Alicia Barajas Delgado",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-mario-benito-delgado",
+          "title": "Mario Benito Delgado",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-lain-burgos-cuadrado",
+          "title": "Laín Burgos Cuadrado",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-francisco-cabanas-centeno",
+          "title": "Francisco Cabañas Centeno",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-dolores-cadiz",
+          "title": "Dolores Cádiz",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-pablo-calle-martin",
+          "title": "Pablo Calle Martín",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-fabian-calvo-de-santiago",
+          "title": "Fabián Calvo De Santiago",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-estefania-casadevall-stefanova",
+          "title": "Estefanía Casadevall Stefanova",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-eduardo-camero",
+          "title": "Eduardo Camero",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-elena-caminero",
+          "title": "Elena Caminero",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-diego-castro-garcia",
+          "title": "Diego Castro García",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-paula-castro-herrero",
+          "title": "Paula Castro Herrero",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-rodrigo-castro-san-jose",
+          "title": "Rodrigo Castro San José",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-raul-crespo-valdivieso",
+          "title": "Raúl Crespo Valdivieso",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-berta-cuadrado-de-la-fuente",
+          "title": "Berta Cuadrado De la Fuente",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-cristina-cuinas-dios",
+          "title": "Cristina Cuiñas Dios",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-sandra-diaz-lopez",
+          "title": "Sandra Díaz López",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-hector-erazo-bernal",
+          "title": "Héctor Erazo Bernal",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-carlota-esteban-cabreros",
+          "title": "Carlota Esteban Cabreros",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-sofia-farto-garcia",
+          "title": "Sofía Farto García",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-alba-fernandez",
+          "title": "Alba Fernández",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-mario-fernandez-lazaro",
+          "title": "Mario Fernández Lázaro",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-lydia-fernandez-martin",
+          "title": "Lydia Fernández Martín",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-laura-fernandez-rodriguez",
+          "title": "Laura Fernández Rodríguez",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-maria-ferreira-sevillano",
+          "title": "María Ferreira Sevillano",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-juan-figueros-sahagun",
+          "title": "Juan Figueros Sahagún",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-luz-glez-frechilla",
+          "title": "Luz Glez. Frechilla",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-elena-de-la-fuente",
+          "title": "Elena de la Fuente",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-sara-isabel-de-la-fuente-martinez",
+          "title": "Sara Isabel de la Fuente Martínez",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-angela-garcia",
+          "title": "Ángela García",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-claudia-garcia",
+          "title": "Claudia García",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-paula-garcia-alcolea",
+          "title": "Paula García Alcolea",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-ana-garcia-de-la-fuente",
+          "title": "Ana García de la Fuente",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-marta-garcia-gutierrez",
+          "title": "Marta García Gutiérrez",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-elena-garcia-munoz",
+          "title": "Elena García Muñoz",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-maria-magdalena-garcia-perez",
+          "title": "María Magdalena García Pérez",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-erica-garcia-sanchez",
+          "title": "Erica García Sánchez",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-irene-garres-pelaz",
+          "title": "Irene Garres Pelaz",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-isabel-garrido-rivas",
+          "title": "Isabel Garrido Rivas",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-esther-garrote-robledo",
+          "title": "Esther Garrote Robledo",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-miguel-gil-gracia",
+          "title": "Miguel Gil Gracia",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-lucia-gomez",
+          "title": "Lucía Gómez",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-anais-gomez-garcia",
+          "title": "Anaïs Gómez García",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-paula-gomez-juarez",
+          "title": "Paula Gómez Juárez",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-ana-rosa-gonzalez",
+          "title": "Ana Rosa González",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-marta-gonzalez",
+          "title": "Marta González",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-alba-gonzalez-anibarro",
+          "title": "Alba González Anibarro",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-miriam-gonzalez-rios",
+          "title": "Míriam González Ríos",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-daniel-gonzalez-varela",
+          "title": "Daniel González Varela",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-julia-gromowska-swiatkowska",
+          "title": "Julia Gromowska Swiatkowska",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-jesus-guemes-ramirez",
+          "title": "Jesús Güemes Ramírez",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-diego-gutierrez",
+          "title": "Diego Gutiérrez",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-carmen-henar-leon-moro",
+          "title": "Carmen Henar León Moro",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-isaias-hernandez-galeano",
+          "title": "Isaías Hernández Galeano",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-judit-hernandez-toledano",
+          "title": "Judit Hernández Toledano",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-ana-belen-hidalgo-gonzalez",
+          "title": "Ana Belén Hidalgo González",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-ines-izquierdo-archidona",
+          "title": "Inés Izquierdo Archidona",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-curtis-kouame",
+          "title": "Curtis Kouame",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-sandra-laguna-garcia",
+          "title": "Sandra Laguna García",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-cristina-manrique-balmori",
+          "title": "Cristina Manrique Balmori",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-samuel-marina-franco",
+          "title": "Samuel Marina Franco",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-alvaro-magdaleno-garcia",
+          "title": "Álvaro Magdaleno García",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-aaron-marques-gonzalez",
+          "title": "Aarón Marqués González",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-irene-martin",
+          "title": "Irene Martín",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-olivia-martin",
+          "title": "Olivia Martín",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-alba-martin-teran",
+          "title": "Alba Martín Terán",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-isabel-de-mata-gutierrez",
+          "title": "Isabel de Mata Gutiérrez",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-rut-matilla-cortezon",
+          "title": "Rut Matilla Cortezón",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-marina-mayor-rocher",
+          "title": "Marina Mayor Rocher",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-pedro-mendez-montes",
+          "title": "Pedro Méndez Montes",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-susana-merillas-benito",
+          "title": "Susana Merillas Benito",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-lucia-merino-montes",
+          "title": "Lucía Merino Montes",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-maria-molina-mera",
+          "title": "María Molina Mera",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-alicia-monge-olivares",
+          "title": "Alicia Monge Olivares",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-jimena-munoz-abad",
+          "title": "Jimena Muñoz Abad",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-esther-nicolas-bolivar",
+          "title": "Esther Nicolás Bolívar",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-jacinta-maria-de-onuva-lopez-de-san-roman-alves",
+          "title": "Jacinta María de Onuva López de San Román Alves",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-ana-ortega-gutierrez",
+          "title": "Ana Ortega Gutiérrez",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-paula-pena-navarro",
+          "title": "Paula Peña Navarro",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-esther-perez",
+          "title": "Esther Pérez",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-pablo-perez",
+          "title": "Pablo Pérez",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-claudia-perez-conde",
+          "title": "Claudia Pérez Conde",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-eva-poblador",
+          "title": "Eva Poblador",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-ana-porres",
+          "title": "Ana Porres",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-cristina-pozo",
+          "title": "Cristina Pozo",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-andrea-redondo-nebreda",
+          "title": "Andrea Redondo Nebreda",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-andrea-revilla",
+          "title": "Andrea Revilla",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-irene-rico",
+          "title": "Irene Rico",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-marta-riesco-valdes",
+          "title": "Marta Riesco Valdés",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-julia-rodriguez",
+          "title": "Julia Rodríguez",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-noa-rodriguez",
+          "title": "Noa Rodríguez",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-ana-rodriguez-rebollo",
+          "title": "Ana Rodríguez Rebollo",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-alvaro-luis-rodriguez-sanz",
+          "title": "Álvaro Luis Rodríguez Sanz",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-lucia-saez",
+          "title": "Lucía Sáez",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-paula-salas-durantez",
+          "title": "Paula Salas Durántez",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-patricia-san-miguel-molinilla",
+          "title": "Patricia San Miguel Molinilla",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-claudia-sanchez",
+          "title": "Claudia Sánchez",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-urko-sanchez-astorgano",
+          "title": "Urko Sánchez Astorgano",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-daniel-sanchez-loma",
+          "title": "Daniel Sánchez Loma",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-manuel-sanchis",
+          "title": "Manuel Sanchís",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-helena-santos-martin",
+          "title": "Helena Santos Martín",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-ana-simon-miguelez",
+          "title": "Ana Simón Miguélez",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-blanca-suarez-gonzalez",
+          "title": "Blanca Suárez González",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-maria-dolores-tejada-benavides",
+          "title": "María Dolores Tejada Benavides",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-sheila-toquero-pascual",
+          "title": "Sheila Toquero Pascual",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-elena-toral-martin",
+          "title": "Elena Toral Martín",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-ada-valdivieso-del-pozo",
+          "title": "Ada Valdivieso del Pozo",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-lara-vallejo",
+          "title": "Lara Vallejo",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-marta-vaquero-herrero",
+          "title": "Marta Vaquero Herrero",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-jana-velasco",
+          "title": "Jana Velasco",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-mario-villalba",
+          "title": "Mario Villalba",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-domingo-vladimir-consuegra",
+          "title": "Domingo Vladimir Consuegra",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        },
+        {
+          "id": "student-nadia-ziyi-gutierrez-nuevo",
+          "title": "Nadia Ziyí Gutiérrez Nuevo",
+          "summary": "",
+          "type": "student",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universidad de Valladolid"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
+        }
+      ]
+    },
+    {
+      "id": "open-corpora",
+      "title": "Open corpora",
+      "description": "Bases de datos y repositorios abiertos que han sido utilizados",
+      "presentation": "media_cards",
+      "items": [
+        {
+          "id": "resource-artelope",
+          "title": "Artelope",
+          "summary": "Base de datos y Argumentos del teatro de Lope de Vega",
+          "type": "resource",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [],
+          "tags": [],
+          "links": [],
+          "image": "/images/colaboradores/open-corpora/etso-colaboradores-artelope.png"
+        },
+        {
+          "id": "resource-association-for-hispanic-classical-theater",
+          "title": "Association for Hispanic Classical Theater",
+          "summary": "Promoting appreciation for the Spain's classical theater in production",
+          "type": "resource",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [],
+          "tags": [],
+          "links": [],
+          "image": "/images/colaboradores/open-corpora/etso-colaboradores-Association-for-Hispanic-Classical-Theater.png"
+        },
+        {
+          "id": "resource-aula-biblioteca-mira-de-amescua",
+          "title": "Aula-Biblioteca Mira de Amescua",
+          "summary": "",
+          "type": "resource",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [],
+          "tags": [],
+          "links": [],
+          "image": "/images/colaboradores/open-corpora/aula-biblioteca-mira-de-amescua.jpeg"
+        },
+        {
+          "id": "resource-canon-60",
+          "title": "Canon 60",
+          "summary": "La colección esencial del TC/12",
+          "type": "resource",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [],
+          "tags": [],
+          "links": [],
+          "image": "/images/colaboradores/open-corpora/TC-12.png"
+        },
+        {
+          "id": "resource-cervantes-virtual",
+          "title": "Cervantes Virtual",
+          "summary": "Biblioteca Virtual Miguel de Cervantes",
+          "type": "resource",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [],
+          "tags": [],
+          "links": [],
+          "image": "/images/colaboradores/open-corpora/etso-colaboradores-Cervantes-Virtual.png"
+        },
+        {
+          "id": "resource-moretianos",
+          "title": "Moretianos",
+          "summary": "",
+          "type": "resource",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [],
+          "tags": [],
+          "links": [],
+          "image": "/images/colaboradores/open-corpora/etso-colaboradores-Moretianos.png"
+        },
+        {
+          "id": "resource-repositorios-universitarios",
+          "title": "Repositorios universitarios",
+          "summary": "",
+          "type": "resource",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [],
+          "tags": [],
+          "links": [],
+          "image": "/images/colaboradores/open-corpora/repositorios-universitarios.jpeg"
+        },
+        {
+          "id": "resource-teseo",
+          "title": "TESEO",
+          "summary": "Base de datos de tesis doctorales",
+          "type": "resource",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [],
+          "tags": [],
+          "links": [],
+          "image": "/images/colaboradores/open-corpora/etso-colaboradores-TESEO.png"
+        }
+      ]
+    },
+    {
+      "id": "acknowledgments",
+      "title": "Agradecimientos",
+      "description": "Apoyos institucionales y técnicos",
+      "presentation": "callout",
+      "items": [
+        {
+          "id": "acknowledgments-main",
+          "title": "University of Kentucky",
+          "summary": "Agradecemos a University of Kentucky Center for Computational Sciences and Information Technology Services Research Computing su apoyo y el uso del Lipscomb Compute Cluster y de los recursos de computación asociados.",
+          "type": "acknowledgment",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [],
+          "tags": [],
+          "links": [],
+          "image": "/images/colaboradores/acknowledgments/etso-colaboradores-University-of-Kentucky-Center-for-Computational-Sciences.png"
+        }
+      ]
     }
-  ],
-  "collaborators": {
-    "people": [
-      {
-        "name": "Abraham Madroñal Durán",
-        "affiliations": [
-          "Université de Genève"
-        ]
-      },
-      {
-        "name": "Adrián Sáez",
-        "affiliations": [
-          "Université de Neuchâtel"
-        ]
-      },
-      {
-        "name": "Adrián Velasco Sainz",
-        "affiliations": [
-          "Universidad de Valladolid"
-        ]
-      },
-      {
-        "name": "Alberto Gutiérrez Gil",
-        "affiliations": [
-          "Universidad de Castilla-La Mancha"
-        ]
-      },
-      {
-        "name": "Alejandra Ulla",
-        "affiliations": [
-          "Universidad Internacional de La Rioja"
-        ]
-      },
-      {
-        "name": "Alejandro García Reidy",
-        "affiliations": [
-          "Universidad de Salamanca"
-        ]
-      },
-      {
-        "name": "Alfredo Hermenegildo",
-        "affiliations": [
-          "Université de Montréal"
-        ]
-      },
-      {
-        "name": "Alicia Vara",
-        "affiliations": [
-          "Universidad de Córdoba"
-        ]
-      },
-      {
-        "name": "Almudena García González",
-        "affiliations": [
-          "Universidad de Castilla-La Mancha"
-        ]
-      },
-      {
-        "name": "Anna Benvenuti",
-        "affiliations": [
-          "Università degli Studi di Milan"
-        ]
-      },
-      {
-        "name": "Antonio Cortijo Ocaña",
-        "affiliations": [
-          "University of California"
-        ]
-      },
-      {
-        "name": "Antonio Serrano",
-        "affiliations": [
-          "Jornadas de Teatro del Siglo de Oro de Almería"
-        ]
-      },
-      {
-        "name": "Arianna Fiore",
-        "affiliations": [
-          "Università degli Studi di Firenze"
-        ]
-      },
-      {
-        "name": "Aurelio Valladares",
-        "affiliations": [
-          "Aula-Biblioteca Mira de Amescua"
-        ]
-      },
-      {
-        "name": "Beata Baczynska",
-        "affiliations": [
-          "Uniwersytet Wrocławski"
-        ]
-      },
-      {
-        "name": "Carles Márquez-Molins",
-        "affiliations": [
-          "Universitat de València"
-        ]
-      },
-      {
-        "name": "Carmelina Salvati",
-        "affiliations": [
-          "Università degli Studi di Salerno"
-        ]
-      },
-      {
-        "name": "Carmen Pinillos Salvador",
-        "affiliations": [
-          "Universidad de Navarra"
-        ]
-      },
-      {
-        "name": "Carmen Santana Bustamante",
-        "affiliations": [
-          "Universidad de Castilla-La Mancha"
-        ]
-      },
-      {
-        "name": "Catalina Buezo",
-        "affiliations": [
-          "Universidad de La Rioja"
-        ]
-      },
-      {
-        "name": "Cipriano López",
-        "affiliations": [
-          "Universitat Autònoma de Barcelona. Prolope"
-        ]
-      },
-      {
-        "name": "Clara Monzó Ribes",
-        "affiliations": [
-          "Universitat de València"
-        ]
-      },
-      {
-        "name": "Claudia Dematté",
-        "affiliations": [
-          "Università degli Studi di Trento"
-        ]
-      },
-      {
-        "name": "Cristina Barreda",
-        "affiliations": [
-          "Universitat de València"
-        ]
-      },
-      {
-        "name": "Daniel Fernández Rodríguez",
-        "affiliations": [
-          "Universitat de València"
-        ]
-      },
-      {
-        "name": "Daniele Crivellari",
-        "affiliations": [
-          "Universitá degli studi di Salerno"
-        ]
-      },
-      {
-        "name": "David J. Amelang",
-        "affiliations": [
-          "Universidad Autónoma de Madrid"
-        ]
-      },
-      {
-        "name": "David Mañero Lozano",
-        "affiliations": [
-          "Universidad de Jaén"
-        ]
-      },
-      {
-        "name": "David Merino Recalde",
-        "affiliations": [
-          "Universidad Nacional de Educación a Distancia"
-        ]
-      },
-      {
-        "name": "Delia Gavela",
-        "affiliations": [
-          "Universidad de La Rioja"
-        ]
-      },
-      {
-        "name": "Diego Símini",
-        "affiliations": [
-          "Università del Salento"
-        ]
-      },
-      {
-        "name": "Elena Di Pinto",
-        "affiliations": [
-          "Universidad Complutense de Madrid"
-        ]
-      },
-      {
-        "name": "Elena Martínez Carro",
-        "affiliations": [
-          "Universidad Internacional de La Rioja"
-        ]
-      },
-      {
-        "name": "Elena Muñoz Rodríguez",
-        "affiliations": [
-          "Universidad del País Vasco/Euskal Herriko Unibertsitatea"
-        ]
-      },
-      {
-        "name": "Emma Marcos Rodríguez",
-        "affiliations": [
-          "Universidad de Valladolid"
-        ]
-      },
-      {
-        "name": "Erik Coenen",
-        "affiliations": [
-          "Universidad Complutense de Madrid"
-        ]
-      },
-      {
-        "name": "Esperanza Rivera Salmerón",
-        "affiliations": [
-          "Universidad de Valladolid"
-        ]
-      },
-      {
-        "name": "Esther Borrego",
-        "affiliations": [
-          "Universidad Complutense de Madrid"
-        ]
-      },
-      {
-        "name": "Fernando Cantalapiedra Erostarbe",
-        "affiliations": [
-          "Investigador"
-        ]
-      },
-      {
-        "name": "Fernando Rodríguez-Gallego",
-        "affiliations": [
-          "Universitat de les Illes Balears"
-        ]
-      },
-      {
-        "name": "Francisco Domínguez Matito",
-        "affiliations": [
-          "Universidad de La Rioja"
-        ]
-      },
-      {
-        "name": "Francisco Sáez Raposo",
-        "affiliations": [
-          "Universidad Complutense de Madrid"
-        ]
-      },
-      {
-        "name": "Fructuoso Atencia",
-        "affiliations": [
-          "Universidad Complutense de Madrid"
-        ]
-      },
-      {
-        "name": "Félix Blanco Campos",
-        "affiliations": [
-          "Universidad de Valladolid"
-        ]
-      },
-      {
-        "name": "Gaston Gilabert",
-        "affiliations": [
-          "Universitat de Barcelona"
-        ]
-      },
-      {
-        "name": "Gema Cienfuegos Antelo",
-        "affiliations": [
-          "Universidad de Valladolid"
-        ]
-      },
-      {
-        "name": "Gema Gómez Rubio",
-        "affiliations": [
-          "Universidad de Castilla-La Mancha"
-        ]
-      },
-      {
-        "name": "George Peale",
-        "affiliations": [
-          "California State University"
-        ]
-      },
-      {
-        "name": "Gonzalo Pontón",
-        "affiliations": [
-          "Universitat Autònoma de Barcelona. Prolope"
-        ]
-      },
-      {
-        "name": "Guillermo Carrascón",
-        "affiliations": [
-          "Università degli Studi di Torino"
-        ]
-      },
-      {
-        "name": "Guillermo Gómez Sánchez-Ferrer",
-        "affiliations": [
-          "Universidad Complutense de Madrid"
-        ]
-      },
-      {
-        "name": "Guillermo Schmidhuber",
-        "affiliations": [
-          "Universidad de Guadalajara"
-        ]
-      },
-      {
-        "name": "Guillermo Serés Guillén",
-        "affiliations": [
-          "Universitat Autònoma de Barcelona"
-        ]
-      },
-      {
-        "name": "Héctor Brioso Santos",
-        "affiliations": [
-          "Universidad de Alcalá de Henares"
-        ]
-      },
-      {
-        "name": "Héctor Urzáiz Tortajada",
-        "affiliations": [
-          "Universidad de Valladolid"
-        ]
-      },
-      {
-        "name": "Ilaria Resta",
-        "affiliations": [
-          "Università degli studi Roma Tre"
-        ]
-      },
-      {
-        "name": "Irene González Escudero",
-        "affiliations": [
-          "Universidad de Valladolid"
-        ]
-      },
-      {
-        "name": "Iván Gómez Caballero",
-        "affiliations": [
-          "Universidad de Castilla-La Mancha"
-        ]
-      },
-      {
-        "name": "Javier Castrillo Alaguero",
-        "affiliations": [
-          "Universidad de Burgos"
-        ]
-      },
-      {
-        "name": "Javier Huerta Calvo",
-        "affiliations": [
-          "Universidad Complutense de Madrid"
-        ]
-      },
-      {
-        "name": "Javier J. González Martínez",
-        "affiliations": [
-          "Universidad de Valladolid"
-        ]
-      },
-      {
-        "name": "Javier Rubiera",
-        "affiliations": [
-          "Université de Montréal"
-        ]
-      },
-      {
-        "name": "Javier de la Rosa",
-        "affiliations": [
-          "Nasjonalbiblioteket"
-        ]
-      },
-      {
-        "name": "Jean-Baptiste Camps",
-        "affiliations": [
-          "École nationale des chartes - PSL"
-        ]
-      },
-      {
-        "name": "Jorge Ferreira Barrocal",
-        "affiliations": [
-          "Universidad de Valladolid"
-        ]
-      },
-      {
-        "name": "José Cano Navarro",
-        "affiliations": [
-          "Consejería de Educación de la Comunidad de Madrid"
-        ]
-      },
-      {
-        "name": "José Javier Rodríguez",
-        "affiliations": [
-          "Universidad del País Vasco/Euskal Herriko Unibertsitatea"
-        ]
-      },
-      {
-        "name": "Juan Antonio Martínez Berbel",
-        "affiliations": [
-          "Universidad de La Rioja"
-        ]
-      },
-      {
-        "name": "Juan Manuel Carmona Tierno",
-        "affiliations": [
-          "Universidad de Sevilla"
-        ]
-      },
-      {
-        "name": "Juan Matas Caballero",
-        "affiliations": [
-          "Universidad de León"
-        ]
-      },
-      {
-        "name": "Judith Farré Vidal",
-        "affiliations": [
-          "Consejo Superior de Investigaciones Científicas"
-        ]
-      },
-      {
-        "name": "Julio Vélez Sainz",
-        "affiliations": [
-          "Universidad Complutense de Madrid"
-        ]
-      },
-      {
-        "name": "Jörg Lehmann",
-        "affiliations": [
-          "Eberhard Karls Universität Tübingen"
-        ]
-      },
-      {
-        "name": "Kelly Ferguson",
-        "affiliations": [
-          "University of Kentucky"
-        ]
-      },
-      {
-        "name": "Leonardo Sarría Muzio",
-        "affiliations": [
-          "Universidad de La Habana"
-        ]
-      },
-      {
-        "name": "Luis Iglesias Feijoo",
-        "affiliations": [
-          "Universidad de Santiago de Compostela. GIC"
-        ]
-      },
-      {
-        "name": "Luisa Rosselló Castillo",
-        "affiliations": [
-          "Universitat de les Illes Balears"
-        ]
-      },
-      {
-        "name": "Marcella Trambaioli",
-        "affiliations": [
-          "Università del Piemonte Orientale"
-        ]
-      },
-      {
-        "name": "Marco Pannarale",
-        "affiliations": [
-          "Università di Bologna"
-        ]
-      },
-      {
-        "name": "Marco Presotto",
-        "affiliations": [
-          "Università di Bologna"
-        ]
-      },
-      {
-        "name": "Mark Lauersdorf",
-        "affiliations": [
-          "University of Kentucky"
-        ]
-      },
-      {
-        "name": "María Cimadevilla Abadíe",
-        "affiliations": [
-          "Universidad Complutense de Madrid"
-        ]
-      },
-      {
-        "name": "María Luisa Lobato",
-        "affiliations": [
-          "Universidad de Burgos. Proteo"
-        ]
-      },
-      {
-        "name": "María Rosa Álvarez Sellers",
-        "affiliations": [
-          "Universitat de València"
-        ]
-      },
-      {
-        "name": "María del Pilar Chouza-Calo",
-        "affiliations": [
-          "Central Michigan University"
-        ]
-      },
-      {
-        "name": "Miguel Betti",
-        "affiliations": [
-          "Université de Genève"
-        ]
-      },
-      {
-        "name": "Miguel Campión",
-        "affiliations": [
-          "Universidad Autónoma de Madrid"
-        ]
-      },
-      {
-        "name": "Miguel García-Bermejo Giner",
-        "affiliations": [
-          "Universidad de Salamanca"
-        ]
-      },
-      {
-        "name": "Miguel Zugasti",
-        "affiliations": [
-          "Universidad de Navarra"
-        ]
-      },
-      {
-        "name": "Míriam Martínez Gutiérrez",
-        "affiliations": [
-          "Universidad de Burgos"
-        ]
-      },
-      {
-        "name": "Natalia Fernández",
-        "affiliations": [
-          "Universidad Complutense de Madrid"
-        ]
-      },
-      {
-        "name": "Noelia Iglesias Iglesias",
-        "affiliations": [
-          "Universidad de Santiago de Compostela"
-        ]
-      },
-      {
-        "name": "Paolo Pintacuda",
-        "affiliations": [
-          "Università di Pavia"
-        ]
-      },
-      {
-        "name": "Paula Casariego Castiñeira",
-        "affiliations": [
-          "Universidad de Santiago de Compostela"
-        ]
-      },
-      {
-        "name": "Piedad Bolaños",
-        "affiliations": [
-          "Universidad de Sevilla"
-        ]
-      },
-      {
-        "name": "Rafael González Cañal",
-        "affiliations": [
-          "Universidad de Castilla-La Mancha"
-        ]
-      },
-      {
-        "name": "Rafael Massanet Rodríguez",
-        "affiliations": [
-          "Universitat de les Illes Balears"
-        ]
-      },
-      {
-        "name": "Rafael Ramos",
-        "affiliations": [
-          "Universitat de Girona"
-        ]
-      },
-      {
-        "name": "Ramón Valdés Gázquez",
-        "affiliations": [
-          "Universitat Autònoma de Barcelona. Prolope"
-        ]
-      },
-      {
-        "name": "Ricardo Enguix Barber",
-        "affiliations": [
-          "Kaunas University of Technology",
-          "Edition Reichenberger"
-        ]
-      },
-      {
-        "name": "Ricardo Serrano Deza",
-        "affiliations": [
-          "Universidad de La Rioja"
-        ]
-      },
-      {
-        "name": "Roberta Alviti",
-        "affiliations": [
-          "Università degli studi di Cassino e del Lazio Meridionale"
-        ]
-      },
-      {
-        "name": "Rocío Alonso Medel",
-        "affiliations": [
-          "Universidad Complutense de Madrid"
-        ]
-      },
-      {
-        "name": "Rosa Illán de Haro",
-        "affiliations": [
-          "Università di Pavia"
-        ]
-      },
-      {
-        "name": "Salomé Vuelta García",
-        "affiliations": [
-          "Università di Firenze"
-        ]
-      },
-      {
-        "name": "Santiago Fernández Mosquera",
-        "affiliations": [
-          "Universidad de Santiago de Compostela. GIC"
-        ]
-      },
-      {
-        "name": "Sergio Rodríguez Nicolás",
-        "affiliations": [
-          "Universidad de León"
-        ]
-      },
-      {
-        "name": "Simon Kroll",
-        "affiliations": [
-          "Universität Wien"
-        ]
-      },
-      {
-        "name": "Sofía Cantalapiedra Delgado",
-        "affiliations": [
-          "Universitat de Barcelona"
-        ]
-      },
-      {
-        "name": "Stefano De Capitani",
-        "affiliations": [
-          "Università degli Studi di Milano"
-        ]
-      },
-      {
-        "name": "Tania De Miguel Magro",
-        "affiliations": [
-          "West Virginia University"
-        ]
-      },
-      {
-        "name": "Teresa Ferrer Valls",
-        "affiliations": [
-          "Universitat de València"
-        ]
-      },
-      {
-        "name": "Valeria Marrella",
-        "affiliations": [
-          "Università Ca' Foscari Venezia"
-        ]
-      },
-      {
-        "name": "Zaida Vila Carneiro",
-        "affiliations": [
-          "Universidad de La Rioja"
-        ]
-      },
-      {
-        "name": "Álvaro Bustos",
-        "affiliations": [
-          "Universidad Complutense de Madrid"
-        ]
-      },
-      {
-        "name": "Óscar García Fernández",
-        "affiliations": [
-          "Universidad de León"
-        ]
-      }
-    ],
-    "organizations": [
-      {
-        "name": "Grupo de Investigación Calderón (GIC)",
-        "affiliations": [
-          "Universidad de Santiago de Compostela"
-        ]
-      },
-      {
-        "name": "Prolope",
-        "affiliations": [
-          "Universidad Autónoma de Barcelona"
-        ]
-      }
-    ]
-  },
-  "students": {
-    "group": "Estudiantes de los Grados en Estudios Clásicos y en Español: Lengua y Literatura",
-    "institution": "Universidad de Valladolid",
-    "people": [
-      {
-        "name": "Tania Alba Martín"
-      },
-      {
-        "name": "Gabriela Albertos Escudero"
-      },
-      {
-        "name": "Leillane Almeida"
-      },
-      {
-        "name": "Noelia Alonso"
-      },
-      {
-        "name": "Elena Alonso del Río"
-      },
-      {
-        "name": "Simona Andreea Gaia"
-      },
-      {
-        "name": "Amanda Aparicio"
-      },
-      {
-        "name": "Génesis Aquino Berroa"
-      },
-      {
-        "name": "Marina Arenas Guerra"
-      },
-      {
-        "name": "Alicia Barajas Delgado"
-      },
-      {
-        "name": "Mario Benito Delgado"
-      },
-      {
-        "name": "Laín Burgos Cuadrado"
-      },
-      {
-        "name": "Francisco Cabañas Centeno"
-      },
-      {
-        "name": "Dolores Cádiz"
-      },
-      {
-        "name": "Pablo Calle Martín"
-      },
-      {
-        "name": "Fabián Calvo De Santiago"
-      },
-      {
-        "name": "Estefanía Casadevall Stefanova"
-      },
-      {
-        "name": "Eduardo Camero"
-      },
-      {
-        "name": "Elena Caminero"
-      },
-      {
-        "name": "Diego Castro García"
-      },
-      {
-        "name": "Paula Castro Herrero"
-      },
-      {
-        "name": "Rodrigo Castro San José"
-      },
-      {
-        "name": "Raúl Crespo Valdivieso"
-      },
-      {
-        "name": "Berta Cuadrado De la Fuente"
-      },
-      {
-        "name": "Cristina Cuiñas Dios"
-      },
-      {
-        "name": "Sandra Díaz López"
-      },
-      {
-        "name": "Héctor Erazo Bernal"
-      },
-      {
-        "name": "Carlota Esteban Cabreros"
-      },
-      {
-        "name": "Sofía Farto García"
-      },
-      {
-        "name": "Alba Fernández"
-      },
-      {
-        "name": "Mario Fernández Lázaro"
-      },
-      {
-        "name": "Lydia Fernández Martín"
-      },
-      {
-        "name": "Laura Fernández Rodríguez"
-      },
-      {
-        "name": "María Ferreira Sevillano"
-      },
-      {
-        "name": "Juan Figueros Sahagún"
-      },
-      {
-        "name": "Luz Glez. Frechilla"
-      },
-      {
-        "name": "Elena de la Fuente"
-      },
-      {
-        "name": "Sara Isabel de la Fuente Martínez"
-      },
-      {
-        "name": "Ángela García"
-      },
-      {
-        "name": "Claudia García"
-      },
-      {
-        "name": "Paula García Alcolea"
-      },
-      {
-        "name": "Ana García de la Fuente"
-      },
-      {
-        "name": "Marta García Gutiérrez"
-      },
-      {
-        "name": "Elena García Muñoz"
-      },
-      {
-        "name": "María Magdalena García Pérez"
-      },
-      {
-        "name": "Erica García Sánchez"
-      },
-      {
-        "name": "Irene Garres Pelaz"
-      },
-      {
-        "name": "Isabel Garrido Rivas"
-      },
-      {
-        "name": "Esther Garrote Robledo"
-      },
-      {
-        "name": "Miguel Gil Gracia"
-      },
-      {
-        "name": "Lucía Gómez"
-      },
-      {
-        "name": "Anaïs Gómez García"
-      },
-      {
-        "name": "Paula Gómez Juárez"
-      },
-      {
-        "name": "Ana Rosa González"
-      },
-      {
-        "name": "Marta González"
-      },
-      {
-        "name": "Alba González Anibarro"
-      },
-      {
-        "name": "Míriam González Ríos"
-      },
-      {
-        "name": "Daniel González Varela"
-      },
-      {
-        "name": "Julia Gromowska Swiatkowska"
-      },
-      {
-        "name": "Jesús Güemes Ramírez"
-      },
-      {
-        "name": "Diego Gutiérrez"
-      },
-      {
-        "name": "Carmen Henar León Moro"
-      },
-      {
-        "name": "Isaías Hernández Galeano"
-      },
-      {
-        "name": "Judit Hernández Toledano"
-      },
-      {
-        "name": "Ana Belén Hidalgo González"
-      },
-      {
-        "name": "Inés Izquierdo Archidona"
-      },
-      {
-        "name": "Curtis Kouame"
-      },
-      {
-        "name": "Sandra Laguna García"
-      },
-      {
-        "name": "Cristina Manrique Balmori"
-      },
-      {
-        "name": "Samuel Marina Franco"
-      },
-      {
-        "name": "Álvaro Magdaleno García"
-      },
-      {
-        "name": "Aarón Marqués González"
-      },
-      {
-        "name": "Irene Martín"
-      },
-      {
-        "name": "Olivia Martín"
-      },
-      {
-        "name": "Alba Martín Terán"
-      },
-      {
-        "name": "Isabel de Mata Gutiérrez"
-      },
-      {
-        "name": "Rut Matilla Cortezón"
-      },
-      {
-        "name": "Marina Mayor Rocher"
-      },
-      {
-        "name": "Pedro Méndez Montes"
-      },
-      {
-        "name": "Susana Merillas Benito"
-      },
-      {
-        "name": "Lucía Merino Montes"
-      },
-      {
-        "name": "María Molina Mera"
-      },
-      {
-        "name": "Alicia Monge Olivares"
-      },
-      {
-        "name": "Jimena Muñoz Abad"
-      },
-      {
-        "name": "Esther Nicolás Bolívar"
-      },
-      {
-        "name": "Jacinta María de Onuva López de San Román Alves"
-      },
-      {
-        "name": "Ana Ortega Gutiérrez"
-      },
-      {
-        "name": "Paula Peña Navarro"
-      },
-      {
-        "name": "Esther Pérez"
-      },
-      {
-        "name": "Pablo Pérez"
-      },
-      {
-        "name": "Claudia Pérez Conde"
-      },
-      {
-        "name": "Eva Poblador"
-      },
-      {
-        "name": "Ana Porres"
-      },
-      {
-        "name": "Cristina Pozo"
-      },
-      {
-        "name": "Andrea Redondo Nebreda"
-      },
-      {
-        "name": "Andrea Revilla"
-      },
-      {
-        "name": "Irene Rico"
-      },
-      {
-        "name": "Marta Riesco Valdés"
-      },
-      {
-        "name": "Julia Rodríguez"
-      },
-      {
-        "name": "Noa Rodríguez"
-      },
-      {
-        "name": "Ana Rodríguez Rebollo"
-      },
-      {
-        "name": "Álvaro Luis Rodríguez Sanz"
-      },
-      {
-        "name": "Lucía Sáez"
-      },
-      {
-        "name": "Paula Salas Durántez"
-      },
-      {
-        "name": "Patricia San Miguel Molinilla"
-      },
-      {
-        "name": "Claudia Sánchez"
-      },
-      {
-        "name": "Urko Sánchez Astorgano"
-      },
-      {
-        "name": "Daniel Sánchez Loma"
-      },
-      {
-        "name": "Manuel Sanchís"
-      },
-      {
-        "name": "Helena Santos Martín"
-      },
-      {
-        "name": "Ana Simón Miguélez"
-      },
-      {
-        "name": "Blanca Suárez González"
-      },
-      {
-        "name": "María Dolores Tejada Benavides"
-      },
-      {
-        "name": "Sheila Toquero Pascual"
-      },
-      {
-        "name": "Elena Toral Martín"
-      },
-      {
-        "name": "Ada Valdivieso del Pozo"
-      },
-      {
-        "name": "Lara Vallejo"
-      },
-      {
-        "name": "Marta Vaquero Herrero"
-      },
-      {
-        "name": "Jana Velasco"
-      },
-      {
-        "name": "Mario Villalba"
-      },
-      {
-        "name": "Domingo Vladimir Consuegra"
-      },
-      {
-        "name": "Nadia Ziyí Gutiérrez Nuevo"
-      }
-    ]
-  },
-  "open_corpora": [
-    {
-      "name": "Artelope",
-      "description": "Base de datos y Argumentos del teatro de Lope de Vega"
-    },
-    {
-      "name": "Association for Hispanic Classical Theater",
-      "description": "Promoting appreciation for the Spain's classical theater in production"
-    },
-    {
-      "name": "Aula-Biblioteca Mira de Amescua"
-    },
-    {
-      "name": "Canon 60",
-      "description": "La colección esencial del TC/12"
-    },
-    {
-      "name": "Cervantes Virtual",
-      "description": "Biblioteca Virtual Miguel de Cervantes"
-    },
-    {
-      "name": "Moretianos",
-      "description": "Repositorios universitarios"
-    },
-    {
-      "name": "TESEO",
-      "description": "Base de datos de tesis doctorales"
-    }
-  ],
-  "acknowledgments": {
-    "text": "We would thank the University of Kentucky Center for Computational Sciences and Information Technology Services Research Computing for their support and use of the Lipscomb Compute Cluster and associated research computing resources.",
-    "organizations": [
-      "University of Kentucky",
-      "Center for Computational Sciences and Information Technology Services Research Computing"
-    ]
-  }
+  ]
 }

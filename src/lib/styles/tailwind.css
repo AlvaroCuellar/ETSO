@@ -14,11 +14,42 @@
 	--color-text-soft: #4f5562;
 	--color-border: #d7dfef;
 	--color-surface: #ffffff;
-	--color-surface-soft: #f5f8ff;
+	--color-surface-page: #ffffff;
+	--color-surface-soft: #f4f4f5;
 	--color-surface-accent: #edf2ff;
+	--color-surface-accent-blue: #edf2ff;
+	--color-surface-accent-purple: #f7eef8;
+	--color-border-accent-blue: #c9d9f3;
+	--color-border-accent-purple: #dcc5df;
+	--color-text-accent-purple: #5a2454;
 
 	--shadow-soft: 0 6px 20px rgba(7, 36, 110, 0.08);
 	--shadow-strong: 0 14px 30px rgba(9, 34, 98, 0.15);
 
 	--radius-card: 0.75rem;
+}
+
+@layer base {
+	:where(a[href]) {
+		color: var(--color-brand-blue);
+		text-decoration-line: underline;
+		text-decoration-thickness: 0.08em;
+		text-underline-offset: 0.18em;
+		text-decoration-color: rgba(13, 63, 145, 0.42);
+		transition:
+			color 160ms ease,
+			text-decoration-color 160ms ease,
+			text-decoration-thickness 160ms ease;
+	}
+
+	:where(a[href]:hover, a[href]:focus-visible) {
+		color: var(--color-brand-blue-dark);
+		text-decoration-color: currentColor;
+		text-decoration-thickness: 0.11em;
+	}
+
+	::selection {
+		background: rgba(105, 0, 93, 0.16);
+		color: var(--color-brand-blue-dark);
+	}
 }

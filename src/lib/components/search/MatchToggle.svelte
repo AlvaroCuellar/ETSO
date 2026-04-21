@@ -82,7 +82,7 @@
 	.fieldset-legend {
 		font-weight: 600;
 		font-size: 14px;
-		color: #555;
+		color: var(--color-text-soft);
 		margin-bottom: 6px;
 		padding: 0;
 		display: inline-flex;
@@ -99,10 +99,10 @@
 	.field-help-trigger {
 		width: 20px;
 		height: 20px;
-		border: 1px solid #c6d1e4;
+		border: 1px solid var(--color-border-accent-blue);
 		border-radius: 999px;
-		background: #f2f6ff;
-		color: #0033a7;
+		background: var(--color-surface-accent-blue);
+		color: var(--color-brand-blue-dark);
 		font-size: 12px;
 		font-weight: 700;
 		line-height: 1;
@@ -118,7 +118,7 @@
 		left: 0;
 		width: min(320px, 78vw);
 		padding: 8px 10px;
-		border: 1px solid #d8e0ea;
+		border: 1px solid var(--color-border);
 		border-radius: 6px;
 		background: #fff;
 		color: #3d4c63;
@@ -142,8 +142,8 @@
 	.match-toggle {
 		display: inline-flex;
 		gap: 6px;
-		background: #eef2f7;
-		border: 1px solid #d8e0ea;
+		background: var(--color-surface-accent-blue);
+		border: 1px solid var(--color-border-accent-blue);
 		border-radius: 999px;
 		padding: 4px;
 		width: fit-content;
@@ -152,7 +152,7 @@
 	.match-toggle-btn {
 		border: 0;
 		background: transparent;
-		color: #46607d;
+		color: var(--color-brand-blue);
 		border-radius: 999px;
 		font-size: 12px;
 		font-weight: 700;
@@ -162,7 +162,7 @@
 	}
 
 	.match-toggle-btn.is-active {
-		background: #0033a7;
+		background: var(--color-brand-blue);
 		color: #fff;
 	}
 

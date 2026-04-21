@@ -51,7 +51,7 @@
 <style>
 	.unresolved-copy {
 		margin: 0;
-		color: #4f6686;
+		color: var(--color-text-soft);
 		font-size: 0.82rem;
 	}
 
@@ -62,7 +62,7 @@
 		align-items: center;
 		font-size: 0.82rem;
 		line-height: 1.45;
-		color: #2f4668;
+		color: var(--color-text-main);
 	}
 
 	.attribution-group {
@@ -73,7 +73,7 @@
 	}
 
 	.attribution-group a {
-		color: #224e8e;
+		color: var(--color-brand-blue);
 		text-decoration: none;
 		font-weight: 500;
 	}
@@ -88,8 +88,8 @@
 		justify-content: center;
 		padding: 0.1rem 0.3rem;
 		border-radius: 0.25rem;
-		background: #edf2f7;
-		color: #4a5f7d;
+		background: var(--color-surface-accent-purple);
+		color: var(--color-text-accent-purple);
 		font-size: 0.67rem;
 		font-weight: 700;
 		text-transform: uppercase;

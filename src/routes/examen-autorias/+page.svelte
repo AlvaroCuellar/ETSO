@@ -4,6 +4,8 @@
 	import WorksTable from '$lib/components/search/WorksTable.svelte';
 	import AppButton from '$lib/components/ui/AppButton.svelte';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
+	import FeatureHeroSection from '$lib/components/ui/FeatureHeroSection.svelte';
+	import HeroStatCard from '$lib/components/ui/HeroStatCard.svelte';
 	import fondoLogo from '$lib/assets/fondos/fondo-logo.png';
 	import BookOpen from 'lucide-svelte/icons/book-open';
 	import ChevronDown from 'lucide-svelte/icons/chevron-down';
@@ -243,94 +245,81 @@
 <div class="grid gap-6">
 	<Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'Examen de autorías' }]} />
 
-	<section
-		class="grid items-start gap-[2.1rem] rounded-[14px] bg-[#ececf0] p-[clamp(1.2rem,2.4vw,2rem)] [background-repeat:no-repeat,no-repeat] [background-size:auto,min(130vw,720px)_auto] [background-position:center,right_-120px_bottom_-35px] md:[background-size:auto,min(90vw,680px)_auto] md:[background-position:center,right_-80px_bottom_-58px] min-[1201px]:grid-cols-[minmax(0,1.9fr)_minmax(320px,1fr)] min-[1201px]:[background-size:auto,min(60vw,860px)_auto] min-[1201px]:[background-position:center,right_-56px_bottom_-66px]"
-		style={`background-image: linear-gradient(100deg, rgba(239,240,244,0.95) 0%, rgba(236,237,242,0.88) 46%, rgba(236,237,242,0.52) 70%, rgba(236,237,242,0.22) 100%), url('${fondoLogo}')`}
+	<FeatureHeroSection
+		eyebrow="Análisis computacional"
+		title="Examen de Autorías"
+		titleTag="h2"
+		subtitle="Análisis estilométrico de obras teatrales del Siglo de Oro"
+		backgroundImage={fondoLogo}
+		statsAriaLabel="Indicadores del catálogo"
 	>
-		<div class="flex flex-col">
-			<h2 class="mb-0 mt-0 font-ui text-[clamp(2rem,4.3vw,2.85rem)] leading-[1.05] font-bold text-[#0033a7]">
-				Examen de Autorías
-			</h2>
-			<p class="mt-[1.05rem] mb-0 max-w-none font-ui text-[clamp(1.28rem,2.2vw,1.78rem)] leading-[1.22] font-semibold text-[#003aa5] min-[1201px]:max-w-[25ch]">
-				Análisis estilométrico de obras teatrales del Siglo de Oro
-			</p>
-			<p class="mt-[1.8rem] mb-0 max-w-[64ch] font-['Lora',serif] text-[1.01rem] leading-[1.62] text-[#17293f]">
-				Examen de Autorías es un espacio dedicado a la <b>atribución computacional</b> de autoría en el teatro
-				del Siglo de Oro a gran escala. La plataforma, desarrollada por Álvaro Cuéllar y Germán Vega
-				García-Luengos, ofrece resultados estilométricos sobre un corpus en expansión de unas 3.000 obras
-				pertenecientes a más de 350 dramaturgos, con el propósito de facilitar la investigación y el
-				contraste de hipótesis autorales.
-			</p>
-			<p class="mt-[1.25rem] mb-0 max-w-[64ch] font-['Lora',serif] text-[1.01rem] leading-[1.62] text-[#17293f]">
-				Los textos han sido modernizados y regularizados para hacer posible su comparación, y se han depurado
-				en lo posible para reducir interferencias (por ejemplo, acotaciones y marcas de intervención). A
-				partir de esta base, el sitio permite confrontar atribuciones transmitidas por la tradición con
-				propuestas derivadas del análisis cuantitativo del estilo. El objetivo no es sustituir la lectura
-				filológica, sino aportar evidencia adicional, reproducible y acumulativa que ayude a orientar futuras
-				comprobaciones documentales y críticas.
-			</p>
-			<p class="mt-[1.25rem] mb-0 max-w-[64ch] font-['Lora',serif] text-[1.01rem] leading-[1.62] text-[#17293f]">
-				El corpus se nutre de fuentes abiertas y de aportaciones de investigadores y grupos, e integra
-				también textos procedentes de transcripciones automáticas de impresos y manuscritos antiguos. Se
-				aceptan consultas, colaboraciones y propuestas de ampliación: si dispones de una obra o conoces cómo
-				acceder a ella, escríbenos y nos comprometemos a reconocer la procedencia en la tabla
-				correspondiente y a compartir los resultados del análisis.
-			</p>
-		</div>
+		<p class="mt-[1.8rem] mb-0 max-w-[64ch] font-['Lora',serif] text-[1.01rem] leading-[1.62] text-text-main">
+			Examen de Autorías es un espacio dedicado a la <b>atribución computacional</b> de autoría en el teatro
+			del Siglo de Oro a gran escala. La plataforma, desarrollada por Álvaro Cuéllar y Germán Vega
+			García-Luengos, ofrece resultados estilométricos sobre un corpus en expansión de unas 3.000 obras
+			pertenecientes a más de 350 dramaturgos, con el propósito de facilitar la investigación y el
+			contraste de hipótesis autorales.
+		</p>
+		<p class="mt-[1.25rem] mb-0 max-w-[64ch] font-['Lora',serif] text-[1.01rem] leading-[1.62] text-text-main">
+			Los textos han sido modernizados y regularizados para hacer posible su comparación, y se han depurado
+			en lo posible para reducir interferencias (por ejemplo, acotaciones y marcas de intervención). A
+			partir de esta base, el sitio permite confrontar atribuciones transmitidas por la tradición con
+			propuestas derivadas del análisis cuantitativo del estilo. El objetivo no es sustituir la lectura
+			filológica, sino aportar evidencia adicional, reproducible y acumulativa que ayude a orientar futuras
+			comprobaciones documentales y críticas.
+		</p>
+		<p class="mt-[1.25rem] mb-0 max-w-[64ch] font-['Lora',serif] text-[1.01rem] leading-[1.62] text-text-main">
+			El corpus se nutre de fuentes abiertas y de aportaciones de investigadores y grupos, e integra
+			también textos procedentes de transcripciones automáticas de impresos y manuscritos antiguos. Se
+			aceptan consultas, colaboraciones y propuestas de ampliación: si dispones de una obra o conoces cómo
+			acceder a ella, escríbenos y nos comprometemos a reconocer la procedencia en la tabla
+			correspondiente y a compartir los resultados del análisis.
+		</p>
 
-		<div
-			class="grid w-full max-w-[420px] grid-cols-1 content-center items-end gap-[1.05rem] self-center justify-self-center md:max-w-[520px] md:grid-cols-2 md:justify-self-start min-[1201px]:max-w-[420px] min-[1201px]:justify-self-center"
-			aria-label="Indicadores del catálogo"
-		>
-			<article
-				class="flex min-h-[170px] flex-col items-start gap-[0.65rem] rounded-[10px] border border-[rgba(6,33,93,0.08)] bg-[rgba(249,249,251,0.88)] px-[1.1rem] pb-[1.1rem] pt-[1.35rem] shadow-[0_8px_20px_rgba(25,37,77,0.08)] lg:-translate-y-[14px]"
-			>
-				<div class="inline-flex h-[2.2rem] w-[2.2rem] items-center justify-center text-[#70006b]" aria-hidden="true">
-					<BookOpen class="h-[1.9rem] w-[1.9rem] stroke-[2.2]" />
-				</div>
-				<div>
-					<div class="text-[clamp(2rem,3vw,2.35rem)] leading-none font-bold text-[#0033a7]">{totalWorks}</div>
-					<div class="font-['Roboto'] text-[1.04rem] font-medium text-[#1f2f45]">Obras</div>
-				</div>
-			</article>
+		{#snippet stats()}
+			<HeroStatCard
+				Icon={BookOpen}
+				href="/examen-autorias/obras"
+				ariaLabel="Ver listado de obras"
+				value={totalWorks}
+				label="Obras"
+				desktopOffset="up"
+			/>
 
-			<article
-				class="flex min-h-[170px] flex-col items-start gap-[0.65rem] rounded-[10px] border border-[rgba(6,33,93,0.08)] bg-[rgba(249,249,251,0.88)] px-[1.1rem] pb-[1.1rem] pt-[1.35rem] shadow-[0_8px_20px_rgba(25,37,77,0.08)] lg:translate-y-[14px]"
-			>
-				<div class="inline-flex h-[2.2rem] w-[2.2rem] items-center justify-center text-[#70006b]" aria-hidden="true">
-					<Feather class="h-[1.9rem] w-[1.9rem] stroke-[2.2]" />
-				</div>
-				<div>
-					<div class="text-[clamp(2rem,3vw,2.35rem)] leading-none font-bold text-[#0033a7]">{totalDramaturgos}</div>
-					<div class="font-['Roboto'] text-[1.04rem] font-medium text-[#1f2f45]">Dramaturgos</div>
-				</div>
-			</article>
-		</div>
-	</section>
+			<HeroStatCard
+				Icon={Feather}
+				href="/examen-autorias/dramaturgos"
+				ariaLabel="Ver listado de dramaturgos"
+				value={totalDramaturgos}
+				label="Dramaturgos"
+				desktopOffset="down"
+			/>
+		{/snippet}
+	</FeatureHeroSection>
 
-	<div class="font-['Roboto',sans-serif] leading-[1.6] text-[#333]">
+	<div class="font-['Roboto',sans-serif] leading-[1.6] text-text-main">
 		<div class="min-w-0">
 			<form onsubmit={applySearch}>
 				<div class="mb-[1.6rem]">
 					<div class="mb-[0.9rem]">
-						<div class="mb-[15px] border-b-2 border-[#ecf0f1] pb-2 text-[14px] font-bold tracking-[0.5px] text-[#34495e] uppercase">
+						<div class="mb-[15px] border-b-2 border-border pb-2 text-[14px] font-bold tracking-[0.5px] text-text-soft uppercase">
 							Búsqueda
 						</div>
 
 						<div class="mb-[15px] grid grid-cols-1 gap-5 min-[1201px]:grid-cols-[3fr_1fr]">
 							<div class="relative flex flex-col">
-								<label class="mb-[6px] inline-flex items-center gap-1 text-[14px] font-semibold text-[#555]" for="filtro-titulo">
+								<label class="mb-[6px] inline-flex items-center gap-1 text-[14px] font-semibold text-text-soft" for="filtro-titulo">
 									Título
 									<span class="group relative inline-flex items-center">
 										<span
-											class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-[#c6d1e4] bg-[#f2f6ff] text-[12px] leading-none font-bold text-[#0033a7]"
+											class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border-accent-blue bg-surface-accent-blue text-[12px] leading-none font-bold text-brand-blue-dark"
 											role="button"
 											tabindex="0"
 										>
 											?
 										</span>
 										<span
-											class="invisible absolute top-[calc(100%+8px)] left-0 z-20 w-[min(320px,78vw)] rounded-[6px] border border-[#d8e0ea] bg-white px-[10px] py-2 text-[12px] leading-[1.35] font-normal text-[#3d4c63] opacity-0 shadow-[0_8px_18px_rgba(0,0,0,0.08)] transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
+											class="invisible absolute top-[calc(100%+8px)] left-0 z-20 w-[min(320px,78vw)] rounded-[6px] border border-border bg-white px-[10px] py-2 text-[12px] leading-[1.35] font-normal text-text-soft opacity-0 shadow-[0_8px_18px_rgba(0,0,0,0.08)] transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
 										>
 											Busca por palabras del título.
 										</span>
@@ -339,7 +328,7 @@
 								<input
 									id="filtro-titulo"
 									type="text"
-									class="rounded-[4px] border border-[#ddd] px-3 py-[10px] text-[14px] transition focus:border-[#5a9fd4] focus:shadow-[0_0_0_3px_rgba(90,159,212,0.1)] focus:outline-none"
+									class="rounded-[4px] border border-border px-3 py-[10px] text-[14px] transition focus:border-brand-blue/35 focus:shadow-[0_0_0_3px_rgba(13,63,145,0.1)] focus:outline-none"
 									placeholder="Ej: cada paso peligro, verdades amor..."
 									bind:value={title}
 								/>
@@ -376,10 +365,10 @@
 						</div>
 					</div>
 
-					<div class="mt-[0.9rem] overflow-hidden rounded-[8px] border border-[#d8e0ea] bg-white">
+					<div class="mt-[0.9rem] overflow-hidden rounded-[8px] border border-border-accent-blue bg-white">
 						<button
 							type="button"
-							class="w-full cursor-pointer border-0 bg-transparent px-4 py-[0.9rem] text-left text-[14px] font-semibold text-[#0033a7] transition hover:bg-[#eef3ff]"
+							class="w-full cursor-pointer border-0 bg-transparent px-4 py-[0.9rem] text-left text-[14px] font-semibold text-brand-blue-dark transition hover:bg-surface-accent-blue"
 							data-target="advanced-content"
 							aria-expanded={advancedOpen ? 'true' : 'false'}
 							onclick={() => {
@@ -398,16 +387,16 @@
 							id="advanced-content"
 							class={`overflow-hidden border-t px-4 transition-[max-height,padding,opacity] duration-300 ease-out ${
 								advancedOpen
-									? 'max-h-[1200px] border-[#d8e0ea] py-[0.9rem] opacity-100'
+									? 'max-h-[1200px] border-border-accent-blue py-[0.9rem] opacity-100'
 									: 'max-h-0 border-transparent py-0 opacity-0'
 							}`}
 						>
 							<div class="mb-[0.8rem] bg-transparent py-[0.8rem]">
-								<div class="mb-[15px] border-b-2 border-[#ecf0f1] pb-2 text-[14px] font-bold tracking-[0.5px] text-[#34495e] uppercase">
+								<div class="mb-[15px] border-b-2 border-border pb-2 text-[14px] font-bold tracking-[0.5px] text-text-soft uppercase">
 									Filtros de autoría
 								</div>
 
-								<div class="mb-[18px] grid grid-cols-1 gap-5 rounded-[8px] border border-dashed border-[#d6dde8] bg-[#fafcff] p-3">
+								<div class="mb-[18px] grid grid-cols-1 gap-5 rounded-[8px] border border-dashed border-border-accent-blue bg-surface-accent-blue p-3">
 									<TokenMultiSelect
 										name="tipo_autoria"
 										label="Tipo de autoría"
@@ -423,7 +412,7 @@
 								</div>
 
 								<div class="grid grid-cols-1 gap-4 min-[1201px]:grid-cols-2">
-									<div class="flex flex-col gap-3 rounded-[8px] border border-[#e4e9ef] bg-[#fbfcfe] p-[14px]">
+									<div class="flex flex-col gap-3 rounded-[8px] border border-border bg-surface p-[14px]">
 										<TokenMultiSelect
 											name="autor_trad_ids"
 											label="Atribución tradicional"
@@ -447,7 +436,7 @@
 										/>
 									</div>
 
-									<div class="flex flex-col gap-3 rounded-[8px] border border-[#e4e9ef] bg-[#fbfcfe] p-[14px]">
+									<div class="flex flex-col gap-3 rounded-[8px] border border-border bg-surface p-[14px]">
 										<TokenMultiSelect
 											name="autor_esto_ids"
 											label="Atribución estilometría"
@@ -489,7 +478,7 @@
 							</div>
 
 							<div class="mb-[0.8rem] bg-transparent py-[0.8rem]">
-								<div class="mb-[15px] border-b-2 border-[#ecf0f1] pb-2 text-[14px] font-bold tracking-[0.5px] text-[#34495e] uppercase">
+								<div class="mb-[15px] border-b-2 border-border pb-2 text-[14px] font-bold tracking-[0.5px] text-text-soft uppercase">
 									Filtros técnicos
 								</div>
 
@@ -523,18 +512,18 @@
 
 								<div class="mb-[15px] grid grid-cols-1 gap-5 md:grid-cols-2">
 									<div class="relative flex flex-col">
-										<label class="mb-[6px] inline-flex items-center gap-1 text-[14px] font-semibold text-[#555]" for="filtro-fecha-desde">
+										<label class="mb-[6px] inline-flex items-center gap-1 text-[14px] font-semibold text-text-soft" for="filtro-fecha-desde">
 											Fecha de adición o modificación (desde)
 											<span class="group relative inline-flex items-center">
 												<span
-													class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-[#c6d1e4] bg-[#f2f6ff] text-[12px] leading-none font-bold text-[#0033a7]"
+													class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border-accent-blue bg-surface-accent-blue text-[12px] leading-none font-bold text-brand-blue-dark"
 													role="button"
 													tabindex="0"
 												>
 													?
 												</span>
 												<span
-													class="invisible absolute top-[calc(100%+8px)] left-0 z-20 w-[min(320px,78vw)] rounded-[6px] border border-[#d8e0ea] bg-white px-[10px] py-2 text-[12px] leading-[1.35] font-normal text-[#3d4c63] opacity-0 shadow-[0_8px_18px_rgba(0,0,0,0.08)] transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
+													class="invisible absolute top-[calc(100%+8px)] left-0 z-20 w-[min(320px,78vw)] rounded-[6px] border border-border bg-white px-[10px] py-2 text-[12px] leading-[1.35] font-normal text-text-soft opacity-0 shadow-[0_8px_18px_rgba(0,0,0,0.08)] transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
 												>
 													Incluye obras añadidas o modificadas desde esta fecha.
 												</span>
@@ -543,24 +532,24 @@
 										<input
 											id="filtro-fecha-desde"
 											type="date"
-											class="rounded-[4px] border border-[#ddd] px-3 py-[10px] text-[14px] transition focus:border-[#5a9fd4] focus:shadow-[0_0_0_3px_rgba(90,159,212,0.1)] focus:outline-none"
+											class="rounded-[4px] border border-border px-3 py-[10px] text-[14px] transition focus:border-brand-blue/35 focus:shadow-[0_0_0_3px_rgba(13,63,145,0.1)] focus:outline-none"
 											bind:value={dateFrom}
 										/>
 									</div>
 
 									<div class="relative flex flex-col">
-										<label class="mb-[6px] inline-flex items-center gap-1 text-[14px] font-semibold text-[#555]" for="filtro-fecha-hasta">
+										<label class="mb-[6px] inline-flex items-center gap-1 text-[14px] font-semibold text-text-soft" for="filtro-fecha-hasta">
 											Fecha de adición o modificación (hasta)
 											<span class="group relative inline-flex items-center">
 												<span
-													class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-[#c6d1e4] bg-[#f2f6ff] text-[12px] leading-none font-bold text-[#0033a7]"
+													class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border-accent-blue bg-surface-accent-blue text-[12px] leading-none font-bold text-brand-blue-dark"
 													role="button"
 													tabindex="0"
 												>
 													?
 												</span>
 												<span
-													class="invisible absolute top-[calc(100%+8px)] left-0 z-20 w-[min(320px,78vw)] rounded-[6px] border border-[#d8e0ea] bg-white px-[10px] py-2 text-[12px] leading-[1.35] font-normal text-[#3d4c63] opacity-0 shadow-[0_8px_18px_rgba(0,0,0,0.08)] transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
+													class="invisible absolute top-[calc(100%+8px)] left-0 z-20 w-[min(320px,78vw)] rounded-[6px] border border-border bg-white px-[10px] py-2 text-[12px] leading-[1.35] font-normal text-text-soft opacity-0 shadow-[0_8px_18px_rgba(0,0,0,0.08)] transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
 												>
 													Incluye obras añadidas o modificadas hasta esta fecha.
 												</span>
@@ -569,14 +558,14 @@
 										<input
 											id="filtro-fecha-hasta"
 											type="date"
-											class="rounded-[4px] border border-[#ddd] px-3 py-[10px] text-[14px] transition focus:border-[#5a9fd4] focus:shadow-[0_0_0_3px_rgba(90,159,212,0.1)] focus:outline-none"
+											class="rounded-[4px] border border-border px-3 py-[10px] text-[14px] transition focus:border-brand-blue/35 focus:shadow-[0_0_0_3px_rgba(13,63,145,0.1)] focus:outline-none"
 											bind:value={dateTo}
 										/>
 									</div>
 								</div>
 
 								{#if dateRangeError}
-									<div class="mt-1 text-[12px] text-[#7f8c8d] italic" role="alert">{dateRangeError}</div>
+									<div class="mt-1 text-[12px] text-text-soft italic" role="alert">{dateRangeError}</div>
 								{/if}
 							</div>
 						</div>
@@ -607,8 +596,8 @@
 				tabindex="-1"
 			>
 				{#if tableRows.length > 0}
-					<div class="mb-5 flex items-center justify-between border-b-2 border-[#ecf0f1] pb-[15px]">
-						<div class="text-[16px] text-[#555]"><strong class="text-[20px] text-[#2c3e50]">{works.length}</strong> resultados</div>
+					<div class="mb-5 flex items-center justify-between border-b-2 border-border pb-[15px]">
+						<div class="text-[16px] text-text-soft"><strong class="text-[20px] text-text-main">{works.length}</strong> resultados</div>
 					</div>
 				{/if}
 				<WorksTable

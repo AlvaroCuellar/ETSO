@@ -247,7 +247,7 @@
 		gap: 0.25rem;
 		font-size: 14px;
 		font-weight: 600;
-		color: #555;
+		color: var(--color-text-soft);
 	}
 
 	.field-help-anchor {
@@ -259,10 +259,10 @@
 	.field-help-trigger {
 		width: 20px;
 		height: 20px;
-		border: 1px solid #c6d1e4;
+		border: 1px solid var(--color-border-accent-blue);
 		border-radius: 999px;
-		background: #f2f6ff;
-		color: #0033a7;
+		background: var(--color-surface-accent-blue);
+		color: var(--color-brand-blue-dark);
 		font-size: 12px;
 		font-weight: 700;
 		line-height: 1;
@@ -278,7 +278,7 @@
 		left: 0;
 		width: min(320px, 78vw);
 		padding: 8px 10px;
-		border: 1px solid #d8e0ea;
+		border: 1px solid var(--color-border);
 		border-radius: 6px;
 		background: #fff;
 		color: #3d4c63;
@@ -301,9 +301,9 @@
 	}
 
 	.author-multiselect-wrapper {
-		border: 1px solid #ddd;
+		border: 1px solid var(--color-border);
 		border-radius: 4px;
-		background: #fff;
+		background: var(--color-surface);
 		padding: 6px 8px;
 		min-height: 44px;
 	}
@@ -328,9 +328,9 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 6px;
-		background: #eef4ff;
-		border: 1px solid #c9dbff;
-		color: #0033a7;
+		background: var(--color-surface-accent-purple);
+		border: 1px solid var(--color-border-accent-purple);
+		color: var(--color-text-accent-purple);
 		border-radius: 999px;
 		padding: 3px 8px;
 		font-size: 12px;
@@ -369,10 +369,10 @@
 		justify-content: center;
 		width: 18px;
 		height: 18px;
-		border: 1px solid #c9dbff;
+		border: 1px solid var(--color-border-accent-purple);
 		border-radius: 999px;
-		background: #eef4ff;
-		color: #0033a7;
+		background: var(--color-surface-accent-purple);
+		color: var(--color-text-accent-purple);
 		flex: 0 0 auto;
 	}
 
@@ -405,8 +405,8 @@
 		top: calc(100% + 1px);
 		left: 0;
 		right: 0;
-		background: #fff;
-		border: 1px solid #ddd;
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
 		border-radius: 0 0 4px 4px;
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 		max-height: 250px;
@@ -423,7 +423,7 @@
 		border-bottom: 1px solid #f0f0f0;
 		font-size: 14px;
 		text-align: left;
-		background: #fff;
+		background: var(--color-surface);
 	}
 
 	.autocomplete-item:last-child {
@@ -432,8 +432,8 @@
 
 	.autocomplete-item:hover,
 	.autocomplete-item.active {
-		background: #f0f7ff;
-		color: #0033a7;
+		background: var(--color-surface-accent-blue);
+		color: var(--color-brand-blue-dark);
 	}
 </style>
 

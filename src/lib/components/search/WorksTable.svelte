@@ -48,13 +48,13 @@
 		'mb-[6px] hidden text-[12px] font-semibold uppercase text-[#5a7a8a] max-md:block';
 	const actionButtonBaseClass = $derived.by(
 		() =>
-			`btn-action grid w-full min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 rounded-[8px] border text-left font-normal text-[#213549] no-underline transition-all ${
+			`btn-action grid w-full min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 rounded-[8px] border text-left font-normal text-text-main no-underline transition-all ${
 				mode === 'informe' ? 'px-[9px] py-[7px] text-[11px] rounded-[7px]' : 'px-[10px] py-2 text-[12px]'
 			}`
 	);
 	const actionButtonEnabledClass = $derived.by(
 		() =>
-			`${actionButtonBaseClass} cursor-pointer border-[rgba(0,51,167,0.18)] bg-white hover:border-[rgba(0,51,167,0.34)] hover:bg-[#f6f9ff] hover:no-underline focus:no-underline focus-visible:no-underline focus:outline-3 focus:outline-[rgba(0,51,167,0.16)] focus:outline-offset-1`
+			`${actionButtonBaseClass} cursor-pointer border-border-accent-blue bg-white hover:border-border-accent-blue hover:bg-surface-accent-blue hover:no-underline focus:no-underline focus-visible:no-underline focus:outline-3 focus:outline-brand-blue/15 focus:outline-offset-1`
 	);
 	const actionButtonDisabledClass = $derived.by(
 		() =>
@@ -209,11 +209,11 @@
 </script>
 
 {#if rows.length === 0}
-	<div class="py-10 px-5 text-center text-[16px] text-[#7f8c8d]">{emptyMessage}</div>
+	<div class="py-10 px-5 text-center text-[16px] text-text-soft">{emptyMessage}</div>
 {:else}
 	<div class="table-wrapper obra-table-shared-container min-w-0 w-full max-w-full overflow-x-auto overflow-y-visible font-['Roboto',sans-serif]">
 		<table class={tableClass}>
-			<thead class="bg-[#34495e] text-white max-md:hidden">
+			<thead class="bg-brand-blue-dark text-white max-md:hidden">
 				<tr>
 					{#if mode === 'informe'}
 						<th class="obra-table-col--position w-[36px] px-3 py-[14px] text-left text-[13px] font-medium tracking-[0.5px] uppercase" scope="col"></th>
@@ -267,8 +267,8 @@
 				{#each rows as row}
 					{@const flags = resolveFilterFlags(row)}
 					<tr
-						class={`obra-row cursor-pointer border-b border-[#ecf0f1] transition-colors hover:bg-[#f8f9fa] max-md:mb-3 max-md:block max-md:rounded-[8px] max-md:border max-md:border-[#e9ecef] max-md:bg-white max-md:p-2 ${
-							isRowExpanded(row.rowId) ? 'expanded border-b-[#e0e0e0] bg-[#f5f5f5]' : ''
+						class={`obra-row cursor-pointer border-b border-border transition-colors hover:bg-surface-accent-blue/45 max-md:mb-3 max-md:block max-md:rounded-[8px] max-md:border max-md:border-border max-md:bg-white max-md:p-2 ${
+							isRowExpanded(row.rowId) ? 'expanded border-b-border-accent-blue bg-surface-accent-blue/55' : ''
 						}`}
 						data-obra-id={row.work.id}
 						data-title-search={normalizeForSearch([row.work.title, ...row.work.titleVariants].join(' '))}
@@ -289,7 +289,7 @@
 								<span class={mobileCellLabelClass}>Distancia</span>
 								<span
 									class="distance-badge inline-block rounded-[12px] px-[0.55rem] py-[0.22rem] text-[0.75rem] font-medium"
-									style={`background-color: ${row.badgeColor ?? '#3366cc'}; color: #fff;`}
+									style={`background-color: ${row.badgeColor ?? '#0D3F91'}; color: #fff;`}
 								>
 									{distanceValue(row)}
 								</span>
@@ -298,10 +298,10 @@
 
 						<td class={dataCellClass} data-label="Título">
 							<span class={mobileCellLabelClass}>Título</span>
-							<div class="obra-title flex select-none items-center gap-2 font-medium text-[#2c3e50]">
+							<div class="obra-title flex select-none items-center gap-2 font-medium text-text-main">
 								<span
 									class={`expand-icon inline-flex h-3 w-3 flex-shrink-0 items-center justify-center max-md:hidden ${
-										isRowExpanded(row.rowId) ? 'text-[#0033a7]' : 'text-[#7f8c8d]'
+										isRowExpanded(row.rowId) ? 'text-brand-blue-dark' : 'text-text-soft'
 									}`}
 									aria-hidden="true"
 								>
@@ -313,20 +313,20 @@
 								</span>
 								<a
 									href={`/obras/${row.work.slug}`}
-									class="text-[#2c3e50] visited:text-[#2c3e50] no-underline hover:underline focus:underline focus-visible:underline"
+									class="text-text-main visited:text-text-main no-underline hover:underline focus:underline focus-visible:underline"
 								>
 									{row.work.title}
 								</a>
 							</div>
 							{#if row.work.titleVariants.length > 0}
-								<div class="variantes-titulo mt-1.5 pl-5 text-[13px] leading-[1.4] text-[#7f8c8d] italic">
-									<span class="variantes-prefix mr-1 inline-flex align-middle text-[#7f8c8d] not-italic" aria-hidden="true">
+								<div class="variantes-titulo mt-1.5 pl-5 text-[13px] leading-[1.4] text-text-soft italic">
+									<span class="variantes-prefix mr-1 inline-flex align-middle text-text-soft not-italic" aria-hidden="true">
 										<CornerDownRight class="h-3 w-3 stroke-[2.1]" />
 									</span>
 									{#each row.work.titleVariants as variante, index}
 										<span class="variante-item">{variante}</span>
 										{#if index < row.work.titleVariants.length - 1}
-											<span class="variantes-sep text-[#9aa8b7]"> | </span>
+											<span class="variantes-sep text-text-soft/55"> | </span>
 										{/if}
 									{/each}
 								</div>
@@ -343,36 +343,36 @@
 												{#if canLinkAuthor(member.authorId)}
 													<a
 														href={`/autores/${member.authorId}`}
-														class="autor-name font-normal text-[#2c3e50] visited:text-[#2c3e50] no-underline hover:underline focus:underline focus-visible:underline"
+														class="autor-name font-normal text-text-main visited:text-text-main no-underline hover:underline focus:underline focus-visible:underline"
 													>
 														{member.authorName}
 													</a>
 												{:else}
-													<span class="autor-name font-normal text-[#2c3e50]">{member.authorName}</span>
+													<span class="autor-name font-normal text-text-main">{member.authorName}</span>
 												{/if}
 												{#if memberIndex < group.members.length - 1}
-													<span class="logic-operator mx-1 inline-block rounded-[3px] bg-[#ecf0f1] px-1.5 py-[1px] align-middle text-[10px] font-semibold text-[#555] uppercase">
+													<span class="logic-operator mx-1 inline-block rounded-[3px] bg-surface-accent-purple px-1.5 py-[1px] align-middle text-[10px] font-semibold text-text-accent-purple uppercase">
 														Y
 													</span>
 												{/if}
 											{/each}
 										</span>
 										{#if groupIndex < row.work.traditionalAttribution.groups.length - 1}
-											<span class="logic-operator mx-1 inline-block rounded-[3px] bg-[#ecf0f1] px-1.5 py-[1px] align-middle text-[10px] font-semibold text-[#555] uppercase">
+											<span class="logic-operator mx-1 inline-block rounded-[3px] bg-surface-accent-purple px-1.5 py-[1px] align-middle text-[10px] font-semibold text-text-accent-purple uppercase">
 												{connectorLabel(row.work.traditionalAttribution)}
 											</span>
 										{/if}
 									{/each}
 								</div>
 							{:else}
-								<span class="desconocido text-[#7f8c8d] italic">Desconocido</span>
+								<span class="desconocido text-text-soft italic">Desconocido</span>
 							{/if}
 						</td>
 
 						<td class={dataCellClass} data-label="Atribución estilometría">
 							<span class={mobileCellLabelClass}>Atribución estilometría</span>
 							{#if row.work.stylometryAttribution.unresolved}
-								<span class="desconocido text-[#7f8c8d] italic">El análisis no apunta hacia ningún autor</span>
+								<span class="desconocido text-text-soft italic">El análisis no apunta hacia ningún autor</span>
 							{:else if row.work.stylometryAttribution.groups.length > 0}
 								<div class="autor-list leading-[1.6]">
 									{#each row.work.stylometryAttribution.groups as group, groupIndex}
@@ -381,12 +381,12 @@
 												{#if canLinkAuthor(member.authorId)}
 													<a
 														href={`/autores/${member.authorId}`}
-														class="autor-name font-normal text-[#2c3e50] visited:text-[#2c3e50] no-underline hover:underline focus:underline focus-visible:underline"
+														class="autor-name font-normal text-text-main visited:text-text-main no-underline hover:underline focus:underline focus-visible:underline"
 													>
 														{member.authorName}
 													</a>
 												{:else}
-													<span class="autor-name font-normal text-[#2c3e50]">{member.authorName}</span>
+													<span class="autor-name font-normal text-text-main">{member.authorName}</span>
 												{/if}
 												{#if member.confidence}
 													<span class={confidenceClass(member.confidence)}>
@@ -394,21 +394,21 @@
 													</span>
 												{/if}
 												{#if memberIndex < group.members.length - 1}
-													<span class="logic-operator mx-1 inline-block rounded-[3px] bg-[#ecf0f1] px-1.5 py-[1px] align-middle text-[10px] font-semibold text-[#555] uppercase">
+													<span class="logic-operator mx-1 inline-block rounded-[3px] bg-surface-accent-purple px-1.5 py-[1px] align-middle text-[10px] font-semibold text-text-accent-purple uppercase">
 														Y
 													</span>
 												{/if}
 											{/each}
 										</span>
 										{#if groupIndex < row.work.stylometryAttribution.groups.length - 1}
-											<span class="logic-operator mx-1 inline-block rounded-[3px] bg-[#ecf0f1] px-1.5 py-[1px] align-middle text-[10px] font-semibold text-[#555] uppercase">
+											<span class="logic-operator mx-1 inline-block rounded-[3px] bg-surface-accent-purple px-1.5 py-[1px] align-middle text-[10px] font-semibold text-text-accent-purple uppercase">
 												{connectorLabel(row.work.stylometryAttribution)}
 											</span>
 										{/if}
 									{/each}
 								</div>
 							{:else}
-								<span class="desconocido text-[#7f8c8d] italic">No disponible</span>
+								<span class="desconocido text-text-soft italic">No disponible</span>
 							{/if}
 						</td>
 
@@ -423,14 +423,14 @@
 								{#if row.work.reportId}
 									<a href={`/informes/${row.work.reportId}`} class={actionButtonEnabledClass}>
 										<span class="btn-left col-span-2 flex min-w-0 items-center gap-[7px]">
-											<span class="btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-[#0033a7]" aria-hidden="true">
+											<span class="btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-brand-blue-dark" aria-hidden="true">
 												<ChartLine class="h-[14px] w-[14px] stroke-[2.1]" />
 											</span>
 											<span class={actionLabelClass}>
 												{mode === 'informe' ? 'Informe' : 'Informe estilométrico'}
 											</span>
 										</span>
-										<span class="btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center text-[#5b6f84]" aria-hidden="true">
+										<span class="btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center text-text-soft" aria-hidden="true">
 											<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
 										</span>
 									</a>
@@ -461,12 +461,12 @@
 											onclick={(event) => toggleTextDropdown(event, row.rowId)}
 										>
 											<span class="btn-left col-span-2 flex min-w-0 items-center gap-[7px]">
-												<span class="btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-[#0033a7]" aria-hidden="true">
+												<span class="btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-brand-blue-dark" aria-hidden="true">
 													<FolderOpen class="h-[14px] w-[14px] stroke-[2.1]" />
 												</span>
 												<span class={actionLabelClass}>{mode === 'informe' ? 'Texto' : 'Acceso al texto'}</span>
 											</span>
-											<span class="btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center text-[#5b6f84]" aria-hidden="true">
+											<span class="btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center text-text-soft" aria-hidden="true">
 												{#if openDropdownRowId === row.rowId}
 													<ChevronDown class="h-[13px] w-[13px] stroke-[2.2]" />
 												{:else}
@@ -475,7 +475,7 @@
 											</span>
 										</button>
 										<div
-											class="textos-dropdown textos-dropdown-portal fixed left-0 top-0 z-[1200] max-h-[300px] min-w-[220px] max-w-[320px] overflow-y-auto rounded-[8px] border border-[rgba(0,51,167,0.18)] bg-white p-1.5 font-['Roboto',sans-serif] shadow-[0_10px_28px_rgba(7,36,110,0.16)] max-md:min-w-[260px] max-md:max-w-[calc(100vw-20px)]"
+											class="textos-dropdown textos-dropdown-portal fixed left-0 top-0 z-[1200] max-h-[300px] min-w-[220px] max-w-[320px] overflow-y-auto rounded-[8px] border border-border-accent-blue bg-white p-1.5 font-['Roboto',sans-serif] shadow-[0_10px_28px_rgba(7,36,110,0.16)] max-md:min-w-[260px] max-md:max-w-[calc(100vw-20px)]"
 											data-row-id={row.rowId}
 											hidden={openDropdownRowId !== row.rowId}
 											style={dropdownStyles[row.rowId] ?? ''}
@@ -483,11 +483,11 @@
 											{#each row.work.textLinks as link}
 												<a
 													href={link.href}
-													class="textos-dropdown-item grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-[6px] px-2.5 py-[9px] text-[12px] font-normal text-[#213549] no-underline transition-all hover:bg-[#f6f9ff] hover:text-[#213549] hover:no-underline focus:bg-[#f6f9ff] focus:text-[#213549] focus:no-underline focus:outline-none focus-visible:bg-[#f6f9ff] focus-visible:text-[#213549] focus-visible:no-underline focus-visible:outline-none"
+													class="textos-dropdown-item grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-[6px] px-2.5 py-[9px] text-[12px] font-normal text-text-main no-underline transition-all hover:bg-surface-accent-blue hover:text-text-main hover:no-underline focus:bg-surface-accent-blue focus:text-text-main focus:no-underline focus:outline-none focus-visible:bg-surface-accent-blue focus-visible:text-text-main focus-visible:no-underline focus-visible:outline-none"
 													target={link.external ? '_blank' : undefined}
 													rel={link.external ? 'noopener noreferrer' : undefined}
 												>
-													<span class="textos-dropdown-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-[#0033a7]" aria-hidden="true">
+													<span class="textos-dropdown-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-brand-blue-dark" aria-hidden="true">
 														{#if link.kind === 'bicuve'}
 															<BookOpen class="h-[14px] w-[14px] stroke-[2.1]" />
 														{:else}
@@ -496,7 +496,7 @@
 													</span>
 													<span class="textos-dropdown-body flex min-w-0 flex-col gap-0.5">
 														<span class="textos-dropdown-label block overflow-hidden text-ellipsis whitespace-nowrap">{link.label}</span>
-														<span class="textos-dropdown-kind text-[0.68rem] font-normal tracking-[0.02em] text-[#6b7b8d] uppercase">
+														<span class="textos-dropdown-kind text-[0.68rem] font-normal tracking-[0.02em] text-text-accent-purple uppercase">
 															{#if link.kind === 'bicuve'}
 																BICUVE
 															{:else}
@@ -504,7 +504,7 @@
 															{/if}
 														</span>
 													</span>
-													<span class="textos-dropdown-item-arrow inline-flex h-3 w-3 flex-none items-center justify-center text-[#5b6f84]" aria-hidden="true">
+													<span class="textos-dropdown-item-arrow inline-flex h-3 w-3 flex-none items-center justify-center text-text-soft" aria-hidden="true">
 														<ChevronRight class="h-3 w-3 stroke-[2.1]" />
 													</span>
 												</a>
@@ -528,12 +528,12 @@
 								{#if hasLongSummary(row.work)}
 									<a href={summaryUrl(row.work)} class={actionButtonEnabledClass}>
 										<span class="btn-left col-span-2 flex min-w-0 items-center gap-[7px]">
-											<span class="btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-[#0033a7]" aria-hidden="true">
+											<span class="btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-brand-blue-dark" aria-hidden="true">
 												<AlignLeft class="h-[14px] w-[14px] stroke-[2.1]" />
 											</span>
 											<span class={actionLabelClass}>{mode === 'informe' ? 'Resumen' : 'Resumen automático'}</span>
 										</span>
-										<span class="btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center text-[#5b6f84]" aria-hidden="true">
+										<span class="btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center text-text-soft" aria-hidden="true">
 											<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
 										</span>
 									</a>
@@ -553,7 +553,7 @@
 
 								<div class="ver-mas mt-2 hidden text-center max-md:mt-[10px] max-md:block">
 									<span
-										class="toggle-detail inline-block rounded-[4px] bg-transparent px-2 py-1.5 text-[14px] leading-none font-semibold text-[#0033a7]"
+										class="toggle-detail inline-block rounded-[4px] bg-transparent px-2 py-1.5 text-[14px] leading-none font-semibold text-brand-blue-dark"
 										role="button"
 										tabindex="0"
 										aria-expanded={isRowExpanded(row.rowId) ? 'true' : 'false'}
@@ -572,7 +572,7 @@
 										Ver más
 									</span>
 									<div
-										class={`toggle-down mt-1.5 inline-flex items-center justify-center leading-none text-[#0033a7] transition-transform ${
+										class={`toggle-down mt-1.5 inline-flex items-center justify-center leading-none text-brand-blue-dark transition-transform ${
 											isRowExpanded(row.rowId) ? 'rotate-180' : ''
 										}`}
 										aria-hidden="true"
@@ -585,7 +585,7 @@
 					</tr>
 
 					<tr
-						class={`${isRowExpanded(row.rowId) ? 'table-row' : 'hidden'} detail-row border-b border-[#e0e0e0] bg-[#f5f5f5] max-md:block`}
+						class={`${isRowExpanded(row.rowId) ? 'table-row' : 'hidden'} detail-row border-b border-border bg-surface-accent-blue/55 max-md:block`}
 						hidden={!isRowExpanded(row.rowId)}
 					>
 						<td colspan={detailColspan} class="max-md:block max-md:border-0 max-md:p-0">
@@ -595,7 +595,7 @@
 										<div class="detail-section-title mb-2.5 text-[12px] font-semibold tracking-[0.5px] text-[#5a7a8a] uppercase">
 											Resumen breve automático
 										</div>
-										<p class="resumen-text mb-3 text-[14px] leading-[1.7] text-[#555]">{row.work.shortSummary}</p>
+										<p class="resumen-text mb-3 text-[14px] leading-[1.7] text-text-soft">{row.work.shortSummary}</p>
 									</div>
 								{/if}
 
@@ -606,9 +606,9 @@
 												Texto empleado
 											</span>
 											{#if row.work.origin}
-												<span class="metadata-value text-[14px] text-[#2c3e50]">{row.work.origin}</span>
+												<span class="metadata-value text-[14px] text-text-main">{row.work.origin}</span>
 											{:else}
-												<span class="metadata-value not-available text-[14px] text-[#7f8c8d] italic">No disponible</span>
+												<span class="metadata-value not-available text-[14px] text-text-soft italic">No disponible</span>
 											{/if}
 										</div>
 
@@ -617,9 +617,9 @@
 												Estado del texto
 											</span>
 											{#if row.work.textState}
-												<span class="metadata-value text-[14px] text-[#2c3e50]">{row.work.textState}</span>
+												<span class="metadata-value text-[14px] text-text-main">{row.work.textState}</span>
 											{:else}
-												<span class="metadata-value not-available text-[14px] text-[#7f8c8d] italic">No disponible</span>
+												<span class="metadata-value not-available text-[14px] text-text-soft italic">No disponible</span>
 											{/if}
 										</div>
 
@@ -628,9 +628,9 @@
 												Fecha de adición o modificación
 											</span>
 											{#if row.work.addedOn}
-												<span class="metadata-value text-[14px] text-[#2c3e50]">{row.work.addedOn}</span>
+												<span class="metadata-value text-[14px] text-text-main">{row.work.addedOn}</span>
 											{:else}
-												<span class="metadata-value not-available text-[14px] text-[#7f8c8d] italic">No disponible</span>
+												<span class="metadata-value not-available text-[14px] text-text-soft italic">No disponible</span>
 											{/if}
 										</div>
 									</div>
@@ -660,12 +660,12 @@
 	.obra-table-shared-container .obra-title a:visited,
 	.obra-table-shared-container .autor-name,
 	.obra-table-shared-container .autor-name:visited {
-		color: #2c3e50;
+		color: var(--color-text-main);
 	}
 
 	.obra-table-shared-container .btn-action,
 	.obra-table-shared-container .textos-dropdown-item {
-		color: #213549;
+		color: var(--color-text-main);
 	}
 
 	.obra-table-shared-container .btn-action:hover,

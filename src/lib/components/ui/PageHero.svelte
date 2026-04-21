@@ -11,18 +11,18 @@
 
 	const heroStyle = $derived.by(() => {
 		if (backgroundImage) {
-			return `background-image: linear-gradient(130deg, rgba(0, 65, 156, 0.86), rgba(0, 47, 126, 0.84)), url("${backgroundImage}")`;
+			return `background-image: linear-gradient(rgba(0, 38, 129, 0.84), rgba(0, 38, 129, 0.84)), url("${backgroundImage}")`;
 		}
-		return 'background-image: linear-gradient(130deg, rgba(0, 65, 156, 0.86), rgba(0, 47, 126, 0.84))';
+		return '';
 	});
 </script>
 
 <section
-	class={`relative overflow-hidden rounded-card bg-[#1b4f99] bg-cover bg-center bg-no-repeat text-white shadow-strong ${compact ? 'p-8' : 'p-10'}`}
+	class={`relative overflow-hidden rounded-card bg-brand-blue-dark bg-cover bg-center bg-no-repeat text-white shadow-strong ${compact ? 'p-8' : 'p-10'}`}
 	style={heroStyle}
 >
 	{#if eyebrow}
-		<span class="inline-flex rounded-card border border-white/35 bg-white/25 px-3 py-1 font-ui text-[0.75rem] font-semibold uppercase tracking-[0.03em]">
+		<span class="inline-flex rounded-card bg-surface-accent-purple px-3 py-1 font-ui text-[0.75rem] font-semibold uppercase tracking-[0.03em] text-text-accent-purple">
 			{eyebrow}
 		</span>
 	{/if}

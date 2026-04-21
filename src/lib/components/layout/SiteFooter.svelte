@@ -16,21 +16,21 @@
 	] as const;
 </script>
 
-<footer class="mt-12 bg-brand-blue font-ui text-white">
+<footer class="mt-12 border-t border-brand-purple/20 bg-brand-blue font-ui text-white">
 	<div class="mx-auto w-full max-w-7xl px-4 py-10 sm:px-5 lg:px-6">
-		<div class="grid gap-8 border-b border-white/20 pb-8 md:grid-cols-[auto_minmax(0,1fr)] md:gap-10">
+		<div class="grid gap-8 border-b border-white/16 pb-8 md:grid-cols-[auto_minmax(0,1fr)] md:gap-10">
 			<a class="inline-flex w-fit items-center gap-3 text-white no-underline hover:no-underline" href="/examen-autorias">
 				<img class="h-50 w-50 object-contain" src={iconEtso} alt="Logo ETSO" />
 			</a>
 
 			<nav class="grid w-full gap-8 sm:grid-cols-2 md:w-fit md:justify-self-end" aria-label="Navegación del pie de página">
 				<div class="grid content-start gap-3">
-					<p class="m-0 text-[0.8rem] font-ui font-semibold tracking-[0.04em] text-white/70 uppercase">
+					<p class="m-0 text-[0.8rem] font-ui font-semibold tracking-[0.04em] text-white/72 uppercase">
 						Navegación
 					</p>
 					{#each primaryNavItems as item}
 						<a
-							class="text-[0.94rem] text-white/90 no-underline transition hover:text-white hover:underline hover:no-underline"
+							class="text-[0.94rem] text-white/90 no-underline transition hover:text-white hover:no-underline"
 							href={item.href}
 						>
 							{item.label}
@@ -39,12 +39,12 @@
 				</div>
 
 				<div class="grid content-start gap-3">
-					<p class="m-0 text-[0.8rem] font-ui font-semibold tracking-[0.04em] text-white/70 uppercase">
+					<p class="m-0 text-[0.8rem] font-ui font-semibold tracking-[0.04em] text-white/72 uppercase">
 						Información
 					</p>
 					{#each secondaryNavItems as item}
 						<a
-							class="text-[0.94rem] text-white/90 no-underline transition hover:text-white hover:underline hover:no-underline"
+							class="text-[0.94rem] text-white/90 no-underline transition hover:text-white hover:no-underline"
 							href={item.href}
 						>
 							{item.label}

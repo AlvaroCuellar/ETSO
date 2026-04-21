@@ -111,12 +111,12 @@
 	onDestroy(clearToastTimer);
 </script>
 
-<section class={`grid gap-2 rounded-card border border-[rgba(0,51,167,0.24)] bg-[linear-gradient(180deg,#f4f8ff,#eef4ff)] p-4 shadow-soft ${className}`}>
+<section class={`grid gap-2 rounded-card border border-border-accent-blue bg-surface-accent-blue p-4 shadow-soft ${className}`}>
 	<div class="flex flex-wrap items-center justify-between gap-3">
-		<p class="m-0 font-ui text-[0.8rem] font-bold uppercase tracking-[0.04em] text-brand-blue-dark">{label}</p>
+		<p class="m-0 font-ui text-[0.8rem] font-bold uppercase tracking-[0.04em] text-text-accent-purple">{label}</p>
 		<button
 			type="button"
-			class="rounded-md border border-[rgba(0,51,167,0.28)] bg-white px-3 py-2 text-[0.82rem] leading-none font-bold text-brand-blue-dark transition hover:bg-[#f3f7ff]"
+			class="rounded-md border border-border-accent-blue bg-white px-3 py-2 text-[0.82rem] leading-none font-bold text-brand-blue-dark transition hover:bg-surface-accent-blue"
 			onclick={copyCitation}
 		>
 			{buttonLabel}

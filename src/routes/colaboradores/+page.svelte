@@ -1,119 +1,170 @@
 <script lang="ts">
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 
+	import type { EditorialItem, EditorialSection } from '$lib/domain/catalog';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 
-	const hasRenderableCards = (
-		section: PageData['collaboratorsView']['sections'][number]
-	): boolean => section.cards.length > 0;
+	const hasAnyData = (sections: EditorialSection[]): boolean =>
+		sections.some((section) => section.items.length > 0);
 
-	const hasStudents = (view: PageData['collaboratorsView']): boolean =>
-		Boolean(view.students && view.students.people.length > 0);
+	const sectionHasItems = (section: EditorialSection): boolean => section.items.length > 0;
 
-	const hasAnyData = (view: PageData['collaboratorsView']): boolean =>
-		view.sections.some((section) => hasRenderableCards(section)) ||
-		hasStudents(view) ||
-		Boolean(view.acknowledgments);
+	const itemMeta = (item: EditorialItem): string =>
+		item.organizations.length > 0 ? item.organizations.join(' | ') : '';
 </script>
 
-<div class="grid gap-6">
+<div class="grid gap-7">
 	<Breadcrumbs
 		items={[
-			{ label: 'Examen de autorías', href: '/examen-autorias' },
-			{ label: 'Más información', href: '/mas-informacion' },
+			{ label: 'Inicio', href: '/' },
 			{ label: 'Colaboradores' }
 		]}
 	/>
 
 	<section class="grid gap-3">
 		<h1 class="text-[clamp(1.6rem,2.7vw,2.1rem)] font-bold text-brand-blue-dark">Colaboradores</h1>
-		<p class="max-w-[72ch] leading-[1.62] text-text-main">
-			Equipo, colaboradores y entidades que participan en el desarrollo y difusión del proyecto ETSO.
-		</p>
+		{#if data.collaboratorsView.intro}
+			<p class="leading-[1.66] text-text-main">{data.collaboratorsView.intro}</p>
+		{/if}
 	</section>
 
-	{#if !hasAnyData(data.collaboratorsView)}
+	{#if !hasAnyData(data.collaboratorsView.sections)}
 		<p class="m-0 italic text-text-soft">No hay datos de colaboradores disponibles.</p>
 	{:else}
-		{#each data.collaboratorsView.sections as section}
-			{#if hasRenderableCards(section)}
-				<section class="grid gap-3" aria-label={section.title}>
-					<h2 class="m-0 text-[1.25rem] font-semibold leading-[1.2] text-brand-blue-dark">{section.title}</h2>
-					<div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-						{#each section.cards as card}
-							<article class="overflow-hidden rounded-card border border-border bg-surface shadow-soft">
-								{#if card.image}
-									<img src={card.image} alt={`Imagen de ${card.name}`} class="h-44 w-full object-cover" loading="lazy" />
-								{/if}
-								<div class="grid gap-2 p-4">
-									<h3 class="m-0 font-ui text-[1rem] font-semibold leading-[1.3] text-brand-blue-dark">{card.name}</h3>
+		<div class="grid gap-8">
+			{#each data.collaboratorsView.sections as section}
+				{#if sectionHasItems(section)}
+					<section class="grid gap-3" aria-label={section.title}>
+						<div class="grid gap-1">
+							<h2 class="m-0 text-[1.24rem] font-semibold leading-[1.2] text-brand-blue-dark">{section.title}</h2>
+							{#if section.description}
+								<p class="m-0 max-w-[88ch] text-[0.96rem] leading-[1.62] text-text-soft">{section.description}</p>
+							{/if}
+						</div>
 
-									{#if card.affiliations.length > 0}
-										<p class="m-0 text-[0.92rem] leading-[1.55] text-text-soft">{card.affiliations.join(' | ')}</p>
-									{/if}
+						{#if section.presentation === 'featured_cards'}
+							<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+								{#each section.items as item}
+									<article class="overflow-hidden rounded-card border border-border bg-surface shadow-soft md:mx-auto md:w-full md:max-w-[24rem]">
+										{#if item.image}
+											<img src={item.image} alt={`Imagen de ${item.title}`} class="block h-auto w-full" loading="lazy" />
+										{/if}
+										<div class="grid gap-2 p-4">
+											<h3 class="m-0 font-ui text-[1rem] font-semibold leading-[1.3] text-brand-blue-dark">{item.title}</h3>
 
-									{#if card.description}
-										<p class="m-0 text-[0.96rem] leading-[1.62] text-text-main">{card.description}</p>
-									{/if}
+											{#if itemMeta(item)}
+												<p class="m-0 text-[0.92rem] leading-[1.55] text-text-soft">{itemMeta(item)}</p>
+											{/if}
 
-									{#if card.sourceLabel}
-										<p class="m-0 text-[0.78rem] font-ui font-semibold uppercase tracking-[0.04em] text-brand-blue">
-											Fuente: {card.sourceLabel}
-										</p>
-									{/if}
+											{#if item.summary}
+												<p class="m-0 text-[0.96rem] leading-[1.62] text-text-main">{item.summary}</p>
+											{/if}
+										</div>
+									</article>
+								{/each}
+							</div>
+						{:else if section.presentation === 'media_cards'}
+							<div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+								{#each section.items as item}
+									<article class="overflow-hidden rounded-card border border-border bg-surface shadow-soft">
+										{#if item.image}
+											<div class="flex h-[14rem] items-center justify-center overflow-hidden border-b border-border-accent-blue bg-surface-accent-blue">
+												<img
+													src={item.image}
+													alt={`Imagen de ${item.title}`}
+													class="h-full w-full object-cover"
+													loading="lazy"
+												/>
+											</div>
+										{/if}
+										<div class="grid gap-2 p-4">
+											<h3 class="m-0 font-ui text-[1rem] font-semibold leading-[1.3] text-brand-blue-dark">{item.title}</h3>
+
+											{#if item.summary}
+												<p class="m-0 text-[0.95rem] leading-[1.6] text-text-main">{item.summary}</p>
+											{/if}
+										</div>
+									</article>
+								{/each}
+							</div>
+						{:else if section.presentation === 'compact_list'}
+							{#if section.id === 'collaborators'}
+								<div class="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+									{#each section.items as item}
+										<article class="grid gap-1.5 rounded-card border border-border bg-surface px-4 py-3 shadow-soft">
+											<h3 class="m-0 text-[0.98rem] font-semibold leading-[1.35] text-brand-blue-dark">{item.title}</h3>
+											{#if itemMeta(item)}
+												<p class="m-0 text-[0.9rem] leading-[1.5] text-text-soft">{itemMeta(item)}</p>
+											{/if}
+											{#if item.summary}
+												<p class="m-0 text-[0.95rem] leading-[1.58] text-text-main">{item.summary}</p>
+											{/if}
+										</article>
+									{/each}
 								</div>
-							</article>
-						{/each}
-					</div>
-				</section>
-			{/if}
-		{/each}
+							{:else}
+								<div class="overflow-hidden rounded-card border border-border bg-surface shadow-soft">
+									<div class="divide-y divide-border-accent-blue">
+										{#each section.items as item}
+											<article class="grid gap-1.5 px-4 py-3 md:px-5">
+												<h3 class="m-0 text-[0.98rem] font-semibold leading-[1.35] text-brand-blue-dark">{item.title}</h3>
+												{#if itemMeta(item)}
+													<p class="m-0 text-[0.9rem] leading-[1.5] text-text-soft">{itemMeta(item)}</p>
+												{/if}
+												{#if item.summary}
+													<p class="m-0 text-[0.95rem] leading-[1.58] text-text-main">{item.summary}</p>
+												{/if}
+											</article>
+										{/each}
+									</div>
+								</div>
+							{/if}
+						{:else if section.presentation === 'multi_column_list'}
+							<div class="rounded-card border border-border bg-surface p-4 shadow-soft">
+								<ul class="m-0 columns-1 gap-5 space-y-1.5 pl-5 text-[0.95rem] leading-[1.5] text-text-main sm:columns-2 lg:columns-3 xl:columns-4">
+									{#each section.items as item}
+										<li class="break-inside-avoid">{item.title}</li>
+									{/each}
+								</ul>
+							</div>
+						{:else if section.presentation === 'callout'}
+							{#each section.items as item}
+								<article class="grid gap-4 rounded-card border border-border-accent-purple bg-surface-accent-blue p-4 shadow-soft md:grid-cols-[minmax(0,1fr)_15rem] md:items-center">
+									<div class="grid gap-3">
+										<p class="m-0 font-ui text-[0.76rem] font-semibold uppercase tracking-[0.05em] text-text-accent-purple">
+											Agradecimiento
+										</p>
+										<h3 class="m-0 text-[1rem] font-semibold leading-[1.3] text-brand-blue-dark">{item.title}</h3>
+										{#if item.summary}
+											<p class="m-0 leading-[1.62] text-text-main">{item.summary}</p>
+										{/if}
+										{#if item.organizations.length > 0}
+											<ul class="m-0 grid gap-1.5 pl-5 text-[0.95rem] leading-[1.6] text-text-main">
+												{#each item.organizations as organization}
+													<li>{organization}</li>
+												{/each}
+											</ul>
+										{/if}
+									</div>
 
-		{#if data.collaboratorsView.students && data.collaboratorsView.students.people.length > 0}
-			<section class="grid gap-3" aria-label="Estudiantes">
-				<h2 class="m-0 text-[1.25rem] font-semibold leading-[1.2] text-brand-blue-dark">Estudiantes</h2>
-
-				{#if data.collaboratorsView.students.group || data.collaboratorsView.students.institution}
-					<p class="m-0 text-[0.95rem] leading-[1.6] text-text-soft">
-						{#if data.collaboratorsView.students.group}
-							{data.collaboratorsView.students.group}
-						{/if}
-						{#if data.collaboratorsView.students.group && data.collaboratorsView.students.institution}
-							|
-						{/if}
-						{#if data.collaboratorsView.students.institution}
-							{data.collaboratorsView.students.institution}
-						{/if}
-					</p>
-				{/if}
-
-				<ul class="m-0 columns-1 gap-5 space-y-1.5 pl-5 text-[0.95rem] leading-[1.5] text-text-main sm:columns-2 lg:columns-3 xl:columns-4">
-					{#each data.collaboratorsView.students.people as student}
-						<li class="break-inside-avoid">{student}</li>
-					{/each}
-				</ul>
-			</section>
-		{/if}
-
-		{#if data.collaboratorsView.acknowledgments}
-			<section class="grid gap-3" aria-label="Agradecimientos">
-				<h2 class="m-0 text-[1.25rem] font-semibold leading-[1.2] text-brand-blue-dark">Agradecimientos</h2>
-				<article class="grid gap-3 rounded-card border border-[rgba(0,51,167,0.24)] bg-[linear-gradient(180deg,#f4f8ff,#eef4ff)] p-4 shadow-soft">
-					{#if data.collaboratorsView.acknowledgments.text}
-						<p class="m-0 leading-[1.62] text-text-main">{data.collaboratorsView.acknowledgments.text}</p>
-					{/if}
-
-					{#if data.collaboratorsView.acknowledgments.organizations.length > 0}
-						<ul class="m-0 grid gap-1.5 pl-5 text-[0.95rem] leading-[1.6] text-text-main">
-							{#each data.collaboratorsView.acknowledgments.organizations as organization}
-								<li>{organization}</li>
+									{#if item.image}
+										<div class="flex h-[10rem] items-center justify-center overflow-hidden">
+											<img
+												src={item.image}
+												alt={`Imagen de ${item.title}`}
+												class="h-full w-full object-cover"
+												loading="lazy"
+											/>
+										</div>
+									{/if}
+								</article>
 							{/each}
-						</ul>
-					{/if}
-				</article>
-			</section>
-		{/if}
+						{/if}
+					</section>
+				{/if}
+			{/each}
+		</div>
 	{/if}
 </div>

@@ -26,7 +26,7 @@
 	const badgeColor = (distance: number): string => {
 		if (distance <= 0.75) return '#1f7a4a';
 		if (distance <= 1.15) return '#2f855a';
-		if (distance <= 1.5) return '#3366cc';
+		if (distance <= 1.5) return '#0D3F91';
 		return '#6c757d';
 	};
 
@@ -162,26 +162,25 @@
 
 	<section class="grid gap-4 font-ui">
 		<div class="grid gap-2.5">
-			<p class="m-0 text-base font-medium leading-[1.55] text-[#1b2f45]">
+			<p class="m-0 text-base font-medium leading-[1.55] text-brand-blue-dark">
 				<strong>{data.work.genre}</strong>
 				{attributedWord(data.work.genre)} a <strong>{traditionalAttributionText(data.work.traditionalAttribution)}</strong
 				>.
 			</p>
 			<div class="grid gap-1">
-				<div class="m-0 text-[0.72rem] font-bold uppercase tracking-[0.06em] text-[#4c6177]">Procedencia</div>
-				<p class="m-0 text-base leading-[1.55] text-[#3e556d]">{procedeValue}</p>
+				<div class="m-0 text-[0.72rem] font-bold uppercase tracking-[0.06em] text-text-accent-purple">Procedencia</div>
+				<p class="m-0 text-base leading-[1.55] text-text-main">{procedeValue}</p>
 			</div>
 		</div>
 		<div
-			class="rounded-[10px] border border-[rgba(0,51,167,0.16)] px-4 py-3 max-md:px-[0.85rem] max-md:py-[0.8rem]"
-			style="background: linear-gradient(180deg, rgba(0, 51, 167, 0.06), rgba(0, 51, 167, 0.03));"
+			class="rounded-[10px] border border-border-accent-blue bg-surface-accent-blue px-4 py-3 max-md:px-[0.85rem] max-md:py-[0.8rem]"
 		>
-			<p class="m-0 text-[0.97rem] font-normal leading-[1.55] text-[#1a2f45]">{methodologyLead}</p>
+			<p class="m-0 text-[0.97rem] font-normal leading-[1.55] text-text-main">{methodologyLead}</p>
 		</div>
 	</section>
 
 	<section class="mt-1">
-		<h2 class="mb-4 mt-0 text-[clamp(1.2rem,2vw,1.45rem)] font-semibold leading-[1.2] text-[#1b2f45]">
+		<h2 class="mb-4 mt-0 text-[clamp(1.2rem,2vw,1.45rem)] font-semibold leading-[1.2] text-brand-blue-dark">
 			Obras más cercanas por ámbito
 		</h2>
 
@@ -190,7 +189,7 @@
 				<div class="mb-3 md:hidden">
 					<select
 						id="mobile-acto-selector"
-						class="w-full cursor-pointer rounded-[8px] border-2 border-[#0d6efd] bg-[#f8f9fa] px-4 py-3 font-semibold text-[#0d6efd] transition-all focus:outline-none focus:ring-4 focus:ring-[rgba(13,110,253,0.25)]"
+						class="w-full cursor-pointer rounded-[8px] border-2 border-border-accent-blue bg-surface-accent-blue px-4 py-3 font-semibold text-brand-blue-dark transition-all focus:outline-none focus:ring-4 focus:ring-brand-blue/15"
 						value={activeAmbito}
 						onchange={(event) => {
 							activeAmbito = (event.currentTarget as HTMLSelectElement).value as Ambito;
@@ -202,15 +201,15 @@
 					</select>
 				</div>
 
-				<ul class="mb-6 hidden list-none gap-2 border-b-2 border-[#dee2e6] p-0 md:flex" role="tablist">
+				<ul class="mb-6 hidden list-none gap-2 border-b-2 border-border-accent-blue p-0 md:flex" role="tablist">
 					{#each availableAmbitos as ambito}
 						<li class="-mb-[2px]">
 							<button
 								type="button"
 								class={`cursor-pointer border-b-2 bg-transparent px-6 py-3 text-[0.95rem] transition-all ${
 									activeAmbito === ambito
-										? 'border-[#0d6efd] font-semibold text-[#0d6efd]'
-										: 'border-transparent text-[#6c757d] hover:text-[#495057]'
+										? 'border-brand-blue font-semibold text-brand-blue-dark'
+										: 'border-transparent text-text-soft hover:text-brand-blue-dark'
 								}`}
 								data-tab={`acto-${ambito}`}
 								onclick={() => {
@@ -219,7 +218,7 @@
 							>
 								{ambitoLabels[ambito]}
 								<span
-									class="ml-2 inline-flex rounded-[10px] bg-[#6c757d] px-2 py-1 text-[0.75rem] leading-none text-white"
+									class="ml-2 inline-flex rounded-[10px] bg-surface-accent-purple px-2 py-1 text-[0.75rem] leading-none text-text-accent-purple"
 								>
 									{rowsByAmbito[ambito].length}
 								</span>
@@ -231,7 +230,7 @@
 
 			<div>
 				{#if availableAmbitos.length === 0}
-					<div class="rounded-[10px] border border-[rgba(0,51,167,0.15)] bg-[rgba(0,51,167,0.07)] p-4 text-[#29445f]">
+					<div class="rounded-[10px] border border-border-accent-blue bg-surface-accent-blue p-4 text-text-main">
 						No hay distancias disponibles para este informe.
 					</div>
 				{:else}
@@ -250,17 +249,17 @@
 	</section>
 
 	<section class="grid gap-3 font-ui">
-		<h2 class="m-0 text-[clamp(1.2rem,2vw,1.45rem)] font-semibold leading-[1.2] text-[#1b2f45]">Resultados</h2>
+		<h2 class="m-0 text-[clamp(1.2rem,2vw,1.45rem)] font-semibold leading-[1.2] text-brand-blue-dark">Resultados</h2>
 		{#if data.work.result1}
 			<p
-				class="m-0 rounded-[8px] border border-[rgba(0,51,167,0.14)] bg-[rgba(0,51,167,0.04)] px-[0.95rem] py-3 text-base leading-[1.55] text-[#22384f] max-md:px-[0.8rem] max-md:py-[0.7rem]"
+				class="m-0 rounded-[8px] border border-border-accent-blue bg-surface-accent-blue px-[0.95rem] py-3 text-base leading-[1.55] text-text-main max-md:px-[0.8rem] max-md:py-[0.7rem]"
 			>
 				{data.work.result1}
 			</p>
 		{/if}
 		{#if data.work.result2}
 			<p
-				class="m-0 rounded-[8px] border border-[rgba(0,51,167,0.14)] bg-[rgba(0,51,167,0.04)] px-[0.95rem] py-3 text-base leading-[1.55] text-[#22384f] max-md:px-[0.8rem] max-md:py-[0.7rem]"
+				class="m-0 rounded-[8px] border border-border-accent-blue bg-surface-accent-blue px-[0.95rem] py-3 text-base leading-[1.55] text-text-main max-md:px-[0.8rem] max-md:py-[0.7rem]"
 			>
 				{data.work.result2}
 			</p>
@@ -269,13 +268,13 @@
 
 	<section class="grid gap-4 font-ui">
 		<div class="flex flex-wrap items-center justify-between gap-4">
-			<h2 class="m-0 text-[clamp(1.2rem,2vw,1.45rem)] font-semibold leading-[1.2] text-[#1b2f45]">
+			<h2 class="m-0 text-[clamp(1.2rem,2vw,1.45rem)] font-semibold leading-[1.2] text-brand-blue-dark">
 				Referencias
 			</h2>
 		</div>
 
 		{#if data.bibliography.sections.length === 0}
-			<div class="rounded-[10px] border border-[rgba(0,51,167,0.15)] bg-[rgba(0,51,167,0.07)] p-4 text-[#29445f]">
+			<div class="rounded-[10px] border border-border-accent-blue bg-surface-accent-blue p-4 text-text-main">
 				No hay referencias disponibles para este informe.
 			</div>
 		{:else}
@@ -289,14 +288,14 @@
 						emptyCitationMessage="No hay cita ETSO disponible."
 						copyErrorMessage="No se pudo copiar automáticamente."
 					>
-						<p class="m-0 text-[0.95rem] leading-[1.52] text-[#263f58]">
+						<p class="m-0 text-[0.95rem] leading-[1.52] text-text-main">
 							{#each citationEntry.parts as part}
 								{#if part.kind === 'link'}
 									<a
 										href={part.href ?? part.value}
 										target="_blank"
 										rel="noopener noreferrer"
-										class="break-words text-[#0033a7] underline hover:text-[#00287f] focus-visible:text-[#00287f]"
+										class="break-words text-brand-blue underline hover:text-brand-blue-dark focus-visible:text-brand-blue-dark"
 									>
 										{part.value}
 									</a>
@@ -312,23 +311,23 @@
 
 				{#if citationSection && citationSectionEntries.length > 0}
 					<section
-						class="rounded-[10px] border border-[rgba(0,51,167,0.12)] bg-[rgba(0,51,167,0.03)] px-[0.9rem] py-[0.8rem] max-md:px-[0.8rem] max-md:py-[0.75rem]"
+						class="rounded-[10px] border border-border-accent-blue bg-surface px-[0.9rem] py-[0.8rem] max-md:px-[0.8rem] max-md:py-[0.75rem]"
 						aria-label={citationSection.lead}
 					>
-						<p class="mb-[0.65rem] mt-0 text-[0.95rem] font-medium leading-[1.45] text-[#22384f]">
+						<p class="mb-[0.65rem] mt-0 text-[0.95rem] font-medium leading-[1.45] text-brand-blue-dark">
 							{citationSection.lead}
 						</p>
 						<ol class="m-0 grid gap-[0.55rem] pl-[1.2rem]">
 							{#each citationSectionEntries as entry}
 								<li class="m-0">
-									<p class="m-0 text-[0.95rem] leading-[1.52] text-[#263f58]">
+									<p class="m-0 text-[0.95rem] leading-[1.52] text-text-main">
 										{#each entry.parts as part}
 											{#if part.kind === 'link'}
 												<a
 													href={part.href ?? part.value}
 													target="_blank"
 													rel="noopener noreferrer"
-													class="break-words text-[#0033a7] underline hover:text-[#00287f] focus-visible:text-[#00287f]"
+													class="break-words text-brand-blue underline hover:text-brand-blue-dark focus-visible:text-brand-blue-dark"
 												>
 													{part.value}
 												</a>
@@ -347,23 +346,23 @@
 
 				{#each extraRegularSections as section}
 					<section
-						class="rounded-[10px] border border-[rgba(0,51,167,0.12)] bg-[rgba(0,51,167,0.03)] px-[0.9rem] py-[0.8rem] max-md:px-[0.8rem] max-md:py-[0.75rem]"
+						class="rounded-[10px] border border-border-accent-blue bg-surface px-[0.9rem] py-[0.8rem] max-md:px-[0.8rem] max-md:py-[0.75rem]"
 						aria-label={section.lead}
 					>
-						<p class="mb-[0.65rem] mt-0 text-[0.95rem] font-medium leading-[1.45] text-[#22384f]">
+						<p class="mb-[0.65rem] mt-0 text-[0.95rem] font-medium leading-[1.45] text-brand-blue-dark">
 							{section.lead}
 						</p>
 						<ol class="m-0 grid gap-[0.55rem] pl-[1.2rem]">
 							{#each section.entries as entry}
 								<li class="m-0">
-									<p class="m-0 text-[0.95rem] leading-[1.52] text-[#263f58]">
+									<p class="m-0 text-[0.95rem] leading-[1.52] text-text-main">
 										{#each entry.parts as part}
 											{#if part.kind === 'link'}
 												<a
 													href={part.href ?? part.value}
 													target="_blank"
 													rel="noopener noreferrer"
-													class="break-words text-[#0033a7] underline hover:text-[#00287f] focus-visible:text-[#00287f]"
+													class="break-words text-brand-blue underline hover:text-brand-blue-dark focus-visible:text-brand-blue-dark"
 												>
 													{part.value}
 												</a>
@@ -382,13 +381,13 @@
 
 				{#each collapsibleSections as section}
 					<details
-						class="informe-bibliografia-disclosure overflow-hidden rounded-[10px] border border-[rgba(0,51,167,0.2)] bg-[rgba(0,51,167,0.03)]"
+						class="informe-bibliografia-disclosure overflow-hidden rounded-[10px] border border-border-accent-blue bg-surface"
 						open={section.defaultOpen === true}
 					>
-						<summary class="informe-bibliografia-summary cursor-pointer list-none px-[0.9rem] py-[0.65rem] text-[0.9rem] font-semibold text-[#1f344a] max-md:px-[0.8rem] max-md:py-[0.6rem]">
+						<summary class="informe-bibliografia-summary cursor-pointer list-none px-[0.9rem] py-[0.65rem] text-[0.9rem] font-semibold text-brand-blue-dark max-md:px-[0.8rem] max-md:py-[0.6rem]">
 							<span class="inline-flex items-center gap-[0.35rem]">
 								<span
-									class="informe-bibliografia-summary-icon inline-flex h-[13px] w-[13px] items-center justify-center text-[#0033a7] transition-transform"
+									class="informe-bibliografia-summary-icon inline-flex h-[13px] w-[13px] items-center justify-center text-text-accent-purple transition-transform"
 									aria-hidden="true"
 								>
 									<ChevronRight size={13} strokeWidth={2.2} />
@@ -397,23 +396,23 @@
 							</span>
 						</summary>
 						<div
-							class="border-t border-[rgba(0,51,167,0.12)] px-[0.9rem] pb-[0.8rem] pt-0 max-md:px-[0.8rem] max-md:pb-[0.75rem]"
+							class="border-t border-border-accent-blue px-[0.9rem] pb-[0.8rem] pt-0 max-md:px-[0.8rem] max-md:pb-[0.75rem]"
 							aria-label={section.lead}
 						>
-							<p class="mb-[0.65rem] mt-0 text-[0.95rem] font-medium leading-[1.45] text-[#22384f]">
+							<p class="mb-[0.65rem] mt-0 text-[0.95rem] font-medium leading-[1.45] text-brand-blue-dark">
 								{section.lead}
 							</p>
 							<ol class="m-0 grid gap-[0.55rem] pl-[1.2rem]">
 								{#each section.entries as entry}
 									<li class="m-0">
-										<p class="m-0 text-[0.95rem] leading-[1.52] text-[#263f58]">
+										<p class="m-0 text-[0.95rem] leading-[1.52] text-text-main">
 											{#each entry.parts as part}
 												{#if part.kind === 'link'}
 													<a
 														href={part.href ?? part.value}
 														target="_blank"
 														rel="noopener noreferrer"
-														class="break-words text-[#0033a7] underline hover:text-[#00287f] focus-visible:text-[#00287f]"
+														class="break-words text-brand-blue underline hover:text-brand-blue-dark focus-visible:text-brand-blue-dark"
 													>
 														{part.value}
 													</a>

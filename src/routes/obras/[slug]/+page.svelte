@@ -22,9 +22,9 @@
 	const confidenceClass = (confidence?: Confidence): string => {
 		if (confidence === 'segura') return 'bg-[#d4edda] text-[#155724]';
 		if (confidence === 'probable') return 'bg-[#d1ecf1] text-[#0c5460]';
-		if (confidence === 'posible') return 'bg-[#e9ecef] text-[#495057]';
+		if (confidence === 'posible') return 'bg-surface-accent-purple text-text-accent-purple';
 		if (confidence === 'no_concluyente') return 'bg-[#fff3cd] text-[#856404]';
-		return 'bg-[#e9ecef] text-[#495057]';
+		return 'bg-surface-accent-purple text-text-accent-purple';
 	};
 
 	const hasTraditionalAttribution = (set: AttributionSet): boolean => !set.unresolved && set.groups.length > 0;
@@ -39,11 +39,12 @@
 	const hasAnySummary = (): boolean => Boolean(data.work.shortSummary || data.work.longSummary);
 
 	const cardShellClass = 'mb-5 overflow-hidden rounded-[10px] border border-black/10 bg-white shadow-soft';
-	const cardHeaderClass = 'border-b border-black/5 bg-[#f8f9fa] px-[0.85rem] py-[0.85rem] md:px-4 md:py-4';
-	const cardTitleClass = 'm-0 text-base font-semibold text-[#343a40]';
+	const cardHeaderClass =
+		'border-b border-border bg-surface-soft px-[0.85rem] py-[0.85rem] md:px-4 md:py-4';
+	const cardTitleClass = 'm-0 text-base font-semibold text-text-main';
 	const cardBodyClass = 'px-[0.85rem] py-[0.85rem] md:px-4 md:py-4';
 	const actionLinkClass =
-		'grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-[0.65rem] rounded-lg border border-brand-blue/20 bg-white px-[0.85rem] py-3 text-inherit no-underline transition hover:border-brand-blue/35 hover:bg-[#f6f9ff] hover:no-underline';
+		'grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-[0.65rem] rounded-lg border border-border-accent-blue bg-white px-[0.85rem] py-3 text-inherit no-underline transition hover:border-border-accent-blue hover:bg-surface-accent-blue hover:no-underline';
 </script>
 
 <div class="grid gap-6">
@@ -73,27 +74,27 @@
 					<div class={cardBodyClass}>
 						{#if hasTraditionalAttribution(data.work.traditionalAttribution)}
 							<div
-								class="mb-4 rounded-[10px] border border-[#e9ecef] bg-[linear-gradient(to_right,rgba(108,117,125,0.06),transparent)] p-[0.85rem] last:mb-0 md:p-4"
+								class="mb-4 rounded-[10px] border border-border bg-surface p-[0.85rem] last:mb-0 md:p-4"
 							>
 								<div class="mb-3">
 									<span
-										class="inline-flex rounded-full bg-[#6c757d]/15 px-[0.7rem] py-[0.35rem] text-[0.76rem] font-bold tracking-[0.03em] text-[#495057] uppercase"
+										class="inline-flex rounded-full bg-surface-accent-purple px-[0.7rem] py-[0.35rem] text-[0.76rem] font-bold tracking-[0.03em] text-text-accent-purple uppercase"
 										>Atribución tradicional</span
 									>
 								</div>
-								<div class="text-[0.97rem] leading-[1.6] text-[#495057]">
+								<div class="text-[0.97rem] leading-[1.6] text-text-main">
 									<div class="flex flex-col items-start gap-[0.65rem]">
 										{#each data.work.traditionalAttribution.groups as group, groupIndex}
 											<div class="flex flex-wrap items-center gap-3">
 												{#each group.members as member, memberIndex}
 													<a
 														href={`/autores/${member.authorId}`}
-														class="font-medium text-[#343a40] no-underline hover:text-brand-blue hover:underline"
+														class="font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline"
 														>{member.authorName}</a
 													>
 													{#if memberIndex < group.members.length - 1}
 														<span
-															class="inline-flex rounded bg-[#ecf0f1] px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-[#555] lowercase"
+															class="inline-flex rounded bg-surface-accent-purple px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-text-accent-purple lowercase"
 															>y</span
 														>
 													{/if}
@@ -101,7 +102,7 @@
 											</div>
 											{#if groupIndex < data.work.traditionalAttribution.groups.length - 1}
 												<span
-													class="inline-flex rounded bg-[#ecf0f1] px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-[#555] lowercase"
+													class="inline-flex rounded bg-surface-accent-purple px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-text-accent-purple lowercase"
 												>
 													{connectorLabel(data.work.traditionalAttribution.connector)}
 												</span>
@@ -114,7 +115,7 @@
 
 						{#if hasStylometryAttribution(data.work.stylometryAttribution)}
 							<div
-								class="mb-4 rounded-[10px] border border-[#e9ecef] bg-[linear-gradient(to_right,rgba(102,126,234,0.07),transparent)] p-[0.85rem] last:mb-0 md:p-4"
+								class="mb-4 rounded-[10px] border border-border-accent-blue bg-surface-accent-blue p-[0.85rem] last:mb-0 md:p-4"
 							>
 								<div class="mb-3">
 									<span
@@ -122,11 +123,11 @@
 										>Atribución estilometría</span
 									>
 								</div>
-								<div class="text-[0.97rem] leading-[1.6] text-[#495057]">
+								<div class="text-[0.97rem] leading-[1.6] text-text-main">
 									<div class="flex flex-col items-start gap-[0.65rem]">
 										{#if data.work.stylometryAttribution.unresolved}
 											<div class="flex flex-wrap items-center gap-3">
-												<span class="font-medium text-[#6c757d] italic">Autoría no determinada</span>
+												<span class="font-medium italic text-text-soft">Autoría no determinada</span>
 												<span
 													class="inline-flex rounded-full px-[0.55rem] py-[0.24rem] text-[0.72rem] font-bold tracking-[0.02em] uppercase {confidenceClass('no_concluyente')}"
 												>
@@ -140,7 +141,7 @@
 												{#each group.members as member, memberIndex}
 													<a
 														href={`/autores/${member.authorId}`}
-														class="font-medium text-[#343a40] no-underline hover:text-brand-blue hover:underline"
+														class="font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline"
 														>{member.authorName}</a
 													>
 													{#if member.confidence}
@@ -152,7 +153,7 @@
 													{/if}
 													{#if memberIndex < group.members.length - 1}
 														<span
-															class="inline-flex rounded bg-[#ecf0f1] px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-[#555] lowercase"
+															class="inline-flex rounded bg-surface-accent-purple px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-text-accent-purple lowercase"
 															>y</span
 														>
 													{/if}
@@ -160,7 +161,7 @@
 											</div>
 											{#if groupIndex < data.work.stylometryAttribution.groups.length - 1}
 												<span
-													class="inline-flex rounded bg-[#ecf0f1] px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-[#555] lowercase"
+													class="inline-flex rounded bg-surface-accent-purple px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-text-accent-purple lowercase"
 												>
 													{connectorLabel(data.work.stylometryAttribution.connector)}
 												</span>
@@ -173,7 +174,7 @@
 
 						{#if !hasAnyAttribution()}
 							<div
-								class="rounded-lg border border-brand-blue/20 bg-brand-blue/[0.08] px-4 py-3.5 text-[0.92rem] text-[#24425d]"
+								class="rounded-lg border border-border-accent-blue bg-surface-accent-blue px-4 py-3.5 text-[0.92rem] text-text-main"
 							>
 								No hay información de autoría disponible.
 							</div>
@@ -185,9 +186,6 @@
 					<section class={`${cardShellClass} lg:hidden`}>
 						<header class={cardHeaderClass}>
 							<h2 class={cardTitleClass}>Informe de análisis estilométrico</h2>
-							<p class="mt-[0.65rem] text-[0.8rem] text-[#516273]">
-								Consulta el informe para contextualizar la atribución de esta obra.
-							</p>
 						</header>
 						<div class={cardBodyClass}>
 							<div class="flex flex-col gap-2.5">
@@ -196,10 +194,10 @@
 										<ChartLine class="h-[0.9rem] w-[0.9rem] stroke-2" />
 									</div>
 									<div class="min-w-0 justify-self-start text-left">
-										<div class="text-[0.93rem] font-semibold text-[#213549]">Informe</div>
-										<div class="text-[0.78rem] text-[#62758a]">Ver análisis completo</div>
+										<div class="text-[0.93rem] font-semibold text-brand-blue-dark">Informe</div>
+										<div class="text-[0.78rem] text-text-soft">Ver análisis completo</div>
 									</div>
-									<div class="text-[#5b6f84]" aria-hidden="true">
+									<div class="text-text-accent-purple" aria-hidden="true">
 										<ChevronRight class="h-[0.78rem] w-[0.78rem] stroke-2" />
 									</div>
 								</a>
@@ -216,7 +214,7 @@
 						{#if hasAnySummary()}
 							<div class="mb-4">
 								<div
-									class="[&>p]:m-0 grid gap-[0.85rem] font-reading text-base leading-[1.65] text-[#495057]"
+									class="[&>p]:m-0 grid gap-[0.85rem] font-reading text-base leading-[1.65] text-text-main"
 								>
 									{#if data.work.shortSummary}
 										<p>{data.work.shortSummary}</p>
@@ -231,12 +229,12 @@
 											<AlignLeft class="h-[0.9rem] w-[0.9rem] stroke-2" />
 										</div>
 										<div class="min-w-0 justify-self-start text-left">
-											<div class="text-[0.93rem] font-semibold text-[#213549]">
+											<div class="text-[0.93rem] font-semibold text-brand-blue-dark">
 												Leer resumen automático completo
 											</div>
-											<div class="text-[0.78rem] text-[#62758a]">Descripción extensa de la obra</div>
+											<div class="text-[0.78rem] text-text-soft">Descripción extensa de la obra</div>
 										</div>
-										<div class="text-[#5b6f84]" aria-hidden="true">
+										<div class="text-text-accent-purple" aria-hidden="true">
 											<ChevronRight class="h-[0.78rem] w-[0.78rem] stroke-2" />
 										</div>
 									</a>
@@ -244,7 +242,7 @@
 							{/if}
 						{:else}
 							<div
-								class="rounded-lg border border-brand-blue/20 bg-brand-blue/[0.08] px-4 py-3.5 text-[0.92rem] text-[#24425d]"
+								class="rounded-lg border border-border-accent-blue bg-surface-accent-blue px-4 py-3.5 text-[0.92rem] text-text-main"
 							>
 								No hay resumen disponible para esta obra.
 							</div>
@@ -274,20 +272,20 @@
 									</div>
 									<div class="min-w-0 justify-self-start text-left">
 										{#if link.kind === 'bicuve'}
-											<div class="text-[0.93rem] font-semibold text-[#213549]">{link.label}</div>
-											<div class="text-[0.78rem] text-[#62758a]">BICUVE</div>
+											<div class="text-[0.93rem] font-semibold text-brand-blue-dark">{link.label}</div>
+											<div class="text-[0.78rem] text-text-soft">BICUVE</div>
 										{:else}
-											<div class="text-[0.93rem] font-semibold text-[#213549]">Leer texto</div>
-											<div class="text-[0.78rem] text-[#62758a]">{link.label}</div>
+											<div class="text-[0.93rem] font-semibold text-brand-blue-dark">Leer texto</div>
+											<div class="text-[0.78rem] text-text-soft">{link.label}</div>
 										{/if}
 									</div>
-									<div class="text-[#5b6f84]" aria-hidden="true">
+									<div class="text-text-accent-purple" aria-hidden="true">
 										<ChevronRight class="h-[0.78rem] w-[0.78rem] stroke-2" />
 									</div>
 								</a>
 							{/each}
 						{:else}
-							<div class="rounded-lg border border-[#dee5ee] bg-[#f5f7fa] px-4 py-3.5 text-[0.92rem] text-[#4f5f6f]">
+							<div class="rounded-lg border border-border bg-surface px-4 py-3.5 text-[0.92rem] text-text-soft">
 								No hay acceso al texto disponible para esta obra.
 							</div>
 						{/if}
@@ -300,9 +298,6 @@
 					<section class={`${cardShellClass} hidden lg:block`}>
 						<header class={cardHeaderClass}>
 							<h3 class={cardTitleClass}>Informe de análisis estilométrico</h3>
-							<p class="mt-[0.65rem] text-[0.8rem] text-[#516273]">
-								Consulta el informe para contextualizar la atribución de esta obra.
-							</p>
 						</header>
 						<div class={cardBodyClass}>
 							<div class="flex flex-col gap-2.5">
@@ -311,10 +306,10 @@
 										<ChartLine class="h-[0.9rem] w-[0.9rem] stroke-2" />
 									</div>
 									<div class="min-w-0 justify-self-start text-left">
-										<div class="text-[0.93rem] font-semibold text-[#213549]">Informe</div>
-										<div class="text-[0.78rem] text-[#62758a]">Ver análisis completo</div>
+										<div class="text-[0.93rem] font-semibold text-brand-blue-dark">Informe</div>
+										<div class="text-[0.78rem] text-text-soft">Ver análisis completo</div>
 									</div>
-									<div class="text-[#5b6f84]" aria-hidden="true">
+									<div class="text-text-accent-purple" aria-hidden="true">
 										<ChevronRight class="h-[0.78rem] w-[0.78rem] stroke-2" />
 									</div>
 								</a>
@@ -345,20 +340,20 @@
 									</div>
 									<div class="min-w-0 justify-self-start text-left">
 										{#if link.kind === 'bicuve'}
-											<div class="text-[0.93rem] font-semibold text-[#213549]">{link.label}</div>
-											<div class="text-[0.78rem] text-[#62758a]">BICUVE</div>
+											<div class="text-[0.93rem] font-semibold text-brand-blue-dark">{link.label}</div>
+											<div class="text-[0.78rem] text-text-soft">BICUVE</div>
 										{:else}
-											<div class="text-[0.93rem] font-semibold text-[#213549]">Leer texto</div>
-											<div class="text-[0.78rem] text-[#62758a]">{link.label}</div>
+											<div class="text-[0.93rem] font-semibold text-brand-blue-dark">Leer texto</div>
+											<div class="text-[0.78rem] text-text-soft">{link.label}</div>
 										{/if}
 									</div>
-									<div class="text-[#5b6f84]" aria-hidden="true">
+									<div class="text-text-accent-purple" aria-hidden="true">
 										<ChevronRight class="h-[0.78rem] w-[0.78rem] stroke-2" />
 									</div>
 								</a>
 							{/each}
 						{:else}
-							<div class="rounded-lg border border-[#dee5ee] bg-[#f5f7fa] px-4 py-3.5 text-[0.92rem] text-[#4f5f6f]">
+							<div class="rounded-lg border border-border bg-surface px-4 py-3.5 text-[0.92rem] text-text-soft">
 								No hay acceso al texto disponible para esta obra.
 							</div>
 						{/if}
@@ -371,44 +366,44 @@
 					</header>
 					<div class={cardBodyClass}>
 						<dl class="m-0">
-							<div class="flex flex-col gap-[0.45rem] border-b border-[#e9ecef] py-[0.9rem] first:pt-0 last:border-b-0 last:pb-0">
+							<div class="flex flex-col gap-[0.45rem] border-b border-border py-[0.9rem] first:pt-0 last:border-b-0 last:pb-0">
 								<dt
-									class="m-0 flex items-center gap-[0.35rem] text-[0.77rem] font-semibold tracking-[0.03em] text-[#6c757d] uppercase"
+									class="m-0 flex items-center gap-[0.35rem] text-[0.77rem] font-semibold tracking-[0.03em] text-text-accent-purple uppercase"
 								>
-									<Drama class="h-[0.82rem] w-[0.82rem] text-[#667eea] stroke-2" aria-hidden="true" />
+									<Drama class="h-[0.82rem] w-[0.82rem] text-text-accent-purple stroke-2" aria-hidden="true" />
 									Género
 								</dt>
-								<dd class="m-0 text-[0.96rem] text-[#2c3e50]">{data.work.genre}</dd>
+								<dd class="m-0 text-[0.96rem] text-text-main">{data.work.genre}</dd>
 							</div>
 
-							<div class="flex flex-col gap-[0.45rem] border-b border-[#e9ecef] py-[0.9rem] first:pt-0 last:border-b-0 last:pb-0">
+							<div class="flex flex-col gap-[0.45rem] border-b border-border py-[0.9rem] first:pt-0 last:border-b-0 last:pb-0">
 								<dt
-									class="m-0 flex items-center gap-[0.35rem] text-[0.77rem] font-semibold tracking-[0.03em] text-[#6c757d] uppercase"
+									class="m-0 flex items-center gap-[0.35rem] text-[0.77rem] font-semibold tracking-[0.03em] text-text-accent-purple uppercase"
 								>
-									<CircleCheck class="h-[0.82rem] w-[0.82rem] text-[#667eea] stroke-2" aria-hidden="true" />
+									<CircleCheck class="h-[0.82rem] w-[0.82rem] text-text-accent-purple stroke-2" aria-hidden="true" />
 									Estado del texto
 								</dt>
-								<dd class="m-0 text-[0.96rem] text-[#2c3e50]">{data.work.textState}</dd>
+								<dd class="m-0 text-[0.96rem] text-text-main">{data.work.textState}</dd>
 							</div>
 
-							<div class="flex flex-col gap-[0.45rem] border-b border-[#e9ecef] py-[0.9rem] first:pt-0 last:border-b-0 last:pb-0">
+							<div class="flex flex-col gap-[0.45rem] border-b border-border py-[0.9rem] first:pt-0 last:border-b-0 last:pb-0">
 								<dt
-									class="m-0 flex items-center gap-[0.35rem] text-[0.77rem] font-semibold tracking-[0.03em] text-[#6c757d] uppercase"
+									class="m-0 flex items-center gap-[0.35rem] text-[0.77rem] font-semibold tracking-[0.03em] text-text-accent-purple uppercase"
 								>
-									<Archive class="h-[0.82rem] w-[0.82rem] text-[#667eea] stroke-2" aria-hidden="true" />
+									<Archive class="h-[0.82rem] w-[0.82rem] text-text-accent-purple stroke-2" aria-hidden="true" />
 									Procedencia
 								</dt>
-								<dd class="m-0 text-[0.96rem] text-[#2c3e50]">{data.work.origin}</dd>
+								<dd class="m-0 text-[0.96rem] text-text-main">{data.work.origin}</dd>
 							</div>
 
-							<div class="flex flex-col gap-[0.45rem] border-b border-[#e9ecef] py-[0.9rem] first:pt-0 last:border-b-0 last:pb-0">
+							<div class="flex flex-col gap-[0.45rem] border-b border-border py-[0.9rem] first:pt-0 last:border-b-0 last:pb-0">
 								<dt
-									class="m-0 flex items-center gap-[0.35rem] text-[0.77rem] font-semibold tracking-[0.03em] text-[#6c757d] uppercase"
+									class="m-0 flex items-center gap-[0.35rem] text-[0.77rem] font-semibold tracking-[0.03em] text-text-accent-purple uppercase"
 								>
-									<Calendar class="h-[0.82rem] w-[0.82rem] text-[#667eea] stroke-2" aria-hidden="true" />
+									<Calendar class="h-[0.82rem] w-[0.82rem] text-text-accent-purple stroke-2" aria-hidden="true" />
 									Fecha de adición
 								</dt>
-								<dd class="m-0 text-[0.96rem] text-[#2c3e50]">{data.work.addedOn}</dd>
+								<dd class="m-0 text-[0.96rem] text-text-main">{data.work.addedOn}</dd>
 							</div>
 						</dl>
 					</div>

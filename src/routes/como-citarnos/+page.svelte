@@ -7,13 +7,13 @@
 </script>
 
 <div class="grid gap-6">
-	<Breadcrumbs items={[{ label: 'Examen de autorías', href: '/examen-autorias' }, { label: 'Cómo citarnos' }]} />
+	<Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'Cómo citarnos' }]} />
 
 	<section class="grid gap-3">
 		<h1 class="m-0 text-[clamp(1.85rem,3vw,2.4rem)] font-bold leading-[1.12] text-brand-blue-dark">Cómo citarnos</h1>
 
 		{#if data.bibliography.intro}
-			<p class="m-0 max-w-[78ch] leading-[1.65] text-text-main">{data.bibliography.intro}</p>
+			<p class="m-0 leading-[1.65] text-text-main">{data.bibliography.intro}</p>
 		{/if}
 
 		{#if data.bibliography.sections.length === 0}

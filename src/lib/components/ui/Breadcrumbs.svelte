@@ -20,7 +20,9 @@
 						>{item.label}</a
 					>
 				{:else}
-					<span class="font-semibold text-brand-purple-dark">{item.label}</span>
+					<span class="rounded-full bg-surface-accent-purple px-2.5 py-1 font-semibold text-text-accent-purple">
+						{item.label}
+					</span>
 				{/if}
 			</li>
 			{#if index < items.length - 1}

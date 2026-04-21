@@ -229,7 +229,7 @@
 
 		<div class="grid gap-5 text-[1.02rem] leading-[1.72] text-text-soft">
 			<p class="m-0">
-				El proyecto ETSO: Estilometría aplicada al Teatro del Siglo de Oro surge del interés del investigador
+				El proyecto <b>ETSO: Estilometría aplicada al Teatro del Siglo de Oro</b> surge del interés del investigador
 				Álvaro Cuéllar (Universitat Autònoma de Barcelona) y del catedrático Germán Vega García-Luengos
 				(Universidad de Valladolid) en aplicar las nuevas herramientas informáticas a los numerosos problemas
 				de autoría que presenta el teatro del Siglo de Oro español. Este portal trata de ofrecer análisis que

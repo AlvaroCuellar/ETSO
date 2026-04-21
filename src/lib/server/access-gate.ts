@@ -1,7 +1,7 @@
 import { dev } from '$app/environment';
 import { env as privateEnv } from '$env/dynamic/private';
 import type { Cookies } from '@sveltejs/kit';
-import { createHash, timingSafeEqual } from 'node:crypto';
+import { createHash } from 'node:crypto';
 
 const ACCESS_COOKIE_NAME = 'etso_access';
 const ACCESS_COOKIE_NAMESPACE = 'etso-site-access-v1';
@@ -10,10 +10,18 @@ const toHash = (value: string): string =>
 	createHash('sha256').update(`${ACCESS_COOKIE_NAMESPACE}:${value}`).digest('base64url');
 
 const safeCompare = (left: string, right: string): boolean => {
-	const leftBuffer = Buffer.from(left);
-	const rightBuffer = Buffer.from(right);
-	if (leftBuffer.length !== rightBuffer.length) return false;
-	return timingSafeEqual(leftBuffer, rightBuffer);
+	const leftValue = left.normalize('NFKC');
+	const rightValue = right.normalize('NFKC');
+	const maxLength = Math.max(leftValue.length, rightValue.length);
+	let mismatch = leftValue.length ^ rightValue.length;
+
+	for (let index = 0; index < maxLength; index += 1) {
+		const leftCode = leftValue.charCodeAt(index) || 0;
+		const rightCode = rightValue.charCodeAt(index) || 0;
+		mismatch |= leftCode ^ rightCode;
+	}
+
+	return mismatch === 0;
 };
 
 export const getAccessPassword = (): string => privateEnv.SITE_ACCESS_PASSWORD?.trim() ?? '';

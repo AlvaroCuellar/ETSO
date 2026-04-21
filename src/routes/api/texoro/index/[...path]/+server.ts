@@ -2,7 +2,7 @@ import { error } from '@sveltejs/kit';
 
 import type { RequestHandler } from './$types';
 
-const indexFiles = import.meta.glob('../../../../../data/search-index/**/*.json', {
+const indexFiles = import.meta.glob('../../../../../../data/search-index/**/*.json', {
 	import: 'default',
 	query: '?raw'
 });
@@ -13,7 +13,7 @@ const resolveSafeKey = (rawPath: string): string => {
 	const cleaned = rawPath.replace(/^\/+/, '');
 	if (!cleaned) throw error(400, 'Ruta de indice vacia');
 	if (cleaned.includes('..')) throw error(400, 'Ruta de indice invalida');
-	return `../../../../../data/search-index/${cleaned}`;
+	return `../../../../../../data/search-index/${cleaned}`;
 };
 
 export const GET: RequestHandler = async ({ params }) => {

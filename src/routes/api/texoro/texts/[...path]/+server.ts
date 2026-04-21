@@ -4,7 +4,7 @@ import { error } from '@sveltejs/kit';
 
 import type { RequestHandler } from './$types';
 
-const textFiles = import.meta.glob('../../../../../data/texts/*.txt', {
+const textFiles = import.meta.glob('../../../../../../data/texts/*.txt', {
 	import: 'default',
 	query: '?raw'
 });
@@ -16,7 +16,7 @@ const resolveSafeKey = (rawPath: string): string => {
 	if (!cleaned) throw error(400, 'Ruta de texto vacia');
 	if (cleaned.includes('..')) throw error(400, 'Ruta de texto invalida');
 	const withExtension = extname(cleaned) ? cleaned : `${cleaned}.txt`;
-	return `../../../../../data/texts/${withExtension}`;
+	return `../../../../../../data/texts/${withExtension}`;
 };
 
 export const GET: RequestHandler = async ({ params }) => {

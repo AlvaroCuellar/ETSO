@@ -11,7 +11,7 @@
 	<Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'BICUVE' }]} />
 
 	<FeatureHeroSection
-		eyebrow="Repositorio"
+		eyebrow=""
 		title="BICUVE"
 		subtitle="Sección provisional"
 		backgroundImage={fondoLogo}

@@ -748,7 +748,7 @@
 	<Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'TEXORO' }]} />
 
 	<FeatureHeroSection
-		eyebrow="Exploración textual"
+		eyebrow=""
 		title="TEXORO"
 		subtitle="Búsquedas textuales en 3000 obras del Siglo de Oro"
 		backgroundImage={fondoLogo}

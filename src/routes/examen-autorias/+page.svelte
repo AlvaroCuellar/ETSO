@@ -246,7 +246,7 @@
 	<Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'Examen de autorías' }]} />
 
 	<FeatureHeroSection
-		eyebrow="Análisis computacional"
+		eyebrow=""
 		title="Examen de Autorías"
 		titleTag="h2"
 		subtitle="Análisis estilométrico de obras teatrales del Siglo de Oro"

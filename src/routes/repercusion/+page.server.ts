@@ -1,4 +1,4 @@
-import { getImpactView } from '$lib/server/catalog-local';
+import { getImpactView } from '$lib/server/catalog-runtime';
 
 import type { PageServerLoad } from './$types';
 

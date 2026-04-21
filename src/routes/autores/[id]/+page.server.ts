@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import { getAuthorById, getAuthorMetrics, getAuthorWorks } from '$lib/server/catalog-local';
+import { getAuthorById, getAuthorMetrics, getAuthorWorks } from '$lib/server/catalog-runtime';
 
 import type { PageServerLoad } from './$types';
 

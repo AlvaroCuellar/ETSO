@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import { buildBicuveCitation, getBicuveById, getWorkById } from '$lib/server/catalog-local';
+import { buildBicuveCitation, getBicuveById, getWorkById } from '$lib/server/catalog-runtime';
 
 import type { PageServerLoad } from './$types';
 

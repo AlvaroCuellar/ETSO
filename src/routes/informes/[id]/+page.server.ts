@@ -5,7 +5,7 @@ import {
 	getInformeById,
 	getInformeDistanceRows,
 	getWorkById
-} from '$lib/server/catalog-local';
+} from '$lib/server/catalog-runtime';
 
 import type { PageServerLoad } from './$types';
 

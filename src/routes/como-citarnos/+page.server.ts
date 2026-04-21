@@ -1,4 +1,4 @@
-import { getComoCitarnosBibliography } from '$lib/server/catalog-local';
+import { getComoCitarnosBibliography } from '$lib/server/catalog-runtime';
 
 import type { PageServerLoad } from './$types';
 

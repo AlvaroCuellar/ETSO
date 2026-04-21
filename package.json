@@ -7,12 +7,13 @@
 		"node": "24.x"
 	},
 	"scripts": {
-		"dev": "vite dev",
-		"build": "vite build",
+		"dev": "npm run build:catalog && vite dev",
+		"build": "npm run build:catalog && vite build",
+		"build:catalog": "node scripts/build-catalog-snapshot.mjs",
 		"preview": "vite preview",
-		"prepare": "svelte-kit sync || echo ''",
-		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"prepare": "node scripts/build-catalog-snapshot.mjs && svelte-kit sync",
+		"check": "npm run build:catalog && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "npm run build:catalog && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"index:texts": "node scripts/build-search-index.mjs",
 		"index:texts:compact": "node scripts/build-search-index.mjs --compact",
 		"index:validate": "node scripts/validate-search-index.mjs"

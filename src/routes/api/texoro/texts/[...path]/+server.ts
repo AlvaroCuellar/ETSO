@@ -1,29 +1,36 @@
-﻿import { readFile } from 'node:fs/promises';
-import { extname, resolve } from 'node:path';
+import { extname } from 'node:path';
 
 import { error } from '@sveltejs/kit';
 
 import type { RequestHandler } from './$types';
 
-const TEXT_ROOT = resolve(process.cwd(), 'data', 'texts');
+const textFiles = import.meta.glob('../../../../../data/texts/*.txt', {
+	import: 'default',
+	query: '?raw'
+});
 
-const resolveSafePath = (rawPath: string): string => {
+type RawFileLoader = () => Promise<string>;
+
+const resolveSafeKey = (rawPath: string): string => {
 	const cleaned = rawPath.replace(/^\/+/, '');
 	if (!cleaned) throw error(400, 'Ruta de texto vacia');
 	if (cleaned.includes('..')) throw error(400, 'Ruta de texto invalida');
 	const withExtension = extname(cleaned) ? cleaned : `${cleaned}.txt`;
-	const full = resolve(TEXT_ROOT, withExtension);
-	if (!full.startsWith(TEXT_ROOT)) throw error(403, 'Ruta fuera del directorio de textos');
-	return full;
+	return `../../../../../data/texts/${withExtension}`;
 };
 
 export const GET: RequestHandler = async ({ params }) => {
 	const rawPath = params.path ?? '';
 	const decoded = decodeURIComponent(rawPath);
-	const fullPath = resolveSafePath(decoded);
+	const moduleKey = resolveSafeKey(decoded);
+	const loadFile = textFiles[moduleKey] as RawFileLoader | undefined;
+
+	if (!loadFile) {
+		throw error(404, 'Texto no encontrado');
+	}
 
 	try {
-		const body = await readFile(fullPath);
+		const body = await loadFile();
 		return new Response(body, {
 			headers: {
 				'content-type': 'text/plain; charset=utf-8',

@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import { getInformeByWorkId, getWorkBySlug } from '$lib/server/catalog-local';
+import { getInformeByWorkId, getWorkBySlug } from '$lib/server/catalog-runtime';
 
 import type { PageServerLoad } from './$types';
 

@@ -24,3 +24,6 @@ vite.config.ts.timestamp-*
 
 # Generated search index artifacts
 # data/search-index/
+
+# Generated catalog snapshot
+src/lib/server/generated/

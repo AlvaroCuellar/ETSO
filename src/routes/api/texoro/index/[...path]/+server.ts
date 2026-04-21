@@ -1,38 +1,36 @@
-﻿import { readFile } from 'node:fs/promises';
-import { extname, resolve } from 'node:path';
-
 import { error } from '@sveltejs/kit';
 
 import type { RequestHandler } from './$types';
 
-const INDEX_ROOT = resolve(process.cwd(), 'data', 'search-index');
+const indexFiles = import.meta.glob('../../../../../data/search-index/**/*.json', {
+	import: 'default',
+	query: '?raw'
+});
 
-const resolveSafePath = (rawPath: string): string => {
+type RawFileLoader = () => Promise<string>;
+
+const resolveSafeKey = (rawPath: string): string => {
 	const cleaned = rawPath.replace(/^\/+/, '');
 	if (!cleaned) throw error(400, 'Ruta de indice vacia');
 	if (cleaned.includes('..')) throw error(400, 'Ruta de indice invalida');
-	const full = resolve(INDEX_ROOT, cleaned);
-	if (!full.startsWith(INDEX_ROOT)) throw error(403, 'Ruta fuera de indice');
-	return full;
-};
-
-const contentTypeFor = (pathValue: string): string => {
-	const extension = extname(pathValue).toLowerCase();
-	if (extension === '.json') return 'application/json; charset=utf-8';
-	if (extension === '.txt') return 'text/plain; charset=utf-8';
-	return 'application/octet-stream';
+	return `../../../../../data/search-index/${cleaned}`;
 };
 
 export const GET: RequestHandler = async ({ params }) => {
 	const rawPath = params.path ?? '';
 	const decoded = decodeURIComponent(rawPath);
-	const fullPath = resolveSafePath(decoded);
+	const moduleKey = resolveSafeKey(decoded);
+	const loadFile = indexFiles[moduleKey] as RawFileLoader | undefined;
+
+	if (!loadFile) {
+		throw error(404, 'Artefacto de indice no encontrado');
+	}
 
 	try {
-		const body = await readFile(fullPath);
+		const body = await loadFile();
 		return new Response(body, {
 			headers: {
-				'content-type': contentTypeFor(fullPath),
+				'content-type': 'application/json; charset=utf-8',
 				'cache-control': 'public, max-age=60'
 			}
 		});

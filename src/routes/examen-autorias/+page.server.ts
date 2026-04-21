@@ -1,4 +1,4 @@
-import { getAllAuthors, getAllWorks, listGenres } from '$lib/server/catalog-local';
+import { getAllAuthors, getAllWorks, listGenres } from '$lib/server/catalog-runtime';
 
 import type { PageServerLoad } from './$types';
 

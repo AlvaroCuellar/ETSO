@@ -14,7 +14,7 @@ export const load: LayoutServerLoad = async ({ cookies, url }) => {
 	}
 
 	const { pathname, search } = url;
-	if (pathname === '/acceso') {
+	if (pathname === '/acceso' || pathname.startsWith('/acceso/')) {
 		return {};
 	}
 

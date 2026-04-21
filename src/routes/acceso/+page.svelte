@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { ActionData, PageData } from './$types';
+	import type { PageData } from './$types';
 
-	let { data, form }: { data: PageData; form: ActionData } = $props();
+	let { data }: { data: PageData } = $props();
 </script>
 
 <svelte:head>
@@ -24,8 +24,8 @@
 			Introduce la contraseña de acceso para entrar en la web mientras el proyecto sigue en revisión.
 		</p>
 
-		<form method="POST" class="mt-6 grid gap-4">
-			<input type="hidden" name="next" value={form?.next ?? data.next} />
+		<form method="POST" action="/acceso/login" class="mt-6 grid gap-4">
+			<input type="hidden" name="next" value={data.next} />
 
 			<div class="grid gap-1.5">
 				<label for="site-access-password" class="font-['Roboto',sans-serif] text-[0.86rem] font-semibold text-brand-blue-dark">
@@ -41,7 +41,7 @@
 				/>
 			</div>
 
-			{#if form?.invalid}
+			{#if data.invalid}
 				<p class="m-0 rounded-[10px] border border-[#f1c7cf] bg-[#fff6f8] px-3 py-2 text-[0.9rem] text-[#972842]">
 					La contraseña no es correcta.
 				</p>

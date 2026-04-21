@@ -14,7 +14,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 	}
 
 	const { pathname, search } = event.url;
-	if (UNPROTECTED_PATHS.has(pathname) || pathname.startsWith('/_app/')) {
+	const isAccessPath = UNPROTECTED_PATHS.has(pathname) || pathname.startsWith('/acceso/');
+	if (isAccessPath || pathname.startsWith('/_app/')) {
 		return resolve(event);
 	}
 

@@ -1,0 +1,952 @@
+{
+  "intro": "Se presentan algunas referencias sobre la repercusión que el proyecto ETSO ha conseguido en la comunidad investigadora del teatro del Siglo de Oro español y las Humanidades Digitales en forma de artículos, tesis, noticias, libros, conferencias, exposiciones, premios, etc.",
+  "sections": [
+    {
+      "id": "colaboraciones-de-etso-en-progreso",
+      "title": "Colaboraciones de ETSO en progreso",
+      "items": [
+        {
+          "id": "colaboraciones-de-etso-en-progreso-1",
+          "summary": "Tesis doctoral. Rocío Alonso Medel. Las comedias de santos de Juan Pérez de Montalbán (1601-1638): construcción dramática, fuentes y proyección . Universidad Complutense de Madrid.",
+          "links": []
+        },
+        {
+          "id": "colaboraciones-de-etso-en-progreso-2",
+          "summary": "Tesis doctoral. Félix Blanco Campos. Edición y estudio del teatro de Alonso de Castillo Solórzano . Universidad de Valladolid.",
+          "links": []
+        },
+        {
+          "id": "colaboraciones-de-etso-en-progreso-3",
+          "summary": "Tesis doctoral. Miguel Campión Larumbe. «El mejor amigo, el muerto», de tres ingenios: edición crítica y estudio . Universidad Autónoma de Madrid.",
+          "links": []
+        },
+        {
+          "id": "colaboraciones-de-etso-en-progreso-4",
+          "summary": "Tesis doctoral. Javier Castrillo Alaguero. La reescritura en el teatro del Siglo de Oro: el caso de Agustín Moreto . Universidad de Burgos.",
+          "links": []
+        },
+        {
+          "id": "colaboraciones-de-etso-en-progreso-5",
+          "summary": "Tesis doctoral. Iván Gómez Caballero. Ulises en el teatro del siglo XVII . Universidad de Castilla-La Mancha.",
+          "links": []
+        },
+        {
+          "id": "colaboraciones-de-etso-en-progreso-6",
+          "summary": "Tesis doctoral. Emma Marcos Rodríguez. Sentido y pervivencia del teatro de Antonio Mira de Amescua . Universidad de Valladolid.",
+          "links": []
+        },
+        {
+          "id": "colaboraciones-de-etso-en-progreso-7",
+          "summary": "Tesis doctoral. Esperanza Rivera Salmerón. Las armas y las letras en el teatro clásico español. Estudio y edición crítica de Cautelas son amistades de Felipe Godínez . Universidad de Valladolid.",
+          "links": []
+        },
+        {
+          "id": "colaboraciones-de-etso-en-progreso-8",
+          "summary": "Tesis doctoral. Francisco Sánchez Ibáñez. Escritura teatral colaborativa en el Siglo de Oro: Agustín Moreto como paradigma . Universidad de Burgos.",
+          "links": []
+        },
+        {
+          "id": "colaboraciones-de-etso-en-progreso-9",
+          "summary": "Tesis doctoral. Carmen Santana Bustamante. La Santa Táez de Rojas Zorrilla y la de Enríquez Gómez: Edición crítica, estudio y análisis comparativo . Universidad de Castilla-La Mancha.",
+          "links": []
+        },
+        {
+          "id": "colaboraciones-de-etso-en-progreso-10",
+          "summary": "Tesis doctoral. Ane Zapatero Molinuevo. Estudio literario y edición crítica de un díptico dramático de Lope de Vega: Los Tellos de Meneses y Valor, fortuna y lealtad de los Tellos de Meneses . Universidad del País Vasco / Euskal Herriko Unibertsitatea.",
+          "links": []
+        }
+      ]
+    },
+    {
+      "id": "2022",
+      "title": "2022",
+      "year": 2022,
+      "items": [
+        {
+          "id": "2022-1",
+          "summary": "La monja alférez se estrena en España a cargo de la Compañía Nacional de Teatro de México a nombre de su legítimo dramaturgo: Juan Ruiz de Alarcón. Esta autoría fue apuntada por los análisis estilométriccos del proyecto y del estudio histórico-filológico de Germán Vega. Noticias en El Norte de Castilla y El Cultural .",
+          "impact_tag": "Reportajes sobre atribución de ETSO.",
+          "links": [
+            {
+              "href": "https://www.elnortedecastilla.es/culturas/teatro/monja-alferez-salta-20220630001135-nt.html",
+              "label": "El Norte de Castilla"
+            },
+            {
+              "href": "https://www.elespanol.com/el-cultural/escenarios/teatro/20220701/monja-alferez-siglo-oro-travestido/684182101_0.html",
+              "label": "El Cultural"
+            }
+          ]
+        },
+        {
+          "id": "2022-2",
+          "summary": "«Sistemas de reconocimiento de textos e impresos hispánicos de la Edad Moderna. La creación de unos modelos de HTR para la transcripción automatizada de documentos en gótica y redonda (s. XV-XVII)» . Stefano Bazzaco, Ana Milagros Jiménez Ruiz, Mónica Martín Molares y Ángela Torralba Ruberte. Historias Fingidas, Número Especial 1. Humanidades Digitales y estudios literarios hispánicos, pp. 67-125. 2022",
+          "impact_tag": "Se menciona ETSO",
+          "links": [
+            {
+              "href": "https://historiasfingidas.dlls.univr.it/article/view/1190/0",
+              "label": "«Sistemas de reconocimiento de textos e impresos hispánicos de la Edad Moderna. La creación de unos modelos de HTR para la transcripción automatizada de documentos en gótica y redonda (s. XV-XVII)»"
+            }
+          ]
+        },
+        {
+          "id": "2022-3",
+          "summary": "«Hacia una biblioteca digital de las comedias de Calderón: el proceso del GIC» . Verónica Casais Vila y Santiago Fernández Mosquera. Hipogrifo. 10.1. 2022.",
+          "impact_tag": "Se menciona ETSO",
+          "links": [
+            {
+              "href": "https://www.revistahipogrifo.com/index.php/hipogrifo/article/view/1106",
+              "label": "«Hacia una biblioteca digital de las comedias de Calderón: el proceso del GIC»"
+            }
+          ]
+        },
+        {
+          "id": "2022-4",
+          "summary": "« Romances teatrales entre Mira de Amescua, Calderón y Lope, ritmo, asonancia y cuestiones de autoría » . Simon Kroll y Fernando Sanz-Lázaro. Revista de Humanidades Digitales. 2022.",
+          "impact_tag": "Se menciona ETSO",
+          "links": [
+            {
+              "href": "http://www.revuh.uh.cu/index.php/UH/article/view/294/216",
+              "label": "«"
+            },
+            {
+              "href": "https://revistas.uned.es/index.php/RHD/article/view/31620",
+              "label": "Romances teatrales entre Mira de Amescua, Calderón y Lope, ritmo, asonancia y cuestiones de autoría"
+            },
+            {
+              "href": "http://www.revuh.uh.cu/index.php/UH/article/view/294/216",
+              "label": "»"
+            }
+          ]
+        },
+        {
+          "id": "2022-5",
+          "summary": "«David perseguido y montes de Gelboé. Novedades estilométricas ante una atribución dudosa» . Elena Martínez Carro. Anuario Lope de Vega. 2022.",
+          "impact_tag": "Colaboración de ETSO",
+          "links": [
+            {
+              "href": "https://revistes.uab.cat/anuariolopedevega/article/view/v28-martinez-carro",
+              "label": "«David perseguido y montes de Gelboé. Novedades estilométricas ante una atribución dudosa»"
+            }
+          ]
+        },
+        {
+          "id": "2022-6",
+          "summary": "«Tras «un Ingenio de La Habana». Más sobre El príncipe jardinero y fingido Cloridano » . Leonardo Sarría. Universidad de La Habana. 2022.",
+          "impact_tag": "Se menciona ETSO",
+          "links": [
+            {
+              "href": "http://www.revuh.uh.cu/index.php/UH/article/view/294/216",
+              "label": "«Tras «un Ingenio de La Habana». Más sobre El príncipe jardinero y fingido Cloridano »"
+            }
+          ]
+        },
+        {
+          "id": "2022-7",
+          "summary": "«Comentario sobre el estudio y la edición crítica de Las dos bandoleras y fundación de la Santa Hermandad de Toledo, comedia atribuida a Lope de Vega» . Marie Zesiger. Boletín Hispánico Helvético. 2022.",
+          "impact_tag": "Colaboración de ETSO",
+          "links": [
+            {
+              "href": "https://www.sagw.ch/fileadmin/redaktion-sseh/dokumente/BHH_37-38.pdf#page=5",
+              "label": "«Comentario sobre el estudio y la edición crítica de Las dos bandoleras y fundación de la Santa Hermandad de Toledo, comedia atribuida a Lope de Vega»"
+            }
+          ]
+        },
+        {
+          "id": "2022-8",
+          "summary": "Hacer remedio el dolor . Editada por María Luisa Lobato y Francisco Sánchez Ibáñez. Biblioteca Virtual Miguel de Cervantes. 2022.",
+          "impact_tag": "Colaboración de ETSO",
+          "links": [
+            {
+              "href": "http://www.cervantesvirtual.com/obra/hacer-remedio-el-dolor-1135366/",
+              "label": "Hacer remedio el dolor"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2021",
+      "title": "2021",
+      "year": 2021,
+      "items": [
+        {
+          "id": "2021-1",
+          "summary": "«Edición crítica, problemas textuales y de autoría: métrica y ortología en Lope de Vega» . Daniel Fernández Rodríguez. Luigi Giuliani, Victoria Pineda (edit.). La edición del diálogo teatral (siglos xvi-xvii) .",
+          "impact_tag": "Se menciona ETSO",
+          "links": [
+            {
+              "href": "https://www.researchgate.net/publication/348853182_Edicion_critica_y_problemas_de_autoria_versificacion_metrica_y_ortologia_en_Lope_de_Vega",
+              "label": "«Edición crítica, problemas textuales y de autoría: métrica y ortología en Lope de Vega»"
+            }
+          ]
+        },
+        {
+          "id": "2021-2",
+          "summary": "« Las Humanidades Digitales y la redefinición del canon teatral del Siglo de Oro » . David J Amelang. Boletín de la Biblioteca de Menéndez Pelayo XCVII.1, pp. 115-134. 2021.",
+          "impact_tag": "Se menciona ETSO",
+          "links": [
+            {
+              "href": "https://revistas.ucm.es/index.php/CFCL/article/download/77308/4564456558623",
+              "label": "«"
+            },
+            {
+              "href": "https://www.academia.edu/74233548/David_J_Amelang_Las_Humanidades_Digitales_y_la_redefinici%C3%B3n_del_canon_teatral_del_Siglo_de_Oro_Bolet%C3%ADn_de_la_Biblioteca_de_Men%C3%A9ndez_Pelayo_XCVII_1_2021_pp_115_134",
+              "label": "Las Humanidades Digitales y la redefinición del canon teatral del Siglo de Oro"
+            },
+            {
+              "href": "https://revistas.ucm.es/index.php/CFCL/article/download/77308/4564456558623",
+              "label": "»"
+            }
+          ]
+        },
+        {
+          "id": "2021-3",
+          "summary": "Francisco de Rojas Zorrilla. Obras completas. Volumen VIII . Dirigida por Felipe B. Pedraza Jiménez y Rafael González Cañal. Volumen coordinado por Milagros Rodríguez Cáceres. Ediciones de la Universidad de Castilla-La Mancha. 2021.",
+          "impact_tag": "Colaboración de ETSO",
+          "links": [
+            {
+              "href": "https://play.google.com/books/reader?id=sYFSEAAAQBAJ&pg=GBS.PP1&hl=es&lr=&printsec=frontcover",
+              "label": "Francisco de Rojas Zorrilla. Obras completas. Volumen VIII"
+            }
+          ]
+        },
+        {
+          "id": "2021-4",
+          "summary": "«Variantes, rastros, hitos e instancias autoriales entre borradores, manuscritos e impresos de «El castigo sin venganza» y la labor del editor» . Ramón Valdés Gázquez. Hipogrifo, vol. 9, no. 1041-11098. 2021.",
+          "impact_tag": "Colaboración de ETSO",
+          "links": [
+            {
+              "href": "https://www.revistahipogrifo.com/index.php/hipogrifo/article/view/1004",
+              "label": "«Variantes, rastros, hitos e instancias autoriales entre borradores, manuscritos e impresos de «El castigo sin venganza» y la labor del editor»"
+            }
+          ]
+        },
+        {
+          "id": "2021-5",
+          "summary": "«Notas sobre el proceso de composición y representación de La niñez del Padre Rojas, de Lope» . Daniele Crivellari. Criticón, 85-107. 2021.",
+          "impact_tag": "Se cita ETSO",
+          "links": [
+            {
+              "href": "https://doi.org/10.4000/criticon.20089",
+              "label": "«Notas sobre el proceso de composición y representación de La niñez del Padre Rojas, de Lope»"
+            }
+          ]
+        },
+        {
+          "id": "2021-6",
+          "summary": "Fábula de Dafne . Lupercio Leonardo de Argensola. Editada por Teresa Ferrer Valls y Jaime Olmedo Ramos. Edition Reichenberger. 2021.",
+          "impact_tag": "Colaboración de ETSO",
+          "links": [
+            {
+              "href": "http://www.reichenberger.de/Pages/e225.html",
+              "label": "Fábula de Dafne"
+            }
+          ]
+        },
+        {
+          "id": "2021-7",
+          "summary": "El encanto de los dioses. Mito, poesía y música en el teatro de Lope de Vega . Gaston Gilabert. Editum. Ediciones de la Universidad de Murcia. 2021.",
+          "impact_tag": "Se cita ETSO",
+          "links": [
+            {
+              "href": "https://publicaciones.um.es/publicaciones/public/obras/ficha.seam?numero=2800&edicion=1&cid=4248",
+              "label": "El encanto de los dioses. Mito, poesía y música en el teatro de Lope de Vega"
+            }
+          ]
+        },
+        {
+          "id": "2021-8",
+          "summary": "«Estudio estilométrico del teatro latino: a vueltas con Octavia y Hercules Oetaeus de Séneca» . Iván Gómez Caballero. Cuad. Filol. Clás. Estud. Lat. 41.1, 57-73. 2021.",
+          "impact_tag": "Se cita ETSO",
+          "links": [
+            {
+              "href": "https://revistas.ucm.es/index.php/CFCL/article/download/77308/4564456558623",
+              "label": "«Estudio estilométrico del teatro latino: a vueltas con Octavia y Hercules Oetaeus de Séneca»"
+            }
+          ]
+        },
+        {
+          "id": "2021-9",
+          "summary": "«Hacia un corpus lingüístico del gracioso moretiano en las comedias palatinas» . Elena Martínez Carro. Anuario Calderoniano , 14 , 245-270. 2021.",
+          "impact_tag": "Se cita ETSO",
+          "links": [
+            {
+              "href": "https://recyt.fecyt.es/index.php/acal/article/view/87227",
+              "label": "«Hacia un corpus lingüístico del gracioso moretiano en las comedias palatinas»"
+            }
+          ]
+        },
+        {
+          "id": "2021-10",
+          "summary": "Estudio literario y prolegómenos para una edición crítica de Las cadenas del Demonio de Pedro Calderón de la Barca . Tesis de pregrado. Henrry Alexander Ibáñez Mogrovejo. Pontificia Universidad Católica del Perú. 2021.",
+          "impact_tag": "Colaboración de ETSO",
+          "links": [
+            {
+              "href": "https://tesis.pucp.edu.pe/repositorio/handle/20.500.12404/20306",
+              "label": "Estudio literario y prolegómenos para una edición crítica de Las cadenas del Demonio de Pedro Calderón de la Barca"
+            }
+          ]
+        },
+        {
+          "id": "2021-11",
+          "summary": "Manasés, rey de Judea . Editada por Mercedes de los Reyes Peña. Edition Reichenberger. 2021.",
+          "impact_tag": "Colaboración de ETSO",
+          "links": [
+            {
+              "href": "http://www.reichenberger.de/Pages/e227.html",
+              "label": "Manasés, rey de Judea"
+            }
+          ]
+        },
+        {
+          "id": "2021-12",
+          "summary": "La figura de Caín en el teatro del Siglo de Oro. Edición y estudio de «El primer condenado», comedia atribuida a Felipe Godínez . Tesis doctoral. Irene G. Escudero. Universidad de Valladolid. Agosto 2021.",
+          "impact_tag": "Colaboración de ETSO",
+          "links": [
+            {
+              "href": "https://uvadoc.uva.es/bitstream/handle/10324/47763/Tesis1873-210729.pdf?sequence=1&isAllowed=y",
+              "label": "La figura de Caín en el teatro del Siglo de Oro. Edición y estudio de «El primer condenado», comedia atribuida a Felipe Godínez"
+            }
+          ]
+        },
+        {
+          "id": "2021-13",
+          "summary": "La Estrella de Sevilla y las potencialidades de la edición digital . Tesis doctoral de Nàdia Revenga García. Dirigida por Teresa Ferrer Valls. Universitat de València. Julio 2021.",
+          "impact_tag": "Colaboración de ETSO",
+          "links": [
+            {
+              "href": "https://roderic.uv.es/handle/10550/79924",
+              "label": "La Estrella de Sevilla y las potencialidades de la edición digital"
+            }
+          ]
+        },
+        {
+          "id": "2021-14",
+          "summary": "«El Segundo tomo de comedias de Juan Pérez de Montalbán: hacia un mapa estilométrico de las comedias auténticas, dudosas y ajenas» . Claudia Demattè. Talía. Revista De Estudios Teatrales. v. 3. Julio 2021.",
+          "impact_tag": "Colaboración de ETSO",
+          "links": [
+            {
+              "href": "https://doi.org/10.5209/tret.70616",
+              "label": "«El Segundo tomo de comedias de Juan Pérez de Montalbán: hacia un mapa estilométrico de las comedias auténticas, dudosas y ajenas»"
+            }
+          ]
+        },
+        {
+          "id": "2021-15",
+          "summary": "«Discernir entre original y refundición en el teatro del Siglo de Oro a través de la estilometría: el caso de El mejor amigo, el muerto» . Miguel Campión Larumbe y Álvaro Cuéllar. Talía. Revista De Estudios Teatrales. v. 3. Julio 2021.",
+          "impact_tag": "Colaboración de ETSO",
+          "links": [
+            {
+              "href": "https://doi.org/10.5209/tret.74021",
+              "label": "«Discernir entre original y refundición en el teatro del Siglo de Oro a través de la estilometría: el caso de El mejor amigo, el muerto»"
+            }
+          ]
+        },
+        {
+          "id": "2021-16",
+          "summary": "« Texto, atribución y censura de Próspera y Adversa fortuna de Don Álvaro de Luna » . Emma María Marcos Rodríguez. Talía. Revista De Estudios Teatrales. v. 3. Julio 2021.",
+          "impact_tag": "Colaboración de ETSO",
+          "links": [
+            {
+              "href": "https://ruidera.uclm.es/xmlui/handle/10578/28570",
+              "label": "«"
+            },
+            {
+              "href": "https://doi.org/10.5209/tret.68539",
+              "label": "Texto, atribución y censura de Próspera y Adversa fortuna de Don Álvaro de Luna"
+            },
+            {
+              "href": "https://ruidera.uclm.es/xmlui/handle/10578/28570",
+              "label": "»"
+            }
+          ]
+        },
+        {
+          "id": "2021-17",
+          "summary": "«Las comedias de Lope de Vega: confirmaciones de autoría y nuevas atribuciones desde la estilometría (I)» . Germán Vega García-Luengos. Talía. Revista De Estudios Teatrales. v. 3. Julio 2021.",
+          "impact_tag": "Colaboración de ETSO",
+          "links": [
+            {
+              "href": "https://doi.org/10.5209/tret.74625",
+              "label": "«Las comedias de Lope de Vega: confirmaciones de autoría y nuevas atribuciones desde la estilometría (I)»"
+            }
+          ]
+        },
+        {
+          "id": "2021-18",
+          "summary": "Un superordenador para descifrar a Lope de Vega y rayos X para delatar a su censor . ABC . Junio 2021.",
+          "impact_tag": "Reportaje sobre ETSO",
+          "links": [
+            {
+              "href": "https://www.abc.es/cultura/teatros/abci-superordenador-para-descifrar-lope-vega-y-rayos-para-delatar-censor-202106210036_noticia.html",
+              "label": "Un superordenador para descifrar a Lope de Vega y rayos X para delatar a su censor"
+            }
+          ]
+        },
+        {
+          "id": "2021-19",
+          "summary": "Lope de Vega y los secretos de los autores del Siglo de Oro: la tecnología que reconstruye la historia de la literatura . elDiario.es . Junio 2021.",
+          "impact_tag": "Reportaje sobre ETSO",
+          "links": [
+            {
+              "href": "https://www.eldiario.es/cultura/libros/lope-vega-secretos-autores-siglo-oro-tecnologia-reconstruye-historia-literatura_1_8051490.html",
+              "label": "Lope de Vega y los secretos de los autores del Siglo de Oro: la tecnología que reconstruye la historia de la literatura"
+            }
+          ]
+        },
+        {
+          "id": "2021-20",
+          "summary": "«Juan Ruiz de Alarcón recupera La monja alférez » . Germán Vega García-Luengos. Ediciones UCLM. Colección Corral de Comedias n.º 45: Sor Juana Inés de la Cruz y el teatro novohispano . Junio 2021.",
+          "impact_tag": "Atribución a partir de resultado estilométrico aportado por ETSO",
+          "links": [
+            {
+              "href": "https://ruidera.uclm.es/xmlui/handle/10578/28570",
+              "label": "«Juan Ruiz de Alarcón recupera La monja alférez »"
+            }
+          ]
+        },
+        {
+          "id": "2021-21",
+          "summary": "«Límites estilométricos en una miscelánea áurea: «Favores de las musas» de Sebastián Francisco de Medrano» . Elena Martínez Carro. Hipogrífo . v.9. n.1. Junio 2021.",
+          "impact_tag": "Colaboración de ETSO",
+          "links": [
+            {
+              "href": "https://www.revistahipogrifo.com/index.php/hipogrifo/article/view/883",
+              "label": "«Límites estilométricos en una miscelánea áurea: «Favores de las musas» de Sebastián Francisco de Medrano»"
+            }
+          ]
+        },
+        {
+          "id": "2021-22",
+          "summary": "«La recuperación de un dramaturgo áureo: Agustín Moreto en la Biblioteca Virtual Miguel de Cervantes» . Julia M.ª Bernal y María Luisa Lobato. Hipogrífo . v.9. n.1. Junio 2021.",
+          "impact_tag": "Colaboración de ETSO",
+          "links": [
+            {
+              "href": "https://www.revistahipogrifo.com/index.php/hipogrifo/article/view/846",
+              "label": "«La recuperación de un dramaturgo áureo: Agustín Moreto en la Biblioteca Virtual Miguel de Cervantes»"
+            }
+          ]
+        },
+        {
+          "id": "2021-23",
+          "summary": "« Es de madre el corazón : el personaje de María en la comedia La Aldegüela , atribuida a Lope de Vega» . Debora Vaccari. Hipogrífo . v.9. n.1. Junio 2021.",
+          "impact_tag": "Colaboración de ETSO",
+          "links": [
+            {
+              "href": "https://www.revistahipogrifo.com/index.php/hipogrifo/article/view/959",
+              "label": "« Es de madre el corazón : el personaje de María en la comedia La Aldegüela , atribuida a Lope de Vega»"
+            }
+          ]
+        },
+        {
+          "id": "2021-24",
+          "summary": "Encuentran en los fondos de la BNE la princeps de una comedia desconocida de Lope de Vega . Abraham Madroñal encuentra una nueva comedia de Lope de Vega. Los resultados son apoyados desde la estilometría y el proyecto ETSO. Muchos medios y entidades han dado cuenta de ello, como The Times , ABC , RTVE , Biblioteca Nacional de España , Europapress , Lanza Digital , Tribuna de Valladolid , etc.",
+          "impact_tag": "Colaboración de ETSO",
+          "links": [
+            {
+              "href": "http://www.bne.es/es/AreaPrensa/noticias2021/0528-encuentran-fondos-bne-princeps-comedia-desconocida-de-lope-de-vega.html",
+              "label": "Encuentran en los fondos de la BNE la princeps de una comedia desconocida de Lope de Vega"
+            },
+            {
+              "href": "https://www.thetimes.co.uk/article/lope-de-vega-lost-play-shakespeare-spain-found-library-madrid-tph3hpfjs",
+              "label": "The Times"
+            },
+            {
+              "href": "https://www.abc.es/cultura/libros/abci-descubren-comedia-desconocida-lope-vega-fondos-biblioteca-nacional-espana-202105281426_noticia.html",
+              "label": "ABC"
+            },
+            {
+              "href": "https://www.rtve.es/alacarta/videos/telediario/biblioteca-nacional-descubre-obra-lope-vega/5921228/",
+              "label": "RTVE"
+            },
+            {
+              "href": "http://www.bne.es/es/AreaPrensa/noticias2021/0528-encuentran-fondos-bne-princeps-comedia-desconocida-de-lope-de-vega.html",
+              "label": "Biblioteca Nacional de España"
+            },
+            {
+              "href": "https://www.europapress.es/cultura/libros-00132/noticia-descubren-comedia-desconocida-lope-vega-fondos-biblioteca-nacional-20210528143808.html",
+              "label": "Europapress"
+            },
+            {
+              "href": "https://www.lanzadigital.com/general/descubren-una-comedia-desconocida-de-lope-de-vega-en-los-fondos-de-la-biblioteca-nacional/",
+              "label": "Lanza Digital"
+            },
+            {
+              "href": "https://www.tribunavalladolid.com/noticias/descubren-una-comedia-desconocida-de-lope-de-vega-en-los-fondos-de-la-biblioteca-nacional/1622278555",
+              "label": "Tribuna de Valladolid"
+            }
+          ]
+        },
+        {
+          "id": "2021-25",
+          "summary": "La lindona de Galicia, comedia de protagonista galega . Santiago Fernández Mosquera. Mayo 2021.",
+          "impact_tag": "Se ofrece un resultado de ETSO",
+          "links": [
+            {
+              "href": "http://consellodacultura.gal/especiais/a-lindona-de-galicia/texto.php?esp=10291&mat=80231",
+              "label": "La lindona de Galicia, comedia de protagonista galega"
+            }
+          ]
+        },
+        {
+          "id": "2021-26",
+          "summary": "El renacer del Fénix: Yo he hecho lo que he podido, una nueva comedia de Lope de Vega . Abraham Madroñal. Universidad de Valladolid-Ayuntamiento de Olmedo (Colección “Olmedo Clásico», n. 17). Mayo 2021.",
+          "impact_tag": "Colaboración de ETSO",
+          "links": [
+            {
+              "href": "http://www.publicaciones.uva.es/UVAColecciones-8-Olmedo-Clasico.aspx",
+              "label": "El renacer del Fénix: Yo he hecho lo que he podido, una nueva comedia de Lope de Vega"
+            }
+          ]
+        },
+        {
+          "id": "2021-27",
+          "summary": "«Los primeros años del teatro comercial en España y el primer Lope (1560-1598)» . Daniel Fernández Rodríguez. Anuario Lope de Vega. Texto, literatura, cultura , XXVII (2021), pp. 1-8. Enero 2021.",
+          "impact_tag": "Se menciona ETSO",
+          "links": [
+            {
+              "href": "https://doi.org/10.5565/rev/anuariolopedevega.423",
+              "label": "«Los primeros años del teatro comercial en España y el primer Lope (1560-1598)»"
+            }
+          ]
+        },
+        {
+          "id": "2021-28",
+          "summary": "«Un nuevo caso de reescritura Lope-Moreto: El piadoso aragonés y El hijo obediente» . Javier Castrillo Alaguero. Anuario Lope de Vega. Texto, literatura, cultura , XXVII (2021), pp. 255-269. Enero 2021.",
+          "impact_tag": "Colaboración de ETSO",
+          "links": [
+            {
+              "href": "https://revistes.uab.cat/anuariolopedevega/article/view/v27-castrillo-alaguero",
+              "label": "«Un nuevo caso de reescritura Lope-Moreto: El piadoso aragonés y El hijo obediente»"
+            }
+          ]
+        },
+        {
+          "id": "2021-29",
+          "summary": "«Problemas de autoría en comedias en colaboración: La adúltera penitente, de Matos Fragoso, Cáncer y Moreto» . Fernando Rodríguez-Gallego. Boletín de la Real Academia Española . v. 100, n. 322, pp. 663-698. Enero 2021.",
+          "impact_tag": "Colaboración de ETSO",
+          "links": [
+            {
+              "href": "http://revistas.rae.es/brae/article/view/443/925",
+              "label": "«Problemas de autoría en comedias en colaboración: La adúltera penitente, de Matos Fragoso, Cáncer y Moreto»"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2020",
+      "title": "2020",
+      "year": 2020,
+      "items": [
+        {
+          "id": "2020-1",
+          "summary": "«Las humanidades digitales y la base de datos MeMoRam para un enfoque sistemático hacia los motivos en los libros de caballerías» . Giulia Tomasi. Historias Fingidas , no. 8, pp. 129-156. 2020",
+          "impact_tag": "Se menciona ETSO",
+          "links": [
+            {
+              "href": "https://dialnet.unirioja.es/servlet/articulo?codigo=7796896",
+              "label": "«Las humanidades digitales y la base de datos MeMoRam para un enfoque sistemático hacia los motivos en los libros de caballerías»"
+            }
+          ]
+        },
+        {
+          "id": "2020-2",
+          "summary": "La monja alférez . Edición de Gabriel Andrés Renales. Metauro Edizioni. Diciembre 2020.",
+          "impact_tag": "Se menciona resultado de ETSO",
+          "links": [
+            {
+              "href": "https://www.metauroedizioni.it/product/la-monja-alferez/",
+              "label": "La monja alférez"
+            }
+          ]
+        },
+        {
+          "id": "2020-3",
+          "summary": "Estudios teatrales y Humanidades Digitales: Un estado de la cuestión del cruce entre disciplinas en la investigación del teatro español . David Merino Recalde, Trabajo de Fin de Máster. Máster Universitario en Humanidades Digitales. UNED. Diciembre 2020.",
+          "impact_tag": "Se menciona ETSO",
+          "links": [
+            {
+              "href": "http://e-spacio.uned.es/fez/view/bibliuned:master-LINHD-HD-Dmerino",
+              "label": "Estudios teatrales y Humanidades Digitales: Un estado de la cuestión del cruce entre disciplinas en la investigación del teatro español"
+            }
+          ]
+        },
+        {
+          "id": "2020-4",
+          "summary": "«Humanidades Digitales y Literatura española: 50 años de repaso histórico y panorámica de proyectos representativos» . Laura Hernández Lorenzo, Janus 9. Noviembre 2020.",
+          "impact_tag": "Se menciona ETSO",
+          "links": [
+            {
+              "href": "https://dialnet.unirioja.es/servlet/articulo?codigo=7644373",
+              "label": "«Humanidades Digitales y Literatura española: 50 años de repaso histórico y panorámica de proyectos representativos»"
+            }
+          ]
+        },
+        {
+          "id": "2020-5",
+          "summary": "«Questioni di autorialità a proposito di tre commedie seicentesche: Pedro de Urdemalas tra Cervantes, Lope, Montalbán, Diamante e la scuola di Calderón» . Arianna Fiore, Artifara 20.2 Contributi, pp. 53-77. Noviembre 2020.",
+          "impact_tag": "Colaboración de ETSO",
+          "links": [
+            {
+              "href": "https://www.ojs.unito.it/index.php/artifara/article/view/3970/4717",
+              "label": "«Questioni di autorialità a proposito di tre commedie seicentesche: Pedro de Urdemalas tra Cervantes, Lope, Montalbán, Diamante e la scuola di Calderón»"
+            }
+          ]
+        },
+        {
+          "id": "2020-6",
+          "summary": "«Pico y Canente, de Luis de Ulloa y Rodrigo Dávila, un mito menor para una fiesta real» . Delia Gavela García y Juan Antonio Martínez Berbel, Libros de la Corte , pp. 223-246. Octubre 2020.",
+          "impact_tag": "Se menciona ETSO",
+          "links": [
+            {
+              "href": "https://revistas.uam.es/librosdelacorte/article/download/12836/13248/37620",
+              "label": "«Pico y Canente, de Luis de Ulloa y Rodrigo Dávila, un mito menor para una fiesta real»"
+            }
+          ]
+        },
+        {
+          "id": "2020-7",
+          "summary": "«La edición y los poblemas de autoría en El saco de Amberes» . Elena Truan Aguirre, Melior Auro. Actas del IX Congreso Internacional Jóvenes Investigadores Siglo de Oro (JISO 2019) . Septiembre 2020.",
+          "impact_tag": "Colaboración de ETSO",
+          "links": [
+            {
+              "href": "https://dadun.unav.edu/handle/10171/59475",
+              "label": "«La edición y los poblemas de autoría en El saco de Amberes»"
+            }
+          ]
+        },
+        {
+          "id": "2020-8",
+          "summary": "«No hay reino como el de dios y mártires de madrid: problemas de identificación y de atribución» . Roberta Alviti. Arte Nuevo 6 (2019): 90-109. Septiembre 2020.",
+          "impact_tag": "Colaboración de ETSO",
+          "links": [
+            {
+              "href": "https://doc.rero.ch/record/324457/files/Alviti_Roberta_-_No_hay_reino_como_el_de_Dios_y_los_m_rtires_20190410.pdf",
+              "label": "«No hay reino como el de dios y mártires de madrid: problemas de identificación y de atribución»"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2019",
+      "title": "2019",
+      "year": 2019,
+      "items": [
+        {
+          "id": "2019-1",
+          "summary": "«Príncipes musulmanes conversos sobre las tablas «El bautismo del príncipe de Marruecos», de Lope, y «El gran príncipe de Fez», de Calderón» . Fernando Rodríguez-Gallego. Hipogrifo: Revista de Literatura y Cultura del Siglo de Oro, ISSN-e 2328-1308, Vol. 7, Nº. 2. págs. 545-577. Dicembre 2019.",
+          "impact_tag": "Se apunta un dato en relación a ETSO",
+          "links": [
+            {
+              "href": "https://dialnet.unirioja.es/servlet/articulo?codigo=7174069",
+              "label": "«Príncipes musulmanes conversos sobre las tablas «El bautismo del príncipe de Marruecos», de Lope, y «El gran príncipe de Fez», de Calderón»"
+            }
+          ]
+        },
+        {
+          "id": "2019-2",
+          "summary": "«La presencia escénica de Andrés de Claramonte en el Siglo de Oro a partir de las bases de datos Manos y CATCOM » . Alejandro García-Reidy. Bulletin of the Comediantes , vol. 71 no. 1, 2019, p. 135-154. Project MUSE. Diciembre 2019.",
+          "impact_tag": "Se menciona ETSO",
+          "links": [
+            {
+              "href": "http://doi.org/10.1353/boc.2019.0009",
+              "label": "«La presencia escénica de Andrés de Claramonte en el Siglo de Oro a partir de las bases de datos Manos y CATCOM »"
+            }
+          ]
+        },
+        {
+          "id": "2019-3",
+          "summary": "«Una nueva comedia en colaboración entre ¿Calderón?, Rojas Zorrilla y Montalbán: «Empezar a ser amigos» a la luz del análisis estilométrico» . Claudia Demattè, Rilce. Revista de Filología Hispánica , 35.3. Diciembre 2019.",
+          "impact_tag": "Colaboración con ETSO para arrojar luz sobre una comedia de atribución problemática",
+          "links": [
+            {
+              "href": "https://www.unav.edu/publicaciones/revistas/index.php/rilce/article/view/36625",
+              "label": "«Una nueva comedia en colaboración entre ¿Calderón?, Rojas Zorrilla y Montalbán: «Empezar a ser amigos» a la luz del análisis estilométrico»"
+            }
+          ]
+        },
+        {
+          "id": "2019-4",
+          "summary": "Congreso HDH (Asociación Internacional Humanidades Digitales Hispánicas). Octubre 2019.",
+          "impact_tag": "Álvaro Cuéllar compartió con la comunidad investigadora de Humanidades Digitales el estado de ETSO. Recogió el premio de la HDH al mejor proyecto desarrollado durante 2018",
+          "links": [
+            {
+              "href": "https://humanidadesdigitaleshispanicas.es/congreso-hdh-2019/",
+              "label": "Congreso HDH"
+            }
+          ]
+        },
+        {
+          "id": "2019-5",
+          "summary": "Congreso AITENSO (Asociación Internacional de Teatro Español Y Novohispano de los Siglos de Oro). Octubre 2019.",
+          "impact_tag": "Germán Vega y Álvaro Cuéllar presentaron el estado y los últimos hallazgos de ETSO ante la comunidad de Teatro del Siglo de Oro internacional",
+          "links": [
+            {
+              "href": "http://eventos.ucm.es/34378/detail/xix-congreso-de-la-asociacion-internacional-de-teatro-espanol-y-novohispano-de-los-siglos-de-oro-ai.html",
+              "label": "Congreso AITENSO"
+            }
+          ]
+        },
+        {
+          "id": "2019-6",
+          "summary": "«El Holmes de la filología. Germán Vega «devuelve» La monja alférez a su verdadero autor» . Suplemento Cultural PSOE Chamberí, nº6. Julio 2019.",
+          "impact_tag": "Se describe el hallazgo autorial a partir de los datos aportados por ETSO",
+          "links": [
+            {
+              "href": "http://psoechamberi.com/esp/tags/suplemento/2019/n6_julio28/08_right_daniel_Miguela%C3%B1ez_01.html",
+              "label": "«El Holmes de la filología. Germán Vega «devuelve» La monja alférez a su verdadero autor»"
+            }
+          ]
+        },
+        {
+          "id": "2019-7",
+          "summary": "Linajes y manos en la paloma de toledo. Edición crítica y digital . Tesis doctoral de Cristina Barreda Villafranca. Universitat de València. Julio 2019.",
+          "impact_tag": "Colaboración de ETSO",
+          "links": [
+            {
+              "href": "https://dialnet.unirioja.es/servlet/tesis?codigo=255711",
+              "label": "Linajes y manos en la paloma de toledo. Edición crítica y digital"
+            }
+          ]
+        },
+        {
+          "id": "2019-8",
+          "summary": "«Juan Ruiz de Alarcón aumenta su obra cinco siglos después» . La tribuna de Ciudad Real. Julio 2019.",
+          "impact_tag": "Se recogen las ponencias de Germán Vega y Álvaro Cuéllar en las Jornadas de Teatro Clásico de Almagro en relación con ETSO",
+          "links": [
+            {
+              "href": "https://www.latribunadeciudadreal.es/noticia/Z6F846F17-0F70-FEF3-449E11A2A1C6BD36/201907/Juan-Ruiz-de-Alarcon-aumenta-su-obra-cinco-siglos-despues",
+              "label": "«Juan Ruiz de Alarcón aumenta su obra cinco siglos después»"
+            }
+          ]
+        },
+        {
+          "id": "2019-9",
+          "summary": "«Sor Juana Inés centró las 42 Jornadas de Teatro Clásico» . Lanza. Diario de La Mancha. Julio 2019.",
+          "impact_tag": "Se describe profusamente ETSO y las posibilidades que ofrece",
+          "links": [
+            {
+              "href": "https://www.lanzadigital.com/cultura/sor-juana-ines-centro-las-42-jornadas-de-teatro-clasico/#ringtone/gallery/post_img_gallery/3",
+              "label": "«Sor Juana Inés centró las 42 Jornadas de Teatro Clásico»"
+            }
+          ]
+        },
+        {
+          "id": "2019-10",
+          "summary": "«La monja alférez ya no es de Pérez de Montalbán, sino de Ruiz de Alarcón» . Norte de Castilla. Julio 2019.",
+          "impact_tag": "Se presenta el cambio de autoría, posible gracias a las investigaciones de ETSO",
+          "links": [
+            {
+              "href": "https://www.elnortedecastilla.es/culturas/teatro/monja-alferez-perez-20190710071933-nt.html",
+              "label": "«La monja alférez ya no es de Pérez de Montalbán, sino de Ruiz de Alarcón»"
+            }
+          ]
+        },
+        {
+          "id": "2019-11",
+          "summary": "Beca La Caixa. Julio 2019.",
+          "impact_tag": "Beca para estudios de posgrado en universidades de América del Norte y Asia-Pacífico concedida a Álvaro Cuéllar en relación con su trabajo en ETSO",
+          "links": [
+            {
+              "href": "https://obrasociallacaixa.org/documents/10280/162648/becarios_america_del_norte_y_asia_pacifico_2019_es.pdf/c3c30f59-8dfa-b5e4-150e-da614e860d66?t=1563258688954",
+              "label": "Beca La Caixa."
+            }
+          ]
+        },
+        {
+          "id": "2019-12",
+          "summary": "Premio de la sociedad internacional Humanidades Digitales Hispánicas. Julio 2019.",
+          "impact_tag": "Categoría de Mejor proyecto de investigación desarrollado durante 2018",
+          "links": [
+            {
+              "href": "http://humanidadesdigitaleshispanicas.es/resolucion-convocatoria-i-edicion-premios-hdh/",
+              "label": "Premio de la sociedad internacional Humanidades Digitales Hispánicas."
+            }
+          ]
+        },
+        {
+          "id": "2019-13",
+          "summary": "LVII Jornadas de Teatro Clásico de Almagro . Julio 2019.",
+          "impact_tag": "El profesor Germán Vega y el estudiante graduado Álvaro Cuéllar participaron con ponencias en relación a ETSO",
+          "links": [
+            {
+              "href": "https://biblioteca.uclm.es/-/media/Files/C01-Centros/instituto-almagro/Almagro-2019/Libro-Almagro.ashx?la=es",
+              "label": "LVII Jornadas de Teatro Clásico de Almagro"
+            }
+          ]
+        },
+        {
+          "id": "2019-14",
+          "summary": "Estrategias de atribución automática de autoría aplicadas al teatro de Tirso de Molina . Miguel Cavadas Docampo. TFG Universidade de Santigo Compostela. Junio 2019.",
+          "impact_tag": "Se menciona ETSO",
+          "links": [
+            {
+              "href": "https://minerva.usc.es/xmlui/handle/10347/23543",
+              "label": "Estrategias de atribución automática de autoría aplicadas al teatro de Tirso de Molina"
+            }
+          ]
+        },
+        {
+          "id": "2019-15",
+          "summary": "«Métrica y estilometría, el maridaje perfecto para Lope» , Fernández Rodríguez, Daniel. Junio 2019.",
+          "impact_tag": "Seminario en la Jornada Internacional Icrea Academia-Prolope: Investigación avanzada en Literatura española y teatro del Siglo de Oro , Universitat Autònoma de Barcelona, Bellaterra (Barcelona), 17 de junio de 2019. Se utilizan los análisis de ETSO para explorar cuestiones autoriales en Lope de Vega",
+          "links": [
+            {
+              "href": "http://filescat.uab.cat/filesp/wp-content/uploads/2019/06/Jornada-Internacional-Icrea-Academia-1-1.pdf",
+              "label": "«Métrica y estilometría, el maridaje perfecto para Lope»"
+            }
+          ]
+        },
+        {
+          "id": "2019-16",
+          "summary": "«Deconstructing the Authorship of Siempre ayuda la verdad: A Play by Lope de Vega?» , Alejandro García-Reidy, Abril 2019.",
+          "impact_tag": "Recomienda visitar ETSO",
+          "links": [
+            {
+              "href": "https://link.springer.com/article/10.1007/s11061-019-09607-8",
+              "label": "«Deconstructing the Authorship of Siempre ayuda la verdad: A Play by Lope de Vega?»"
+            }
+          ]
+        },
+        {
+          "id": "2019-17",
+          "summary": "Exposición Lope y el teatro del Siglo de Oro en la Biblioteca Nacional de España del 28 de noviembre de 2018 al 17 de marzo de 2019.",
+          "impact_tag": "ETSO colaboró con un dendrograma en el que se explora la autoría de Mujeres y criados. También se ofrecía a los visitantes la posibilidad de visitar el portal",
+          "links": [
+            {
+              "href": "https://lopeyelteatro.bne.es",
+              "label": "Exposición Lope y el teatro del Siglo de Oro"
+            }
+          ]
+        },
+        {
+          "id": "2019-18",
+          "summary": "«No hay reino como el de Dios y los mártires de Madrid» , Roberta Alvita, Arte nuevo. Revista de estudios áureos , 6, pp. 90-109, 2019.",
+          "impact_tag": "Se apunta la necesidad de aplicar los análisis de ETSO a la pieza teatral que analiza",
+          "links": [
+            {
+              "href": "http://www.artenuevorevista.com/index.php/arte-nuevo/article/view/89/69",
+              "label": "«No hay reino como el de Dios y los mártires de Madrid»"
+            }
+          ]
+        },
+        {
+          "id": "2019-19",
+          "summary": "Digital Stylistics in Romance Studies and Beyond , University of Würzburg. Febrero 2019.",
+          "impact_tag": "Álvaro Cuéllar presentó el proyecto ante la comunidad internacional de investigadores en análisis computacional de textos literarios",
+          "links": [
+            {
+              "href": "https://cligs.hypotheses.org/digital-stylistics-in-romance-studies-and-beyond/conference-program",
+              "label": "Digital Stylistics in Romance Studies and Beyond"
+            }
+          ]
+        },
+        {
+          "id": "2019-20",
+          "summary": "«Entre la historia y la leyenda. A propósito de Las dos bandoleras, comedia atribuida a Lope de Vega» , Abraham Madroñal, Anuario Lope de Vega. Texto, literatura, cultura, XXV, pp. 281-310, 2019.",
+          "impact_tag": "Se toman en consideración los datos aportados por ETSO para el análisis autorial",
+          "links": [
+            {
+              "href": "https://revistes.uab.cat/anuariolopedevega/article/view/v25-madronal-1",
+              "label": "«Entre la historia y la leyenda. A propósito de Las dos bandoleras, comedia atribuida a Lope de Vega»"
+            }
+          ]
+        },
+        {
+          "id": "2019-21",
+          "summary": "La adúltera penitente . Edición a cargo de Fernando Rodríguez-Gallego. 2019.",
+          "impact_tag": "Se utilizan datos aportados por ETSO para explorar la cuestión autorial",
+          "links": [
+            {
+              "href": "http://www.cervantesvirtual.com/research/la-adultera-penitente-942634/99f7b3bb-b321-43bb-a38d-7d9275cb3756.pdf",
+              "label": "La adúltera penitente"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2018",
+      "title": "2018",
+      "year": 2018,
+      "items": [
+        {
+          "id": "2018-1",
+          "summary": "« Rastreadores digitales en el Siglo de Oro» . El Norte de Castilla. Diciembre 2018.",
+          "impact_tag": "Se describe ETSO y se exploran los resultados y posibilidades de las nuevas herramientas digitales para analizar el teatro del Siglo de Oro",
+          "links": [
+            {
+              "href": "https://www.elnortedecastilla.es/culturas/teatro/rastreadores-digitales-siglo-20181223133815-nt.html",
+              "label": "«"
+            },
+            {
+              "href": "https://www.elnortedecastilla.es/culturas/teatro/rastreadores-digitales-siglo-20181223133815-nt.html",
+              "label": "Rastreadores digitales en el Siglo de Oro»"
+            }
+          ]
+        },
+        {
+          "id": "2018-2",
+          "summary": "«Tecnología al rescate del Siglo de Oro» . El Independiente. Noviembre 2018.",
+          "impact_tag": "Se apunta la relevancia de las nuevas tecnologías y de ETSO para la comunidad investigadora",
+          "links": [
+            {
+              "href": "https://www.elindependiente.com/tendencias/cultura/2018/11/27/tecnologia-al-rescate-siglo-de-oro/",
+              "label": "«Tecnología al rescate del Siglo de Oro»"
+            }
+          ]
+        },
+        {
+          "id": "2018-3",
+          "summary": "«Lope de Vega, el Siglo de Oro soy yo» . La Razón. Noviembre 2018.",
+          "impact_tag": "Se explica la atribución de Mujeres y Criados a Lope a través de la estilometría",
+          "links": [
+            {
+              "href": "https://www.larazon.es/cultura/lope-de-vega-el-siglo-de-oro-soy-yo-IE20714792",
+              "label": "«Lope de Vega, el Siglo de Oro soy yo»"
+            }
+          ]
+        },
+        {
+          "id": "2018-4",
+          "summary": "«Un monstruo de la naturaleza llamado Lope» . ABC. Noviembre 2018.",
+          "impact_tag": "Se presenta la contribución de ETSO en la exposición de la Biblioteca Nacional",
+          "links": [
+            {
+              "href": "https://www.abc.es/cultura/abci-monstruo-naturaleza-llamado-lope-201811280249_noticia.html",
+              "label": "«Un monstruo de la naturaleza llamado Lope»"
+            }
+          ]
+        },
+        {
+          "id": "2018-5",
+          "summary": "«Lope de Vega, el «monstruo» al que envidiaba Cervantes» . eldiario.es. Noviembre 2018.",
+          "impact_tag": "Se apunta la utilidad de la estilometría en las atribuciones autoriales",
+          "links": [
+            {
+              "href": "https://www.eldiario.es/cultura/Lope-Vega-monstruo-envidiaba-Cervantes_0_840266493.html",
+              "label": "«Lope de Vega, el «monstruo» al que envidiaba Cervantes»"
+            }
+          ]
+        },
+        {
+          "id": "2018-6",
+          "summary": "« La aplicación de herramientas digitales al estudio de la literatura española del Siglo de Oro» . Noviembre 2018.",
+          "impact_tag": "Seminario en el Instituto de Estudios Hispánicos en la Modernidad de la Universitat de les Illes Balears. El profesor Germán Vega García-Luengos ofreció un seminario en el que se daba cuenta de ETSO",
+          "links": [
+            {
+              "href": "https://iehm.uib.es/Noticias/Anuncio-del-seminario-Dr.-German-Vega-Garcia.cid566007",
+              "label": "«"
+            },
+            {
+              "href": "https://iehm.uib.es/Noticias/Anuncio-del-seminario-Dr.-German-Vega-Garcia.cid566007",
+              "label": "La aplicación de herramientas digitales al estudio de la literatura española del Siglo de Oro»"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

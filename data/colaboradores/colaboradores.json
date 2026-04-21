@@ -4,13 +4,15 @@
       "name": "Álvaro Cuéllar",
       "affiliations": [
         "Universitat Autònoma de Barcelona"
-      ]
+      ],
+      "image": "/images/colaboradores/FotoAlvaroCuellar.png"
     },
     {
       "name": "Germán Vega García-Luengos",
       "affiliations": [
         "Universidad de Valladolid"
-      ]
+      ],
+      "image": "/images/colaboradores/FotoGermanVega.jpg"
     }
   ],
   "collaborators": {
@@ -1103,13 +1105,11 @@
   "open_corpora": [
     {
       "name": "Artelope",
-      "description": "Base de datos y Argumentos del teatro de Lope de Vega",
-      "source_label": "ETSO - Colaboradores - Artelope"
+      "description": "Base de datos y Argumentos del teatro de Lope de Vega"
     },
     {
       "name": "Association for Hispanic Classical Theater",
-      "description": "Promoting appreciation for the Spain's classical theater in production",
-      "source_label": "ETSO - Colaboradores - Association for Hispanic Classical Theater"
+      "description": "Promoting appreciation for the Spain's classical theater in production"
     },
     {
       "name": "Aula-Biblioteca Mira de Amescua"
@@ -1120,13 +1120,11 @@
     },
     {
       "name": "Cervantes Virtual",
-      "description": "Biblioteca Virtual Miguel de Cervantes",
-      "source_label": "ETSO - Colaboradores - Cervantes Virtual"
+      "description": "Biblioteca Virtual Miguel de Cervantes"
     },
     {
       "name": "Moretianos",
-      "description": "Repositorios universitarios",
-      "source_label": "ETSO - Colaboradores - Moretianos"
+      "description": "Repositorios universitarios"
     },
     {
       "name": "TESEO",

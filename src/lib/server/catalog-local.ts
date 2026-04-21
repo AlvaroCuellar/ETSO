@@ -19,10 +19,19 @@ import {
 	type CatalogInforme,
 	type CatalogStats,
 	type CatalogWork,
+	type CollaboratorCard,
+	type CollaboratorSection,
+	type CollaboratorsAcknowledgments,
+	type CollaboratorsPageView,
+	type CollaboratorsStudentsView,
 	type Confidence,
 	type ComoCitarnosBibliographySection,
 	type ComoCitarnosBibliographyView,
 	type DistanceRow,
+	type ImpactPageView,
+	type ImpactReferenceItem,
+	type ImpactReferenceLink,
+	type ImpactReferenceSection,
 	type InformeBibliographyCopyButton,
 	type InformeBibliographyEntry,
 	type InformeBibliographyEntryPart,
@@ -41,6 +50,8 @@ const BIBLIOGRAPHY_PATH = resolve(
 	'referencias',
 	'bibliografia.json'
 );
+const IMPACT_PATH = resolve(process.cwd(), 'data', 'referencias', 'repercusion.json');
+const COLLABORATORS_PATH = resolve(process.cwd(), 'data', 'colaboradores', 'colaboradores.json');
 
 const CACHE_MS = 2000;
 
@@ -137,6 +148,68 @@ interface BibliographyViewsRaw {
 interface BibliographyFileRaw {
 	entriesByKey?: unknown;
 	views?: unknown;
+}
+
+interface CollaboratorCardRaw {
+	name?: unknown;
+	affiliations?: unknown;
+	description?: unknown;
+	source_label?: unknown;
+	sourceLabel?: unknown;
+	image?: unknown;
+}
+
+interface CollaboratorsGroupsRaw {
+	people?: unknown;
+	organizations?: unknown;
+}
+
+interface CollaboratorsStudentRaw {
+	name?: unknown;
+}
+
+interface CollaboratorsStudentsRaw {
+	group?: unknown;
+	institution?: unknown;
+	people?: unknown;
+}
+
+interface CollaboratorsAcknowledgmentsRaw {
+	text?: unknown;
+	organizations?: unknown;
+}
+
+interface CollaboratorsFileRaw {
+	team?: unknown;
+	collaborators?: unknown;
+	students?: unknown;
+	open_corpora?: unknown;
+	acknowledgments?: unknown;
+}
+
+interface ImpactReferenceLinkRaw {
+	href?: unknown;
+	label?: unknown;
+}
+
+interface ImpactReferenceItemRaw {
+	id?: unknown;
+	summary?: unknown;
+	impactTag?: unknown;
+	impact_tag?: unknown;
+	links?: unknown;
+}
+
+interface ImpactReferenceSectionRaw {
+	id?: unknown;
+	title?: unknown;
+	year?: unknown;
+	items?: unknown;
+}
+
+interface ImpactSourceRaw {
+	intro?: unknown;
+	sections?: unknown;
 }
 
 interface BibliographySectionConfigNormalized {
@@ -248,6 +321,40 @@ const emptyComoCitarnosBibliography = (): ComoCitarnosBibliographyView => ({
 	sections: []
 });
 
+const emptyImpactView = (): ImpactPageView => ({
+	intro: '',
+	sections: []
+});
+
+const buildEmptyCollaboratorSections = (): CollaboratorSection[] => [
+	{
+		id: 'team',
+		title: 'Equipo',
+		cards: []
+	},
+	{
+		id: 'collaborators',
+		title: 'Colaboradores',
+		cards: []
+	},
+	{
+		id: 'organizations',
+		title: 'Organizaciones colaboradoras',
+		cards: []
+	},
+	{
+		id: 'open-corpora',
+		title: 'Open corpora',
+		cards: []
+	}
+];
+
+const emptyCollaboratorsPageView = (): CollaboratorsPageView => ({
+	sections: buildEmptyCollaboratorSections(),
+	students: null,
+	acknowledgments: null
+});
+
 const BIBLIO_URL_PATTERN = /https?:\/\/[^\s<>()]+/gi;
 
 const trimTrailingPunctuation = (url: string): { href: string; trailing: string } => {
@@ -330,6 +437,153 @@ const normalizeBibliographyPart = (raw: InformeBibliographyEntryPartRaw): Inform
 };
 
 const asFieldString = (value: unknown): string => (typeof value === 'string' ? value.trim() : '');
+
+const asFieldStringList = (value: unknown): string[] =>
+	Array.isArray(value)
+		? value
+				.map((item) => (typeof item === 'string' ? item.trim() : ''))
+				.filter((item) => item.length > 0)
+		: [];
+
+const asPublicImagePath = (value: unknown): string | undefined => {
+	if (typeof value !== 'string') return undefined;
+	const normalized = value.trim();
+	if (!normalized || !normalized.startsWith('/')) return undefined;
+	return normalized;
+};
+
+const normalizeImpactText = (value: unknown): string => {
+	const text = asFieldString(value);
+	if (!text) return '';
+	return text
+		.replace(/\s+/g, ' ')
+		.replace(/\s+([.,;:!?])/g, '$1')
+		.replace(/«\s+/g, '«')
+		.replace(/\s+»/g, '»')
+		.trim();
+};
+
+const normalizeImpactLink = (value: unknown): ImpactReferenceLink | null => {
+	if (!value || typeof value !== 'object') return null;
+	const raw = value as ImpactReferenceLinkRaw;
+	const href = asFieldString(raw.href);
+	const label = normalizeImpactText(raw.label);
+	if (!href || !label) return null;
+	if (/^[«»"'.:;!?-]+$/.test(label)) return null;
+	return {
+		href,
+		label
+	};
+};
+
+const normalizeImpactItem = (
+	value: unknown,
+	index: number,
+	sectionId: string
+): ImpactReferenceItem | null => {
+	if (!value || typeof value !== 'object') return null;
+	const raw = value as ImpactReferenceItemRaw;
+	const summary = normalizeImpactText(raw.summary);
+	const impactTag = normalizeImpactText(raw.impact_tag ?? raw.impactTag) || undefined;
+	const linksRaw = Array.isArray(raw.links) ? raw.links : [];
+	const dedupedLinks = new Map<string, ImpactReferenceLink>();
+	for (const linkRaw of linksRaw) {
+		const normalizedLink = normalizeImpactLink(linkRaw);
+		if (!normalizedLink) continue;
+		const dedupeKey = `${normalizedLink.href}||${normalizedLink.label}`;
+		if (!dedupedLinks.has(dedupeKey)) {
+			dedupedLinks.set(dedupeKey, normalizedLink);
+		}
+	}
+
+	if (!summary && !impactTag && dedupedLinks.size === 0) return null;
+	const id = asFieldString(raw.id) || `${sectionId}-${index + 1}`;
+
+	return {
+		id,
+		summary,
+		impactTag,
+		links: [...dedupedLinks.values()]
+	};
+};
+
+const normalizeImpactSection = (value: unknown, index: number): ImpactReferenceSection | null => {
+	if (!value || typeof value !== 'object') return null;
+	const raw = value as ImpactReferenceSectionRaw;
+	const title = normalizeImpactText(raw.title);
+	if (!title) return null;
+
+	const parsedYear =
+		typeof raw.year === 'number'
+			? raw.year
+			: typeof raw.year === 'string' && /^\d{4}$/.test(raw.year.trim())
+				? Number(raw.year.trim())
+				: undefined;
+	const year = Number.isInteger(parsedYear) ? parsedYear : undefined;
+	const sectionId = asFieldString(raw.id) || slugify(title) || `section-${index + 1}`;
+	const itemsRaw = Array.isArray(raw.items) ? raw.items : [];
+	const items = itemsRaw
+		.map((item, itemIndex) => normalizeImpactItem(item, itemIndex, sectionId))
+		.filter((item): item is ImpactReferenceItem => Boolean(item));
+	if (items.length === 0) return null;
+
+	return {
+		id: sectionId,
+		title,
+		year,
+		items
+	};
+};
+
+const normalizeCollaboratorCard = (value: unknown): CollaboratorCard | null => {
+	if (!value || typeof value !== 'object') return null;
+	const raw = value as CollaboratorCardRaw;
+	const name = asFieldString(raw.name);
+	if (!name) return null;
+
+	const affiliations = asFieldStringList(raw.affiliations);
+	const description = asFieldString(raw.description) || undefined;
+	const sourceLabel = asFieldString(raw.source_label) || asFieldString(raw.sourceLabel) || undefined;
+	const image = asPublicImagePath(raw.image);
+
+	return {
+		name,
+		affiliations,
+		description,
+		sourceLabel,
+		image
+	};
+};
+
+const normalizeCollaboratorCards = (value: unknown): CollaboratorCard[] =>
+	Array.isArray(value)
+		? value
+				.map((item) => normalizeCollaboratorCard(item))
+				.filter((item): item is CollaboratorCard => Boolean(item))
+		: [];
+
+const normalizeCollaboratorsStudents = (value: unknown): CollaboratorsStudentsView | null => {
+	if (!value || typeof value !== 'object') return null;
+	const raw = value as CollaboratorsStudentsRaw;
+	const group = asFieldString(raw.group) || undefined;
+	const institution = asFieldString(raw.institution) || undefined;
+	const people = Array.isArray(raw.people)
+		? raw.people
+				.map((item) => {
+					if (typeof item === 'string') return item.trim();
+					if (!item || typeof item !== 'object') return '';
+					return asFieldString((item as CollaboratorsStudentRaw).name);
+				})
+				.filter((item) => item.length > 0)
+		: [];
+
+	if (!group && !institution && people.length === 0) return null;
+	return {
+		group,
+		institution,
+		people
+	};
+};
 
 const appendTextPart = (parts: InformeBibliographyEntryPart[], value: string): void => {
 	if (!value) return;
@@ -713,6 +967,89 @@ const parseBibliographySource = ():
 			informesBase,
 			informesOverridesById,
 			comoCitarnos
+		};
+	} catch {
+		return null;
+	}
+};
+
+const parseImpactSource = (): ImpactPageView | null => {
+	if (!existsSync(IMPACT_PATH)) return null;
+
+	try {
+		const raw = readFileSync(IMPACT_PATH, 'utf8');
+		const parsed = JSON.parse(raw) as ImpactSourceRaw;
+		if (!parsed || typeof parsed !== 'object') return null;
+
+		const intro = normalizeImpactText(parsed.intro);
+		const sectionsRaw = Array.isArray(parsed.sections) ? parsed.sections : [];
+		const sections = sectionsRaw
+			.map((section, index) => normalizeImpactSection(section, index))
+			.filter((section): section is ImpactReferenceSection => Boolean(section));
+
+		if (!intro && sections.length === 0) return null;
+
+		return {
+			intro,
+			sections
+		};
+	} catch {
+		return null;
+	}
+};
+
+const normalizeCollaboratorsAcknowledgments = (value: unknown): CollaboratorsAcknowledgments | null => {
+	if (!value || typeof value !== 'object') return null;
+	const raw = value as CollaboratorsAcknowledgmentsRaw;
+	const text = asFieldString(raw.text) || undefined;
+	const organizations = asFieldStringList(raw.organizations);
+	if (!text && organizations.length === 0) return null;
+	return {
+		text,
+		organizations
+	};
+};
+
+const parseCollaboratorsSource = (): CollaboratorsPageView | null => {
+	if (!existsSync(COLLABORATORS_PATH)) return null;
+
+	try {
+		const raw = readFileSync(COLLABORATORS_PATH, 'utf8');
+		const parsed = JSON.parse(raw) as CollaboratorsFileRaw;
+		if (!parsed || typeof parsed !== 'object') return null;
+
+		const collaboratorsRaw =
+			parsed.collaborators && typeof parsed.collaborators === 'object'
+				? (parsed.collaborators as CollaboratorsGroupsRaw)
+				: undefined;
+
+		const sections: CollaboratorSection[] = [
+			{
+				id: 'team',
+				title: 'Equipo',
+				cards: normalizeCollaboratorCards(parsed.team)
+			},
+			{
+				id: 'collaborators',
+				title: 'Colaboradores',
+				cards: normalizeCollaboratorCards(collaboratorsRaw?.people)
+			},
+			{
+				id: 'organizations',
+				title: 'Organizaciones colaboradoras',
+				cards: normalizeCollaboratorCards(collaboratorsRaw?.organizations)
+			},
+			{
+				id: 'open-corpora',
+				title: 'Open corpora',
+				cards: normalizeCollaboratorCards(parsed.open_corpora)
+			}
+		];
+
+		return {
+			sections,
+			students: normalizeCollaboratorsStudents(parsed.students),
+			acknowledgments: normalizeCollaboratorsAcknowledgments(parsed.acknowledgments)
 		};
 	} catch {
 		return null;
@@ -1244,6 +1581,18 @@ export const getComoCitarnosBibliography = (): ComoCitarnosBibliographyView => {
 	const source = parseBibliographySource();
 	if (!source) return emptyComoCitarnosBibliography();
 	return resolveComoCitarnosView(source.comoCitarnos, source.entryRawByKey);
+};
+
+export const getImpactView = (): ImpactPageView => {
+	const source = parseImpactSource();
+	if (!source) return emptyImpactView();
+	return source;
+};
+
+export const getCollaboratorsView = (): CollaboratorsPageView => {
+	const source = parseCollaboratorsSource();
+	if (!source) return emptyCollaboratorsPageView();
+	return source;
 };
 
 export const getInformeById = (informeId: string): CatalogInforme | undefined => {

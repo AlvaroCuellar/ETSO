@@ -117,6 +117,61 @@ export interface ComoCitarnosBibliographyView {
 	sections: ComoCitarnosBibliographySection[];
 }
 
+export interface CollaboratorCard {
+	name: string;
+	affiliations: string[];
+	description?: string;
+	sourceLabel?: string;
+	image?: string;
+}
+
+export interface CollaboratorSection {
+	id: string;
+	title: string;
+	cards: CollaboratorCard[];
+}
+
+export interface CollaboratorsAcknowledgments {
+	text?: string;
+	organizations: string[];
+}
+
+export interface CollaboratorsStudentsView {
+	group?: string;
+	institution?: string;
+	people: string[];
+}
+
+export interface CollaboratorsPageView {
+	sections: CollaboratorSection[];
+	students: CollaboratorsStudentsView | null;
+	acknowledgments: CollaboratorsAcknowledgments | null;
+}
+
+export interface ImpactReferenceLink {
+	href: string;
+	label: string;
+}
+
+export interface ImpactReferenceItem {
+	id: string;
+	summary: string;
+	impactTag?: string;
+	links: ImpactReferenceLink[];
+}
+
+export interface ImpactReferenceSection {
+	id: string;
+	title: string;
+	year?: number;
+	items: ImpactReferenceItem[];
+}
+
+export interface ImpactPageView {
+	intro: string;
+	sections: ImpactReferenceSection[];
+}
+
 export interface CatalogBicuve {
 	id: string;
 	workId: string;

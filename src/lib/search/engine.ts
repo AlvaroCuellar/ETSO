@@ -42,6 +42,18 @@ interface WarmupOptions {
 	kgramBudgetBytes?: number;
 }
 
+interface PrimeQueryOptions {
+	prefetchTexts?: boolean;
+	textLimit?: number;
+	textConcurrency?: number;
+}
+
+interface TextWarmupOptions {
+	limit?: number;
+	concurrency?: number;
+	docIds?: number[];
+}
+
 interface TermMeta {
 	term: string;
 	termId: number;
@@ -75,6 +87,7 @@ const DEFAULT_SNIPPET_RADIUS = 110;
 const DEFAULT_WARMUP_VOCAB_BUDGET = 900_000;
 const DEFAULT_WARMUP_POSTINGS_BUDGET = 900_000;
 const DEFAULT_WARMUP_KGRAM_BUDGET = 800_000;
+const DEFAULT_TEXT_WARMUP_CONCURRENCY = 4;
 
 const stripTrailingSlash = (value: string): string => value.replace(/\/+$/, '');
 const joinUrl = (base: string, path: string): string => `${stripTrailingSlash(base)}/${path.replace(/^\/+/, '')}`;
@@ -147,6 +160,27 @@ const selectShardsForBudget = <T extends { estimatedBytes: number; termsCount?: 
 	return selected;
 };
 
+const runWithConcurrency = async <T>(
+	items: T[],
+	concurrency: number,
+	task: (item: T) => Promise<void>
+): Promise<void> => {
+	const size = Math.max(1, Math.floor(concurrency));
+	let nextIndex = 0;
+
+	const worker = async (): Promise<void> => {
+		while (nextIndex < items.length) {
+			const currentIndex = nextIndex;
+			nextIndex += 1;
+			await task(items[currentIndex]);
+		}
+	};
+
+	await Promise.all(
+		Array.from({ length: Math.min(size, items.length) }, () => worker())
+	);
+};
+
 export class TexoroSearchEngine {
 	readonly #indexBaseUrl: string;
 	readonly #textsBaseUrl: string;
@@ -167,11 +201,13 @@ export class TexoroSearchEngine {
 	#termMetaById = new Map<number, TermMeta>();
 	#patternTermIds = new Map<string, number[]>();
 	#preparedTexts = new Map<number, PreparedText>();
+	#preparedTextLoads = new Map<number, Promise<PreparedText | null>>();
 	#vocabShardLoads = new Map<string, Promise<TexoroVocabShard>>();
 	#kgramShardLoads = new Map<string, Promise<TexoroKgramShard>>();
 	#postingsShardLoads = new Map<string, Promise<Map<number, Array<[number, number]>>>>();
 	#firstSearchWarmupPromise: Promise<void> | null = null;
 	#wildcardWarmupPromise: Promise<void> | null = null;
+	#primedQueries = new Map<string, Promise<void>>();
 
 	#docRowById = new Map<number, [number, string, string, string, number, number]>();
 	#allTermIdsCache: number[] | null = null;
@@ -215,6 +251,71 @@ export class TexoroSearchEngine {
 		})();
 
 		return this.#wildcardWarmupPromise;
+	}
+
+	async warmupAllTexts(options: TextWarmupOptions = {}): Promise<void> {
+		await this.initialize();
+		const docIdsSource = options.docIds ?? Array.from(this.#docRowById.keys()).sort((a, b) => a - b);
+		const limit =
+			typeof options.limit === 'number' && options.limit > 0
+				? Math.min(options.limit, docIdsSource.length)
+				: docIdsSource.length;
+		const docIds = docIdsSource.slice(0, limit);
+		if (docIds.length === 0) return;
+
+		await this.#warmupPreparedTexts(docIds, options.concurrency ?? DEFAULT_TEXT_WARMUP_CONCURRENCY);
+	}
+
+	async primeQuery(query: string, options: PrimeQueryOptions = {}): Promise<void> {
+		const normalizedQuery = query.trim();
+		if (!normalizedQuery) return;
+
+		const cacheKey = `${normalizedQuery}::${options.prefetchTexts === true ? 'texts' : 'index'}::${
+			options.textLimit ?? ''
+		}`;
+		const pending = this.#primedQueries.get(cacheKey);
+		if (pending) return pending;
+
+		const primePromise = (async () => {
+			await this.initialize();
+			const parsed = parseSearchQuery(normalizedQuery, this.#preserveEnie);
+			if (parsed.groups.length === 0) return;
+
+			const groupEvaluations: GroupEvaluation[] = [];
+			const retrievalScores = new Map<number, number>();
+
+			for (const group of parsed.groups) {
+				const evaluated = await this.#evaluateGroup(group);
+				groupEvaluations.push(evaluated);
+				for (const [docId, score] of evaluated.scores) {
+					const current = retrievalScores.get(docId) ?? 0;
+					if (score > current) retrievalScores.set(docId, score);
+				}
+			}
+
+			if (!options.prefetchTexts) return;
+
+			const orderedCandidates = sortedNumeric(unionSets(groupEvaluations.map((group) => group.docs))).sort(
+				(a, b) => (retrievalScores.get(b) ?? 0) - (retrievalScores.get(a) ?? 0)
+			);
+			if (orderedCandidates.length === 0) return;
+
+			const textLimit =
+				typeof options.textLimit === 'number' && options.textLimit > 0
+					? Math.min(options.textLimit, orderedCandidates.length)
+					: Math.min(8, orderedCandidates.length);
+			await this.#warmupPreparedTexts(
+				orderedCandidates.slice(0, textLimit),
+				options.textConcurrency ?? DEFAULT_TEXT_WARMUP_CONCURRENCY
+			);
+		})();
+
+		this.#primedQueries.set(cacheKey, primePromise);
+		try {
+			await primePromise;
+		} finally {
+			this.#primedQueries.delete(cacheKey);
+		}
 	}
 
 	async initialize(): Promise<void> {
@@ -562,36 +663,47 @@ export class TexoroSearchEngine {
 	async #getPreparedText(docId: number): Promise<PreparedText | null> {
 		const memory = this.#preparedTexts.get(docId);
 		if (memory) return memory;
+		const pending = this.#preparedTextLoads.get(docId);
+		if (pending) return pending;
 
-		const row = this.#docRowById.get(docId);
-		if (!row) return null;
-		const textKey = row[3];
-		const manifest = this.#manifest;
-		if (!manifest) return null;
+		const loadPromise = (async () => {
+			const row = this.#docRowById.get(docId);
+			if (!row) return null;
+			const textKey = row[3];
+			const manifest = this.#manifest;
+			if (!manifest) return null;
 
-		const cacheKey = `text:${textKey}`;
-		let rawText: string | null = null;
-		if (this.#cacheInIndexedDb) {
-			rawText = await this.#cache.getText(cacheKey, manifest.indexVersion);
-		}
-
-		if (!rawText) {
-			const response = await fetch(joinUrl(this.#textsBaseUrl, encodeURIComponent(textKey)));
-			if (!response.ok) {
-				throw new Error(`Unable to fetch text ${textKey}: ${response.status}`);
-			}
-			rawText = await response.text();
+			const cacheKey = `text:${textKey}`;
+			let rawText: string | null = null;
 			if (this.#cacheInIndexedDb) {
-				await this.#cache.setText(cacheKey, manifest.indexVersion, rawText);
+				rawText = await this.#cache.getText(cacheKey, manifest.indexVersion);
 			}
-		}
 
-		const prepared: PreparedText = {
-			raw: rawText,
-			tokens: tokenizeWithOffsets(rawText, this.#preserveEnie)
-		};
-		this.#preparedTexts.set(docId, prepared);
-		return prepared;
+			if (!rawText) {
+				const response = await fetch(joinUrl(this.#textsBaseUrl, encodeURIComponent(textKey)));
+				if (!response.ok) {
+					throw new Error(`Unable to fetch text ${textKey}: ${response.status}`);
+				}
+				rawText = await response.text();
+				if (this.#cacheInIndexedDb) {
+					await this.#cache.setText(cacheKey, manifest.indexVersion, rawText);
+				}
+			}
+
+			const prepared: PreparedText = {
+				raw: rawText,
+				tokens: tokenizeWithOffsets(rawText, this.#preserveEnie)
+			};
+			this.#preparedTexts.set(docId, prepared);
+			return prepared;
+		})();
+
+		this.#preparedTextLoads.set(docId, loadPromise);
+		try {
+			return await loadPromise;
+		} finally {
+			this.#preparedTextLoads.delete(docId);
+		}
 	}
 
 	async #evaluateGroup(group: ParsedQueryClause[]): Promise<GroupEvaluation> {
@@ -957,6 +1069,19 @@ export class TexoroSearchEngine {
 		const selected = selectShardsForBudget(shards, budgetBytes);
 		if (selected.length === 0) return;
 		await Promise.all(selected.map((shard) => this.#loadKgramShard(shard.id)));
+	}
+
+	async #warmupPreparedTexts(docIds: number[], concurrency: number): Promise<void> {
+		const uniqueDocIds = Array.from(new Set(docIds));
+		if (uniqueDocIds.length === 0) return;
+
+		await runWithConcurrency(uniqueDocIds, concurrency, async (docId) => {
+			try {
+				await this.#getPreparedText(docId);
+			} catch {
+				// Background warmups should stay silent; the search path will report real failures.
+			}
+		});
 	}
 
 	#getAllTermIds(): number[] {

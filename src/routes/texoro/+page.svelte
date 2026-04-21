@@ -141,6 +141,7 @@
 	let wildcardWarmupQueued = false;
 	let initialWarmupTimer: number | null = null;
 	let wildcardWarmupTimer: number | null = null;
+	let queryWarmupTimer: number | null = null;
 
 	interface NavigatorConnectionLike {
 		saveData?: boolean;
@@ -160,18 +161,53 @@
 		initialWarmupQueued = true;
 		initialWarmupTimer = window.setTimeout(() => {
 			initialWarmupTimer = null;
-			void searchEngine.warmupForFirstSearch().catch(() => {});
-		}, 350);
+			const textWarmupLimit = data.stats.works <= 30 ? data.stats.works : 12;
+			void Promise.all([
+				searchEngine.warmupWildcardSupport(),
+				searchEngine.warmupAllTexts({
+					limit: textWarmupLimit,
+					concurrency: 3
+				})
+			]).catch(() => {});
+		}, 220);
 	};
 
-	const queueWildcardWarmup = (): void => {
-		if (typeof window === 'undefined' || wildcardWarmupQueued || shouldSkipBackgroundWarmup()) return;
-		if (!engine || !/[*?]/.test(query)) return;
-		wildcardWarmupQueued = true;
-		wildcardWarmupTimer = window.setTimeout(() => {
-			wildcardWarmupTimer = null;
-			void engine?.warmupWildcardSupport().catch(() => {});
-		}, 120);
+	const queueQueryWarmup = (): void => {
+		if (typeof window === 'undefined' || shouldSkipBackgroundWarmup()) return;
+		if (!engine) return;
+
+		const trimmedQuery = query.trim();
+		if (trimmedQuery.length < 2) return;
+
+		if (queryWarmupTimer !== null) {
+			window.clearTimeout(queryWarmupTimer);
+		}
+
+		queryWarmupTimer = window.setTimeout(() => {
+			queryWarmupTimer = null;
+			const textWarmupLimit =
+				data.stats.works <= 30
+					? Math.min(data.stats.works, 12)
+					: /["\s]/.test(trimmedQuery)
+						? 8
+						: 6;
+
+			void engine
+				?.primeQuery(trimmedQuery, {
+					prefetchTexts: true,
+					textLimit: textWarmupLimit,
+					textConcurrency: 3
+				})
+				.catch(() => {});
+
+			if (!wildcardWarmupQueued && /[*?]/.test(trimmedQuery)) {
+				wildcardWarmupQueued = true;
+				wildcardWarmupTimer = window.setTimeout(() => {
+					wildcardWarmupTimer = null;
+					void engine?.warmupWildcardSupport().catch(() => {});
+				}, 80);
+			}
+		}, 140);
 	};
 
 	const sumResultOccurrences = (result: SearchResult): number =>
@@ -733,7 +769,7 @@
 	};
 
 	$effect(() => {
-		queueWildcardWarmup();
+		queueQueryWarmup();
 	});
 
 	onMount(() => {
@@ -763,6 +799,9 @@
 			}
 			if (wildcardWarmupTimer !== null) {
 				window.clearTimeout(wildcardWarmupTimer);
+			}
+			if (queryWarmupTimer !== null) {
+				window.clearTimeout(queryWarmupTimer);
 			}
 		};
 	});

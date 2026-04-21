@@ -13,9 +13,9 @@
 	] as const;
 
 	const infoItems = [
-		{ href: '/mas-informacion/transcripciones-automaticas', label: 'Transcripciones automáticas' },
-		{ href: '/mas-informacion/colaboradores', label: 'Colaboradores' },
-		{ href: '/mas-informacion/repercusion', label: 'Repercusión' }
+		{ href: '/transcripciones-automaticas', label: 'Transcripciones automáticas' },
+		{ href: '/colaboradores', label: 'Colaboradores' },
+		{ href: '/repercusion', label: 'Repercusión' }
 	] as const;
 
 	let mobileMenuOpen = $state(false);
@@ -26,7 +26,10 @@
 		return path === href || path.startsWith(`${href}/`);
 	};
 
-	const isMoreInfoActive = (): boolean => page.url.pathname.startsWith('/mas-informacion');
+	const isMoreInfoActive = (): boolean => {
+		const path = page.url.pathname;
+		return path === '/mas-informacion' || infoItems.some((item) => isActive(item.href));
+	};
 
 	const navLinkClass = (active: boolean): string =>
 		`inline-flex items-center rounded-card border px-4 py-2 text-[0.9rem] font-ui font-medium text-brand-blue no-underline transition hover:no-underline focus-visible:no-underline ${

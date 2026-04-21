@@ -5,11 +5,11 @@
 		{ href: '/examen-autorias', label: 'Examen de autorías' },
 		{ href: '/texoro', label: 'TEXORO' },
 		{ href: '/bicuve', label: 'BICUVE' },
-		{ href: '/mas-informacion/transcripciones-automaticas', label: 'Transcripciones automáticas' }
+		{ href: '/transcripciones-automaticas', label: 'Transcripciones automáticas' }
 	] as const;
 
 	const secondaryNavItems = [
-		{ href: '/mas-informacion/colaboradores', label: 'Colaboradores' },
+		{ href: '/colaboradores', label: 'Colaboradores' },
 		{ href: '/privacidad', label: 'Privacidad' },
 		{ href: '/como-citarnos', label: 'Cómo citarnos' },
 		{ href: '/contacto', label: 'Contacto' }

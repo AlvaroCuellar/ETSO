@@ -9,20 +9,17 @@ import {
 
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = ({ params }) => {
-	const informe = getInformeById(params.id);
+export const load: PageServerLoad = async ({ params }) => {
+	const informe = await getInformeById(params.id);
 	if (!informe) throw error(404, 'Informe no encontrado');
 
-	const work = getWorkById(informe.workId);
+	const work = await getWorkById(informe.workId);
 	if (!work) throw error(500, 'Obra del informe no disponible');
 
-	const distances = ambitos.reduce(
-		(acc, ambito) => {
-			acc[ambito] = getInformeDistanceRows(informe, ambito);
-			return acc;
-		},
-		{} as Record<Ambito, InformeDistanceView[]>
+	const distanceEntries = await Promise.all(
+		ambitos.map(async (ambito) => [ambito, await getInformeDistanceRows(informe, ambito)] as const)
 	);
+	const distances = Object.fromEntries(distanceEntries) as Record<Ambito, InformeDistanceView[]>;
 	const bibliography = getInformeBibliographyByInformeId(informe.id);
 
 	return {

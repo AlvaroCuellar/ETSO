@@ -2,8 +2,8 @@ import { getAllAuthors } from '$lib/server/catalog-runtime';
 
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = () => ({
-	dramaturgos: getAllAuthors()
+export const load: PageServerLoad = async () => ({
+	dramaturgos: (await getAllAuthors())
 		.map((author) => ({
 			id: author.id,
 			name: author.name,

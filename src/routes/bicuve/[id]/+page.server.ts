@@ -3,11 +3,11 @@ import { buildBicuveCitation, getBicuveById, getWorkById } from '$lib/server/cat
 
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = ({ params }) => {
-	const bicuve = getBicuveById(params.id);
+export const load: PageServerLoad = async ({ params }) => {
+	const bicuve = await getBicuveById(params.id);
 	if (!bicuve) throw error(404, 'Texto BICUVE no encontrado');
 
-	const work = getWorkById(bicuve.workId);
+	const work = await getWorkById(bicuve.workId);
 	if (!work) throw error(500, 'Obra vinculada no disponible');
 
 	const canonicalUrl = `https://etso.es/bicuve/${bicuve.id}`;

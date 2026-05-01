@@ -1,11 +1,17 @@
 import { basename } from 'node:path';
 
+import { createClient } from '@libsql/client';
+import { env } from '$env/dynamic/private';
 import {
 	UNRESOLVED_AUTHOR_ID,
 	ambitos,
 	formatConfidence,
 	inferWorkAuthorshipType,
+	normalizeConfidence,
 	type Ambito,
+	type AttributionGroup,
+	type AttributionMember,
+	type AttributionSet,
 	type AuthorMetrics,
 	type AuthorWorkRelation,
 	type CatalogAuthor,
@@ -37,7 +43,6 @@ import {
 import collaboratorsSource from '../../../data/colaboradores/colaboradores.json';
 import bibliographySource from '../../../data/referencias/bibliografia.json';
 import impactSource from '../../../data/referencias/repercusion.json';
-import snapshotSource from '$lib/server/generated/catalog-snapshot.generated.json';
 
 const CACHE_MS = 2000;
 
@@ -51,14 +56,8 @@ interface Snapshot {
 	distancesByWork: Map<string, Record<Ambito, DistanceRow[]>>;
 }
 
-interface SnapshotDisk {
-	works: CatalogWork[];
-	authors: CatalogAuthor[];
-	bicuveNameByWorkId: Record<string, string>;
-	distancesByWork: Record<string, Record<Ambito, DistanceRow[]>>;
-}
-
 interface SummaryFile {
+	resumen_breve?: string[];
 	resumen_largo?: string[];
 	personajes_principales?: Array<{
 		nombre?: string;
@@ -162,6 +161,74 @@ interface BibliographyViewConfigNormalized {
 	} | null;
 }
 
+interface WorkRow {
+	id: string;
+	slug: string | null;
+	titulo: string;
+	variaciones_titulo: string | null;
+	genero: string | null;
+	adicion: string | null;
+	estado_texto: string | null;
+	examen_autorias: number;
+	bicuve: number;
+	bicuve_nombre: string | null;
+	tiene_acceso_externo: number;
+	procede: string | null;
+	resultado1: string | null;
+	resultado2: string | null;
+	resumen_breve: string | null;
+}
+
+interface AuthorRow {
+	id: string;
+	nombre: string;
+	variaciones_nombre: string | null;
+}
+
+interface AttributionRow {
+	set_id: number;
+	work_id: string;
+	attribution_type: string;
+	raw_expression: string;
+	group_id: number | null;
+	group_order: number | null;
+	author_id: string | null;
+	member_order: number | null;
+	confianza: string | null;
+}
+
+interface TextAccessRow {
+	work_id: string;
+	tipo: string;
+	etiqueta: string;
+	url: string;
+	position: number;
+}
+
+interface DistanceRowRaw {
+	work_id: string;
+	ambito: string;
+	rank: number;
+	related_work_id: string;
+	distancia: number;
+}
+
+interface TempGroup {
+	order: number;
+	members: Array<{
+		memberOrder: number;
+		authorId: string;
+		confidence?: string | null;
+	}>;
+}
+
+interface TempSet {
+	workId: string;
+	attributionType: string;
+	rawExpression: string;
+	groups: Map<number, TempGroup>;
+}
+
 interface EditorialLinkRaw {
 	label?: unknown;
 	href?: unknown;
@@ -215,7 +282,17 @@ const textByWorkId = new Map(
 );
 
 let cachedSnapshot: Snapshot | null = null;
+let cachedSnapshotPromise: Promise<Snapshot> | null = null;
 let cachedAt = 0;
+let dbClient: ReturnType<typeof createClient> | null = null;
+
+const splitVariants = (value: string | null | undefined): string[] => {
+	if (!value) return [];
+	return value
+		.split(/\s*[|;]\s*/)
+		.map((chunk) => chunk.trim())
+		.filter((chunk) => chunk.length > 0);
+};
 
 const ensureDistanceRecord = (): Record<Ambito, DistanceRow[]> => ({
 	obracompleta: [],
@@ -229,48 +306,311 @@ const ensureDistanceRecord = (): Record<Ambito, DistanceRow[]> => ({
 const hasAnyDistanceRows = (distances: Record<Ambito, DistanceRow[]>): boolean =>
 	Object.values(distances).some((rows) => rows.length > 0);
 
-const createSnapshot = (): Snapshot => {
-	const source = snapshotSource as SnapshotDisk;
-	const works = Array.isArray(source.works) ? source.works : [];
-	const authors = Array.isArray(source.authors) ? source.authors : [];
-	const distancesByWork = new Map<string, Record<Ambito, DistanceRow[]>>();
-
-	for (const work of works) {
-		distancesByWork.set(work.id, {
-			...ensureDistanceRecord(),
-			...(source.distancesByWork?.[work.id] ?? {})
-		});
+const assertTursoConfig = (): void => {
+	if (!env.TURSO_DATABASE_URL || !env.TURSO_AUTH_TOKEN) {
+		throw new Error('Faltan TURSO_DATABASE_URL o TURSO_AUTH_TOKEN para leer el catálogo desde Turso.');
 	}
+};
 
-	for (const [workId, distanceRecord] of Object.entries(source.distancesByWork ?? {})) {
-		if (!distancesByWork.has(workId)) {
-			distancesByWork.set(workId, {
-				...ensureDistanceRecord(),
-				...distanceRecord
+const getRows = async <T>(sql: string): Promise<T[]> => {
+	assertTursoConfig();
+	dbClient ??= createClient({
+		url: env.TURSO_DATABASE_URL,
+		authToken: env.TURSO_AUTH_TOKEN
+	});
+	const db = dbClient;
+	const result = await db.execute(sql);
+	return result.rows as unknown as T[];
+};
+
+const resolveConnector = (rawExpression: string): 'and' | 'or' => {
+	if (/\bOR\b/i.test(rawExpression)) return 'or';
+	return 'and';
+};
+
+const makeEmptyAttributionSet = (): AttributionSet => ({
+	groups: [],
+	connector: 'and'
+});
+
+const memberNameFromId = (authorId: string, authorMap: Map<string, CatalogAuthor>): string => {
+	const author = authorMap.get(authorId);
+	if (author) return author.name;
+	return authorId
+		.split('_')
+		.map((token) => token.charAt(0).toUpperCase() + token.slice(1))
+		.join(' ');
+};
+
+const resolveWorkBaseSlug = (row: WorkRow): string => {
+	const preferred = row.slug?.trim() ? slugify(row.slug) : '';
+	if (preferred) return preferred;
+
+	const fromTitle = slugify(row.titulo ?? '');
+	if (fromTitle) return fromTitle;
+
+	const fromId = slugify(row.id ?? '');
+	if (fromId) return fromId;
+
+	return 'obra';
+};
+
+const parseSummaryFile = (workId: string): { shortSummary?: string; longSummary?: string } => {
+	const parsed = summaryFileByWorkId.get(workId);
+	if (!parsed) return {};
+
+	const shortSummary = Array.isArray(parsed.resumen_breve)
+		? parsed.resumen_breve.map((paragraph) => paragraph.trim()).filter(Boolean).join('\n\n')
+		: undefined;
+	const longSummary = Array.isArray(parsed.resumen_largo)
+		? parsed.resumen_largo.map((paragraph) => paragraph.trim()).filter(Boolean).join('\n\n')
+		: undefined;
+
+	return {
+		shortSummary,
+		longSummary
+	};
+};
+
+const createSnapshot = async (): Promise<Snapshot> => {
+	const authorRows = await getRows<AuthorRow>(
+		`SELECT id, nombre, variaciones_nombre
+		 FROM authors
+		 ORDER BY nombre COLLATE NOCASE`
+	);
+
+	const authors: CatalogAuthor[] = authorRows.map((row) => ({
+		id: row.id,
+		name: row.nombre,
+		nameVariants: splitVariants(row.variaciones_nombre)
+	}));
+	const authorById = new Map(authors.map((author) => [author.id, author] as const));
+
+	const attributionRows = await getRows<AttributionRow>(
+		`SELECT
+			s.id AS set_id,
+			s.work_id,
+			s.attribution_type,
+			s.raw_expression,
+			g.id AS group_id,
+			g.group_order,
+			m.author_id,
+			m.member_order,
+			m.confianza
+		 FROM attribution_sets s
+		 LEFT JOIN attribution_groups g ON g.attribution_set_id = s.id
+		 LEFT JOIN attribution_members m ON m.attribution_group_id = g.id
+		 ORDER BY s.work_id, s.attribution_type, g.group_order, m.member_order`
+	);
+
+	const tempSets = new Map<number, TempSet>();
+	for (const row of attributionRows) {
+		if (!tempSets.has(row.set_id)) {
+			tempSets.set(row.set_id, {
+				workId: row.work_id,
+				attributionType: row.attribution_type,
+				rawExpression: row.raw_expression,
+				groups: new Map()
+			});
+		}
+
+		const set = tempSets.get(row.set_id)!;
+		if (row.group_id == null || row.group_order == null) continue;
+
+		if (!set.groups.has(row.group_id)) {
+			set.groups.set(row.group_id, {
+				order: row.group_order,
+				members: []
+			});
+		}
+
+		if (row.author_id) {
+			set.groups.get(row.group_id)!.members.push({
+				memberOrder: row.member_order ?? 0,
+				authorId: row.author_id,
+				confidence: row.confianza
 			});
 		}
 	}
 
+	const attributionByWorkType = new Map<string, AttributionSet>();
+	for (const set of tempSets.values()) {
+		const sortedGroups = [...set.groups.values()]
+			.sort((a, b) => a.order - b.order)
+			.map((group): AttributionGroup => {
+				const members = group.members
+					.sort((a, b) => a.memberOrder - b.memberOrder)
+					.map((member): AttributionMember => ({
+						authorId: member.authorId,
+						authorName: memberNameFromId(member.authorId, authorById),
+						confidence: normalizeConfidence(member.confidence)
+					}));
+				return { members };
+			})
+			.filter((group) => group.members.length > 0);
+
+		const unresolved =
+			set.rawExpression.toLowerCase().includes(UNRESOLVED_AUTHOR_ID) ||
+			sortedGroups.some((group) =>
+				group.members.some((member) => member.authorId === UNRESOLVED_AUTHOR_ID)
+			);
+
+		const normalized: AttributionSet = unresolved
+			? {
+					groups: [],
+					connector: 'and',
+					unresolved: true
+				}
+			: {
+					groups: sortedGroups,
+					connector: resolveConnector(set.rawExpression)
+				};
+
+		attributionByWorkType.set(`${set.workId}::${set.attributionType}`, normalized);
+	}
+
+	const textAccessRows = await getRows<TextAccessRow>(
+		`SELECT work_id, tipo, etiqueta, url, position
+		 FROM text_access
+		 ORDER BY work_id, position`
+	);
+	const textAccessByWork = new Map<string, CatalogWork['textLinks']>();
+	for (const row of textAccessRows) {
+		if (!textAccessByWork.has(row.work_id)) {
+			textAccessByWork.set(row.work_id, []);
+		}
+		textAccessByWork.get(row.work_id)!.push({
+			label: row.etiqueta || row.tipo || 'Acceso externo',
+			href: row.url,
+			kind: 'texto_externo',
+			external: true
+		});
+	}
+
+	const distancesByWork = new Map<string, Record<Ambito, DistanceRow[]>>();
+	const distanceRows = await getRows<DistanceRowRaw>(
+		`SELECT work_id, ambito, rank, related_work_id, distancia
+		 FROM work_distances
+		 ORDER BY work_id, ambito, rank`
+	);
+	for (const row of distanceRows) {
+		const ambito = row.ambito as Ambito;
+		if (!ambitos.includes(ambito)) continue;
+		if (!distancesByWork.has(row.work_id)) {
+			distancesByWork.set(row.work_id, ensureDistanceRecord());
+		}
+		distancesByWork.get(row.work_id)![ambito].push({
+			rank: row.rank,
+			relatedWorkId: row.related_work_id,
+			distancia: row.distancia
+		});
+	}
+
+	const worksTableColumns = await getRows<{ name: string }>('PRAGMA table_info(works)');
+	const hasWorkSlugColumn = worksTableColumns.some((column) => column.name === 'slug');
+
+	const workRows = await getRows<WorkRow>(
+		`SELECT id, ${hasWorkSlugColumn ? 'slug' : 'NULL AS slug'}, titulo, variaciones_titulo, genero, adicion, estado_texto,
+		 examen_autorias, bicuve, bicuve_nombre, tiene_acceso_externo,
+		 procede, resultado1, resultado2, resumen_breve
+		 FROM works
+		 WHERE examen_autorias = 1
+		 ORDER BY titulo COLLATE NOCASE`
+	);
+
+	const slugCounts = new Map<string, number>();
+	const bicuveNameByWorkId = new Map<string, string>();
+
+	const works: CatalogWork[] = workRows.map((row) => {
+		const summaries = parseSummaryFile(row.id);
+		const traditionalAttribution =
+			attributionByWorkType.get(`${row.id}::tradicional`) ?? makeEmptyAttributionSet();
+		const stylometryAttribution =
+			attributionByWorkType.get(`${row.id}::estilometria`) ?? makeEmptyAttributionSet();
+
+		const links: CatalogWork['textLinks'] = [];
+		if (Number(row.bicuve) === 1 && textByWorkId.has(row.id)) {
+			const label = row.bicuve_nombre?.trim()
+				? `Texto BICUVE (${row.bicuve_nombre.trim()})`
+				: 'Texto BICUVE';
+			links.push({
+				label,
+				href: `/bicuve/${row.id}`,
+				kind: 'bicuve'
+			});
+		}
+		for (const link of textAccessByWork.get(row.id) ?? []) {
+			links.push(link);
+		}
+
+		const distanceRecord = distancesByWork.get(row.id) ?? ensureDistanceRecord();
+		if (!distancesByWork.has(row.id)) {
+			distancesByWork.set(row.id, distanceRecord);
+		}
+
+		const shortSummary =
+			row.resumen_breve?.trim() || summaries.shortSummary || 'Sin resumen breve disponible.';
+
+		const baseSlug = resolveWorkBaseSlug(row);
+		const currentCount = (slugCounts.get(baseSlug) ?? 0) + 1;
+		slugCounts.set(baseSlug, currentCount);
+		const slug = currentCount === 1 ? baseSlug : `${baseSlug}-${currentCount}`;
+		const bicuveNombre = row.bicuve_nombre?.trim() || 'ETSO';
+		bicuveNameByWorkId.set(row.id, bicuveNombre);
+
+		return {
+			id: row.id,
+			slug,
+			title: row.titulo,
+			titleVariants: splitVariants(row.variaciones_titulo),
+			genre: row.genero?.trim() || 'Sin genero',
+			origin: row.procede?.trim() || 'Sin procedencia',
+			textState: row.estado_texto?.trim() || 'Sin estado',
+			addedOn: row.adicion?.trim() || 'Sin fecha',
+			shortSummary,
+			longSummary: summaries.longSummary,
+			result1: row.resultado1?.trim() || undefined,
+			result2: row.resultado2?.trim() || undefined,
+			traditionalAttribution,
+			stylometryAttribution,
+			textLinks: links,
+			reportId: hasAnyDistanceRows(distanceRecord) ? row.id : undefined
+		};
+	});
+
+	const workById = new Map(works.map((work) => [work.id, work] as const));
+	const workBySlug = new Map(works.map((work) => [work.slug, work] as const));
+
 	return {
 		works,
-		workById: new Map(works.map((work) => [work.id, work] as const)),
-		workBySlug: new Map(works.map((work) => [work.slug, work] as const)),
-		bicuveNameByWorkId: new Map(Object.entries(source.bicuveNameByWorkId ?? {})),
+		workById,
+		workBySlug,
+		bicuveNameByWorkId,
 		authors,
-		authorById: new Map(authors.map((author) => [author.id, author] as const)),
+		authorById,
 		distancesByWork
 	};
 };
 
-const getSnapshot = (): Snapshot => {
+const getSnapshot = async (): Promise<Snapshot> => {
 	const now = Date.now();
 	if (cachedSnapshot && now - cachedAt < CACHE_MS) {
 		return cachedSnapshot;
 	}
 
-	cachedSnapshot = createSnapshot();
-	cachedAt = now;
-	return cachedSnapshot;
+	if (!cachedSnapshotPromise) {
+		cachedSnapshotPromise = createSnapshot()
+			.then((snapshot) => {
+				cachedSnapshot = snapshot;
+				cachedAt = Date.now();
+				return snapshot;
+			})
+			.finally(() => {
+				cachedSnapshotPromise = null;
+			});
+	}
+
+	return cachedSnapshotPromise;
 };
 
 const normalizeSummaryNamedItems = (
@@ -316,25 +656,29 @@ const confidenceForAuthor = (set: CatalogWork['stylometryAttribution'], authorId
 	return Array.from(values);
 };
 
-export const getAllWorks = (): CatalogWork[] => getSnapshot().works;
+export const getAllWorks = async (): Promise<CatalogWork[]> => (await getSnapshot()).works;
 
-export const getWorkById = (workId: string): CatalogWork | undefined => getSnapshot().workById.get(workId);
+export const getWorkById = async (workId: string): Promise<CatalogWork | undefined> =>
+	(await getSnapshot()).workById.get(workId);
 
-export const getWorkBySlug = (slug: string): CatalogWork | undefined => getSnapshot().workBySlug.get(slug);
+export const getWorkBySlug = async (slug: string): Promise<CatalogWork | undefined> =>
+	(await getSnapshot()).workBySlug.get(slug);
 
-export const getAllAuthors = (): CatalogAuthor[] =>
-	getSnapshot().authors.filter((author) => author.id !== UNRESOLVED_AUTHOR_ID);
+export const getAllAuthors = async (): Promise<CatalogAuthor[]> =>
+	(await getSnapshot()).authors.filter((author) => author.id !== UNRESOLVED_AUTHOR_ID);
 
-export const getAuthorById = (authorId: string): CatalogAuthor | undefined => {
+export const getAuthorById = async (authorId: string): Promise<CatalogAuthor | undefined> => {
 	if (authorId === UNRESOLVED_AUTHOR_ID) return undefined;
-	return getSnapshot().authorById.get(authorId);
+	return (await getSnapshot()).authorById.get(authorId);
 };
 
-export const listGenres = (): string[] =>
-	Array.from(new Set(getSnapshot().works.map((work) => work.genre))).sort((a, b) => a.localeCompare(b));
+export const listGenres = async (): Promise<string[]> =>
+	Array.from(new Set((await getSnapshot()).works.map((work) => work.genre))).sort((a, b) =>
+		a.localeCompare(b)
+	);
 
-export const getCatalogStats = (): CatalogStats => {
-	const snapshot = getSnapshot();
+export const getCatalogStats = async (): Promise<CatalogStats> => {
+	const snapshot = await getSnapshot();
 	const bicuveTexts = snapshot.works.filter((work) =>
 		work.textLinks.some((link) => link.kind === 'bicuve')
 	).length;
@@ -348,8 +692,8 @@ export const getCatalogStats = (): CatalogStats => {
 	};
 };
 
-export const getAuthorWorks = (authorId: string): AuthorWorkRelation[] => {
-	const snapshot = getSnapshot();
+export const getAuthorWorks = async (authorId: string): Promise<AuthorWorkRelation[]> => {
+	const snapshot = await getSnapshot();
 	if (!snapshot.authorById.has(authorId)) return [];
 
 	return snapshot.works
@@ -367,8 +711,8 @@ export const getAuthorWorks = (authorId: string): AuthorWorkRelation[] => {
 		.filter((entry) => entry.inTraditional || entry.inStylometry);
 };
 
-export const getAuthorMetrics = (authorId: string): AuthorMetrics => {
-	const relations = getAuthorWorks(authorId);
+export const getAuthorMetrics = async (authorId: string): Promise<AuthorMetrics> => {
+	const relations = await getAuthorWorks(authorId);
 
 	let tradAny = 0;
 	let etsoYes = 0;
@@ -407,8 +751,8 @@ export const getWorkSummaryDetailById = (workId: string): WorkSummaryDetail | un
 	};
 };
 
-export const getInformeById = (informeId: string): CatalogInforme | undefined => {
-	const snapshot = getSnapshot();
+export const getInformeById = async (informeId: string): Promise<CatalogInforme | undefined> => {
+	const snapshot = await getSnapshot();
 	const work = snapshot.workById.get(informeId);
 	if (!work) return undefined;
 
@@ -426,27 +770,28 @@ export const getInformeById = (informeId: string): CatalogInforme | undefined =>
 	return {
 		id: work.id,
 		workId: work.id,
-		title: `Analisis estilometrico de ${work.title}`,
+		title: `Análisis estilométrico de ${work.title}`,
 		intro:
 			work.result1 ||
-			'Informe generado desde el snapshot del catalogo para validar visualizacion y flujo de consulta.',
+			'Informe generado desde Turso para validar visualización y flujo de consulta.',
 		methodology:
-			'Se muestran las distancias cargadas en work_distances del snapshot generado durante el build. En la version final, esta seccion se alimentara desde Turso y servicios de calculo oficiales del proyecto.',
+			'Se muestran las distancias cargadas en work_distances desde Turso. En la versión final, esta sección podrá enriquecerse con servicios de cálculo oficiales del proyecto.',
 		conclusion:
 			work.result2 ||
 			`Lectura preliminar para ${work.title} con perfil ${inferWorkAuthorshipType(work)} y nivel ${confidenceLabel}.`,
-		citation: `ETSO. Analisis estilometrico de ${work.title}. Dataset local de prueba.`,
+		citation: `ETSO. Análisis estilométrico de ${work.title}. Dataset alojado en Turso.`,
 		distances
 	};
 };
 
-export const getInformeByWorkId = (workId: string): CatalogInforme | undefined => getInformeById(workId);
+export const getInformeByWorkId = async (workId: string): Promise<CatalogInforme | undefined> =>
+	getInformeById(workId);
 
-export const getInformeDistanceRows = (
+export const getInformeDistanceRows = async (
 	informe: CatalogInforme,
 	ambito: Ambito
-): InformeDistanceView[] => {
-	const snapshot = getSnapshot();
+): Promise<InformeDistanceView[]> => {
+	const snapshot = await getSnapshot();
 	const rows = informe.distances[ambito] ?? [];
 	return rows
 		.map((row) => {
@@ -460,8 +805,8 @@ export const getInformeDistanceRows = (
 		.filter((row): row is InformeDistanceView => Boolean(row));
 };
 
-export const getBicuveById = (bicuveId: string): CatalogBicuve | undefined => {
-	const snapshot = getSnapshot();
+export const getBicuveById = async (bicuveId: string): Promise<CatalogBicuve | undefined> => {
+	const snapshot = await getSnapshot();
 	const work = snapshot.workById.get(bicuveId);
 	if (!work) return undefined;
 

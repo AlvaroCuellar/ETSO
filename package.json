@@ -7,13 +7,12 @@
 		"node": "24.x"
 	},
 	"scripts": {
-		"dev": "npm run build:catalog && vite dev",
-		"build": "npm run build:catalog && vite build",
-		"build:catalog": "node scripts/build-catalog-snapshot.mjs",
+		"dev": "vite dev",
+		"build": "vite build",
 		"preview": "vite preview",
-		"prepare": "node scripts/build-catalog-snapshot.mjs && svelte-kit sync",
-		"check": "npm run build:catalog && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "npm run build:catalog && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"prepare": "svelte-kit sync",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"index:texts": "node scripts/build-search-index.mjs",
 		"index:texts:compact": "node scripts/build-search-index.mjs --compact",
 		"index:validate": "node scripts/validate-search-index.mjs"
@@ -31,6 +30,7 @@
 		"vite": "^8.0.7"
 	},
 	"dependencies": {
+		"@libsql/client": "^0.17.3",
 		"echarts": "^6.0.0",
 		"lucide-svelte": "^1.0.1"
 	}

@@ -11,8 +11,8 @@ const emptySummaryDetail: WorkSummaryDetail = {
 	tematicas: []
 };
 
-export const load: PageServerLoad = ({ params }) => {
-	const work = getWorkBySlug(params.slug);
+export const load: PageServerLoad = async ({ params }) => {
+	const work = await getWorkBySlug(params.slug);
 	if (!work) throw error(404, 'Obra no encontrada');
 
 	return {

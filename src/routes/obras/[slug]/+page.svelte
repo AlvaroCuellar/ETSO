@@ -12,10 +12,14 @@
 	import CircleCheck from 'lucide-svelte/icons/circle-check';
 	import Drama from 'lucide-svelte/icons/drama';
 	import ExternalLink from 'lucide-svelte/icons/external-link';
+	import { formatDisplayWorkTitle, formatDisplayWorkTitleList } from '$lib/utils/format-display-work-title';
+	import { renderInlineItalicsHtml } from '$lib/utils/render-inline-italics-html';
 
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
+	const displayWorkTitle = $derived.by(() => formatDisplayWorkTitle(data.work.title));
+	const displayTitleVariants = $derived.by(() => formatDisplayWorkTitleList(data.work.titleVariants));
 
 	const connectorLabel = (connector: 'and' | 'or'): string => (connector === 'and' ? 'y' : 'o');
 
@@ -52,15 +56,15 @@
 		items={[
 			{ label: 'Inicio', href: '/' },
 			{ label: 'Examen de autorías', href: '/examen-autorias' },
-			{ label: data.work.title }
+			{ label: displayWorkTitle }
 		]}
 	/>
 
 	<PageHero
 		compact
 		eyebrow="Ficha de obra"
-		title={data.work.title}
-		subtitle={data.work.titleVariants.length ? data.work.titleVariants.join(' | ') : undefined}
+		title={displayWorkTitle}
+		subtitle={displayTitleVariants.length ? displayTitleVariants.join(' | ') : undefined}
 		backgroundImage={heroBg}
 	/>
 
@@ -393,7 +397,9 @@
 									<Archive class="h-[0.82rem] w-[0.82rem] text-text-accent-purple stroke-2" aria-hidden="true" />
 									Procedencia
 								</dt>
-								<dd class="m-0 text-[0.96rem] text-text-main">{data.work.origin}</dd>
+								<dd class="m-0 text-[0.96rem] text-text-main">
+									{@html renderInlineItalicsHtml(data.work.origin)}
+								</dd>
 							</div>
 
 							<div class="flex flex-col gap-[0.45rem] border-b border-border py-[0.9rem] first:pt-0 last:border-b-0 last:pb-0">

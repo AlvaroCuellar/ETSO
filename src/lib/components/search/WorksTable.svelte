@@ -17,6 +17,8 @@
 		type ObraTableFilterFlags,
 		type ObraTableRow
 	} from '$lib/domain/catalog';
+	import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
+	import { renderInlineItalicsHtml } from '$lib/utils/render-inline-italics-html';
 
 	interface Props {
 		rows: ObraTableRow[];
@@ -32,9 +34,6 @@
 
 	let expandedRows = $state<Set<string>>(new Set());
 	let openDropdownRowId = $state<string | null>(null);
-	let dropdownStyles = $state<Record<string, string>>({});
-
-	const buttonRefs = new Map<string, HTMLButtonElement>();
 
 	const tableClass = $derived.by(() =>
 		mode === 'informe'
@@ -73,47 +72,29 @@
 			if (!openDropdownRowId) return;
 			const target = event.target as HTMLElement | null;
 			if (!target) {
-				openDropdownRowId = null;
+				closeTextDropdown();
 				return;
 			}
 
 			if (target.closest('.textos-dropdown-wrapper')) return;
-			if (target.closest(`.textos-dropdown[data-row-id="${openDropdownRowId}"]`)) return;
+			if (target.closest('.textos-dropdown')) return;
 
-			openDropdownRowId = null;
+			closeTextDropdown();
 		};
 
 		const onEscape = (event: KeyboardEvent): void => {
 			if (event.key !== 'Escape') return;
-			openDropdownRowId = null;
-		};
-
-		const onViewportChange = (): void => {
-			if (!openDropdownRowId) return;
-			positionDropdown(openDropdownRowId);
+			closeTextDropdown();
 		};
 
 		document.addEventListener('click', onDocumentClick);
 		document.addEventListener('keydown', onEscape);
-		window.addEventListener('resize', onViewportChange);
-		window.addEventListener('scroll', onViewportChange, true);
 
 		return () => {
 			document.removeEventListener('click', onDocumentClick);
 			document.removeEventListener('keydown', onEscape);
-			window.removeEventListener('resize', onViewportChange);
-			window.removeEventListener('scroll', onViewportChange, true);
 		};
 	});
-
-	const registerTextButton = (node: HTMLButtonElement, rowId: string) => {
-		buttonRefs.set(rowId, node);
-		return {
-			destroy: () => {
-				buttonRefs.delete(rowId);
-			}
-		};
-	};
 
 	const normalizeForSearch = (value: string): string =>
 		value
@@ -181,30 +162,18 @@
 
 	const summaryUrl = (work: CatalogWork): string => `/obras/${work.slug}/resumen`;
 
+	const closeTextDropdown = (): void => {
+		openDropdownRowId = null;
+	};
+
 	const toggleTextDropdown = (event: MouseEvent, rowId: string): void => {
 		event.preventDefault();
 		event.stopPropagation();
 		if (openDropdownRowId === rowId) {
-			openDropdownRowId = null;
+			closeTextDropdown();
 			return;
 		}
 		openDropdownRowId = rowId;
-		positionDropdown(rowId);
-	};
-
-	const positionDropdown = (rowId: string): void => {
-		const button = buttonRefs.get(rowId);
-		if (!button) return;
-
-		const rect = button.getBoundingClientRect();
-		const width = Math.max(220, rect.width);
-		const left = Math.max(10, Math.min(rect.left, window.innerWidth - width - 10));
-		const top = Math.min(rect.bottom + 4, Math.max(10, window.innerHeight - 320));
-
-		dropdownStyles = {
-			...dropdownStyles,
-			[rowId]: `left:${left}px;top:${top}px;width:${width}px;`
-		};
 	};
 </script>
 
@@ -315,7 +284,7 @@
 									href={`/obras/${row.work.slug}`}
 									class="text-text-main visited:text-text-main no-underline hover:underline focus:underline focus-visible:underline"
 								>
-									{row.work.title}
+									{formatDisplayWorkTitle(row.work.title)}
 								</a>
 							</div>
 							{#if row.work.titleVariants.length > 0}
@@ -324,7 +293,7 @@
 										<CornerDownRight class="h-3 w-3 stroke-[2.1]" />
 									</span>
 									{#each row.work.titleVariants as variante, index}
-										<span class="variante-item">{variante}</span>
+										<span class="variante-item">{formatDisplayWorkTitle(variante)}</span>
 										{#if index < row.work.titleVariants.length - 1}
 											<span class="variantes-sep text-text-soft/55"> | </span>
 										{/if}
@@ -457,7 +426,6 @@
 											class={`${actionButtonEnabledClass} btn-texto textos-toggle`}
 											aria-haspopup="true"
 											aria-expanded={openDropdownRowId === row.rowId ? 'true' : 'false'}
-											use:registerTextButton={row.rowId}
 											onclick={(event) => toggleTextDropdown(event, row.rowId)}
 										>
 											<span class="btn-left col-span-2 flex min-w-0 items-center gap-[7px]">
@@ -474,42 +442,34 @@
 												{/if}
 											</span>
 										</button>
-										<div
-											class="textos-dropdown textos-dropdown-portal fixed left-0 top-0 z-[1200] max-h-[300px] min-w-[220px] max-w-[320px] overflow-y-auto rounded-[8px] border border-border-accent-blue bg-white p-1.5 font-['Roboto',sans-serif] shadow-[0_10px_28px_rgba(7,36,110,0.16)] max-md:min-w-[260px] max-md:max-w-[calc(100vw-20px)]"
-											data-row-id={row.rowId}
-											hidden={openDropdownRowId !== row.rowId}
-											style={dropdownStyles[row.rowId] ?? ''}
-										>
-											{#each row.work.textLinks as link}
-												<a
-													href={link.href}
-													class="textos-dropdown-item grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-[6px] px-2.5 py-[9px] text-[12px] font-normal text-text-main no-underline transition-all hover:bg-surface-accent-blue hover:text-text-main hover:no-underline focus:bg-surface-accent-blue focus:text-text-main focus:no-underline focus:outline-none focus-visible:bg-surface-accent-blue focus-visible:text-text-main focus-visible:no-underline focus-visible:outline-none"
-													target={link.external ? '_blank' : undefined}
-													rel={link.external ? 'noopener noreferrer' : undefined}
-												>
-													<span class="textos-dropdown-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-brand-blue-dark" aria-hidden="true">
-														{#if link.kind === 'bicuve'}
-															<BookOpen class="h-[14px] w-[14px] stroke-[2.1]" />
-														{:else}
-															<ExternalLink class="h-[14px] w-[14px] stroke-[2.1]" />
-														{/if}
-													</span>
-													<span class="textos-dropdown-body flex min-w-0 flex-col gap-0.5">
-														<span class="textos-dropdown-label block overflow-hidden text-ellipsis whitespace-nowrap">{link.label}</span>
-														<span class="textos-dropdown-kind text-[0.68rem] font-normal tracking-[0.02em] text-text-accent-purple uppercase">
+										{#if openDropdownRowId === row.rowId}
+											<div
+												class="textos-dropdown absolute left-0 top-[calc(100%+4px)] z-10 max-h-[min(300px,calc(100vh-24px))] min-w-full max-w-[320px] overflow-y-auto rounded-[8px] border border-border-accent-blue bg-white p-1.5 font-['Roboto',sans-serif] shadow-[0_10px_28px_rgba(7,36,110,0.16)] max-md:right-0 max-md:max-w-none"
+											>
+												{#each row.work.textLinks as link}
+													<a
+														href={link.href}
+														class="textos-dropdown-item grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-2 rounded-[6px] px-2.5 py-[9px] text-[12px] font-normal text-text-main no-underline transition-all hover:bg-surface-accent-blue hover:text-text-main hover:no-underline focus:bg-surface-accent-blue focus:text-text-main focus:no-underline focus:outline-none focus-visible:bg-surface-accent-blue focus-visible:text-text-main focus-visible:no-underline focus-visible:outline-none"
+														target={link.external ? '_blank' : undefined}
+														rel={link.external ? 'noopener noreferrer' : undefined}
+													>
+														<span class="textos-dropdown-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-brand-blue-dark" aria-hidden="true">
 															{#if link.kind === 'bicuve'}
-																BICUVE
+																<BookOpen class="h-[14px] w-[14px] stroke-[2.1]" />
 															{:else}
-																Enlace externo
+																<ExternalLink class="h-[14px] w-[14px] stroke-[2.1]" />
 															{/if}
 														</span>
-													</span>
-													<span class="textos-dropdown-item-arrow inline-flex h-3 w-3 flex-none items-center justify-center text-text-soft" aria-hidden="true">
-														<ChevronRight class="h-3 w-3 stroke-[2.1]" />
-													</span>
-												</a>
-											{/each}
-										</div>
+														<span class="textos-dropdown-body flex min-w-0 flex-col">
+															<span class="textos-dropdown-label block whitespace-normal break-words leading-[1.35]">{link.label}</span>
+														</span>
+														<span class="textos-dropdown-item-arrow mt-[2px] inline-flex h-3 w-3 flex-none items-center justify-center text-text-soft" aria-hidden="true">
+															<ChevronRight class="h-3 w-3 stroke-[2.1]" />
+														</span>
+													</a>
+												{/each}
+											</div>
+										{/if}
 									</div>
 								{:else}
 									<span class={actionButtonDisabledClass}>
@@ -606,7 +566,9 @@
 												Texto empleado
 											</span>
 											{#if row.work.origin}
-												<span class="metadata-value text-[14px] text-text-main">{row.work.origin}</span>
+												<span class="metadata-value text-[14px] text-text-main">
+													{@html renderInlineItalicsHtml(row.work.origin)}
+												</span>
 											{:else}
 												<span class="metadata-value not-available text-[14px] text-text-soft italic">No disponible</span>
 											{/if}

@@ -2,12 +2,13 @@
 	interface Props {
 		eyebrow?: string;
 		title: string;
+		titleHtml?: string;
 		subtitle?: string;
 		compact?: boolean;
 		backgroundImage?: string;
 	}
 
-	let { eyebrow, title, subtitle, compact = false, backgroundImage }: Props = $props();
+	let { eyebrow, title, titleHtml, subtitle, compact = false, backgroundImage }: Props = $props();
 
 	const heroStyle = $derived.by(() => {
 		if (backgroundImage) {
@@ -26,7 +27,13 @@
 			{eyebrow}
 		</span>
 	{/if}
-	<h1 class="mt-3 font-ui text-[clamp(1.55rem,2.7vw,2.5rem)] leading-[1.2] font-bold text-white">{title}</h1>
+	<h1 class="mt-3 font-ui text-[clamp(1.55rem,2.7vw,2.5rem)] leading-[1.2] font-bold text-white">
+		{#if titleHtml}
+			{@html titleHtml}
+		{:else}
+			{title}
+		{/if}
+	</h1>
 	{#if subtitle}
 		<p class="mt-3 max-w-[68ch] font-reading text-[1.02rem] text-white/90">{subtitle}</p>
 	{/if}

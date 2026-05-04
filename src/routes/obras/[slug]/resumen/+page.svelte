@@ -4,10 +4,12 @@
 	import LegalCard from '$lib/components/ui/LegalCard.svelte';
 	import PageHero from '$lib/components/ui/PageHero.svelte';
 	import heroBg from '$lib/assets/heros/obra-bg.jpg';
+	import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
 
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
+	const displayWorkTitle = $derived.by(() => formatDisplayWorkTitle(data.work.title));
 
 	const summaryCitation =
 		'Cuéllar, Álvaro. "Resúmenes asistidos por modelos de lenguaje para un vasto corpus de obras literarias del Siglo de Oro". En: <i>El teatro del Siglo de Oro en el horizonte de las humanidades digitales</i>. Peter Lang, 2026 (en prensa).';
@@ -18,13 +20,13 @@
 		items={[
 			{ label: 'Inicio', href: '/' },
 			{ label: 'Examen de autorías', href: '/examen-autorias' },
-			{ label: data.work.title, href: `/obras/${data.work.slug}` },
+			{ label: displayWorkTitle, href: `/obras/${data.work.slug}` },
 			{ label: 'Resumen automático' }
 		]}
 	/>
 
 	<div class="mx-auto grid w-full max-w-[1280px] gap-6">
-		<PageHero compact eyebrow="Resumen automático" title={data.work.title} backgroundImage={heroBg} />
+		<PageHero compact eyebrow="Resumen automático" title={displayWorkTitle} backgroundImage={heroBg} />
 
 		<section class="grid gap-3" aria-label="Aviso y cita">
 			<LegalCard label="Aviso" class="w-full">

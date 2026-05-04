@@ -5,10 +5,19 @@
 	import PageHero from '$lib/components/ui/PageHero.svelte';
 	import bicuveLogo from '$lib/assets/logos/bicuve.png';
 	import byNcLogo from '$lib/assets/logos/by-nc.svg';
+	import {
+		formatDisplayWorkTitle,
+		formatPrefixedDisplayWorkTitleHtml
+	} from '$lib/utils/format-display-work-title';
 
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
+	const displayWorkTitle = $derived.by(() => formatDisplayWorkTitle(data.work.title));
+	const displayBicuveTitle = $derived.by(() => `Texto digital de ${displayWorkTitle}`);
+	const displayBicuveTitleHtml = $derived.by(() =>
+		formatPrefixedDisplayWorkTitleHtml('Texto digital de', data.work.title)
+	);
 </script>
 
 <div class="grid gap-6">
@@ -16,12 +25,12 @@
 		items={[
 			{ label: 'Inicio', href: '/' },
 			{ label: 'Examen de autorías', href: '/examen-autorias' },
-			{ label: data.work.title, href: `/obras/${data.work.slug}` },
+			{ label: displayWorkTitle, href: `/obras/${data.work.slug}` },
 			{ label: 'BICUVE' }
 		]}
 	/>
 
-	<PageHero compact eyebrow="Texto digital" title={data.bicuve.title} />
+	<PageHero compact eyebrow="Texto digital" title={displayBicuveTitle} titleHtml={displayBicuveTitleHtml} />
 
 	<section class="grid gap-5 max-md:gap-4">
 		<div class="grid w-full gap-2">
@@ -61,7 +70,7 @@
 		</div>
 
 		<h2 class="mt-1 text-center font-ui text-[0.95rem] font-bold uppercase tracking-[0.08em] text-brand-blue-dark">
-			{data.work.title.toLocaleUpperCase('es-ES')}
+			{displayWorkTitle.toLocaleUpperCase('es-ES')}
 		</h2>
 
 		<div class="mx-auto max-w-[82ch] whitespace-pre-wrap px-0 font-reading text-base leading-[1.8] text-text-main md:px-[clamp(0.5rem,2.8vw,2.25rem)]">

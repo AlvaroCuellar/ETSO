@@ -9,6 +9,7 @@
 	import ComparisonMetricToggle from '$lib/components/search/ComparisonMetricToggle.svelte';
 	import TexoroLiveChart from '$lib/components/search/TexoroLiveChart.svelte';
 	import TexoroComparisonChart from '$lib/components/search/TexoroComparisonChart.svelte';
+	import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
 	import fondoLogo from '$lib/assets/fondos/fondo-logo.png';
 	import BookOpen from 'lucide-svelte/icons/book-open';
 	import Feather from 'lucide-svelte/icons/feather';
@@ -1087,7 +1088,7 @@
 									<div class="min-w-0">
 										<h3 class="m-0 font-['Roboto',sans-serif] text-[1.03rem] font-semibold leading-[1.25] text-brand-blue-dark">
 											{#if result.meta}
-												<a href={`/obras/${result.meta.slug}`} class="text-brand-blue no-underline hover:text-brand-blue-dark">{result.meta.title}</a>
+												<a href={`/obras/${result.meta.slug}`} class="text-brand-blue no-underline hover:text-brand-blue-dark">{formatDisplayWorkTitle(result.meta.title)}</a>
 												<span class="ml-1 text-[0.86rem] font-medium text-text-soft">
 													· {resultAuthorLabel(result)}
 												</span>

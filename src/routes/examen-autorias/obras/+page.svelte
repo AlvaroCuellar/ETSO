@@ -1,6 +1,7 @@
-<script lang="ts">
-	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
-	import { normalizePlainText } from '$lib/search/normalize';
+	<script lang="ts">
+		import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
+		import { normalizePlainText } from '$lib/search/normalize';
+		import { formatDisplayWorkTitle, formatDisplayWorkTitleList } from '$lib/utils/format-display-work-title';
 
 	import type { PageData } from './$types';
 
@@ -63,9 +64,9 @@
 							href={`/obras/${work.slug}`}
 							class="grid gap-1 px-4 py-3 text-inherit no-underline transition hover:bg-[rgba(237,242,255,0.7)] hover:no-underline md:px-5"
 						>
-							<p class="m-0 font-ui text-[0.99rem] font-semibold leading-[1.35] text-brand-blue-dark">{work.title}</p>
+							<p class="m-0 font-ui text-[0.99rem] font-semibold leading-[1.35] text-brand-blue-dark">{formatDisplayWorkTitle(work.title)}</p>
 							{#if work.titleVariants.length > 0}
-								<p class="m-0 text-[0.92rem] leading-[1.5] text-text-soft">{work.titleVariants.join(' | ')}</p>
+								<p class="m-0 text-[0.92rem] leading-[1.5] text-text-soft">{formatDisplayWorkTitleList(work.titleVariants).join(' | ')}</p>
 							{/if}
 						</a>
 					{/each}

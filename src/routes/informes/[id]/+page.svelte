@@ -6,10 +6,19 @@
 	import PageHero from '$lib/components/ui/PageHero.svelte';
 	import informeBg from '$lib/assets/heros/informes.png';
 	import { ambitoLabels, ambitos, type Ambito, type AttributionSet, type ObraTableRow } from '$lib/domain/catalog';
+	import {
+		formatDisplayWorkTitle,
+		formatPrefixedDisplayWorkTitleHtml
+	} from '$lib/utils/format-display-work-title';
 
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
+	const displayWorkTitle = $derived.by(() => formatDisplayWorkTitle(data.work.title));
+	const displayInformeTitle = $derived.by(() => `Análisis estilométrico de ${displayWorkTitle}`);
+	const displayInformeTitleHtml = $derived.by(() =>
+		formatPrefixedDisplayWorkTitleHtml('Análisis estilométrico de', data.work.title)
+	);
 
 	let activeAmbito = $state<Ambito>('obracompleta');
 
@@ -148,7 +157,7 @@
 		items={[
 			{ label: 'Inicio', href: '/' },
 			{ label: 'Examen de autorías', href: '/examen-autorias' },
-			{ label: data.work.title, href: `/obras/${data.work.slug}` },
+			{ label: displayWorkTitle, href: `/obras/${data.work.slug}` },
 			{ label: 'Informe' }
 		]}
 	/>
@@ -156,7 +165,8 @@
 	<PageHero
 		compact
 		eyebrow="Informe estilométrico"
-		title={data.informe.title}
+		title={displayInformeTitle}
+		titleHtml={displayInformeTitleHtml}
 		backgroundImage={informeBg}
 	/>
 

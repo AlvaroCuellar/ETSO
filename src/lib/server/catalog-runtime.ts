@@ -530,11 +530,8 @@ const createSnapshot = async (): Promise<Snapshot> => {
 
 		const links: CatalogWork['textLinks'] = [];
 		if (Number(row.bicuve) === 1 && textByWorkId.has(row.id)) {
-			const label = row.bicuve_nombre?.trim()
-				? `Texto BICUVE (${row.bicuve_nombre.trim()})`
-				: 'Texto BICUVE';
 			links.push({
-				label,
+				label: 'Texto BICUVE',
 				href: `/bicuve/${row.id}`,
 				kind: 'bicuve'
 			});

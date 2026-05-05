@@ -2,7 +2,7 @@
 
 import { IndexedDbCache } from './idb-cache';
 import { buildSnippet, normalizePattern, normalizePlainText, tokenizeWithOffsets } from './normalize';
-import { parseSearchQuery } from './query';
+import { parseSearchQuery, parseStructuredSearchQuery } from './query';
 
 import type {
 	ParsedQuery,
@@ -17,6 +17,8 @@ import type {
 	TexoroKgramShard,
 	TexoroKgramsRoot,
 	TexoroPostingsShard,
+	TexoroPositionsDoc,
+	TexoroPositionsShard,
 	TexoroVocabRoot,
 	TexoroVocabShard,
 	TexoroWildcardLengths,
@@ -27,12 +29,25 @@ import type {
 interface SearchEngineConfig {
 	indexBaseUrl?: string;
 	textsBaseUrl?: string;
+	textLoader?: (textKey: string) => Promise<string | null>;
 	preserveEnie?: boolean;
 	cacheInIndexedDb?: boolean;
+	preparedTextCacheMaxDocs?: number;
 }
 
 interface MatchOccurrencesOptions {
 	maxItems?: number;
+	snippetRadius?: number;
+}
+
+interface PreviewRequestItem {
+	docId: number;
+	workId: string;
+	matches: SearchResultMatch[];
+}
+
+interface PreviewOptions {
+	maxItemsPerDoc?: number;
 	snippetRadius?: number;
 }
 
@@ -61,6 +76,7 @@ interface TermMeta {
 	cf: number;
 	len: number;
 	postingsShard: string;
+	positionsShard?: string;
 }
 
 interface ClauseEvaluation {
@@ -79,6 +95,26 @@ interface GroupEvaluation {
 interface PreparedText {
 	raw: string;
 	tokens: ReturnType<typeof tokenizeWithOffsets>;
+}
+
+interface ClausePositionOccurrence {
+	tokenStart: number;
+	tokenEnd: number;
+	byteStart: number;
+	byteEnd: number;
+}
+
+interface PreparedSpan {
+	start: number;
+	end: number;
+	tokenStart: number;
+	tokenEnd: number;
+}
+
+interface RawOccurrenceHighlight {
+	start: number;
+	end: number;
+	tokenIndex: number;
 }
 
 const DEFAULT_LIMIT = 30;
@@ -109,6 +145,37 @@ const wildcardToRegex = (pattern: string): RegExp => {
 	return new RegExp(expression, 'u');
 };
 
+const findPreparedSpans = (
+	tokens: ReturnType<typeof tokenizeWithOffsets>,
+	patterns: string[]
+): PreparedSpan[] => {
+	if (patterns.length === 0 || tokens.length < patterns.length) return [];
+	const regexes = patterns.map((pattern) => wildcardToRegex(pattern));
+	const spans: PreparedSpan[] = [];
+	const maxStart = tokens.length - regexes.length;
+
+	for (let start = 0; start <= maxStart; start += 1) {
+		let matched = true;
+		for (let offset = 0; offset < regexes.length; offset += 1) {
+			if (!regexes[offset].test(tokens[start + offset].norm)) {
+				matched = false;
+				break;
+			}
+		}
+		if (!matched) continue;
+		const first = tokens[start];
+		const last = tokens[start + regexes.length - 1];
+		spans.push({
+			start: first.start,
+			end: last.end,
+			tokenStart: start,
+			tokenEnd: start + regexes.length - 1
+		});
+	}
+
+	return spans;
+};
+
 const intersectSets = (left: Set<number>, right: Set<number>): Set<number> => {
 	const output = new Set<number>();
 	const [small, large] = left.size <= right.size ? [left, right] : [right, left];
@@ -127,6 +194,68 @@ const unionSets = (sets: Set<number>[]): Set<number> => {
 };
 
 const sortedNumeric = (values: Iterable<number>): number[] => Array.from(values).sort((a, b) => a - b);
+
+const buildSnippetWithHighlights = (
+	rawText: string,
+	start: number,
+	end: number,
+	highlights: RawOccurrenceHighlight[],
+	radius = DEFAULT_SNIPPET_RADIUS
+): Pick<SearchMatchOccurrence, 'snippet' | 'highlights'> => {
+	const left = Math.max(0, start - radius);
+	const right = Math.min(rawText.length, end + radius);
+	const rawSlice = rawText.slice(left, right);
+	const leadingWhitespace = rawSlice.match(/^\s*/u)?.[0].length ?? 0;
+	const trailingWhitespace = rawSlice.match(/\s*$/u)?.[0].length ?? 0;
+	const bodyStart = left + leadingWhitespace;
+	const bodyEnd = right - trailingWhitespace;
+	const prefix = left > 0 ? '... ' : '';
+	const suffix = right < rawText.length ? ' ...' : '';
+	const sortedHighlights = highlights
+		.filter((highlight) => highlight.end > bodyStart && highlight.start < bodyEnd)
+		.map((highlight) => ({
+			...highlight,
+			start: Math.max(highlight.start, bodyStart),
+			end: Math.min(highlight.end, bodyEnd)
+		}))
+		.sort((a, b) => a.start - b.start || a.end - b.end);
+	const localHighlights = sortedHighlights.map((highlight) => ({
+		start: -1,
+		end: -1,
+		tokenIndex: highlight.tokenIndex
+	}));
+
+	let snippet = prefix;
+	let pendingSpace = false;
+	for (let absoluteIndex = bodyStart; absoluteIndex < bodyEnd; absoluteIndex += 1) {
+		const char = rawText[absoluteIndex];
+		if (/\s/u.test(char)) {
+			pendingSpace = snippet.length > prefix.length;
+			continue;
+		}
+		if (pendingSpace) {
+			snippet += ' ';
+			pendingSpace = false;
+		}
+		for (let index = 0; index < sortedHighlights.length; index += 1) {
+			if (sortedHighlights[index].start === absoluteIndex) {
+				localHighlights[index].start = snippet.length;
+			}
+		}
+		snippet += char;
+		for (let index = 0; index < sortedHighlights.length; index += 1) {
+			if (sortedHighlights[index].end === absoluteIndex + 1) {
+				localHighlights[index].end = snippet.length;
+			}
+		}
+	}
+	snippet += suffix;
+
+	return {
+		snippet,
+		highlights: localHighlights.filter((highlight) => highlight.start >= 0 && highlight.end > highlight.start)
+	};
+};
 
 const rangeIntersectsPrefix = (termMin: string, termMax: string, prefix: string): boolean => {
 	const prefixUpper = `${prefix}\uffff`;
@@ -184,8 +313,10 @@ const runWithConcurrency = async <T>(
 export class TexoroSearchEngine {
 	readonly #indexBaseUrl: string;
 	readonly #textsBaseUrl: string;
+	readonly #textLoader?: (textKey: string) => Promise<string | null>;
 	readonly #preserveEnie: boolean;
 	readonly #cacheInIndexedDb: boolean;
+	readonly #preparedTextCacheMaxDocs: number;
 	readonly #cache = new IndexedDbCache();
 
 	#initialized = false;
@@ -198,6 +329,7 @@ export class TexoroSearchEngine {
 	#vocabShards = new Map<string, TexoroVocabShard>();
 	#kgramShards = new Map<string, TexoroKgramShard>();
 	#postingsShards = new Map<string, Map<number, Array<[number, number]>>>();
+	#positionsShards = new Map<string, Map<number, TexoroPositionsDoc[]>>();
 	#termMetaById = new Map<number, TermMeta>();
 	#patternTermIds = new Map<string, number[]>();
 	#preparedTexts = new Map<number, PreparedText>();
@@ -205,20 +337,32 @@ export class TexoroSearchEngine {
 	#vocabShardLoads = new Map<string, Promise<TexoroVocabShard>>();
 	#kgramShardLoads = new Map<string, Promise<TexoroKgramShard>>();
 	#postingsShardLoads = new Map<string, Promise<Map<number, Array<[number, number]>>>>();
+	#positionsShardLoads = new Map<string, Promise<Map<number, TexoroPositionsDoc[]>>>();
 	#firstSearchWarmupPromise: Promise<void> | null = null;
 	#wildcardWarmupPromise: Promise<void> | null = null;
 	#primedQueries = new Map<string, Promise<void>>();
+	#positionsShardLoadCount = 0;
+	#textLoadCount = 0;
 
 	#docRowById = new Map<number, [number, string, string, string, number, number]>();
 	#allTermIdsCache: number[] | null = null;
 
 	constructor(config: SearchEngineConfig = {}) {
 		this.#indexBaseUrl =
-			stripTrailingSlash(config.indexBaseUrl || publicEnv.PUBLIC_TEXORO_INDEX_BASE_URL || '/api/texoro/index');
-		this.#textsBaseUrl =
-			stripTrailingSlash(config.textsBaseUrl || publicEnv.PUBLIC_TEXORO_TEXTS_BASE_URL || '/api/texoro/texts');
+			stripTrailingSlash(
+				config.indexBaseUrl ||
+					publicEnv.PUBLIC_TEXORO_INDEX_BASE_URL ||
+					(publicEnv.PUBLIC_R2_PUBLIC_ASSETS_BASE_URL
+						? `${stripTrailingSlash(publicEnv.PUBLIC_R2_PUBLIC_ASSETS_BASE_URL)}/search`
+						: publicEnv.PUBLIC_R2_BASE_URL
+							? `${stripTrailingSlash(publicEnv.PUBLIC_R2_BASE_URL)}/search`
+							: '')
+			);
+		this.#textsBaseUrl = stripTrailingSlash(config.textsBaseUrl || '');
+		this.#textLoader = config.textLoader;
 		this.#preserveEnie = config.preserveEnie ?? true;
 		this.#cacheInIndexedDb = config.cacheInIndexedDb ?? true;
+		this.#preparedTextCacheMaxDocs = Math.max(1, Math.floor(config.preparedTextCacheMaxDocs ?? 64));
 	}
 
 	get manifest(): TexoroIndexManifest | null {
@@ -320,6 +464,11 @@ export class TexoroSearchEngine {
 
 	async initialize(): Promise<void> {
 		if (this.#initialized) return;
+		if (!this.#indexBaseUrl) {
+			throw new Error(
+				'Falta PUBLIC_R2_PUBLIC_ASSETS_BASE_URL o PUBLIC_TEXORO_INDEX_BASE_URL para inicializar TEXORO.'
+			);
+		}
 
 		const manifest = await this.#fetchJson<TexoroIndexManifest>('manifest.json', null);
 		this.#manifest = manifest;
@@ -346,9 +495,13 @@ export class TexoroSearchEngine {
 
 	async search(query: string, workMetaById: Map<string, TexoroWorkMeta>, options: SearchOptions = {}): Promise<SearchExecution> {
 		const startedAt = performance.now();
+		const positionsShardLoadsAtStart = this.#positionsShardLoadCount;
+		const textLoadsAtStart = this.#textLoadCount;
 		await this.initialize();
 		const normalizedQuery = normalizePlainText(query, this.#preserveEnie);
-		const parsed = parseSearchQuery(query, this.#preserveEnie);
+		const parsed = options.structuredClauses?.length
+			? parseStructuredSearchQuery(options.structuredClauses, this.#preserveEnie)
+			: parseSearchQuery(query, this.#preserveEnie);
 
 		if (parsed.groups.length === 0) {
 			return {
@@ -361,6 +514,8 @@ export class TexoroSearchEngine {
 				textsWithOccurrences: 0,
 				totalOccurrences: 0,
 				verifiedCount: 0,
+				positionsShardLoads: this.#positionsShardLoadCount - positionsShardLoadsAtStart,
+				textLoads: this.#textLoadCount - textLoadsAtStart,
 				elapsedMs: Math.round(performance.now() - startedAt)
 			};
 		}
@@ -415,10 +570,26 @@ export class TexoroSearchEngine {
 
 				let groupOk = true;
 				let groupSnippet: string | undefined;
+				const consumedByProximity = new Set<string>();
+				for (const clause of group.clauses) {
+					if (clause.clause.kind !== 'proximity') continue;
+					consumedByProximity.add(this.#formatClauseSource(clause.clause.left));
+				}
 
 				for (const clause of group.clauses) {
+					const clauseSource = this.#formatClauseSource(clause.clause);
 					if (clause.clause.kind === 'term') {
-						addMatch('term', clause.clause.pattern, clause.scores.get(docId) ?? 0);
+						if (!consumedByProximity.has(clauseSource)) {
+							addMatch('term', clause.clause.pattern, clause.scores.get(docId) ?? 0);
+						}
+						continue;
+					}
+					if (clause.clause.kind === 'proximity') {
+						addMatch(
+							'proximity',
+							this.#formatProximitySource(clause.clause.left, clause.clause.right, clause.clause.distance),
+							clause.scores.get(docId) ?? 0
+						);
 						continue;
 					}
 
@@ -437,7 +608,9 @@ export class TexoroSearchEngine {
 						groupOk = false;
 						break;
 					}
-					addMatch('phrase', `"${clause.clause.literal}"`, phraseMatch.count);
+					if (!consumedByProximity.has(clauseSource)) {
+						addMatch('phrase', `"${clause.clause.literal}"`, phraseMatch.count);
+					}
 					if (!groupSnippet && phraseMatch.snippet) {
 						groupSnippet = phraseMatch.snippet;
 					}
@@ -475,7 +648,9 @@ export class TexoroSearchEngine {
 
 		const limit = options.limit ?? DEFAULT_LIMIT;
 		const results = rawResults.slice(0, limit);
-		await this.#fillMissingSnippets(results, parsed, options.snippetRadius);
+		if (options.includeSnippets === true) {
+			await this.#fillMissingSnippets(results, parsed, options.snippetRadius);
+		}
 
 		return {
 			query,
@@ -487,6 +662,8 @@ export class TexoroSearchEngine {
 			textsWithOccurrences,
 			totalOccurrences,
 			verifiedCount,
+			positionsShardLoads: this.#positionsShardLoadCount - positionsShardLoadsAtStart,
+			textLoads: this.#textLoadCount - textLoadsAtStart,
 			elapsedMs: Math.round(performance.now() - startedAt)
 		};
 	}
@@ -534,16 +711,79 @@ export class TexoroSearchEngine {
 		const items: SearchMatchOccurrence[] = [];
 		let count = 0;
 
-		if (match.kind === 'term') {
+		if (match.kind === 'proximity') {
+			const proximity = this.#parseProximitySource(match.source);
+			if (!proximity) {
+				return {
+					workId: result.workId,
+					docId: result.docId,
+					match,
+					count: 0,
+					items: [],
+					truncated: false
+				};
+			}
+			const leftSpans = findPreparedSpans(prepared.tokens, proximity.left);
+			const rightSpans = findPreparedSpans(prepared.tokens, proximity.right);
+			const rightByStart = new Map<number, PreparedSpan[]>();
+			for (const span of rightSpans) {
+				const byStart = rightByStart.get(span.tokenStart) ?? [];
+				byStart.push(span);
+				rightByStart.set(span.tokenStart, byStart);
+			}
+
+			for (const leftSpan of leftSpans) {
+				const candidates = rightByStart.get(leftSpan.tokenEnd + proximity.distance + 1) ?? [];
+				for (const rightSpan of candidates) {
+					if (rightSpan.tokenStart <= leftSpan.tokenEnd && leftSpan.tokenStart <= rightSpan.tokenEnd) {
+						continue;
+					}
+					count += 1;
+					if (items.length < maxItems) {
+						const first = leftSpan.start < rightSpan.start ? leftSpan : rightSpan;
+						const last = leftSpan.start < rightSpan.start ? rightSpan : leftSpan;
+						const snippet = buildSnippetWithHighlights(
+							prepared.raw,
+							first.start,
+							last.end,
+							[
+								{ start: leftSpan.start, end: leftSpan.end, tokenIndex: leftSpan.tokenStart + 1 },
+								{ start: rightSpan.start, end: rightSpan.end, tokenIndex: rightSpan.tokenStart + 1 }
+							],
+							snippetRadius
+						);
+						items.push({
+							start: first.start,
+							end: last.end,
+							tokenIndex: Math.min(leftSpan.tokenStart, rightSpan.tokenStart) + 1,
+							tokenEndIndex: Math.max(leftSpan.tokenEnd, rightSpan.tokenEnd) + 1,
+							tokenCount: prepared.tokens.length,
+							...snippet
+						});
+					}
+				}
+			}
+		} else if (match.kind === 'term') {
 			const regexes = patterns.map((pattern) => wildcardToRegex(pattern));
-			for (const token of prepared.tokens) {
+			for (let index = 0; index < prepared.tokens.length; index += 1) {
+				const token = prepared.tokens[index];
 				if (!regexes.some((regex) => regex.test(token.norm))) continue;
 				count += 1;
 				if (items.length < maxItems) {
+					const snippet = buildSnippetWithHighlights(
+						prepared.raw,
+						token.start,
+						token.end,
+						[{ start: token.start, end: token.end, tokenIndex: index + 1 }],
+						snippetRadius
+					);
 					items.push({
 						start: token.start,
 						end: token.end,
-						snippet: buildSnippet(prepared.raw, token.start, token.end, snippetRadius)
+						tokenIndex: index + 1,
+						tokenEndIndex: index + 1,
+						tokenCount: prepared.tokens.length,
+						...snippet
 					});
 				}
 			}
@@ -565,10 +805,20 @@ export class TexoroSearchEngine {
 				if (items.length < maxItems) {
 					const first = prepared.tokens[start];
 					const last = prepared.tokens[start + regexes.length - 1];
+					const snippet = buildSnippetWithHighlights(
+						prepared.raw,
+						first.start,
+						last.end,
+						[{ start: first.start, end: last.end, tokenIndex: start + 1 }],
+						snippetRadius
+					);
 					items.push({
 						start: first.start,
 						end: last.end,
-						snippet: buildSnippet(prepared.raw, first.start, last.end, snippetRadius)
+						tokenIndex: start + 1,
+						tokenEndIndex: start + regexes.length,
+						tokenCount,
+						...snippet
 					});
 				}
 			}
@@ -587,7 +837,7 @@ export class TexoroSearchEngine {
 	async #fillMissingSnippets(results: SearchResult[], parsed: ParsedQuery, snippetRadius?: number): Promise<void> {
 		const fallbackPatterns = parsed.groups
 			.flatMap((group) => group)
-			.flatMap((clause) => (clause.kind === 'term' ? [clause.pattern] : clause.patterns))
+			.flatMap((clause) => this.#patternsForClause(clause))
 			.slice(0, 6);
 
 		if (fallbackPatterns.length === 0) return;
@@ -616,6 +866,13 @@ export class TexoroSearchEngine {
 	}
 
 	#extractPatternsFromMatch(match: SearchResultMatch): string[] {
+		if (match.kind === 'proximity') {
+			const parts = match.source.split(/\s+~\d+\s+/);
+			return parts
+				.flatMap((part) => part.trim().split(/\s+/))
+				.map((part) => normalizePattern(part, this.#preserveEnie))
+				.filter((part) => part.length > 0);
+		}
 		if (match.kind === 'term') {
 			const normalized = normalizePattern(match.source, this.#preserveEnie);
 			return normalized ? [normalized] : [];
@@ -629,6 +886,83 @@ export class TexoroSearchEngine {
 			.map((part) => normalizePattern(part, this.#preserveEnie))
 			.filter((part) => part.length > 0);
 		return patterns;
+	}
+
+	#patternsForClause(clause: ParsedQueryClause): string[] {
+		if (clause.kind === 'term') return [clause.pattern];
+		if (clause.kind === 'phrase') return clause.patterns;
+		return [...this.#patternsForClause(clause.left), ...this.#patternsForClause(clause.right)];
+	}
+
+	#parseProximitySource(source: string): { left: string[]; right: string[]; distance: number } | null {
+		const match = source.match(/^(.*?)\s+~(\d+)\s+(.*?)$/);
+		if (!match) return null;
+		const left = match[1]
+			.replace(/^"|"$/g, '')
+			.split(/\s+/)
+			.map((part) => normalizePattern(part, this.#preserveEnie))
+			.filter(Boolean);
+		const right = match[3]
+			.replace(/^"|"$/g, '')
+			.split(/\s+/)
+			.map((part) => normalizePattern(part, this.#preserveEnie))
+			.filter(Boolean);
+		const parsedDistance = Number.parseInt(match[2], 10);
+		const distance = Math.min(100, Math.max(0, Number.isFinite(parsedDistance) ? parsedDistance : 0));
+		return left.length && right.length ? { left, right, distance } : null;
+	}
+
+	async getPreviewsForResults(
+		items: PreviewRequestItem[],
+		options: PreviewOptions = {}
+	): Promise<{
+		items: Array<{
+			docId: number;
+			workId: string;
+			snippets: Array<SearchMatchOccurrence & { matchKey: string }>;
+		}>;
+	}> {
+		await this.initialize();
+		const maxItemsPerDoc = Math.max(1, Math.min(options.maxItemsPerDoc ?? 3, 10));
+		const snippetRadius = options.snippetRadius ?? DEFAULT_SNIPPET_RADIUS;
+		const output: Array<{
+			docId: number;
+			workId: string;
+			snippets: Array<SearchMatchOccurrence & { matchKey: string }>;
+		}> = [];
+
+		for (const item of items) {
+			const snippets: Array<SearchMatchOccurrence & { matchKey: string }> = [];
+			for (const match of item.matches) {
+				if (snippets.length >= maxItemsPerDoc) break;
+				const remainingItems = Math.max(1, maxItemsPerDoc - snippets.length);
+				const details = await this.getOccurrencesForMatch(
+					{ docId: item.docId, workId: item.workId },
+					match,
+					{ maxItems: match.kind === 'proximity' ? 1 : remainingItems, snippetRadius }
+				);
+				for (const occurrence of details.items) {
+					snippets.push({
+						...occurrence,
+						matchKey: `${match.kind}:${match.source}`
+					});
+					if (match.kind === 'proximity' || snippets.length >= maxItemsPerDoc) break;
+				}
+			}
+			output.push({ docId: item.docId, workId: item.workId, snippets });
+		}
+
+		return { items: output };
+	}
+
+	#formatClauseSource(clause: ParsedQueryClause): string {
+		if (clause.kind === 'term') return clause.pattern;
+		if (clause.kind === 'phrase') return `"${clause.literal}"`;
+		return this.#formatProximitySource(clause.left, clause.right, clause.distance);
+	}
+
+	#formatProximitySource(left: ParsedQueryClause, right: ParsedQueryClause, distance: number): string {
+		return `${this.#formatClauseSource(left)} ~${distance} ${this.#formatClauseSource(right)}`;
 	}
 
 	async #verifyPhraseClause(
@@ -690,11 +1024,21 @@ export class TexoroSearchEngine {
 			}
 
 			if (!rawText) {
-				const response = await fetch(joinUrl(this.#textsBaseUrl, encodeURIComponent(textKey)));
-				if (!response.ok) {
-					throw new Error(`Unable to fetch text ${textKey}: ${response.status}`);
+				if (this.#textLoader) {
+					rawText = await this.#textLoader(textKey);
+					if (!rawText) {
+						throw new Error(`Unable to fetch text ${textKey}: 404`);
+					}
+				} else {
+					if (!this.#textsBaseUrl) {
+						throw new Error('No hay cargador de TXT configurado para TEXORO.');
+					}
+					const response = await fetch(joinUrl(this.#textsBaseUrl, encodeURIComponent(textKey)));
+					if (!response.ok) {
+						throw new Error(`Unable to fetch text ${textKey}: ${response.status}`);
+					}
+					rawText = await response.text();
 				}
-				rawText = await response.text();
 				if (this.#cacheInIndexedDb) {
 					await this.#cache.setText(cacheKey, manifest.indexVersion, rawText);
 				}
@@ -704,7 +1048,9 @@ export class TexoroSearchEngine {
 				raw: rawText,
 				tokens: tokenizeWithOffsets(rawText, this.#preserveEnie)
 			};
+			this.#textLoadCount += 1;
 			this.#preparedTexts.set(docId, prepared);
+			this.#trimPreparedTextCache();
 			return prepared;
 		})();
 
@@ -754,7 +1100,18 @@ export class TexoroSearchEngine {
 		if (clause.kind === 'term') {
 			return this.#evaluateTermClause(clause.pattern, clause);
 		}
+		if (clause.kind === 'proximity') {
+			return this.#evaluateProximityClause(clause);
+		}
 		return this.#evaluatePhraseClause(clause.patterns, clause);
+	}
+
+	#trimPreparedTextCache(): void {
+		while (this.#preparedTexts.size > this.#preparedTextCacheMaxDocs) {
+			const firstKey = this.#preparedTexts.keys().next().value as number | undefined;
+			if (firstKey === undefined) return;
+			this.#preparedTexts.delete(firstKey);
+		}
 	}
 
 	async #evaluateTermClause(pattern: string, clause: ParsedQueryClause): Promise<ClauseEvaluation> {
@@ -815,6 +1172,109 @@ export class TexoroSearchEngine {
 		}
 
 		return { clause, docs, scores };
+	}
+
+	async #evaluateProximityClause(clause: Extract<ParsedQueryClause, { kind: 'proximity' }>): Promise<ClauseEvaluation> {
+		const [leftPositions, rightPositions] = await Promise.all([
+			this.#positionsForSimpleClause(clause.left),
+			this.#positionsForSimpleClause(clause.right)
+		]);
+		const docs = new Set<number>();
+		const scores = new Map<number, number>();
+
+		for (const [docId, leftOccurrences] of leftPositions) {
+			const rightOccurrences = rightPositions.get(docId);
+			if (!rightOccurrences || leftOccurrences.length === 0 || rightOccurrences.length === 0) continue;
+			let count = 0;
+			const rightByStart = new Map<number, ClausePositionOccurrence[]>();
+			for (const right of rightOccurrences) {
+				const byStart = rightByStart.get(right.tokenStart) ?? [];
+				byStart.push(right);
+				rightByStart.set(right.tokenStart, byStart);
+			}
+
+			for (const left of leftOccurrences) {
+				const candidates = rightByStart.get(left.tokenEnd + clause.distance + 1) ?? [];
+				for (const right of candidates) {
+					if (right.tokenStart <= left.tokenEnd && left.tokenStart <= right.tokenEnd) continue;
+					count += 1;
+				}
+			}
+			if (count <= 0) continue;
+			docs.add(docId);
+			scores.set(docId, count);
+		}
+
+		return { clause, docs, scores };
+	}
+
+	async #positionsForSimpleClause(
+		clause: ParsedQueryClause
+	): Promise<Map<number, ClausePositionOccurrence[]>> {
+		if (clause.kind === 'proximity') {
+			return this.#positionsForSimpleClause(clause.right);
+		}
+		if (clause.kind === 'term') {
+			const termIds = await this.#resolvePatternTermIds(clause.pattern);
+			const byDoc = new Map<number, ClausePositionOccurrence[]>();
+			for (const termId of termIds) {
+				const docs = await this.#getPositionsForTerm(termId);
+				for (const [docId, , occurrences] of docs) {
+					const current = byDoc.get(docId) ?? [];
+					current.push(
+						...occurrences.map((occurrence) => ({
+							tokenStart: occurrence[0],
+							tokenEnd: occurrence[0],
+							byteStart: occurrence[1],
+							byteEnd: occurrence[2]
+						}))
+					);
+					byDoc.set(docId, current);
+				}
+			}
+			for (const occurrences of byDoc.values()) {
+				occurrences.sort((a, b) => a.tokenStart - b.tokenStart || a.tokenEnd - b.tokenEnd);
+			}
+			return byDoc;
+		}
+
+		const patternDocs: Array<Map<number, ClausePositionOccurrence[]>> = [];
+		for (const pattern of clause.patterns) {
+			patternDocs.push(await this.#positionsForSimpleClause({ kind: 'term', pattern }));
+		}
+		if (patternDocs.length === 0) return new Map();
+
+		const output = new Map<number, ClausePositionOccurrence[]>();
+		for (const [docId, starts] of patternDocs[0]) {
+			const occurrenceSets = patternDocs.map((byDoc) => byDoc.get(docId));
+			if (occurrenceSets.some((items) => !items || items.length === 0)) continue;
+			const tokenLookup = occurrenceSets.map(
+				(items) => new Map((items ?? []).map((occurrence) => [occurrence.tokenStart, occurrence]))
+			);
+			const matches: ClausePositionOccurrence[] = [];
+			for (const start of starts) {
+				let last = start;
+				let matched = true;
+				for (let offset = 1; offset < tokenLookup.length; offset += 1) {
+					const next = tokenLookup[offset].get(start.tokenStart + offset);
+					if (!next) {
+						matched = false;
+						break;
+					}
+					last = next;
+				}
+				if (matched) {
+					matches.push({
+						tokenStart: start.tokenStart,
+						tokenEnd: last.tokenEnd,
+						byteStart: start.byteStart,
+						byteEnd: last.byteEnd
+					});
+				}
+			}
+			if (matches.length > 0) output.set(docId, matches);
+		}
+		return output;
 	}
 
 	async #resolvePatternTermIds(pattern: string): Promise<number[]> {
@@ -977,7 +1437,8 @@ export class TexoroSearchEngine {
 			df: row[2],
 			cf: row[3],
 			len: row[4],
-			postingsShard: row[5]
+			postingsShard: row[5],
+			positionsShard: row[6]
 		};
 		this.#termMetaById.set(termId, meta);
 		return meta;
@@ -987,6 +1448,13 @@ export class TexoroSearchEngine {
 		const term = await this.#getTermMeta(termId);
 		if (!term) return [];
 		const shardMap = await this.#loadPostingsShard(term.postingsShard);
+		return shardMap.get(termId) ?? [];
+	}
+
+	async #getPositionsForTerm(termId: number): Promise<TexoroPositionsDoc[]> {
+		const term = await this.#getTermMeta(termId);
+		if (!term?.positionsShard) return [];
+		const shardMap = await this.#loadPositionsShard(term.positionsShard);
 		return shardMap.get(termId) ?? [];
 	}
 
@@ -1054,6 +1522,30 @@ export class TexoroSearchEngine {
 			return await loadPromise;
 		} finally {
 			this.#postingsShardLoads.delete(shardId);
+		}
+	}
+
+	async #loadPositionsShard(shardId: string): Promise<Map<number, TexoroPositionsDoc[]>> {
+		const cached = this.#positionsShards.get(shardId);
+		if (cached) return cached;
+		const pending = this.#positionsShardLoads.get(shardId);
+		if (pending) return pending;
+		const shardMeta = this.#manifest?.shards.positions?.find((item) => item.id === shardId);
+		if (!shardMeta) {
+			throw new Error(`Missing positions shard metadata for ${shardId}`);
+		}
+		const loadPromise = (async () => {
+			const shard = await this.#fetchJson<TexoroPositionsShard>(shardMeta.file, this.#manifest?.indexVersion ?? null);
+			const map = new Map<number, TexoroPositionsDoc[]>(shard.positions);
+			this.#positionsShards.set(shardId, map);
+			this.#positionsShardLoadCount += 1;
+			return map;
+		})();
+		this.#positionsShardLoads.set(shardId, loadPromise);
+		try {
+			return await loadPromise;
+		} finally {
+			this.#positionsShardLoads.delete(shardId);
 		}
 	}
 

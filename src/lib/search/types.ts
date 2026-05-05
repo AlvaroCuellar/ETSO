@@ -33,7 +33,13 @@ export interface TexoroIndexManifest {
 		chars: number;
 		vocabSize: number;
 		totalPostingsPairs: number;
+		totalPositionEntries?: number;
 		totalKgrams: number;
+	};
+	features?: {
+		positions?: boolean;
+		proximity?: boolean;
+		byteOffsets?: boolean;
 	};
 	files: {
 		manifest: string;
@@ -44,11 +50,13 @@ export interface TexoroIndexManifest {
 	};
 	directories: {
 		postings: string;
+		positions?: string;
 		vocabShards: string;
 		kgramShards: string;
 	};
 	shards: {
 		postings: TexoroManifestShard[];
+		positions?: TexoroManifestShard[];
 		vocab: TexoroManifestShard[];
 		kgrams: TexoroManifestShard[];
 	};
@@ -88,7 +96,7 @@ export interface TexoroVocabRoot {
 	};
 }
 
-export type TexoroVocabShardTerm = [string, number, number, number, number, string];
+export type TexoroVocabShardTerm = [string, number, number, number, number, string, string?];
 
 export interface TexoroVocabShard {
 	schemaVersion: string;
@@ -120,6 +128,25 @@ export interface TexoroPostingsShard {
 		estimatedBytes: number;
 	};
 	postings: Array<[number, Array<[number, number]>]>;
+}
+
+export type TexoroTermOccurrence = [tokenIndex: number, byteStart: number, byteEnd: number];
+export type TexoroPositionsDoc = [docId: number, tf: number, occurrences: TexoroTermOccurrence[]];
+
+export interface TexoroPositionsShard {
+	schemaVersion: string;
+	indexVersion: string;
+	shard: {
+		id: string;
+		file: string;
+		termMin: string;
+		termMax: string;
+		minTermId: number;
+		maxTermId: number;
+		termsCount: number;
+		estimatedBytes: number;
+	};
+	positions: Array<[number, TexoroPositionsDoc[]]>;
 }
 
 export interface TexoroKgramsRoot {
@@ -187,7 +214,15 @@ export interface ParsedQueryPhrase {
 	literal: string;
 }
 
-export type ParsedQueryClause = ParsedQueryTerm | ParsedQueryPhrase;
+export interface ParsedQueryProximity {
+	kind: 'proximity';
+	left: ParsedQueryTerm | ParsedQueryPhrase;
+	right: ParsedQueryTerm | ParsedQueryPhrase;
+	distance: number;
+	direction: 'ordered';
+}
+
+export type ParsedQueryClause = ParsedQueryTerm | ParsedQueryPhrase | ParsedQueryProximity;
 
 export interface ParsedQuery {
 	groups: ParsedQueryClause[][];
@@ -195,9 +230,10 @@ export interface ParsedQuery {
 }
 
 export interface SearchResultMatch {
-	kind: 'term' | 'phrase';
+	kind: 'term' | 'phrase' | 'proximity';
 	source: string;
 	occurrences: number;
+	tokenIndex?: number;
 }
 
 export interface SearchResult {
@@ -213,7 +249,15 @@ export interface SearchResult {
 export interface SearchMatchOccurrence {
 	start: number;
 	end: number;
+	tokenIndex: number;
+	tokenEndIndex?: number;
+	tokenCount: number;
 	snippet: string;
+	highlights?: Array<{
+		start: number;
+		end: number;
+		tokenIndex: number;
+	}>;
 }
 
 export interface SearchMatchOccurrences {
@@ -235,6 +279,8 @@ export interface SearchExecution {
 	textsWithOccurrences: number;
 	totalOccurrences: number;
 	verifiedCount: number;
+	positionsShardLoads?: number;
+	textLoads?: number;
 	elapsedMs: number;
 }
 
@@ -242,6 +288,12 @@ export interface SearchOptions {
 	limit?: number;
 	maxPhraseVerificationDocs?: number;
 	snippetRadius?: number;
+	includeSnippets?: boolean;
+	structuredClauses?: Array<
+		| { kind: 'term'; value: string; operator?: 'and' | 'or' | null }
+		| { kind: 'phrase'; value: string; operator?: 'and' | 'or' | null }
+		| { kind: 'proximity'; value: string; distance: number; operator?: 'near' }
+	>;
 }
 
 

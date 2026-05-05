@@ -8,7 +8,10 @@ export const load: PageServerLoad = async ({ params }) => {
 	if (!work) throw error(404, 'Obra no encontrada');
 
 	return {
-		work,
+		work: {
+			...work,
+			longSummary: work.shortSummary ? 'r2' : undefined
+		},
 		informe: await getInformeByWorkId(work.id)
 	};
 };

@@ -12,6 +12,7 @@ const DEFAULTS = {
 	kgram: 3,
 	vocabShardTargetBytes: 256_000,
 	postingsShardTargetBytes: 512_000,
+	positionsShardTargetBytes: 1_000_000,
 	kgramShardTargetBytes: 256_000,
 	preserveEnie: true,
 	pretty: true
@@ -20,7 +21,7 @@ const DEFAULTS = {
 const DEFAULT_SCHEMA_VERSION = 'etso-search-index-v1';
 
 const usage = () => {
-	console.log(`Usage: node scripts/build-search-index.mjs [options]\n\nOptions:\n  --input <dir>                         Input TXT directory (default: ${DEFAULTS.input})\n  --output <dir>                        Output index directory (default: ${DEFAULTS.output})\n  --encoding <name>                     Text encoding for TXT files (default: ${DEFAULTS.encoding})\n  --kgram <n>                           K value for wildcard index (default: ${DEFAULTS.kgram})\n  --vocab-shard-target-bytes <n>        Approximate target size per vocab shard\n  --postings-shard-target-bytes <n>     Approximate target size per postings shard\n  --kgram-shard-target-bytes <n>        Approximate target size per kgram shard\n  --preserve-enie                       Preserve ñ when removing diacritics (default)\n  --no-preserve-enie                    Fold ñ into n\n  --pretty                              Pretty JSON output (default)\n  --compact                             Compact JSON output\n  --help                                Show this help\n`);
+	console.log(`Usage: node scripts/build-search-index.mjs [options]\n\nOptions:\n  --input <dir>                         Input TXT directory (default: ${DEFAULTS.input})\n  --output <dir>                        Output index directory (default: ${DEFAULTS.output})\n  --encoding <name>                     Text encoding for TXT files (default: ${DEFAULTS.encoding})\n  --kgram <n>                           K value for wildcard index (default: ${DEFAULTS.kgram})\n  --vocab-shard-target-bytes <n>        Approximate target size per vocab shard\n  --postings-shard-target-bytes <n>     Approximate target size per postings shard\n  --positions-shard-target-bytes <n>    Approximate target size per positions shard\n  --kgram-shard-target-bytes <n>        Approximate target size per kgram shard\n  --preserve-enie                       Preserve ñ when removing diacritics (default)\n  --no-preserve-enie                    Fold ñ into n\n  --pretty                              Pretty JSON output (default)\n  --compact                             Compact JSON output\n  --help                                Show this help\n`);
 };
 
 const parsePositiveInt = (raw, name) => {
@@ -92,6 +93,11 @@ const parseArgs = (argv) => {
 			i += 1;
 			continue;
 		}
+		if (arg === '--positions-shard-target-bytes') {
+			options.positionsShardTargetBytes = parsePositiveInt(next, '--positions-shard-target-bytes');
+			i += 1;
+			continue;
+		}
 		if (arg === '--kgram-shard-target-bytes') {
 			options.kgramShardTargetBytes = parsePositiveInt(next, '--kgram-shard-target-bytes');
 			i += 1;
@@ -129,6 +135,46 @@ const normalizePlainText = (input, preserveEnie) => {
 };
 
 const tokenize = (normalizedText) => normalizedText.match(TOKEN_REGEX) ?? [];
+
+const buildByteOffsets = (text) => {
+	const offsets = new Array(text.length + 1);
+	let bytes = 0;
+	for (let index = 0; index < text.length;) {
+		const codePoint = text.codePointAt(index);
+		const char = String.fromCodePoint(codePoint);
+		const width = char.length;
+		for (let offset = 0; offset < width; offset += 1) {
+			offsets[index + offset] = bytes;
+		}
+		bytes += Buffer.byteLength(char, 'utf8');
+		index += width;
+	}
+	offsets[text.length] = bytes;
+	return offsets;
+};
+
+const tokenizeWithOffsets = (rawText, preserveEnie) => {
+	const byteOffsets = buildByteOffsets(rawText);
+	const tokens = [];
+	let tokenIndex = 1;
+	for (const match of rawText.matchAll(TOKEN_REGEX)) {
+		const raw = match[0];
+		const start = match.index ?? 0;
+		const end = start + raw.length;
+		const norm = normalizePlainText(raw, preserveEnie);
+		if (!norm) continue;
+		tokens.push({
+			norm,
+			tokenIndex,
+			start,
+			end,
+			byteStart: byteOffsets[start],
+			byteEnd: byteOffsets[end]
+		});
+		tokenIndex += 1;
+	}
+	return tokens;
+};
 
 const estimateBytes = (value) => Buffer.byteLength(JSON.stringify(value), 'utf8');
 
@@ -190,23 +236,24 @@ const buildIndex = async (options) => {
 		const workId = basename(fileName, '.txt');
 		const filePath = join(options.input, fileName);
 		const rawText = await readFile(filePath, options.encoding);
-		const normalized = normalizePlainText(rawText, options.preserveEnie);
-		const tokens = tokenize(normalized);
+		const tokens = tokenizeWithOffsets(rawText, options.preserveEnie);
 		const localTf = new Map();
 
 		for (const token of tokens) {
-			localTf.set(token, (localTf.get(token) ?? 0) + 1);
+			if (!localTf.has(token.norm)) localTf.set(token.norm, []);
+			localTf.get(token.norm).push([token.tokenIndex, token.byteStart, token.byteEnd]);
 		}
 
-		for (const [term, tf] of localTf) {
+		for (const [term, occurrences] of localTf) {
 			let current = termStats.get(term);
 			if (!current) {
-				current = { cf: 0, df: 0, docTf: new Map() };
+				current = { cf: 0, df: 0, docTf: new Map(), docPositions: new Map() };
 				termStats.set(term, current);
 			}
-			current.cf += tf;
+			current.cf += occurrences.length;
 			current.df += 1;
-			current.docTf.set(docId, tf);
+			current.docTf.set(docId, occurrences.length);
+			current.docPositions.set(docId, occurrences);
 		}
 
 		works.push([docId, workId, fileName, `${workId}.txt`, tokens.length, rawText.length]);
@@ -219,13 +266,17 @@ const buildIndex = async (options) => {
 		const postings = Array.from(stats.docTf.entries())
 			.map(([docId, tf]) => [docId, tf])
 			.sort((a, b) => a[0] - b[0]);
+		const positions = Array.from(stats.docPositions.entries())
+			.map(([docId, occurrences]) => [docId, occurrences.length, occurrences])
+			.sort((a, b) => a[0] - b[0]);
 		return {
 			termId,
 			term,
 			df: stats.df,
 			cf: stats.cf,
 			len: term.length,
-			postings
+			postings,
+			positions
 		};
 	});
 
@@ -238,8 +289,11 @@ const buildIndex = async (options) => {
 	);
 
 	const postingsDir = join(options.output, 'postings');
+	const positionsDir = join(options.output, 'positions');
 	const postingsShardMeta = [];
+	const positionsShardMeta = [];
 	const postingsShardByTermId = new Map();
+	const positionsShardByTermId = new Map();
 
 	for (let i = 0; i < postingsChunks.length; i += 1) {
 		const chunk = postingsChunks[i];
@@ -262,13 +316,41 @@ const buildIndex = async (options) => {
 		});
 	}
 
+	const positionsChunks = chunkByTargetBytes(
+		termEntries,
+		options.positionsShardTargetBytes,
+		(entry) => estimateBytes([entry.termId, entry.positions]) + 1
+	);
+
+	for (let i = 0; i < positionsChunks.length; i += 1) {
+		const chunk = positionsChunks[i];
+		const shardId = toShardId('pos', i);
+		const fileName = `${shardId}.json`;
+		const first = chunk.items[0];
+		const last = chunk.items[chunk.items.length - 1];
+		for (const item of chunk.items) {
+			positionsShardByTermId.set(item.termId, shardId);
+		}
+		positionsShardMeta.push({
+			id: shardId,
+			file: `positions/${fileName}`,
+			termMin: first.term,
+			termMax: last.term,
+			minTermId: first.termId,
+			maxTermId: last.termId,
+			termsCount: chunk.items.length,
+			estimatedBytes: chunk.estimatedBytes
+		});
+	}
+
 	const vocabRows = termEntries.map((entry) => [
 		entry.term,
 		entry.termId,
 		entry.df,
 		entry.cf,
 		entry.len,
-		postingsShardByTermId.get(entry.termId)
+		postingsShardByTermId.get(entry.termId),
+		positionsShardByTermId.get(entry.termId)
 	]);
 
 	const vocabChunks = chunkByTargetBytes(
@@ -354,6 +436,7 @@ const buildIndex = async (options) => {
 	await rm(options.output, { recursive: true, force: true });
 	await ensureDir(options.output);
 	await ensureDir(postingsDir);
+	await ensureDir(positionsDir);
 	await ensureDir(vocabDir);
 	await ensureDir(join(options.output, 'kgram-shards'));
 
@@ -367,6 +450,21 @@ const buildIndex = async (options) => {
 				indexVersion,
 				shard,
 				postings: chunk.items.map((entry) => [entry.termId, entry.postings])
+			},
+			options.pretty
+		);
+	}
+
+	for (let i = 0; i < positionsChunks.length; i += 1) {
+		const chunk = positionsChunks[i];
+		const shard = positionsShardMeta[i];
+		await writeJson(
+			join(options.output, shard.file),
+			{
+				schemaVersion: 'etso-search-positions-v1',
+				indexVersion,
+				shard,
+				positions: chunk.items.map((entry) => [entry.termId, entry.positions])
 			},
 			options.pretty
 		);
@@ -479,6 +577,7 @@ const buildIndex = async (options) => {
 					kgram: options.kgram,
 					vocabShardTargetBytes: options.vocabShardTargetBytes,
 					postingsShardTargetBytes: options.postingsShardTargetBytes,
+					positionsShardTargetBytes: options.positionsShardTargetBytes,
 					kgramShardTargetBytes: options.kgramShardTargetBytes,
 					preserveEnie: options.preserveEnie,
 					pretty: options.pretty
@@ -499,7 +598,13 @@ const buildIndex = async (options) => {
 				chars: totalChars,
 				vocabSize: termEntries.length,
 				totalPostingsPairs,
+				totalPositionEntries: totalTokens,
 				totalKgrams: gramRows.length
+			},
+			features: {
+				positions: true,
+				proximity: true,
+				byteOffsets: true
 			},
 			files: {
 				manifest: 'manifest.json',
@@ -510,11 +615,13 @@ const buildIndex = async (options) => {
 			},
 			directories: {
 				postings: 'postings',
+				positions: 'positions',
 				vocabShards: 'vocab-shards',
 				kgramShards: 'kgram-shards'
 			},
 			shards: {
 				postings: postingsShardMeta,
+				positions: positionsShardMeta,
 				vocab: vocabShardMeta,
 				kgrams: kgramShardMeta
 			}
@@ -528,6 +635,7 @@ const buildIndex = async (options) => {
 		vocab: termEntries.length,
 		kgrams: gramRows.length,
 		postingsShards: postingsShardMeta.length,
+		positionsShards: positionsShardMeta.length,
 		vocabShards: vocabShardMeta.length,
 		kgramShards: kgramShardMeta.length,
 		output: options.output
@@ -540,7 +648,7 @@ const main = async () => {
 		const result = await buildIndex(options);
 		console.log(`[build-search-index] Done. works=${result.works} tokens=${result.tokens} vocab=${result.vocab}`);
 		console.log(
-			`[build-search-index] shards: postings=${result.postingsShards} vocab=${result.vocabShards} kgrams=${result.kgramShards}`
+			`[build-search-index] shards: postings=${result.postingsShards} positions=${result.positionsShards} vocab=${result.vocabShards} kgrams=${result.kgramShards}`
 		);
 		console.log(`[build-search-index] Output: ${result.output}`);
 	} catch (error) {

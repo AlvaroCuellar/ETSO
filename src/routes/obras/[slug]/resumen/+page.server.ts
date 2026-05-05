@@ -1,15 +1,8 @@
 import { error } from '@sveltejs/kit';
-import { getWorkBySlug, getWorkSummaryDetailById } from '$lib/server/catalog-runtime';
-import type { WorkSummaryDetail } from '$lib/domain/catalog';
+import { getWorkBySlug } from '$lib/server/catalog-runtime';
+import { getSummariesBaseUrl } from '$lib/server/r2-public';
 
 import type { PageServerLoad } from './$types';
-
-const emptySummaryDetail: WorkSummaryDetail = {
-	resumenLargo: [],
-	personajes: [],
-	espacios: [],
-	tematicas: []
-};
 
 export const load: PageServerLoad = async ({ params }) => {
 	const work = await getWorkBySlug(params.slug);
@@ -17,6 +10,7 @@ export const load: PageServerLoad = async ({ params }) => {
 
 	return {
 		work,
-		summary: getWorkSummaryDetailById(work.id) ?? emptySummaryDetail
+		summaryUrl: `${getSummariesBaseUrl()}/${encodeURIComponent(work.id)}.json`,
+		summaryProxyUrl: `/api/r2-public/resumenes/${encodeURIComponent(work.id)}.json`
 	};
 };

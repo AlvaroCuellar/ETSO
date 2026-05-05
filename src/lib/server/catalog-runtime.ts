@@ -1,7 +1,7 @@
-import { basename } from 'node:path';
-
 import { createClient } from '@libsql/client';
 import { env } from '$env/dynamic/private';
+import { readPrivateTextByWorkId } from '$lib/server/r2-private';
+import { fetchPublicR2Json, getSummariesBaseUrl } from '$lib/server/r2-public';
 import {
 	UNRESOLVED_AUTHOR_ID,
 	ambitos,
@@ -262,25 +262,6 @@ interface EditorialPageRaw {
 	sections?: unknown;
 }
 
-const summaryModules = import.meta.glob('../../../data/resumenes/*.json', {
-	eager: true,
-	import: 'default'
-}) as Record<string, SummaryFile>;
-
-const textModules = import.meta.glob('../../../data/texts/*.txt', {
-	eager: true,
-	import: 'default',
-	query: '?raw'
-}) as Record<string, string>;
-
-const summaryFileByWorkId = new Map(
-	Object.entries(summaryModules).map(([path, summary]) => [basename(path, '.json'), summary] as const)
-);
-
-const textByWorkId = new Map(
-	Object.entries(textModules).map(([path, text]) => [basename(path, '.txt'), text] as const)
-);
-
 let cachedSnapshot: Snapshot | null = null;
 let cachedSnapshotPromise: Promise<Snapshot> | null = null;
 let cachedAt = 0;
@@ -306,17 +287,21 @@ const ensureDistanceRecord = (): Record<Ambito, DistanceRow[]> => ({
 const hasAnyDistanceRows = (distances: Record<Ambito, DistanceRow[]>): boolean =>
 	Object.values(distances).some((rows) => rows.length > 0);
 
-const assertTursoConfig = (): void => {
+const assertTursoConfig = (): { databaseUrl: string; authToken: string } => {
 	if (!env.TURSO_DATABASE_URL || !env.TURSO_AUTH_TOKEN) {
 		throw new Error('Faltan TURSO_DATABASE_URL o TURSO_AUTH_TOKEN para leer el catálogo desde Turso.');
 	}
+	return {
+		databaseUrl: env.TURSO_DATABASE_URL,
+		authToken: env.TURSO_AUTH_TOKEN
+	};
 };
 
 const getRows = async <T>(sql: string): Promise<T[]> => {
-	assertTursoConfig();
+	const { databaseUrl, authToken } = assertTursoConfig();
 	dbClient ??= createClient({
-		url: env.TURSO_DATABASE_URL,
-		authToken: env.TURSO_AUTH_TOKEN
+		url: databaseUrl,
+		authToken
 	});
 	const db = dbClient;
 	const result = await db.execute(sql);
@@ -355,22 +340,8 @@ const resolveWorkBaseSlug = (row: WorkRow): string => {
 	return 'obra';
 };
 
-const parseSummaryFile = (workId: string): { shortSummary?: string; longSummary?: string } => {
-	const parsed = summaryFileByWorkId.get(workId);
-	if (!parsed) return {};
-
-	const shortSummary = Array.isArray(parsed.resumen_breve)
-		? parsed.resumen_breve.map((paragraph) => paragraph.trim()).filter(Boolean).join('\n\n')
-		: undefined;
-	const longSummary = Array.isArray(parsed.resumen_largo)
-		? parsed.resumen_largo.map((paragraph) => paragraph.trim()).filter(Boolean).join('\n\n')
-		: undefined;
-
-	return {
-		shortSummary,
-		longSummary
-	};
-};
+const fetchSummaryFile = async (workId: string): Promise<SummaryFile | null> =>
+	fetchPublicR2Json<SummaryFile>(getSummariesBaseUrl(), `${workId}.json`);
 
 const createSnapshot = async (): Promise<Snapshot> => {
 	const authorRows = await getRows<AuthorRow>(
@@ -522,14 +493,13 @@ const createSnapshot = async (): Promise<Snapshot> => {
 	const bicuveNameByWorkId = new Map<string, string>();
 
 	const works: CatalogWork[] = workRows.map((row) => {
-		const summaries = parseSummaryFile(row.id);
 		const traditionalAttribution =
 			attributionByWorkType.get(`${row.id}::tradicional`) ?? makeEmptyAttributionSet();
 		const stylometryAttribution =
 			attributionByWorkType.get(`${row.id}::estilometria`) ?? makeEmptyAttributionSet();
 
 		const links: CatalogWork['textLinks'] = [];
-		if (Number(row.bicuve) === 1 && textByWorkId.has(row.id)) {
+		if (Number(row.bicuve) === 1) {
 			links.push({
 				label: 'Texto BICUVE',
 				href: `/bicuve/${row.id}`,
@@ -545,8 +515,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 			distancesByWork.set(row.id, distanceRecord);
 		}
 
-		const shortSummary =
-			row.resumen_breve?.trim() || summaries.shortSummary || 'Sin resumen breve disponible.';
+		const shortSummary = row.resumen_breve?.trim() || 'Sin resumen breve disponible.';
 
 		const baseSlug = resolveWorkBaseSlug(row);
 		const currentCount = (slugCounts.get(baseSlug) ?? 0) + 1;
@@ -565,7 +534,6 @@ const createSnapshot = async (): Promise<Snapshot> => {
 			textState: row.estado_texto?.trim() || 'Sin estado',
 			addedOn: row.adicion?.trim() || 'Sin fecha',
 			shortSummary,
-			longSummary: summaries.longSummary,
 			result1: row.resultado1?.trim() || undefined,
 			result2: row.resultado2?.trim() || undefined,
 			traditionalAttribution,
@@ -732,8 +700,10 @@ export const getAuthorMetrics = async (authorId: string): Promise<AuthorMetrics>
 	};
 };
 
-export const getWorkSummaryDetailById = (workId: string): WorkSummaryDetail | undefined => {
-	const parsed = summaryFileByWorkId.get(workId);
+export const getWorkSummaryDetailById = async (
+	workId: string
+): Promise<WorkSummaryDetail | undefined> => {
+	const parsed = await fetchSummaryFile(workId);
 	if (!parsed) return undefined;
 
 	const resumenLargo = Array.isArray(parsed.resumen_largo)
@@ -806,8 +776,9 @@ export const getBicuveById = async (bicuveId: string): Promise<CatalogBicuve | u
 	const snapshot = await getSnapshot();
 	const work = snapshot.workById.get(bicuveId);
 	if (!work) return undefined;
+	if (!work.textLinks.some((link) => link.kind === 'bicuve')) return undefined;
 
-	const text = textByWorkId.get(bicuveId);
+	const text = await readPrivateTextByWorkId(bicuveId);
 	if (!text) return undefined;
 
 	return {

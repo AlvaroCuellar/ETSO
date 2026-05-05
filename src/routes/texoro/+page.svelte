@@ -1,5 +1,6 @@
 ﻿<script lang="ts">
 	import { onMount } from 'svelte';
+	import { env as publicEnv } from '$env/dynamic/public';
 	import MatchToggle from '$lib/components/search/MatchToggle.svelte';
 	import TokenMultiSelect from '$lib/components/search/TokenMultiSelect.svelte';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
@@ -19,7 +20,7 @@
 	import Search from 'lucide-svelte/icons/search';
 	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
 
-	import { TexoroSearchEngine, buildWorkMetaMap, normalizePattern, normalizePlainText } from '$lib/search';
+	import { normalizePattern, normalizePlainText } from '$lib/search';
 
 	import type { AttributionSet } from '$lib/domain/catalog';
 	import type {
@@ -27,13 +28,13 @@
 		SearchMatchOccurrence,
 		SearchMatchOccurrences,
 		SearchResult,
-		SearchResultMatch
+		SearchResultMatch,
+		TexoroIndexManifest
 	} from '$lib/search';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 
-	const worksMetaMap = $derived.by(() => buildWorkMetaMap(data.worksMeta));
 	const numberFormatter = new Intl.NumberFormat('es-ES');
 	const decimalFormatter = new Intl.NumberFormat('es-ES', { maximumFractionDigits: 1 });
 	const highlightPalette = [
@@ -141,8 +142,9 @@
 
 	interface AdvancedQueryTerm {
 		id: number;
-		operator: 'and' | 'or';
+		operator: 'and' | 'or' | 'near';
 		value: string;
+		distance: number;
 	}
 
 	interface TokenOption {
@@ -153,7 +155,7 @@
 	interface SubmittedQueryTerm {
 		key: string;
 		label: string;
-		operator: 'and' | 'or' | null;
+		operator: 'and' | 'or' | 'near' | null;
 	}
 
 	type ChartKey = 'author' | 'genre';
@@ -172,8 +174,22 @@
 	const RESULT_PREVIEW_OCCURRENCE_LIMIT = 10;
 	const RESULT_PREVIEW_SNIPPET_RADIUS = 115;
 	const RESULT_PREVIEW_VISIBLE_RADIUS = 70;
+	const PREVIEW_INITIAL_DOC_LIMIT = 8;
+	const PREVIEW_BATCH_SIZE = 6;
+	const PREVIEW_SCROLL_THRESHOLD_PX = 900;
+	const OCCURRENCE_DETAILS_CACHE_LIMIT = 24;
 
-	let engine = $state<TexoroSearchEngine | null>(null);
+	const stripTrailingSlash = (value: string): string => value.replace(/\/+$/, '');
+	const joinUrl = (base: string, path: string): string =>
+		`${stripTrailingSlash(base)}/${path.replace(/^\/+/, '')}`;
+	const publicAssetsBaseUrl = stripTrailingSlash(
+		publicEnv.PUBLIC_R2_PUBLIC_ASSETS_BASE_URL || publicEnv.PUBLIC_R2_BASE_URL || ''
+	);
+	const texoroIndexBaseUrl = stripTrailingSlash(
+		publicEnv.PUBLIC_TEXORO_INDEX_BASE_URL ||
+			(publicAssetsBaseUrl ? joinUrl(publicAssetsBaseUrl, 'search') : '')
+	);
+
 	let isEngineReady = $state(false);
 	let mainQuery = $state('');
 	let advancedSearchOpen = $state(false);
@@ -195,86 +211,18 @@
 	let preserveEnieForHighlight = $state(true);
 	let occurrenceModal = $state<OccurrenceModalState | null>(null);
 	let occurrencePreviews = $state<Map<number, ResultOccurrencePreview>>(new Map());
+	let previewLoadLimit = $state(PREVIEW_INITIAL_DOC_LIMIT);
 	let occurrenceLoading = $state(false);
 	let occurrenceError = $state('');
+	let occurrenceDetailsCache = $state<Map<string, SearchMatchOccurrences>>(new Map());
+	let occurrenceDetailsLoads = $state<Map<string, Promise<SearchMatchOccurrences>>>(new Map());
 	let chartMode = $state<ChartMode>('bars');
 	let comparisonMetric = $state<ComparisonMetric>('frequency10k');
 	let chartCopyPending = $state<Record<ChartKey, boolean>>({ author: false, genre: false });
 	let authorChartRef = $state<TexoroLiveChart | null>(null);
 	let genreChartRef = $state<TexoroLiveChart | null>(null);
 	let infoModalOpen = $state(false);
-	let initialWarmupQueued = false;
-	let wildcardWarmupQueued = false;
-	let initialWarmupTimer: number | null = null;
-	let wildcardWarmupTimer: number | null = null;
-	let queryWarmupTimer: number | null = null;
-
-	interface NavigatorConnectionLike {
-		saveData?: boolean;
-		effectiveType?: string;
-	}
-
-	const shouldSkipBackgroundWarmup = (): boolean => {
-		if (typeof navigator === 'undefined') return true;
-		const connection = (navigator as Navigator & { connection?: NavigatorConnectionLike }).connection;
-		if (!connection) return false;
-		if (connection.saveData) return true;
-		return connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g';
-	};
-
-	const queueInitialWarmup = (searchEngine: TexoroSearchEngine): void => {
-		if (typeof window === 'undefined' || initialWarmupQueued || shouldSkipBackgroundWarmup()) return;
-		initialWarmupQueued = true;
-		initialWarmupTimer = window.setTimeout(() => {
-			initialWarmupTimer = null;
-			const textWarmupLimit = data.stats.works <= 30 ? data.stats.works : 12;
-			void Promise.all([
-				searchEngine.warmupWildcardSupport(),
-				searchEngine.warmupAllTexts({
-					limit: textWarmupLimit,
-					concurrency: 3
-				})
-			]).catch(() => {});
-		}, 220);
-	};
-
-	const queueQueryWarmup = (): void => {
-		if (typeof window === 'undefined' || shouldSkipBackgroundWarmup()) return;
-		if (!engine) return;
-
-		const trimmedQuery = mainQuery.trim();
-		if (trimmedQuery.length < 2) return;
-
-		if (queryWarmupTimer !== null) {
-			window.clearTimeout(queryWarmupTimer);
-		}
-
-		queryWarmupTimer = window.setTimeout(() => {
-			queryWarmupTimer = null;
-			const textWarmupLimit =
-				data.stats.works <= 30
-					? Math.min(data.stats.works, 12)
-					: /\s/.test(trimmedQuery)
-						? 8
-						: 6;
-
-			void engine
-				?.primeQuery(trimmedQuery, {
-					prefetchTexts: true,
-					textLimit: textWarmupLimit,
-					textConcurrency: 3
-				})
-				.catch(() => {});
-
-			if (!wildcardWarmupQueued && /[*?]/.test(trimmedQuery)) {
-				wildcardWarmupQueued = true;
-				wildcardWarmupTimer = window.setTimeout(() => {
-					wildcardWarmupTimer = null;
-					void engine?.warmupWildcardSupport().catch(() => {});
-				}, 80);
-			}
-		}, 140);
-	};
+	let indexVersion = $state('n/d');
 
 	const sumResultOccurrences = (result: SearchResult): number =>
 		result.matches.reduce((sum, match) => sum + (match.occurrences ?? 0), 0);
@@ -692,7 +640,8 @@
 	const createAdvancedTerm = (): AdvancedQueryTerm => ({
 		id: nextAdvancedTermId++,
 		operator: 'and',
-		value: ''
+		value: '',
+		distance: 5
 	});
 
 	const addAdvancedTerm = (): void => {
@@ -705,7 +654,7 @@
 		advancedTerms = advancedTerms.filter((term) => term.id !== termId);
 	};
 
-	const updateAdvancedTermOperator = (termId: number, operator: 'and' | 'or'): void => {
+	const updateAdvancedTermOperator = (termId: number, operator: 'and' | 'or' | 'near'): void => {
 		advancedTerms = advancedTerms.map((term) => (term.id === termId ? { ...term, operator } : term));
 	};
 
@@ -713,10 +662,15 @@
 		advancedTerms = advancedTerms.map((term) => (term.id === termId ? { ...term, value } : term));
 	};
 
+	const updateAdvancedTermDistance = (termId: number, distance: number): void => {
+		const clean = Math.min(100, Math.max(0, Number.isFinite(distance) ? Math.floor(distance) : 5));
+		advancedTerms = advancedTerms.map((term) => (term.id === termId ? { ...term, distance: clean } : term));
+	};
+
 	const buildTermDescriptor = (
 		value: string,
 		label: string,
-		operator: 'and' | 'or' | null
+		operator: 'and' | 'or' | 'near' | null
 	): SubmittedQueryTerm => {
 		const trimmed = value.trim().replace(/\s+/g, ' ');
 		if (/\s/.test(trimmed)) {
@@ -734,25 +688,41 @@
 		};
 	};
 
-	const buildEffectiveQuery = (): { query: string; terms: SubmittedQueryTerm[] } => {
+	const buildStructuredClause = (
+		value: string,
+		operator: 'and' | 'or' | 'near' | null,
+		distance?: number
+	) => {
+		const kind = /\s/.test(value) ? 'phrase' : 'term';
+		if (operator === 'near') {
+			return { kind: 'proximity' as const, value, distance: distance ?? 5, operator: 'near' as const };
+		}
+		return { kind, value, operator };
+	};
+
+	const buildEffectiveQuery = (): { query: string; terms: SubmittedQueryTerm[]; structuredClauses: ReturnType<typeof buildStructuredClause>[] } => {
 		const clauses: string[] = [];
 		const terms: SubmittedQueryTerm[] = [];
+		const structuredClauses: ReturnType<typeof buildStructuredClause>[] = [];
 		const normalizedMain = mainQuery.trim().replace(/\s+/g, ' ');
 		const mainClause = /\s/.test(normalizedMain) ? `"${normalizedMain}"` : normalizedMain;
 		clauses.push(mainClause);
 		terms.push(buildTermDescriptor(normalizedMain, normalizedMain, null));
+		structuredClauses.push(buildStructuredClause(normalizedMain, null));
 
 		for (const term of advancedTerms) {
 			const normalizedValue = term.value.trim().replace(/\s+/g, ' ');
 			if (!normalizedValue) continue;
 			const clause = /\s/.test(normalizedValue) ? `"${normalizedValue}"` : normalizedValue;
-			clauses.push(`${term.operator.toUpperCase()} ${clause}`);
+			clauses.push(term.operator === 'near' ? `NEAR/${term.distance} ${clause}` : `${term.operator.toUpperCase()} ${clause}`);
 			terms.push(buildTermDescriptor(normalizedValue, normalizedValue, term.operator));
+			structuredClauses.push(buildStructuredClause(normalizedValue, term.operator, term.distance));
 		}
 
 		return {
 			query: clauses.join(' '),
-			terms
+			terms,
+			structuredClauses
 		};
 	};
 
@@ -762,7 +732,7 @@
 		if (!QUERY_ALLOWED_PATTERN.test(trimmed)) {
 			return `${label}: solo se permiten palabras, espacios y los comodines * y ?.`;
 		}
-		if (/\b(?:and|or)\b/i.test(trimmed)) {
+		if (/\b(?:and|or|near)\b/i.test(trimmed)) {
 			return `${label}: no escribas AND u OR dentro del término; usa Búsqueda avanzada.`;
 		}
 		return '';
@@ -783,6 +753,10 @@
 		submittedTerms = [];
 		searchExecution = null;
 		searchError = '';
+		occurrencePreviews = new Map();
+		previewLoadLimit = PREVIEW_INITIAL_DOC_LIMIT;
+		occurrenceDetailsCache = new Map();
+		occurrenceDetailsLoads = new Map();
 	};
 
 	const drawWrappedText = (
@@ -890,7 +864,6 @@
 			const now = new Date();
 			const dateText = now.toLocaleString('es-ES');
 			const sourceUrl = typeof window !== 'undefined' ? `${window.location.origin}/texoro` : '/texoro';
-			const indexVersion = engine?.manifest?.indexVersion ?? 'n/d';
 			const citation =
 				`Cita sugerida: ETSO, TEXORO. "${exportTitle}". ` +
 				`Consulta: "${queryTermsLabel}". ` +
@@ -943,6 +916,17 @@
 
 	const extractMatchPatterns = (match: SearchResultMatch): string[] => {
 		const source = match.source.trim();
+		if (match.kind === 'proximity') {
+			const chunks = source
+				.split(/\s+~\d+\s+/)
+				.flatMap((part) => part.replace(/^"|"$/g, '').split(/\s+/))
+				.filter((chunk) => chunk.length > 0);
+			const normalized = chunks
+				.map((chunk) => normalizePattern(chunk, preserveEnieForHighlight))
+				.filter((chunk) => chunk.length > 0);
+			return Array.from(new Set(normalized));
+		}
+
 		const phraseBody =
 			match.kind === 'phrase' && source.startsWith('"') && source.endsWith('"')
 				? source.slice(1, -1)
@@ -973,7 +957,10 @@
 				patterns,
 				regexes: patterns.map((pattern) => wildcardPatternToRegex(pattern)),
 				chipStyle: palette.chip,
-				markStyle: palette.mark
+				markStyle:
+					match.kind === 'proximity'
+						? `${palette.mark}text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:2px;`
+						: palette.mark
 			};
 		});
 	};
@@ -1010,53 +997,119 @@
 		occurrencePreviews = next;
 	};
 
-	const loadResultOccurrencePreview = async (result: SearchResult): Promise<void> => {
-		if (!engine || !searchExecution) return;
-		const searchEngine = engine;
-		const queryAtStart = searchExecution.query;
-		const assignments = buildMatchAssignments(result.matches);
-		if (assignments.length === 0) {
-			setOccurrencePreview(result.docId, { loading: false, items: [], error: '' });
-			return;
+	async function postJson<T>(url: string, body: unknown): Promise<T> {
+		const response = await fetch(url, {
+			method: 'POST',
+			headers: {
+				'content-type': 'application/json'
+			},
+			body: JSON.stringify(body)
+		});
+		if (!response.ok) {
+			const message = await response.text().catch(() => '');
+			throw new Error(message || `Error HTTP ${response.status}`);
 		}
+		return (await response.json()) as T;
+	}
 
-		setOccurrencePreview(result.docId, { loading: true, items: [], error: '' });
+	const fetchIndexManifest = async (): Promise<TexoroIndexManifest> => {
+		if (!texoroIndexBaseUrl) {
+			throw new Error('Falta PUBLIC_R2_PUBLIC_ASSETS_BASE_URL para inicializar TEXORO.');
+		}
+		const response = await fetch(joinUrl(texoroIndexBaseUrl, 'manifest.json'));
+		if (!response.ok) {
+			throw new Error(`No se pudo inicializar TEXORO: ${response.status}`);
+		}
+		return (await response.json()) as TexoroIndexManifest;
+	};
+
+	const loadResultOccurrencePreviews = async (results: SearchResult[]): Promise<void> => {
+		if (!searchExecution) return;
+		const queryAtStart = searchExecution.query;
+		const eligible = results.filter((result) => {
+			const preview = occurrencePreviews.get(result.docId);
+			return !preview?.loading && !preview?.items.length && !preview?.error && result.matches.length > 0;
+		});
+		if (eligible.length === 0) return;
+
+		for (const result of eligible) {
+			setOccurrencePreview(result.docId, { loading: true, items: [], error: '' });
+		}
 
 		try {
-			const detailsByAssignment = await Promise.all(
-				assignments.map(async (assignment) => ({
-					assignment,
-					details: await searchEngine.getOccurrencesForMatch(
-						{ docId: result.docId, workId: result.workId },
-						assignment.match,
-						{
-							maxItems: RESULT_PREVIEW_OCCURRENCE_LIMIT,
-							snippetRadius: RESULT_PREVIEW_SNIPPET_RADIUS
-						}
-					)
-				}))
-			);
-			const items = detailsByAssignment
-				.flatMap(({ assignment, details }) =>
-					details.items.map((item) => ({
-						...item,
-						assignmentKey: assignment.key,
-						centeredSnippet: buildCenteredOccurrenceSnippet(item.snippet, [assignment], RESULT_PREVIEW_VISIBLE_RADIUS)
-					}))
-				)
-				.sort((a, b) => a.start - b.start || a.end - b.end)
-				.slice(0, RESULT_PREVIEW_OCCURRENCE_LIMIT);
-
+			const response = await postJson<{
+				items: Array<{
+					docId: number;
+					workId: string;
+					snippets: Array<SearchMatchOccurrence & { matchKey: string }>;
+				}>;
+			}>('/api/texoro/previews', {
+				items: eligible.map((result) => ({
+					docId: result.docId,
+					workId: result.workId,
+					matches: result.matches
+				})),
+				options: {
+					maxItemsPerDoc: 3,
+					snippetRadius: RESULT_PREVIEW_SNIPPET_RADIUS
+				}
+			});
 			if (searchExecution?.query !== queryAtStart) return;
-			setOccurrencePreview(result.docId, { loading: false, items, error: '' });
+			const byDoc = new Map(response.items.map((item) => [item.docId, item]));
+			for (const result of eligible) {
+				const assignments = buildMatchAssignments(result.matches);
+				const item = byDoc.get(result.docId);
+				const previewItems =
+					item?.snippets
+						.map((snippet) => {
+							const assignment = assignments.find((candidate) => candidate.key === snippet.matchKey);
+							return {
+								...snippet,
+								assignmentKey: snippet.matchKey,
+								centeredSnippet: snippet.highlights?.length
+									? snippet.snippet
+									: buildCenteredOccurrenceSnippet(
+											snippet.snippet,
+											assignment ? [assignment] : assignments,
+											RESULT_PREVIEW_VISIBLE_RADIUS
+										)
+							};
+						})
+						.sort((a, b) => a.start - b.start || a.end - b.end) ?? [];
+				setOccurrencePreview(result.docId, { loading: false, items: previewItems, error: '' });
+			}
 		} catch (cause) {
 			if (searchExecution?.query !== queryAtStart) return;
-			setOccurrencePreview(result.docId, {
-				loading: false,
-				items: [],
-				error: cause instanceof Error ? cause.message : 'No se pudieron cargar las concurrencias'
-			});
+			for (const result of eligible) {
+				setOccurrencePreview(result.docId, {
+					loading: false,
+					items: [],
+					error: cause instanceof Error ? cause.message : 'No se pudieron cargar las concurrencias'
+				});
+			}
 		}
+	};
+
+	const increasePreviewWindowIfNeeded = (): void => {
+		if (!searchExecution || visibleResults.length === 0) return;
+		let nextLimit = previewLoadLimit;
+		const preloadLine = window.innerHeight + PREVIEW_SCROLL_THRESHOLD_PX;
+		const resultCards = document.querySelectorAll<HTMLElement>('[data-texoro-result-index]');
+
+		for (const card of resultCards) {
+			if (card.getBoundingClientRect().top > preloadLine) continue;
+			const index = Number(card.dataset.texoroResultIndex);
+			if (!Number.isFinite(index)) continue;
+			nextLimit = Math.max(nextLimit, index + 1 + PREVIEW_BATCH_SIZE);
+		}
+
+		const nearPageBottom =
+			window.scrollY + window.innerHeight >=
+			document.documentElement.scrollHeight - PREVIEW_SCROLL_THRESHOLD_PX;
+		if (nearPageBottom) nextLimit = visibleResults.length;
+
+		if (nextLimit <= previewLoadLimit) return;
+		previewLoadLimit = Math.min(visibleResults.length, nextLimit);
 	};
 
 	const collectHighlightRanges = (snippet: string, assignments: MatchAssignment[]): HighlightRange[] => {
@@ -1106,7 +1159,9 @@
 		for (const token of tokens) {
 			if (overlapsExistingRange(token.start, token.end)) continue;
 			const assignment = eligible.find(
-				(entry) => entry.match.kind === 'term' && entry.regexes.some((regex) => regex.test(token.norm))
+				(entry) =>
+					(entry.match.kind === 'term' || entry.match.kind === 'proximity') &&
+					entry.regexes.some((regex) => regex.test(token.norm))
 			);
 			if (!assignment) continue;
 			ranges.push({ start: token.start, end: token.end, assignment });
@@ -1149,6 +1204,7 @@
 
 		const ranges = collectHighlightRanges(snippet, [assignment]);
 		if (ranges.length === 0) return escapeHtml(snippet);
+		if (assignment.match.kind === 'proximity') return renderHighlightedRanges(snippet, ranges);
 
 		const center = snippet.length / 2;
 		const selected = ranges.sort(
@@ -1161,33 +1217,116 @@
 		return renderHighlightedRanges(snippet, [selected]);
 	};
 
+	const highlightExactOccurrenceSnippet = (
+		snippet: string,
+		assignment: MatchAssignment | undefined,
+		occurrence: SearchMatchOccurrence
+	): string => {
+		if (!snippet.trim()) return '';
+		if (!assignment || !occurrence.highlights?.length) {
+			return highlightSingleOccurrenceSnippet(snippet, assignment);
+		}
+
+		const ranges = occurrence.highlights
+			.map((highlight) => ({
+				start: Math.max(0, Math.min(snippet.length, highlight.start)),
+				end: Math.max(0, Math.min(snippet.length, highlight.end)),
+				assignment
+			}))
+			.filter((range) => range.end > range.start)
+			.sort((a, b) => a.start - b.start || a.end - b.end);
+
+		return ranges.length > 0 ? renderHighlightedRanges(snippet, ranges) : escapeHtml(snippet);
+	};
+
+	const occurrencePositionLabel = (occurrence: SearchMatchOccurrence): string => {
+		const highlightIndexes = occurrence.highlights?.map((highlight) => highlight.tokenIndex) ?? [];
+		const start = Math.min(occurrence.tokenIndex, ...highlightIndexes);
+		const end = Math.max(occurrence.tokenEndIndex ?? occurrence.tokenIndex, ...highlightIndexes);
+		const total = numberFormatter.format(occurrence.tokenCount);
+		if (start === end) return `palabra ${numberFormatter.format(start)} de ${total}`;
+		return `palabras ${numberFormatter.format(start)}-${numberFormatter.format(end)} de ${total}`;
+	};
+
 	const closeOccurrenceModal = (): void => {
 		occurrenceModal = null;
 		occurrenceLoading = false;
 		occurrenceError = '';
 	};
 
+	const occurrenceDetailsKey = (result: SearchResult, assignment: MatchAssignment): string =>
+		`${result.docId}:${assignment.key}`;
+
+	const rememberOccurrenceDetails = (
+		key: string,
+		details: SearchMatchOccurrences
+	): SearchMatchOccurrences => {
+		const next = new Map(occurrenceDetailsCache);
+		next.set(key, details);
+		while (next.size > OCCURRENCE_DETAILS_CACHE_LIMIT) {
+			const oldestKey = next.keys().next().value;
+			if (!oldestKey) break;
+			next.delete(oldestKey);
+		}
+		occurrenceDetailsCache = next;
+		return details;
+	};
+
+	const loadOccurrenceDetails = async (
+		result: SearchResult,
+		assignment: MatchAssignment
+	): Promise<SearchMatchOccurrences> => {
+		const key = occurrenceDetailsKey(result, assignment);
+		const cached = occurrenceDetailsCache.get(key);
+		if (cached) return cached;
+
+		const existing = occurrenceDetailsLoads.get(key);
+		if (existing) return existing;
+
+		const pending = postJson<SearchMatchOccurrences>('/api/texoro/occurrences', {
+			docId: result.docId,
+			workId: result.workId,
+			match: assignment.match,
+			options: {
+				maxItems: 500,
+				snippetRadius: 115
+			}
+		});
+
+		const nextLoads = new Map(occurrenceDetailsLoads);
+		nextLoads.set(key, pending);
+		occurrenceDetailsLoads = nextLoads;
+
+		try {
+			return rememberOccurrenceDetails(key, await pending);
+		} finally {
+			const remainingLoads = new Map(occurrenceDetailsLoads);
+			remainingLoads.delete(key);
+			occurrenceDetailsLoads = remainingLoads;
+		}
+	};
+
+	const prefetchOccurrenceDetails = (result: SearchResult, assignment: MatchAssignment): void => {
+		void loadOccurrenceDetails(result, assignment).catch(() => {
+			// La interacción real mostrará el error si sigue ocurriendo.
+		});
+	};
+
 	const openOccurrenceModal = async (
 		result: SearchResult,
 		assignment: MatchAssignment
 	): Promise<void> => {
-		if (!engine) return;
+		const cached = occurrenceDetailsCache.get(occurrenceDetailsKey(result, assignment)) ?? null;
 		occurrenceError = '';
-		occurrenceLoading = true;
+		occurrenceLoading = !cached;
 		occurrenceModal = {
 			result,
 			assignment,
-			details: null
+			details: cached
 		};
+		if (cached) return;
 		try {
-			const details = await engine.getOccurrencesForMatch(
-				{ docId: result.docId, workId: result.workId },
-				assignment.match,
-				{
-					maxItems: 500,
-					snippetRadius: 115
-				}
-			);
+			const details = await loadOccurrenceDetails(result, assignment);
 			if (!occurrenceModal) return;
 			if (
 				occurrenceModal.result.docId !== result.docId ||
@@ -1213,49 +1352,41 @@
 	};
 
 	$effect(() => {
-		queueQueryWarmup();
-	});
-
-	$effect(() => {
-		if (!engine || !searchExecution || visibleResults.length === 0) return;
-		for (const result of visibleResults) {
-			const preview = occurrencePreviews.get(result.docId);
-			if (preview?.loading || preview?.items.length || preview?.error) continue;
-			void loadResultOccurrencePreview(result);
-		}
+		if (!searchExecution || visibleResults.length === 0) return;
+		void loadResultOccurrencePreviews(visibleResults.slice(0, previewLoadLimit));
 	});
 
 	onMount(() => {
+		let previewScrollFrame = 0;
+		const onScroll = (): void => {
+			if (previewScrollFrame) return;
+			previewScrollFrame = window.requestAnimationFrame(() => {
+				previewScrollFrame = 0;
+				increasePreviewWindowIfNeeded();
+			});
+		};
+		window.addEventListener('scroll', onScroll, { passive: true });
+		queueMicrotask(onScroll);
+
 		void (async () => {
 			try {
-				const created = new TexoroSearchEngine();
-				await created.initialize();
-				engine = created;
+				const manifest = await fetchIndexManifest();
 				isEngineReady = true;
-				if (created.manifest) {
-					indexStats = {
-						works: created.manifest.stats.works,
-						tokens: created.manifest.stats.tokens,
-						vocabSize: created.manifest.stats.vocabSize
-					};
-					preserveEnieForHighlight = created.manifest.normalization.preserveEnie;
-				}
-				queueInitialWarmup(created);
+				indexStats = {
+					works: manifest.stats.works,
+					tokens: manifest.stats.tokens,
+					vocabSize: manifest.stats.vocabSize
+				};
+				indexVersion = manifest.indexVersion;
+				preserveEnieForHighlight = manifest.normalization.preserveEnie;
 			} catch (cause) {
 				searchError = cause instanceof Error ? cause.message : 'No se pudo inicializar TEXORO';
 			}
 		})();
 
 		return () => {
-			if (initialWarmupTimer !== null) {
-				window.clearTimeout(initialWarmupTimer);
-			}
-			if (wildcardWarmupTimer !== null) {
-				window.clearTimeout(wildcardWarmupTimer);
-			}
-			if (queryWarmupTimer !== null) {
-				window.clearTimeout(queryWarmupTimer);
-			}
+			window.removeEventListener('scroll', onScroll);
+			if (previewScrollFrame) window.cancelAnimationFrame(previewScrollFrame);
 		};
 	});
 
@@ -1265,8 +1396,11 @@
 		searchExecution = null;
 		submittedTerms = [];
 		occurrencePreviews = new Map();
+		previewLoadLimit = PREVIEW_INITIAL_DOC_LIMIT;
+		occurrenceDetailsCache = new Map();
+		occurrenceDetailsLoads = new Map();
 		chartCopyPending = { author: false, genre: false };
-		if (!engine) {
+		if (!isEngineReady) {
 			searchError = 'Motor de búsqueda no disponible todavía';
 			return;
 		}
@@ -1294,15 +1428,21 @@
 			return;
 		}
 
-		const { query, terms } = buildEffectiveQuery();
+		const { query, terms, structuredClauses } = buildEffectiveQuery();
 		isSearching = true;
 		try {
 			submittedTerms = terms;
-			searchExecution = await engine.search(query, worksMetaMap, {
-				limit: RESULTS_PAGE_SIZE,
-				maxPhraseVerificationDocs: 220,
-				snippetRadius: 115
+			searchExecution = await postJson<SearchExecution>('/api/texoro/search', {
+				query,
+				structuredClauses,
+				options: {
+					limit: RESULTS_PAGE_SIZE,
+					maxPhraseVerificationDocs: 220,
+					snippetRadius: 115,
+					includeSnippets: false
+				}
 			});
+			queueMicrotask(increasePreviewWindowIfNeeded);
 		} catch (cause) {
 			submittedTerms = [];
 			searchError = cause instanceof Error ? cause.message : 'Error ejecutando la búsqueda';
@@ -1410,7 +1550,7 @@
 				>
 					<p class="m-0 text-[0.86rem] leading-[1.5] text-text-soft">
 						Añade hasta {MAX_QUERY_TERMS - 1} términos complementarios. Cada fila se suma a la búsqueda
-						principal mediante <code>AND</code> o <code>OR</code>.
+						principal mediante <code>AND</code>, <code>OR</code> o una distancia exacta en palabras intermedias.
 					</p>
 
 					<div class="mt-3 grid gap-3">
@@ -1420,7 +1560,13 @@
 							</p>
 						{:else}
 							{#each advancedTerms as term}
-								<div class="grid gap-2 rounded-[9px] border border-border bg-surface p-3 md:grid-cols-[120px_minmax(0,1fr)_auto]">
+								<div
+									class={`grid gap-2 rounded-[9px] border border-border bg-surface p-3 ${
+										term.operator === 'near'
+											? 'md:grid-cols-[150px_96px_auto_minmax(0,1fr)_auto]'
+											: 'md:grid-cols-[150px_minmax(0,1fr)_auto]'
+									}`}
+								>
 									<label class="sr-only" for={`advanced-operator-${term.id}`}>Operador</label>
 									<select
 										id={`advanced-operator-${term.id}`}
@@ -1429,12 +1575,34 @@
 										onchange={(event) =>
 											updateAdvancedTermOperator(
 												term.id,
-												(event.currentTarget as HTMLSelectElement).value as 'and' | 'or'
+												(event.currentTarget as HTMLSelectElement).value as 'and' | 'or' | 'near'
 											)}
 									>
 										<option value="and">AND</option>
 										<option value="or">OR</option>
+										<option value="near">A distancia</option>
 									</select>
+
+									{#if term.operator === 'near'}
+										<label class="sr-only" for={`advanced-distance-${term.id}`}>Distancia</label>
+										<input
+											id={`advanced-distance-${term.id}`}
+											type="number"
+											min="0"
+											max="100"
+											value={term.distance}
+											title="Distancia exacta en palabras intermedias"
+											class="h-[42px] rounded-[8px] border border-border bg-white px-3 text-[0.92rem] text-text-main outline-none transition focus:border-brand-blue/35"
+											oninput={(event) =>
+												updateAdvancedTermDistance(
+													term.id,
+													Number((event.currentTarget as HTMLInputElement).value)
+												)}
+										/>
+										<span class="flex h-[42px] items-center font-['Roboto',sans-serif] text-[0.86rem] font-semibold text-text-soft">
+											de
+										</span>
+									{/if}
 
 									<label class="sr-only" for={`advanced-query-${term.id}`}>Término avanzado</label>
 									<input
@@ -1803,11 +1971,14 @@
 					</p>
 				{:else}
 					<ul class="m-0 grid list-none gap-3 p-0">
-						{#each visibleResults as result}
+						{#each visibleResults as result, resultIndex}
 							{@const assignments = buildMatchAssignments(result.matches)}
 							{@const resultOccurrences = sumResultOccurrences(result)}
 							{@const preview = occurrencePreviews.get(result.docId)}
-							<li class="rounded-[11px] border border-border-accent-blue bg-white px-4 py-3 shadow-[0_6px_16px_rgba(25,46,80,0.07)]">
+							<li
+								class="rounded-[11px] border border-border-accent-blue bg-white px-4 py-3 shadow-[0_6px_16px_rgba(25,46,80,0.07)]"
+								data-texoro-result-index={resultIndex}
+							>
 								<div class="flex flex-wrap items-start justify-between gap-3">
 									<div class="min-w-0">
 										<h3 class="m-0 font-['Roboto',sans-serif] text-[1.03rem] font-semibold leading-[1.25] text-brand-blue-dark">
@@ -1840,14 +2011,19 @@
 												<span class="font-['Roboto',sans-serif] text-[0.82rem] font-bold text-text-accent-purple">
 													{index + 1}#
 												</span>
-												<span class="texoro-occurrence-snippet block min-w-0">
-													{@html highlightSingleOccurrenceSnippet(item.centeredSnippet, itemAssignment)}
-												</span>
+										<span class="texoro-occurrence-snippet block min-w-0">
+											{@html highlightExactOccurrenceSnippet(item.centeredSnippet, itemAssignment, item)}
+											<span class="ml-1 font-['Roboto',sans-serif] text-[0.76rem] text-text-soft">
+												{occurrencePositionLabel(item)}
+											</span>
+										</span>
 											</li>
 										{/each}
 									</ol>
-								{:else}
+								{:else if preview}
 									<p class="mt-3 mb-0 text-[0.9rem] text-text-soft">No hay concurrencias para mostrar.</p>
+								{:else}
+									<p class="mt-3 mb-0 text-[0.9rem] text-text-soft">Cargando concurrencias...</p>
 								{/if}
 
 								<div class="mt-2 flex flex-wrap gap-1.5">
@@ -1856,6 +2032,8 @@
 											type="button"
 											class="rounded-full border px-2 py-[2px] font-['Roboto',sans-serif] text-[0.76rem] font-medium hover:brightness-95"
 											style={`${assignment.chipStyle} cursor:pointer;`}
+											onpointerenter={() => prefetchOccurrenceDetails(result, assignment)}
+											onfocus={() => prefetchOccurrenceDetails(result, assignment)}
 											onclick={() => openOccurrenceModal(result, assignment)}
 											title={`Ver más concurrencias de ${formatMatchDisplayLabel(assignment.match)}`}
 										>
@@ -1879,7 +2057,11 @@
 			<div class="flex items-start justify-between gap-3 border-b border-border-accent-blue px-4 py-3">
 				<div>
 					<h3 class="m-0 font-['Roboto',sans-serif] text-[1.02rem] font-semibold text-brand-blue-dark">
-						{occurrenceModal.assignment.match.kind === 'phrase' ? 'Concurrencias de frase' : 'Concurrencias de término'}
+						{occurrenceModal.assignment.match.kind === 'phrase'
+							? 'Concurrencias de frase'
+							: occurrenceModal.assignment.match.kind === 'proximity'
+								? 'Concurrencias por distancia'
+								: 'Concurrencias de término'}
 					</h3>
 					<p class="mt-1 mb-0 text-[0.9rem] text-text-soft">
 						{formatMatchDisplayLabel(occurrenceModal.assignment.match)}
@@ -1911,7 +2093,10 @@
 							<li class="rounded-[9px] border border-border-accent-blue bg-surface px-3 py-2">
 								<p class="m-0 text-[0.79rem] font-semibold text-text-accent-purple">#{index + 1}</p>
 								<p class="mt-1 mb-0 text-[0.93rem] leading-[1.5] text-text-main">
-									{@html highlightSingleOccurrenceSnippet(item.snippet, occurrenceModal.assignment)}
+									{@html highlightExactOccurrenceSnippet(item.snippet, occurrenceModal.assignment, item)}
+								</p>
+								<p class="mt-1 mb-0 font-['Roboto',sans-serif] text-[0.75rem] text-text-soft">
+									{occurrencePositionLabel(item)}
 								</p>
 							</li>
 						{/each}

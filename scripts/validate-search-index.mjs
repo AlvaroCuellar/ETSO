@@ -67,16 +67,19 @@ const main = async () => {
 	if (manifest.indexVersion !== wildcardLengths.indexVersion) {
 		throw new Error('Index version mismatch between manifest and wildcard-lengths.json');
 	}
+	if (manifest.features?.positions !== true || manifest.features?.proximity !== true) {
+		throw new Error('Index manifest is missing positions/proximity features');
+	}
 
 	const termMeta = new Map();
 	for (const shardMeta of vocabRoot.shards) {
 		const shard = await readJson(join(indexDir, shardMeta.file));
 		for (const row of shard.terms) {
-			const [term, termId, df, cf, len, postingsShard] = row;
+			const [term, termId, df, cf, len, postingsShard, positionsShard] = row;
 			if (termMeta.has(termId)) {
 				throw new Error(`Duplicate termId in vocab shards: ${termId}`);
 			}
-			termMeta.set(termId, { term, df, cf, len, postingsShard });
+			termMeta.set(termId, { term, df, cf, len, postingsShard, positionsShard });
 		}
 	}
 
@@ -86,6 +89,7 @@ const main = async () => {
 
 	const worksCount = works.works.length;
 	let postingsTermCount = 0;
+	const postingsTfByTermDoc = new Map();
 	for (const shardMeta of manifest.shards.postings) {
 		const shard = await readJson(join(indexDir, shardMeta.file));
 		for (const [termId, postings] of shard.postings) {
@@ -101,8 +105,66 @@ const main = async () => {
 				if (!Number.isInteger(tf) || tf <= 0) {
 					throw new Error(`Invalid tf in postings term ${termId}: ${tf}`);
 				}
+				postingsTfByTermDoc.set(`${termId}:${docId}`, tf);
 			}
 			postingsTermCount += 1;
+		}
+	}
+
+	let positionsTermCount = 0;
+	let positionsOccurrences = 0;
+	const positionShards = manifest.shards.positions ?? [];
+	if (positionShards.length === 0) {
+		throw new Error('No positions shards in manifest');
+	}
+	for (const shardMeta of positionShards) {
+		const shard = await readJson(join(indexDir, shardMeta.file));
+		if (shard.indexVersion !== manifest.indexVersion) {
+			throw new Error(`Index version mismatch in positions shard ${shardMeta.id}`);
+		}
+		for (const [termId, docs] of shard.positions) {
+			const meta = termMeta.get(termId);
+			if (!meta) throw new Error(`Positions reference unknown termId: ${termId}`);
+			if (meta.positionsShard !== shardMeta.id) {
+				throw new Error(`Term ${termId} expected in positions shard ${meta.positionsShard}, found in ${shardMeta.id}`);
+			}
+			for (const [docId, tf, occurrences] of docs) {
+				if (!Number.isInteger(docId) || docId < 0 || docId >= worksCount) {
+					throw new Error(`Invalid docId in positions term ${termId}: ${docId}`);
+				}
+				if (!Number.isInteger(tf) || tf <= 0) {
+					throw new Error(`Invalid tf in positions term ${termId}: ${tf}`);
+				}
+				if (!Array.isArray(occurrences) || occurrences.length !== tf) {
+					throw new Error(`Positions tf mismatch term=${termId} doc=${docId}`);
+				}
+				const postingsTf = postingsTfByTermDoc.get(`${termId}:${docId}`);
+				if (postingsTf !== tf) {
+					throw new Error(`Postings/positions tf mismatch term=${termId} doc=${docId}`);
+				}
+				let previousTokenIndex = 0;
+				let previousByteEnd = -1;
+				const docTokenCount = works.works[docId]?.[4] ?? 0;
+				const docCharCount = works.works[docId]?.[5] ?? 0;
+				for (const [tokenIndex, byteStart, byteEnd] of occurrences) {
+					if (!Number.isInteger(tokenIndex) || tokenIndex <= previousTokenIndex || tokenIndex > docTokenCount) {
+						throw new Error(`Invalid tokenIndex term=${termId} doc=${docId}: ${tokenIndex}`);
+					}
+					if (!Number.isInteger(byteStart) || !Number.isInteger(byteEnd) || byteStart < 0 || byteEnd <= byteStart) {
+						throw new Error(`Invalid byte offsets term=${termId} doc=${docId}`);
+					}
+					if (byteStart < previousByteEnd) {
+						throw new Error(`Positions not sorted by byte offset term=${termId} doc=${docId}`);
+					}
+					if (byteStart > Math.max(docCharCount * 4, byteEnd)) {
+						throw new Error(`Suspicious byte offset term=${termId} doc=${docId}`);
+					}
+					previousTokenIndex = tokenIndex;
+					previousByteEnd = byteEnd;
+					positionsOccurrences += 1;
+				}
+			}
+			positionsTermCount += 1;
 		}
 	}
 
@@ -131,6 +193,7 @@ const main = async () => {
 
 	console.log('[validate-search-index] OK');
 	console.log(`[validate-search-index] works=${worksCount} terms=${termMeta.size} postingsTerms=${postingsTermCount}`);
+	console.log(`[validate-search-index] positionsTerms=${positionsTermCount} occurrences=${positionsOccurrences}`);
 	console.log(`[validate-search-index] wildcardTermIds=${wildcardTermIds.size} kgrams=${kgramEntries}`);
 };
 

@@ -356,6 +356,7 @@ export class TexoroSearchEngine {
 				normalizedQuery,
 				parsed,
 				results: [],
+				allResults: [],
 				candidateCount: 0,
 				textsWithOccurrences: 0,
 				totalOccurrences: 0,
@@ -481,12 +482,21 @@ export class TexoroSearchEngine {
 			normalizedQuery,
 			parsed,
 			results,
+			allResults: rawResults,
 			candidateCount: orderedCandidates.length,
 			textsWithOccurrences,
 			totalOccurrences,
 			verifiedCount,
 			elapsedMs: Math.round(performance.now() - startedAt)
 		};
+	}
+
+	async ensureSnippets(results: SearchResult[], query: string, options: Pick<SearchOptions, 'snippetRadius'> = {}): Promise<void> {
+		if (results.length === 0) return;
+		await this.initialize();
+		const parsed = parseSearchQuery(query, this.#preserveEnie);
+		if (parsed.groups.length === 0) return;
+		await this.#fillMissingSnippets(results, parsed, options.snippetRadius);
 	}
 
 	async getOccurrencesForMatch(

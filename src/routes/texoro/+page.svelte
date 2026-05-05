@@ -1,5 +1,7 @@
 ﻿<script lang="ts">
 	import { onMount } from 'svelte';
+	import MatchToggle from '$lib/components/search/MatchToggle.svelte';
+	import TokenMultiSelect from '$lib/components/search/TokenMultiSelect.svelte';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import AttributionView from '$lib/components/ui/AttributionView.svelte';
 	import AppButton from '$lib/components/ui/AppButton.svelte';
@@ -12,15 +14,17 @@
 	import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
 	import fondoLogo from '$lib/assets/fondos/fondo-logo.png';
 	import BookOpen from 'lucide-svelte/icons/book-open';
+	import ChevronDown from 'lucide-svelte/icons/chevron-down';
 	import Feather from 'lucide-svelte/icons/feather';
 	import Search from 'lucide-svelte/icons/search';
 	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
 
 	import { TexoroSearchEngine, buildWorkMetaMap, normalizePattern, normalizePlainText } from '$lib/search';
 
+	import type { AttributionSet } from '$lib/domain/catalog';
 	import type {
-		ParsedQueryClause,
 		SearchExecution,
+		SearchMatchOccurrence,
 		SearchMatchOccurrences,
 		SearchResult,
 		SearchResultMatch
@@ -68,10 +72,34 @@
 		markStyle: string;
 	}
 
+	interface SnippetToken {
+		raw: string;
+		start: number;
+		end: number;
+		norm: string;
+	}
+
+	interface HighlightRange {
+		start: number;
+		end: number;
+		assignment: MatchAssignment;
+	}
+
 	interface OccurrenceModalState {
 		result: SearchResult;
 		assignment: MatchAssignment;
 		details: SearchMatchOccurrences | null;
+	}
+
+	interface ResultOccurrencePreviewItem extends SearchMatchOccurrence {
+		assignmentKey: string;
+		centeredSnippet: string;
+	}
+
+	interface ResultOccurrencePreview {
+		loading: boolean;
+		items: ResultOccurrencePreviewItem[];
+		error: string;
 	}
 
 	interface ChartRow {
@@ -111,6 +139,23 @@
 		series: ComparisonTerm[];
 	}
 
+	interface AdvancedQueryTerm {
+		id: number;
+		operator: 'and' | 'or';
+		value: string;
+	}
+
+	interface TokenOption {
+		id: string;
+		label: string;
+	}
+
+	interface SubmittedQueryTerm {
+		key: string;
+		label: string;
+		operator: 'and' | 'or' | null;
+	}
+
 	type ChartKey = 'author' | 'genre';
 	type ChartMode = 'bars' | 'pie';
 	type ComparisonMetric = 'frequency10k' | 'occurrences' | 'share';
@@ -120,16 +165,36 @@
 	const exportTitle = '#002681';
 	const exportText = '#4f5562';
 	const exportTextStrong = '#243b63';
+	const MAX_QUERY_TERMS = 10;
+	const RESULTS_PAGE_SIZE = 35;
+	const QUERY_ALLOWED_PATTERN = /^[\p{L}\p{N}*?\s]+$/u;
+	const SHOW_AUTOMATIC_CHARTS = false;
+	const RESULT_PREVIEW_OCCURRENCE_LIMIT = 10;
+	const RESULT_PREVIEW_SNIPPET_RADIUS = 115;
+	const RESULT_PREVIEW_VISIBLE_RADIUS = 70;
 
 	let engine = $state<TexoroSearchEngine | null>(null);
 	let isEngineReady = $state(false);
-	let query = $state('');
+	let mainQuery = $state('');
+	let advancedSearchOpen = $state(false);
+	let filtersOpen = $state(false);
+	let advancedTerms = $state<AdvancedQueryTerm[]>([]);
+	let nextAdvancedTermId = 1;
+	let titleFilter = $state('');
+	let selectedGenres = $state<string[]>([]);
+	let selectedTradAuthors = $state<string[]>([]);
+	let tradMatch = $state<'or' | 'and'>('or');
+	let selectedEstoAuthors = $state<string[]>([]);
+	let estoMatch = $state<'or' | 'and'>('or');
+	let selectedStates = $state<string[]>([]);
+	let submittedTerms = $state<SubmittedQueryTerm[]>([]);
 	let isSearching = $state(false);
 	let searchError = $state('');
 	let searchExecution = $state<SearchExecution | null>(null);
 	let indexStats = $state<{ works: number; tokens: number; vocabSize: number } | null>(null);
 	let preserveEnieForHighlight = $state(true);
 	let occurrenceModal = $state<OccurrenceModalState | null>(null);
+	let occurrencePreviews = $state<Map<number, ResultOccurrencePreview>>(new Map());
 	let occurrenceLoading = $state(false);
 	let occurrenceError = $state('');
 	let chartMode = $state<ChartMode>('bars');
@@ -177,7 +242,7 @@
 		if (typeof window === 'undefined' || shouldSkipBackgroundWarmup()) return;
 		if (!engine) return;
 
-		const trimmedQuery = query.trim();
+		const trimmedQuery = mainQuery.trim();
 		if (trimmedQuery.length < 2) return;
 
 		if (queryWarmupTimer !== null) {
@@ -189,7 +254,7 @@
 			const textWarmupLimit =
 				data.stats.works <= 30
 					? Math.min(data.stats.works, 12)
-					: /["\s]/.test(trimmedQuery)
+					: /\s/.test(trimmedQuery)
 						? 8
 						: 6;
 
@@ -214,6 +279,39 @@
 	const sumResultOccurrences = (result: SearchResult): number =>
 		result.matches.reduce((sum, match) => sum + (match.occurrences ?? 0), 0);
 
+	const normalizeText = (value: string): string =>
+		value
+			.normalize('NFD')
+			.replace(/[\u0300-\u036f]/g, '')
+			.toLowerCase()
+			.trim();
+
+	const collectAuthorIds = (set: AttributionSet): Set<string> => {
+		const authorIds = new Set<string>();
+		if (set.unresolved) return authorIds;
+
+		for (const group of set.groups) {
+			for (const member of group.members) {
+				if (!member.authorId) continue;
+				authorIds.add(member.authorId);
+			}
+		}
+
+		return authorIds;
+	};
+
+	const matchesByMode = (
+		haystack: Set<string>,
+		selectedIds: string[],
+		matchMode: 'or' | 'and'
+	): boolean => {
+		if (selectedIds.length === 0) return true;
+		if (matchMode === 'and') {
+			return selectedIds.every((candidate) => haystack.has(candidate));
+		}
+		return selectedIds.some((candidate) => haystack.has(candidate));
+	};
+
 	const collectStylometryAuthors = (result: SearchResult): string[] => {
 		const set = result.meta?.stylometryAttribution;
 		if (!set || set.unresolved) return [];
@@ -228,6 +326,17 @@
 		}
 		return Array.from(authorById.values());
 	};
+
+	const formatMatchSource = (match: Pick<SearchResultMatch, 'kind' | 'source'>): string => {
+		const source = match.source.trim();
+		if (match.kind === 'phrase' && source.startsWith('"') && source.endsWith('"')) {
+			return source.slice(1, -1);
+		}
+		return source;
+	};
+
+	const formatMatchDisplayLabel = (match: Pick<SearchResultMatch, 'kind' | 'source'>): string =>
+		submittedTermLabelByKey.get(`${match.kind}:${match.source}`) ?? formatMatchSource(match);
 
 	const toChartBlock = (source: Map<string, number>, limit: number): ChartBlock => {
 		const sorted = Array.from(source.entries())
@@ -255,15 +364,119 @@
 		};
 	};
 
+	const authorOptions = $derived.by<TokenOption[]>(() => {
+		const byId = new Map<string, string>();
+		for (const work of data.worksMeta) {
+			for (const set of [work.traditionalAttribution, work.stylometryAttribution]) {
+				if (set.unresolved) continue;
+				for (const group of set.groups) {
+					for (const member of group.members) {
+						const id = member.authorId?.trim();
+						const name = member.authorName?.trim();
+						if (!id || !name || byId.has(id)) continue;
+						byId.set(id, name);
+					}
+				}
+			}
+		}
+		return Array.from(byId.entries())
+			.map(([id, label]) => ({ id, label }))
+			.sort((a, b) => a.label.localeCompare(b.label, 'es'));
+	});
+
+	const genreOptions = $derived.by<TokenOption[]>(() => {
+		const values = Array.from(new Set(data.worksMeta.map((work) => work.genre.trim()).filter(Boolean)));
+		values.sort((a, b) => a.localeCompare(b, 'es'));
+		return values.map((value) => ({ id: value, label: value }));
+	});
+
+	const stateOptions = $derived.by<TokenOption[]>(() => {
+		const values = Array.from(new Set(data.worksMeta.map((work) => work.textState.trim()).filter(Boolean)));
+		values.sort((a, b) => a.localeCompare(b, 'es'));
+		return values.map((value) => ({ id: value, label: value }));
+	});
+
+	const activeSearchTermCount = $derived.by(() => {
+		let count = mainQuery.trim() ? 1 : 0;
+		for (const term of advancedTerms) {
+			if (term.value.trim()) count += 1;
+		}
+		return count;
+	});
+
+	const hasActiveFilters = $derived.by(
+		() =>
+			Boolean(titleFilter.trim()) ||
+			selectedGenres.length > 0 ||
+			selectedTradAuthors.length > 0 ||
+			selectedEstoAuthors.length > 0 ||
+			selectedStates.length > 0
+	);
+
+	$effect(() => {
+		if (advancedTerms.length > 0) {
+			advancedSearchOpen = true;
+		}
+	});
+
+	$effect(() => {
+		if (hasActiveFilters) {
+			filtersOpen = true;
+		}
+	});
+
+	const filteredResults = $derived.by(() => {
+		if (!searchExecution) return [] as SearchResult[];
+		const normalizedTitle = normalizeText(titleFilter);
+
+		return searchExecution.allResults
+			.filter((result) => {
+				const meta = result.meta;
+				if (!meta) return false;
+
+				if (normalizedTitle) {
+					const haystack = normalizeText([meta.title, ...meta.titleVariants].join(' '));
+					if (!haystack.includes(normalizedTitle)) return false;
+				}
+
+				if (selectedGenres.length > 0 && !selectedGenres.includes(meta.genre)) return false;
+				if (
+					!matchesByMode(collectAuthorIds(meta.traditionalAttribution), selectedTradAuthors, tradMatch)
+				) {
+					return false;
+				}
+				if (
+					!matchesByMode(collectAuthorIds(meta.stylometryAttribution), selectedEstoAuthors, estoMatch)
+				) {
+					return false;
+				}
+				if (selectedStates.length > 0 && !selectedStates.includes(meta.textState)) return false;
+
+				return true;
+			})
+			.sort(
+				(a, b) =>
+					sumResultOccurrences(b) - sumResultOccurrences(a) ||
+					b.score - a.score ||
+					a.docId - b.docId
+			);
+	});
+
+	const visibleResults = $derived.by(() => filteredResults.slice(0, RESULTS_PAGE_SIZE));
+	const filteredTextsWithOccurrences = $derived.by(() => filteredResults.length);
+	const filteredTotalOccurrences = $derived.by(() =>
+		filteredResults.reduce((sum, result) => sum + sumResultOccurrences(result), 0)
+	);
+
 	const liveCharts = $derived.by(() => {
-		if (!searchExecution || searchExecution.results.length === 0) {
+		if (filteredResults.length === 0) {
 			return null;
 		}
 
 		const byAuthor = new Map<string, number>();
 		const byGenre = new Map<string, number>();
 
-		for (const result of searchExecution.results) {
+		for (const result of filteredResults) {
 			const occurrences = sumResultOccurrences(result);
 			if (occurrences <= 0) continue;
 
@@ -301,63 +514,47 @@
 		genre: 'No hay datos de género para graficar.'
 	};
 
-	const queryClauseSource = (clause: ParsedQueryClause): string =>
-		clause.kind === 'phrase' ? `"${clause.literal.trim()}"` : clause.pattern.trim();
-
-	const queryClauseKey = (clause: ParsedQueryClause): string => `${clause.kind}:${queryClauseSource(clause)}`;
-
-	const queryClauseLabel = (clause: ParsedQueryClause): string => {
-		return queryClauseSource(clause);
-	};
-
-	const queryClauseCount = $derived.by(() => {
-		if (!searchExecution) return 0;
-		let count = 0;
-		for (const group of searchExecution.parsed.groups) {
-			count += group.length;
-		}
-		return count;
-	});
+	const queryClauseCount = $derived.by(() => submittedTerms.length);
 
 	const queryLabelNoun = $derived.by(() => (queryClauseCount === 1 ? 'Término' : 'Términos'));
 
 	const queryTermsLabel = $derived.by(() => {
-		if (!searchExecution) return '';
-		const groups = searchExecution.parsed.groups
-			.map((group) => group.map((clause) => queryClauseLabel(clause)).filter((label) => label.length > 0))
-			.filter((group) => group.length > 0);
-		if (groups.length === 0) return searchExecution.query.trim();
-
-		const expression = groups.map((group) => group.join(' AND ')).join(' OR ');
+		if (submittedTerms.length === 0) return '';
+		const expression = submittedTerms
+			.map((term, index) => (index === 0 ? term.label : `${term.operator?.toUpperCase()} ${term.label}`))
+			.join(' ');
 		return expression.length > 240 ? `${expression.slice(0, 237)}...` : expression;
 	});
 
 	const comparisonTerms = $derived.by(() => {
-		if (!searchExecution) return [] as ComparisonTerm[];
+		if (submittedTerms.length === 0) return [] as ComparisonTerm[];
 		const output: ComparisonTerm[] = [];
 		const seen = new Set<string>();
-		for (const group of searchExecution.parsed.groups) {
-			for (const clause of group) {
-				const key = queryClauseKey(clause);
-				if (seen.has(key)) continue;
-				seen.add(key);
-				output.push({
-					key,
-					label: queryClauseLabel(clause),
-					color: chartPalette[output.length % chartPalette.length]
-				});
-			}
+		for (const term of submittedTerms) {
+			if (seen.has(term.key)) continue;
+			seen.add(term.key);
+			output.push({
+				key: term.key,
+				label: term.label,
+				color: chartPalette[output.length % chartPalette.length]
+			});
 		}
 		return output.slice(0, 6);
 	});
 
 	const comparisonTermsOverflow = $derived.by(() => {
-		if (!searchExecution) return false;
+		if (submittedTerms.length === 0) return false;
 		const seen = new Set<string>();
-		for (const group of searchExecution.parsed.groups) {
-			for (const clause of group) seen.add(queryClauseKey(clause));
-		}
+		for (const term of submittedTerms) seen.add(term.key);
 		return seen.size > comparisonTerms.length;
+	});
+
+	const submittedTermLabelByKey = $derived.by(() => {
+		const labels = new Map<string, string>();
+		for (const term of submittedTerms) {
+			if (!labels.has(term.key)) labels.set(term.key, term.label);
+		}
+		return labels;
 	});
 
 	const ensureComparisonAccumulator = (
@@ -433,13 +630,13 @@
 	};
 
 	const multiTermComparison = $derived.by(() => {
-		if (!searchExecution || searchExecution.results.length === 0) return null;
+		if (filteredResults.length === 0) return null;
 		if (comparisonTerms.length < 2) return null;
 
 		const byAuthor = new Map<string, ComparisonAccumulator>();
 		const byGenre = new Map<string, ComparisonAccumulator>();
 
-		for (const result of searchExecution.results) {
+		for (const result of filteredResults) {
 			const matchesByKey = new Map<string, number>(
 				result.matches.map((match) => [`${match.kind}:${match.source}`, match.occurrences])
 			);
@@ -490,6 +687,102 @@
 		if (authors.length === 0) return 'autoría no resuelta';
 		if (authors.length <= 2) return authors.join(' / ');
 		return `${authors[0]} / ${authors[1]} +${authors.length - 2}`;
+	};
+
+	const createAdvancedTerm = (): AdvancedQueryTerm => ({
+		id: nextAdvancedTermId++,
+		operator: 'and',
+		value: ''
+	});
+
+	const addAdvancedTerm = (): void => {
+		if (advancedTerms.length >= MAX_QUERY_TERMS - 1) return;
+		advancedTerms = [...advancedTerms, createAdvancedTerm()];
+		advancedSearchOpen = true;
+	};
+
+	const removeAdvancedTerm = (termId: number): void => {
+		advancedTerms = advancedTerms.filter((term) => term.id !== termId);
+	};
+
+	const updateAdvancedTermOperator = (termId: number, operator: 'and' | 'or'): void => {
+		advancedTerms = advancedTerms.map((term) => (term.id === termId ? { ...term, operator } : term));
+	};
+
+	const updateAdvancedTermValue = (termId: number, value: string): void => {
+		advancedTerms = advancedTerms.map((term) => (term.id === termId ? { ...term, value } : term));
+	};
+
+	const buildTermDescriptor = (
+		value: string,
+		label: string,
+		operator: 'and' | 'or' | null
+	): SubmittedQueryTerm => {
+		const trimmed = value.trim().replace(/\s+/g, ' ');
+		if (/\s/.test(trimmed)) {
+			return {
+				key: `phrase:"${trimmed}"`,
+				label,
+				operator
+			};
+		}
+
+		return {
+			key: `term:${normalizePattern(trimmed, preserveEnieForHighlight)}`,
+			label,
+			operator
+		};
+	};
+
+	const buildEffectiveQuery = (): { query: string; terms: SubmittedQueryTerm[] } => {
+		const clauses: string[] = [];
+		const terms: SubmittedQueryTerm[] = [];
+		const normalizedMain = mainQuery.trim().replace(/\s+/g, ' ');
+		const mainClause = /\s/.test(normalizedMain) ? `"${normalizedMain}"` : normalizedMain;
+		clauses.push(mainClause);
+		terms.push(buildTermDescriptor(normalizedMain, normalizedMain, null));
+
+		for (const term of advancedTerms) {
+			const normalizedValue = term.value.trim().replace(/\s+/g, ' ');
+			if (!normalizedValue) continue;
+			const clause = /\s/.test(normalizedValue) ? `"${normalizedValue}"` : normalizedValue;
+			clauses.push(`${term.operator.toUpperCase()} ${clause}`);
+			terms.push(buildTermDescriptor(normalizedValue, normalizedValue, term.operator));
+		}
+
+		return {
+			query: clauses.join(' '),
+			terms
+		};
+	};
+
+	const validateSearchTerm = (value: string, label: string): string => {
+		const trimmed = value.trim();
+		if (!trimmed) return `${label}: introduce un término.`;
+		if (!QUERY_ALLOWED_PATTERN.test(trimmed)) {
+			return `${label}: solo se permiten palabras, espacios y los comodines * y ?.`;
+		}
+		if (/\b(?:and|or)\b/i.test(trimmed)) {
+			return `${label}: no escribas AND u OR dentro del término; usa Búsqueda avanzada.`;
+		}
+		return '';
+	};
+
+	const resetSearchControls = (): void => {
+		mainQuery = '';
+		advancedSearchOpen = false;
+		filtersOpen = false;
+		advancedTerms = [];
+		titleFilter = '';
+		selectedGenres = [];
+		selectedTradAuthors = [];
+		tradMatch = 'or';
+		selectedEstoAuthors = [];
+		estoMatch = 'or';
+		selectedStates = [];
+		submittedTerms = [];
+		searchExecution = null;
+		searchError = '';
 	};
 
 	const drawWrappedText = (
@@ -600,9 +893,9 @@
 			const indexVersion = engine?.manifest?.indexVersion ?? 'n/d';
 			const citation =
 				`Cita sugerida: ETSO, TEXORO. "${exportTitle}". ` +
-				`Consulta: "${searchExecution.query}". ` +
+				`Consulta: "${queryTermsLabel}". ` +
 				`Generado el ${dateText}. ` +
-				`Resultados: ${searchExecution.textsWithOccurrences} textos, ${decimalFormatter.format(searchExecution.totalOccurrences)} concurrencias. ` +
+				`Resultados: ${filteredTextsWithOccurrences} textos, ${decimalFormatter.format(filteredTotalOccurrences)} concurrencias. ` +
 				`Índice: ${indexVersion}. Fuente: ${sourceUrl}.`;
 
 			ctx.fillStyle = exportText;
@@ -685,37 +978,187 @@
 		});
 	};
 
-	const highlightSnippet = (snippet: string, assignments: MatchAssignment[]): string => {
-		if (!snippet.trim()) return '';
-		const eligible = assignments.filter((assignment) => assignment.regexes.length > 0);
-		if (eligible.length === 0) return escapeHtml(snippet);
+	const buildCenteredOccurrenceSnippet = (snippet: string, assignments: MatchAssignment[], radius: number): string => {
+		const ranges = collectHighlightRanges(snippet, assignments);
+		if (ranges.length === 0) return snippet;
 
-		const wordRegex = /[\p{L}\p{N}]+/gu;
-		let output = '';
-		let cursor = 0;
+		const center = snippet.length / 2;
+		const selected = ranges.sort(
+			(a, b) =>
+				Math.abs((a.start + a.end) / 2 - center) -
+					Math.abs((b.start + b.end) / 2 - center) ||
+				a.start - b.start
+		)[0];
+		const selectedCenter = Math.round((selected.start + selected.end) / 2);
+		const left = Math.max(0, selectedCenter - radius);
+		const right = Math.min(snippet.length, selectedCenter + radius);
+		const prefix = left > 0 || snippet.trimStart().startsWith('...') ? '... ' : '';
+		const suffix = right < snippet.length || snippet.trimEnd().endsWith('...') ? ' ...' : '';
+		const body = snippet
+			.slice(left, right)
+			.replace(/^\.\.\.\s*/, '')
+			.replace(/\s*\.\.\.$/, '')
+			.replace(/\s+/g, ' ')
+			.trim();
 
-		for (const tokenMatch of snippet.matchAll(wordRegex)) {
-			const token = tokenMatch[0];
-			const start = tokenMatch.index ?? 0;
-			const end = start + token.length;
-			output += escapeHtml(snippet.slice(cursor, start));
+		return `${prefix}${body}${suffix}`;
+	};
 
-			const normalizedToken = normalizePlainText(token, preserveEnieForHighlight);
-			const assignment = eligible.find((entry) =>
-				entry.regexes.some((regex) => regex.test(normalizedToken))
-			);
+	const setOccurrencePreview = (docId: number, preview: ResultOccurrencePreview): void => {
+		const next = new Map(occurrencePreviews);
+		next.set(docId, preview);
+		occurrencePreviews = next;
+	};
 
-			if (assignment) {
-				output += `<mark class="rounded-[4px] px-[2px]" style="${assignment.markStyle}">${escapeHtml(token)}</mark>`;
-			} else {
-				output += escapeHtml(token);
-			}
-
-			cursor = end;
+	const loadResultOccurrencePreview = async (result: SearchResult): Promise<void> => {
+		if (!engine || !searchExecution) return;
+		const searchEngine = engine;
+		const queryAtStart = searchExecution.query;
+		const assignments = buildMatchAssignments(result.matches);
+		if (assignments.length === 0) {
+			setOccurrencePreview(result.docId, { loading: false, items: [], error: '' });
+			return;
 		}
 
-		output += escapeHtml(snippet.slice(cursor));
+		setOccurrencePreview(result.docId, { loading: true, items: [], error: '' });
+
+		try {
+			const detailsByAssignment = await Promise.all(
+				assignments.map(async (assignment) => ({
+					assignment,
+					details: await searchEngine.getOccurrencesForMatch(
+						{ docId: result.docId, workId: result.workId },
+						assignment.match,
+						{
+							maxItems: RESULT_PREVIEW_OCCURRENCE_LIMIT,
+							snippetRadius: RESULT_PREVIEW_SNIPPET_RADIUS
+						}
+					)
+				}))
+			);
+			const items = detailsByAssignment
+				.flatMap(({ assignment, details }) =>
+					details.items.map((item) => ({
+						...item,
+						assignmentKey: assignment.key,
+						centeredSnippet: buildCenteredOccurrenceSnippet(item.snippet, [assignment], RESULT_PREVIEW_VISIBLE_RADIUS)
+					}))
+				)
+				.sort((a, b) => a.start - b.start || a.end - b.end)
+				.slice(0, RESULT_PREVIEW_OCCURRENCE_LIMIT);
+
+			if (searchExecution?.query !== queryAtStart) return;
+			setOccurrencePreview(result.docId, { loading: false, items, error: '' });
+		} catch (cause) {
+			if (searchExecution?.query !== queryAtStart) return;
+			setOccurrencePreview(result.docId, {
+				loading: false,
+				items: [],
+				error: cause instanceof Error ? cause.message : 'No se pudieron cargar las concurrencias'
+			});
+		}
+	};
+
+	const collectHighlightRanges = (snippet: string, assignments: MatchAssignment[]): HighlightRange[] => {
+		const eligible = assignments.filter((assignment) => assignment.regexes.length > 0);
+		if (eligible.length === 0) return [];
+
+		const wordRegex = /[\p{L}\p{N}]+/gu;
+		const tokens: SnippetToken[] = [];
+		for (const tokenMatch of snippet.matchAll(wordRegex)) {
+			const raw = tokenMatch[0];
+			const start = tokenMatch.index ?? 0;
+			tokens.push({
+				raw,
+				start,
+				end: start + raw.length,
+				norm: normalizePlainText(raw, preserveEnieForHighlight)
+			});
+		}
+
+		if (tokens.length === 0) return [];
+
+		const ranges: HighlightRange[] = [];
+		const overlapsExistingRange = (start: number, end: number): boolean =>
+			ranges.some((range) => start < range.end && end > range.start);
+
+		for (const assignment of eligible.filter((entry) => entry.match.kind === 'phrase')) {
+			const phraseLength = assignment.regexes.length;
+			if (phraseLength === 0 || tokens.length < phraseLength) continue;
+
+			for (let startIndex = 0; startIndex <= tokens.length - phraseLength; startIndex += 1) {
+				let matches = true;
+				for (let offset = 0; offset < phraseLength; offset += 1) {
+					if (!assignment.regexes[offset].test(tokens[startIndex + offset].norm)) {
+						matches = false;
+						break;
+					}
+				}
+				if (!matches) continue;
+
+				const start = tokens[startIndex].start;
+				const end = tokens[startIndex + phraseLength - 1].end;
+				if (overlapsExistingRange(start, end)) continue;
+				ranges.push({ start, end, assignment });
+			}
+		}
+
+		for (const token of tokens) {
+			if (overlapsExistingRange(token.start, token.end)) continue;
+			const assignment = eligible.find(
+				(entry) => entry.match.kind === 'term' && entry.regexes.some((regex) => regex.test(token.norm))
+			);
+			if (!assignment) continue;
+			ranges.push({ start: token.start, end: token.end, assignment });
+		}
+
+		ranges.sort((a, b) => a.start - b.start || a.end - b.end);
+		return ranges;
+	};
+
+	const renderHighlightedRanges = (snippet: string, ranges: HighlightRange[]): string => {
+		if (ranges.length === 0) return escapeHtml(snippet);
+		let output = '';
+		let cursor = 0;
+		for (const range of ranges) {
+			output += escapeHtml(snippet.slice(cursor, range.start));
+			output += `<mark class="rounded-[4px] px-[2px]" style="${range.assignment.markStyle}">${escapeHtml(
+				snippet.slice(range.start, range.end)
+			)}</mark>`;
+			cursor = range.end;
+		}
+
+		if (cursor < snippet.length) {
+			output += escapeHtml(snippet.slice(cursor));
+		}
+
 		return output;
+	};
+
+	const highlightSnippet = (snippet: string, assignments: MatchAssignment[]): string => {
+		if (!snippet.trim()) return '';
+		return renderHighlightedRanges(snippet, collectHighlightRanges(snippet, assignments));
+	};
+
+	const highlightSingleOccurrenceSnippet = (
+		snippet: string,
+		assignment: MatchAssignment | undefined
+	): string => {
+		if (!snippet.trim()) return '';
+		if (!assignment) return escapeHtml(snippet);
+
+		const ranges = collectHighlightRanges(snippet, [assignment]);
+		if (ranges.length === 0) return escapeHtml(snippet);
+
+		const center = snippet.length / 2;
+		const selected = ranges.sort(
+			(a, b) =>
+				Math.abs((a.start + a.end) / 2 - center) -
+					Math.abs((b.start + b.end) / 2 - center) ||
+				a.start - b.start
+		)[0];
+
+		return renderHighlightedRanges(snippet, [selected]);
 	};
 
 	const closeOccurrenceModal = (): void => {
@@ -773,6 +1216,15 @@
 		queueQueryWarmup();
 	});
 
+	$effect(() => {
+		if (!engine || !searchExecution || visibleResults.length === 0) return;
+		for (const result of visibleResults) {
+			const preview = occurrencePreviews.get(result.docId);
+			if (preview?.loading || preview?.items.length || preview?.error) continue;
+			void loadResultOccurrencePreview(result);
+		}
+	});
+
 	onMount(() => {
 		void (async () => {
 			try {
@@ -811,24 +1263,48 @@
 		event.preventDefault();
 		searchError = '';
 		searchExecution = null;
+		submittedTerms = [];
+		occurrencePreviews = new Map();
 		chartCopyPending = { author: false, genre: false };
 		if (!engine) {
 			searchError = 'Motor de búsqueda no disponible todavía';
 			return;
 		}
-		if (!query.trim()) {
-			searchError = 'Introduce una consulta';
+
+		const mainValidationError = validateSearchTerm(mainQuery, 'Búsqueda principal');
+		if (mainValidationError) {
+			searchError = mainValidationError;
 			return;
 		}
 
+		let nonEmptyAdvancedTerms = 0;
+		for (let index = 0; index < advancedTerms.length; index += 1) {
+			const term = advancedTerms[index];
+			if (!term.value.trim()) continue;
+			nonEmptyAdvancedTerms += 1;
+			const validationError = validateSearchTerm(term.value, `Búsqueda avanzada ${index + 1}`);
+			if (validationError) {
+				searchError = validationError;
+				return;
+			}
+		}
+
+		if (1 + nonEmptyAdvancedTerms > MAX_QUERY_TERMS) {
+			searchError = `La consulta admite un máximo de ${MAX_QUERY_TERMS} términos en total.`;
+			return;
+		}
+
+		const { query, terms } = buildEffectiveQuery();
 		isSearching = true;
 		try {
+			submittedTerms = terms;
 			searchExecution = await engine.search(query, worksMetaMap, {
-				limit: 35,
+				limit: RESULTS_PAGE_SIZE,
 				maxPhraseVerificationDocs: 220,
 				snippetRadius: 115
 			});
 		} catch (cause) {
+			submittedTerms = [];
 			searchError = cause instanceof Error ? cause.message : 'Error ejecutando la búsqueda';
 		} finally {
 			isSearching = false;
@@ -873,34 +1349,264 @@
 	<section class="rounded-[14px] p-5">
 		<h2 class="m-0 font-['Roboto',sans-serif] text-[1.45rem] font-bold text-brand-blue-dark">Buscar en TEXORO</h2>
 		<p class="mt-2 mb-0 text-[0.98rem] text-text-soft">
-			Consulta palabras, frases con comillas, comodines (`*`, `?`) y combinaciones con AND/OR.
+			La búsqueda principal se interpreta como exacta por defecto. Solo se admiten palabras, espacios y
+			los comodines <code>*</code> y <code>?</code>.
 		</p>
 
-		<form class="mt-4 flex flex-col gap-3 md:flex-row" onsubmit={submitSearch}>
-			<div class="relative flex-1">
-				<input
-					type="search"
-					bind:value={query}
-					placeholder='Ejemplos: amor | "amor constante" | am* OR "amor const*"'
-					class="h-[46px] w-full appearance-none rounded-[10px] border border-border bg-white px-11 py-2 text-[15px] text-text-main outline-none shadow-none transition focus:border-brand-blue/35 focus:shadow-none focus:outline-none focus-visible:border-brand-blue/35 focus-visible:outline-none"
-				/>
-				<span class="pointer-events-none absolute inset-y-0 left-3 inline-flex items-center text-text-accent-purple">
-					<Search class="h-4.5 w-4.5" />
-				</span>
+		<form class="mt-4 grid gap-3" onsubmit={submitSearch}>
+			<div class="grid gap-3 md:grid-cols-[minmax(0,1fr)_auto]">
+				<div class="relative">
+					<input
+						type="search"
+						bind:value={mainQuery}
+						placeholder="Ejemplos: amor | amor constante | honor*"
+						class="h-[46px] w-full appearance-none rounded-[10px] border border-border bg-white px-11 py-2 text-[15px] text-text-main outline-none shadow-none transition focus:border-brand-blue/35 focus:shadow-none focus:outline-none focus-visible:border-brand-blue/35 focus-visible:outline-none"
+					/>
+					<span class="pointer-events-none absolute inset-y-0 left-3 inline-flex items-center text-text-accent-purple">
+						<Search class="h-4.5 w-4.5" />
+					</span>
+				</div>
+				<AppButton
+					type="submit"
+					variant="primary"
+					disabled={!isEngineReady || isSearching}
+					className="!h-[46px] !min-w-[180px] gap-2 !rounded-[10px] !px-5 !py-2 font-['Roboto',sans-serif] text-[0.93rem] font-semibold tracking-[0.02em]"
+				>
+					{#if isSearching}
+						<LoaderCircle class="h-4.5 w-4.5 animate-spin" />
+						Buscando...
+					{:else}
+						Buscar
+					{/if}
+				</AppButton>
 			</div>
-			<AppButton
-				type="submit"
-				variant="primary"
-				disabled={!isEngineReady || isSearching}
-				className="!h-[46px] !min-w-[180px] gap-2 !rounded-[10px] !px-5 !py-2 font-['Roboto',sans-serif] text-[0.93rem] font-semibold tracking-[0.02em]"
-			>
-				{#if isSearching}
-					<LoaderCircle class="h-4.5 w-4.5 animate-spin" />
-					Buscando...
-				{:else}
-					Buscar
-				{/if}
-			</AppButton>
+
+			<p class="m-0 text-[0.84rem] text-text-soft">
+				Una entrada con varias palabras se busca como frase exacta. Para combinar varios términos usa
+				<em class="not-italic font-semibold text-brand-blue">Búsqueda avanzada</em>.
+			</p>
+
+			<div class="overflow-hidden rounded-[10px] border border-border-accent-blue bg-white">
+				<button
+					type="button"
+					class="flex w-full items-center justify-between gap-3 border-0 bg-transparent px-4 py-3 text-left font-['Roboto',sans-serif] text-[0.92rem] font-semibold text-brand-blue-dark transition hover:bg-surface-accent-blue"
+					aria-expanded={advancedSearchOpen}
+					onclick={() => {
+						advancedSearchOpen = !advancedSearchOpen;
+					}}
+				>
+					<span>Búsqueda avanzada</span>
+					<span class={`inline-flex items-center justify-center transition-transform duration-200 ${advancedSearchOpen ? 'rotate-180' : ''}`} aria-hidden="true">
+						<ChevronDown class="h-[15px] w-[15px] stroke-[2.2]" />
+					</span>
+				</button>
+
+				<div
+					class={`overflow-hidden border-t px-4 transition-[max-height,padding,opacity] duration-300 ease-out ${
+						advancedSearchOpen
+							? 'max-h-[1200px] border-border-accent-blue py-4 opacity-100'
+							: 'max-h-0 border-transparent py-0 opacity-0'
+					}`}
+				>
+					<p class="m-0 text-[0.86rem] leading-[1.5] text-text-soft">
+						Añade hasta {MAX_QUERY_TERMS - 1} términos complementarios. Cada fila se suma a la búsqueda
+						principal mediante <code>AND</code> o <code>OR</code>.
+					</p>
+
+					<div class="mt-3 grid gap-3">
+						{#if advancedTerms.length === 0}
+							<p class="m-0 rounded-[9px] border border-dashed border-border-accent-blue bg-surface px-3 py-2 text-[0.86rem] text-text-soft">
+								No hay términos avanzados añadidos.
+							</p>
+						{:else}
+							{#each advancedTerms as term}
+								<div class="grid gap-2 rounded-[9px] border border-border bg-surface p-3 md:grid-cols-[120px_minmax(0,1fr)_auto]">
+									<label class="sr-only" for={`advanced-operator-${term.id}`}>Operador</label>
+									<select
+										id={`advanced-operator-${term.id}`}
+										class="h-[42px] rounded-[8px] border border-border bg-white px-3 text-[0.92rem] text-text-main outline-none transition focus:border-brand-blue/35"
+										value={term.operator}
+										onchange={(event) =>
+											updateAdvancedTermOperator(
+												term.id,
+												(event.currentTarget as HTMLSelectElement).value as 'and' | 'or'
+											)}
+									>
+										<option value="and">AND</option>
+										<option value="or">OR</option>
+									</select>
+
+									<label class="sr-only" for={`advanced-query-${term.id}`}>Término avanzado</label>
+									<input
+										id={`advanced-query-${term.id}`}
+										type="search"
+										value={term.value}
+										placeholder="Ej: honra | honra constante | desdich?"
+										class="h-[42px] rounded-[8px] border border-border bg-white px-3 text-[0.92rem] text-text-main outline-none transition focus:border-brand-blue/35"
+										oninput={(event) =>
+											updateAdvancedTermValue(
+												term.id,
+												(event.currentTarget as HTMLInputElement).value
+											)}
+									/>
+
+									<button
+										type="button"
+										class="h-[42px] rounded-[8px] border border-border bg-white px-3 text-[0.84rem] font-semibold text-text-soft transition hover:border-[#d7b5bf] hover:bg-[#fff5f7] hover:text-[#8f1e36]"
+										onclick={() => removeAdvancedTerm(term.id)}
+									>
+										Eliminar
+									</button>
+								</div>
+							{/each}
+						{/if}
+					</div>
+
+					<div class="mt-3 flex flex-wrap items-center justify-between gap-3">
+						<p class="m-0 text-[0.82rem] text-text-soft">
+							Términos activos: {activeSearchTermCount}/{MAX_QUERY_TERMS}
+						</p>
+						<button
+							type="button"
+							class="rounded-[8px] border border-border-accent-blue bg-surface-accent-blue px-3 py-2 text-[0.84rem] font-semibold text-brand-blue-dark transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-55"
+							disabled={advancedTerms.length >= MAX_QUERY_TERMS - 1}
+							onclick={addAdvancedTerm}
+						>
+							Añadir término
+						</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="overflow-hidden rounded-[10px] border border-border-accent-blue bg-white">
+				<button
+					type="button"
+					class="flex w-full items-center justify-between gap-3 border-0 bg-transparent px-4 py-3 text-left font-['Roboto',sans-serif] text-[0.92rem] font-semibold text-brand-blue-dark transition hover:bg-surface-accent-blue"
+					aria-expanded={filtersOpen}
+					onclick={() => {
+						filtersOpen = !filtersOpen;
+					}}
+				>
+					<span>Filtros</span>
+					<span class={`inline-flex items-center justify-center transition-transform duration-200 ${filtersOpen ? 'rotate-180' : ''}`} aria-hidden="true">
+						<ChevronDown class="h-[15px] w-[15px] stroke-[2.2]" />
+					</span>
+				</button>
+
+				<div
+					class={`overflow-hidden border-t px-4 transition-[max-height,padding,opacity] duration-300 ease-out ${
+						filtersOpen
+							? 'max-h-[1600px] border-border-accent-blue py-4 opacity-100'
+							: 'max-h-0 border-transparent py-0 opacity-0'
+					}`}
+				>
+					<div class="grid gap-5">
+						<div class="grid gap-5 md:grid-cols-2">
+							<div class="flex flex-col">
+								<label class="mb-[6px] text-[14px] font-semibold text-text-soft" for="texoro-title-filter">
+									Título
+								</label>
+								<input
+									id="texoro-title-filter"
+									type="text"
+									bind:value={titleFilter}
+									placeholder="Ej: desdén, fuerza del interés..."
+									class="rounded-[8px] border border-border px-3 py-[10px] text-[14px] transition focus:border-brand-blue/35 focus:shadow-[0_0_0_3px_rgba(13,63,145,0.1)] focus:outline-none"
+								/>
+							</div>
+
+							<TokenMultiSelect
+								name="texoro-genero"
+								label="Género"
+								placeholder="Escribe y selecciona géneros"
+								options={genreOptions}
+								selectedIds={selectedGenres}
+								helpText="Selecciona uno o varios géneros para limitar los resultados."
+								inputClass="js-static-multiselect"
+								onChange={(nextIds) => {
+									selectedGenres = nextIds;
+								}}
+							/>
+						</div>
+
+						<div class="grid gap-4 md:grid-cols-2">
+							<div class="flex flex-col gap-3 rounded-[8px] border border-border bg-surface p-[14px]">
+								<TokenMultiSelect
+									name="texoro-traditional-attribution"
+									label="Atribución tradicional"
+									placeholder="Escribe y selecciona autores"
+									options={authorOptions}
+									selectedIds={selectedTradAuthors}
+									helpText="Autores propuestos por la tradición filológica."
+									inputClass="js-author-multiselect"
+									onChange={(nextIds) => {
+										selectedTradAuthors = nextIds;
+									}}
+								/>
+
+								<MatchToggle
+									name="texoro-trad-match"
+									value={tradMatch}
+									helpText="OR muestra obras con cualquiera de los autores seleccionados. AND exige que estén todos."
+									onChange={(next) => {
+										tradMatch = next;
+									}}
+								/>
+							</div>
+
+							<div class="flex flex-col gap-3 rounded-[8px] border border-border bg-surface p-[14px]">
+								<TokenMultiSelect
+									name="texoro-stylometry-attribution"
+									label="Atribución estilometría"
+									placeholder="Escribe y selecciona autores"
+									options={authorOptions}
+									selectedIds={selectedEstoAuthors}
+									helpText="Autores sugeridos por el análisis estilométrico."
+									inputClass="js-author-multiselect"
+									onChange={(nextIds) => {
+										selectedEstoAuthors = nextIds;
+									}}
+								/>
+
+								<MatchToggle
+									name="texoro-esto-match"
+									value={estoMatch}
+									helpText="OR muestra obras con cualquiera de los autores seleccionados. AND exige que estén todos."
+									onChange={(next) => {
+										estoMatch = next;
+									}}
+								/>
+							</div>
+						</div>
+
+						<TokenMultiSelect
+							name="texoro-text-state"
+							label="Estado del texto"
+							placeholder="Escribe y selecciona estados"
+							options={stateOptions}
+							selectedIds={selectedStates}
+							helpText="Limita los resultados al estado del texto utilizado en TEXORO."
+							inputClass="js-static-multiselect"
+							onChange={(nextIds) => {
+								selectedStates = nextIds;
+							}}
+						/>
+					</div>
+				</div>
+			</div>
+
+			<div class="flex justify-end">
+				<AppButton
+					href="/texoro"
+					variant="secondary"
+					onclick={(event) => {
+						event.preventDefault();
+						resetSearchControls();
+					}}
+				>
+					Limpiar campos
+				</AppButton>
+			</div>
 		</form>
 
 		{#if searchError}
@@ -909,18 +1615,30 @@
 
 		{#if searchExecution}
 			<div class="mt-4 grid gap-4">
-				<div class="flex flex-wrap items-center gap-2 font-['Roboto',sans-serif] text-[0.9rem] text-brand-blue-dark">
-					<span class="rounded-full bg-surface-accent-blue px-3 py-1">
-						{numberFormatter.format(searchExecution.textsWithOccurrences)} textos con concurrencias
-					</span>
-					<span class="rounded-full bg-surface-accent-blue px-3 py-1">
-						{numberFormatter.format(searchExecution.totalOccurrences)} concurrencias totales
-					</span>
-					<span class="rounded-full bg-surface-accent-blue px-3 py-1">
-						Mostrando {numberFormatter.format(searchExecution.results.length)}
-					</span>
-					<span class="rounded-full bg-surface-accent-purple px-3 py-1 text-text-accent-purple">{searchExecution.elapsedMs} ms</span>
+				<div class="grid gap-3 rounded-[12px] border border-border-accent-blue bg-white px-4 py-5 text-center shadow-[0_6px_16px_rgba(25,46,80,0.07)] md:grid-cols-2">
+					<div>
+						<p class="m-0 font-['Roboto',sans-serif] text-[2.4rem] leading-none font-bold text-brand-blue-dark">
+							{numberFormatter.format(filteredTotalOccurrences)}
+						</p>
+						<p class="mt-2 mb-0 text-[0.9rem] font-semibold tracking-[0.03em] text-text-soft uppercase">
+							Concurrencias
+						</p>
+					</div>
+					<div>
+						<p class="m-0 font-['Roboto',sans-serif] text-[2.4rem] leading-none font-bold text-brand-blue-dark">
+							{numberFormatter.format(filteredTextsWithOccurrences)}
+						</p>
+						<p class="mt-2 mb-0 text-[0.9rem] font-semibold tracking-[0.03em] text-text-soft uppercase">
+							Textos con concurrencias
+						</p>
+					</div>
 				</div>
+
+				{#if hasActiveFilters}
+					<p class="m-0 rounded-[9px] border border-border-accent-blue bg-surface px-3 py-2 text-[0.84rem] text-text-soft">
+						Los resultados están recalculados sobre el subconjunto filtrado.
+					</p>
+				{/if}
 
 				{#if searchExecution.parsed.warnings.length > 0}
 					<p class="m-0 rounded-[9px] border border-border bg-surface px-3 py-2 text-[0.88rem] text-text-soft">
@@ -928,7 +1646,7 @@
 					</p>
 				{/if}
 
-				{#if liveCharts}
+				{#if SHOW_AUTOMATIC_CHARTS && liveCharts}
 					<div class="grid gap-3 rounded-[12px] border border-border-accent-blue bg-white p-3">
 						<div class="flex flex-wrap items-start justify-between gap-3">
 							<div>
@@ -1013,7 +1731,7 @@
 					</div>
 				{/if}
 
-				{#if multiTermComparison}
+				{#if SHOW_AUTOMATIC_CHARTS && multiTermComparison}
 					<div class="grid gap-3 rounded-[12px] border border-border-accent-blue bg-surface p-3">
 						<div class="flex flex-wrap items-start justify-between gap-3">
 							<div>
@@ -1077,12 +1795,18 @@
 					</div>
 				{/if}
 
-				{#if searchExecution.results.length === 0}
-					<p class="m-0 text-[0.96rem] text-text-soft">No se encontraron coincidencias.</p>
+				{#if filteredResults.length === 0}
+					<p class="m-0 text-[0.96rem] text-text-soft">
+						{hasActiveFilters
+							? 'No se encontraron coincidencias con los filtros aplicados.'
+							: 'No se encontraron coincidencias.'}
+					</p>
 				{:else}
 					<ul class="m-0 grid list-none gap-3 p-0">
-						{#each searchExecution.results as result}
+						{#each visibleResults as result}
 							{@const assignments = buildMatchAssignments(result.matches)}
+							{@const resultOccurrences = sumResultOccurrences(result)}
+							{@const preview = occurrencePreviews.get(result.docId)}
 							<li class="rounded-[11px] border border-border-accent-blue bg-white px-4 py-3 shadow-[0_6px_16px_rgba(25,46,80,0.07)]">
 								<div class="flex flex-wrap items-start justify-between gap-3">
 									<div class="min-w-0">
@@ -1097,15 +1821,33 @@
 											{/if}
 										</h3>
 									</div>
-									<span class="shrink-0 rounded-full bg-surface-accent-purple px-2.5 py-1 text-[0.8rem] font-semibold text-text-accent-purple">
-										score {result.score.toFixed(1)}
+									<span class="shrink-0 rounded-full bg-surface-accent-blue px-2.5 py-1 text-[0.8rem] font-semibold text-brand-blue-dark">
+										{numberFormatter.format(resultOccurrences)} {resultOccurrences === 1 ? 'concurrencia' : 'concurrencias'}
 									</span>
 								</div>
 
-								{#if result.snippet}
-									<p class="mt-2 mb-0 text-[0.95rem] leading-[1.5] text-text-main">
-										{@html highlightSnippet(result.snippet, assignments)}
+								{#if preview?.loading}
+									<p class="mt-3 mb-0 text-[0.9rem] text-text-soft">Cargando concurrencias...</p>
+								{:else if preview?.error}
+									<p class="mt-3 mb-0 rounded-[9px] border border-[#f3c0ca] bg-[#fff5f7] px-3 py-2 text-[0.88rem] text-[#8f1e36]">
+										{preview.error}
 									</p>
+								{:else if preview?.items.length}
+									<ol class="mt-3 m-0 list-none p-0 text-[0.95rem] leading-[1.55] text-text-main">
+										{#each preview.items as item, index}
+											{@const itemAssignment = assignments.find((assignment) => assignment.key === item.assignmentKey)}
+											<li class="grid grid-cols-[auto_minmax(0,1fr)] gap-3 border-t border-brand-blue/15 py-3 first:border-t-0 first:pt-0 last:pb-0">
+												<span class="font-['Roboto',sans-serif] text-[0.82rem] font-bold text-text-accent-purple">
+													{index + 1}#
+												</span>
+												<span class="texoro-occurrence-snippet block min-w-0">
+													{@html highlightSingleOccurrenceSnippet(item.centeredSnippet, itemAssignment)}
+												</span>
+											</li>
+										{/each}
+									</ol>
+								{:else}
+									<p class="mt-3 mb-0 text-[0.9rem] text-text-soft">No hay concurrencias para mostrar.</p>
 								{/if}
 
 								<div class="mt-2 flex flex-wrap gap-1.5">
@@ -1115,9 +1857,9 @@
 											class="rounded-full border px-2 py-[2px] font-['Roboto',sans-serif] text-[0.76rem] font-medium hover:brightness-95"
 											style={`${assignment.chipStyle} cursor:pointer;`}
 											onclick={() => openOccurrenceModal(result, assignment)}
-											title="Ver concurrencias"
+											title={`Ver más concurrencias de ${formatMatchDisplayLabel(assignment.match)}`}
 										>
-											{assignment.match.kind === 'phrase' ? 'Frase' : 'Término'}: {assignment.match.source}
+											Ver más de {formatMatchDisplayLabel(assignment.match)}
 											({numberFormatter.format(assignment.match.occurrences)})
 										</button>
 									{/each}
@@ -1140,7 +1882,7 @@
 						{occurrenceModal.assignment.match.kind === 'phrase' ? 'Concurrencias de frase' : 'Concurrencias de término'}
 					</h3>
 					<p class="mt-1 mb-0 text-[0.9rem] text-text-soft">
-						{occurrenceModal.assignment.match.source}
+						{formatMatchDisplayLabel(occurrenceModal.assignment.match)}
 						{#if occurrenceModal.details}
 							({numberFormatter.format(occurrenceModal.details.count)})
 						{/if}
@@ -1169,7 +1911,7 @@
 							<li class="rounded-[9px] border border-border-accent-blue bg-surface px-3 py-2">
 								<p class="m-0 text-[0.79rem] font-semibold text-text-accent-purple">#{index + 1}</p>
 								<p class="mt-1 mb-0 text-[0.93rem] leading-[1.5] text-text-main">
-									{@html highlightSnippet(item.snippet, [occurrenceModal.assignment])}
+									{@html highlightSingleOccurrenceSnippet(item.snippet, occurrenceModal.assignment)}
 								</p>
 							</li>
 						{/each}
@@ -1187,6 +1929,23 @@
 		</div>
 	</div>
 {/if}
+
+<style>
+	.texoro-occurrence-snippet {
+		display: -webkit-box;
+		overflow: hidden;
+		-webkit-box-orient: vertical;
+		line-clamp: 3;
+		-webkit-line-clamp: 3;
+	}
+
+	@media (min-width: 768px) {
+		.texoro-occurrence-snippet {
+			line-clamp: 1;
+			-webkit-line-clamp: 1;
+		}
+	}
+</style>
 
 {#if infoModalOpen}
 	<div class="fixed inset-0 z-40 flex items-center justify-center bg-black/45 px-3 py-4">
@@ -1217,13 +1976,14 @@
 				<h4 class="mb-0 mt-4 font-['Roboto',sans-serif] text-[0.94rem] font-semibold text-text-accent-purple">Consultas disponibles</h4>
 				<ul class="mb-0 mt-2 pl-5 text-[0.92rem] leading-[1.52] text-text-main">
 					<li>Palabra exacta: <code>amor</code>.</li>
-					<li>Frase exacta: <code>"amor constante"</code>.</li>
+					<li>Varias palabras en la búsqueda principal: <code>amor constante</code> se interpreta como frase exacta.</li>
 					<li>Comodines: <code>am*</code>, <code>a*or</code>, <code>am?r</code>, <code>???</code>.</li>
-					<li>Operadores booleanos: <code>AND</code> y <code>OR</code>.</li>
+					<li>Los operadores <code>AND</code> y <code>OR</code> se aplican desde el bloque de Búsqueda avanzada.</li>
+					<li>Solo se admiten letras, números, espacios y los comodines <code>*</code> y <code>?</code>.</li>
 				</ul>
 				<h4 class="mb-0 mt-4 font-['Roboto',sans-serif] text-[0.94rem] font-semibold text-text-accent-purple">Lectura de gráficos</h4>
 				<ul class="mb-0 mt-2 pl-5 text-[0.92rem] leading-[1.52] text-text-main">
-					<li>Los gráficos se calculan en vivo con las concurrencias de los resultados mostrados.</li>
+					<li>Los gráficos se calculan en vivo con las concurrencias del subconjunto activo de resultados.</li>
 					<li>En autoría, la concurrencia de cada obra se reparte proporcionalmente entre autores asignados.</li>
 					<li>En género, se suma el total de concurrencias por género textual.</li>
 					<li>En consultas con varios términos se activa una comparativa por autor y género con métrica seleccionable.</li>

@@ -7,9 +7,12 @@ export const load: PageServerLoad = async () => {
 	const worksMeta = works.map((work) => ({
 		id: work.id,
 		title: work.title,
+		titleVariants: work.titleVariants,
 		slug: work.slug,
 		genre: work.genre,
+		textState: work.textState,
 		shortSummary: work.shortSummary,
+		traditionalAttribution: work.traditionalAttribution,
 		stylometryAttribution: work.stylometryAttribution
 	}));
 

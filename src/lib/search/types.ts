@@ -167,9 +167,12 @@ export interface TexoroWildcardLengths {
 export interface TexoroWorkMeta {
 	id: string;
 	title: string;
+	titleVariants: string[];
 	slug: string;
 	genre: string;
+	textState: string;
 	shortSummary: string;
+	traditionalAttribution: AttributionSet;
 	stylometryAttribution: AttributionSet;
 }
 
@@ -227,6 +230,7 @@ export interface SearchExecution {
 	normalizedQuery: string;
 	parsed: ParsedQuery;
 	results: SearchResult[];
+	allResults: SearchResult[];
 	candidateCount: number;
 	textsWithOccurrences: number;
 	totalOccurrences: number;

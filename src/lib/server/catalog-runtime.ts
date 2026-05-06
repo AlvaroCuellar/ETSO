@@ -430,11 +430,13 @@ const createSnapshot = async (): Promise<Snapshot> => {
 			? {
 					groups: [],
 					connector: 'and',
-					unresolved: true
+					unresolved: true,
+					rawExpression: set.rawExpression
 				}
 			: {
 					groups: sortedGroups,
-					connector: resolveConnector(set.rawExpression)
+					connector: resolveConnector(set.rawExpression),
+					rawExpression: set.rawExpression
 				};
 
 		attributionByWorkType.set(`${set.workId}::${set.attributionType}`, normalized);

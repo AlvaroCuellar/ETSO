@@ -152,6 +152,11 @@
 		return row.distancia.toFixed(3);
 	};
 
+	const positionValue = (row: ObraTableRow): string => {
+		if (typeof row.position !== 'number' || Number.isNaN(row.position)) return '-';
+		return `${Math.trunc(row.position)}ª`;
+	};
+
 	const hasLongSummary = (work: CatalogWork): boolean => Boolean(work.longSummary?.trim());
 
 	const hasShortSummary = (work: CatalogWork): boolean => {
@@ -185,7 +190,9 @@
 			<thead class="bg-brand-blue-dark text-white max-md:hidden">
 				<tr>
 					{#if mode === 'informe'}
-						<th class="obra-table-col--position w-[36px] px-3 py-[14px] text-left text-[13px] font-medium tracking-[0.5px] uppercase" scope="col"></th>
+						<th class="obra-table-col--position w-[82px] px-3 py-[14px] text-left text-[13px] font-medium tracking-[0.5px] uppercase" scope="col">
+							Posición
+						</th>
 						<th class="obra-table-col--distance w-[90px] px-3 py-[14px] text-left text-[13px] font-medium tracking-[0.5px] uppercase" scope="col">
 							Distancia
 						</th>
@@ -252,7 +259,7 @@
 						{#if mode === 'informe'}
 							<td class={`${dataCellClass} text-center font-medium`} data-label="Posición">
 								<span class={mobileCellLabelClass}>Posición</span>
-								{row.position ?? '-'}
+								{positionValue(row)}
 							</td>
 							<td class={`${dataCellClass} text-right whitespace-nowrap`} data-label="Distancia">
 								<span class={mobileCellLabelClass}>Distancia</span>

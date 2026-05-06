@@ -13,6 +13,17 @@
 
 	import type { PageData } from './$types';
 
+	interface ResultTextPart {
+		kind: 'text' | 'author';
+		value: string;
+		authorId?: string;
+	}
+
+	interface AuthorReference {
+		authorId: string;
+		authorName: string;
+	}
+
 	let { data }: { data: PageData } = $props();
 	const displayWorkTitle = $derived.by(() => formatDisplayWorkTitle(data.work.title));
 	const displayInformeTitle = $derived.by(() => `Análisis estilométrico de ${displayWorkTitle}`);
@@ -21,6 +32,8 @@
 	);
 
 	let activeAmbito = $state<Ambito>('obracompleta');
+
+	const authorNameById = $derived.by(() => new Map(data.authors.map((author) => [author.id, author.name] as const)));
 
 	const availableAmbitos = $derived.by(() =>
 		ambitos.filter((ambito) => (data.distances[ambito] ?? []).length > 0)
@@ -46,28 +59,153 @@
 			.toLowerCase()
 			.trim();
 
-	const traditionalAttributionText = (set: AttributionSet): string => {
-		if (set.unresolved || set.groups.length === 0) return 'autoría no determinada';
-		const connector = set.connector === 'and' ? ' y ' : ' o ';
-		const groups = set.groups.map((group) => group.members.map((member) => member.authorName).join(' y '));
-		return groups.join(connector);
+	const formatNameList = (names: string[], connector: 'y' | 'o'): string => {
+		if (names.length <= 1) return names[0] ?? '';
+		if (names.length === 2) return `${names[0]} ${connector} ${names[1]}`;
+		return `${names.slice(0, -1).join(', ')} ${connector} ${names[names.length - 1]}`;
 	};
 
-	const attributedWord = (genre: string): 'atribuido' | 'atribuida' => {
-		const normalized = normalizeText(genre);
-		if (!normalized) return 'atribuido';
-		if (
-			normalized.endsWith('a') ||
-			normalized.includes('comedia') ||
-			normalized.includes('tragedia') ||
-			normalized.includes('loa') ||
-			normalized.includes('zarzuela') ||
-			normalized.includes('farsa')
-		) {
-			return 'atribuida';
+	const formatAuthorListParts = (authors: AuthorReference[], connector: 'y' | 'o'): ResultTextPart[] => {
+		const parts: ResultTextPart[] = [];
+		for (const [index, author] of authors.entries()) {
+			if (index > 0) {
+				parts.push({
+					kind: 'text',
+					value: index === authors.length - 1 ? ` ${connector} ` : ', '
+				});
+			}
+			parts.push({
+				kind: 'author',
+				value: author.authorName,
+				authorId: author.authorId
+			});
 		}
-		return 'atribuido';
+		return parts;
 	};
+
+	const buildTraditionalAttributionParts = (set: AttributionSet): ResultTextPart[] => {
+		const authors = set.groups.flatMap((group) =>
+			group.members
+				.map((member) => ({
+					authorId: member.authorId,
+					authorName: member.authorName.trim()
+				}))
+				.filter((member) => member.authorName.length > 0)
+		);
+		if (set.unresolved || authors.length === 0) {
+			return [{ kind: 'text', value: 'Obra sin atribución tradicional determinada.' }];
+		}
+		if (authors.length === 1) {
+			return [
+				{ kind: 'text', value: 'Obra atribuida a ' },
+				...formatAuthorListParts(authors, 'y'),
+				{ kind: 'text', value: '.' }
+			];
+		}
+		if (set.connector === 'and') {
+			return [
+				{ kind: 'text', value: 'Obra atribuida a la escritura en colaboración entre ' },
+				...formatAuthorListParts(authors, 'y'),
+				{ kind: 'text', value: '.' }
+			];
+		}
+		return [
+			{ kind: 'text', value: 'Obra atribuida a ' },
+			...formatAuthorListParts(authors, 'o'),
+			{ kind: 'text', value: '.' }
+		];
+	};
+
+	const traditionalAttributionParts = $derived.by(() =>
+		buildTraditionalAttributionParts(data.work.traditionalAttribution)
+	);
+
+	const hasAutomaticMarker = (value: string): boolean => {
+		const normalized = normalizeText(value);
+		return normalized.includes('automatico') || /\bauto\b/.test(normalized);
+	};
+
+	const stylometryResultSentence = (set: AttributionSet): string => {
+		const rawExpression = normalizeText(set.rawExpression ?? '');
+		if (rawExpression.includes('no_apunta_a_ningun_autor')) {
+			return 'Los análisis de estilometría no permiten asociar esta obra de forma clara con ningún perfil autorial del corpus.';
+		}
+		if (rawExpression.includes('no_es_posible')) {
+			return 'Los análisis de estilometría no permiten evaluar la asociación de esta obra con el perfil autorial del autor tradicional, debido a lo reducido de su corpus de comparación. Tampoco identifican de forma clara una alternativa autorial.';
+		}
+		if (rawExpression.includes('no_analizada')) {
+			return 'Esta obra no ha sido analizada estilométricamente, por lo que no es posible valorar su asociación con ningún perfil autorial del corpus.';
+		}
+		if (rawExpression.includes('pendiente_profundidad')) {
+			return 'Los resultados estilométricos disponibles requieren una revisión en profundidad antes de formular una conclusión autorial.';
+		}
+
+		const members = set.groups.flatMap((group) => group.members).filter((member) => member.authorName.trim());
+		const names = members.map((member) => member.authorName.trim());
+		const allProbable = members.length > 0 && members.every((member) => member.confidence === 'probable');
+
+		if (members.length === 1 && members[0].confidence === 'segura') {
+			return `Los análisis de estilometría permiten asociar esta obra de forma clara con el perfil autorial de ${names[0]}.`;
+		}
+		if (members.length === 1 && members[0].confidence === 'probable') {
+			return `Los análisis de estilometría permiten asociar esta obra con el perfil autorial de ${names[0]}, por cuanto algunas de sus obras aparecen en las primeras posiciones, aunque no de forma concluyente.`;
+		}
+		if (members.length > 1 && set.connector === 'and' && allProbable) {
+			return `Los análisis de estilometría permiten asociar esta obra con los perfiles autoriales de ${formatNameList(names, 'y')}, por cuanto algunas de sus obras aparecen en las primeras posiciones, aunque no de forma concluyente.`;
+		}
+
+		return 'Los resultados estilométricos disponibles requieren revisión antes de formular una conclusión autorial.';
+	};
+
+	const resolveResult1Text = (): string => {
+		const result = data.work.result1?.trim() ?? '';
+		if (!result) return '';
+		return hasAutomaticMarker(result) ? stylometryResultSentence(data.work.stylometryAttribution) : result;
+	};
+
+	const tokenizeResultText = (value: string): ResultTextPart[] => {
+		const parts: ResultTextPart[] = [];
+		const authorKeyPattern = /#([A-Za-z0-9_]+)/g;
+		let lastIndex = 0;
+		let match: RegExpExecArray | null;
+
+		while ((match = authorKeyPattern.exec(value)) !== null) {
+			if (match.index > lastIndex) {
+				parts.push({
+					kind: 'text',
+					value: value.slice(lastIndex, match.index)
+				});
+			}
+
+			const authorId = match[1];
+			const authorName = authorNameById.get(authorId);
+			parts.push(
+				authorName
+					? {
+							kind: 'author',
+							value: authorName,
+							authorId
+						}
+					: {
+							kind: 'text',
+							value: match[0]
+						}
+			);
+			lastIndex = authorKeyPattern.lastIndex;
+		}
+
+		if (lastIndex < value.length) {
+			parts.push({
+				kind: 'text',
+				value: value.slice(lastIndex)
+			});
+		}
+
+		return parts;
+	};
+
+	const result1Parts = $derived.by(() => tokenizeResultText(resolveResult1Text()));
+	const result2Parts = $derived.by(() => tokenizeResultText(data.work.result2?.trim() ?? ''));
 
 	const procedeValue = $derived.by(() => {
 		const origin = data.work.origin?.trim();
@@ -170,29 +308,48 @@
 		backgroundImage={informeBg}
 	/>
 
-	<section class="grid gap-4 font-ui">
-		<div class="grid gap-2.5">
-			<p class="m-0 text-base font-medium leading-[1.55] text-brand-blue-dark">
-				<strong>{data.work.genre}</strong>
-				{attributedWord(data.work.genre)} a <strong>{traditionalAttributionText(data.work.traditionalAttribution)}</strong
-				>.
-			</p>
-			<div class="grid gap-1">
-				<div class="m-0 text-[0.72rem] font-bold uppercase tracking-[0.06em] text-text-accent-purple">Procedencia</div>
-				<p class="m-0 text-base leading-[1.55] text-text-main">{procedeValue}</p>
+	<section class="font-ui">
+		<dl class="m-0 grid gap-4 rounded-[10px] bg-surface-soft px-4 py-4 md:grid-cols-[minmax(9rem,0.55fr)_minmax(0,1.45fr)] md:px-5">
+			<div class="grid content-start gap-1.5">
+				<dt class="m-0 text-[0.72rem] font-bold uppercase tracking-[0.06em] text-text-accent-purple">
+					Atribución tradicional
+				</dt>
+				<dd class="m-0 text-base leading-[1.55] text-text-main">
+					{#each traditionalAttributionParts as part}
+						{#if part.kind === 'author' && part.authorId}
+							<a href={`/autores/${part.authorId}`} class="font-semibold text-brand-blue underline hover:text-brand-blue-dark focus-visible:text-brand-blue-dark">
+								{part.value}
+							</a>
+						{:else}
+							{part.value}
+						{/if}
+					{/each}
+				</dd>
 			</div>
-		</div>
-		<div
-			class="rounded-[10px] border border-border-accent-blue bg-surface-accent-blue px-4 py-3 max-md:px-[0.85rem] max-md:py-[0.8rem]"
-		>
-			<p class="m-0 text-[0.97rem] font-normal leading-[1.55] text-text-main">{methodologyLead}</p>
-		</div>
+
+			<div class="grid content-start gap-1.5">
+				<dt class="m-0 text-[0.72rem] font-bold uppercase tracking-[0.06em] text-text-accent-purple">
+					Género
+				</dt>
+				<dd class="m-0 text-base leading-[1.55] text-text-main">{data.work.genre}</dd>
+			</div>
+
+			<div class="grid content-start gap-1.5 md:col-span-2">
+				<dt class="m-0 text-[0.72rem] font-bold uppercase tracking-[0.06em] text-text-accent-purple">
+					Procedencia
+				</dt>
+				<dd class="m-0 text-base leading-[1.6] text-text-main">{procedeValue}</dd>
+			</div>
+		</dl>
 	</section>
 
 	<section class="mt-1">
-		<h2 class="mb-4 mt-0 text-[clamp(1.2rem,2vw,1.45rem)] font-semibold leading-[1.2] text-brand-blue-dark">
-			Obras más cercanas por ámbito
-		</h2>
+		<div class="mb-5 grid gap-2">
+			<h2 class="m-0 text-[clamp(1.2rem,2vw,1.45rem)] font-semibold leading-[1.2] text-brand-blue-dark">
+				Obras más cercanas por ámbito
+			</h2>
+			<p class="m-0 text-[0.97rem] leading-[1.62] text-text-soft">{methodologyLead}</p>
+		</div>
 
 		<div class="font-ui">
 			{#if availableAmbitos.length > 1}
@@ -260,18 +417,37 @@
 
 	<section class="grid gap-3 font-ui">
 		<h2 class="m-0 text-[clamp(1.2rem,2vw,1.45rem)] font-semibold leading-[1.2] text-brand-blue-dark">Resultados</h2>
-		{#if data.work.result1}
-			<p
-				class="m-0 rounded-[8px] border border-border-accent-blue bg-surface-accent-blue px-[0.95rem] py-3 text-base leading-[1.55] text-text-main max-md:px-[0.8rem] max-md:py-[0.7rem]"
-			>
-				{data.work.result1}
-			</p>
+		{#if result1Parts.length > 0}
+			<article class="rounded-[8px] bg-surface-soft px-4 py-3.5 max-md:px-[0.9rem] max-md:py-3">
+				<div class="grid gap-2">
+					<div class="text-[0.72rem] font-bold uppercase tracking-[0.06em] text-text-accent-purple">
+						Conclusión
+					</div>
+					<p class="m-0 text-base leading-[1.62] text-text-main">
+						{#each result1Parts as part}
+							{#if part.kind === 'author' && part.authorId}
+								<a href={`/autores/${part.authorId}`} class="font-semibold text-text-main underline hover:text-brand-blue-dark focus-visible:text-brand-blue-dark">
+									{part.value}
+								</a>
+							{:else}
+								{part.value}
+							{/if}
+						{/each}
+					</p>
+				</div>
+			</article>
 		{/if}
-		{#if data.work.result2}
-			<p
-				class="m-0 rounded-[8px] border border-border-accent-blue bg-surface-accent-blue px-[0.95rem] py-3 text-base leading-[1.55] text-text-main max-md:px-[0.8rem] max-md:py-[0.7rem]"
-			>
-				{data.work.result2}
+		{#if result2Parts.length > 0}
+			<p class="m-0 max-w-[78ch] text-base leading-[1.72] text-text-main">
+				{#each result2Parts as part}
+					{#if part.kind === 'author' && part.authorId}
+						<a href={`/autores/${part.authorId}`} class="font-semibold text-brand-blue underline hover:text-brand-blue-dark focus-visible:text-brand-blue-dark">
+							{part.value}
+						</a>
+					{:else}
+						{part.value}
+					{/if}
+				{/each}
 			</p>
 		{/if}
 	</section>

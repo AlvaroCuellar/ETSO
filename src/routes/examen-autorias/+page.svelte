@@ -40,7 +40,6 @@
 	let estoMatch = $state<'or' | 'and'>('or');
 	let selectedConfidence = $state<string[]>([]);
 	let selectedStates = $state<string[]>([]);
-	let selectedOrigins = $state<string[]>([]);
 	let dateFrom = $state('');
 	let dateTo = $state('');
 
@@ -131,11 +130,6 @@
 		values.sort((a, b) => a.localeCompare(b));
 		return values.map((value) => ({ id: value, label: value }));
 	});
-	const originOptions = $derived.by<TokenOption[]>(() => {
-		const values = Array.from(new Set(data.works.map((work) => work.origin))).filter(Boolean);
-		values.sort((a, b) => a.localeCompare(b));
-		return values.map((value) => ({ id: value, label: value }));
-	});
 	const confidenceOptions: TokenOption[] = [
 		{ id: 'segura', label: 'Segura' },
 		{ id: 'probable', label: 'Probable' }
@@ -152,7 +146,6 @@
 			selectedEstoAuthors.length > 0 ||
 			selectedConfidence.length > 0 ||
 			selectedStates.length > 0 ||
-			selectedOrigins.length > 0 ||
 			Boolean(dateFrom) ||
 			Boolean(dateTo)
 	);
@@ -202,7 +195,6 @@
 			}
 
 			if (selectedStates.length > 0 && !selectedStates.includes(work.textState)) return false;
-			if (selectedOrigins.length > 0 && !selectedOrigins.includes(work.origin)) return false;
 
 			if (!dateRangeError && !matchesDateRange(work)) return false;
 
@@ -231,7 +223,6 @@
 		estoMatch = 'or';
 		selectedConfidence = [];
 		selectedStates = [];
-		selectedOrigins = [];
 		dateFrom = '';
 		dateTo = '';
 		advancedOpen = false;
@@ -363,6 +354,7 @@
 								}}
 							/>
 						</div>
+
 					</div>
 
 					<div class="mt-[0.9rem] overflow-hidden rounded-[8px] border border-border-accent-blue bg-white">
@@ -394,21 +386,6 @@
 							<div class="mb-[0.8rem] bg-transparent py-[0.8rem]">
 								<div class="mb-[15px] border-b-2 border-border pb-2 text-[14px] font-bold tracking-[0.5px] text-text-soft uppercase">
 									Filtros de autoría
-								</div>
-
-								<div class="mb-[18px] grid grid-cols-1 gap-5 rounded-[8px] border border-dashed border-border-accent-blue bg-surface-accent-blue p-3">
-									<TokenMultiSelect
-										name="tipo_autoria"
-										label="Tipo de autoría"
-										placeholder="Selecciona uno o varios tipos"
-										options={authorshipTypeOptions}
-										selectedIds={selectedAuthorshipTypes}
-										helpText="Obras de un solo autor (Única) o de varios autores (Colaboración)."
-										inputClass="js-static-multiselect"
-										onChange={(nextIds) => {
-											selectedAuthorshipTypes = nextIds;
-										}}
-									/>
 								</div>
 
 								<div class="grid grid-cols-1 gap-4 min-[1201px]:grid-cols-2">
@@ -475,6 +452,21 @@
 										</div>
 									</div>
 								</div>
+
+								<div class="mt-[18px] grid grid-cols-1 gap-5 rounded-[8px] border border-dashed border-border-accent-blue bg-surface-accent-blue p-3 md:grid-cols-2">
+									<TokenMultiSelect
+										name="tipo_autoria"
+										label="Tipo de autoría"
+										placeholder="Cualquiera"
+										options={authorshipTypeOptions}
+										selectedIds={selectedAuthorshipTypes}
+										helpText="Deja este campo en Cualquiera para mostrar obras de cualquier tipo de autoría. Puedes filtrar por obras de un solo autor (Única) o de varios autores (Colaboración)."
+										inputClass="js-static-multiselect"
+										onChange={(nextIds) => {
+											selectedAuthorshipTypes = nextIds;
+										}}
+									/>
+								</div>
 							</div>
 
 							<div class="mb-[0.8rem] bg-transparent py-[0.8rem]">
@@ -493,19 +485,6 @@
 										inputClass="js-static-multiselect"
 										onChange={(nextIds) => {
 											selectedStates = nextIds;
-										}}
-									/>
-
-									<TokenMultiSelect
-										name="procedencia"
-										label="Procedencia"
-										placeholder="Escribe y selecciona procedencias"
-										options={originOptions}
-										selectedIds={selectedOrigins}
-										helpText="Filtra por la procedencia del texto de la obra utilizado para el análisis estilométrico."
-										inputClass="js-static-multiselect"
-										onChange={(nextIds) => {
-											selectedOrigins = nextIds;
 										}}
 									/>
 								</div>

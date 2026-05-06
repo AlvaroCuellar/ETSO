@@ -1,6 +1,7 @@
 import { error } from '@sveltejs/kit';
 import { ambitos, type Ambito, type InformeDistanceView } from '$lib/domain/catalog';
 import {
+	getAllAuthors,
 	getInformeBibliographyByInformeId,
 	getInformeById,
 	getInformeDistanceRows,
@@ -16,9 +17,10 @@ export const load: PageServerLoad = async ({ params }) => {
 	const work = await getWorkById(informe.workId);
 	if (!work) throw error(500, 'Obra del informe no disponible');
 
-	const distanceEntries = await Promise.all(
-		ambitos.map(async (ambito) => [ambito, await getInformeDistanceRows(informe, ambito)] as const)
-	);
+	const [distanceEntries, authors] = await Promise.all([
+		Promise.all(ambitos.map(async (ambito) => [ambito, await getInformeDistanceRows(informe, ambito)] as const)),
+		getAllAuthors()
+	]);
 	const distances = Object.fromEntries(distanceEntries) as Record<Ambito, InformeDistanceView[]>;
 	const bibliography = getInformeBibliographyByInformeId(informe.id);
 
@@ -26,6 +28,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		informe,
 		work,
 		distances,
+		authors,
 		bibliography
 	};
 };

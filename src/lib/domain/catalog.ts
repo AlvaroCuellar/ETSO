@@ -22,6 +22,7 @@ export interface AttributionSet {
 	groups: AttributionGroup[];
 	connector: 'and' | 'or';
 	unresolved?: boolean;
+	rawExpression?: string;
 }
 
 export interface WorkResourceLink {

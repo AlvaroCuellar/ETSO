@@ -397,7 +397,7 @@
 							<span class={mobileCellLabelClass}>Recursos</span>
 							<div class="actions relative flex flex-col gap-1.5 max-md:flex-wrap max-md:justify-start max-md:gap-2">
 								{#if row.work.reportId}
-									<a href={`/informes/${row.work.reportId}`} class={actionButtonEnabledClass}>
+									<a href={`/informes/${row.work.slug}`} class={actionButtonEnabledClass}>
 										<span class="btn-left col-span-2 flex min-w-0 items-center gap-[7px]">
 											<span class="btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-brand-blue-dark" aria-hidden="true">
 												<ChartLine class="h-[14px] w-[14px] stroke-[2.1]" />

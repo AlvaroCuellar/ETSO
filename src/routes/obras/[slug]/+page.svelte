@@ -193,7 +193,7 @@
 						</header>
 						<div class={cardBodyClass}>
 							<div class="flex flex-col gap-2.5">
-								<a href={`/informes/${data.informe.id}`} class={actionLinkClass}>
+								<a href={`/informes/${data.work.slug}`} class={actionLinkClass}>
 									<div class="inline-flex items-center justify-center text-brand-blue" aria-hidden="true">
 										<ChartLine class="h-[0.9rem] w-[0.9rem] stroke-2" />
 									</div>
@@ -305,7 +305,7 @@
 						</header>
 						<div class={cardBodyClass}>
 							<div class="flex flex-col gap-2.5">
-								<a href={`/informes/${data.informe.id}`} class={actionLinkClass}>
+								<a href={`/informes/${data.work.slug}`} class={actionLinkClass}>
 									<div class="inline-flex items-center justify-center text-brand-blue" aria-hidden="true">
 										<ChartLine class="h-[0.9rem] w-[0.9rem] stroke-2" />
 									</div>

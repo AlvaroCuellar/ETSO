@@ -775,6 +775,12 @@ export const getInformeById = async (informeId: string): Promise<CatalogInforme 
 export const getInformeByWorkId = async (workId: string): Promise<CatalogInforme | undefined> =>
 	getInformeById(workId);
 
+export const getInformeByWorkSlug = async (workSlug: string): Promise<CatalogInforme | undefined> => {
+	const work = await getWorkBySlug(workSlug);
+	if (!work) return undefined;
+	return getInformeById(work.id);
+};
+
 export const getInformeDistanceRows = async (
 	informe: CatalogInforme,
 	ambito: Ambito

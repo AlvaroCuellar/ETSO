@@ -2,6 +2,7 @@ import { createClient } from '@libsql/client';
 import { env } from '$env/dynamic/private';
 import { readPrivateTextByWorkId } from '$lib/server/r2-private';
 import { fetchPublicR2Json, getSummariesBaseUrl } from '$lib/server/r2-public';
+import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
 import {
 	UNRESOLVED_AUTHOR_ID,
 	ambitos,
@@ -45,6 +46,14 @@ import bibliographySource from '../../../data/referencias/bibliografia.json';
 import impactSource from '../../../data/referencias/repercusion.json';
 
 const CACHE_MS = 2000;
+
+const escapeHtml = (value: string): string =>
+	value
+		.replaceAll('&', '&amp;')
+		.replaceAll('<', '&lt;')
+		.replaceAll('>', '&gt;')
+		.replaceAll('"', '&quot;')
+		.replaceAll("'", '&#39;');
 
 interface Snapshot {
 	works: CatalogWork[];
@@ -1548,7 +1557,8 @@ export const buildBicuveCitation = ({
 	canonicalUrl
 }: BicuveCitationInput): string => {
 	const author = resolveBicuveCitationAuthor(bicuveNombre);
-	return `${author}. Texto digital de ${title}. BICUVE, 2026. URL: ${canonicalUrl}.`;
+	const displayTitle = formatDisplayWorkTitle(title);
+	return `${escapeHtml(author)}. Texto digital de <i>${escapeHtml(displayTitle)}</i>. BICUVE, 2026. URL: ${escapeHtml(canonicalUrl)}.`;
 };
 
 export const getInformeBibliographyByInformeId = (informeId: string): InformeBibliographyView => {

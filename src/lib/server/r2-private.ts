@@ -72,6 +72,13 @@ const ensurePlainFileName = (value: string): string => {
 const joinTextKey = (textPrefix: string, fileName: string): string =>
 	textPrefix ? `${textPrefix.replace(/^\/+|\/+$/g, '')}/${fileName}` : fileName;
 
+const uniqueTextPrefixes = (preferredPrefix: string): string[] => {
+	const prefixes = [preferredPrefix, '', DEFAULT_TEXT_PREFIX].map((value) =>
+		value.replace(/^\/+|\/+$/g, '')
+	);
+	return Array.from(new Set(prefixes));
+};
+
 const signedR2Get = async (key: string, range?: string): Promise<Response> => {
 	const { accountId, accessKeyId, secretAccessKey, bucket } = assertR2Config();
 	const host = `${accountId}.r2.cloudflarestorage.com`;
@@ -112,14 +119,18 @@ const signedR2Get = async (key: string, range?: string): Promise<Response> => {
 export const readPrivateTextByTextKey = async (textKey: string): Promise<string | null> => {
 	const { textPrefix } = assertR2Config();
 	const fileName = ensurePlainFileName(textKey);
-	const response = await signedR2Get(joinTextKey(textPrefix, fileName));
 
-	if (response.status === 404) return null;
-	if (!response.ok) {
-		throw new Error(`No se pudo leer texto privado desde R2: ${response.status}`);
+	for (const prefix of uniqueTextPrefixes(textPrefix)) {
+		const response = await signedR2Get(joinTextKey(prefix, fileName));
+		if (response.status === 404) continue;
+		if (!response.ok) {
+			throw new Error(`No se pudo leer texto privado desde R2: ${response.status}`);
+		}
+
+		return response.text();
 	}
 
-	return response.text();
+	return null;
 };
 
 export const readPrivateTextByWorkId = async (workId: string): Promise<string | null> =>
@@ -134,12 +145,17 @@ export const readPrivateTextRangeByTextKey = async (
 	const fileName = ensurePlainFileName(textKey);
 	const start = Math.max(0, Math.floor(startByte));
 	const end = Math.max(start, Math.floor(endByte));
-	const response = await signedR2Get(joinTextKey(textPrefix, fileName), `bytes=${start}-${end}`);
 
-	if (response.status === 404 || response.status === 416) return null;
-	if (!response.ok && response.status !== 206) {
-		throw new Error(`No se pudo leer rango privado desde R2: ${response.status}`);
+	for (const prefix of uniqueTextPrefixes(textPrefix)) {
+		const response = await signedR2Get(joinTextKey(prefix, fileName), `bytes=${start}-${end}`);
+		if (response.status === 404) continue;
+		if (response.status === 416) return null;
+		if (!response.ok && response.status !== 206) {
+			throw new Error(`No se pudo leer rango privado desde R2: ${response.status}`);
+		}
+
+		return response.text();
 	}
 
-	return response.text();
+	return null;
 };

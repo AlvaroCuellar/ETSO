@@ -50,6 +50,8 @@ interface Snapshot {
 	works: CatalogWork[];
 	workById: Map<string, CatalogWork>;
 	workBySlug: Map<string, CatalogWork>;
+	bicuveWorkBySlug: Map<string, CatalogWork>;
+	bicuveSlugByWorkId: Map<string, string>;
 	bicuveNameByWorkId: Map<string, string>;
 	authors: CatalogAuthor[];
 	authorById: Map<string, CatalogAuthor>;
@@ -492,6 +494,8 @@ const createSnapshot = async (): Promise<Snapshot> => {
 	);
 
 	const slugCounts = new Map<string, number>();
+	const bicuveSlugCounts = new Map<string, number>();
+	const bicuveSlugByWorkId = new Map<string, string>();
 	const bicuveNameByWorkId = new Map<string, string>();
 
 	const works: CatalogWork[] = workRows.map((row) => {
@@ -499,18 +503,6 @@ const createSnapshot = async (): Promise<Snapshot> => {
 			attributionByWorkType.get(`${row.id}::tradicional`) ?? makeEmptyAttributionSet();
 		const stylometryAttribution =
 			attributionByWorkType.get(`${row.id}::estilometria`) ?? makeEmptyAttributionSet();
-
-		const links: CatalogWork['textLinks'] = [];
-		if (Number(row.bicuve) === 1) {
-			links.push({
-				label: 'Texto BICUVE',
-				href: `/bicuve/${row.id}`,
-				kind: 'bicuve'
-			});
-		}
-		for (const link of textAccessByWork.get(row.id) ?? []) {
-			links.push(link);
-		}
 
 		const distanceRecord = distancesByWork.get(row.id) ?? ensureDistanceRecord();
 		if (!distancesByWork.has(row.id)) {
@@ -525,6 +517,26 @@ const createSnapshot = async (): Promise<Snapshot> => {
 		const slug = currentCount === 1 ? baseSlug : `${baseSlug}-${currentCount}`;
 		const bicuveNombre = row.bicuve_nombre?.trim() || 'ETSO';
 		bicuveNameByWorkId.set(row.id, bicuveNombre);
+		let bicuveSlug = '';
+		if (Number(row.bicuve) === 1) {
+			const bicuveBaseSlug = slugify(row.titulo ?? '') || slugify(row.id ?? '') || 'texto';
+			const bicuveSlugCount = (bicuveSlugCounts.get(bicuveBaseSlug) ?? 0) + 1;
+			bicuveSlugCounts.set(bicuveBaseSlug, bicuveSlugCount);
+			bicuveSlug = bicuveSlugCount === 1 ? bicuveBaseSlug : `${bicuveBaseSlug}-${bicuveSlugCount}`;
+			bicuveSlugByWorkId.set(row.id, bicuveSlug);
+		}
+
+		const links: CatalogWork['textLinks'] = [];
+		if (Number(row.bicuve) === 1) {
+			links.push({
+				label: 'Texto BICUVE',
+				href: `/bicuve/${bicuveSlug}`,
+				kind: 'bicuve'
+			});
+		}
+		for (const link of textAccessByWork.get(row.id) ?? []) {
+			links.push(link);
+		}
 
 		return {
 			id: row.id,
@@ -547,11 +559,18 @@ const createSnapshot = async (): Promise<Snapshot> => {
 
 	const workById = new Map(works.map((work) => [work.id, work] as const));
 	const workBySlug = new Map(works.map((work) => [work.slug, work] as const));
+	const bicuveWorkBySlug = new Map<string, CatalogWork>();
+	for (const work of works) {
+		const bicuveSlug = bicuveSlugByWorkId.get(work.id);
+		if (bicuveSlug) bicuveWorkBySlug.set(bicuveSlug, work);
+	}
 
 	return {
 		works,
 		workById,
 		workBySlug,
+		bicuveWorkBySlug,
+		bicuveSlugByWorkId,
 		bicuveNameByWorkId,
 		authors,
 		authorById,
@@ -774,22 +793,36 @@ export const getInformeDistanceRows = async (
 		.filter((row): row is InformeDistanceView => Boolean(row));
 };
 
-export const getBicuveById = async (bicuveId: string): Promise<CatalogBicuve | undefined> => {
-	const snapshot = await getSnapshot();
-	const work = snapshot.workById.get(bicuveId);
+const getBicuveForWork = async (
+	work: CatalogWork | undefined,
+	snapshot: Snapshot
+): Promise<CatalogBicuve | undefined> => {
 	if (!work) return undefined;
 	if (!work.textLinks.some((link) => link.kind === 'bicuve')) return undefined;
 
-	const text = await readPrivateTextByWorkId(bicuveId);
+	const text = await readPrivateTextByWorkId(work.id);
 	if (!text) return undefined;
 
 	return {
-		id: bicuveId,
+		id: snapshot.bicuveSlugByWorkId.get(work.id) || work.slug,
 		workId: work.id,
 		bicuveNombre: snapshot.bicuveNameByWorkId.get(work.id) || 'ETSO',
 		title: `Texto digital de ${work.title}`,
 		text
 	};
+};
+
+export const getBicuveBySlug = async (bicuveSlug: string): Promise<CatalogBicuve | undefined> => {
+	const snapshot = await getSnapshot();
+	return getBicuveForWork(snapshot.bicuveWorkBySlug.get(bicuveSlug), snapshot);
+};
+
+export const getBicuveWorkBySlug = async (bicuveSlug: string): Promise<CatalogWork | undefined> =>
+	(await getSnapshot()).bicuveWorkBySlug.get(bicuveSlug);
+
+export const getBicuveById = async (bicuveId: string): Promise<CatalogBicuve | undefined> => {
+	const snapshot = await getSnapshot();
+	return getBicuveForWork(snapshot.workById.get(bicuveId), snapshot);
 };
 
 const emptyInformeBibliography = (): InformeBibliographyView => ({

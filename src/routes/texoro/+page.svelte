@@ -13,6 +13,7 @@
 	import TexoroLiveChart from '$lib/components/search/TexoroLiveChart.svelte';
 	import TexoroComparisonChart from '$lib/components/search/TexoroComparisonChart.svelte';
 	import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
+	import { formatAttribution, type AttributionSet } from '$lib/domain/catalog';
 	import fondoLogo from '$lib/assets/fondos/fondo-logo.png';
 	import BookOpen from 'lucide-svelte/icons/book-open';
 	import ChevronDown from 'lucide-svelte/icons/chevron-down';
@@ -24,7 +25,6 @@
 
 	import { normalizePattern, normalizePlainText } from '$lib/search';
 
-	import type { AttributionSet } from '$lib/domain/catalog';
 	import type {
 		SearchExecution,
 		SearchMatchOccurrence,
@@ -763,11 +763,23 @@
 		return suffix ? `${chartTitles[chartKey]} · ${queryLabelNoun}: ${suffix}` : chartTitles[chartKey];
 	};
 
-	const resultAuthorLabel = (result: SearchResult): string => {
-		const authors = collectStylometryAuthors(result);
-		if (authors.length === 0) return 'autoría no resuelta';
-		if (authors.length <= 2) return authors.join(' / ');
-		return `${authors[0]} / ${authors[1]} +${authors.length - 2}`;
+	const formatCompactAttribution = (set: AttributionSet): string => {
+		if (set.unresolved) return 'No determinada';
+		const label = formatAttribution(set).trim();
+		if (!label || label === 'Sin datos') return 'Sin datos';
+		if (label === 'Autoria no determinada' || label === 'Autoría no determinada') {
+			return 'No determinada';
+		}
+		return label;
+	};
+
+	const resultMetadataLine = (result: SearchResult): string => {
+		const meta = result.meta;
+		if (!meta) return 'Sin metadatos';
+		const traditional = formatCompactAttribution(meta.traditionalAttribution);
+		const stylometry = formatCompactAttribution(meta.stylometryAttribution);
+		const genre = meta.genre.trim() || 'Sin género';
+		return `Trad. ${traditional} · Estil. ${stylometry} · Género ${genre}`;
 	};
 
 	const createAdditionalTerm = (): AdditionalQueryTerm => ({
@@ -2778,26 +2790,38 @@
 							{@const assignments = buildMatchAssignments(result.matches)}
 							{@const resultOccurrences = sumResultOccurrences(result)}
 							{@const preview = occurrencePreviews.get(result.docId)}
+							{@const metadataLine = resultMetadataLine(result)}
 							<li
 								class="rounded-[11px] border border-border-accent-blue bg-white px-4 py-3 shadow-[0_6px_16px_rgba(25,46,80,0.07)]"
 								data-texoro-result-index={resultIndex}
 							>
-								<div class="flex flex-wrap items-start justify-between gap-3">
-									<div class="min-w-0">
-										<h3 class="m-0 font-['Roboto',sans-serif] text-[1.03rem] font-semibold leading-[1.25] text-brand-blue-dark">
+								<div class="grid gap-1.5">
+									<div class="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
+										<h3 class="m-0 min-w-0 font-['Roboto',sans-serif] text-[1.03rem] leading-[1.25] font-semibold text-brand-blue-dark">
 											{#if result.meta}
-												<a href={`/obras/${result.meta.slug}`} class="text-brand-blue no-underline hover:text-brand-blue-dark">{formatDisplayWorkTitle(result.meta.title)}</a>
-												<span class="ml-1 text-[0.86rem] font-medium text-text-soft">
-													· {resultAuthorLabel(result)}
-												</span>
+												<a href={`/obras/${result.meta.slug}`} class="block overflow-hidden text-ellipsis whitespace-nowrap text-brand-blue no-underline hover:text-brand-blue-dark" title={formatDisplayWorkTitle(result.meta.title)}>{formatDisplayWorkTitle(result.meta.title)}</a>
 											{:else}
 												Obra sin metadatos
 											{/if}
 										</h3>
+										<span class="w-fit shrink-0 rounded-full bg-surface-accent-blue px-2.5 py-1 text-[0.8rem] font-semibold whitespace-nowrap text-brand-blue-dark">
+											{numberFormatter.format(resultOccurrences)} {resultOccurrences === 1 ? 'concurrencia' : 'concurrencias'}
+										</span>
 									</div>
-									<span class="shrink-0 rounded-full bg-surface-accent-blue px-2.5 py-1 text-[0.8rem] font-semibold text-brand-blue-dark">
-										{numberFormatter.format(resultOccurrences)} {resultOccurrences === 1 ? 'concurrencia' : 'concurrencias'}
-									</span>
+									<p class="m-0 overflow-hidden text-ellipsis whitespace-nowrap text-[0.78rem] leading-[1.35] text-text-soft" title={metadataLine}>
+										{#if result.meta}
+											<span class="font-['Roboto',sans-serif] font-semibold text-text-accent-purple">Trad.</span>
+											{formatCompactAttribution(result.meta.traditionalAttribution)}
+											<span class="mx-1 text-border">·</span>
+											<span class="font-['Roboto',sans-serif] font-semibold text-text-accent-purple">Estil.</span>
+											{formatCompactAttribution(result.meta.stylometryAttribution)}
+											<span class="mx-1 text-border">·</span>
+											<span class="font-['Roboto',sans-serif] font-semibold text-text-accent-purple">Género</span>
+											{result.meta.genre.trim() || 'Sin género'}
+										{:else}
+											{metadataLine}
+										{/if}
+									</p>
 								</div>
 
 								{#if preview?.loading}

@@ -1,5 +1,3 @@
-﻿import { env as publicEnv } from '$env/dynamic/public';
-
 import { IndexedDbCache } from './idb-cache';
 import { buildSnippet, normalizePattern, normalizePlainText, tokenizeWithOffsets } from './normalize';
 import { parseSearchQuery, parseStructuredSearchQuery } from './query';
@@ -38,6 +36,8 @@ interface SearchEngineConfig {
 interface MatchOccurrencesOptions {
 	maxItems?: number;
 	snippetRadius?: number;
+	snippetMode?: 'chars' | 'lines';
+	lineContext?: number;
 }
 
 interface PreviewRequestItem {
@@ -58,6 +58,7 @@ interface WarmupOptions {
 }
 
 interface PrimeQueryOptions {
+	structuredClauses?: SearchOptions['structuredClauses'];
 	prefetchTexts?: boolean;
 	textLimit?: number;
 	textConcurrency?: number;
@@ -89,7 +90,6 @@ interface GroupEvaluation {
 	clauses: ClauseEvaluation[];
 	docs: Set<number>;
 	scores: Map<number, number>;
-	hasPhrase: boolean;
 }
 
 interface PreparedText {
@@ -117,9 +117,16 @@ interface RawOccurrenceHighlight {
 	tokenIndex: number;
 }
 
+interface TextLineRange {
+	start: number;
+	contentEnd: number;
+	end: number;
+	isBlank: boolean;
+}
+
 const DEFAULT_LIMIT = 30;
-const DEFAULT_MAX_PHRASE_VERIFY_DOCS = 200;
 const DEFAULT_SNIPPET_RADIUS = 110;
+const DEFAULT_LINE_CONTEXT = 3;
 const DEFAULT_WARMUP_VOCAB_BUDGET = 900_000;
 const DEFAULT_WARMUP_POSTINGS_BUDGET = 900_000;
 const DEFAULT_WARMUP_KGRAM_BUDGET = 800_000;
@@ -194,6 +201,116 @@ const unionSets = (sets: Set<number>[]): Set<number> => {
 };
 
 const sortedNumeric = (values: Iterable<number>): number[] => Array.from(values).sort((a, b) => a - b);
+
+const buildTextLineRanges = (rawText: string): TextLineRange[] => {
+	const lines: TextLineRange[] = [];
+	let start = 0;
+
+	for (let index = 0; index < rawText.length; index += 1) {
+		if (rawText[index] !== '\n') continue;
+		const contentEnd = index > start && rawText[index - 1] === '\r' ? index - 1 : index;
+		lines.push({
+			start,
+			contentEnd,
+			end: index + 1,
+			isBlank: contentEnd === start
+		});
+		start = index + 1;
+	}
+
+	lines.push({
+		start,
+		contentEnd: rawText.length,
+		end: rawText.length,
+		isBlank: rawText.length === start
+	});
+
+	return lines;
+};
+
+const findLineIndexForOffset = (lines: TextLineRange[], offset: number): number => {
+	if (lines.length === 0) return 0;
+	const normalizedOffset = Math.max(0, offset);
+	let low = 0;
+	let high = lines.length - 1;
+
+	while (low <= high) {
+		const mid = Math.floor((low + high) / 2);
+		const line = lines[mid];
+		if (normalizedOffset < line.start) {
+			high = mid - 1;
+			continue;
+		}
+		if (normalizedOffset >= line.end && mid < lines.length - 1) {
+			low = mid + 1;
+			continue;
+		}
+		return mid;
+	}
+
+	return Math.max(0, Math.min(lines.length - 1, low));
+};
+
+const buildLineSnippetWithHighlights = (
+	rawText: string,
+	start: number,
+	end: number,
+	highlights: RawOccurrenceHighlight[],
+	lines: TextLineRange[],
+	lineContext = DEFAULT_LINE_CONTEXT
+): Pick<SearchMatchOccurrence, 'snippet' | 'highlights'> => {
+	if (lines.length === 0) {
+		return buildSnippetWithHighlights(rawText, start, end, highlights);
+	}
+
+	const effectiveHighlights = highlights.length > 0 ? highlights : [{ start, end, tokenIndex: 0 }];
+	const highlightStart = Math.min(start, ...effectiveHighlights.map((highlight) => highlight.start));
+	const highlightEnd = Math.max(end, ...effectiveHighlights.map((highlight) => highlight.end));
+	const firstHitLine = findLineIndexForOffset(lines, highlightStart);
+	const lastHitLine = findLineIndexForOffset(lines, Math.max(highlightStart, highlightEnd - 1));
+	const context = Math.max(0, Math.floor(lineContext));
+	const nonBlankLineIndexes = lines
+		.map((line, index) => (line.isBlank ? -1 : index))
+		.filter((index) => index >= 0);
+	const firstHitPosition = nonBlankLineIndexes.findIndex((lineIndex) => lineIndex >= firstHitLine);
+	const lastHitPosition = nonBlankLineIndexes.findLastIndex((lineIndex) => lineIndex <= lastHitLine);
+	if (firstHitPosition < 0 || lastHitPosition < 0) {
+		return buildSnippetWithHighlights(rawText, start, end, highlights);
+	}
+
+	const firstPosition = Math.max(0, firstHitPosition - context);
+	const lastPosition = Math.min(nonBlankLineIndexes.length - 1, lastHitPosition + context);
+	const selectedLineIndexes = nonBlankLineIndexes.slice(firstPosition, lastPosition + 1);
+	const localHighlights: Array<{ start: number; end: number; tokenIndex: number }> = [];
+	let snippet = '';
+
+	for (const lineIndex of selectedLineIndexes) {
+		const line = lines[lineIndex];
+		if (snippet.length > 0) snippet += '\n';
+		const localLineStart = snippet.length;
+		const lineText = rawText.slice(line.start, line.contentEnd);
+		snippet += lineText;
+
+		for (const highlight of highlights) {
+			if (highlight.end <= line.start || highlight.start >= line.contentEnd) continue;
+			const localStart = localLineStart + Math.max(highlight.start, line.start) - line.start;
+			const localEnd = localLineStart + Math.min(highlight.end, line.contentEnd) - line.start;
+			if (localEnd <= localStart) continue;
+			localHighlights.push({
+				start: localStart,
+				end: localEnd,
+				tokenIndex: highlight.tokenIndex
+			});
+		}
+	}
+
+	localHighlights.sort((a, b) => a.start - b.start || a.end - b.end);
+
+	return {
+		snippet,
+		highlights: localHighlights
+	};
+};
 
 const buildSnippetWithHighlights = (
 	rawText: string,
@@ -348,16 +465,7 @@ export class TexoroSearchEngine {
 	#allTermIdsCache: number[] | null = null;
 
 	constructor(config: SearchEngineConfig = {}) {
-		this.#indexBaseUrl =
-			stripTrailingSlash(
-				config.indexBaseUrl ||
-					publicEnv.PUBLIC_TEXORO_INDEX_BASE_URL ||
-					(publicEnv.PUBLIC_R2_PUBLIC_ASSETS_BASE_URL
-						? `${stripTrailingSlash(publicEnv.PUBLIC_R2_PUBLIC_ASSETS_BASE_URL)}/search`
-						: publicEnv.PUBLIC_R2_BASE_URL
-							? `${stripTrailingSlash(publicEnv.PUBLIC_R2_BASE_URL)}/search`
-							: '')
-			);
+		this.#indexBaseUrl = stripTrailingSlash(config.indexBaseUrl || '');
 		this.#textsBaseUrl = stripTrailingSlash(config.textsBaseUrl || '');
 		this.#textLoader = config.textLoader;
 		this.#preserveEnie = config.preserveEnie ?? true;
@@ -422,7 +530,9 @@ export class TexoroSearchEngine {
 
 		const primePromise = (async () => {
 			await this.initialize();
-			const parsed = parseSearchQuery(normalizedQuery, this.#preserveEnie);
+			const parsed = options.structuredClauses?.length
+				? parseStructuredSearchQuery(options.structuredClauses, this.#preserveEnie)
+				: parseSearchQuery(normalizedQuery, this.#preserveEnie);
 			if (parsed.groups.length === 0) return;
 
 			const groupEvaluations: GroupEvaluation[] = [];
@@ -537,19 +647,12 @@ export class TexoroSearchEngine {
 			(a, b) => (retrievalScores.get(b) ?? 0) - (retrievalScores.get(a) ?? 0)
 		);
 
-		const hasPhrase = groupEvaluations.some((group) => group.hasPhrase);
-		const maxPhraseVerificationDocs = options.maxPhraseVerificationDocs ?? DEFAULT_MAX_PHRASE_VERIFY_DOCS;
-		const verifiableDocs = new Set<number>(
-			hasPhrase ? orderedCandidates.slice(0, maxPhraseVerificationDocs) : orderedCandidates
-		);
-
-		let verifiedCount = 0;
+		const verifiedCount = 0;
 		const rawResults: SearchResult[] = [];
 
 		for (const docId of orderedCandidates) {
 			const matchByKey = new Map<string, SearchResultMatch>();
 			let matchedGroups = 0;
-			let snippet: string | undefined;
 			const addMatch = (kind: SearchResultMatch['kind'], source: string, occurrences: number): void => {
 				if (occurrences <= 0) return;
 				const key = `${kind}:${source}`;
@@ -569,7 +672,6 @@ export class TexoroSearchEngine {
 				if (!group.docs.has(docId)) continue;
 
 				let groupOk = true;
-				let groupSnippet: string | undefined;
 				const consumedByProximity = new Set<string>();
 				for (const clause of group.clauses) {
 					if (clause.clause.kind !== 'proximity') continue;
@@ -593,32 +695,18 @@ export class TexoroSearchEngine {
 						continue;
 					}
 
-					if (!verifiableDocs.has(docId)) {
-						groupOk = false;
-						break;
-					}
-
-					const phraseMatch = await this.#verifyPhraseClause(
-						docId,
-						clause.clause.patterns,
-						options.snippetRadius
-					);
-					verifiedCount += 1;
-					if (!phraseMatch.matched) {
+					const phraseCount = clause.scores.get(docId) ?? 0;
+					if (phraseCount <= 0) {
 						groupOk = false;
 						break;
 					}
 					if (!consumedByProximity.has(clauseSource)) {
-						addMatch('phrase', `"${clause.clause.literal}"`, phraseMatch.count);
-					}
-					if (!groupSnippet && phraseMatch.snippet) {
-						groupSnippet = phraseMatch.snippet;
+						addMatch('phrase', `"${clause.clause.literal}"`, phraseCount);
 					}
 				}
 
 				if (!groupOk) continue;
 				matchedGroups += 1;
-				if (!snippet && groupSnippet) snippet = groupSnippet;
 			}
 
 			if (matchedGroups === 0) continue;
@@ -633,7 +721,6 @@ export class TexoroSearchEngine {
 				docTokenCount: row[4],
 				score: (retrievalScores.get(docId) ?? 0) + matchedGroups,
 				meta: workMetaById.get(workId),
-				snippet,
 				matches: Array.from(matchByKey.values())
 			});
 		}
@@ -696,6 +783,17 @@ export class TexoroSearchEngine {
 
 		const maxItems = options.maxItems ?? 300;
 		const snippetRadius = options.snippetRadius ?? DEFAULT_SNIPPET_RADIUS;
+		const snippetMode = options.snippetMode === 'lines' ? 'lines' : 'chars';
+		const lineContext = options.lineContext ?? DEFAULT_LINE_CONTEXT;
+		const lineRanges = snippetMode === 'lines' ? buildTextLineRanges(prepared.raw) : [];
+		const buildOccurrenceSnippet = (
+			start: number,
+			end: number,
+			highlights: RawOccurrenceHighlight[]
+		): Pick<SearchMatchOccurrence, 'snippet' | 'highlights'> =>
+			snippetMode === 'lines'
+				? buildLineSnippetWithHighlights(prepared.raw, start, end, highlights, lineRanges, lineContext)
+				: buildSnippetWithHighlights(prepared.raw, start, end, highlights, snippetRadius);
 		const patterns = this.#extractPatternsFromMatch(match);
 		if (patterns.length === 0) {
 			return {
@@ -742,15 +840,13 @@ export class TexoroSearchEngine {
 					if (items.length < maxItems) {
 						const first = leftSpan.start < rightSpan.start ? leftSpan : rightSpan;
 						const last = leftSpan.start < rightSpan.start ? rightSpan : leftSpan;
-						const snippet = buildSnippetWithHighlights(
-							prepared.raw,
+						const snippet = buildOccurrenceSnippet(
 							first.start,
 							last.end,
 							[
 								{ start: leftSpan.start, end: leftSpan.end, tokenIndex: leftSpan.tokenStart + 1 },
 								{ start: rightSpan.start, end: rightSpan.end, tokenIndex: rightSpan.tokenStart + 1 }
-							],
-							snippetRadius
+							]
 						);
 						items.push({
 							start: first.start,
@@ -770,12 +866,10 @@ export class TexoroSearchEngine {
 				if (!regexes.some((regex) => regex.test(token.norm))) continue;
 				count += 1;
 				if (items.length < maxItems) {
-					const snippet = buildSnippetWithHighlights(
-						prepared.raw,
+					const snippet = buildOccurrenceSnippet(
 						token.start,
 						token.end,
-						[{ start: token.start, end: token.end, tokenIndex: index + 1 }],
-						snippetRadius
+						[{ start: token.start, end: token.end, tokenIndex: index + 1 }]
 					);
 					items.push({
 						start: token.start,
@@ -805,12 +899,10 @@ export class TexoroSearchEngine {
 				if (items.length < maxItems) {
 					const first = prepared.tokens[start];
 					const last = prepared.tokens[start + regexes.length - 1];
-					const snippet = buildSnippetWithHighlights(
-						prepared.raw,
+					const snippet = buildOccurrenceSnippet(
 						first.start,
 						last.end,
-						[{ start: first.start, end: last.end, tokenIndex: start + 1 }],
-						snippetRadius
+						[{ start: first.start, end: last.end, tokenIndex: start + 1 }]
 					);
 					items.push({
 						start: first.start,
@@ -965,45 +1057,6 @@ export class TexoroSearchEngine {
 		return `${this.#formatClauseSource(left)} ~${distance} ${this.#formatClauseSource(right)}`;
 	}
 
-	async #verifyPhraseClause(
-		docId: number,
-		patterns: string[],
-		snippetRadius = DEFAULT_SNIPPET_RADIUS
-	): Promise<{ matched: boolean; count: number; snippet?: string }> {
-		const prepared = await this.#getPreparedText(docId);
-		if (!prepared) return { matched: false, count: 0 };
-		if (patterns.length === 0) return { matched: false, count: 0 };
-
-		const tokenCount = prepared.tokens.length;
-		if (tokenCount < patterns.length) return { matched: false, count: 0 };
-
-		const regexes = patterns.map((pattern) => wildcardToRegex(pattern));
-		const maxStart = tokenCount - patterns.length;
-		let count = 0;
-		let firstSnippet: string | undefined;
-
-		for (let start = 0; start <= maxStart; start += 1) {
-			let matched = true;
-			for (let offset = 0; offset < patterns.length; offset += 1) {
-				const token = prepared.tokens[start + offset];
-				if (!regexes[offset].test(token.norm)) {
-					matched = false;
-					break;
-				}
-			}
-			if (!matched) continue;
-
-			count += 1;
-			if (!firstSnippet) {
-				const first = prepared.tokens[start];
-				const last = prepared.tokens[start + patterns.length - 1];
-				firstSnippet = buildSnippet(prepared.raw, first.start, last.end, snippetRadius);
-			}
-		}
-
-		return { matched: count > 0, count, snippet: firstSnippet };
-	}
-
 	async #getPreparedText(docId: number): Promise<PreparedText | null> {
 		const memory = this.#preparedTexts.get(docId);
 		if (memory) return memory;
@@ -1066,12 +1119,10 @@ export class TexoroSearchEngine {
 		let currentDocs: Set<number> | null = null;
 		let currentScores = new Map<number, number>();
 		const clauses: ClauseEvaluation[] = [];
-		let hasPhrase = false;
 
 		for (const clause of group) {
 			const evaluated = await this.#evaluateClause(clause);
 			clauses.push(evaluated);
-			if (clause.kind === 'phrase') hasPhrase = true;
 
 			if (currentDocs === null) {
 				currentDocs = new Set(evaluated.docs);
@@ -1091,8 +1142,7 @@ export class TexoroSearchEngine {
 		return {
 			clauses,
 			docs: currentDocs ?? new Set<number>(),
-			scores: currentScores,
-			hasPhrase
+			scores: currentScores
 		};
 	}
 
@@ -1135,40 +1185,13 @@ export class TexoroSearchEngine {
 			return { clause, docs: new Set<number>(), scores: new Map<number, number>() };
 		}
 
-		const tokenDocs: Set<number>[] = [];
-		const tokenScores: Map<number, number>[] = [];
-
-		for (const pattern of patterns) {
-			const termIds = await this.#resolvePatternTermIds(pattern);
-			if (termIds.length === 0) {
-				return { clause, docs: new Set<number>(), scores: new Map<number, number>() };
-			}
-
-			const docs = new Set<number>();
-			const scores = new Map<number, number>();
-			for (const termId of termIds) {
-				const postings = await this.#getPostingsForTerm(termId);
-				for (const [docId, tf] of postings) {
-					docs.add(docId);
-					scores.set(docId, (scores.get(docId) ?? 0) + tf);
-				}
-			}
-			tokenDocs.push(docs);
-			tokenScores.push(scores);
-		}
-
-		let docs = tokenDocs[0];
-		for (let i = 1; i < tokenDocs.length; i += 1) {
-			docs = intersectSets(docs, tokenDocs[i]);
-		}
-
+		const positions = await this.#positionsForSimpleClause(clause);
+		const docs = new Set<number>();
 		const scores = new Map<number, number>();
-		for (const docId of docs) {
-			let total = 3;
-			for (const tokenScore of tokenScores) {
-				total += tokenScore.get(docId) ?? 0;
-			}
-			scores.set(docId, total);
+		for (const [docId, occurrences] of positions) {
+			if (occurrences.length <= 0) continue;
+			docs.add(docId);
+			scores.set(docId, occurrences.length);
 		}
 
 		return { clause, docs, scores };

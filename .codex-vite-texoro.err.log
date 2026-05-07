@@ -1,0 +1,30 @@
+[2m17:48:18[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22mThe next HMR update will cause the page to reload
+[2m17:48:18[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [2m[console.error] [22mTypeError: error loading dynamically imported module: http://localhost:5173/node_modules/.vite/deps/lucide-svelte_icons_x.js?v=8f2160ad
+[2m17:48:18[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [31m[Unhandled rejection] [1mTypeError[22m: error loading dynamically imported module: http://localhost:5173/node_modules/.vite/deps/lucide-svelte_icons_x.js?v=8f2160ad
+[39m
+[2m17:48:18[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m [31m[Unhandled rejection] [1mTypeError[22m: error loading dynamically imported module: http://localhost:5173/node_modules/.vite/deps/lucide-svelte_icons_menu.js?v=87efaddb
+[39m > nodes< .svelte-kit/generated/client/app.js:4:8
+ > load_node node_modules/@sveltejs/kit/src/runtime/client/client.js?v=3b59d615:839:21
+ > load_root_error_page node_modules/@sveltejs/kit/src/runtime/client/client.js?v=3b59d615:1391:29
+
+[2m17:48:20[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22m[texoro] using server search fallback _page/requestTexoroWorker/<@http://localhost:5173/src/routes/texoro/+page.svelte:1276:36
+requestTexoroWorker@http://localhost:5173/src/routes/texoro/+page.svelte:1274:10
+_page/</<@http://localhost:5173/src/routes/texoro/+page.svelte:1726:53
+_page/<@http://localhost:5173/src/routes/texoro/+page.svelte:1762:5
+untrack@http://localhost:5173/node_modules/.vite/deps/runtime-C0d4kMpv.js?v=195b6c5e:5030:10
+onMount/<@http://localhost:5173/node_modules/.vite/deps/client-DRtZGaDL.js?v=195b6c5e:340:26
+update_reaction@http://localhost:5173/node_modules/.vite/deps/runtime-C0d4kMpv.js?v=195b6c5e:4768:16
+update_effect@http://localhost:5173/node_modules/.vite/deps/runtime-C0d4kMpv.js?v=195b6c5e:4868:33
+flush_queued_effects@http://localhost:5173/node_modules/.vite/deps/runtime-C0d4kMpv.js?v=195b6c5e:2214:17
+#process@http://localhost:5173/node_modules/.vite/deps/runtime-C0d4kMpv.js?v=195b6c5e:1871:24
+flush@http://localhost:5173/node_modules/.vite/deps/runtime-C0d4kMpv.js?v=195b6c5e:1958:17
+ensure/<@http://localhost:5173/node_modules/.vite/deps/runtime-C0d4kMpv.js?v=195b6c5e:2102:12
+run_all@http://localhost:5173/node_modules/.vite/deps/runtime-C0d4kMpv.js?v=195b6c5e:49:45
+run_micro_tasks@http://localhost:5173/node_modules/.vite/deps/runtime-C0d4kMpv.js?v=195b6c5e:1139:9
+flush_tasks@http://localhost:5173/node_modules/.vite/deps/runtime-C0d4kMpv.js?v=195b6c5e:1157:33
+flushSync@http://localhost:5173/node_modules/.vite/deps/runtime-C0d4kMpv.js?v=195b6c5e:2171:4
+Svelte4Component@http://localhost:5173/node_modules/.vite/deps/legacy-client-DDm8Rg4D.js?v=195b6c5e:842:80
+@http://localhost:5173/node_modules/.vite/deps/legacy-client-DDm8Rg4D.js?v=195b6c5e:784:4
+initialize@http://localhost:5173/node_modules/@sveltejs/kit/src/runtime/client/client.js?v=195b6c5e:632:9
+_hydrate@http://localhost:5173/node_modules/@sveltejs/kit/src/runtime/client/client.js?v=195b6c5e:2974:8
+

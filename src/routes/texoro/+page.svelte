@@ -27,10 +27,12 @@
 		SearchExecution,
 		SearchMatchOccurrence,
 		SearchMatchOccurrences,
+		SearchOptions,
 		SearchResult,
 		SearchResultMatch,
 		TexoroIndexManifest
 	} from '$lib/search';
+	import type { TexoroWorkerRequestPayload, TexoroWorkerResponse } from '$lib/search/worker-protocol';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -161,6 +163,7 @@
 	type ChartKey = 'author' | 'genre';
 	type ChartMode = 'bars' | 'pie';
 	type ComparisonMetric = 'frequency10k' | 'occurrences' | 'share';
+	type StructuredClause = NonNullable<SearchOptions['structuredClauses']>[number];
 
 	const chartPalette = ['#1f5fbf', '#2f8fca', '#3aa6a0', '#59a55c', '#d38f38', '#9a69c6', '#c45e92'];
 	const exportSurface = '#edf2ff';
@@ -178,6 +181,7 @@
 	const PREVIEW_BATCH_SIZE = 6;
 	const PREVIEW_SCROLL_THRESHOLD_PX = 900;
 	const OCCURRENCE_DETAILS_CACHE_LIMIT = 24;
+	const TEXORO_PRIME_DEBOUNCE_MS = 500;
 
 	const stripTrailingSlash = (value: string): string => value.replace(/\/+$/, '');
 	const joinUrl = (base: string, path: string): string =>
@@ -223,6 +227,15 @@
 	let genreChartRef = $state<TexoroLiveChart | null>(null);
 	let infoModalOpen = $state(false);
 	let indexVersion = $state('n/d');
+	let texoroWorker: Worker | null = null;
+	let texoroWorkerRequestId = 0;
+	const texoroWorkerPending = new Map<
+		number,
+		{
+			resolve: (value: unknown) => void;
+			reject: (cause: Error) => void;
+		}
+	>();
 
 	const sumResultOccurrences = (result: SearchResult): number =>
 		result.matches.reduce((sum, match) => sum + (match.occurrences ?? 0), 0);
@@ -692,7 +705,7 @@
 		value: string,
 		operator: 'and' | 'or' | 'near' | null,
 		distance?: number
-	) => {
+	): StructuredClause => {
 		const kind = /\s/.test(value) ? 'phrase' : 'term';
 		if (operator === 'near') {
 			return { kind: 'proximity' as const, value, distance: distance ?? 5, operator: 'near' as const };
@@ -700,7 +713,7 @@
 		return { kind, value, operator };
 	};
 
-	const buildEffectiveQuery = (): { query: string; terms: SubmittedQueryTerm[]; structuredClauses: ReturnType<typeof buildStructuredClause>[] } => {
+	const buildEffectiveQuery = (): { query: string; terms: SubmittedQueryTerm[]; structuredClauses: StructuredClause[] } => {
 		const clauses: string[] = [];
 		const terms: SubmittedQueryTerm[] = [];
 		const structuredClauses: ReturnType<typeof buildStructuredClause>[] = [];
@@ -1023,6 +1036,115 @@
 		return (await response.json()) as TexoroIndexManifest;
 	};
 
+	const applyIndexManifest = (manifest: TexoroIndexManifest): void => {
+		isEngineReady = true;
+		indexStats = {
+			works: manifest.stats.works,
+			tokens: manifest.stats.tokens,
+			vocabSize: manifest.stats.vocabSize
+		};
+		indexVersion = manifest.indexVersion;
+		preserveEnieForHighlight = manifest.normalization.preserveEnie;
+	};
+
+	const rejectTexoroWorkerPending = (message: string): void => {
+		for (const pending of texoroWorkerPending.values()) {
+			pending.reject(new Error(message));
+		}
+		texoroWorkerPending.clear();
+	};
+
+	const closeTexoroWorker = (message = 'Worker TEXORO cerrado'): void => {
+		if (!texoroWorker) return;
+		texoroWorker.terminate();
+		texoroWorker = null;
+		rejectTexoroWorkerPending(message);
+	};
+
+	const createTexoroWorker = (): Worker | null => {
+		try {
+			const worker = new Worker(new URL('./texoro.worker.ts', import.meta.url), { type: 'module' });
+			worker.onmessage = (event: MessageEvent<TexoroWorkerResponse>) => {
+				const response = event.data;
+				const pending = texoroWorkerPending.get(response.id);
+				if (!pending) return;
+				texoroWorkerPending.delete(response.id);
+				if (response.ok) {
+					pending.resolve(response.result);
+				} else {
+					pending.reject(new Error(response.error));
+				}
+			};
+			worker.onerror = (event) => {
+				const message = event.message || 'Error en el worker de TEXORO';
+				console.warn('[texoro] browser worker failed', message);
+				closeTexoroWorker(message);
+			};
+			return worker;
+		} catch (cause) {
+			console.warn('[texoro] browser worker unavailable', cause);
+			return null;
+		}
+	};
+
+	const requestTexoroWorker = async <T>(
+		request: TexoroWorkerRequestPayload
+	): Promise<T> => {
+		if (!texoroWorker) {
+			throw new Error('Worker TEXORO no disponible');
+		}
+		const id = ++texoroWorkerRequestId;
+		return new Promise<T>((resolve, reject) => {
+			texoroWorkerPending.set(id, {
+				resolve: (value) => resolve(value as T),
+				reject
+			});
+			texoroWorker?.postMessage({ id, ...request });
+		});
+	};
+
+	const runServerSearch = async (
+		query: string,
+		structuredClauses: ReturnType<typeof buildStructuredClause>[]
+	): Promise<SearchExecution> =>
+		postJson<SearchExecution>('/api/texoro/search', {
+			query,
+			structuredClauses,
+			options: {
+				limit: RESULTS_PAGE_SIZE,
+				maxPhraseVerificationDocs: 220,
+				snippetRadius: 115,
+				includeSnippets: false
+			}
+		});
+
+	const runBrowserFirstSearch = async (
+		query: string,
+		structuredClauses: ReturnType<typeof buildStructuredClause>[]
+	): Promise<SearchExecution> => {
+		if (texoroWorker) {
+			try {
+				const response = await requestTexoroWorker<{ execution?: SearchExecution }>({
+					action: 'search',
+					query,
+					structuredClauses,
+					options: {
+						limit: RESULTS_PAGE_SIZE,
+						maxPhraseVerificationDocs: 220,
+						snippetRadius: 115,
+						includeSnippets: false
+					}
+				});
+				if (response.execution) return response.execution;
+			} catch (cause) {
+				console.warn('[texoro] browser search failed; using server fallback', cause);
+				closeTexoroWorker('Worker TEXORO desactivado tras error de búsqueda');
+			}
+		}
+
+		return runServerSearch(query, structuredClauses);
+	};
+
 	const loadResultOccurrencePreviews = async (results: SearchResult[]): Promise<void> => {
 		if (!searchExecution) return;
 		const queryAtStart = searchExecution.query;
@@ -1289,7 +1411,9 @@
 			match: assignment.match,
 			options: {
 				maxItems: 500,
-				snippetRadius: 115
+				snippetRadius: 115,
+				snippetMode: 'lines',
+				lineContext: 3
 			}
 		});
 
@@ -1351,13 +1475,51 @@
 		infoModalOpen = false;
 	};
 
+	const canPrimeCurrentQuery = (): boolean => {
+		const trimmedMain = mainQuery.trim();
+		if (!trimmedMain || !QUERY_ALLOWED_PATTERN.test(trimmedMain)) return false;
+		if (trimmedMain.replace(/[*?\s]/g, '').length < 3) return false;
+		for (const term of advancedTerms) {
+			const trimmed = term.value.trim();
+			if (trimmed && !QUERY_ALLOWED_PATTERN.test(trimmed)) return false;
+		}
+		return true;
+	};
+
 	$effect(() => {
 		if (!searchExecution || visibleResults.length === 0) return;
 		void loadResultOccurrencePreviews(visibleResults.slice(0, previewLoadLimit));
 	});
 
+	$effect(() => {
+		const primeSignature = [
+			mainQuery,
+			...advancedTerms.map((term) => `${term.operator}:${term.distance}:${term.value}`)
+		].join('\u0001');
+		if (!primeSignature || !isEngineReady || !texoroWorker || isSearching || !canPrimeCurrentQuery()) {
+			return;
+		}
+
+		const timer = window.setTimeout(() => {
+			const { query, structuredClauses } = buildEffectiveQuery();
+			void requestTexoroWorker<void>({
+				action: 'prime',
+				query,
+				structuredClauses,
+				wildcard: /[*?]/.test(query)
+			}).catch((cause) => {
+				console.warn('[texoro] prime failed', cause);
+			});
+		}, TEXORO_PRIME_DEBOUNCE_MS);
+
+		return () => {
+			window.clearTimeout(timer);
+		};
+	});
+
 	onMount(() => {
 		let previewScrollFrame = 0;
+		let warmupTimer = 0;
 		const onScroll = (): void => {
 			if (previewScrollFrame) return;
 			previewScrollFrame = window.requestAnimationFrame(() => {
@@ -1370,23 +1532,41 @@
 
 		void (async () => {
 			try {
-				const manifest = await fetchIndexManifest();
-				isEngineReady = true;
-				indexStats = {
-					works: manifest.stats.works,
-					tokens: manifest.stats.tokens,
-					vocabSize: manifest.stats.vocabSize
-				};
-				indexVersion = manifest.indexVersion;
-				preserveEnieForHighlight = manifest.normalization.preserveEnie;
+				texoroWorker = createTexoroWorker();
+				if (!texoroWorker) {
+					throw new Error('Worker TEXORO no disponible');
+				}
+				const response = await requestTexoroWorker<{ manifest?: TexoroIndexManifest | null }>({
+					action: 'init',
+					indexBaseUrl: texoroIndexBaseUrl,
+					worksMeta: data.worksMeta
+				});
+				if (!response.manifest) {
+					throw new Error('El worker TEXORO no devolvió manifest');
+				}
+				applyIndexManifest(response.manifest);
+				warmupTimer = window.setTimeout(() => {
+					void requestTexoroWorker<void>({ action: 'warmup' }).catch((cause) => {
+						console.warn('[texoro] warmup failed', cause);
+					});
+				}, 120);
 			} catch (cause) {
-				searchError = cause instanceof Error ? cause.message : 'No se pudo inicializar TEXORO';
+				console.warn('[texoro] using server search fallback', cause);
+				closeTexoroWorker('Worker TEXORO no disponible');
+				try {
+					applyIndexManifest(await fetchIndexManifest());
+				} catch (manifestCause) {
+					searchError =
+						manifestCause instanceof Error ? manifestCause.message : 'No se pudo inicializar TEXORO';
+				}
 			}
 		})();
 
 		return () => {
 			window.removeEventListener('scroll', onScroll);
 			if (previewScrollFrame) window.cancelAnimationFrame(previewScrollFrame);
+			if (warmupTimer) window.clearTimeout(warmupTimer);
+			closeTexoroWorker();
 		};
 	});
 
@@ -1432,16 +1612,7 @@
 		isSearching = true;
 		try {
 			submittedTerms = terms;
-			searchExecution = await postJson<SearchExecution>('/api/texoro/search', {
-				query,
-				structuredClauses,
-				options: {
-					limit: RESULTS_PAGE_SIZE,
-					maxPhraseVerificationDocs: 220,
-					snippetRadius: 115,
-					includeSnippets: false
-				}
-			});
+			searchExecution = await runBrowserFirstSearch(query, structuredClauses);
 			queueMicrotask(increasePreviewWindowIfNeeded);
 		} catch (cause) {
 			submittedTerms = [];
@@ -2092,7 +2263,7 @@
 						{#each occurrenceModal.details.items as item, index}
 							<li class="rounded-[9px] border border-border-accent-blue bg-surface px-3 py-2">
 								<p class="m-0 text-[0.79rem] font-semibold text-text-accent-purple">#{index + 1}</p>
-								<p class="mt-1 mb-0 text-[0.93rem] leading-[1.5] text-text-main">
+								<p class="texoro-occurrence-modal-snippet mt-1 mb-0 text-[0.93rem] leading-[1.55] text-text-main">
 									{@html highlightExactOccurrenceSnippet(item.snippet, occurrenceModal.assignment, item)}
 								</p>
 								<p class="mt-1 mb-0 font-['Roboto',sans-serif] text-[0.75rem] text-text-soft">
@@ -2122,6 +2293,11 @@
 		-webkit-box-orient: vertical;
 		line-clamp: 3;
 		-webkit-line-clamp: 3;
+	}
+
+	.texoro-occurrence-modal-snippet {
+		white-space: pre-wrap;
+		overflow-wrap: anywhere;
 	}
 
 	@media (min-width: 768px) {

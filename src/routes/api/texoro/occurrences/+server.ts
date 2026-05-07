@@ -9,6 +9,9 @@ const asPositiveNumber = (value: unknown, fallback: number, max: number): number
 	return Math.min(Math.floor(value), max);
 };
 
+const normalizeSnippetMode = (value: unknown): 'chars' | 'lines' =>
+	value === 'lines' ? 'lines' : 'chars';
+
 const normalizeMatch = (value: unknown): SearchResultMatch | null => {
 	if (!value || typeof value !== 'object') return null;
 	const raw = value as Record<string, unknown>;
@@ -47,7 +50,9 @@ export const POST: RequestHandler = async ({ request }) => {
 	const rawOptions = body?.options ?? {};
 	const options = {
 		maxItems: asPositiveNumber(rawOptions.maxItems, 300, 500),
-		snippetRadius: asPositiveNumber(rawOptions.snippetRadius, 115, 220)
+		snippetRadius: asPositiveNumber(rawOptions.snippetRadius, 115, 220),
+		snippetMode: normalizeSnippetMode(rawOptions.snippetMode),
+		lineContext: asPositiveNumber(rawOptions.lineContext, 3, 10)
 	};
 
 	try {

@@ -28,3 +28,24 @@ Svelte4Component@http://localhost:5173/node_modules/.vite/deps/legacy-client-DDm
 initialize@http://localhost:5173/node_modules/@sveltejs/kit/src/runtime/client/client.js?v=195b6c5e:632:9
 _hydrate@http://localhost:5173/node_modules/@sveltejs/kit/src/runtime/client/client.js?v=195b6c5e:2974:8
 
+[2m17:50:34[22m [33m[1m[vite][22m[39m [33m[2m(client)[22m[39m [2m[console.warn] [22m[texoro] using server search fallback _page/requestTexoroWorker/<@http://127.0.0.1:5173/src/routes/texoro/+page.svelte:1276:36
+requestTexoroWorker@http://127.0.0.1:5173/src/routes/texoro/+page.svelte:1274:10
+_page/</<@http://127.0.0.1:5173/src/routes/texoro/+page.svelte:1726:53
+_page/<@http://127.0.0.1:5173/src/routes/texoro/+page.svelte:1762:5
+untrack@http://127.0.0.1:5173/node_modules/.vite/deps/runtime-C0d4kMpv.js?v=195b6c5e:5030:10
+onMount/<@http://127.0.0.1:5173/node_modules/.vite/deps/client-DRtZGaDL.js?v=195b6c5e:340:26
+update_reaction@http://127.0.0.1:5173/node_modules/.vite/deps/runtime-C0d4kMpv.js?v=195b6c5e:4768:16
+update_effect@http://127.0.0.1:5173/node_modules/.vite/deps/runtime-C0d4kMpv.js?v=195b6c5e:4868:33
+flush_queued_effects@http://127.0.0.1:5173/node_modules/.vite/deps/runtime-C0d4kMpv.js?v=195b6c5e:2214:17
+#process@http://127.0.0.1:5173/node_modules/.vite/deps/runtime-C0d4kMpv.js?v=195b6c5e:1871:24
+flush@http://127.0.0.1:5173/node_modules/.vite/deps/runtime-C0d4kMpv.js?v=195b6c5e:1958:17
+ensure/<@http://127.0.0.1:5173/node_modules/.vite/deps/runtime-C0d4kMpv.js?v=195b6c5e:2102:12
+run_all@http://127.0.0.1:5173/node_modules/.vite/deps/runtime-C0d4kMpv.js?v=195b6c5e:49:45
+run_micro_tasks@http://127.0.0.1:5173/node_modules/.vite/deps/runtime-C0d4kMpv.js?v=195b6c5e:1139:9
+flush_tasks@http://127.0.0.1:5173/node_modules/.vite/deps/runtime-C0d4kMpv.js?v=195b6c5e:1157:33
+flushSync@http://127.0.0.1:5173/node_modules/.vite/deps/runtime-C0d4kMpv.js?v=195b6c5e:2171:4
+Svelte4Component@http://127.0.0.1:5173/node_modules/.vite/deps/legacy-client-DDm8Rg4D.js?v=195b6c5e:842:80
+@http://127.0.0.1:5173/node_modules/.vite/deps/legacy-client-DDm8Rg4D.js?v=195b6c5e:784:4
+initialize@http://127.0.0.1:5173/node_modules/@sveltejs/kit/src/runtime/client/client.js?v=195b6c5e:632:9
+_hydrate@http://127.0.0.1:5173/node_modules/@sveltejs/kit/src/runtime/client/client.js?v=195b6c5e:2974:8
+

@@ -1,0 +1,23 @@
+[
+  {
+    "name": "search",
+    "local": "deploy/input/public-assets/search",
+    "bucket": "etso-public-assets",
+    "prefix": "search",
+    "delete": true
+  },
+  {
+    "name": "resumenes",
+    "local": "deploy/input/public-assets/resumenes",
+    "bucket": "etso-public-assets",
+    "prefix": "resumenes",
+    "delete": true
+  },
+  {
+    "name": "textos",
+    "local": "deploy/input/private-assets/texts",
+    "bucket": "etso-textos",
+    "prefix": "",
+    "delete": true
+  }
+]

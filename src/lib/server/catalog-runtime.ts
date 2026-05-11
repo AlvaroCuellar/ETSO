@@ -355,8 +355,10 @@ const fetchSummaryFile = async (workId: string): Promise<SummaryFile | null> =>
 	fetchPublicR2Json<SummaryFile>(getSummariesBaseUrl(), `${workId}.json`);
 
 const createSnapshot = async (): Promise<Snapshot> => {
+	const authorsTableColumns = await getRows<{ name: string }>('PRAGMA table_info(authors)');
+	const hasAuthorVariantsColumn = authorsTableColumns.some((column) => column.name === 'variaciones_nombre');
 	const authorRows = await getRows<AuthorRow>(
-		`SELECT id, nombre, variaciones_nombre
+		`SELECT id, nombre, ${hasAuthorVariantsColumn ? 'variaciones_nombre' : 'NULL AS variaciones_nombre'}
 		 FROM authors
 		 ORDER BY nombre COLLATE NOCASE`
 	);
@@ -492,9 +494,14 @@ const createSnapshot = async (): Promise<Snapshot> => {
 
 	const worksTableColumns = await getRows<{ name: string }>('PRAGMA table_info(works)');
 	const hasWorkSlugColumn = worksTableColumns.some((column) => column.name === 'slug');
+	const hasWorkTitleVariantsColumn = worksTableColumns.some(
+		(column) => column.name === 'variaciones_titulo'
+	);
 
 	const workRows = await getRows<WorkRow>(
-		`SELECT id, ${hasWorkSlugColumn ? 'slug' : 'NULL AS slug'}, titulo, variaciones_titulo, genero, adicion, estado_texto,
+		`SELECT id, ${hasWorkSlugColumn ? 'slug' : 'NULL AS slug'}, titulo,
+		 ${hasWorkTitleVariantsColumn ? 'variaciones_titulo' : 'NULL AS variaciones_titulo'},
+		 genero, adicion, estado_texto,
 		 examen_autorias, bicuve, bicuve_nombre, tiene_acceso_externo,
 		 procede, resultado1, resultado2, resumen_breve
 		 FROM works

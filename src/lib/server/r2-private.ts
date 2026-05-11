@@ -2,7 +2,7 @@ import { createHash, createHmac } from 'node:crypto';
 
 import { env } from '$env/dynamic/private';
 
-const DEFAULT_TEXT_PREFIX = 'textos';
+const DEFAULT_TEXT_PREFIX = '';
 const R2_REGION = 'auto';
 const R2_SERVICE = 's3';
 const R2_PAYLOAD_HASH = 'UNSIGNED-PAYLOAD';

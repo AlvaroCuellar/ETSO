@@ -17,6 +17,7 @@ Thumbs.db
 .env.*
 !.env.example
 !.env.test
+!deploy/.env.deploy.example
 
 # Vite
 vite.config.js.timestamp-*
@@ -27,3 +28,14 @@ vite.config.ts.timestamp-*
 
 # Generated catalog snapshot
 src/lib/server/generated/
+
+# Deploy
+.env.deploy
+
+deploy/input/
+deploy/tmp/
+deploy/tools/
+
+deploy/backups/*.sql
+deploy/backups/*.db
+deploy/backups/*.sqlite

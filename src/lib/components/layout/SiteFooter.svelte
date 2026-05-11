@@ -1,5 +1,6 @@
 ﻿<script lang="ts">
-	import iconEtso from '$lib/assets/logos/icon-etso.png';
+	import logoEtso from '$lib/assets/logos/etso-logo-light.png';
+	import thaliaLogo from '$lib/assets/logos/thalia.png';
 
 	const primaryNavItems = [
 		{ href: '/examen-autorias', label: 'Examen de autorías' },
@@ -18,12 +19,12 @@
 
 <footer class="mt-12 border-t border-brand-purple/20 bg-brand-blue font-ui text-white">
 	<div class="mx-auto w-full max-w-7xl px-4 py-10 sm:px-5 lg:px-6">
-		<div class="grid gap-8 border-b border-white/16 pb-8 md:grid-cols-[auto_minmax(0,1fr)] md:gap-10">
+		<div class="grid items-start gap-8 md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-10">
 			<a class="inline-flex w-fit items-center gap-3 text-white no-underline hover:no-underline" href="/examen-autorias">
-				<img class="h-50 w-50 object-contain" src={iconEtso} alt="Logo ETSO" />
+				<img class="h-50 w-50 object-contain" src={logoEtso} alt="Logo ETSO" />
 			</a>
 
-			<nav class="grid w-full gap-8 sm:grid-cols-2 md:w-fit md:justify-self-end" aria-label="Navegación del pie de página">
+			<nav class="grid w-full gap-8 sm:grid-cols-2 md:w-fit md:justify-self-center" aria-label="Navegación del pie de página">
 				<div class="grid content-start gap-3">
 					<p class="m-0 text-[0.8rem] font-ui font-semibold tracking-[0.04em] text-white/72 uppercase">
 						Navegación
@@ -52,8 +53,21 @@
 					{/each}
 				</div>
 			</nav>
+
+			<div class="md:justify-self-end md:text-right">
+				<p class="m-0 text-[0.8rem] font-ui font-semibold tracking-[0.04em] text-white/72 uppercase">
+					Con la financiación de
+				</p>
+				<img
+					class="mt-3 h-14 w-auto max-w-[11rem] object-contain md:ml-auto"
+					src={thaliaLogo}
+					alt="Logo de Thalia"
+				/>
+			</div>
 		</div>
 
-		<div class="pt-4 text-[0.84rem] text-white/80">© 2026 ETSO. Todos los derechos reservados.</div>
+		<div class="mt-8 border-t border-white/16 pt-6 text-center text-[0.84rem] text-white/80">
+			© 2026 ETSO. Todos los derechos reservados.
+		</div>
 	</div>
 </footer>

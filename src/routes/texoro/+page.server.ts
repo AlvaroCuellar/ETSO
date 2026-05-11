@@ -7,6 +7,10 @@ import type { PageServerLoad } from './$types';
 const stripTrailingSlash = (value: string): string => value.replace(/\/+$/, '');
 const joinUrl = (base: string, path: string): string =>
 	`${stripTrailingSlash(base)}/${path.replace(/^\/+/, '')}`;
+const withCacheBuster = (url: string): string => {
+	const separator = url.includes('?') ? '&' : '?';
+	return `${url}${separator}t=${Date.now()}`;
+};
 
 interface TexoroInitialIndexInfo {
 	stats: {
@@ -33,7 +37,9 @@ const getTexoroInitialIndexInfo = async (fetch: typeof globalThis.fetch): Promis
 	if (!texoroIndexBaseUrl) return null;
 
 	try {
-		const response = await fetch(joinUrl(texoroIndexBaseUrl, 'manifest.json'));
+		const response = await fetch(withCacheBuster(joinUrl(texoroIndexBaseUrl, 'manifest.json')), {
+			cache: 'no-store'
+		});
 		if (!response.ok) return null;
 
 		const manifest = (await response.json()) as TexoroIndexManifest;

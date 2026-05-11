@@ -134,6 +134,10 @@ const DEFAULT_TEXT_WARMUP_CONCURRENCY = 4;
 
 const stripTrailingSlash = (value: string): string => value.replace(/\/+$/, '');
 const joinUrl = (base: string, path: string): string => `${stripTrailingSlash(base)}/${path.replace(/^\/+/, '')}`;
+const withCacheBuster = (url: string): string => {
+	const separator = url.includes('?') ? '&' : '?';
+	return `${url}${separator}t=${Date.now()}`;
+};
 
 const wildcardToRegex = (pattern: string): RegExp => {
 	let expression = '^';
@@ -1623,7 +1627,12 @@ export class TexoroSearchEngine {
 			if (cached) return cached;
 		}
 
-		const response = await fetch(joinUrl(this.#indexBaseUrl, relativePath));
+		const isManifest = relativePath === 'manifest.json';
+		const requestUrl = joinUrl(this.#indexBaseUrl, relativePath);
+		const response = await fetch(
+			isManifest ? withCacheBuster(requestUrl) : requestUrl,
+			isManifest ? { cache: 'no-store' } : undefined
+		);
 		if (!response.ok) {
 			throw new Error(`Unable to fetch ${relativePath}: ${response.status}`);
 		}

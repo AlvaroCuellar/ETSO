@@ -188,6 +188,10 @@
 	const stripTrailingSlash = (value: string): string => value.replace(/\/+$/, '');
 	const joinUrl = (base: string, path: string): string =>
 		`${stripTrailingSlash(base)}/${path.replace(/^\/+/, '')}`;
+	const withCacheBuster = (url: string): string => {
+		const separator = url.includes('?') ? '&' : '?';
+		return `${url}${separator}t=${Date.now()}`;
+	};
 	const publicAssetsBaseUrl = stripTrailingSlash(
 		publicEnv.PUBLIC_R2_PUBLIC_ASSETS_BASE_URL || publicEnv.PUBLIC_R2_BASE_URL || ''
 	);
@@ -1071,7 +1075,9 @@
 		if (!texoroIndexBaseUrl) {
 			throw new Error('Falta PUBLIC_R2_PUBLIC_ASSETS_BASE_URL para inicializar TEXORO.');
 		}
-		const response = await fetch(joinUrl(texoroIndexBaseUrl, 'manifest.json'));
+		const response = await fetch(withCacheBuster(joinUrl(texoroIndexBaseUrl, 'manifest.json')), {
+			cache: 'no-store'
+		});
 		if (!response.ok) {
 			throw new Error(`No se pudo inicializar TEXORO: ${response.status}`);
 		}

@@ -157,7 +157,7 @@
 		return `${Math.trunc(row.position)}ª`;
 	};
 
-	const hasLongSummary = (work: CatalogWork): boolean => Boolean(work.longSummary?.trim());
+	const hasSummaryFile = (work: CatalogWork): boolean => work.hasSummaryFile;
 
 	const hasShortSummary = (work: CatalogWork): boolean => {
 		const shortText = work.shortSummary.trim();
@@ -492,7 +492,7 @@
 									</span>
 								{/if}
 
-								{#if hasLongSummary(row.work)}
+								{#if hasSummaryFile(row.work)}
 									<a href={summaryUrl(row.work)} class={actionButtonEnabledClass}>
 										<span class="btn-left col-span-2 flex min-w-0 items-center gap-[7px]">
 											<span class="btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-brand-blue-dark" aria-hidden="true">

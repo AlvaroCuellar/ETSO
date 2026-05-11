@@ -50,6 +50,7 @@ const handleRequest = async (request: TexoroWorkerRequest): Promise<void> => {
 	if (request.action === 'prime') {
 		await Promise.all([
 			searchEngine.primeQuery(request.query, {
+				structuredQuery: request.structuredQuery,
 				structuredClauses: request.structuredClauses
 			}),
 			request.wildcard ? searchEngine.warmupWildcardSupport() : Promise.resolve()
@@ -60,6 +61,7 @@ const handleRequest = async (request: TexoroWorkerRequest): Promise<void> => {
 
 	const options: SearchOptions = {
 		...(request.options ?? {}),
+		structuredQuery: request.structuredQuery ?? request.options?.structuredQuery,
 		structuredClauses: request.structuredClauses ?? request.options?.structuredClauses
 	};
 	const execution = await searchEngine.search(request.query, workMetaById, options);

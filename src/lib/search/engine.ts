@@ -1,6 +1,6 @@
 import { IndexedDbCache } from './idb-cache';
 import { buildSnippet, normalizePattern, normalizePlainText, tokenizeWithOffsets } from './normalize';
-import { parseSearchQuery, parseStructuredSearchQuery } from './query';
+import { parseSearchQuery, parseStructuredQuery, parseStructuredSearchQuery } from './query';
 
 import type {
 	ParsedQuery,
@@ -59,6 +59,7 @@ interface WarmupOptions {
 
 interface PrimeQueryOptions {
 	structuredClauses?: SearchOptions['structuredClauses'];
+	structuredQuery?: SearchOptions['structuredQuery'];
 	prefetchTexts?: boolean;
 	textLimit?: number;
 	textConcurrency?: number;
@@ -545,9 +546,11 @@ export class TexoroSearchEngine {
 
 		const primePromise = (async () => {
 			await this.initialize();
-			const parsed = options.structuredClauses?.length
-				? parseStructuredSearchQuery(options.structuredClauses, this.#preserveEnie)
-				: parseSearchQuery(normalizedQuery, this.#preserveEnie);
+			const parsed = options.structuredQuery
+				? parseStructuredQuery(options.structuredQuery, this.#preserveEnie)
+				: options.structuredClauses?.length
+					? parseStructuredSearchQuery(options.structuredClauses, this.#preserveEnie)
+					: parseSearchQuery(normalizedQuery, this.#preserveEnie);
 			if (parsed.groups.length === 0) return;
 
 			const groupEvaluations: GroupEvaluation[] = [];
@@ -624,9 +627,11 @@ export class TexoroSearchEngine {
 		const textLoadsAtStart = this.#textLoadCount;
 		await this.initialize();
 		const normalizedQuery = normalizePlainText(query, this.#preserveEnie);
-		const parsed = options.structuredClauses?.length
-			? parseStructuredSearchQuery(options.structuredClauses, this.#preserveEnie)
-			: parseSearchQuery(query, this.#preserveEnie);
+		const parsed = options.structuredQuery
+			? parseStructuredQuery(options.structuredQuery, this.#preserveEnie)
+			: options.structuredClauses?.length
+				? parseStructuredSearchQuery(options.structuredClauses, this.#preserveEnie)
+				: parseSearchQuery(query, this.#preserveEnie);
 
 		if (parsed.groups.length === 0) {
 			return {
@@ -673,7 +678,7 @@ export class TexoroSearchEngine {
 				const key = `${kind}:${source}`;
 				const existing = matchByKey.get(key);
 				if (existing) {
-					existing.occurrences += occurrences;
+					existing.occurrences = Math.max(existing.occurrences, occurrences);
 					return;
 				}
 				matchByKey.set(key, {
@@ -704,7 +709,12 @@ export class TexoroSearchEngine {
 					if (clause.clause.kind === 'proximity') {
 						addMatch(
 							'proximity',
-							this.#formatProximitySource(clause.clause.left, clause.clause.right, clause.clause.distance),
+							this.#formatProximitySource(
+								clause.clause.left,
+								clause.clause.right,
+								clause.clause.distance,
+								clause.clause.order
+							),
 							clause.scores.get(docId) ?? 0
 						);
 						continue;
@@ -838,17 +848,13 @@ export class TexoroSearchEngine {
 			}
 			const leftSpans = findPreparedSpans(prepared.tokens, proximity.left);
 			const rightSpans = findPreparedSpans(prepared.tokens, proximity.right);
-			const rightByStart = new Map<number, PreparedSpan[]>();
-			for (const span of rightSpans) {
-				const byStart = rightByStart.get(span.tokenStart) ?? [];
-				byStart.push(span);
-				rightByStart.set(span.tokenStart, byStart);
-			}
 
 			for (const leftSpan of leftSpans) {
-				const candidates = rightByStart.get(leftSpan.tokenEnd + proximity.distance + 1) ?? [];
-				for (const rightSpan of candidates) {
-					if (rightSpan.tokenStart <= leftSpan.tokenEnd && leftSpan.tokenStart <= rightSpan.tokenEnd) {
+				for (const rightSpan of rightSpans) {
+					const gap = this.#proximityGap(leftSpan, rightSpan, proximity.order);
+					if (gap === null) continue;
+					if (gap > proximity.distance) {
+						if (rightSpan.tokenStart > leftSpan.tokenEnd) break;
 						continue;
 					}
 					count += 1;
@@ -974,7 +980,10 @@ export class TexoroSearchEngine {
 
 	#extractPatternsFromMatch(match: SearchResultMatch): string[] {
 		if (match.kind === 'proximity') {
-			const parts = match.source.split(/\s+~\d+\s+/);
+			const proximity = this.#parseProximitySource(match.source);
+			const parts = proximity
+				? [...proximity.left, ...proximity.right]
+				: match.source.split(/\s+~(?:any|after|before)<=\d+\s+|\s+~\d+\s+/);
 			return parts
 				.flatMap((part) => part.trim().split(/\s+/))
 				.map((part) => normalizePattern(part, this.#preserveEnie))
@@ -1001,22 +1010,30 @@ export class TexoroSearchEngine {
 		return [...this.#patternsForClause(clause.left), ...this.#patternsForClause(clause.right)];
 	}
 
-	#parseProximitySource(source: string): { left: string[]; right: string[]; distance: number } | null {
-		const match = source.match(/^(.*?)\s+~(\d+)\s+(.*?)$/);
-		if (!match) return null;
-		const left = match[1]
+	#parseProximitySource(
+		source: string
+	): { left: string[]; right: string[]; distance: number; order: 'any' | 'after' | 'before' } | null {
+		const match = source.match(/^(.*?)\s+~(any|after|before)<=(\d+)\s+(.*?)$/);
+		const legacyMatch = match ? null : source.match(/^(.*?)\s+~(\d+)\s+(.*?)$/);
+		const parts = match
+			? { left: match[1], order: match[2] as 'any' | 'after' | 'before', distance: match[3], right: match[4] }
+			: legacyMatch
+				? { left: legacyMatch[1], order: 'after' as const, distance: legacyMatch[2], right: legacyMatch[3] }
+				: null;
+		if (!parts) return null;
+		const left = parts.left
 			.replace(/^"|"$/g, '')
 			.split(/\s+/)
 			.map((part) => normalizePattern(part, this.#preserveEnie))
 			.filter(Boolean);
-		const right = match[3]
+		const right = parts.right
 			.replace(/^"|"$/g, '')
 			.split(/\s+/)
 			.map((part) => normalizePattern(part, this.#preserveEnie))
 			.filter(Boolean);
-		const parsedDistance = Number.parseInt(match[2], 10);
+		const parsedDistance = Number.parseInt(parts.distance, 10);
 		const distance = Math.min(100, Math.max(0, Number.isFinite(parsedDistance) ? parsedDistance : 0));
-		return left.length && right.length ? { left, right, distance } : null;
+		return left.length && right.length ? { left, right, distance, order: parts.order } : null;
 	}
 
 	async getPreviewsForResults(
@@ -1065,11 +1082,16 @@ export class TexoroSearchEngine {
 	#formatClauseSource(clause: ParsedQueryClause): string {
 		if (clause.kind === 'term') return clause.pattern;
 		if (clause.kind === 'phrase') return `"${clause.literal}"`;
-		return this.#formatProximitySource(clause.left, clause.right, clause.distance);
+		return this.#formatProximitySource(clause.left, clause.right, clause.distance, clause.order);
 	}
 
-	#formatProximitySource(left: ParsedQueryClause, right: ParsedQueryClause, distance: number): string {
-		return `${this.#formatClauseSource(left)} ~${distance} ${this.#formatClauseSource(right)}`;
+	#formatProximitySource(
+		left: ParsedQueryClause,
+		right: ParsedQueryClause,
+		distance: number,
+		order: 'any' | 'after' | 'before'
+	): string {
+		return `${this.#formatClauseSource(left)} ~${order}<=${distance} ${this.#formatClauseSource(right)}`;
 	}
 
 	async #getPreparedText(docId: number): Promise<PreparedText | null> {
@@ -1214,6 +1236,20 @@ export class TexoroSearchEngine {
 		return { clause, docs, scores };
 	}
 
+	#proximityGap(
+		left: { tokenStart: number; tokenEnd: number },
+		right: { tokenStart: number; tokenEnd: number },
+		order: 'any' | 'after' | 'before'
+	): number | null {
+		if (right.tokenStart > left.tokenEnd) {
+			return order === 'before' ? null : right.tokenStart - left.tokenEnd - 1;
+		}
+		if (right.tokenEnd < left.tokenStart) {
+			return order === 'after' ? null : left.tokenStart - right.tokenEnd - 1;
+		}
+		return null;
+	}
+
 	async #evaluateProximityClause(clause: Extract<ParsedQueryClause, { kind: 'proximity' }>): Promise<ClauseEvaluation> {
 		const [leftPositions, rightPositions] = await Promise.all([
 			this.#positionsForSimpleClause(clause.left),
@@ -1226,17 +1262,15 @@ export class TexoroSearchEngine {
 			const rightOccurrences = rightPositions.get(docId);
 			if (!rightOccurrences || leftOccurrences.length === 0 || rightOccurrences.length === 0) continue;
 			let count = 0;
-			const rightByStart = new Map<number, ClausePositionOccurrence[]>();
-			for (const right of rightOccurrences) {
-				const byStart = rightByStart.get(right.tokenStart) ?? [];
-				byStart.push(right);
-				rightByStart.set(right.tokenStart, byStart);
-			}
 
 			for (const left of leftOccurrences) {
-				const candidates = rightByStart.get(left.tokenEnd + clause.distance + 1) ?? [];
-				for (const right of candidates) {
-					if (right.tokenStart <= left.tokenEnd && left.tokenStart <= right.tokenEnd) continue;
+				for (const right of rightOccurrences) {
+					const gap = this.#proximityGap(left, right, clause.order);
+					if (gap === null) continue;
+					if (gap > clause.distance) {
+						if (right.tokenStart > left.tokenEnd) break;
+						continue;
+					}
 					count += 1;
 				}
 			}

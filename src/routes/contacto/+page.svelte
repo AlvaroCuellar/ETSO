@@ -55,7 +55,7 @@
 	<section class="grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(18rem,0.8fr)] lg:items-start">
 		<form
 			class="grid gap-4 rounded-card border border-border bg-surface p-5 shadow-soft lg:gap-5 lg:p-6"
-			on:submit={openMailClient}
+			onsubmit={openMailClient}
 		>
 			<div class="grid gap-1.5">
 				<label for="contact-name" class="font-ui text-[0.83rem] font-semibold uppercase tracking-[0.04em] text-text-soft">
@@ -110,7 +110,7 @@
 					class="min-h-40 rounded-md border border-border bg-white px-3 py-2.5 text-text-main outline-none transition focus:border-brand-blue/40 focus:bg-surface-accent-blue/30"
 					bind:value={message}
 					required
-				/>
+				></textarea>
 			</div>
 
 			<div class="flex flex-wrap items-center justify-between gap-3 pt-1">

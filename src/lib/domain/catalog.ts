@@ -42,7 +42,7 @@ export interface CatalogWork {
 	textState: string;
 	addedOn: string;
 	shortSummary: string;
-	longSummary?: string;
+	hasSummaryFile: boolean;
 	result1?: string;
 	result2?: string;
 	traditionalAttribution: AttributionSet;

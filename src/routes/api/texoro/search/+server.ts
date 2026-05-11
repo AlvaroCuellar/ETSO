@@ -11,7 +11,7 @@ const asPositiveNumber = (value: unknown, fallback: number, max: number): number
 
 export const POST: RequestHandler = async ({ request }) => {
 	const body = (await request.json().catch(() => null)) as
-		| { query?: unknown; structuredClauses?: unknown; options?: Record<string, unknown> }
+		| { query?: unknown; structuredQuery?: unknown; structuredClauses?: unknown; options?: Record<string, unknown> }
 		| null;
 	const query = typeof body?.query === 'string' ? body.query : '';
 	if (!query.trim()) {
@@ -24,6 +24,10 @@ export const POST: RequestHandler = async ({ request }) => {
 		maxPhraseVerificationDocs: asPositiveNumber(rawOptions.maxPhraseVerificationDocs, 220, 500),
 		snippetRadius: asPositiveNumber(rawOptions.snippetRadius, 115, 220),
 		includeSnippets: rawOptions.includeSnippets === true,
+		structuredQuery:
+			body?.structuredQuery && typeof body.structuredQuery === 'object'
+				? (body.structuredQuery as SearchOptions['structuredQuery'])
+				: undefined,
 		structuredClauses: Array.isArray(body?.structuredClauses)
 			? (body.structuredClauses as SearchOptions['structuredClauses'])
 			: undefined

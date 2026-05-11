@@ -219,7 +219,7 @@ export interface ParsedQueryProximity {
 	left: ParsedQueryTerm | ParsedQueryPhrase;
 	right: ParsedQueryTerm | ParsedQueryPhrase;
 	distance: number;
-	direction: 'ordered';
+	order: SearchProximityOrder;
 }
 
 export type ParsedQueryClause = ParsedQueryTerm | ParsedQueryPhrase | ParsedQueryProximity;
@@ -284,15 +284,31 @@ export interface SearchExecution {
 	elapsedMs: number;
 }
 
+export type SearchBooleanMode = 'all' | 'any';
+export type SearchProximityOrder = 'any' | 'after' | 'before';
+
+export interface StructuredSearchQuery {
+	main: string;
+	additionalMode?: SearchBooleanMode;
+	additionalTerms?: string[];
+	proximityMode?: SearchBooleanMode;
+	proximityTerms?: Array<{
+		value: string;
+		distance: number;
+		order?: SearchProximityOrder;
+	}>;
+}
+
 export interface SearchOptions {
 	limit?: number;
 	maxPhraseVerificationDocs?: number;
 	snippetRadius?: number;
 	includeSnippets?: boolean;
+	structuredQuery?: StructuredSearchQuery;
 	structuredClauses?: Array<
 		| { kind: 'term'; value: string; operator?: 'and' | 'or' | null }
 		| { kind: 'phrase'; value: string; operator?: 'and' | 'or' | null }
-		| { kind: 'proximity'; value: string; distance: number; operator?: 'near' }
+		| { kind: 'proximity'; value: string; distance: number; operator?: 'near'; order?: SearchProximityOrder }
 	>;
 }
 

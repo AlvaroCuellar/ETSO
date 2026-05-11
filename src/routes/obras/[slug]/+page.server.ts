@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import { getInformeByWorkId, getWorkBySlug } from '$lib/server/catalog-runtime';
+import { getInformeByWorkId, getWorkBySlug, withWorkShortSummary } from '$lib/server/catalog-runtime';
 
 import type { PageServerLoad } from './$types';
 
@@ -8,10 +8,7 @@ export const load: PageServerLoad = async ({ params }) => {
 	if (!work) throw error(404, 'Obra no encontrada');
 
 	return {
-		work: {
-			...work,
-			longSummary: work.shortSummary ? 'r2' : undefined
-		},
+		work: await withWorkShortSummary(work),
 		informe: await getInformeByWorkId(work.id)
 	};
 };

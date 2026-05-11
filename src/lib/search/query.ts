@@ -1,10 +1,12 @@
 ﻿import type { ParsedQuery, ParsedQueryClause } from './types';
 import { normalizePattern } from './normalize';
+import type { ParsedQueryPhrase, ParsedQueryTerm } from './types';
+import type { SearchBooleanMode, SearchProximityOrder, StructuredSearchQuery } from './types';
 
 export type StructuredSearchInputClause =
 	| { kind: 'term'; value: string; operator?: 'and' | 'or' | null }
 	| { kind: 'phrase'; value: string; operator?: 'and' | 'or' | null }
-	| { kind: 'proximity'; value: string; distance: number; operator?: 'near' };
+	| { kind: 'proximity'; value: string; distance: number; operator?: 'near'; order?: SearchProximityOrder };
 
 interface QueryToken {
 	type: 'word' | 'phrase';
@@ -43,7 +45,7 @@ const lexQuery = (input: string): QueryToken[] => {
 const isOrToken = (token: QueryToken): boolean => token.type === 'word' && token.value.toUpperCase() === 'OR';
 const isAndToken = (token: QueryToken): boolean => token.type === 'word' && token.value.toUpperCase() === 'AND';
 
-export const phraseToClause = (value: string, preserveEnie: boolean): ParsedQueryClause | null => {
+export const phraseToClause = (value: string, preserveEnie: boolean): ParsedQueryPhrase | null => {
 	const patterns = value
 		.split(/\s+/)
 		.map((part) => normalizePattern(part, preserveEnie))
@@ -56,7 +58,7 @@ export const phraseToClause = (value: string, preserveEnie: boolean): ParsedQuer
 	};
 };
 
-export const wordToClause = (value: string, preserveEnie: boolean): ParsedQueryClause | null => {
+export const wordToClause = (value: string, preserveEnie: boolean): ParsedQueryTerm | null => {
 	const pattern = normalizePattern(value, preserveEnie);
 	if (!pattern) return null;
 	return {
@@ -65,10 +67,29 @@ export const wordToClause = (value: string, preserveEnie: boolean): ParsedQueryC
 	};
 };
 
-const valueToClause = (value: string, preserveEnie: boolean): ParsedQueryClause | null => {
+const valueToClause = (value: string, preserveEnie: boolean): ParsedQueryTerm | ParsedQueryPhrase | null => {
 	const normalized = value.trim().replace(/\s+/g, ' ');
 	if (!normalized) return null;
 	return /\s/.test(normalized) ? phraseToClause(normalized, preserveEnie) : wordToClause(normalized, preserveEnie);
+};
+
+const normalizeBooleanMode = (value: SearchBooleanMode | undefined): SearchBooleanMode =>
+	value === 'any' ? 'any' : 'all';
+
+const normalizeProximityOrder = (value: SearchProximityOrder | undefined): SearchProximityOrder =>
+	value === 'before' || value === 'after' ? value : 'any';
+
+const normalizeDistance = (value: number): number =>
+	Math.min(100, Math.max(0, Number.isFinite(value) ? Math.floor(value) : 5));
+
+const combineGroups = (
+	groups: ParsedQueryClause[][],
+	clauses: ParsedQueryClause[],
+	mode: SearchBooleanMode
+): ParsedQueryClause[][] => {
+	if (clauses.length === 0) return groups;
+	if (mode === 'all') return groups.map((group) => [...group, ...clauses]);
+	return groups.flatMap((group) => clauses.map((clause) => [...group, clause]));
 };
 
 export const parseSearchQuery = (input: string, preserveEnie: boolean): ParsedQuery => {
@@ -123,13 +144,9 @@ export const parseStructuredSearchQuery = (
 		}
 
 		if (input.kind === 'proximity') {
-			const distance = Math.min(100, Math.max(0, Math.floor(input.distance)));
+			const distance = normalizeDistance(input.distance);
 			if (!previousConjunct) {
 				warnings.push('La proximidad necesita un termino anterior');
-				continue;
-			}
-			if (clause.kind === 'proximity') {
-				warnings.push('La proximidad no puede apuntar a otra proximidad');
 				continue;
 			}
 			const proximity: ParsedQueryClause = {
@@ -137,7 +154,7 @@ export const parseStructuredSearchQuery = (
 				left: previousConjunct.kind === 'proximity' ? previousConjunct.right : previousConjunct,
 				right: clause,
 				distance,
-				direction: 'ordered'
+				order: normalizeProximityOrder(input.order ?? 'after')
 			};
 			groups[groups.length - 1].push(proximity);
 			previousConjunct = proximity;
@@ -151,6 +168,51 @@ export const parseStructuredSearchQuery = (
 		groups[groups.length - 1].push(clause);
 		previousConjunct = clause;
 	}
+
+	const filteredGroups = groups.filter((group) => group.length > 0);
+	if (filteredGroups.length === 0) warnings.push('No hay terminos validos tras normalizacion');
+	return { groups: filteredGroups, warnings };
+};
+
+export const parseStructuredQuery = (
+	query: StructuredSearchQuery,
+	preserveEnie: boolean
+): ParsedQuery => {
+	const warnings: string[] = [];
+	const mainClause = valueToClause(query.main, preserveEnie);
+	if (!mainClause) {
+		return { groups: [], warnings: ['No hay termino principal valido tras normalizacion'] };
+	}
+
+	let groups: ParsedQueryClause[][] = [[mainClause]];
+
+	const additionalClauses: ParsedQueryClause[] = [];
+	for (const value of query.additionalTerms ?? []) {
+		const clause = valueToClause(value, preserveEnie);
+		if (!clause) {
+			warnings.push(`No se pudo interpretar: ${value}`);
+			continue;
+		}
+		additionalClauses.push(clause);
+	}
+	groups = combineGroups(groups, additionalClauses, normalizeBooleanMode(query.additionalMode));
+
+	const proximityClauses: ParsedQueryClause[] = [];
+	for (const item of query.proximityTerms ?? []) {
+		const right = valueToClause(item.value, preserveEnie);
+		if (!right) {
+			warnings.push(`No se pudo interpretar: ${item.value}`);
+			continue;
+		}
+		proximityClauses.push({
+			kind: 'proximity',
+			left: mainClause,
+			right,
+			distance: normalizeDistance(item.distance),
+			order: normalizeProximityOrder(item.order)
+		});
+	}
+	groups = combineGroups(groups, proximityClauses, normalizeBooleanMode(query.proximityMode));
 
 	const filteredGroups = groups.filter((group) => group.length > 0);
 	if (filteredGroups.length === 0) warnings.push('No hay terminos validos tras normalizacion');

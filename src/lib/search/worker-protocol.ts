@@ -16,6 +16,7 @@ export type TexoroWorkerRequest =
 			id: number;
 			action: 'prime';
 			query: string;
+			structuredQuery?: SearchOptions['structuredQuery'];
 			structuredClauses?: SearchOptions['structuredClauses'];
 			wildcard?: boolean;
 	  }
@@ -23,6 +24,7 @@ export type TexoroWorkerRequest =
 			id: number;
 			action: 'search';
 			query: string;
+			structuredQuery?: SearchOptions['structuredQuery'];
 			structuredClauses?: SearchOptions['structuredClauses'];
 			options?: SearchOptions;
 	  };

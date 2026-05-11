@@ -91,11 +91,21 @@
 
 	const AUTOPLAY_MS = 7000;
 	let activeIndex = $state(0);
+	let loadedSlideIndexes = $state([0]);
 	let autoplayHandle: ReturnType<typeof setInterval> | null = null;
 	let prefersReducedMotion = false;
 
+	const normalizeSlideIndex = (index: number): number => (index + slides.length) % slides.length;
+
+	const ensureSlideLoaded = (index: number): void => {
+		if (loadedSlideIndexes.includes(index)) return;
+		loadedSlideIndexes = [...loadedSlideIndexes, index];
+	};
+
 	const goToSlide = (nextIndex: number): void => {
-		activeIndex = (nextIndex + slides.length) % slides.length;
+		const normalizedIndex = normalizeSlideIndex(nextIndex);
+		ensureSlideLoaded(normalizedIndex);
+		activeIndex = normalizedIndex;
 	};
 
 	const goToPrevious = (): void => {
@@ -115,7 +125,7 @@
 	const startAutoplay = (): void => {
 		if (prefersReducedMotion || autoplayHandle) return;
 		autoplayHandle = setInterval(() => {
-			activeIndex = (activeIndex + 1) % slides.length;
+			goToSlide(activeIndex + 1);
 		}, AUTOPLAY_MS);
 	};
 
@@ -161,9 +171,20 @@
 			class="absolute inset-0 flex transition-transform duration-700 ease-out"
 			style={`transform: translateX(-${activeIndex * 100}%);`}
 		>
-			{#each slides as slide}
+			{#each slides as slide, index}
 				<article class="relative h-full min-w-full">
-					<img src={slide.image} alt={slide.alt} class="h-full w-full object-cover" loading="eager" />
+					{#if loadedSlideIndexes.includes(index)}
+						<img
+							src={slide.image}
+							alt={slide.alt}
+							class="h-full w-full object-cover"
+							loading={index === 0 ? 'eager' : 'lazy'}
+							fetchpriority={index === 0 ? 'high' : 'auto'}
+							decoding="async"
+						/>
+					{:else}
+						<div class="h-full w-full bg-brand-blue-dark"></div>
+					{/if}
 					<div class="absolute inset-0 bg-[rgba(8,21,52,0.48)]"></div>
 
 					<div class="absolute inset-0 flex items-end pb-12 md:items-center md:pb-0">

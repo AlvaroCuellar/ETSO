@@ -40,7 +40,11 @@
 		hasStylometryAttribution(data.work.stylometryAttribution);
 
 	const hasTextAccess = (): boolean => data.work.textLinks.length > 0;
-	const hasAnySummary = (): boolean => Boolean(data.work.shortSummary || data.work.longSummary);
+	const hasShortSummary = (): boolean => {
+		const shortText = data.work.shortSummary.trim();
+		return shortText.length > 0 && shortText !== 'Sin resumen breve disponible.';
+	};
+	const hasAnySummary = (): boolean => hasShortSummary() || data.work.hasSummaryFile;
 
 	const cardShellClass = 'mb-5 overflow-hidden rounded-[10px] border border-black/10 bg-white shadow-soft';
 	const cardHeaderClass =
@@ -221,13 +225,13 @@
 								<div
 									class="[&>p]:m-0 grid gap-[0.85rem] font-reading text-base leading-[1.65] text-text-main"
 								>
-									{#if data.work.shortSummary}
+									{#if hasShortSummary()}
 										<p>{data.work.shortSummary}</p>
 									{/if}
 								</div>
 							</div>
 
-							{#if data.work.longSummary}
+							{#if data.work.hasSummaryFile}
 								<div class="mt-4">
 									<a href={`/obras/${data.work.slug}/resumen`} class={actionLinkClass}>
 										<div class="inline-flex items-center justify-center text-brand-blue" aria-hidden="true">

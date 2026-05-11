@@ -32,6 +32,9 @@
 		SearchOptions,
 		SearchResult,
 		SearchResultMatch,
+		SearchBooleanMode,
+		SearchProximityOrder,
+		StructuredSearchQuery,
 		TexoroIndexManifest
 	} from '$lib/search';
 	import type { TexoroWorkerRequestPayload, TexoroWorkerResponse } from '$lib/search/worker-protocol';
@@ -144,11 +147,16 @@
 		series: ComparisonTerm[];
 	}
 
-	interface AdvancedQueryTerm {
+	interface AdditionalQueryTerm {
 		id: number;
-		operator: 'and' | 'or' | 'near';
+		value: string;
+	}
+
+	interface ProximityQueryTerm {
+		id: number;
 		value: string;
 		distance: number;
+		order: SearchProximityOrder;
 	}
 
 	interface TokenOption {
@@ -159,13 +167,24 @@
 	interface SubmittedQueryTerm {
 		key: string;
 		label: string;
-		operator: 'and' | 'or' | 'near' | null;
+		operator: string | null;
+	}
+
+	type InterpretedQueryPartKind = 'text' | 'term' | 'operator';
+
+	interface InterpretedQueryPart {
+		kind: InterpretedQueryPartKind;
+		value: string;
+	}
+
+	interface InterpretedQueryView {
+		summaryParts: InterpretedQueryPart[];
+		formulaParts: InterpretedQueryPart[];
 	}
 
 	type ChartKey = 'author' | 'genre';
 	type ChartMode = 'bars' | 'pie';
 	type ComparisonMetric = 'frequency10k' | 'occurrences' | 'share';
-	type StructuredClause = NonNullable<SearchOptions['structuredClauses']>[number];
 
 	const chartPalette = ['#1f5fbf', '#2f8fca', '#3aa6a0', '#59a55c', '#d38f38', '#9a69c6', '#c45e92'];
 	const exportSurface = '#edf2ff';
@@ -204,8 +223,14 @@
 	let mainQuery = $state('');
 	let advancedSearchOpen = $state(false);
 	let filtersOpen = $state(false);
-	let advancedTerms = $state<AdvancedQueryTerm[]>([]);
-	let nextAdvancedTermId = 1;
+	let additionalTerms = $state<AdditionalQueryTerm[]>([]);
+	let additionalMode = $state<SearchBooleanMode>('all');
+	let additionalModePreview = $state<SearchBooleanMode | null>(null);
+	let proximityTerms = $state<ProximityQueryTerm[]>([]);
+	let proximityMode = $state<SearchBooleanMode>('all');
+	let proximityModePreview = $state<SearchBooleanMode | null>(null);
+	let nextAdditionalTermId = 1;
+	let nextProximityTermId = 1;
 	let titleFilter = $state('');
 	let selectedGenres = $state<string[]>([]);
 	let selectedTradAuthors = $state<string[]>([]);
@@ -301,8 +326,38 @@
 		return Array.from(authorById.values());
 	};
 
+	const parseProximityMatchSource = (
+		source: string
+	): { left: string; right: string; distance: number; order: SearchProximityOrder } | null => {
+		const match = source.match(/^(.*?)\s+~(any|after|before)<=(\d+)\s+(.*?)$/);
+		const legacyMatch = match ? null : source.match(/^(.*?)\s+~(\d+)\s+(.*?)$/);
+		if (match) {
+			return {
+				left: match[1].replace(/^"|"$/g, ''),
+				right: match[4].replace(/^"|"$/g, ''),
+				distance: Number.parseInt(match[3], 10),
+				order: match[2] as SearchProximityOrder
+			};
+		}
+		if (legacyMatch) {
+			return {
+				left: legacyMatch[1].replace(/^"|"$/g, ''),
+				right: legacyMatch[3].replace(/^"|"$/g, ''),
+				distance: Number.parseInt(legacyMatch[2], 10),
+				order: 'after'
+			};
+		}
+		return null;
+	};
+
 	const formatMatchSource = (match: Pick<SearchResultMatch, 'kind' | 'source'>): string => {
 		const source = match.source.trim();
+		if (match.kind === 'proximity') {
+			const proximity = parseProximityMatchSource(source);
+			if (proximity) {
+				return `${proximity.left} cerca de ${proximity.right} (máx. ${proximity.distance}, ${proximityOrderLabel(proximity.order)})`;
+			}
+		}
 		if (match.kind === 'phrase' && source.startsWith('"') && source.endsWith('"')) {
 			return source.slice(1, -1);
 		}
@@ -372,7 +427,10 @@
 
 	const activeSearchTermCount = $derived.by(() => {
 		let count = mainQuery.trim() ? 1 : 0;
-		for (const term of advancedTerms) {
+		for (const term of additionalTerms) {
+			if (term.value.trim()) count += 1;
+		}
+		for (const term of proximityTerms) {
 			if (term.value.trim()) count += 1;
 		}
 		return count;
@@ -388,7 +446,7 @@
 	);
 
 	$effect(() => {
-		if (advancedTerms.length > 0) {
+		if (additionalTerms.length > 0 || proximityTerms.length > 0) {
 			advancedSearchOpen = true;
 		}
 	});
@@ -520,14 +578,31 @@
 		genre: 'No hay datos de género para graficar.'
 	};
 
+	const modePillButtonClass =
+		'relative z-10 rounded-full border-0 [border-width:0px] bg-transparent px-3 py-1.5 text-[0.78rem] font-semibold outline-none ring-0 transition-colors focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0';
+	const modePillIndicatorClass =
+		'pointer-events-none absolute top-1 bottom-1 left-1 w-[calc(50%-0.25rem)] rounded-full bg-white shadow-soft transition-transform duration-200 ease-out';
+	const interpretedQueryTermClass =
+		'inline-flex max-w-full items-center rounded-full bg-surface-accent-purple px-2.5 py-1 font-semibold leading-none text-text-accent-purple align-middle';
+	const interpretedQueryOperatorClass =
+		'font-mono text-[0.76rem] font-semibold uppercase text-text-soft';
+
+	const additionalModeVisual = $derived(additionalModePreview ?? additionalMode);
+	const proximityModeVisual = $derived(proximityModePreview ?? proximityMode);
+
 	const queryClauseCount = $derived.by(() => submittedTerms.length);
 
 	const queryLabelNoun = $derived.by(() => (queryClauseCount === 1 ? 'Término' : 'Términos'));
 
 	const queryTermsLabel = $derived.by(() => {
 		if (submittedTerms.length === 0) return '';
+		const connectorLabel = (operator: string | null): string => {
+			if (operator === 'all') return 'AND';
+			if (operator === 'any') return 'OR';
+			return operator?.toUpperCase() ?? '';
+		};
 		const expression = submittedTerms
-			.map((term, index) => (index === 0 ? term.label : `${term.operator?.toUpperCase()} ${term.label}`))
+			.map((term, index) => (index === 0 ? term.label : `${connectorLabel(term.operator)} ${term.label}`))
 			.join(' ');
 		return expression.length > 240 ? `${expression.slice(0, 237)}...` : expression;
 	});
@@ -695,40 +770,272 @@
 		return `${authors[0]} / ${authors[1]} +${authors.length - 2}`;
 	};
 
-	const createAdvancedTerm = (): AdvancedQueryTerm => ({
-		id: nextAdvancedTermId++,
-		operator: 'and',
-		value: '',
-		distance: 5
+	const createAdditionalTerm = (): AdditionalQueryTerm => ({
+		id: nextAdditionalTermId++,
+		value: ''
 	});
 
-	const addAdvancedTerm = (): void => {
-		if (advancedTerms.length >= MAX_QUERY_TERMS - 1) return;
-		advancedTerms = [...advancedTerms, createAdvancedTerm()];
+	const createProximityTerm = (): ProximityQueryTerm => ({
+		id: nextProximityTermId++,
+		value: '',
+		distance: 5,
+		order: 'any'
+	});
+
+	const addAdditionalTerm = (): void => {
+		if (additionalTerms.length + proximityTerms.length >= MAX_QUERY_TERMS - 1) return;
+		additionalTerms = [...additionalTerms, createAdditionalTerm()];
 		advancedSearchOpen = true;
 	};
 
-	const removeAdvancedTerm = (termId: number): void => {
-		advancedTerms = advancedTerms.filter((term) => term.id !== termId);
+	const removeAdditionalTerm = (termId: number): void => {
+		additionalTerms = additionalTerms.filter((term) => term.id !== termId);
 	};
 
-	const updateAdvancedTermOperator = (termId: number, operator: 'and' | 'or' | 'near'): void => {
-		advancedTerms = advancedTerms.map((term) => (term.id === termId ? { ...term, operator } : term));
+	const updateAdditionalTermValue = (termId: number, value: string): void => {
+		additionalTerms = additionalTerms.map((term) => (term.id === termId ? { ...term, value } : term));
 	};
 
-	const updateAdvancedTermValue = (termId: number, value: string): void => {
-		advancedTerms = advancedTerms.map((term) => (term.id === termId ? { ...term, value } : term));
+	const setAdditionalMode = (event: MouseEvent, mode: SearchBooleanMode): void => {
+		additionalMode = mode;
+		(event.currentTarget as HTMLButtonElement).blur();
 	};
 
-	const updateAdvancedTermDistance = (termId: number, distance: number): void => {
+	const addProximityTerm = (): void => {
+		if (additionalTerms.length + proximityTerms.length >= MAX_QUERY_TERMS - 1) return;
+		proximityTerms = [...proximityTerms, createProximityTerm()];
+		advancedSearchOpen = true;
+	};
+
+	const removeProximityTerm = (termId: number): void => {
+		proximityTerms = proximityTerms.filter((term) => term.id !== termId);
+	};
+
+	const updateProximityTermValue = (termId: number, value: string): void => {
+		proximityTerms = proximityTerms.map((term) => (term.id === termId ? { ...term, value } : term));
+	};
+
+	const updateProximityTermDistance = (termId: number, distance: number): void => {
 		const clean = Math.min(100, Math.max(0, Number.isFinite(distance) ? Math.floor(distance) : 5));
-		advancedTerms = advancedTerms.map((term) => (term.id === termId ? { ...term, distance: clean } : term));
+		proximityTerms = proximityTerms.map((term) => (term.id === termId ? { ...term, distance: clean } : term));
+	};
+
+	const updateProximityTermOrder = (termId: number, order: SearchProximityOrder): void => {
+		proximityTerms = proximityTerms.map((term) => (term.id === termId ? { ...term, order } : term));
+	};
+
+	const setProximityMode = (event: MouseEvent, mode: SearchBooleanMode): void => {
+		proximityMode = mode;
+		(event.currentTarget as HTMLButtonElement).blur();
+	};
+
+	const normalizeSearchValue = (value: string): string => value.trim().replace(/\s+/g, ' ');
+
+	const formatFormulaValue = (value: string): string => {
+		const normalized = normalizeSearchValue(value);
+		return /\s/.test(normalized) ? `"${normalized}"` : normalized;
+	};
+
+	const formatClauseSourceForValue = (value: string): string => {
+		const normalized = normalizeSearchValue(value);
+		return /\s/.test(normalized) ? `"${normalized}"` : normalizePattern(normalized, preserveEnieForHighlight);
+	};
+
+	const formatProximitySourceForValue = (
+		main: string,
+		term: Pick<ProximityQueryTerm, 'value' | 'distance' | 'order'>
+	): string =>
+		`${formatClauseSourceForValue(main)} ~${term.order}<=${term.distance} ${formatClauseSourceForValue(term.value)}`;
+
+	const proximityOrderLabel = (order: SearchProximityOrder): string => {
+		if (order === 'after') return 'después';
+		if (order === 'before') return 'antes';
+		return 'en cualquier orden';
+	};
+
+	const proximityFormulaName = (order: SearchProximityOrder): string => {
+		if (order === 'after') return 'NEAR_AFTER';
+		if (order === 'before') return 'NEAR_BEFORE';
+		return 'NEAR_ANY';
+	};
+
+	const formatProximityDisplayLabel = (
+		main: string,
+		term: Pick<ProximityQueryTerm, 'value' | 'distance' | 'order'>
+	): string =>
+		`${formatFormulaValue(main)} cerca de ${formatFormulaValue(term.value)} (máx. ${term.distance}, ${proximityOrderLabel(term.order)})`;
+
+	const textPart = (value: string): InterpretedQueryPart => ({ kind: 'text', value });
+	const termPart = (value: string): InterpretedQueryPart => ({ kind: 'term', value });
+	const operatorPart = (value: string): InterpretedQueryPart => ({ kind: 'operator', value });
+
+	const appendHumanTermList = (
+		parts: InterpretedQueryPart[],
+		terms: string[],
+		conjunction: 'y' | 'o'
+	): void => {
+		terms.forEach((term, index) => {
+			if (index > 0) {
+				parts.push(textPart(index === terms.length - 1 ? ` ${conjunction} ` : ', '));
+			}
+			parts.push(termPart(term));
+		});
+	};
+
+	const appendFormulaTerms = (
+		parts: InterpretedQueryPart[],
+		terms: string[],
+		operator: 'AND' | 'OR'
+	): void => {
+		terms.forEach((term, index) => {
+			if (index > 0) parts.push(operatorPart(operator));
+			parts.push(termPart(term));
+		});
+	};
+
+	const appendProximityCondition = (
+		parts: InterpretedQueryPart[],
+		main: string,
+		term: Pick<ProximityQueryTerm, 'value' | 'distance'> & { order?: SearchProximityOrder }
+	): void => {
+		parts.push(termPart(formatFormulaValue(term.value)));
+		parts.push(textPart(` a un máximo de ${term.distance} palabras de `));
+		parts.push(termPart(main));
+
+		if (term.order === 'after') {
+			parts.push(textPart(', después de '));
+			parts.push(termPart(main));
+			return;
+		}
+
+		if (term.order === 'before') {
+			parts.push(textPart(', antes de '));
+			parts.push(termPart(main));
+			return;
+		}
+
+		parts.push(textPart(', en cualquier orden'));
+	};
+
+	const buildTechnicalFormulaParts = (query: StructuredSearchQuery): InterpretedQueryPart[] => {
+		const main = formatFormulaValue(query.main);
+		const parts: InterpretedQueryPart[] = [termPart(main)];
+		const additional = (query.additionalTerms ?? []).map(formatFormulaValue).filter(Boolean);
+		if (additional.length > 0) {
+			parts.push(operatorPart('AND'));
+			if (additional.length > 1 && query.additionalMode === 'any') parts.push(textPart('('));
+			appendFormulaTerms(parts, additional, query.additionalMode === 'any' ? 'OR' : 'AND');
+			if (additional.length > 1 && query.additionalMode === 'any') parts.push(textPart(')'));
+		}
+		const proximity = (query.proximityTerms ?? [])
+			.filter((term) => term.value.trim())
+			.map((term): InterpretedQueryPart[] => [
+				operatorPart(`${proximityFormulaName(term.order ?? 'any')}(`),
+				termPart(main),
+				textPart(', '),
+				termPart(formatFormulaValue(term.value)),
+				textPart(`, <=${term.distance})`)
+			]);
+		if (proximity.length > 0) {
+			parts.push(operatorPart('AND'));
+			if (proximity.length > 1) parts.push(textPart('('));
+			proximity.forEach((group, index) => {
+				if (index > 0) parts.push(operatorPart(query.proximityMode === 'any' ? 'OR' : 'AND'));
+				parts.push(...group);
+			});
+			if (proximity.length > 1) parts.push(textPart(')'));
+		}
+		return parts;
+	};
+
+	const buildTechnicalFormula = (query: StructuredSearchQuery): string => {
+		const main = formatFormulaValue(query.main);
+		const parts = [main];
+		const additional = (query.additionalTerms ?? []).map(formatFormulaValue).filter(Boolean);
+		if (additional.length > 0) {
+			if (additional.length === 1) {
+				parts.push(additional[0]);
+			} else if (query.additionalMode === 'all') {
+				parts.push(...additional);
+			} else {
+				parts.push(`(${additional.join(' OR ')})`);
+			}
+		}
+		const proximity = (query.proximityTerms ?? [])
+			.filter((term) => term.value.trim())
+			.map(
+				(term) =>
+					`${proximityFormulaName(term.order ?? 'any')}(${main}, ${formatFormulaValue(term.value)}, <=${term.distance})`
+			);
+		if (proximity.length > 0) {
+			parts.push(
+				proximity.length === 1
+					? proximity[0]
+					: `(${proximity.join(query.proximityMode === 'any' ? ' OR ' : ' AND ')})`
+			);
+		}
+		return parts.join(' AND ');
+	};
+
+	const buildInterpretedSummaryParts = (query: StructuredSearchQuery): InterpretedQueryPart[] => {
+		const main = formatFormulaValue(query.main);
+		const parts: InterpretedQueryPart[] = [textPart('Buscar '), termPart(main)];
+		const additional = (query.additionalTerms ?? []).map(formatFormulaValue).filter(Boolean);
+		if (additional.length > 0) {
+			if (additional.length === 1) {
+				parts.push(textPart(' en obras que también contienen '));
+				parts.push(termPart(additional[0]));
+			} else {
+				parts.push(
+					textPart(
+						query.additionalMode === 'any'
+							? ' en obras que también contienen al menos uno de estos términos: '
+							: ' en obras que también contienen todos estos términos: '
+					)
+				);
+				appendHumanTermList(parts, additional, query.additionalMode === 'any' ? 'o' : 'y');
+			}
+		}
+		const proximity = (query.proximityTerms ?? []).filter((term) => term.value.trim());
+		if (proximity.length > 0) {
+			parts.push(textPart('. Además, '));
+
+			if (proximity.length === 1) {
+				const [term] = proximity;
+				parts.push(termPart(formatFormulaValue(term.value)));
+				parts.push(textPart(` debe aparecer a un máximo de ${term.distance} palabras de `));
+				parts.push(termPart(main));
+				if (term.order === 'after') {
+					parts.push(textPart(', después de '));
+					parts.push(termPart(main));
+				} else if (term.order === 'before') {
+					parts.push(textPart(', antes de '));
+					parts.push(termPart(main));
+				} else {
+					parts.push(textPart(', en cualquier orden'));
+				}
+			} else {
+				parts.push(
+					textPart(
+						query.proximityMode === 'any'
+							? 'debe cumplirse al menos una de estas condiciones de cercanía: '
+							: 'deben cumplirse estas condiciones de cercanía: '
+					)
+				);
+				proximity.forEach((term, index) => {
+					if (index > 0) parts.push(textPart('; '));
+					appendProximityCondition(parts, main, term);
+				});
+			}
+		}
+		parts.push(textPart('.'));
+		return parts;
 	};
 
 	const buildTermDescriptor = (
 		value: string,
 		label: string,
-		operator: 'and' | 'or' | 'near' | null
+		operator: string | null
 	): SubmittedQueryTerm => {
 		const trimmed = value.trim().replace(/\s+/g, ' ');
 		if (/\s/.test(trimmed)) {
@@ -746,43 +1053,71 @@
 		};
 	};
 
-	const buildStructuredClause = (
-		value: string,
-		operator: 'and' | 'or' | 'near' | null,
-		distance?: number
-	): StructuredClause => {
-		const kind = /\s/.test(value) ? 'phrase' : 'term';
-		if (operator === 'near') {
-			return { kind: 'proximity' as const, value, distance: distance ?? 5, operator: 'near' as const };
-		}
-		return { kind, value, operator };
-	};
-
-	const buildEffectiveQuery = (): { query: string; terms: SubmittedQueryTerm[]; structuredClauses: StructuredClause[] } => {
-		const clauses: string[] = [];
+	const buildEffectiveQuery = (): {
+		query: string;
+		terms: SubmittedQueryTerm[];
+		structuredQuery: StructuredSearchQuery;
+	} => {
 		const terms: SubmittedQueryTerm[] = [];
-		const structuredClauses: ReturnType<typeof buildStructuredClause>[] = [];
-		const normalizedMain = mainQuery.trim().replace(/\s+/g, ' ');
-		const mainClause = /\s/.test(normalizedMain) ? `"${normalizedMain}"` : normalizedMain;
-		clauses.push(mainClause);
+		const normalizedMain = normalizeSearchValue(mainQuery);
 		terms.push(buildTermDescriptor(normalizedMain, normalizedMain, null));
-		structuredClauses.push(buildStructuredClause(normalizedMain, null));
 
-		for (const term of advancedTerms) {
-			const normalizedValue = term.value.trim().replace(/\s+/g, ' ');
-			if (!normalizedValue) continue;
-			const clause = /\s/.test(normalizedValue) ? `"${normalizedValue}"` : normalizedValue;
-			clauses.push(term.operator === 'near' ? `NEAR/${term.distance} ${clause}` : `${term.operator.toUpperCase()} ${clause}`);
-			terms.push(buildTermDescriptor(normalizedValue, normalizedValue, term.operator));
-			structuredClauses.push(buildStructuredClause(normalizedValue, term.operator, term.distance));
+		const cleanAdditionalTerms = additionalTerms.map((term) => normalizeSearchValue(term.value)).filter(Boolean);
+		for (const term of cleanAdditionalTerms) {
+			terms.push(buildTermDescriptor(term, term, additionalMode));
 		}
+
+		const cleanProximityTerms = proximityTerms
+			.map((term) => ({
+				value: normalizeSearchValue(term.value),
+				distance: term.distance,
+				order: term.order
+			}))
+			.filter((term) => term.value);
+		for (const term of cleanProximityTerms) {
+			terms.push({
+				key: `proximity:${formatProximitySourceForValue(normalizedMain, term)}`,
+				label: formatProximityDisplayLabel(normalizedMain, term),
+				operator: proximityMode
+			});
+		}
+
+		const structuredQuery: StructuredSearchQuery = {
+			main: normalizedMain,
+			additionalMode,
+			additionalTerms: cleanAdditionalTerms,
+			proximityMode,
+			proximityTerms: cleanProximityTerms
+		};
 
 		return {
-			query: clauses.join(' '),
+			query: buildTechnicalFormula(structuredQuery),
 			terms,
-			structuredClauses
+			structuredQuery
 		};
 	};
+
+	const interpretedQuery = $derived.by(() => {
+		const main = normalizeSearchValue(mainQuery);
+		if (!main) return null as InterpretedQueryView | null;
+		const structuredQuery: StructuredSearchQuery = {
+			main,
+			additionalMode,
+			additionalTerms: additionalTerms.map((term) => normalizeSearchValue(term.value)).filter(Boolean),
+			proximityMode,
+			proximityTerms: proximityTerms
+				.map((term) => ({
+					value: normalizeSearchValue(term.value),
+					distance: term.distance,
+					order: term.order
+				}))
+				.filter((term) => term.value)
+		};
+		return {
+			summaryParts: buildInterpretedSummaryParts(structuredQuery),
+			formulaParts: buildTechnicalFormulaParts(structuredQuery)
+		};
+	});
 
 	const validateSearchTerm = (value: string, label: string): string => {
 		const trimmed = value.trim();
@@ -791,7 +1126,7 @@
 			return `${label}: solo se permiten palabras, espacios y los comodines * y ?.`;
 		}
 		if (/\b(?:and|or|near)\b/i.test(trimmed)) {
-			return `${label}: no escribas AND u OR dentro del término; usa Búsqueda avanzada.`;
+			return `${label}: no escribas AND, OR o NEAR dentro del término; usa las secciones de búsqueda avanzada.`;
 		}
 		return '';
 	};
@@ -800,7 +1135,10 @@
 		mainQuery = '';
 		advancedSearchOpen = false;
 		filtersOpen = false;
-		advancedTerms = [];
+		additionalTerms = [];
+		additionalMode = 'all';
+		proximityTerms = [];
+		proximityMode = 'all';
 		titleFilter = '';
 		selectedGenres = [];
 		selectedTradAuthors = [];
@@ -976,10 +1314,13 @@
 	const extractMatchPatterns = (match: SearchResultMatch): string[] => {
 		const source = match.source.trim();
 		if (match.kind === 'proximity') {
-			const chunks = source
-				.split(/\s+~\d+\s+/)
-				.flatMap((part) => part.replace(/^"|"$/g, '').split(/\s+/))
-				.filter((chunk) => chunk.length > 0);
+			const proximity = parseProximityMatchSource(source);
+			const chunks = proximity
+				? [proximity.left, proximity.right].flatMap((part) => part.split(/\s+/))
+				: source
+						.split(/\s+~(?:any|after|before)<=\d+\s+|\s+~\d+\s+/)
+						.flatMap((part) => part.replace(/^"|"$/g, '').split(/\s+/))
+						.filter((chunk) => chunk.length > 0);
 			const normalized = chunks
 				.map((chunk) => normalizePattern(chunk, preserveEnieForHighlight))
 				.filter((chunk) => chunk.length > 0);
@@ -1190,11 +1531,11 @@
 
 	const runServerSearch = async (
 		query: string,
-		structuredClauses: ReturnType<typeof buildStructuredClause>[]
+		structuredQuery: StructuredSearchQuery
 	): Promise<SearchExecution> =>
 		postJson<SearchExecution>('/api/texoro/search', {
 			query,
-			structuredClauses,
+			structuredQuery,
 			options: {
 				limit: RESULTS_PAGE_SIZE,
 				maxPhraseVerificationDocs: 220,
@@ -1205,14 +1546,14 @@
 
 	const runBrowserFirstSearch = async (
 		query: string,
-		structuredClauses: ReturnType<typeof buildStructuredClause>[]
+		structuredQuery: StructuredSearchQuery
 	): Promise<SearchExecution> => {
 		if (texoroWorker) {
 			try {
 				const response = await requestTexoroWorker<{ execution?: SearchExecution }>({
 					action: 'search',
 					query,
-					structuredClauses,
+					structuredQuery,
 					options: {
 						limit: RESULTS_PAGE_SIZE,
 						maxPhraseVerificationDocs: 220,
@@ -1227,7 +1568,7 @@
 			}
 		}
 
-		return runServerSearch(query, structuredClauses);
+		return runServerSearch(query, structuredQuery);
 	};
 
 	const loadResultOccurrencePreviews = async (results: SearchResult[]): Promise<void> => {
@@ -1578,7 +1919,11 @@
 		const trimmedMain = mainQuery.trim();
 		if (!trimmedMain || !QUERY_ALLOWED_PATTERN.test(trimmedMain)) return false;
 		if (trimmedMain.replace(/[*?\s]/g, '').length < 3) return false;
-		for (const term of advancedTerms) {
+		for (const term of additionalTerms) {
+			const trimmed = term.value.trim();
+			if (trimmed && !QUERY_ALLOWED_PATTERN.test(trimmed)) return false;
+		}
+		for (const term of proximityTerms) {
 			const trimmed = term.value.trim();
 			if (trimmed && !QUERY_ALLOWED_PATTERN.test(trimmed)) return false;
 		}
@@ -1593,18 +1938,21 @@
 	$effect(() => {
 		const primeSignature = [
 			mainQuery,
-			...advancedTerms.map((term) => `${term.operator}:${term.distance}:${term.value}`)
+			additionalMode,
+			...additionalTerms.map((term) => term.value),
+			proximityMode,
+			...proximityTerms.map((term) => `${term.order}:${term.distance}:${term.value}`)
 		].join('\u0001');
 		if (!primeSignature || !isEngineReady || !texoroWorker || isSearching || !canPrimeCurrentQuery()) {
 			return;
 		}
 
 		const timer = window.setTimeout(() => {
-			const { query, structuredClauses } = buildEffectiveQuery();
+			const { query, structuredQuery } = buildEffectiveQuery();
 			void requestTexoroWorker<void>({
 				action: 'prime',
 				query,
-				structuredClauses,
+				structuredQuery,
 				wildcard: /[*?]/.test(query)
 			}).catch((cause) => {
 				console.warn('[texoro] prime failed', cause);
@@ -1690,11 +2038,21 @@
 		}
 
 		let nonEmptyAdvancedTerms = 0;
-		for (let index = 0; index < advancedTerms.length; index += 1) {
-			const term = advancedTerms[index];
+		for (let index = 0; index < additionalTerms.length; index += 1) {
+			const term = additionalTerms[index];
 			if (!term.value.trim()) continue;
 			nonEmptyAdvancedTerms += 1;
-			const validationError = validateSearchTerm(term.value, `Búsqueda avanzada ${index + 1}`);
+			const validationError = validateSearchTerm(term.value, `Término adicional ${index + 1}`);
+			if (validationError) {
+				searchError = validationError;
+				return;
+			}
+		}
+		for (let index = 0; index < proximityTerms.length; index += 1) {
+			const term = proximityTerms[index];
+			if (!term.value.trim()) continue;
+			nonEmptyAdvancedTerms += 1;
+			const validationError = validateSearchTerm(term.value, `Proximidad ${index + 1}`);
 			if (validationError) {
 				searchError = validationError;
 				return;
@@ -1706,11 +2064,11 @@
 			return;
 		}
 
-		const { query, terms, structuredClauses } = buildEffectiveQuery();
+		const { query, terms, structuredQuery } = buildEffectiveQuery();
 		isSearching = true;
 		try {
 			submittedTerms = terms;
-			searchExecution = await runBrowserFirstSearch(query, structuredClauses);
+			searchExecution = await runBrowserFirstSearch(query, structuredQuery);
 			queueMicrotask(increasePreviewWindowIfNeeded);
 		} catch (cause) {
 			submittedTerms = [];
@@ -1759,8 +2117,8 @@
 	<section class="rounded-[14px] p-5">
 		<h2 class="m-0 font-['Roboto',sans-serif] text-[1.45rem] font-bold text-brand-blue-dark">Buscar en TEXORO</h2>
 		<p class="mt-2 mb-0 text-[0.98rem] text-text-soft">
-			La búsqueda principal se interpreta como exacta por defecto. Solo se admiten palabras, espacios y
-			los comodines <code>*</code> y <code>?</code>.
+			Busca una palabra, frase exacta o patrón con comodines <code>*</code> y <code>?</code>. Si escribes varias
+			palabras, se buscan como frase exacta.
 		</p>
 
 		<form class="mt-4 grid gap-3" onsubmit={submitSearch}>
@@ -1792,8 +2150,7 @@
 			</div>
 
 			<p class="m-0 text-[0.84rem] text-text-soft">
-				Una entrada con varias palabras se busca como frase exacta. Para combinar varios términos usa
-				<em class="not-italic font-semibold text-brand-blue">Búsqueda avanzada</em>.
+				Para combinar varios términos o buscar cercanías, abre la búsqueda avanzada.
 			</p>
 
 			<div class={`rounded-[10px] border border-border-accent-blue bg-white ${advancedSearchOpen ? 'overflow-visible' : 'overflow-hidden'}`}>
@@ -1814,107 +2171,232 @@
 				<div
 					class={`border-t px-4 transition-[max-height,padding,opacity] duration-300 ease-out ${
 						advancedSearchOpen
-							? 'max-h-[1200px] overflow-visible border-border-accent-blue py-4 opacity-100'
+							? 'max-h-[2200px] overflow-visible border-border-accent-blue py-4 opacity-100'
 							: 'max-h-0 border-transparent py-0 opacity-0'
 					}`}
 				>
 					<p class="m-0 text-[0.86rem] leading-[1.5] text-text-soft">
-						Añade hasta {MAX_QUERY_TERMS - 1} términos complementarios. Cada fila se suma a la búsqueda
-						principal mediante <code>AND</code>, <code>OR</code> o una distancia exacta en palabras intermedias.
+						Añade términos y condiciones de cercanía sin escribir operadores. El límite total es de {MAX_QUERY_TERMS}
+						condiciones contando la búsqueda principal.
 					</p>
 
-					<div class="mt-3 grid gap-3">
-						{#if advancedTerms.length === 0}
-							<p class="m-0 rounded-[9px] border border-dashed border-border-accent-blue bg-surface px-3 py-2 text-[0.86rem] text-text-soft">
-								No hay términos avanzados añadidos.
-							</p>
-						{:else}
-							{#each advancedTerms as term}
+					<div class="mt-4 grid gap-5">
+						<div class="grid gap-3">
+							<div class="flex flex-wrap items-center justify-between gap-3">
+								<div>
+									<h3 class="m-0 font-['Roboto',sans-serif] text-[0.98rem] font-semibold text-brand-blue-dark">
+										Términos adicionales
+									</h3>
+									<p class="mt-1 mb-0 text-[0.82rem] text-text-soft">
+										Cada término puede ser una palabra, frase o patrón.
+									</p>
+								</div>
 								<div
-									class={`grid gap-2 rounded-[9px] border border-border bg-surface p-3 ${
-										term.operator === 'near'
-											? 'md:grid-cols-[150px_96px_auto_minmax(0,1fr)_auto]'
-											: 'md:grid-cols-[150px_minmax(0,1fr)_auto]'
-									}`}
+									role="group"
+									aria-label="Modo de combinación de términos adicionales"
+									class="relative grid grid-cols-2 rounded-full bg-surface-soft p-1"
+									onmouseleave={() => (additionalModePreview = null)}
 								>
-									<label class="sr-only" for={`advanced-operator-${term.id}`}>Operador</label>
-									<select
-										id={`advanced-operator-${term.id}`}
-										class="h-[42px] rounded-[8px] border border-border bg-white px-3 text-[0.92rem] text-text-main outline-none transition focus:border-brand-blue/35"
-										value={term.operator}
-										onchange={(event) =>
-											updateAdvancedTermOperator(
-												term.id,
-												(event.currentTarget as HTMLSelectElement).value as 'and' | 'or' | 'near'
-											)}
+									<span
+										class={`${modePillIndicatorClass} ${additionalModeVisual === 'any' ? 'translate-x-full' : 'translate-x-0'}`}
+										aria-hidden="true"
+									></span>
+									<button
+										type="button"
+										class={`${modePillButtonClass} ${additionalModeVisual === 'all' ? 'text-brand-blue-dark' : 'text-text-soft hover:text-brand-blue-dark'}`}
+										onmouseenter={() => (additionalModePreview = 'all')}
+										onclick={(event) => setAdditionalMode(event, 'all')}
 									>
-										<option value="and">AND</option>
-										<option value="or">OR</option>
-										<option value="near">A distancia</option>
-									</select>
+										Deben aparecer todos
+									</button>
+									<button
+										type="button"
+										class={`${modePillButtonClass} ${additionalModeVisual === 'any' ? 'text-brand-blue-dark' : 'text-text-soft hover:text-brand-blue-dark'}`}
+										onmouseenter={() => (additionalModePreview = 'any')}
+										onclick={(event) => setAdditionalMode(event, 'any')}
+									>
+										Puede aparecer cualquiera
+									</button>
+								</div>
+							</div>
 
-									{#if term.operator === 'near'}
-										<label class="sr-only" for={`advanced-distance-${term.id}`}>Distancia</label>
+							{#if additionalTerms.length === 0}
+								<p class="m-0 rounded-[9px] border border-dashed border-border-accent-blue bg-surface px-3 py-2 text-[0.86rem] text-text-soft">
+									No hay términos adicionales.
+								</p>
+							{:else}
+								{#each additionalTerms as term}
+									<div class="grid gap-2 rounded-[9px] border border-border bg-surface p-3 md:grid-cols-[minmax(0,1fr)_auto]">
+										<label class="sr-only" for={`additional-query-${term.id}`}>Término adicional</label>
 										<input
-											id={`advanced-distance-${term.id}`}
+											id={`additional-query-${term.id}`}
+											type="search"
+											value={term.value}
+											placeholder="Ej: honra | honra constante | desdich?"
+											class="h-[42px] rounded-[8px] border border-border bg-white px-3 text-[0.92rem] text-text-main outline-none transition focus:border-brand-blue/35"
+											oninput={(event) =>
+												updateAdditionalTermValue(term.id, (event.currentTarget as HTMLInputElement).value)}
+										/>
+										<button
+											type="button"
+											class="h-[42px] rounded-[8px] border border-border bg-white px-3 text-[0.84rem] font-semibold text-text-soft transition hover:border-[#d7b5bf] hover:bg-[#fff5f7] hover:text-[#8f1e36]"
+											onclick={() => removeAdditionalTerm(term.id)}
+										>
+											Eliminar
+										</button>
+									</div>
+								{/each}
+							{/if}
+
+							<div class="flex flex-wrap items-center justify-between gap-3">
+								<p class="m-0 text-[0.82rem] text-text-soft">
+									Condiciones activas: {activeSearchTermCount}/{MAX_QUERY_TERMS}
+								</p>
+								<button
+									type="button"
+									class="rounded-[8px] border border-border-accent-blue bg-surface-accent-blue px-3 py-2 text-[0.84rem] font-semibold text-brand-blue-dark transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-55"
+									disabled={additionalTerms.length + proximityTerms.length >= MAX_QUERY_TERMS - 1}
+									onclick={addAdditionalTerm}
+								>
+									Añadir término
+								</button>
+							</div>
+						</div>
+
+						<div class="grid gap-3 border-t border-border-accent-blue pt-4">
+							<div class="flex flex-wrap items-center justify-between gap-3">
+								<div>
+									<h3 class="m-0 font-['Roboto',sans-serif] text-[0.98rem] font-semibold text-brand-blue-dark">
+										Proximidad respecto a la búsqueda principal
+									</h3>
+									<p class="mt-1 mb-0 text-[0.82rem] text-text-soft">
+										Busca términos cercanos a la palabra o frase principal.
+									</p>
+								</div>
+								<div
+									role="group"
+									aria-label="Modo de combinación de condiciones de proximidad"
+									class="relative grid grid-cols-2 rounded-full bg-surface-soft p-1"
+									onmouseleave={() => (proximityModePreview = null)}
+								>
+									<span
+										class={`${modePillIndicatorClass} ${proximityModeVisual === 'any' ? 'translate-x-full' : 'translate-x-0'}`}
+										aria-hidden="true"
+									></span>
+									<button
+										type="button"
+										class={`${modePillButtonClass} ${proximityModeVisual === 'all' ? 'text-brand-blue-dark' : 'text-text-soft hover:text-brand-blue-dark'}`}
+										onmouseenter={() => (proximityModePreview = 'all')}
+										onclick={(event) => setProximityMode(event, 'all')}
+									>
+										Todas las condiciones
+									</button>
+									<button
+										type="button"
+										class={`${modePillButtonClass} ${proximityModeVisual === 'any' ? 'text-brand-blue-dark' : 'text-text-soft hover:text-brand-blue-dark'}`}
+										onmouseenter={() => (proximityModePreview = 'any')}
+										onclick={(event) => setProximityMode(event, 'any')}
+									>
+										Basta con una
+									</button>
+								</div>
+							</div>
+
+							{#if proximityTerms.length === 0}
+								<p class="m-0 rounded-[9px] border border-dashed border-border-accent-blue bg-surface px-3 py-2 text-[0.86rem] text-text-soft">
+									No hay condiciones de proximidad.
+								</p>
+							{:else}
+								{#each proximityTerms as term}
+									<div class="grid gap-2 rounded-[9px] border border-border bg-surface p-3 md:grid-cols-[minmax(0,1fr)_112px_150px_auto]">
+										<label class="sr-only" for={`proximity-query-${term.id}`}>Término cercano</label>
+										<input
+											id={`proximity-query-${term.id}`}
+											type="search"
+											value={term.value}
+											placeholder="Término cercano"
+											class="h-[42px] rounded-[8px] border border-border bg-white px-3 text-[0.92rem] text-text-main outline-none transition focus:border-brand-blue/35"
+											oninput={(event) =>
+												updateProximityTermValue(term.id, (event.currentTarget as HTMLInputElement).value)}
+										/>
+										<label class="sr-only" for={`proximity-distance-${term.id}`}>Distancia máxima</label>
+										<input
+											id={`proximity-distance-${term.id}`}
 											type="number"
 											min="0"
 											max="100"
 											value={term.distance}
-											title="Distancia exacta en palabras intermedias"
+											title="Distancia máxima en palabras intermedias"
 											class="h-[42px] rounded-[8px] border border-border bg-white px-3 text-[0.92rem] text-text-main outline-none transition focus:border-brand-blue/35"
 											oninput={(event) =>
-												updateAdvancedTermDistance(
-													term.id,
-													Number((event.currentTarget as HTMLInputElement).value)
-												)}
+												updateProximityTermDistance(term.id, Number((event.currentTarget as HTMLInputElement).value))}
 										/>
-										<span class="flex h-[42px] items-center font-['Roboto',sans-serif] text-[0.86rem] font-semibold text-text-soft">
-											de
-										</span>
-									{/if}
+										<label class="sr-only" for={`proximity-order-${term.id}`}>Orden</label>
+										<select
+											id={`proximity-order-${term.id}`}
+											class="h-[42px] rounded-[8px] border border-border bg-white px-3 text-[0.92rem] text-text-main outline-none transition focus:border-brand-blue/35"
+											value={term.order}
+											onchange={(event) =>
+												updateProximityTermOrder(
+													term.id,
+													(event.currentTarget as HTMLSelectElement).value as SearchProximityOrder
+												)}
+										>
+											<option value="any">Cualquiera</option>
+											<option value="after">Después</option>
+											<option value="before">Antes</option>
+										</select>
+										<button
+											type="button"
+											class="h-[42px] rounded-[8px] border border-border bg-white px-3 text-[0.84rem] font-semibold text-text-soft transition hover:border-[#d7b5bf] hover:bg-[#fff5f7] hover:text-[#8f1e36]"
+											onclick={() => removeProximityTerm(term.id)}
+										>
+											Eliminar
+										</button>
+									</div>
+								{/each}
+							{/if}
 
-									<label class="sr-only" for={`advanced-query-${term.id}`}>Término avanzado</label>
-									<input
-										id={`advanced-query-${term.id}`}
-										type="search"
-										value={term.value}
-										placeholder="Ej: honra | honra constante | desdich?"
-										class="h-[42px] rounded-[8px] border border-border bg-white px-3 text-[0.92rem] text-text-main outline-none transition focus:border-brand-blue/35"
-										oninput={(event) =>
-											updateAdvancedTermValue(
-												term.id,
-												(event.currentTarget as HTMLInputElement).value
-											)}
-									/>
-
-									<button
-										type="button"
-										class="h-[42px] rounded-[8px] border border-border bg-white px-3 text-[0.84rem] font-semibold text-text-soft transition hover:border-[#d7b5bf] hover:bg-[#fff5f7] hover:text-[#8f1e36]"
-										onclick={() => removeAdvancedTerm(term.id)}
-									>
-										Eliminar
-									</button>
-								</div>
-							{/each}
-						{/if}
-					</div>
-
-					<div class="mt-3 flex flex-wrap items-center justify-between gap-3">
-						<p class="m-0 text-[0.82rem] text-text-soft">
-							Términos activos: {activeSearchTermCount}/{MAX_QUERY_TERMS}
-						</p>
-						<button
-							type="button"
-							class="rounded-[8px] border border-border-accent-blue bg-surface-accent-blue px-3 py-2 text-[0.84rem] font-semibold text-brand-blue-dark transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-55"
-							disabled={advancedTerms.length >= MAX_QUERY_TERMS - 1}
-							onclick={addAdvancedTerm}
-						>
-							Añadir término
-						</button>
+							<div class="flex justify-end">
+								<button
+									type="button"
+									class="rounded-[8px] border border-border-accent-blue bg-surface-accent-blue px-3 py-2 text-[0.84rem] font-semibold text-brand-blue-dark transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-55"
+									disabled={additionalTerms.length + proximityTerms.length >= MAX_QUERY_TERMS - 1}
+									onclick={addProximityTerm}
+								>
+									Añadir proximidad
+								</button>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
+
+			{#if interpretedQuery}
+				<div class="rounded-[10px] bg-surface-soft px-4 py-3">
+					<p class="m-0 text-[0.84rem] font-semibold text-brand-blue-dark">Consulta interpretada</p>
+					<p class="mt-1 mb-0 text-[0.9rem] leading-[1.75] text-text-main">
+						{#each interpretedQuery.summaryParts as part}
+							{#if part.kind === 'term'}
+								<span class={interpretedQueryTermClass} title={part.value}>{part.value}</span>
+							{:else}
+								<span>{part.value}</span>
+							{/if}
+						{/each}
+					</p>
+					<p class="mt-2 mb-0 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[0.78rem] text-text-soft">
+						{#each interpretedQuery.formulaParts as part}
+							{#if part.kind === 'term'}
+								<span class={interpretedQueryTermClass} title={part.value}>{part.value}</span>
+							{:else if part.kind === 'operator'}
+								<span class={interpretedQueryOperatorClass}>{part.value}</span>
+							{:else}
+								<span class="font-mono">{part.value}</span>
+							{/if}
+						{/each}
+					</p>
+				</div>
+			{/if}
 
 			<div class={`rounded-[10px] border border-border-accent-blue bg-white ${filtersOpen ? 'overflow-visible' : 'overflow-hidden'}`}>
 				<button

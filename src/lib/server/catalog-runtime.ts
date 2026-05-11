@@ -1,5 +1,7 @@
 import { createClient } from '@libsql/client';
+import { dev } from '$app/environment';
 import { env } from '$env/dynamic/private';
+import { existsSync } from 'node:fs';
 import { readPrivateTextByWorkId } from '$lib/server/r2-private';
 import { fetchPublicR2Json, getSummariesBaseUrl } from '$lib/server/r2-public';
 import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
@@ -45,9 +47,13 @@ import collaboratorsSource from '../../../data/colaboradores/colaboradores.json'
 import bibliographySource from '../../../data/referencias/bibliografia.json';
 import impactSource from '../../../data/referencias/repercusion.json';
 
+type SqlArg = string | number | bigint | boolean | null | Uint8Array | Date;
+
 const DEFAULT_CACHE_MS = 10 * 60 * 1000;
 const configuredCacheMs = Number.parseInt(env.CATALOG_CACHE_MS ?? '', 10);
 const CACHE_MS = Number.isFinite(configuredCacheMs) && configuredCacheMs > 0 ? configuredCacheMs : DEFAULT_CACHE_MS;
+const LOCAL_CATALOG_SQLITE_PATH = 'data/sqlite/etso-prueba.sqlite';
+const EMPTY_SHORT_SUMMARY = 'Sin resumen breve disponible.';
 
 const escapeHtml = (value: string): string =>
 	value
@@ -66,7 +72,6 @@ interface Snapshot {
 	bicuveNameByWorkId: Map<string, string>;
 	authors: CatalogAuthor[];
 	authorById: Map<string, CatalogAuthor>;
-	distancesByWork: Map<string, Record<Ambito, DistanceRow[]>>;
 }
 
 interface SummaryFile {
@@ -189,7 +194,7 @@ interface WorkRow {
 	procede: string | null;
 	resultado1: string | null;
 	resultado2: string | null;
-	resumen_breve: string | null;
+	has_resumen_breve: number;
 }
 
 interface AuthorRow {
@@ -224,6 +229,10 @@ interface DistanceRowRaw {
 	rank: number;
 	related_work_id: string;
 	distancia: number;
+}
+
+interface WorkShortSummaryRow {
+	resumen_breve: string | null;
 }
 
 interface TempGroup {
@@ -279,6 +288,8 @@ let cachedSnapshot: Snapshot | null = null;
 let cachedSnapshotPromise: Promise<Snapshot> | null = null;
 let cachedAt = 0;
 let dbClient: ReturnType<typeof createClient> | null = null;
+let dbClientMode: 'configured' | 'local-fallback' | null = null;
+let warnedLocalCatalogFallback = false;
 
 const splitVariants = (value: string | null | undefined): string[] => {
 	if (!value) return [];
@@ -324,6 +335,8 @@ const normalizeDistanceAmbito = (rawAmbito: string): Ambito | null => {
 	return aliases[normalized.replace(/[^a-z0-9]/g, '')] ?? null;
 };
 
+const normalizeShortSummary = (value: string | null | undefined): string => value?.trim() || EMPTY_SHORT_SUMMARY;
+
 const assertTursoConfig = (): { databaseUrl: string; authToken: string } => {
 	if (!env.TURSO_DATABASE_URL || !env.TURSO_AUTH_TOKEN) {
 		throw new Error('Faltan TURSO_DATABASE_URL o TURSO_AUTH_TOKEN para leer el catálogo desde Turso.');
@@ -334,14 +347,62 @@ const assertTursoConfig = (): { databaseUrl: string; authToken: string } => {
 	};
 };
 
-const getRows = async <T>(sql: string): Promise<T[]> => {
+const canUseLocalCatalogFallback = (): boolean => dev && existsSync(LOCAL_CATALOG_SQLITE_PATH);
+
+const warnLocalCatalogFallback = (cause: unknown): void => {
+	if (warnedLocalCatalogFallback) return;
+	warnedLocalCatalogFallback = true;
+	const message = cause instanceof Error ? cause.message : String(cause);
+	console.warn(
+		`No se pudo leer el catalogo desde Turso (${message}). Usando SQLite local de desarrollo: ${LOCAL_CATALOG_SQLITE_PATH}.`
+	);
+};
+
+const createConfiguredDbClient = (): ReturnType<typeof createClient> => {
 	const { databaseUrl, authToken } = assertTursoConfig();
-	dbClient ??= createClient({
+	dbClientMode = 'configured';
+	return createClient({
 		url: databaseUrl,
 		authToken
 	});
-	const db = dbClient;
-	const result = await db.execute(sql);
+};
+
+const createLocalFallbackDbClient = (): ReturnType<typeof createClient> => {
+	dbClientMode = 'local-fallback';
+	return createClient({
+		url: `file:${LOCAL_CATALOG_SQLITE_PATH}`,
+		authToken: 'local'
+	});
+};
+
+const getDbClient = (): ReturnType<typeof createClient> => {
+	if (dbClient) return dbClient;
+	try {
+		dbClient = createConfiguredDbClient();
+	} catch (cause) {
+		if (!canUseLocalCatalogFallback()) throw cause;
+		warnLocalCatalogFallback(cause);
+		dbClient = createLocalFallbackDbClient();
+	}
+	return dbClient;
+};
+
+const isFetchFailure = (cause: unknown): boolean =>
+	cause instanceof Error && cause.message.toLowerCase().includes('fetch failed');
+
+const getRows = async <T>(sql: string, args?: SqlArg[]): Promise<T[]> => {
+	const db = getDbClient();
+	let result;
+	try {
+		result = args ? await db.execute(sql, args) : await db.execute(sql);
+	} catch (cause) {
+		if (dbClientMode !== 'configured' || !canUseLocalCatalogFallback() || !isFetchFailure(cause)) {
+			throw cause;
+		}
+		warnLocalCatalogFallback(cause);
+		dbClient = createLocalFallbackDbClient();
+		result = args ? await dbClient.execute(sql, args) : await dbClient.execute(sql);
+	}
 	return result.rows as unknown as T[];
 };
 
@@ -499,25 +560,6 @@ const createSnapshot = async (): Promise<Snapshot> => {
 		});
 	}
 
-	const distancesByWork = new Map<string, Record<Ambito, DistanceRow[]>>();
-	const distanceRows = await getRows<DistanceRowRaw>(
-		`SELECT work_id, ambito, rank, related_work_id, distancia
-		 FROM work_distances
-		 ORDER BY work_id, ambito, rank`
-	);
-	for (const row of distanceRows) {
-		const ambito = normalizeDistanceAmbito(row.ambito);
-		if (!ambito) continue;
-		if (!distancesByWork.has(row.work_id)) {
-			distancesByWork.set(row.work_id, ensureDistanceRecord());
-		}
-		distancesByWork.get(row.work_id)![ambito].push({
-			rank: row.rank,
-			relatedWorkId: row.related_work_id,
-			distancia: row.distancia
-		});
-	}
-
 	const worksTableColumns = await getRows<{ name: string }>('PRAGMA table_info(works)');
 	const hasWorkSlugColumn = worksTableColumns.some((column) => column.name === 'slug');
 	const hasWorkTitleVariantsColumn = worksTableColumns.some(
@@ -529,7 +571,8 @@ const createSnapshot = async (): Promise<Snapshot> => {
 		 ${hasWorkTitleVariantsColumn ? 'variaciones_titulo' : 'NULL AS variaciones_titulo'},
 		 genero, adicion, estado_texto,
 		 examen_autorias, bicuve, bicuve_nombre, tiene_acceso_externo,
-		 procede, resultado1, resultado2, resumen_breve
+		 procede, resultado1, resultado2,
+		 CASE WHEN resumen_breve IS NOT NULL AND TRIM(resumen_breve) <> '' THEN 1 ELSE 0 END AS has_resumen_breve
 		 FROM works
 		 WHERE examen_autorias = 1
 		 ORDER BY titulo COLLATE NOCASE`
@@ -546,12 +589,8 @@ const createSnapshot = async (): Promise<Snapshot> => {
 		const stylometryAttribution =
 			attributionByWorkType.get(`${row.id}::estilometria`) ?? makeEmptyAttributionSet();
 
-		const distanceRecord = distancesByWork.get(row.id) ?? ensureDistanceRecord();
-		if (!distancesByWork.has(row.id)) {
-			distancesByWork.set(row.id, distanceRecord);
-		}
-
-		const shortSummary = row.resumen_breve?.trim() || 'Sin resumen breve disponible.';
+		const hasSummary = Number(row.has_resumen_breve) === 1;
+		const hasReport = Boolean(row.resultado1?.trim() || row.resultado2?.trim());
 
 		const baseSlug = resolveWorkBaseSlug(row);
 		const currentCount = (slugCounts.get(baseSlug) ?? 0) + 1;
@@ -589,13 +628,14 @@ const createSnapshot = async (): Promise<Snapshot> => {
 			origin: row.procede?.trim() || 'Sin procedencia',
 			textState: row.estado_texto?.trim() || 'Sin estado',
 			addedOn: row.adicion?.trim() || 'Sin fecha',
-			shortSummary,
+			shortSummary: EMPTY_SHORT_SUMMARY,
+			hasSummaryFile: hasSummary,
 			result1: row.resultado1?.trim() || undefined,
 			result2: row.resultado2?.trim() || undefined,
 			traditionalAttribution,
 			stylometryAttribution,
 			textLinks: links,
-			reportId: hasAnyDistanceRows(distanceRecord) ? row.id : undefined
+			reportId: hasReport ? row.id : undefined
 		};
 	});
 
@@ -615,8 +655,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 		bicuveSlugByWorkId,
 		bicuveNameByWorkId,
 		authors,
-		authorById,
-		distancesByWork
+		authorById
 	};
 };
 
@@ -691,6 +730,25 @@ export const getWorkById = async (workId: string): Promise<CatalogWork | undefin
 
 export const getWorkBySlug = async (slug: string): Promise<CatalogWork | undefined> =>
 	(await getSnapshot()).workBySlug.get(slug);
+
+export const getWorkShortSummaryById = async (workId: string): Promise<string> => {
+	const rows = await getRows<WorkShortSummaryRow>(
+		`SELECT resumen_breve
+		 FROM works
+		 WHERE id = ?
+		 LIMIT 1`,
+		[workId]
+	);
+	return normalizeShortSummary(rows[0]?.resumen_breve);
+};
+
+export const withWorkShortSummary = async (work: CatalogWork): Promise<CatalogWork> => ({
+	...work,
+	shortSummary: await getWorkShortSummaryById(work.id)
+});
+
+export const withWorkShortSummaries = async (works: CatalogWork[]): Promise<CatalogWork[]> =>
+	Promise.all(works.map((work) => withWorkShortSummary(work)));
 
 export const getAllAuthors = async (): Promise<CatalogAuthor[]> =>
 	(await getSnapshot()).authors.filter((author) => author.id !== UNRESOLVED_AUTHOR_ID);
@@ -781,12 +839,35 @@ export const getWorkSummaryDetailById = async (
 	};
 };
 
+const getDistancesForWork = async (workId: string): Promise<Record<Ambito, DistanceRow[]>> => {
+	const distances = ensureDistanceRecord();
+	const rows = await getRows<DistanceRowRaw>(
+		`SELECT work_id, ambito, rank, related_work_id, distancia
+		 FROM work_distances
+		 WHERE work_id = ?
+		 ORDER BY ambito, rank`,
+		[workId]
+	);
+
+	for (const row of rows) {
+		const ambito = normalizeDistanceAmbito(row.ambito);
+		if (!ambito) continue;
+		distances[ambito].push({
+			rank: row.rank,
+			relatedWorkId: row.related_work_id,
+			distancia: row.distancia
+		});
+	}
+
+	return distances;
+};
+
 export const getInformeById = async (informeId: string): Promise<CatalogInforme | undefined> => {
 	const snapshot = await getSnapshot();
 	const work = snapshot.workById.get(informeId);
 	if (!work) return undefined;
 
-	const distances = snapshot.distancesByWork.get(work.id) ?? ensureDistanceRecord();
+	const distances = await getDistancesForWork(work.id);
 	if (!hasAnyDistanceRows(distances)) return undefined;
 
 	const confidenceLabel = work.stylometryAttribution.unresolved

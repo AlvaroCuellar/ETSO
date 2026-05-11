@@ -134,9 +134,20 @@ const DEFAULT_TEXT_WARMUP_CONCURRENCY = 4;
 
 const stripTrailingSlash = (value: string): string => value.replace(/\/+$/, '');
 const joinUrl = (base: string, path: string): string => `${stripTrailingSlash(base)}/${path.replace(/^\/+/, '')}`;
-const withCacheBuster = (url: string): string => {
+const withQueryParam = (url: string, key: string, value: string): string => {
 	const separator = url.includes('?') ? '&' : '?';
-	return `${url}${separator}t=${Date.now()}`;
+	return `${url}${separator}${key}=${encodeURIComponent(value)}`;
+};
+const withCacheBuster = (url: string): string => {
+	return withQueryParam(url, 't', String(Date.now()));
+};
+const withIndexVersion = (url: string, indexVersion: string | null): string =>
+	indexVersion ? withQueryParam(url, 'v', indexVersion) : url;
+
+const readPayloadIndexVersion = (value: unknown): string | null => {
+	if (!value || typeof value !== 'object') return null;
+	const raw = value as { indexVersion?: unknown };
+	return typeof raw.indexVersion === 'string' ? raw.indexVersion : null;
 };
 
 const wildcardToRegex = (pattern: string): RegExp => {
@@ -1090,7 +1101,9 @@ export class TexoroSearchEngine {
 					if (!this.#textsBaseUrl) {
 						throw new Error('No hay cargador de TXT configurado para TEXORO.');
 					}
-					const response = await fetch(joinUrl(this.#textsBaseUrl, encodeURIComponent(textKey)));
+					const response = await fetch(
+						withIndexVersion(joinUrl(this.#textsBaseUrl, encodeURIComponent(textKey)), manifest.indexVersion)
+					);
 					if (!response.ok) {
 						throw new Error(`Unable to fetch text ${textKey}: ${response.status}`);
 					}
@@ -1624,19 +1637,35 @@ export class TexoroSearchEngine {
 		const cacheKey = `json:${relativePath}`;
 		if (indexVersion && this.#cacheInIndexedDb) {
 			const cached = await this.#cache.getJson<T>(cacheKey, indexVersion);
-			if (cached) return cached;
+			if (cached && readPayloadIndexVersion(cached) === indexVersion) return cached;
 		}
 
 		const isManifest = relativePath === 'manifest.json';
 		const requestUrl = joinUrl(this.#indexBaseUrl, relativePath);
-		const response = await fetch(
-			isManifest ? withCacheBuster(requestUrl) : requestUrl,
+		const fetchJsonFromUrl = async (url: string, init?: RequestInit): Promise<T> => {
+			const response = await fetch(url, init);
+			if (!response.ok) {
+				throw new Error(`Unable to fetch ${relativePath}: ${response.status}`);
+			}
+			return (await response.json()) as T;
+		};
+
+		let data = await fetchJsonFromUrl(
+			isManifest ? withCacheBuster(requestUrl) : withIndexVersion(requestUrl, indexVersion),
 			isManifest ? { cache: 'no-store' } : undefined
 		);
-		if (!response.ok) {
-			throw new Error(`Unable to fetch ${relativePath}: ${response.status}`);
+
+		if (indexVersion && readPayloadIndexVersion(data) !== indexVersion) {
+			data = await fetchJsonFromUrl(withCacheBuster(withIndexVersion(requestUrl, indexVersion)), {
+				cache: 'no-store'
+			});
+			const payloadIndexVersion = readPayloadIndexVersion(data);
+			if (payloadIndexVersion !== indexVersion) {
+				throw new Error(
+					`Index version mismatch for ${relativePath}: expected ${indexVersion}, got ${payloadIndexVersion ?? 'missing'}`
+				);
+			}
 		}
-		const data = (await response.json()) as T;
 
 		if (indexVersion && this.#cacheInIndexedDb) {
 			await this.#cache.setJson(cacheKey, indexVersion, data);

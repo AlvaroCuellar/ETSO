@@ -19,10 +19,10 @@
 
 <footer class="mt-12 border-t border-brand-purple/20 bg-brand-blue font-ui text-white">
 	<div class="mx-auto w-full max-w-7xl px-4 py-10 sm:px-5 lg:px-6">
-		<div class="grid items-start gap-8 md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-10">
-			<a class="inline-flex w-fit items-center gap-3 text-white no-underline hover:no-underline" href="/examen-autorias">
-				<img class="h-50 w-50 object-contain" src={logoEtso} alt="Logo ETSO" />
-			</a>
+		<div class="grid items-center gap-8 md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-10">
+			<div>
+				<img class="h-80 w-80 object-contain" src={logoEtso} alt="Logo ETSO" />
+			</div>
 
 			<nav class="grid w-full gap-8 sm:grid-cols-2 md:w-fit md:justify-self-center" aria-label="Navegación del pie de página">
 				<div class="grid content-start gap-3">
@@ -54,15 +54,17 @@
 				</div>
 			</nav>
 
-			<div class="md:justify-self-end md:text-right">
+			<div class="md:justify-self-end">
 				<p class="m-0 text-[0.8rem] font-ui font-semibold tracking-[0.04em] text-white/72 uppercase">
 					Con la financiación de
 				</p>
-				<img
-					class="mt-3 h-14 w-auto max-w-[11rem] object-contain md:ml-auto"
-					src={thaliaLogo}
-					alt="Logo de Thalia"
-				/>
+				<a href="https://webs.uab.cat/thal-ia/" class="inline-block mt-3 no-underline hover:no-underline" target="_blank" rel="noopener noreferrer">
+					<img
+						class="h-14 w-auto max-w-[11rem] object-contain"
+						src={thaliaLogo}
+						alt="Logo de Thalia"
+					/>
+				</a>
 			</div>
 		</div>
 

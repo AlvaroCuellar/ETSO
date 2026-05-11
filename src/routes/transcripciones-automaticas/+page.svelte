@@ -29,8 +29,7 @@
 <div class="grid gap-7 lg:gap-8">
 	<Breadcrumbs
 		items={[
-			{ label: 'Examen de autorías', href: '/examen-autorias' },
-			{ label: 'Más información', href: '/mas-informacion' },
+			{ label: 'Inicio', href: '/' },
 			{ label: 'Transcripciones automáticas' }
 		]}
 	/>

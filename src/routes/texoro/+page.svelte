@@ -1,5 +1,5 @@
 ﻿<script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { env as publicEnv } from '$env/dynamic/public';
 	import MatchToggle from '$lib/components/search/MatchToggle.svelte';
 	import TokenMultiSelect from '$lib/components/search/TokenMultiSelect.svelte';
@@ -16,6 +16,8 @@
 	import fondoLogo from '$lib/assets/fondos/fondo-logo.png';
 	import BookOpen from 'lucide-svelte/icons/book-open';
 	import ChevronDown from 'lucide-svelte/icons/chevron-down';
+	import ChevronLeft from 'lucide-svelte/icons/chevron-left';
+	import ChevronRight from 'lucide-svelte/icons/chevron-right';
 	import Feather from 'lucide-svelte/icons/feather';
 	import Search from 'lucide-svelte/icons/search';
 	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
@@ -171,7 +173,7 @@
 	const exportText = '#4f5562';
 	const exportTextStrong = '#243b63';
 	const MAX_QUERY_TERMS = 10;
-	const RESULTS_PAGE_SIZE = 35;
+	const RESULTS_PAGE_SIZE = 20;
 	const QUERY_ALLOWED_PATTERN = /^[\p{L}\p{N}*?\s]+$/u;
 	const SHOW_AUTOMATIC_CHARTS = false;
 	const RESULT_PREVIEW_OCCURRENCE_LIMIT = 10;
@@ -211,8 +213,13 @@
 	let isSearching = $state(false);
 	let searchError = $state('');
 	let searchExecution = $state<SearchExecution | null>(null);
+	let resultsPage = $state(1);
+	let resultsRegion = $state<HTMLElement | null>(null);
+	let resultsPaginationRegion = $state<HTMLElement | null>(null);
 	let indexStats = $state<{ works: number; tokens: number; vocabSize: number } | null>(null);
-	let preserveEnieForHighlight = $state(true);
+	const displayIndexStats = $derived(indexStats ?? data.indexInfo?.stats ?? null);
+	let loadedPreserveEnieForHighlight = $state<boolean | null>(null);
+	const preserveEnieForHighlight = $derived(loadedPreserveEnieForHighlight ?? data.indexInfo?.preserveEnie ?? true);
 	let occurrenceModal = $state<OccurrenceModalState | null>(null);
 	let occurrencePreviews = $state<Map<number, ResultOccurrencePreview>>(new Map());
 	let previewLoadLimit = $state(PREVIEW_INITIAL_DOC_LIMIT);
@@ -226,8 +233,10 @@
 	let authorChartRef = $state<TexoroLiveChart | null>(null);
 	let genreChartRef = $state<TexoroLiveChart | null>(null);
 	let infoModalOpen = $state(false);
-	let indexVersion = $state('n/d');
+	let loadedIndexVersion = $state<string | null>(null);
+	const indexVersion = $derived(loadedIndexVersion ?? data.indexInfo?.indexVersion ?? 'n/d');
 	let texoroWorker: Worker | null = null;
+	let texoroWorkerInitPromise: Promise<void> | null = null;
 	let texoroWorkerRequestId = 0;
 	const texoroWorkerPending = new Map<
 		number,
@@ -386,6 +395,21 @@
 		}
 	});
 
+	$effect(() => {
+		const filterSignature = [
+			titleFilter,
+			selectedGenres.join('\u0001'),
+			selectedTradAuthors.join('\u0001'),
+			tradMatch,
+			selectedEstoAuthors.join('\u0001'),
+			estoMatch,
+			selectedStates.join('\u0001')
+		].join('\u0002');
+		filterSignature;
+		resultsPage = 1;
+		previewLoadLimit = PREVIEW_INITIAL_DOC_LIMIT;
+	});
+
 	const filteredResults = $derived.by(() => {
 		if (!searchExecution) return [] as SearchResult[];
 		const normalizedTitle = normalizeText(titleFilter);
@@ -423,11 +447,28 @@
 			);
 	});
 
-	const visibleResults = $derived.by(() => filteredResults.slice(0, RESULTS_PAGE_SIZE));
+	const resultPageCount = $derived.by(() =>
+		filteredResults.length > 0 ? Math.ceil(filteredResults.length / RESULTS_PAGE_SIZE) : 1
+	);
+	const resultPageStart = $derived.by(() =>
+		filteredResults.length === 0 ? 0 : (resultsPage - 1) * RESULTS_PAGE_SIZE + 1
+	);
+	const resultPageEnd = $derived.by(() => Math.min(filteredResults.length, resultsPage * RESULTS_PAGE_SIZE));
+	const visibleResults = $derived.by(() => {
+		const start = (resultsPage - 1) * RESULTS_PAGE_SIZE;
+		return filteredResults.slice(start, start + RESULTS_PAGE_SIZE);
+	});
 	const filteredTextsWithOccurrences = $derived.by(() => filteredResults.length);
 	const filteredTotalOccurrences = $derived.by(() =>
 		filteredResults.reduce((sum, result) => sum + sumResultOccurrences(result), 0)
 	);
+
+	$effect(() => {
+		if (resultsPage > resultPageCount) {
+			resultsPage = resultPageCount;
+			previewLoadLimit = PREVIEW_INITIAL_DOC_LIMIT;
+		}
+	});
 
 	const liveCharts = $derived.by(() => {
 		if (filteredResults.length === 0) {
@@ -765,6 +806,7 @@
 		selectedStates = [];
 		submittedTerms = [];
 		searchExecution = null;
+		resultsPage = 1;
 		searchError = '';
 		occurrencePreviews = new Map();
 		previewLoadLimit = PREVIEW_INITIAL_DOC_LIMIT;
@@ -1043,8 +1085,8 @@
 			tokens: manifest.stats.tokens,
 			vocabSize: manifest.stats.vocabSize
 		};
-		indexVersion = manifest.indexVersion;
-		preserveEnieForHighlight = manifest.normalization.preserveEnie;
+		loadedIndexVersion = manifest.indexVersion;
+		loadedPreserveEnieForHighlight = manifest.normalization.preserveEnie;
 	};
 
 	const rejectTexoroWorkerPending = (message: string): void => {
@@ -1055,6 +1097,7 @@
 	};
 
 	const closeTexoroWorker = (message = 'Worker TEXORO cerrado'): void => {
+		texoroWorkerInitPromise = null;
 		if (!texoroWorker) return;
 		texoroWorker.terminate();
 		texoroWorker = null;
@@ -1085,6 +1128,42 @@
 			console.warn('[texoro] browser worker unavailable', cause);
 			return null;
 		}
+	};
+
+	const initializeTexoroWorker = async (): Promise<void> => {
+		if (isEngineReady && texoroWorker) return;
+		if (texoroWorkerInitPromise) return texoroWorkerInitPromise;
+
+		texoroWorkerInitPromise = (async () => {
+			try {
+				texoroWorker = createTexoroWorker();
+				if (!texoroWorker) {
+					throw new Error('Worker TEXORO no disponible');
+				}
+				const response = await requestTexoroWorker<{ manifest?: TexoroIndexManifest | null }>({
+					action: 'init',
+					indexBaseUrl: texoroIndexBaseUrl,
+					worksMeta: data.worksMeta
+				});
+				if (!response.manifest) {
+					throw new Error('El worker TEXORO no devolvió manifest');
+				}
+				applyIndexManifest(response.manifest);
+			} catch (cause) {
+				console.warn('[texoro] using server search fallback', cause);
+				closeTexoroWorker('Worker TEXORO no disponible');
+				try {
+					applyIndexManifest(await fetchIndexManifest());
+				} catch (manifestCause) {
+					searchError =
+						manifestCause instanceof Error ? manifestCause.message : 'No se pudo inicializar TEXORO';
+				}
+			} finally {
+				texoroWorkerInitPromise = null;
+			}
+		})();
+
+		return texoroWorkerInitPromise;
 	};
 
 	const requestTexoroWorker = async <T>(
@@ -1475,6 +1554,20 @@
 		infoModalOpen = false;
 	};
 
+	const scrollToResults = async (): Promise<void> => {
+		await tick();
+		(resultsPaginationRegion ?? resultsRegion)?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+	};
+
+	const navigateResultsPage = async (page: number): Promise<void> => {
+		const nextPage = Math.min(Math.max(1, page), resultPageCount);
+		if (nextPage === resultsPage) return;
+		resultsPage = nextPage;
+		previewLoadLimit = PREVIEW_INITIAL_DOC_LIMIT;
+		await scrollToResults();
+		queueMicrotask(increasePreviewWindowIfNeeded);
+	};
+
 	const canPrimeCurrentQuery = (): boolean => {
 		const trimmedMain = mainQuery.trim();
 		if (!trimmedMain || !QUERY_ALLOWED_PATTERN.test(trimmedMain)) return false;
@@ -1519,7 +1612,27 @@
 
 	onMount(() => {
 		let previewScrollFrame = 0;
-		let warmupTimer = 0;
+		let initDelayTimer = 0;
+		let initIdleHandle = 0;
+		let warmupIdleHandle = 0;
+		const idleWindow = window as Window & {
+			requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
+			cancelIdleCallback?: (handle: number) => void;
+		};
+		const scheduleIdle = (callback: () => void, timeout = 2000): number => {
+			if (idleWindow.requestIdleCallback) {
+				return idleWindow.requestIdleCallback(callback, { timeout });
+			}
+			return window.setTimeout(callback, 0);
+		};
+		const cancelIdle = (handle: number): void => {
+			if (!handle) return;
+			if (idleWindow.cancelIdleCallback) {
+				idleWindow.cancelIdleCallback(handle);
+				return;
+			}
+			globalThis.clearTimeout(handle);
+		};
 		const onScroll = (): void => {
 			if (previewScrollFrame) return;
 			previewScrollFrame = window.requestAnimationFrame(() => {
@@ -1530,42 +1643,25 @@
 		window.addEventListener('scroll', onScroll, { passive: true });
 		queueMicrotask(onScroll);
 
-		void (async () => {
-			try {
-				texoroWorker = createTexoroWorker();
-				if (!texoroWorker) {
-					throw new Error('Worker TEXORO no disponible');
-				}
-				const response = await requestTexoroWorker<{ manifest?: TexoroIndexManifest | null }>({
-					action: 'init',
-					indexBaseUrl: texoroIndexBaseUrl,
-					worksMeta: data.worksMeta
+		initDelayTimer = window.setTimeout(() => {
+			initIdleHandle = scheduleIdle(() => {
+				void initializeTexoroWorker().then(() => {
+					if (!texoroWorker) return;
+					warmupIdleHandle = scheduleIdle(() => {
+						void requestTexoroWorker<void>({ action: 'warmup' }).catch((cause) => {
+							console.warn('[texoro] warmup failed', cause);
+						});
+					}, 2500);
 				});
-				if (!response.manifest) {
-					throw new Error('El worker TEXORO no devolvió manifest');
-				}
-				applyIndexManifest(response.manifest);
-				warmupTimer = window.setTimeout(() => {
-					void requestTexoroWorker<void>({ action: 'warmup' }).catch((cause) => {
-						console.warn('[texoro] warmup failed', cause);
-					});
-				}, 120);
-			} catch (cause) {
-				console.warn('[texoro] using server search fallback', cause);
-				closeTexoroWorker('Worker TEXORO no disponible');
-				try {
-					applyIndexManifest(await fetchIndexManifest());
-				} catch (manifestCause) {
-					searchError =
-						manifestCause instanceof Error ? manifestCause.message : 'No se pudo inicializar TEXORO';
-				}
-			}
-		})();
+			}, 2500);
+		}, 2500);
 
 		return () => {
 			window.removeEventListener('scroll', onScroll);
 			if (previewScrollFrame) window.cancelAnimationFrame(previewScrollFrame);
-			if (warmupTimer) window.clearTimeout(warmupTimer);
+			if (initDelayTimer) window.clearTimeout(initDelayTimer);
+			cancelIdle(initIdleHandle);
+			cancelIdle(warmupIdleHandle);
 			closeTexoroWorker();
 		};
 	});
@@ -1574,17 +1670,13 @@
 		event.preventDefault();
 		searchError = '';
 		searchExecution = null;
+		resultsPage = 1;
 		submittedTerms = [];
 		occurrencePreviews = new Map();
 		previewLoadLimit = PREVIEW_INITIAL_DOC_LIMIT;
 		occurrenceDetailsCache = new Map();
 		occurrenceDetailsLoads = new Map();
 		chartCopyPending = { author: false, genre: false };
-		if (!isEngineReady) {
-			searchError = 'Motor de búsqueda no disponible todavía';
-			return;
-		}
-
 		const mainValidationError = validateSearchTerm(mainQuery, 'Búsqueda principal');
 		if (mainValidationError) {
 			searchError = mainValidationError;
@@ -1632,6 +1724,7 @@
 		subtitle="Búsquedas textuales en 3000 obras del Siglo de Oro"
 		backgroundImage={fondoLogo}
 		statsAriaLabel="Indicadores de TEXORO"
+		statsLayout="wide-second"
 	>
 		<p class="mt-[1.8rem] mb-0 max-w-[64ch] font-['Lora',serif] text-[1.01rem] leading-[1.62] text-text-main">
 			TEXORO es una plataforma de búsqueda textual que permite consultar de forma unificada una amplia colección de textos del Siglo de Oro. El sistema ofrece acceso directo a obras teatrales y otros textos literarios procedentes de distintas tradiciones editoriales y documentales, con el objetivo de facilitar la exploración, localización y análisis del patrimonio textual aurisecular.
@@ -1651,9 +1744,9 @@
 		</div>
 
 		{#snippet stats()}
-			<HeroStatCard Icon={BookOpen} value={numberFormatter.format(indexStats?.works ?? data.stats.works)} label="Obras indexadas" desktopOffset="up" />
+			<HeroStatCard Icon={BookOpen} value={numberFormatter.format(displayIndexStats?.works ?? data.stats.works)} label="Obras indexadas" desktopOffset="up" />
 
-			<HeroStatCard Icon={Feather} value={indexStats ? numberFormatter.format(indexStats.tokens) : '--'} label="Palabras indexadas" desktopOffset="down" />
+			<HeroStatCard Icon={Feather} value={displayIndexStats ? numberFormatter.format(displayIndexStats.tokens) : '--'} label="Palabras indexadas" desktopOffset="down" />
 		{/snippet}
 	</FeatureHeroSection>
 
@@ -1680,7 +1773,7 @@
 				<AppButton
 					type="submit"
 					variant="primary"
-					disabled={!isEngineReady || isSearching}
+					disabled={isSearching}
 					className="!h-[46px] !min-w-[180px] gap-2 !rounded-[10px] !px-5 !py-2 font-['Roboto',sans-serif] text-[0.93rem] font-semibold tracking-[0.02em]"
 				>
 					{#if isSearching}
@@ -1697,7 +1790,7 @@
 				<em class="not-italic font-semibold text-brand-blue">Búsqueda avanzada</em>.
 			</p>
 
-			<div class="overflow-hidden rounded-[10px] border border-border-accent-blue bg-white">
+			<div class={`rounded-[10px] border border-border-accent-blue bg-white ${advancedSearchOpen ? 'overflow-visible' : 'overflow-hidden'}`}>
 				<button
 					type="button"
 					class="flex w-full items-center justify-between gap-3 border-0 bg-transparent px-4 py-3 text-left font-['Roboto',sans-serif] text-[0.92rem] font-semibold text-brand-blue-dark transition hover:bg-surface-accent-blue"
@@ -1713,9 +1806,9 @@
 				</button>
 
 				<div
-					class={`overflow-hidden border-t px-4 transition-[max-height,padding,opacity] duration-300 ease-out ${
+					class={`border-t px-4 transition-[max-height,padding,opacity] duration-300 ease-out ${
 						advancedSearchOpen
-							? 'max-h-[1200px] border-border-accent-blue py-4 opacity-100'
+							? 'max-h-[1200px] overflow-visible border-border-accent-blue py-4 opacity-100'
 							: 'max-h-0 border-transparent py-0 opacity-0'
 					}`}
 				>
@@ -1817,7 +1910,7 @@
 				</div>
 			</div>
 
-			<div class="overflow-hidden rounded-[10px] border border-border-accent-blue bg-white">
+			<div class={`rounded-[10px] border border-border-accent-blue bg-white ${filtersOpen ? 'overflow-visible' : 'overflow-hidden'}`}>
 				<button
 					type="button"
 					class="flex w-full items-center justify-between gap-3 border-0 bg-transparent px-4 py-3 text-left font-['Roboto',sans-serif] text-[0.92rem] font-semibold text-brand-blue-dark transition hover:bg-surface-accent-blue"
@@ -1833,9 +1926,9 @@
 				</button>
 
 				<div
-					class={`overflow-hidden border-t px-4 transition-[max-height,padding,opacity] duration-300 ease-out ${
+					class={`border-t px-4 transition-[max-height,padding,opacity] duration-300 ease-out ${
 						filtersOpen
-							? 'max-h-[1600px] border-border-accent-blue py-4 opacity-100'
+							? 'max-h-[1600px] overflow-visible border-border-accent-blue py-4 opacity-100'
 							: 'max-h-0 border-transparent py-0 opacity-0'
 					}`}
 				>
@@ -1953,9 +2046,14 @@
 		{/if}
 
 		{#if searchExecution}
-			<div class="mt-4 grid gap-4">
-				<div class="grid gap-3 rounded-[12px] border border-border-accent-blue bg-white px-4 py-5 text-center shadow-[0_6px_16px_rgba(25,46,80,0.07)] md:grid-cols-2">
-					<div>
+			<div
+				id="texoro-resultados"
+				bind:this={resultsRegion}
+				class="mt-4 grid scroll-mt-6 gap-4"
+				aria-live="polite"
+			>
+				<div class="grid gap-3 text-center md:grid-cols-2">
+					<div class="rounded-[12px] bg-surface-soft px-4 py-5">
 						<p class="m-0 font-['Roboto',sans-serif] text-[2.4rem] leading-none font-bold text-brand-blue-dark">
 							{numberFormatter.format(filteredTotalOccurrences)}
 						</p>
@@ -1963,7 +2061,7 @@
 							Concurrencias
 						</p>
 					</div>
-					<div>
+					<div class="rounded-[12px] bg-surface-soft px-4 py-5">
 						<p class="m-0 font-['Roboto',sans-serif] text-[2.4rem] leading-none font-bold text-brand-blue-dark">
 							{numberFormatter.format(filteredTextsWithOccurrences)}
 						</p>
@@ -2141,6 +2239,52 @@
 							: 'No se encontraron coincidencias.'}
 					</p>
 				{:else}
+					<div
+						bind:this={resultsPaginationRegion}
+						class="flex scroll-mt-24 flex-wrap items-center justify-between gap-3"
+					>
+						<p class="m-0 text-[0.88rem] font-normal text-text-main">
+							Mostrando
+							<span class="font-semibold text-brand-blue">
+								{numberFormatter.format(resultPageStart)}-{numberFormatter.format(resultPageEnd)}
+							</span>
+							de <span class="font-semibold text-brand-blue">{numberFormatter.format(filteredResults.length)}</span> resultados
+						</p>
+						{#if resultPageCount > 1}
+							<div class="flex items-center gap-2">
+								<AppButton
+									type="button"
+									variant="secondary"
+									disabled={resultsPage <= 1}
+									className="!h-9 !w-9 !rounded-full !border-transparent !bg-transparent !p-0 !text-brand-blue-dark shadow-none hover:!bg-surface-soft"
+									title="Página anterior"
+									onclick={() => {
+										void navigateResultsPage(resultsPage - 1);
+									}}
+								>
+									<ChevronLeft class="h-5 w-5" aria-hidden="true" />
+									<span class="sr-only">Anterior</span>
+								</AppButton>
+								<span class="font-['Roboto',sans-serif] text-[0.86rem] font-normal text-text-main">
+									Página <span class="font-semibold text-brand-blue">{numberFormatter.format(resultsPage)}</span> de
+									<span class="font-semibold text-brand-blue">{numberFormatter.format(resultPageCount)}</span>
+								</span>
+								<AppButton
+									type="button"
+									variant="secondary"
+									disabled={resultsPage >= resultPageCount}
+									className="!h-9 !w-9 !rounded-full !border-transparent !bg-transparent !p-0 !text-brand-blue-dark shadow-none hover:!bg-surface-soft"
+									title="Página siguiente"
+									onclick={() => {
+										void navigateResultsPage(resultsPage + 1);
+									}}
+								>
+									<ChevronRight class="h-5 w-5" aria-hidden="true" />
+									<span class="sr-only">Siguiente</span>
+								</AppButton>
+							</div>
+						{/if}
+					</div>
 					<ul class="m-0 grid list-none gap-3 p-0">
 						{#each visibleResults as result, resultIndex}
 							{@const assignments = buildMatchAssignments(result.matches)}
@@ -2216,6 +2360,40 @@
 							</li>
 						{/each}
 					</ul>
+					{#if resultPageCount > 1}
+						<div class="flex flex-wrap items-center justify-end gap-2">
+							<AppButton
+								type="button"
+								variant="secondary"
+								disabled={resultsPage <= 1}
+								className="!h-9 !w-9 !rounded-full !border-transparent !bg-transparent !p-0 !text-brand-blue-dark shadow-none hover:!bg-surface-soft"
+								title="Página anterior"
+								onclick={() => {
+									void navigateResultsPage(resultsPage - 1);
+								}}
+							>
+								<ChevronLeft class="h-5 w-5" aria-hidden="true" />
+								<span class="sr-only">Anterior</span>
+							</AppButton>
+							<span class="font-['Roboto',sans-serif] text-[0.86rem] font-normal text-text-main">
+								Página <span class="font-semibold text-brand-blue">{numberFormatter.format(resultsPage)}</span> de
+								<span class="font-semibold text-brand-blue">{numberFormatter.format(resultPageCount)}</span>
+							</span>
+							<AppButton
+								type="button"
+								variant="secondary"
+								disabled={resultsPage >= resultPageCount}
+								className="!h-9 !w-9 !rounded-full !border-transparent !bg-transparent !p-0 !text-brand-blue-dark shadow-none hover:!bg-surface-soft"
+								title="Página siguiente"
+								onclick={() => {
+									void navigateResultsPage(resultsPage + 1);
+								}}
+							>
+								<ChevronRight class="h-5 w-5" aria-hidden="true" />
+								<span class="sr-only">Siguiente</span>
+							</AppButton>
+						</div>
+					{/if}
 				{/if}
 			</div>
 		{/if}

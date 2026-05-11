@@ -45,7 +45,9 @@ import collaboratorsSource from '../../../data/colaboradores/colaboradores.json'
 import bibliographySource from '../../../data/referencias/bibliografia.json';
 import impactSource from '../../../data/referencias/repercusion.json';
 
-const CACHE_MS = 2000;
+const DEFAULT_CACHE_MS = 10 * 60 * 1000;
+const configuredCacheMs = Number.parseInt(env.CATALOG_CACHE_MS ?? '', 10);
+const CACHE_MS = Number.isFinite(configuredCacheMs) && configuredCacheMs > 0 ? configuredCacheMs : DEFAULT_CACHE_MS;
 
 const escapeHtml = (value: string): string =>
 	value
@@ -298,6 +300,30 @@ const ensureDistanceRecord = (): Record<Ambito, DistanceRow[]> => ({
 const hasAnyDistanceRows = (distances: Record<Ambito, DistanceRow[]>): boolean =>
 	Object.values(distances).some((rows) => rows.length > 0);
 
+const normalizeDistanceAmbito = (rawAmbito: string): Ambito | null => {
+	const normalized = rawAmbito.trim().toLowerCase();
+	const direct = ambitos.find((ambito) => ambito === normalized);
+	if (direct) return direct;
+
+	const aliases: Record<string, Ambito> = {
+		global: 'obracompleta',
+		obracompleta: 'obracompleta',
+		obra_completa: 'obracompleta',
+		primerajornada: 'jornada1',
+		jornada1: 'jornada1',
+		segundajornada: 'jornada2',
+		jornada2: 'jornada2',
+		tercerajornada: 'jornada3',
+		jornada3: 'jornada3',
+		cuartajornada: 'jornada4',
+		jornada4: 'jornada4',
+		quintajornada: 'jornada5',
+		jornada5: 'jornada5'
+	};
+
+	return aliases[normalized.replace(/[^a-z0-9]/g, '')] ?? null;
+};
+
 const assertTursoConfig = (): { databaseUrl: string; authToken: string } => {
 	if (!env.TURSO_DATABASE_URL || !env.TURSO_AUTH_TOKEN) {
 		throw new Error('Faltan TURSO_DATABASE_URL o TURSO_AUTH_TOKEN para leer el catálogo desde Turso.');
@@ -480,8 +506,8 @@ const createSnapshot = async (): Promise<Snapshot> => {
 		 ORDER BY work_id, ambito, rank`
 	);
 	for (const row of distanceRows) {
-		const ambito = row.ambito as Ambito;
-		if (!ambitos.includes(ambito)) continue;
+		const ambito = normalizeDistanceAmbito(row.ambito);
+		if (!ambito) continue;
 		if (!distancesByWork.has(row.work_id)) {
 			distancesByWork.set(row.work_id, ensureDistanceRecord());
 		}

@@ -295,6 +295,7 @@
 		items={[
 			{ label: 'Inicio', href: '/' },
 			{ label: 'Examen de autorías', href: '/examen-autorias' },
+			{ label: 'Obras', href: '/examen-autorias/obras' },
 			{ label: displayWorkTitle, href: `/obras/${data.work.slug}` },
 			{ label: 'Informe' }
 		]}
@@ -368,19 +369,20 @@
 					</select>
 				</div>
 
-				<ul class="mb-6 hidden list-none gap-2 border-b-2 border-border-accent-blue p-0 md:flex" role="tablist">
+				<ul class="mb-6 hidden list-none gap-2 border-b-2 border-border-accent-blue p-0 pb-2 md:flex" role="tablist">
 					{#each availableAmbitos as ambito}
-						<li class="-mb-[2px]">
+						<li>
 							<button
 								type="button"
-								class={`cursor-pointer border-b-2 bg-transparent px-6 py-3 text-[0.95rem] transition-all ${
+								class={`informe-ambito-tab inline-flex cursor-pointer items-center rounded-card px-4 py-2 text-[0.9rem] font-ui font-medium transition hover:no-underline ${
 									activeAmbito === ambito
-										? 'border-brand-blue font-semibold text-brand-blue-dark'
-										: 'border-transparent text-text-soft hover:text-brand-blue-dark'
+										? 'bg-surface-soft text-brand-blue-dark'
+										: 'bg-transparent text-text-soft hover:bg-surface-soft hover:text-brand-blue-dark'
 								}`}
 								data-tab={`acto-${ambito}`}
-								onclick={() => {
+								onclick={(event) => {
 									activeAmbito = ambito;
+									event.currentTarget.blur();
 								}}
 							>
 								{ambitoLabels[ambito]}
@@ -621,6 +623,22 @@
 </div>
 
 <style>
+	.informe-ambito-tab,
+	.informe-ambito-tab:focus,
+	.informe-ambito-tab:focus-visible,
+	.informe-ambito-tab:active {
+		border: 0 solid transparent !important;
+		border-bottom-width: 0 !important;
+		outline: none !important;
+		box-shadow: none !important;
+		text-decoration: none !important;
+		-webkit-tap-highlight-color: transparent;
+	}
+
+	.informe-ambito-tab::-moz-focus-inner {
+		border: 0;
+	}
+
 	.informe-bibliografia-summary::-webkit-details-marker {
 		display: none;
 	}

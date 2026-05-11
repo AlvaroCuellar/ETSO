@@ -134,7 +134,7 @@
 <div class="grid gap-7">
 	<Breadcrumbs
 		items={[
-			{ label: 'Más información', href: '/mas-informacion' },
+			{ label: 'Inicio', href: '/' },
 			{ label: 'Repercusión' }
 		]}
 	/>

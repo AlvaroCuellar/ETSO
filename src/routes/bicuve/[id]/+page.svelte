@@ -87,9 +87,8 @@
 	<Breadcrumbs
 		items={[
 			{ label: 'Inicio', href: '/' },
-			{ label: 'Examen de autorías', href: '/examen-autorias' },
-			{ label: displayWorkTitle, href: `/obras/${data.work.slug}` },
-			{ label: 'BICUVE' }
+			{ label: 'BICUVE', href: '/bicuve' },
+			{ label: displayWorkTitle }
 		]}
 	/>
 

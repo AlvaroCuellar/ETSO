@@ -185,7 +185,7 @@
 {#if rows.length === 0}
 	<div class="py-10 px-5 text-center text-[16px] text-text-soft">{emptyMessage}</div>
 {:else}
-	<div class="table-wrapper obra-table-shared-container min-w-0 w-full max-w-full overflow-x-auto overflow-y-visible font-['Roboto',sans-serif]">
+	<div class="table-wrapper obra-table-shared-container min-w-0 w-full max-w-full overflow-x-auto overflow-y-visible rounded-t-[15px] font-['Roboto',sans-serif]">
 		<table class={tableClass}>
 			<thead class="bg-brand-blue-dark text-white max-md:hidden">
 				<tr>
@@ -243,8 +243,8 @@
 				{#each rows as row}
 					{@const flags = resolveFilterFlags(row)}
 					<tr
-						class={`obra-row cursor-pointer border-b border-border transition-colors hover:bg-surface-accent-blue/45 max-md:mb-3 max-md:block max-md:rounded-[8px] max-md:border max-md:border-border max-md:bg-white max-md:p-2 ${
-							isRowExpanded(row.rowId) ? 'expanded border-b-border-accent-blue bg-surface-accent-blue/55' : ''
+						class={`obra-row cursor-pointer border-b border-border transition-colors hover:bg-surface-soft max-md:mb-3 max-md:block max-md:rounded-[8px] max-md:border max-md:border-border max-md:bg-white max-md:p-2 ${
+							isRowExpanded(row.rowId) ? 'expanded border-b-border-accent-blue bg-surface-accent-blue' : ''
 						}`}
 						data-obra-id={row.work.id}
 						data-title-search={normalizeForSearch([row.work.title, ...row.work.titleVariants].join(' '))}
@@ -552,7 +552,7 @@
 					</tr>
 
 					<tr
-						class={`${isRowExpanded(row.rowId) ? 'table-row' : 'hidden'} detail-row border-b border-border bg-surface-accent-blue/55 max-md:block`}
+						class={`${isRowExpanded(row.rowId) ? 'table-row' : 'hidden'} detail-row border-b border-border bg-surface-accent-blue max-md:block`}
 						hidden={!isRowExpanded(row.rowId)}
 					>
 						<td colspan={detailColspan} class="max-md:block max-md:border-0 max-md:p-0">
@@ -642,6 +642,14 @@
 	.obra-table-shared-container .textos-dropdown-item:hover,
 	.obra-table-shared-container .textos-dropdown-item:focus-visible {
 		text-decoration: none;
+	}
+
+	.obra-table-shared-container thead th:first-child {
+		border-top-left-radius: 8px;
+	}
+
+	.obra-table-shared-container thead th:last-child {
+		border-top-right-radius: 8px;
 	}
 
 	@keyframes works-table-slide-down {

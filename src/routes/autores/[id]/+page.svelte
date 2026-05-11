@@ -84,6 +84,7 @@
 		items={[
 			{ label: 'Inicio', href: '/' },
 			{ label: 'Examen de autorías', href: '/examen-autorias' },
+			{ label: 'Dramaturgos', href: '/examen-autorias/dramaturgos' },
 			{ label: data.author.name }
 		]}
 	/>

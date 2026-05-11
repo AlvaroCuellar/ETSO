@@ -3,7 +3,7 @@
 </script>
 
 <div class="grid gap-6">
-	<Breadcrumbs items={[{ label: 'Examen de autorías', href: '/examen-autorias' }, { label: 'Más información' }]} />
+	<Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'Más información' }]} />
 
 	<section class="grid gap-3">
 		<h1 class="text-[clamp(1.7rem,2.9vw,2.25rem)] font-bold text-brand-blue-dark">Más información</h1>

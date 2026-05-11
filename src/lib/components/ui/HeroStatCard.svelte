@@ -113,8 +113,8 @@
 				aria-hidden="true"
 			/>
 		</div>
-		<div>
-			<div class="text-[clamp(2rem,3vw,2.35rem)] leading-none font-bold text-brand-blue-dark">{displayValue}</div>
+		<div class="min-w-0">
+			<div class="max-w-full whitespace-nowrap text-[clamp(1.8rem,2.7vw,2.35rem)] leading-none font-bold text-brand-blue-dark">{displayValue}</div>
 			<div class="font-ui text-[1.04rem] font-medium text-text-main">{label}</div>
 		</div>
 	</a>
@@ -123,8 +123,8 @@
 		<div class="inline-flex h-[2.2rem] w-[2.2rem] items-center justify-center text-text-accent-purple" aria-hidden="true">
 			<Icon class="h-[1.9rem] w-[1.9rem] stroke-[2.2]" />
 		</div>
-		<div>
-			<div class="text-[clamp(2rem,3vw,2.35rem)] leading-none font-bold text-brand-blue-dark">{displayValue}</div>
+		<div class="min-w-0">
+			<div class="max-w-full whitespace-nowrap text-[clamp(1.8rem,2.7vw,2.35rem)] leading-none font-bold text-brand-blue-dark">{displayValue}</div>
 			<div class="font-ui text-[1.04rem] font-medium text-text-main">{label}</div>
 		</div>
 	</article>

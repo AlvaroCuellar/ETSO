@@ -56,6 +56,7 @@
 		items={[
 			{ label: 'Inicio', href: '/' },
 			{ label: 'Examen de autorías', href: '/examen-autorias' },
+			{ label: 'Obras', href: '/examen-autorias/obras' },
 			{ label: displayWorkTitle }
 		]}
 	/>

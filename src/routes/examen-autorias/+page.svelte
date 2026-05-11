@@ -1,4 +1,6 @@
 ﻿<script lang="ts">
+	import { tick } from 'svelte';
+	import { goto } from '$app/navigation';
 	import MatchToggle from '$lib/components/search/MatchToggle.svelte';
 	import TokenMultiSelect from '$lib/components/search/TokenMultiSelect.svelte';
 	import WorksTable from '$lib/components/search/WorksTable.svelte';
@@ -9,15 +11,11 @@
 	import fondoLogo from '$lib/assets/fondos/fondo-logo.png';
 	import BookOpen from 'lucide-svelte/icons/book-open';
 	import ChevronDown from 'lucide-svelte/icons/chevron-down';
+	import ChevronLeft from 'lucide-svelte/icons/chevron-left';
+	import ChevronRight from 'lucide-svelte/icons/chevron-right';
 	import Feather from 'lucide-svelte/icons/feather';
-	import {
-		inferWorkAuthorshipType,
-		type AttributionSet,
-		type CatalogWork,
-		type Confidence,
-		type ObraTableRow,
-		type WorkAuthorshipType
-	} from '$lib/domain/catalog';
+	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
+	import type { ObraTableRow } from '$lib/domain/catalog';
 
 	import type { PageData } from './$types';
 
@@ -26,98 +24,70 @@
 		label: string;
 	}
 
+	type ExamenPageFilters = PageData['filters'];
+
 	let { data }: { data: PageData } = $props();
+	const getInitialFilters = () => data.filters;
+	const initialFilters = getInitialFilters();
 
-	let title = $state('');
-	let selectedGenres = $state<string[]>([]);
-	let selectedMainAuthors = $state<string[]>([]);
+	let title = $state(initialFilters.titulo);
+	let selectedGenres = $state<string[]>([...initialFilters.genero]);
+	let selectedMainAuthors = $state<string[]>([...initialFilters.autor]);
 
-	let advancedOpen = $state(false);
-	let selectedAuthorshipTypes = $state<string[]>([]);
-	let selectedTradAuthors = $state<string[]>([]);
-	let tradMatch = $state<'or' | 'and'>('or');
-	let selectedEstoAuthors = $state<string[]>([]);
-	let estoMatch = $state<'or' | 'and'>('or');
-	let selectedConfidence = $state<string[]>([]);
-	let selectedStates = $state<string[]>([]);
-	let dateFrom = $state('');
-	let dateTo = $state('');
+	let advancedOpen = $state(
+		initialFilters.tipo_autoria.length > 0 ||
+			initialFilters.autor_trad.length > 0 ||
+			initialFilters.autor_esto.length > 0 ||
+			initialFilters.confianza.length > 0 ||
+			initialFilters.estado.length > 0 ||
+			Boolean(initialFilters.desde) ||
+			Boolean(initialFilters.hasta)
+	);
+	let selectedAuthorshipTypes = $state<string[]>([...initialFilters.tipo_autoria]);
+	let selectedTradAuthors = $state<string[]>([...initialFilters.autor_trad]);
+	let tradMatch = $state<'or' | 'and'>(initialFilters.autor_trad_match);
+	let selectedEstoAuthors = $state<string[]>([...initialFilters.autor_esto]);
+	let estoMatch = $state<'or' | 'and'>(initialFilters.autor_esto_match);
+	let selectedConfidence = $state<string[]>([...initialFilters.confianza]);
+	let selectedStates = $state<string[]>([...initialFilters.estado]);
+	let dateFrom = $state(initialFilters.desde);
+	let dateTo = $state(initialFilters.hasta);
+	let appliedFilterSignature = $state(JSON.stringify(initialFilters));
+	let isSearching = $state(false);
+	let resultsRegion = $state<HTMLElement | null>(null);
+	let paginationRegion = $state<HTMLElement | null>(null);
 
-	const normalizeText = (value: string): string =>
-		value
-			.normalize('NFD')
-			.replace(/[\u0300-\u036f]/g, '')
-			.toLowerCase()
-			.trim();
+	const hasAdvancedFilterValues = (filters: ExamenPageFilters): boolean =>
+		filters.tipo_autoria.length > 0 ||
+		filters.autor_trad.length > 0 ||
+		filters.autor_esto.length > 0 ||
+		filters.confianza.length > 0 ||
+		filters.estado.length > 0 ||
+		Boolean(filters.desde) ||
+		Boolean(filters.hasta);
 
-	const parseYearMonth = (value: string): number | null => {
-		const match = value.match(/(\d{4})[/-](\d{1,2})/);
-		if (!match) return null;
-		const year = Number(match[1]);
-		const month = Number(match[2]);
-		if (!Number.isInteger(year) || !Number.isInteger(month)) return null;
-		if (month < 1 || month > 12) return null;
-		return year * 100 + month;
+	const applyFiltersToState = (filters: ExamenPageFilters): void => {
+		title = filters.titulo;
+		selectedGenres = [...filters.genero];
+		selectedMainAuthors = [...filters.autor];
+		selectedAuthorshipTypes = [...filters.tipo_autoria];
+		selectedTradAuthors = [...filters.autor_trad];
+		tradMatch = filters.autor_trad_match;
+		selectedEstoAuthors = [...filters.autor_esto];
+		estoMatch = filters.autor_esto_match;
+		selectedConfidence = [...filters.confianza];
+		selectedStates = [...filters.estado];
+		dateFrom = filters.desde;
+		dateTo = filters.hasta;
+		advancedOpen = hasAdvancedFilterValues(filters);
 	};
 
-	const asWorkAuthorshipType = (value: string): WorkAuthorshipType | null => {
-		if (value === 'unica' || value === 'colaboracion' || value === 'desconocida') return value;
-		return null;
-	};
-
-	const collectAuthorIds = (set: AttributionSet): Set<string> => {
-		const authorIds = new Set<string>();
-		if (set.unresolved) return authorIds;
-
-		for (const group of set.groups) {
-			for (const member of group.members) {
-				if (!member.authorId) continue;
-				authorIds.add(member.authorId);
-			}
-		}
-		return authorIds;
-	};
-
-	const matchesByMode = (haystack: Set<string>, selectedIds: string[], matchMode: 'or' | 'and'): boolean => {
-		if (selectedIds.length === 0) return true;
-		if (matchMode === 'and') {
-			return selectedIds.every((candidate) => haystack.has(candidate));
-		}
-		return selectedIds.some((candidate) => haystack.has(candidate));
-	};
-
-	const matchesMainAuthors = (work: CatalogWork, selectedIds: string[]): boolean => {
-		if (selectedIds.length === 0) return true;
-		const all = new Set<string>();
-		for (const authorId of collectAuthorIds(work.traditionalAttribution)) all.add(authorId);
-		for (const authorId of collectAuthorIds(work.stylometryAttribution)) all.add(authorId);
-		return selectedIds.some((candidate) => all.has(candidate));
-	};
-
-	const matchesConfidence = (work: CatalogWork, selectedValues: string[]): boolean => {
-		if (selectedValues.length === 0) return true;
-		if (work.stylometryAttribution.unresolved) return false;
-
-		const values = new Set<Confidence>();
-		for (const group of work.stylometryAttribution.groups) {
-			for (const member of group.members) {
-				if (member.confidence) values.add(member.confidence);
-			}
-		}
-		return selectedValues.some((selectedValue) => values.has(selectedValue as Confidence));
-	};
-
-	const matchesDateRange = (work: CatalogWork): boolean => {
-		const workYearMonth = parseYearMonth(work.addedOn);
-		if (!workYearMonth) return true;
-
-		const fromYearMonth = parseYearMonth(dateFrom);
-		const toYearMonth = parseYearMonth(dateTo);
-
-		if (fromYearMonth && workYearMonth < fromYearMonth) return false;
-		if (toYearMonth && workYearMonth > toYearMonth) return false;
-		return true;
-	};
+	$effect(() => {
+		const nextSignature = JSON.stringify(data.filters);
+		if (nextSignature === appliedFilterSignature) return;
+		appliedFilterSignature = nextSignature;
+		applyFiltersToState(data.filters);
+	});
 
 	const authorOptions = $derived.by<TokenOption[]>(() =>
 		data.authorOptions.map((author) => ({ id: author.id, label: author.name }))
@@ -125,11 +95,9 @@
 	const genreOptions = $derived.by<TokenOption[]>(() =>
 		data.genreOptions.map((genre) => ({ id: genre, label: genre }))
 	);
-	const stateOptions = $derived.by<TokenOption[]>(() => {
-		const values = Array.from(new Set(data.works.map((work) => work.textState))).filter(Boolean);
-		values.sort((a, b) => a.localeCompare(b));
-		return values.map((value) => ({ id: value, label: value }));
-	});
+	const stateOptions = $derived.by<TokenOption[]>(() =>
+		data.stateOptions.map((value) => ({ id: value, label: value }))
+	);
 	const confidenceOptions: TokenOption[] = [
 		{ id: 'segura', label: 'Segura' },
 		{ id: 'probable', label: 'Probable' }
@@ -164,72 +132,101 @@
 		return 'La fecha "hasta" debe ser mayor o igual que la fecha "desde".';
 	});
 
-	const works = $derived.by(() => {
-		const normalizedTitle = normalizeText(title);
-		const effectiveMainAuthors = mainAuthorDisabled ? [] : selectedMainAuthors;
-		const selectedAuthorshipValues = selectedAuthorshipTypes
-			.map((value) => asWorkAuthorshipType(value))
-			.filter((value): value is WorkAuthorshipType => value !== null);
-
-		return data.works.filter((work) => {
-			if (normalizedTitle) {
-				const haystack = normalizeText([work.title, ...work.titleVariants].join(' '));
-				if (!haystack.includes(normalizedTitle)) return false;
-			}
-
-			if (selectedGenres.length > 0 && !selectedGenres.includes(work.genre)) return false;
-			if (!matchesMainAuthors(work, effectiveMainAuthors)) return false;
-
-			if (!matchesByMode(collectAuthorIds(work.traditionalAttribution), selectedTradAuthors, tradMatch)) {
-				return false;
-			}
-			if (!matchesByMode(collectAuthorIds(work.stylometryAttribution), selectedEstoAuthors, estoMatch)) {
-				return false;
-			}
-
-			if (!matchesConfidence(work, selectedConfidence)) return false;
-
-			if (selectedAuthorshipValues.length > 0) {
-				const inferred = inferWorkAuthorshipType(work);
-				if (!selectedAuthorshipValues.includes(inferred)) return false;
-			}
-
-			if (selectedStates.length > 0 && !selectedStates.includes(work.textState)) return false;
-
-			if (!dateRangeError && !matchesDateRange(work)) return false;
-
-			return true;
-		});
-	});
-
 	const tableRows = $derived.by<ObraTableRow[]>(() =>
-		works.map((work) => ({
+		data.works.map((work) => ({
 			rowId: work.id,
 			work
 		}))
 	);
 
-	const totalWorks = $derived.by(() => data.works.length);
+	const totalWorks = $derived.by(() => data.stats.works);
 	const totalDramaturgos = $derived.by(() => data.authorOptions.length);
 
-	const resetFilters = (): void => {
-		title = '';
-		selectedGenres = [];
-		selectedMainAuthors = [];
-		selectedAuthorshipTypes = [];
-		selectedTradAuthors = [];
-		tradMatch = 'or';
-		selectedEstoAuthors = [];
-		estoMatch = 'or';
-		selectedConfidence = [];
-		selectedStates = [];
-		dateFrom = '';
-		dateTo = '';
-		advancedOpen = false;
+	const appendValues = (params: URLSearchParams, key: string, values: string[]): void => {
+		for (const value of values) {
+			const trimmed = value.trim();
+			if (trimmed) params.append(key, trimmed);
+		}
 	};
 
-	const applySearch = (event: SubmitEvent): void => {
+	const buildSearchParams = (page = 1): URLSearchParams => {
+		const params = new URLSearchParams();
+		if (title.trim()) params.set('titulo', title.trim());
+		appendValues(params, 'genero', selectedGenres);
+		appendValues(params, 'autor', mainAuthorDisabled ? [] : selectedMainAuthors);
+		appendValues(params, 'tipo_autoria', selectedAuthorshipTypes);
+		appendValues(params, 'autor_trad', selectedTradAuthors);
+		if (selectedTradAuthors.length > 0 && tradMatch === 'and') params.set('autor_trad_match', tradMatch);
+		appendValues(params, 'autor_esto', selectedEstoAuthors);
+		if (selectedEstoAuthors.length > 0 && estoMatch === 'and') params.set('autor_esto_match', estoMatch);
+		appendValues(params, 'confianza', selectedConfidence);
+		appendValues(params, 'estado', selectedStates);
+		if (dateFrom) params.set('desde', dateFrom);
+		if (dateTo) params.set('hasta', dateTo);
+		if (page > 1) params.set('page', String(page));
+		return params;
+	};
+
+	const buildSearchUrl = (page = 1): string => {
+		const params = buildSearchParams(page);
+		const query = params.toString();
+		return query ? `/examen-autorias?${query}` : '/examen-autorias';
+	};
+
+	const buildPaginationUrl = (page: number): string => {
+		const params = new URLSearchParams();
+		if (data.filters.titulo.trim()) params.set('titulo', data.filters.titulo.trim());
+		appendValues(params, 'genero', data.filters.genero);
+		appendValues(params, 'autor', data.filters.autor);
+		appendValues(params, 'tipo_autoria', data.filters.tipo_autoria);
+		appendValues(params, 'autor_trad', data.filters.autor_trad);
+		if (data.filters.autor_trad.length > 0 && data.filters.autor_trad_match === 'and') {
+			params.set('autor_trad_match', data.filters.autor_trad_match);
+		}
+		appendValues(params, 'autor_esto', data.filters.autor_esto);
+		if (data.filters.autor_esto.length > 0 && data.filters.autor_esto_match === 'and') {
+			params.set('autor_esto_match', data.filters.autor_esto_match);
+		}
+		appendValues(params, 'confianza', data.filters.confianza);
+		appendValues(params, 'estado', data.filters.estado);
+		if (data.filters.desde) params.set('desde', data.filters.desde);
+		if (data.filters.hasta) params.set('hasta', data.filters.hasta);
+		if (page > 1) params.set('page', String(page));
+		const query = params.toString();
+		return query ? `/examen-autorias?${query}` : '/examen-autorias';
+	};
+
+	const scrollToResults = async (): Promise<void> => {
+		await tick();
+		(paginationRegion ?? resultsRegion)?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+	};
+
+	const navigateToUrl = async (url: string, scrollToTable = true): Promise<void> => {
+		isSearching = true;
+		try {
+			await goto(url, { noScroll: true, keepFocus: true });
+			if (scrollToTable) {
+				await scrollToResults();
+			}
+		} finally {
+			isSearching = false;
+		}
+	};
+
+	const applySearch = async (event: SubmitEvent): Promise<void> => {
 		event.preventDefault();
+		if (dateRangeError) return;
+		await navigateToUrl(buildSearchUrl(1));
+	};
+
+	const navigateToPage = async (page: number): Promise<void> => {
+		if (page < 1 || page > data.totalPages || page === data.page) return;
+		await navigateToUrl(buildPaginationUrl(page));
+	};
+
+	const clearFilters = async (event: MouseEvent): Promise<void> => {
+		event.preventDefault();
+		await navigateToUrl('/examen-autorias', false);
 	};
 </script>
 
@@ -290,7 +287,7 @@
 
 	<div class="font-['Roboto',sans-serif] leading-[1.6] text-text-main">
 		<div class="min-w-0">
-			<form onsubmit={applySearch}>
+			<form method="GET" action="/examen-autorias" onsubmit={applySearch}>
 				<div class="mb-[1.6rem]">
 					<div class="mb-[0.9rem]">
 						<div class="mb-[15px] border-b-2 border-border pb-2 text-[14px] font-bold tracking-[0.5px] text-text-soft uppercase">
@@ -318,6 +315,7 @@
 								</label>
 								<input
 									id="filtro-titulo"
+									name="titulo"
 									type="text"
 									class="rounded-[4px] border border-border px-3 py-[10px] text-[14px] transition focus:border-brand-blue/35 focus:shadow-[0_0_0_3px_rgba(13,63,145,0.1)] focus:outline-none"
 									placeholder="Ej: cada paso peligro, verdades amor..."
@@ -357,7 +355,7 @@
 
 					</div>
 
-					<div class="mt-[0.9rem] overflow-hidden rounded-[8px] border border-border-accent-blue bg-white">
+					<div class={`mt-[0.9rem] rounded-[8px] border border-border-accent-blue bg-white ${advancedOpen ? 'overflow-visible' : 'overflow-hidden'}`}>
 						<button
 							type="button"
 							class="w-full cursor-pointer border-0 bg-transparent px-4 py-[0.9rem] text-left text-[14px] font-semibold text-brand-blue-dark transition hover:bg-surface-accent-blue"
@@ -377,9 +375,9 @@
 
 						<div
 							id="advanced-content"
-							class={`overflow-hidden border-t px-4 transition-[max-height,padding,opacity] duration-300 ease-out ${
+							class={`border-t px-4 transition-[max-height,padding,opacity] duration-300 ease-out ${
 								advancedOpen
-									? 'max-h-[1200px] border-border-accent-blue py-[0.9rem] opacity-100'
+									? 'max-h-[1200px] overflow-visible border-border-accent-blue py-[0.9rem] opacity-100'
 									: 'max-h-0 border-transparent py-0 opacity-0'
 							}`}
 						>
@@ -510,6 +508,7 @@
 										</label>
 										<input
 											id="filtro-fecha-desde"
+											name="desde"
 											type="date"
 											class="rounded-[4px] border border-border px-3 py-[10px] text-[14px] transition focus:border-brand-blue/35 focus:shadow-[0_0_0_3px_rgba(13,63,145,0.1)] focus:outline-none"
 											bind:value={dateFrom}
@@ -536,6 +535,7 @@
 										</label>
 										<input
 											id="filtro-fecha-hasta"
+											name="hasta"
 											type="date"
 											class="rounded-[4px] border border-border px-3 py-[10px] text-[14px] transition focus:border-brand-blue/35 focus:shadow-[0_0_0_3px_rgba(13,63,145,0.1)] focus:outline-none"
 											bind:value={dateTo}
@@ -555,28 +555,79 @@
 							href="/examen-autorias"
 							variant="secondary"
 							onclick={(event) => {
-								event.preventDefault();
-								resetFilters();
+								void clearFilters(event);
 							}}
 						>
 							Limpiar campos
 						</AppButton>
-						<AppButton type="submit" variant="primary">Buscar</AppButton>
+						<AppButton type="submit" variant="primary" disabled={isSearching} className="gap-2">
+							{#if isSearching}
+								<LoaderCircle class="h-4.5 w-4.5 animate-spin" />
+								Buscando...
+							{:else}
+								Buscar
+							{/if}
+						</AppButton>
 					</div>
 				</div>
 			</form>
 
 			<div
-				class="relative outline-none"
+				id="examen-resultados"
+				bind:this={resultsRegion}
+				class="relative scroll-mt-6 outline-none"
 				aria-live="polite"
-				aria-busy="false"
+				aria-busy={isSearching ? 'true' : 'false'}
 				role="region"
 				aria-label="Resultados de búsqueda"
 				tabindex="-1"
 			>
 				{#if tableRows.length > 0}
-					<div class="mb-5 flex items-center justify-between border-b-2 border-border pb-[15px]">
-						<div class="text-[16px] text-text-soft"><strong class="text-[20px] text-text-main">{works.length}</strong> resultados</div>
+					<div
+						bind:this={paginationRegion}
+						class="mb-5 flex scroll-mt-24 flex-wrap items-center justify-between gap-3 border-b-2 border-border pb-[15px]"
+					>
+						<p class="m-0 text-[0.88rem] font-normal text-text-main">
+							<span class="font-semibold text-brand-blue">{data.totalResults}</span> resultados ·
+							Mostrando
+							<span class="font-semibold text-brand-blue">
+								{(data.page - 1) * data.pageSize + 1}-{(data.page - 1) * data.pageSize + data.works.length}
+							</span>
+						</p>
+						{#if data.totalPages > 1}
+							<div class="flex items-center gap-2">
+								<AppButton
+									type="button"
+									variant="secondary"
+									disabled={data.page <= 1 || isSearching}
+									className="!h-9 !w-9 !rounded-full !border-transparent !bg-transparent !p-0 !text-brand-blue-dark shadow-none hover:!bg-surface-soft"
+									title="Página anterior"
+									onclick={() => {
+										void navigateToPage(data.page - 1);
+									}}
+								>
+									<ChevronLeft class="h-5 w-5" aria-hidden="true" />
+									<span class="sr-only">Anterior</span>
+								</AppButton>
+								<span class="font-['Roboto',sans-serif] text-[0.86rem] font-normal text-text-main">
+									Página <span class="font-semibold text-brand-blue">{data.page}</span> de
+									<span class="font-semibold text-brand-blue">{data.totalPages}</span>
+								</span>
+								<AppButton
+									type="button"
+									variant="secondary"
+									disabled={data.page >= data.totalPages || isSearching}
+									className="!h-9 !w-9 !rounded-full !border-transparent !bg-transparent !p-0 !text-brand-blue-dark shadow-none hover:!bg-surface-soft"
+									title="Página siguiente"
+									onclick={() => {
+										void navigateToPage(data.page + 1);
+									}}
+								>
+									<ChevronRight class="h-5 w-5" aria-hidden="true" />
+									<span class="sr-only">Siguiente</span>
+								</AppButton>
+							</div>
+						{/if}
 					</div>
 				{/if}
 				<WorksTable
@@ -584,6 +635,40 @@
 					mode="standard"
 					emptyMessage="No se encontraron obras que coincidan con los criterios de búsqueda."
 				/>
+				{#if data.totalPages > 1}
+					<nav class="mt-4 flex flex-wrap items-center justify-end gap-2" aria-label="Paginación de obras">
+						<AppButton
+							type="button"
+							variant="secondary"
+							disabled={data.page <= 1 || isSearching}
+							className="!h-9 !w-9 !rounded-full !border-transparent !bg-transparent !p-0 !text-brand-blue-dark shadow-none hover:!bg-surface-soft"
+							title="Página anterior"
+							onclick={() => {
+								void navigateToPage(data.page - 1);
+							}}
+						>
+							<ChevronLeft class="h-5 w-5" aria-hidden="true" />
+							<span class="sr-only">Anterior</span>
+						</AppButton>
+						<span class="font-['Roboto',sans-serif] text-[0.86rem] font-normal text-text-main">
+							Página <span class="font-semibold text-brand-blue">{data.page}</span> de
+							<span class="font-semibold text-brand-blue">{data.totalPages}</span>
+						</span>
+						<AppButton
+							type="button"
+							variant="secondary"
+							disabled={data.page >= data.totalPages || isSearching}
+							className="!h-9 !w-9 !rounded-full !border-transparent !bg-transparent !p-0 !text-brand-blue-dark shadow-none hover:!bg-surface-soft"
+							title="Página siguiente"
+							onclick={() => {
+								void navigateToPage(data.page + 1);
+							}}
+						>
+							<ChevronRight class="h-5 w-5" aria-hidden="true" />
+							<span class="sr-only">Siguiente</span>
+						</AppButton>
+					</nav>
+				{/if}
 			</div>
 		</div>
 	</div>

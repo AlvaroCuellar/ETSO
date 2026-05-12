@@ -663,23 +663,14 @@ export class TexoroSearchEngine {
 		}
 
 		const candidates = unionSets(groupEvaluations.map((group) => group.docs));
-		const allowedWorkIds = Array.isArray(options.workIds)
-			? new Set(options.workIds.map((workId) => workId.trim()).filter(Boolean))
-			: null;
 		const orderedCandidates = sortedNumeric(candidates).sort(
 			(a, b) => (retrievalScores.get(b) ?? 0) - (retrievalScores.get(a) ?? 0)
 		);
-		const scopedCandidates = allowedWorkIds
-			? orderedCandidates.filter((docId) => {
-					const row = this.#docRowById.get(docId);
-					return row ? allowedWorkIds.has(row[1]) : false;
-				})
-			: orderedCandidates;
 
 		const verifiedCount = 0;
 		const rawResults: SearchResult[] = [];
 
-		for (const docId of scopedCandidates) {
+		for (const docId of orderedCandidates) {
 			const matchByKey = new Map<string, SearchResultMatch>();
 			let matchedGroups = 0;
 			const addMatch = (kind: SearchResultMatch['kind'], source: string, occurrences: number): void => {
@@ -779,7 +770,7 @@ export class TexoroSearchEngine {
 			parsed,
 			results,
 			allResults: rawResults,
-			candidateCount: scopedCandidates.length,
+			candidateCount: orderedCandidates.length,
 			textsWithOccurrences,
 			totalOccurrences,
 			verifiedCount,

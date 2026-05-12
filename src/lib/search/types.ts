@@ -290,15 +290,7 @@ export type SearchProximityOrder = 'any' | 'after' | 'before';
 export interface StructuredSearchQuery {
 	main: string;
 	additionalMode?: SearchBooleanMode;
-	additionalOptions?: string[][][];
-	additionalGroups?: string[][];
-	additionalTerms?: Array<
-		| string
-		| {
-				value: string;
-				operator?: 'and' | 'or';
-		  }
-	>;
+	additionalTerms?: string[];
 	proximityMode?: SearchBooleanMode;
 	proximityTerms?: Array<{
 		value: string;
@@ -312,7 +304,6 @@ export interface SearchOptions {
 	maxPhraseVerificationDocs?: number;
 	snippetRadius?: number;
 	includeSnippets?: boolean;
-	workIds?: string[];
 	structuredQuery?: StructuredSearchQuery;
 	structuredClauses?: Array<
 		| { kind: 'term'; value: string; operator?: 'and' | 'or' | null }

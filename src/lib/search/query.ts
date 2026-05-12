@@ -3,8 +3,6 @@ import { normalizePattern } from './normalize';
 import type { ParsedQueryPhrase, ParsedQueryTerm } from './types';
 import type { SearchBooleanMode, SearchProximityOrder, StructuredSearchQuery } from './types';
 
-type StructuredAdditionalTerm = NonNullable<StructuredSearchQuery['additionalTerms']>[number];
-
 export type StructuredSearchInputClause =
 	| { kind: 'term'; value: string; operator?: 'and' | 'or' | null }
 	| { kind: 'phrase'; value: string; operator?: 'and' | 'or' | null }
@@ -84,37 +82,6 @@ const normalizeProximityOrder = (value: SearchProximityOrder | undefined): Searc
 const normalizeDistance = (value: number): number =>
 	Math.min(100, Math.max(0, Number.isFinite(value) ? Math.floor(value) : 5));
 
-const expandStructuredOptions = (
-	options: string[][][],
-	mainClause: ParsedQueryClause,
-	preserveEnie: boolean,
-	warnings: string[]
-): ParsedQueryClause[][] => {
-	const groups: ParsedQueryClause[][] = [];
-
-	for (const option of options) {
-		let optionGroups: ParsedQueryClause[][] = [[]];
-		for (const condition of option) {
-			const alternatives: ParsedQueryClause[] = [];
-			for (const value of condition) {
-				const clause = valueToClause(value, preserveEnie);
-				if (!clause) {
-					warnings.push(`No se pudo interpretar: ${value}`);
-					continue;
-				}
-				alternatives.push(clause);
-			}
-			if (alternatives.length === 0) continue;
-			optionGroups = optionGroups.flatMap((group) =>
-				alternatives.map((alternative) => [...group, alternative])
-			);
-		}
-		groups.push(...optionGroups.filter((group) => group.length > 0).map((group) => [mainClause, ...group]));
-	}
-
-	return groups;
-};
-
 const combineGroups = (
 	groups: ParsedQueryClause[][],
 	clauses: ParsedQueryClause[],
@@ -124,13 +91,6 @@ const combineGroups = (
 	if (mode === 'all') return groups.map((group) => [...group, ...clauses]);
 	return groups.flatMap((group) => clauses.map((clause) => [...group, clause]));
 };
-
-const structuredAdditionalValue = (item: StructuredAdditionalTerm): string =>
-	typeof item === 'string' ? item : item.value;
-
-const structuredAdditionalOperator = (
-	item: StructuredAdditionalTerm
-): 'and' | 'or' => (typeof item === 'string' ? 'and' : item.operator === 'or' ? 'or' : 'and');
 
 export const parseSearchQuery = (input: string, preserveEnie: boolean): ParsedQuery => {
 	const warnings: string[] = [];
@@ -226,42 +186,16 @@ export const parseStructuredQuery = (
 
 	let groups: ParsedQueryClause[][] = [[mainClause]];
 
-	if (query.additionalOptions) {
-		const optionGroups = expandStructuredOptions(query.additionalOptions, mainClause, preserveEnie, warnings);
-		groups = optionGroups.length > 0 ? optionGroups : [[mainClause]];
-	} else if (query.additionalGroups) {
-		const parsedAdditionalGroups = query.additionalGroups
-			.map((group) => {
-				const clauses: ParsedQueryClause[] = [];
-				for (const value of group) {
-					const clause = valueToClause(value, preserveEnie);
-					if (!clause) {
-						warnings.push(`No se pudo interpretar: ${value}`);
-						continue;
-					}
-					clauses.push(clause);
-				}
-				return clauses;
-			})
-			.filter((group) => group.length > 0);
-		groups = parsedAdditionalGroups.length > 0
-			? parsedAdditionalGroups.map((group) => [mainClause, ...group])
-			: [[mainClause]];
-	} else {
-		for (const item of query.additionalTerms ?? []) {
-			const value = structuredAdditionalValue(item);
-			const clause = valueToClause(value, preserveEnie);
-			if (!clause) {
-				warnings.push(`No se pudo interpretar: ${value}`);
-				continue;
-			}
-			if (structuredAdditionalOperator(item) === 'or') {
-				groups.push([mainClause, clause]);
-				continue;
-			}
-			groups[groups.length - 1].push(clause);
+	const additionalClauses: ParsedQueryClause[] = [];
+	for (const value of query.additionalTerms ?? []) {
+		const clause = valueToClause(value, preserveEnie);
+		if (!clause) {
+			warnings.push(`No se pudo interpretar: ${value}`);
+			continue;
 		}
+		additionalClauses.push(clause);
 	}
+	groups = combineGroups(groups, additionalClauses, normalizeBooleanMode(query.additionalMode));
 
 	const proximityClauses: ParsedQueryClause[] = [];
 	for (const item of query.proximityTerms ?? []) {

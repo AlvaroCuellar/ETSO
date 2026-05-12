@@ -18,7 +18,6 @@
 	}: Props = $props();
 
 	const helpId = $derived.by(() => `help-${name}`);
-	const groupLabel = $derived(label || 'Operador booleano');
 
 	const updateValue = (next: 'or' | 'and'): void => {
 		if (disabled || next === value) return;
@@ -27,19 +26,17 @@
 </script>
 
 <fieldset class="filter-group radio-group js-match-toggle match-toggle-hidden">
-	{#if label}
-		<legend class="fieldset-legend field-label-with-help">
-			{label}
-			{#if helpText}
-				<span class="field-help-anchor">
-					<span class="field-help-trigger" role="button" tabindex="0" aria-label={`Ayuda sobre ${label}`}>
-						?
-					</span>
-					<span class="field-help-popover" id={helpId}>{helpText}</span>
+	<legend class="fieldset-legend field-label-with-help">
+		{label}
+		{#if helpText}
+			<span class="field-help-anchor">
+				<span class="field-help-trigger" role="button" tabindex="0" aria-label={`Ayuda sobre ${label}`}>
+					?
 				</span>
-			{/if}
-		</legend>
-	{/if}
+				<span class="field-help-popover" id={helpId}>{helpText}</span>
+			</span>
+		{/if}
+	</legend>
 
 	<div class="form-radios">
 		<label class="form-item">
@@ -52,7 +49,7 @@
 		</label>
 	</div>
 
-	<div class="match-toggle" role="group" aria-label={groupLabel}>
+	<div class="match-toggle" role="group" aria-label={label}>
 		<button
 			type="button"
 			class="match-toggle-btn"

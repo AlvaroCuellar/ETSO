@@ -9,15 +9,6 @@ const asPositiveNumber = (value: unknown, fallback: number, max: number): number
 	return Math.min(Math.floor(value), max);
 };
 
-const asStringList = (value: unknown, max: number): string[] | undefined => {
-	if (!Array.isArray(value)) return undefined;
-	const items = value
-		.map((item) => (typeof item === 'string' ? item.trim() : ''))
-		.filter(Boolean)
-		.slice(0, max);
-	return items;
-};
-
 export const POST: RequestHandler = async ({ request }) => {
 	const body = (await request.json().catch(() => null)) as
 		| { query?: unknown; structuredQuery?: unknown; structuredClauses?: unknown; options?: Record<string, unknown> }
@@ -33,7 +24,6 @@ export const POST: RequestHandler = async ({ request }) => {
 		maxPhraseVerificationDocs: asPositiveNumber(rawOptions.maxPhraseVerificationDocs, 220, 500),
 		snippetRadius: asPositiveNumber(rawOptions.snippetRadius, 115, 220),
 		includeSnippets: rawOptions.includeSnippets === true,
-		workIds: asStringList(rawOptions.workIds, 5000),
 		structuredQuery:
 			body?.structuredQuery && typeof body.structuredQuery === 'object'
 				? (body.structuredQuery as SearchOptions['structuredQuery'])

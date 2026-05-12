@@ -19,7 +19,6 @@
 	import ChevronDown from 'lucide-svelte/icons/chevron-down';
 	import ChevronLeft from 'lucide-svelte/icons/chevron-left';
 	import ChevronRight from 'lucide-svelte/icons/chevron-right';
-	import ArrowRight from 'lucide-svelte/icons/arrow-right';
 	import Feather from 'lucide-svelte/icons/feather';
 	import Search from 'lucide-svelte/icons/search';
 	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
@@ -154,16 +153,6 @@
 		value: string;
 	}
 
-	interface AdditionalQueryCondition {
-		id: number;
-		alternatives: AdditionalQueryTerm[];
-	}
-
-	interface AdditionalQueryOption {
-		id: number;
-		conditions: AdditionalQueryCondition[];
-	}
-
 	interface ProximityQueryTerm {
 		id: number;
 		value: string;
@@ -182,16 +171,6 @@
 		operator: string | null;
 	}
 
-	interface TexoroFilterSnapshot {
-		workIds: string[];
-		genres: string[];
-		traditionalAuthorIds: string[];
-		traditionalMatch: 'or' | 'and';
-		stylometryAuthorIds: string[];
-		stylometryMatch: 'or' | 'and';
-		states: string[];
-	}
-
 	type InterpretedQueryPartKind = 'text' | 'term' | 'operator';
 
 	interface InterpretedQueryPart {
@@ -199,14 +178,8 @@
 		value: string;
 	}
 
-	interface InterpretedQueryBlock {
-		title: string;
-		parts?: InterpretedQueryPart[];
-		items?: InterpretedQueryPart[][];
-	}
-
 	interface InterpretedQueryView {
-		blocks: InterpretedQueryBlock[];
+		summaryParts: InterpretedQueryPart[];
 		formulaParts: InterpretedQueryPart[];
 	}
 
@@ -219,6 +192,7 @@
 	const exportTitle = '#002681';
 	const exportText = '#4f5562';
 	const exportTextStrong = '#243b63';
+	const MAX_QUERY_TERMS = 10;
 	const RESULTS_PAGE_SIZE = 20;
 	const QUERY_ALLOWED_PATTERN = /^[\p{L}\p{N}*?\s]+$/u;
 	const SHOW_AUTOMATIC_CHARTS = false;
@@ -230,7 +204,6 @@
 	const PREVIEW_SCROLL_THRESHOLD_PX = 900;
 	const OCCURRENCE_DETAILS_CACHE_LIMIT = 24;
 	const TEXORO_PRIME_DEBOUNCE_MS = 500;
-	const ADDITIONAL_OPTION_EXPANSION_LIMIT = 256;
 
 	const stripTrailingSlash = (value: string): string => value.replace(/\/+$/, '');
 	const joinUrl = (base: string, path: string): string =>
@@ -251,22 +224,21 @@
 	let mainQuery = $state('');
 	let advancedSearchOpen = $state(false);
 	let filtersOpen = $state(false);
-	let additionalOptions = $state<AdditionalQueryOption[]>([]);
+	let additionalTerms = $state<AdditionalQueryTerm[]>([]);
+	let additionalMode = $state<SearchBooleanMode>('all');
+	let additionalModePreview = $state<SearchBooleanMode | null>(null);
 	let proximityTerms = $state<ProximityQueryTerm[]>([]);
 	let proximityMode = $state<SearchBooleanMode>('all');
 	let proximityModePreview = $state<SearchBooleanMode | null>(null);
-	let nextAdditionalOptionId = 1;
-	let nextAdditionalConditionId = 1;
 	let nextAdditionalTermId = 1;
 	let nextProximityTermId = 1;
-	let selectedWorkIds = $state<string[]>([]);
+	let titleFilter = $state('');
 	let selectedGenres = $state<string[]>([]);
 	let selectedTradAuthors = $state<string[]>([]);
 	let tradMatch = $state<'or' | 'and'>('or');
 	let selectedEstoAuthors = $state<string[]>([]);
 	let estoMatch = $state<'or' | 'and'>('or');
 	let selectedStates = $state<string[]>([]);
-	let submittedFiltersActive = $state(false);
 	let submittedTerms = $state<SubmittedQueryTerm[]>([]);
 	let isSearching = $state(false);
 	let searchError = $state('');
@@ -308,6 +280,13 @@
 
 	const sumResultOccurrences = (result: SearchResult): number =>
 		result.matches.reduce((sum, match) => sum + (match.occurrences ?? 0), 0);
+
+	const normalizeText = (value: string): string =>
+		value
+			.normalize('NFD')
+			.replace(/[\u0300-\u036f]/g, '')
+			.toLowerCase()
+			.trim();
 
 	const collectAuthorIds = (set: AttributionSet): Set<string> => {
 		const authorIds = new Set<string>();
@@ -417,14 +396,24 @@
 		};
 	};
 
-	const workOptions = $derived.by<TokenOption[]>(() => data.filterOptions.works);
 	const authorOptions = $derived.by<TokenOption[]>(() => data.filterOptions.authors);
 	const genreOptions = $derived.by<TokenOption[]>(() => data.filterOptions.genres);
 	const stateOptions = $derived.by<TokenOption[]>(() => data.filterOptions.states);
 
-	const hasEditableFilters = $derived.by(
+	const activeSearchTermCount = $derived.by(() => {
+		let count = mainQuery.trim() ? 1 : 0;
+		for (const term of additionalTerms) {
+			if (term.value.trim()) count += 1;
+		}
+		for (const term of proximityTerms) {
+			if (term.value.trim()) count += 1;
+		}
+		return count;
+	});
+
+	const hasActiveFilters = $derived.by(
 		() =>
-			selectedWorkIds.length > 0 ||
+			Boolean(titleFilter.trim()) ||
 			selectedGenres.length > 0 ||
 			selectedTradAuthors.length > 0 ||
 			selectedEstoAuthors.length > 0 ||
@@ -432,25 +421,67 @@
 	);
 
 	$effect(() => {
-		if (additionalOptions.length > 0 || proximityTerms.length > 0) {
+		if (additionalTerms.length > 0 || proximityTerms.length > 0) {
 			advancedSearchOpen = true;
 		}
 	});
 
 	$effect(() => {
-		if (hasEditableFilters) {
+		if (hasActiveFilters) {
 			filtersOpen = true;
 		}
 	});
 
+	$effect(() => {
+		const filterSignature = [
+			titleFilter,
+			selectedGenres.join('\u0001'),
+			selectedTradAuthors.join('\u0001'),
+			tradMatch,
+			selectedEstoAuthors.join('\u0001'),
+			estoMatch,
+			selectedStates.join('\u0001')
+		].join('\u0002');
+		filterSignature;
+		resultsPage = 1;
+		previewLoadLimit = PREVIEW_INITIAL_DOC_LIMIT;
+	});
+
 	const filteredResults = $derived.by(() => {
 		if (!searchExecution) return [] as SearchResult[];
-		return [...searchExecution.allResults].sort(
-			(a, b) =>
-				sumResultOccurrences(b) - sumResultOccurrences(a) ||
-				b.score - a.score ||
-				a.docId - b.docId
-		);
+		const normalizedTitle = normalizeText(titleFilter);
+
+		return searchExecution.allResults
+			.filter((result) => {
+				const meta = result.meta;
+				if (!meta) return false;
+
+				if (normalizedTitle) {
+					const haystack = normalizeText([meta.title, ...meta.titleVariants].join(' '));
+					if (!haystack.includes(normalizedTitle)) return false;
+				}
+
+				if (selectedGenres.length > 0 && !selectedGenres.includes(meta.genre)) return false;
+				if (
+					!matchesByMode(collectAuthorIds(meta.traditionalAttribution), selectedTradAuthors, tradMatch)
+				) {
+					return false;
+				}
+				if (
+					!matchesByMode(collectAuthorIds(meta.stylometryAttribution), selectedEstoAuthors, estoMatch)
+				) {
+					return false;
+				}
+				if (selectedStates.length > 0 && !selectedStates.includes(meta.textState)) return false;
+
+				return true;
+			})
+			.sort(
+				(a, b) =>
+					sumResultOccurrences(b) - sumResultOccurrences(a) ||
+					b.score - a.score ||
+					a.docId - b.docId
+			);
 	});
 
 	const resultPageCount = $derived.by(() =>
@@ -531,6 +562,7 @@
 	const interpretedQueryOperatorClass =
 		'font-mono text-[0.76rem] font-semibold uppercase text-text-soft';
 
+	const additionalModeVisual = $derived(additionalModePreview ?? additionalMode);
 	const proximityModeVisual = $derived(proximityModePreview ?? proximityMode);
 
 	const queryClauseCount = $derived.by(() => submittedTerms.length);
@@ -730,16 +762,6 @@
 		value: ''
 	});
 
-	const createAdditionalCondition = (withInitialAlternative = true): AdditionalQueryCondition => ({
-		id: nextAdditionalConditionId++,
-		alternatives: withInitialAlternative ? [createAdditionalTerm()] : []
-	});
-
-	const createAdditionalOption = (withInitialCondition = true): AdditionalQueryOption => ({
-		id: nextAdditionalOptionId++,
-		conditions: withInitialCondition ? [createAdditionalCondition()] : []
-	});
-
 	const createProximityTerm = (): ProximityQueryTerm => ({
 		id: nextProximityTermId++,
 		value: '',
@@ -747,120 +769,27 @@
 		order: 'any'
 	});
 
-	const hasAdditionalConditionValue = (condition: AdditionalQueryCondition): boolean =>
-		condition.alternatives.some((term) => Boolean(term.value.trim()));
-
-	const hasAdditionalOptionValue = (option: AdditionalQueryOption): boolean =>
-		option.conditions.some(hasAdditionalConditionValue);
-
-	const addAdditionalCondition = (): void => {
-		if (additionalOptions.length === 0) {
-			additionalOptions = [createAdditionalOption()];
-			advancedSearchOpen = true;
-			return;
-		}
-		const targetOptionId = additionalOptions[additionalOptions.length - 1].id;
-		additionalOptions = additionalOptions.map((option) =>
-			option.id === targetOptionId
-				? { ...option, conditions: [...option.conditions, createAdditionalCondition()] }
-				: option
-		);
+	const addAdditionalTerm = (): void => {
+		if (additionalTerms.length + proximityTerms.length >= MAX_QUERY_TERMS - 1) return;
+		additionalTerms = [...additionalTerms, createAdditionalTerm()];
 		advancedSearchOpen = true;
 	};
 
-	const addAdditionalConditionToOption = (optionId: number): void => {
-		additionalOptions = additionalOptions.map((option) =>
-			option.id === optionId
-				? { ...option, conditions: [...option.conditions, createAdditionalCondition()] }
-				: option
-		);
-		advancedSearchOpen = true;
+	const removeAdditionalTerm = (termId: number): void => {
+		additionalTerms = additionalTerms.filter((term) => term.id !== termId);
 	};
 
-	const addAdditionalAlternativeToCondition = (optionId: number, conditionId: number): void => {
-		additionalOptions = additionalOptions.map((option) =>
-			option.id === optionId
-				? {
-						...option,
-						conditions: option.conditions.map((condition) =>
-							condition.id === conditionId
-								? { ...condition, alternatives: [...condition.alternatives, createAdditionalTerm()] }
-								: condition
-						)
-					}
-				: option
-		);
-		advancedSearchOpen = true;
+	const updateAdditionalTermValue = (termId: number, value: string): void => {
+		additionalTerms = additionalTerms.map((term) => (term.id === termId ? { ...term, value } : term));
 	};
 
-	const addAdditionalOption = (): void => {
-		if (!additionalOptions.some(hasAdditionalOptionValue)) return;
-		additionalOptions = [...additionalOptions, createAdditionalOption()];
-		advancedSearchOpen = true;
-	};
-
-	const removeAdditionalAlternative = (optionId: number, conditionId: number, termId: number): void => {
-		additionalOptions = additionalOptions.map((option) =>
-			option.id === optionId
-				? {
-						...option,
-						conditions: option.conditions.map((condition) =>
-							condition.id === conditionId
-								? {
-										...condition,
-										alternatives: condition.alternatives.filter((term) => term.id !== termId)
-									}
-								: condition
-						)
-					}
-				: option
-		);
-	};
-
-	const removeAdditionalCondition = (optionId: number, conditionId: number): void => {
-		additionalOptions = additionalOptions.map((option) =>
-			option.id === optionId
-				? { ...option, conditions: option.conditions.filter((condition) => condition.id !== conditionId) }
-				: option
-		);
-	};
-
-	const canRemoveAdditionalCondition = (option: AdditionalQueryOption, condition: AdditionalQueryCondition): boolean =>
-		option.conditions.length > 1 || !hasAdditionalConditionValue(condition);
-
-	const canRemoveAdditionalOption = (option: AdditionalQueryOption, index: number): boolean =>
-		index > 0 || !hasAdditionalOptionValue(option);
-
-	const removeAdditionalOption = (optionId: number): void => {
-		additionalOptions = additionalOptions.filter((option) => option.id !== optionId);
-	};
-
-	const updateAdditionalAlternativeValue = (
-		optionId: number,
-		conditionId: number,
-		termId: number,
-		value: string
-	): void => {
-		additionalOptions = additionalOptions.map((option) =>
-			option.id === optionId
-				? {
-						...option,
-						conditions: option.conditions.map((condition) =>
-							condition.id === conditionId
-								? {
-										...condition,
-										alternatives: condition.alternatives.map((term) =>
-											term.id === termId ? { ...term, value } : term
-										)
-									}
-								: condition
-						)
-					}
-				: option
-		);
+	const setAdditionalMode = (event: MouseEvent, mode: SearchBooleanMode): void => {
+		additionalMode = mode;
+		(event.currentTarget as HTMLButtonElement).blur();
 	};
 
 	const addProximityTerm = (): void => {
+		if (additionalTerms.length + proximityTerms.length >= MAX_QUERY_TERMS - 1) return;
 		proximityTerms = [...proximityTerms, createProximityTerm()];
 		advancedSearchOpen = true;
 	};
@@ -894,8 +823,6 @@
 		return /\s/.test(normalized) ? `"${normalized}"` : normalized;
 	};
 
-	const formatDisplayFormulaValue = (value: string): string => `«${normalizeSearchValue(value)}»`;
-
 	const formatClauseSourceForValue = (value: string): string => {
 		const normalized = normalizeSearchValue(value);
 		return /\s/.test(normalized) ? `"${normalized}"` : normalizePattern(normalized, preserveEnieForHighlight);
@@ -927,228 +854,169 @@
 
 	const textPart = (value: string): InterpretedQueryPart => ({ kind: 'text', value });
 	const termPart = (value: string): InterpretedQueryPart => ({ kind: 'term', value });
-	const collectAdditionalOptions = (query: StructuredSearchQuery): string[][][] => {
-		if (query.additionalOptions) {
-			return query.additionalOptions
-				.map((option) =>
-					option
-						.map((condition) => condition.map(normalizeSearchValue).filter(Boolean))
-						.filter((condition) => condition.length > 0)
-				)
-				.filter((option) => option.length > 0);
-		}
+	const operatorPart = (value: string): InterpretedQueryPart => ({ kind: 'operator', value });
 
-		if (query.additionalGroups) {
-			return query.additionalGroups
-				.map((group) => group.map(normalizeSearchValue).filter(Boolean))
-				.filter((group) => group.length > 0)
-				.map((group) => group.map((term) => [term]));
-		}
-
-		const options: string[][][] = [];
-		for (const item of query.additionalTerms ?? []) {
-			const value = normalizeSearchValue(typeof item === 'string' ? item : item.value);
-			if (!value) continue;
-			const operator = typeof item === 'string' ? 'and' : item.operator === 'or' ? 'or' : 'and';
-			if (operator === 'or' || options.length === 0) {
-				options.push([[value]]);
-				continue;
-			}
-			options[options.length - 1].push([value]);
-		}
-		return options;
-	};
-
-	const appendTermConjunction = (
+	const appendHumanTermList = (
 		parts: InterpretedQueryPart[],
 		terms: string[],
-		conjunction: 'y' | 'o' = 'y'
+		conjunction: 'y' | 'o'
 	): void => {
 		terms.forEach((term, index) => {
 			if (index > 0) {
-				const cleanTerm = term.replace(/^[«"']+/, '').toLocaleLowerCase('es');
-				const finalConjunction = conjunction === 'o' && /^h?o/.test(cleanTerm) ? 'u' : conjunction;
-				parts.push(textPart(index === terms.length - 1 ? ` ${finalConjunction} ` : ', '));
+				parts.push(textPart(index === terms.length - 1 ? ` ${conjunction} ` : ', '));
 			}
 			parts.push(termPart(term));
 		});
 	};
 
-	const appendDisplayTermConjunction = (
+	const appendFormulaTerms = (
 		parts: InterpretedQueryPart[],
 		terms: string[],
-		conjunction: 'y' | 'o' = 'y'
+		operator: 'AND' | 'OR'
 	): void => {
-		appendTermConjunction(parts, terms.map(formatDisplayFormulaValue), conjunction);
+		terms.forEach((term, index) => {
+			if (index > 0) parts.push(operatorPart(operator));
+			parts.push(termPart(term));
+		});
 	};
 
-	const buildConditionFormula = (condition: string[], quote: (value: string) => string): string => {
-		if (condition.length === 1) return quote(condition[0]);
-		return `(${condition.map(quote).join(' OR ')})`;
+	const appendProximityCondition = (
+		parts: InterpretedQueryPart[],
+		main: string,
+		term: Pick<ProximityQueryTerm, 'value' | 'distance'> & { order?: SearchProximityOrder }
+	): void => {
+		parts.push(termPart(formatFormulaValue(term.value)));
+		parts.push(textPart(` a un máximo de ${term.distance} palabras de `));
+		parts.push(termPart(main));
+
+		if (term.order === 'after') {
+			parts.push(textPart(', después de '));
+			parts.push(termPart(main));
+			return;
+		}
+
+		if (term.order === 'before') {
+			parts.push(textPart(', antes de '));
+			parts.push(termPart(main));
+			return;
+		}
+
+		parts.push(textPart(', en cualquier orden'));
 	};
 
-	const buildOptionFormula = (option: string[][], quote: (value: string) => string): string => {
-		const conditionFormulas = option.map((condition) => buildConditionFormula(condition, quote));
-		if (conditionFormulas.length === 1) return conditionFormulas[0];
-		return `(${conditionFormulas.join(' AND ')})`;
+	const buildTechnicalFormulaParts = (query: StructuredSearchQuery): InterpretedQueryPart[] => {
+		const main = formatFormulaValue(query.main);
+		const parts: InterpretedQueryPart[] = [termPart(main)];
+		const additional = (query.additionalTerms ?? []).map(formatFormulaValue).filter(Boolean);
+		if (additional.length > 0) {
+			parts.push(operatorPart('AND'));
+			if (additional.length > 1 && query.additionalMode === 'any') parts.push(textPart('('));
+			appendFormulaTerms(parts, additional, query.additionalMode === 'any' ? 'OR' : 'AND');
+			if (additional.length > 1 && query.additionalMode === 'any') parts.push(textPart(')'));
+		}
+		const proximity = (query.proximityTerms ?? [])
+			.filter((term) => term.value.trim())
+			.map((term): InterpretedQueryPart[] => [
+				operatorPart(`${proximityFormulaName(term.order ?? 'any')}(`),
+				termPart(main),
+				textPart(', '),
+				termPart(formatFormulaValue(term.value)),
+				textPart(`, <=${term.distance})`)
+			]);
+		if (proximity.length > 0) {
+			parts.push(operatorPart('AND'));
+			if (proximity.length > 1) parts.push(textPart('('));
+			proximity.forEach((group, index) => {
+				if (index > 0) parts.push(operatorPart(query.proximityMode === 'any' ? 'OR' : 'AND'));
+				parts.push(...group);
+			});
+			if (proximity.length > 1) parts.push(textPart(')'));
+		}
+		return parts;
 	};
 
-	const buildAdditionalFormula = (options: string[][][], quote: (value: string) => string): string => {
-		if (options.length === 0) return '';
-		if (options.length === 1) return buildOptionFormula(options[0], quote);
-		return `(${options.map((option) => buildOptionFormula(option, quote)).join(' OR ')})`;
-	};
-
-	const buildProximityFormula = (query: StructuredSearchQuery, quote: (value: string) => string): string => {
-		const main = quote(query.main);
+	const buildTechnicalFormula = (query: StructuredSearchQuery): string => {
+		const main = formatFormulaValue(query.main);
+		const parts = [main];
+		const additional = (query.additionalTerms ?? []).map(formatFormulaValue).filter(Boolean);
+		if (additional.length > 0) {
+			if (additional.length === 1) {
+				parts.push(additional[0]);
+			} else if (query.additionalMode === 'all') {
+				parts.push(...additional);
+			} else {
+				parts.push(`(${additional.join(' OR ')})`);
+			}
+		}
 		const proximity = (query.proximityTerms ?? [])
 			.filter((term) => term.value.trim())
 			.map(
 				(term) =>
-					`${proximityFormulaName(term.order ?? 'any')}(${main}, ${quote(term.value)}, <=${term.distance})`
+					`${proximityFormulaName(term.order ?? 'any')}(${main}, ${formatFormulaValue(term.value)}, <=${term.distance})`
 			);
-		if (proximity.length === 0) return '';
-		if (proximity.length === 1) return proximity[0];
-		return `(${proximity.join(query.proximityMode === 'any' ? ' OR ' : ' AND ')})`;
-	};
-
-	const buildTechnicalFormula = (
-		query: StructuredSearchQuery,
-		quote: (value: string) => string = formatFormulaValue,
-		omitMainWhenOnlyProximity = false
-	): string => {
-		const main = quote(query.main);
-		const options = collectAdditionalOptions(query);
-		const additional = buildAdditionalFormula(options, quote);
-		const proximity = buildProximityFormula(query, quote);
-		const parts: string[] = [];
-		if (!(omitMainWhenOnlyProximity && !additional && proximity)) {
-			parts.push(main);
+		if (proximity.length > 0) {
+			parts.push(
+				proximity.length === 1
+					? proximity[0]
+					: `(${proximity.join(query.proximityMode === 'any' ? ' OR ' : ' AND ')})`
+			);
 		}
-		if (additional) parts.push(additional);
-		if (proximity) parts.push(proximity);
 		return parts.join(' AND ');
 	};
 
-	const buildProximityConditionParts = (
-		main: string,
-		term: Pick<ProximityQueryTerm, 'value' | 'distance'> & { order?: SearchProximityOrder }
-	): InterpretedQueryPart[] => {
-		const parts: InterpretedQueryPart[] = [termPart(formatDisplayFormulaValue(term.value))];
-		if (term.order === 'after') {
-			parts.push(textPart(` debe aparecer a un máximo de ${term.distance} palabras después de `));
-			parts.push(termPart(main));
-			parts.push(textPart('.'));
-			return parts;
-		}
-		if (term.order === 'before') {
-			parts.push(textPart(` debe aparecer a un máximo de ${term.distance} palabras antes de `));
-			parts.push(termPart(main));
-			parts.push(textPart('.'));
-			return parts;
-		}
-		parts.push(textPart(` debe aparecer a un máximo de ${term.distance} palabras de `));
-		parts.push(termPart(main));
-		parts.push(textPart(', en cualquier orden.'));
-		return parts;
-	};
-
-	const appendConditionDescription = (parts: InterpretedQueryPart[], condition: string[]): void => {
-		if (condition.length === 1) {
-			parts.push(textPart('contener '));
-			parts.push(termPart(formatDisplayFormulaValue(condition[0])));
-			return;
-		}
-		parts.push(textPart('contener al menos uno de estos términos: '));
-		appendDisplayTermConjunction(parts, condition, 'o');
-	};
-
-	const buildOptionDescriptionParts = (option: string[][], sentenceStart: boolean): InterpretedQueryPart[] => {
-		const parts: InterpretedQueryPart[] = [];
-		option.forEach((condition, index) => {
-			if (index === 0) {
-				parts.push(textPart(sentenceStart ? 'La obra también debe ' : 'contiene '));
-				if (sentenceStart) {
-					appendConditionDescription(parts, condition);
-				} else if (condition.length === 1) {
-					parts.push(termPart(formatDisplayFormulaValue(condition[0])));
-				} else {
-					parts.push(textPart('al menos uno de estos términos: '));
-					appendDisplayTermConjunction(parts, condition, 'o');
-				}
-				return;
-			}
-			parts.push(textPart(sentenceStart ? '; y además debe ' : '; y también contiene '));
-			if (sentenceStart) {
-				appendConditionDescription(parts, condition);
-			} else if (condition.length === 1) {
-				parts.push(termPart(formatDisplayFormulaValue(condition[0])));
+	const buildInterpretedSummaryParts = (query: StructuredSearchQuery): InterpretedQueryPart[] => {
+		const main = formatFormulaValue(query.main);
+		const parts: InterpretedQueryPart[] = [textPart('Buscar '), termPart(main)];
+		const additional = (query.additionalTerms ?? []).map(formatFormulaValue).filter(Boolean);
+		if (additional.length > 0) {
+			if (additional.length === 1) {
+				parts.push(textPart(' en obras que también contienen '));
+				parts.push(termPart(additional[0]));
 			} else {
-				parts.push(textPart('al menos uno de estos términos: '));
-				appendDisplayTermConjunction(parts, condition, 'o');
+				parts.push(
+					textPart(
+						query.additionalMode === 'any'
+							? ' en obras que también contienen al menos uno de estos términos: '
+							: ' en obras que también contienen todos estos términos: '
+					)
+				);
+				appendHumanTermList(parts, additional, query.additionalMode === 'any' ? 'o' : 'y');
 			}
-		});
-		return parts;
-	};
-
-	const buildAdditionalBlock = (options: string[][][], main: string): InterpretedQueryBlock | null => {
-		if (options.length === 0) return null;
-		if (options.length === 1) {
-			const parts = buildOptionDescriptionParts(options[0], true);
-			parts.push(textPart('.'));
-			return { title: 'Restricciones adicionales', parts };
 		}
-
-		return {
-			title: 'Restricciones adicionales',
-			parts: [
-				textPart('Además de '),
-				termPart(formatDisplayFormulaValue(main)),
-				textPart(', la obra debe cumplir al menos una de estas condiciones:')
-			],
-			items: options.map((option) => {
-				const itemParts = buildOptionDescriptionParts(option, false);
-				itemParts.push(textPart('.'));
-				return itemParts;
-			})
-		};
-	};
-
-	const buildProximityBlock = (query: StructuredSearchQuery): InterpretedQueryBlock | null => {
-		const main = formatDisplayFormulaValue(query.main);
 		const proximity = (query.proximityTerms ?? []).filter((term) => term.value.trim());
-		if (proximity.length === 0) return null;
-		if (proximity.length === 1) {
-			return { title: 'Proximidad', parts: buildProximityConditionParts(main, proximity[0]) };
-		}
-		return {
-			title: 'Proximidad',
-			parts: [
-				textPart(
-					query.proximityMode === 'any'
-						? 'Debe cumplirse al menos una de estas condiciones de proximidad:'
-						: 'Deben cumplirse todas estas condiciones de proximidad:'
-				)
-			],
-			items: proximity.map((term) => buildProximityConditionParts(main, term))
-		};
-	};
+		if (proximity.length > 0) {
+			parts.push(textPart('. Además, '));
 
-	const buildInterpretedQuery = (query: StructuredSearchQuery): InterpretedQueryView => {
-		const blocks: InterpretedQueryBlock[] = [
-			{
-				title: 'Búsqueda principal',
-				parts: [termPart(formatDisplayFormulaValue(query.main))]
+			if (proximity.length === 1) {
+				const [term] = proximity;
+				parts.push(termPart(formatFormulaValue(term.value)));
+				parts.push(textPart(` debe aparecer a un máximo de ${term.distance} palabras de `));
+				parts.push(termPart(main));
+				if (term.order === 'after') {
+					parts.push(textPart(', después de '));
+					parts.push(termPart(main));
+				} else if (term.order === 'before') {
+					parts.push(textPart(', antes de '));
+					parts.push(termPart(main));
+				} else {
+					parts.push(textPart(', en cualquier orden'));
+				}
+			} else {
+				parts.push(
+					textPart(
+						query.proximityMode === 'any'
+							? 'debe cumplirse al menos una de estas condiciones de cercanía: '
+							: 'deben cumplirse estas condiciones de cercanía: '
+					)
+				);
+				proximity.forEach((term, index) => {
+					if (index > 0) parts.push(textPart('; '));
+					appendProximityCondition(parts, main, term);
+				});
 			}
-		];
-		const additionalBlock = buildAdditionalBlock(collectAdditionalOptions(query), query.main);
-		if (additionalBlock) blocks.push(additionalBlock);
-		const proximityBlock = buildProximityBlock(query);
-		if (proximityBlock) blocks.push(proximityBlock);
-		return {
-			blocks,
-			formulaParts: [textPart(buildTechnicalFormula(query, formatDisplayFormulaValue, true))]
-		};
+		}
+		parts.push(textPart('.'));
+		return parts;
 	};
 
 	const buildTermDescriptor = (
@@ -1172,25 +1040,6 @@
 		};
 	};
 
-	const cleanAdditionalOptionsFromState = (): string[][][] =>
-		additionalOptions
-			.map((option) =>
-				option.conditions
-					.map((condition) =>
-						condition.alternatives.map((term) => normalizeSearchValue(term.value)).filter(Boolean)
-					)
-					.filter((condition) => condition.length > 0)
-			)
-			.filter((option) => option.length > 0);
-
-	const countAdditionalOptionExpansion = (options: string[][][]): number =>
-		options.reduce(
-			(total, option) =>
-				total +
-				option.reduce((product, condition) => product * Math.max(1, condition.length), 1),
-			0
-		);
-
 	const buildEffectiveQuery = (): {
 		query: string;
 		terms: SubmittedQueryTerm[];
@@ -1200,15 +1049,10 @@
 		const normalizedMain = normalizeSearchValue(mainQuery);
 		terms.push(buildTermDescriptor(normalizedMain, normalizedMain, null));
 
-		const cleanAdditionalOptions = cleanAdditionalOptionsFromState();
-		cleanAdditionalOptions.forEach((option, optionIndex) => {
-			option.forEach((condition, conditionIndex) => {
-				condition.forEach((term, termIndex) => {
-					const operator = optionIndex > 0 || termIndex > 0 ? 'or' : conditionIndex > 0 ? 'and' : 'and';
-					terms.push(buildTermDescriptor(term, term, operator));
-				});
-			});
-		});
+		const cleanAdditionalTerms = additionalTerms.map((term) => normalizeSearchValue(term.value)).filter(Boolean);
+		for (const term of cleanAdditionalTerms) {
+			terms.push(buildTermDescriptor(term, term, additionalMode));
+		}
 
 		const cleanProximityTerms = proximityTerms
 			.map((term) => ({
@@ -1227,7 +1071,8 @@
 
 		const structuredQuery: StructuredSearchQuery = {
 			main: normalizedMain,
-			additionalOptions: cleanAdditionalOptions,
+			additionalMode,
+			additionalTerms: cleanAdditionalTerms,
 			proximityMode,
 			proximityTerms: cleanProximityTerms
 		};
@@ -1244,7 +1089,8 @@
 		if (!main) return null as InterpretedQueryView | null;
 		const structuredQuery: StructuredSearchQuery = {
 			main,
-			additionalOptions: cleanAdditionalOptionsFromState(),
+			additionalMode,
+			additionalTerms: additionalTerms.map((term) => normalizeSearchValue(term.value)).filter(Boolean),
 			proximityMode,
 			proximityTerms: proximityTerms
 				.map((term) => ({
@@ -1254,7 +1100,10 @@
 				}))
 				.filter((term) => term.value)
 		};
-		return buildInterpretedQuery(structuredQuery);
+		return {
+			summaryParts: buildInterpretedSummaryParts(structuredQuery),
+			formulaParts: buildTechnicalFormulaParts(structuredQuery)
+		};
 	});
 
 	const validateSearchTerm = (value: string, label: string): string => {
@@ -1266,75 +1115,21 @@
 		return '';
 	};
 
-	const buildFilterSnapshot = (): TexoroFilterSnapshot => ({
-		workIds: [...selectedWorkIds],
-		genres: [...selectedGenres],
-		traditionalAuthorIds: [...selectedTradAuthors],
-		traditionalMatch: tradMatch,
-		stylometryAuthorIds: [...selectedEstoAuthors],
-		stylometryMatch: estoMatch,
-		states: [...selectedStates]
-	});
-
-	const isFilterSnapshotActive = (snapshot: TexoroFilterSnapshot): boolean =>
-		snapshot.workIds.length > 0 ||
-		snapshot.genres.length > 0 ||
-		snapshot.traditionalAuthorIds.length > 0 ||
-		snapshot.stylometryAuthorIds.length > 0 ||
-		snapshot.states.length > 0;
-
-	const resolveWorkIdsForFilters = async (
-		snapshot: TexoroFilterSnapshot
-	): Promise<string[] | undefined> => {
-		if (!isFilterSnapshotActive(snapshot)) return undefined;
-
-		const selectedWorkIdSet = new Set(snapshot.workIds);
-		const loadedWorksMeta = await loadWorksMeta();
-
-		return loadedWorksMeta
-			.filter((meta) => {
-				if (selectedWorkIdSet.size > 0 && !selectedWorkIdSet.has(meta.id)) return false;
-				if (snapshot.genres.length > 0 && !snapshot.genres.includes(meta.genre)) return false;
-				if (
-					!matchesByMode(
-						collectAuthorIds(meta.traditionalAttribution),
-						snapshot.traditionalAuthorIds,
-						snapshot.traditionalMatch
-					)
-				) {
-					return false;
-				}
-				if (
-					!matchesByMode(
-						collectAuthorIds(meta.stylometryAttribution),
-						snapshot.stylometryAuthorIds,
-						snapshot.stylometryMatch
-					)
-				) {
-					return false;
-				}
-				if (snapshot.states.length > 0 && !snapshot.states.includes(meta.textState)) return false;
-
-				return true;
-			})
-			.map((meta) => meta.id);
-	};
-
 	const resetSearchControls = (): void => {
 		mainQuery = '';
 		advancedSearchOpen = false;
 		filtersOpen = false;
-		additionalOptions = [];
+		additionalTerms = [];
+		additionalMode = 'all';
 		proximityTerms = [];
 		proximityMode = 'all';
-		selectedWorkIds = [];
+		titleFilter = '';
 		selectedGenres = [];
 		selectedTradAuthors = [];
 		tradMatch = 'or';
 		selectedEstoAuthors = [];
 		estoMatch = 'or';
 		selectedStates = [];
-		submittedFiltersActive = false;
 		submittedTerms = [];
 		searchExecution = null;
 		resultsPage = 1;
@@ -1798,8 +1593,7 @@
 
 	const runServerSearch = async (
 		query: string,
-		structuredQuery: StructuredSearchQuery,
-		workIds: string[] | undefined
+		structuredQuery: StructuredSearchQuery
 	): Promise<SearchExecution> =>
 		postJson<SearchExecution>('/api/texoro/search', {
 			query,
@@ -1808,15 +1602,13 @@
 				limit: RESULTS_PAGE_SIZE,
 				maxPhraseVerificationDocs: 220,
 				snippetRadius: 115,
-				includeSnippets: false,
-				workIds
+				includeSnippets: false
 			}
 		});
 
 	const runBrowserFirstSearch = async (
 		query: string,
-		structuredQuery: StructuredSearchQuery,
-		workIds: string[] | undefined
+		structuredQuery: StructuredSearchQuery
 	): Promise<SearchExecution> => {
 		if (isEngineReady && texoroWorker) {
 			try {
@@ -1828,8 +1620,7 @@
 						limit: RESULTS_PAGE_SIZE,
 						maxPhraseVerificationDocs: 220,
 						snippetRadius: 115,
-						includeSnippets: false,
-						workIds
+						includeSnippets: false
 					}
 				});
 				if (response.execution) return response.execution;
@@ -1839,7 +1630,7 @@
 			}
 		}
 
-		return runServerSearch(query, structuredQuery, workIds);
+		return runServerSearch(query, structuredQuery);
 	};
 
 	const loadResultOccurrencePreviews = async (results: SearchResult[]): Promise<void> => {
@@ -2191,16 +1982,9 @@
 		const trimmedMain = mainQuery.trim();
 		if (!trimmedMain || !QUERY_ALLOWED_PATTERN.test(trimmedMain)) return false;
 		if (trimmedMain.replace(/[*?\s]/g, '').length < 3) return false;
-		if (countAdditionalOptionExpansion(cleanAdditionalOptionsFromState()) > ADDITIONAL_OPTION_EXPANSION_LIMIT) {
-			return false;
-		}
-		for (const option of additionalOptions) {
-			for (const condition of option.conditions) {
-				for (const term of condition.alternatives) {
-					const trimmed = term.value.trim();
-					if (trimmed && !QUERY_ALLOWED_PATTERN.test(trimmed)) return false;
-				}
-			}
+		for (const term of additionalTerms) {
+			const trimmed = term.value.trim();
+			if (trimmed && !QUERY_ALLOWED_PATTERN.test(trimmed)) return false;
 		}
 		for (const term of proximityTerms) {
 			const trimmed = term.value.trim();
@@ -2217,13 +2001,8 @@
 	$effect(() => {
 		const primeSignature = [
 			mainQuery,
-			...additionalOptions.flatMap((option) => [
-				`option:${option.id}`,
-				...option.conditions.flatMap((condition) => [
-					`condition:${condition.id}`,
-					...condition.alternatives.map((term) => term.value)
-				])
-			]),
+			additionalMode,
+			...additionalTerms.map((term) => term.value),
 			proximityMode,
 			...proximityTerms.map((term) => `${term.order}:${term.distance}:${term.value}`)
 		].join('\u0001');
@@ -2309,7 +2088,6 @@
 		searchError = '';
 		searchExecution = null;
 		resultsPage = 1;
-		submittedFiltersActive = false;
 		submittedTerms = [];
 		occurrencePreviews = new Map();
 		previewLoadLimit = PREVIEW_INITIAL_DOC_LIMIT;
@@ -2322,34 +2100,21 @@
 			return;
 		}
 
-		for (let optionIndex = 0; optionIndex < additionalOptions.length; optionIndex += 1) {
-			const option = additionalOptions[optionIndex];
-			for (let conditionIndex = 0; conditionIndex < option.conditions.length; conditionIndex += 1) {
-				const condition = option.conditions[conditionIndex];
-				for (let termIndex = 0; termIndex < condition.alternatives.length; termIndex += 1) {
-					const term = condition.alternatives[termIndex];
-					if (!term.value.trim()) continue;
-					const validationError = validateSearchTerm(
-						term.value,
-						additionalOptions.length > 1
-							? `Restricción ${optionIndex + 1}, condición ${conditionIndex + 1}, alternativa ${termIndex + 1}`
-							: `Condición ${conditionIndex + 1}, alternativa ${termIndex + 1}`
-					);
-					if (validationError) {
-						searchError = validationError;
-						return;
-					}
-				}
+		let nonEmptyAdvancedTerms = 0;
+		for (let index = 0; index < additionalTerms.length; index += 1) {
+			const term = additionalTerms[index];
+			if (!term.value.trim()) continue;
+			nonEmptyAdvancedTerms += 1;
+			const validationError = validateSearchTerm(term.value, `Término adicional ${index + 1}`);
+			if (validationError) {
+				searchError = validationError;
+				return;
 			}
-		}
-		const additionalExpansion = countAdditionalOptionExpansion(cleanAdditionalOptionsFromState());
-		if (additionalExpansion > ADDITIONAL_OPTION_EXPANSION_LIMIT) {
-			searchError = `La consulta genera ${additionalExpansion} combinaciones internas. Reduce las alternativas léxicas o las restricciones para no superar ${ADDITIONAL_OPTION_EXPANSION_LIMIT}.`;
-			return;
 		}
 		for (let index = 0; index < proximityTerms.length; index += 1) {
 			const term = proximityTerms[index];
 			if (!term.value.trim()) continue;
+			nonEmptyAdvancedTerms += 1;
 			const validationError = validateSearchTerm(term.value, `Proximidad ${index + 1}`);
 			if (validationError) {
 				searchError = validationError;
@@ -2357,18 +2122,19 @@
 			}
 		}
 
+		if (1 + nonEmptyAdvancedTerms > MAX_QUERY_TERMS) {
+			searchError = `La consulta admite un máximo de ${MAX_QUERY_TERMS} términos en total.`;
+			return;
+		}
+
 		const { query, terms, structuredQuery } = buildEffectiveQuery();
-		const filterSnapshot = buildFilterSnapshot();
 		isSearching = true;
 		try {
-			const scopedWorkIds = await resolveWorkIdsForFilters(filterSnapshot);
 			submittedTerms = terms;
-			submittedFiltersActive = isFilterSnapshotActive(filterSnapshot);
-			searchExecution = await runBrowserFirstSearch(query, structuredQuery, scopedWorkIds);
+			searchExecution = await runBrowserFirstSearch(query, structuredQuery);
 			queueMicrotask(increasePreviewWindowIfNeeded);
 		} catch (cause) {
 			submittedTerms = [];
-			submittedFiltersActive = false;
 			searchError = cause instanceof Error ? cause.message : 'Error ejecutando la búsqueda';
 		} finally {
 			isSearching = false;
@@ -2419,26 +2185,31 @@
 		</p>
 
 		<form class="mt-4 grid gap-3" onsubmit={submitSearch}>
-			<div class="grid gap-3">
+			<div class="grid gap-3 md:grid-cols-[minmax(0,1fr)_auto]">
 				<div class="relative">
 					<input
 						type="search"
 						bind:value={mainQuery}
 						placeholder="Ejemplos: amor | amor constante | honor*"
-						class="h-[46px] w-full appearance-none rounded-[10px] border border-border bg-white py-2 pr-11 pl-11 text-[15px] text-text-main outline-none shadow-none transition focus:border-brand-blue/35 focus:shadow-none focus:outline-none focus-visible:border-brand-blue/35 focus-visible:outline-none"
+						class="h-[46px] w-full appearance-none rounded-[10px] border border-border bg-white px-11 py-2 text-[15px] text-text-main outline-none shadow-none transition focus:border-brand-blue/35 focus:shadow-none focus:outline-none focus-visible:border-brand-blue/35 focus-visible:outline-none"
 					/>
 					<span class="pointer-events-none absolute inset-y-0 left-3 inline-flex items-center text-text-accent-purple">
 						<Search class="h-4.5 w-4.5" />
 					</span>
-					<button
-						type="submit"
-						class="absolute inset-y-1 right-1 inline-flex w-9 items-center justify-center rounded-[8px] border-0 bg-transparent text-brand-blue-dark transition hover:bg-surface-accent-blue focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/30 disabled:cursor-not-allowed disabled:opacity-55"
-						aria-label="Buscar"
-						disabled={isSearching}
-					>
-						<ArrowRight class="h-4.5 w-4.5" />
-					</button>
 				</div>
+				<AppButton
+					type="submit"
+					variant="primary"
+					disabled={isSearching}
+					className="!h-[46px] !min-w-[180px] gap-2 !rounded-[10px] !px-5 !py-2 font-['Roboto',sans-serif] text-[0.93rem] font-semibold tracking-[0.02em]"
+				>
+					{#if isSearching}
+						<LoaderCircle class="h-4.5 w-4.5 animate-spin" />
+						Buscando...
+					{:else}
+						Buscar
+					{/if}
+				</AppButton>
 			</div>
 
 			<p class="m-0 text-[0.84rem] text-text-soft">
@@ -2463,151 +2234,96 @@
 				<div
 					class={`border-t px-4 transition-[max-height,padding,opacity] duration-300 ease-out ${
 						advancedSearchOpen
-							? 'max-h-none overflow-visible border-border-accent-blue py-4 opacity-100'
+							? 'max-h-[2200px] overflow-visible border-border-accent-blue py-4 opacity-100'
 							: 'max-h-0 border-transparent py-0 opacity-0'
 					}`}
 				>
+					<p class="m-0 text-[0.86rem] leading-[1.5] text-text-soft">
+						Añade términos y condiciones de cercanía sin escribir operadores. El límite total es de {MAX_QUERY_TERMS}
+						condiciones contando la búsqueda principal.
+					</p>
+
 					<div class="mt-4 grid gap-5">
 						<div class="grid gap-3">
-							<div>
+							<div class="flex flex-wrap items-center justify-between gap-3">
 								<div>
 									<h3 class="m-0 font-['Roboto',sans-serif] text-[0.98rem] font-semibold text-brand-blue-dark">
-										Restricciones adicionales
+										Términos adicionales
 									</h3>
 									<p class="mt-1 mb-0 text-[0.82rem] text-text-soft">
-										Añade condiciones que deben cumplirse además de la búsqueda principal.
+										Cada término puede ser una palabra, frase o patrón.
 									</p>
+								</div>
+								<div
+									role="group"
+									aria-label="Modo de combinación de términos adicionales"
+									class="relative grid grid-cols-2 rounded-full bg-surface-soft p-1"
+									onmouseleave={() => (additionalModePreview = null)}
+								>
+									<span
+										class={`${modePillIndicatorClass} ${additionalModeVisual === 'any' ? 'translate-x-full' : 'translate-x-0'}`}
+										aria-hidden="true"
+									></span>
+									<button
+										type="button"
+										class={`${modePillButtonClass} ${additionalModeVisual === 'all' ? 'text-brand-blue-dark' : 'text-text-soft hover:text-brand-blue-dark'}`}
+										onmouseenter={() => (additionalModePreview = 'all')}
+										onclick={(event) => setAdditionalMode(event, 'all')}
+									>
+										Deben aparecer todos
+									</button>
+									<button
+										type="button"
+										class={`${modePillButtonClass} ${additionalModeVisual === 'any' ? 'text-brand-blue-dark' : 'text-text-soft hover:text-brand-blue-dark'}`}
+										onmouseenter={() => (additionalModePreview = 'any')}
+										onclick={(event) => setAdditionalMode(event, 'any')}
+									>
+										Puede aparecer cualquiera
+									</button>
 								</div>
 							</div>
 
-							{#if additionalOptions.length > 0}
-								{#each additionalOptions as option, optionIndex}
-									<div class="grid gap-3 rounded-[10px] bg-surface-soft p-3">
-										<div class="flex flex-wrap items-center justify-between gap-2">
-											<h4 class="m-0 font-['Roboto',sans-serif] text-[0.86rem] font-semibold text-brand-blue-dark">
-												{additionalOptions.length > 1 ? `Restricción ${optionIndex + 1}` : 'Condiciones obligatorias'}
-											</h4>
-											{#if canRemoveAdditionalOption(option, optionIndex)}
-												<button
-													type="button"
-													class="rounded-[8px] border border-transparent bg-transparent px-2 py-1 text-[0.78rem] font-semibold text-text-soft transition hover:border-[#d7b5bf] hover:bg-[#fff5f7] hover:text-[#8f1e36]"
-													onclick={() => removeAdditionalOption(option.id)}
-												>
-													{additionalOptions.length > 1 ? 'Eliminar restricción' : 'Eliminar condiciones'}
-												</button>
-											{/if}
-										</div>
-
-										{#if option.conditions.length > 0}
-											{#each option.conditions as condition, conditionIndex}
-												<div class="grid gap-2">
-													<div class="flex flex-wrap items-center justify-between gap-2">
-														<p class="m-0 text-[0.8rem] font-semibold text-text-soft">
-															Debe contener al menos uno de:
-														</p>
-														{#if canRemoveAdditionalCondition(option, condition)}
-															<button
-																type="button"
-																class="rounded-[8px] border border-transparent bg-transparent px-2 py-1 text-[0.76rem] font-semibold text-text-soft transition hover:border-[#d7b5bf] hover:bg-[#fff5f7] hover:text-[#8f1e36]"
-																onclick={() => removeAdditionalCondition(option.id, condition.id)}
-															>
-																Eliminar condición
-															</button>
-														{/if}
-													</div>
-
-													{#if condition.alternatives.length > 0}
-														<div class="grid gap-2">
-															{#each condition.alternatives as term}
-																<div class="grid items-end gap-2 md:grid-cols-[minmax(0,1fr)_auto]">
-																	<label class="sr-only" for={`additional-query-${option.id}-${condition.id}-${term.id}`}>
-																		Alternativa léxica
-																	</label>
-																	<input
-																		id={`additional-query-${option.id}-${condition.id}-${term.id}`}
-																		type="search"
-																		value={term.value}
-																		placeholder="Ej: honra | honor | desdich?"
-																		class="h-[42px] rounded-[8px] border border-border bg-white px-3 text-[0.92rem] text-text-main outline-none transition focus:border-brand-blue/35"
-																		oninput={(event) =>
-																			updateAdditionalAlternativeValue(
-																				option.id,
-																				condition.id,
-																				term.id,
-																				(event.currentTarget as HTMLInputElement).value
-																			)}
-																	/>
-																	<button
-																		type="button"
-																		class="h-[42px] rounded-[8px] border border-border bg-white px-3 text-[0.84rem] font-semibold text-text-soft transition hover:border-[#d7b5bf] hover:bg-[#fff5f7] hover:text-[#8f1e36]"
-																		onclick={() => removeAdditionalAlternative(option.id, condition.id, term.id)}
-																	>
-																		Eliminar
-																	</button>
-																</div>
-															{/each}
-														</div>
-													{:else}
-														<button
-															type="button"
-															class="w-full rounded-[9px] border border-dashed border-border-accent-blue bg-white px-3 py-2 text-left text-[0.86rem] font-semibold text-brand-blue-dark transition hover:bg-surface-accent-blue"
-															onclick={() => addAdditionalAlternativeToCondition(option.id, condition.id)}
-														>
-															Añadir alternativa léxica
-														</button>
-													{/if}
-
-													{#if condition.alternatives.length > 0}
-														<button
-															type="button"
-															class="w-full rounded-[9px] border border-dashed border-border-accent-blue bg-white px-3 py-2 text-left text-[0.86rem] font-semibold text-brand-blue-dark transition hover:bg-surface-accent-blue"
-															onclick={() => addAdditionalAlternativeToCondition(option.id, condition.id)}
-														>
-															Añadir alternativa léxica
-														</button>
-													{/if}
-												</div>
-											{/each}
-										{:else}
-											<button
-												type="button"
-												class="w-full rounded-[9px] border border-dashed border-border-accent-blue bg-white px-3 py-2 text-left text-[0.86rem] font-semibold text-brand-blue-dark transition hover:bg-surface-accent-blue"
-												onclick={() => addAdditionalConditionToOption(option.id)}
-											>
-												Añadir condición
-											</button>
-										{/if}
-
-										{#if option.conditions.length > 0}
-											<button
-												type="button"
-												class="w-full rounded-[9px] border border-dashed border-border-accent-blue bg-white px-3 py-2 text-left text-[0.86rem] font-semibold text-brand-blue-dark transition hover:bg-surface-accent-blue"
-												onclick={() => addAdditionalConditionToOption(option.id)}
-											>
-												Añadir condición
-											</button>
-										{/if}
+							{#if additionalTerms.length === 0}
+								<p class="m-0 rounded-[9px] border border-dashed border-border-accent-blue bg-surface px-3 py-2 text-[0.86rem] text-text-soft">
+									No hay términos adicionales.
+								</p>
+							{:else}
+								{#each additionalTerms as term}
+									<div class="grid gap-2 rounded-[9px] border border-border bg-surface p-3 md:grid-cols-[minmax(0,1fr)_auto]">
+										<label class="sr-only" for={`additional-query-${term.id}`}>Término adicional</label>
+										<input
+											id={`additional-query-${term.id}`}
+											type="search"
+											value={term.value}
+											placeholder="Ej: honra | honra constante | desdich?"
+											class="h-[42px] rounded-[8px] border border-border bg-white px-3 text-[0.92rem] text-text-main outline-none transition focus:border-brand-blue/35"
+											oninput={(event) =>
+												updateAdditionalTermValue(term.id, (event.currentTarget as HTMLInputElement).value)}
+										/>
+										<button
+											type="button"
+											class="h-[42px] rounded-[8px] border border-border bg-white px-3 text-[0.84rem] font-semibold text-text-soft transition hover:border-[#d7b5bf] hover:bg-[#fff5f7] hover:text-[#8f1e36]"
+											onclick={() => removeAdditionalTerm(term.id)}
+										>
+											Eliminar
+										</button>
 									</div>
 								{/each}
 							{/if}
 
-							{#if additionalOptions.length === 0}
+							<div class="flex flex-wrap items-center justify-between gap-3">
+								<p class="m-0 text-[0.82rem] text-text-soft">
+									Condiciones activas: {activeSearchTermCount}/{MAX_QUERY_TERMS}
+								</p>
 								<button
 									type="button"
-									class="w-full rounded-[9px] border border-dashed border-border-accent-blue bg-surface px-3 py-2 text-left text-[0.86rem] font-semibold text-brand-blue-dark transition hover:bg-surface-accent-blue"
-									onclick={addAdditionalCondition}
+									class="rounded-[8px] border border-border-accent-blue bg-surface-accent-blue px-3 py-2 text-[0.84rem] font-semibold text-brand-blue-dark transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-55"
+									disabled={additionalTerms.length + proximityTerms.length >= MAX_QUERY_TERMS - 1}
+									onclick={addAdditionalTerm}
 								>
-									Añadir condición obligatoria
+									Añadir término
 								</button>
-							{:else if additionalOptions.some(hasAdditionalOptionValue)}
-								<button
-									type="button"
-									class="w-full rounded-[9px] border border-dashed border-border-accent-blue bg-surface px-3 py-2 text-left text-[0.86rem] font-semibold text-brand-blue-dark transition hover:bg-surface-accent-blue"
-									onclick={addAdditionalOption}
-								>
-									Añadir restricción alternativa
-								</button>
-							{/if}
+							</div>
 						</div>
 
 						<div class="grid gap-3 border-t border-border-accent-blue pt-4">
@@ -2617,7 +2333,7 @@
 										Proximidad respecto a la búsqueda principal
 									</h3>
 									<p class="mt-1 mb-0 text-[0.82rem] text-text-soft">
-										Busca palabras, frases o patrones cercanos a la búsqueda principal.
+										Busca términos cercanos a la palabra o frase principal.
 									</p>
 								</div>
 								<div
@@ -2649,9 +2365,13 @@
 								</div>
 							</div>
 
-							{#if proximityTerms.length > 0}
+							{#if proximityTerms.length === 0}
+								<p class="m-0 rounded-[9px] border border-dashed border-border-accent-blue bg-surface px-3 py-2 text-[0.86rem] text-text-soft">
+									No hay condiciones de proximidad.
+								</p>
+							{:else}
 								{#each proximityTerms as term}
-									<div class="grid items-end gap-2 md:grid-cols-[minmax(0,1fr)_112px_150px_auto]">
+									<div class="grid gap-2 rounded-[9px] border border-border bg-surface p-3 md:grid-cols-[minmax(0,1fr)_112px_150px_auto]">
 										<label class="sr-only" for={`proximity-query-${term.id}`}>Término cercano</label>
 										<input
 											id={`proximity-query-${term.id}`}
@@ -2700,17 +2420,46 @@
 								{/each}
 							{/if}
 
-							<button
-								type="button"
-								class="w-full rounded-[9px] border border-dashed border-border-accent-blue bg-surface px-3 py-2 text-left text-[0.86rem] font-semibold text-brand-blue-dark transition hover:bg-surface-accent-blue disabled:cursor-not-allowed disabled:opacity-55"
-								onclick={addProximityTerm}
-							>
-								Añadir término próximo
-							</button>
+							<div class="flex justify-end">
+								<button
+									type="button"
+									class="rounded-[8px] border border-border-accent-blue bg-surface-accent-blue px-3 py-2 text-[0.84rem] font-semibold text-brand-blue-dark transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-55"
+									disabled={additionalTerms.length + proximityTerms.length >= MAX_QUERY_TERMS - 1}
+									onclick={addProximityTerm}
+								>
+									Añadir proximidad
+								</button>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
+
+			{#if interpretedQuery}
+				<div class="rounded-[10px] bg-surface-soft px-4 py-3">
+					<p class="m-0 text-[0.84rem] font-semibold text-brand-blue-dark">Consulta interpretada</p>
+					<p class="mt-1 mb-0 text-[0.9rem] leading-[1.75] text-text-main">
+						{#each interpretedQuery.summaryParts as part}
+							{#if part.kind === 'term'}
+								<span class={interpretedQueryTermClass} title={part.value}>{part.value}</span>
+							{:else}
+								<span>{part.value}</span>
+							{/if}
+						{/each}
+					</p>
+					<p class="mt-2 mb-0 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[0.78rem] text-text-soft">
+						{#each interpretedQuery.formulaParts as part}
+							{#if part.kind === 'term'}
+								<span class={interpretedQueryTermClass} title={part.value}>{part.value}</span>
+							{:else if part.kind === 'operator'}
+								<span class={interpretedQueryOperatorClass}>{part.value}</span>
+							{:else}
+								<span class="font-mono">{part.value}</span>
+							{/if}
+						{/each}
+					</p>
+				</div>
+			{/if}
 
 			<div class={`rounded-[10px] border border-border-accent-blue bg-white ${filtersOpen ? 'overflow-visible' : 'overflow-hidden'}`}>
 				<button
@@ -2736,18 +2485,18 @@
 				>
 					<div class="grid gap-5">
 						<div class="grid gap-5 md:grid-cols-2">
-							<TokenMultiSelect
-								name="texoro-work"
-								label="Título"
-								placeholder="Escribe y selecciona obras"
-								options={workOptions}
-								selectedIds={selectedWorkIds}
-								helpText="Selecciona una o varias obras concretas para limitar la búsqueda."
-								inputClass="js-static-multiselect"
-								onChange={(nextIds) => {
-									selectedWorkIds = nextIds;
-								}}
-							/>
+							<div class="flex flex-col">
+								<label class="mb-[6px] text-[14px] font-semibold text-text-soft" for="texoro-title-filter">
+									Título
+								</label>
+								<input
+									id="texoro-title-filter"
+									type="text"
+									bind:value={titleFilter}
+									placeholder="Ej: desdén, fuerza del interés..."
+									class="rounded-[8px] border border-border px-3 py-[10px] text-[14px] transition focus:border-brand-blue/35 focus:shadow-[0_0_0_3px_rgba(13,63,145,0.1)] focus:outline-none"
+								/>
+							</div>
 
 							<TokenMultiSelect
 								name="texoro-genero"
@@ -2829,66 +2578,7 @@
 				</div>
 			</div>
 
-			{#if interpretedQuery}
-				<div class="rounded-[10px] bg-surface-soft px-4 py-3">
-					<p class="m-0 font-['Roboto',sans-serif] text-[0.78rem] font-semibold tracking-[0.04em] text-brand-blue-dark uppercase">
-						Consulta interpretada
-					</p>
-					<div class="mt-2 grid gap-3 text-[0.9rem] leading-[1.65] text-text-main">
-						{#each interpretedQuery.blocks as block}
-							<div>
-								<p class="m-0 font-['Roboto',sans-serif] text-[0.74rem] font-semibold tracking-[0.04em] text-text-soft uppercase">
-									{block.title}
-								</p>
-								{#if block.parts}
-									<p class="mt-1 mb-0">
-										{#each block.parts as part}
-											{#if part.kind === 'term'}
-												<span class={interpretedQueryTermClass} title={part.value}>{part.value}</span>
-											{:else}
-												<span>{part.value}</span>
-											{/if}
-										{/each}
-									</p>
-								{/if}
-								{#if block.items}
-									<ol class="mt-1 mb-0 grid gap-1 pl-5">
-										{#each block.items as itemParts}
-											<li>
-												{#each itemParts as part}
-													{#if part.kind === 'term'}
-														<span class={interpretedQueryTermClass} title={part.value}>{part.value}</span>
-													{:else}
-														<span>{part.value}</span>
-													{/if}
-												{/each}
-											</li>
-										{/each}
-									</ol>
-								{/if}
-							</div>
-						{/each}
-					</div>
-					<div class="mt-3 border-t border-border-accent-blue pt-3">
-						<p class="m-0 font-['Roboto',sans-serif] text-[0.74rem] font-semibold tracking-[0.04em] text-text-soft uppercase">
-							Expresión técnica
-						</p>
-						<p class="mt-1 mb-0 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[0.78rem] text-text-soft">
-							{#each interpretedQuery.formulaParts as part}
-								{#if part.kind === 'term'}
-									<span class={interpretedQueryTermClass} title={part.value}>{part.value}</span>
-								{:else if part.kind === 'operator'}
-									<span class={interpretedQueryOperatorClass}>{part.value}</span>
-								{:else}
-									<span class="font-mono">{part.value}</span>
-								{/if}
-							{/each}
-						</p>
-					</div>
-				</div>
-			{/if}
-
-			<div class="flex flex-wrap justify-end gap-2">
+			<div class="flex justify-end">
 				<AppButton
 					href="/texoro"
 					variant="secondary"
@@ -2898,19 +2588,6 @@
 					}}
 				>
 					Limpiar campos
-				</AppButton>
-				<AppButton
-					type="submit"
-					variant="primary"
-					disabled={isSearching}
-					className="!h-[46px] !min-w-[180px] gap-2 !rounded-[10px] !px-5 !py-2 font-['Roboto',sans-serif] text-[0.93rem] font-semibold tracking-[0.02em]"
-				>
-					{#if isSearching}
-						<LoaderCircle class="h-4.5 w-4.5 animate-spin" />
-						Buscando...
-					{:else}
-						Buscar
-					{/if}
 				</AppButton>
 			</div>
 		</form>
@@ -2945,7 +2622,7 @@
 					</div>
 				</div>
 
-				{#if submittedFiltersActive}
+				{#if hasActiveFilters}
 					<p class="m-0 rounded-[9px] border border-border-accent-blue bg-surface px-3 py-2 text-[0.84rem] text-text-soft">
 						Los resultados están recalculados sobre el subconjunto filtrado.
 					</p>
@@ -3108,7 +2785,7 @@
 
 				{#if filteredResults.length === 0}
 					<p class="m-0 text-[0.96rem] text-text-soft">
-						{submittedFiltersActive
+						{hasActiveFilters
 							? 'No se encontraron coincidencias con los filtros aplicados.'
 							: 'No se encontraron coincidencias.'}
 					</p>

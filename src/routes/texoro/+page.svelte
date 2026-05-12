@@ -1349,30 +1349,84 @@
 		});
 	};
 
-	const buildCenteredOccurrenceSnippet = (snippet: string, assignments: MatchAssignment[], radius: number): string => {
-		const ranges = collectHighlightRanges(snippet, assignments);
-		if (ranges.length === 0) return snippet;
+	const snippetInnerBounds = (snippet: string): { start: number; end: number } => {
+		const leadingEllipsis = snippet.match(/^\.\.\.\s*/u)?.[0].length ?? 0;
+		const trailingEllipsis = snippet.match(/\s*\.\.\.$/u)?.[0].length ?? 0;
+		return {
+			start: leadingEllipsis,
+			end: Math.max(leadingEllipsis, snippet.length - trailingEllipsis)
+		};
+	};
+
+	const trimSnippetSlice = (snippet: string, start: number, end: number): { start: number; end: number } => {
+		let trimmedStart = start;
+		let trimmedEnd = end;
+		while (trimmedStart < trimmedEnd && /\s/u.test(snippet[trimmedStart])) trimmedStart += 1;
+		while (trimmedEnd > trimmedStart && /\s/u.test(snippet[trimmedEnd - 1])) trimmedEnd -= 1;
+		return { start: trimmedStart, end: trimmedEnd };
+	};
+
+	const buildCenteredOccurrencePreview = (
+		occurrence: SearchMatchOccurrence,
+		assignments: MatchAssignment[],
+		radius: number
+	): Pick<SearchMatchOccurrence, 'snippet' | 'highlights'> => {
+		const snippet = occurrence.snippet;
+		const inner = snippetInnerBounds(snippet);
+		const exactRanges =
+			occurrence.highlights
+				?.map((highlight) => ({
+					start: Math.max(inner.start, Math.min(inner.end, highlight.start)),
+					end: Math.max(inner.start, Math.min(inner.end, highlight.end)),
+					tokenIndex: highlight.tokenIndex
+				}))
+				.filter((range) => range.end > range.start) ?? [];
+		const inferredRanges = exactRanges.length
+			? []
+			: collectHighlightRanges(snippet, assignments).filter(
+					(range) => range.end > inner.start && range.start < inner.end
+				);
+		const ranges = exactRanges.length ? exactRanges : inferredRanges;
+		if (ranges.length === 0) return { snippet, highlights: occurrence.highlights ?? [] };
 
 		const center = snippet.length / 2;
-		const selected = ranges.sort(
-			(a, b) =>
-				Math.abs((a.start + a.end) / 2 - center) -
-					Math.abs((b.start + b.end) / 2 - center) ||
-				a.start - b.start
-		)[0];
-		const selectedCenter = Math.round((selected.start + selected.end) / 2);
-		const left = Math.max(0, selectedCenter - radius);
-		const right = Math.min(snippet.length, selectedCenter + radius);
-		const prefix = left > 0 || snippet.trimStart().startsWith('...') ? '... ' : '';
-		const suffix = right < snippet.length || snippet.trimEnd().endsWith('...') ? ' ...' : '';
-		const body = snippet
-			.slice(left, right)
-			.replace(/^\.\.\.\s*/, '')
-			.replace(/\s*\.\.\.$/, '')
-			.replace(/\s+/g, ' ')
-			.trim();
+		const selected =
+			exactRanges.length > 1
+				? {
+						start: Math.min(...exactRanges.map((range) => range.start)),
+						end: Math.max(...exactRanges.map((range) => range.end))
+					}
+				: ranges
+						.slice()
+						.sort(
+							(a, b) =>
+								Math.abs((a.start + a.end) / 2 - center) -
+									Math.abs((b.start + b.end) / 2 - center) ||
+								a.start - b.start
+						)[0];
+		const visibleStart = Math.max(inner.start, selected.start - radius);
+		const visibleEnd = Math.min(inner.end, selected.end + radius);
+		const bodyBounds = trimSnippetSlice(snippet, visibleStart, visibleEnd);
+		const prefix = bodyBounds.start > inner.start || snippet.trimStart().startsWith('...') ? '... ' : '';
+		const suffix = bodyBounds.end < inner.end || snippet.trimEnd().endsWith('...') ? ' ...' : '';
+		const body = snippet.slice(bodyBounds.start, bodyBounds.end);
+		const adjustedHighlights = exactRanges
+			.map((range) => ({
+				start: Math.max(bodyBounds.start, Math.min(bodyBounds.end, range.start)),
+				end: Math.max(bodyBounds.start, Math.min(bodyBounds.end, range.end)),
+				tokenIndex: range.tokenIndex
+			}))
+			.filter((range) => range.end > range.start)
+			.map((range) => ({
+				start: range.start - bodyBounds.start + prefix.length,
+				end: range.end - bodyBounds.start + prefix.length,
+				tokenIndex: range.tokenIndex
+			}));
 
-		return `${prefix}${body}${suffix}`;
+		return {
+			snippet: `${prefix}${body}${suffix}`,
+			highlights: adjustedHighlights
+		};
 	};
 
 	const setOccurrencePreview = (docId: number, preview: ResultOccurrencePreview): void => {
@@ -1619,16 +1673,17 @@
 					item?.snippets
 						.map((snippet) => {
 							const assignment = assignments.find((candidate) => candidate.key === snippet.matchKey);
+							const centered = buildCenteredOccurrencePreview(
+								snippet,
+								assignment ? [assignment] : assignments,
+								RESULT_PREVIEW_VISIBLE_RADIUS
+							);
 							return {
 								...snippet,
+								snippet: centered.snippet,
+								highlights: centered.highlights,
 								assignmentKey: snippet.matchKey,
-								centeredSnippet: snippet.highlights?.length
-									? snippet.snippet
-									: buildCenteredOccurrenceSnippet(
-											snippet.snippet,
-											assignment ? [assignment] : assignments,
-											RESULT_PREVIEW_VISIBLE_RADIUS
-										)
+								centeredSnippet: centered.snippet
 							};
 						})
 						.sort((a, b) => a.start - b.start || a.end - b.end) ?? [];

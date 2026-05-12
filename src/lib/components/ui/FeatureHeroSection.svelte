@@ -27,8 +27,8 @@
 
 	const sectionClass = $derived(
 		statsLayout === 'wide-second'
-			? 'grid items-start gap-[2.1rem] rounded-[14px] bg-surface-soft p-[clamp(1.2rem,2.4vw,2rem)] [background-repeat:no-repeat] [background-size:min(130vw,720px)_auto] [background-position:right_-120px_bottom_-35px] md:[background-size:min(90vw,680px)_auto] md:[background-position:right_-80px_bottom_-58px] min-[1201px]:grid-cols-[minmax(0,1.25fr)_minmax(580px,1fr)] min-[1201px]:[background-size:min(60vw,860px)_auto] min-[1201px]:[background-position:right_-56px_bottom_-66px]'
-			: 'grid items-start gap-[2.1rem] rounded-[14px] bg-surface-soft p-[clamp(1.2rem,2.4vw,2rem)] [background-repeat:no-repeat] [background-size:min(130vw,720px)_auto] [background-position:right_-120px_bottom_-35px] md:[background-size:min(90vw,680px)_auto] md:[background-position:right_-80px_bottom_-58px] min-[1201px]:grid-cols-[minmax(0,1.9fr)_minmax(320px,1fr)] min-[1201px]:[background-size:min(60vw,860px)_auto] min-[1201px]:[background-position:right_-56px_bottom_-66px]'
+			? 'grid items-start gap-[2.1rem] rounded-[14px] bg-surface-soft p-[clamp(1.2rem,2.4vw,2rem)] [background-repeat:no-repeat] [background-size:min(130vw,720px)_auto] [background-position:right_bottom] md:[background-size:min(90vw,680px)_auto] md:[background-position:right_bottom] min-[1201px]:grid-cols-[minmax(0,1.25fr)_minmax(580px,1fr)] min-[1201px]:[background-size:min(60vw,860px)_auto] min-[1201px]:[background-position:right_bottom]'
+			: 'grid items-start gap-[2.1rem] rounded-[14px] bg-surface-soft p-[clamp(1.2rem,2.4vw,2rem)] [background-repeat:no-repeat] [background-size:min(130vw,720px)_auto] [background-position:right_bottom] md:[background-size:min(90vw,680px)_auto] md:[background-position:right_bottom] min-[1201px]:grid-cols-[minmax(0,1.9fr)_minmax(320px,1fr)] min-[1201px]:[background-size:min(60vw,860px)_auto] min-[1201px]:[background-position:right_bottom]'
 	);
 
 	const statsClass = $derived(

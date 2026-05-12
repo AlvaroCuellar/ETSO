@@ -1,15 +1,16 @@
 ﻿<script lang="ts">
+	import { onMount } from 'svelte';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import CitationSuggestionCard from '$lib/components/ui/CitationSuggestionCard.svelte';
 	import LegalCard from '$lib/components/ui/LegalCard.svelte';
 	import PageHero from '$lib/components/ui/PageHero.svelte';
+	import WorkMetadataCard from '$lib/components/ui/WorkMetadataCard.svelte';
 	import bicuveLogo from '$lib/assets/logos/bicuve.png';
 	import byNcLogo from '$lib/assets/logos/by-nc.svg';
 	import {
 		formatDisplayWorkTitle,
 		formatPrefixedDisplayWorkTitleHtml
 	} from '$lib/utils/format-display-work-title';
-	import { renderInlineItalicsHtml } from '$lib/utils/render-inline-italics-html';
 
 	import type { PageData } from './$types';
 
@@ -81,6 +82,57 @@
 				segment.type === 'jornada' && Boolean(segment.id) && Boolean(segment.label)
 		)
 	);
+
+	let activeTextAnchor = $state('bicuve-text-start');
+
+	const navLinkClass = (id: string, isStart = false): string =>
+		`rounded-[8px] px-2 py-1.5 no-underline transition hover:no-underline ${
+			activeTextAnchor === id
+				? 'bg-surface-accent-blue font-bold text-brand-blue-dark'
+				: isStart
+					? 'font-bold uppercase tracking-[0.04em] text-brand-blue-dark hover:bg-surface-soft'
+					: 'text-text-soft hover:bg-surface-soft hover:text-brand-blue-dark'
+		} ${isStart ? 'text-[0.78rem]' : 'text-[0.82rem] leading-[1.3]'}`;
+
+	onMount(() => {
+		if (typeof window === 'undefined') return;
+
+		let frame = 0;
+
+		const resolveTargets = (): HTMLElement[] =>
+			['bicuve-text-start', ...jornadaMarks.map((mark) => mark.id)]
+				.map((id) => document.getElementById(id))
+				.filter((element): element is HTMLElement => Boolean(element));
+
+		const updateActiveAnchor = (): void => {
+			frame = 0;
+			const threshold = Math.round(window.innerHeight * 0.34);
+			let current = 'bicuve-text-start';
+
+			for (const target of resolveTargets()) {
+				if (target.getBoundingClientRect().top <= threshold) {
+					current = target.id;
+				}
+			}
+
+			activeTextAnchor = current;
+		};
+
+		const requestUpdate = (): void => {
+			if (frame) return;
+			frame = window.requestAnimationFrame(updateActiveAnchor);
+		};
+
+		updateActiveAnchor();
+		window.addEventListener('scroll', requestUpdate, { passive: true });
+		window.addEventListener('resize', requestUpdate);
+
+		return () => {
+			if (frame) window.cancelAnimationFrame(frame);
+			window.removeEventListener('scroll', requestUpdate);
+			window.removeEventListener('resize', requestUpdate);
+		};
+	});
 </script>
 
 <div class="grid gap-6">
@@ -94,23 +146,18 @@
 
 	<PageHero compact eyebrow="Texto digital" title={displayBicuveTitle} titleHtml={displayBicuveTitleHtml} />
 
-	<section class="grid gap-5 max-md:gap-4">
-		<div class="grid w-full gap-2">
-			<p class="font-ui text-[0.8rem] font-bold uppercase tracking-[0.04em] text-brand-blue-dark">PROCEDENCIA</p>
-			<p class="text-base leading-[1.6] text-text-main">
-				{@html renderInlineItalicsHtml(data.work.origin)}
-			</p>
-		</div>
+	<section class="grid gap-4">
+		<WorkMetadataCard work={data.work} />
 
-		<div class="grid w-full grid-cols-1 gap-3 min-[980px]:grid-cols-2 min-[980px]:items-stretch">
-			<LegalCard label="Aviso" class="h-full">
+		<div class="grid w-full grid-cols-1 items-stretch gap-4 min-[980px]:grid-cols-2">
+			<LegalCard label="Aviso">
 				<p>
 					Puede incluir errores u omisiones. Si dispones de una edición mejor, te agradecemos que contactes
 					con nosotros para incorporar actualizaciones.
 				</p>
 			</LegalCard>
 
-			<LegalCard label="Licencia" class="h-full">
+			<LegalCard label="Licencia">
 				<p>
 					Este contenido se ofrece bajo la licencia Creative Commons CC BY-NC 4.0. Reutilización permitida
 					con cita; usos comerciales no permitidos.
@@ -137,22 +184,30 @@
 			{displayWorkTitle.toLocaleUpperCase('es-ES')}
 		</h2>
 
-		<div class="grid gap-5 lg:grid-cols-[11rem_minmax(0,1fr)] lg:items-start lg:gap-8">
+		<div class="grid gap-5 lg:grid-cols-[11rem_minmax(0,1fr)_11rem] lg:items-start lg:gap-8">
 			<nav
 				class="hidden font-ui lg:sticky lg:top-[calc(5rem+68px)] lg:block"
 				aria-label="Navegación del texto BICUVE"
 			>
-				<div class="grid gap-2 border-l-2 border-border-accent-blue pl-3">
+				<div class="grid gap-1 border-l-2 border-border-accent-blue pl-2">
 					<a
 						href="#bicuve-text-start"
-						class="text-[0.78rem] font-bold uppercase tracking-[0.04em] text-brand-blue-dark no-underline hover:underline"
+						aria-current={activeTextAnchor === 'bicuve-text-start' ? 'location' : undefined}
+						class={navLinkClass('bicuve-text-start', true)}
+						onclick={() => {
+							activeTextAnchor = 'bicuve-text-start';
+						}}
 					>
 						Inicio
 					</a>
 					{#each jornadaMarks as mark}
 						<a
 							href={`#${mark.id}`}
-							class="text-[0.82rem] leading-[1.3] text-text-soft no-underline transition hover:text-brand-blue-dark hover:underline"
+							aria-current={activeTextAnchor === mark.id ? 'location' : undefined}
+							class={navLinkClass(mark.id)}
+							onclick={() => {
+								activeTextAnchor = mark.id;
+							}}
 						>
 							{mark.label}
 						</a>
@@ -168,7 +223,7 @@
 					{#if segment.type === 'jornada'}
 						<h3
 							id={segment.id}
-							class="mt-8 mb-4 scroll-mt-28 border-y border-border-accent-blue bg-surface-accent-blue px-4 py-3 text-center font-ui text-[0.9rem] font-bold uppercase tracking-[0.08em] text-brand-blue-dark"
+							class="mt-10 mb-4 scroll-mt-28 text-center font-ui text-[0.88rem] font-bold uppercase tracking-[0.09em] text-text-accent-purple"
 						>
 							{segment.label}
 						</h3>
@@ -177,6 +232,8 @@
 					{/if}
 				{/each}
 			</div>
+
+			<div class="hidden lg:block" aria-hidden="true"></div>
 		</div>
 	</section>
 </div>

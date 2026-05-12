@@ -1,6 +1,9 @@
 ﻿<script lang="ts">
 	import { onDestroy } from 'svelte';
 	import type { Snippet } from 'svelte';
+	import Copy from 'lucide-svelte/icons/copy';
+	import InfoCard from '$lib/components/ui/InfoCard.svelte';
+	import InlineActionButton from '$lib/components/ui/InlineActionButton.svelte';
 
 	interface Props {
 		citation: string;
@@ -111,28 +114,20 @@
 	onDestroy(clearToastTimer);
 </script>
 
-<section class={`grid gap-2 rounded-card border border-border-accent-blue bg-surface-accent-blue p-4 shadow-soft ${className}`}>
-	<div class="flex flex-wrap items-center justify-between gap-3">
-		<p class="m-0 font-ui text-[0.8rem] font-bold uppercase tracking-[0.04em] text-text-accent-purple">{label}</p>
-		<button
-			type="button"
-			class="rounded-md border border-border-accent-blue bg-white px-3 py-2 text-[0.82rem] leading-none font-bold text-brand-blue-dark transition hover:bg-surface-accent-blue"
-			onclick={copyCitation}
-		>
-			{buttonLabel}
-		</button>
-	</div>
 
-	<div class="grid gap-2 text-[0.97rem] leading-[1.65] text-text-main">
-		{#if children}
-			{@render children()}
-		{:else if allowHtml}
-			<p class="m-0">{@html citation}</p>
-		{:else}
-			<p class="m-0">{citation}</p>
-		{/if}
-	</div>
-</section>
+<InfoCard {label} class={className}>
+	{#snippet action()}
+		<InlineActionButton ariaLabel={buttonLabel} icon={Copy} onclick={copyCitation}>{buttonLabel}</InlineActionButton>
+	{/snippet}
+
+	{#if children}
+		{@render children()}
+	{:else if allowHtml}
+		<p class="m-0">{@html citation}</p>
+	{:else}
+		<p class="m-0">{citation}</p>
+	{/if}
+</InfoCard>
 
 {#if toastStatus !== 'idle' && toastMessage}
 	<p

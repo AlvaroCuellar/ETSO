@@ -93,10 +93,14 @@
 							{#if section.id === 'collaborators'}
 								<div class="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
 									{#each section.items as item}
-										<article class="grid gap-1.5 rounded-card border border-border bg-surface px-4 py-3 shadow-soft">
-											<h3 class="m-0 text-[0.98rem] font-semibold leading-[1.35] text-brand-blue-dark">{item.title}</h3>
+										<article class="grid gap-1.5 rounded-card bg-surface-soft px-4 py-3">
 											{#if itemMeta(item)}
-												<p class="m-0 text-[0.9rem] leading-[1.5] text-text-soft">{itemMeta(item)}</p>
+												<p class="m-0 text-[0.95rem] leading-[1.5] text-text-main">
+													<span class="block font-semibold text-brand-blue-dark">{item.title}</span>
+													<span class="block text-text-soft">{itemMeta(item)}</span>
+												</p>
+											{:else}
+												<h3 class="m-0 text-[0.98rem] font-semibold leading-[1.35] text-brand-blue-dark">{item.title}</h3>
 											{/if}
 											{#if item.summary}
 												<p class="m-0 text-[0.95rem] leading-[1.58] text-text-main">{item.summary}</p>
@@ -105,7 +109,7 @@
 									{/each}
 								</div>
 							{:else}
-								<div class="overflow-hidden rounded-card border border-border bg-surface shadow-soft">
+								<div class="overflow-hidden rounded-card bg-surface-soft">
 									<div class="divide-y divide-border-accent-blue">
 										{#each section.items as item}
 											<article class="grid gap-1.5 px-4 py-3 md:px-5">
@@ -122,7 +126,7 @@
 								</div>
 							{/if}
 						{:else if section.presentation === 'multi_column_list'}
-							<div class="rounded-card border border-border bg-surface p-4 shadow-soft">
+							<div class="rounded-card bg-surface-soft p-4">
 								<ul class="m-0 columns-1 gap-5 space-y-1.5 pl-5 text-[0.95rem] leading-[1.5] text-text-main sm:columns-2 lg:columns-3 xl:columns-4">
 									{#each section.items as item}
 										<li class="break-inside-avoid">{item.title}</li>

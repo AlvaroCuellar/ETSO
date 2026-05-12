@@ -1112,9 +1112,6 @@
 		if (!QUERY_ALLOWED_PATTERN.test(trimmed)) {
 			return `${label}: solo se permiten palabras, espacios y los comodines * y ?.`;
 		}
-		if (/\b(?:and|or|near)\b/i.test(trimmed)) {
-			return `${label}: no escribas AND, OR o NEAR dentro del término; usa las secciones de búsqueda avanzada.`;
-		}
 		return '';
 	};
 

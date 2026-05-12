@@ -423,9 +423,6 @@
 		{#if result1Parts.length > 0}
 			<article class="rounded-[8px] bg-surface-soft px-4 py-3.5 max-md:px-[0.9rem] max-md:py-3">
 				<div class="grid gap-2">
-					<div class="text-[0.72rem] font-bold uppercase tracking-[0.06em] text-text-accent-purple">
-						Conclusión
-					</div>
 					<p class="m-0 text-base leading-[1.62] text-text-main">
 						{#each result1Parts as part}
 							{#if part.kind === 'author' && part.authorId}
@@ -472,9 +469,9 @@
 					<CitationSuggestionCard
 						citation={citationEntry.text}
 						label="Cita sugerida"
-						buttonLabel="Copiar cita ETSO"
-						successMessage="Cita ETSO copiada."
-						emptyCitationMessage="No hay cita ETSO disponible."
+						buttonLabel="Copiar cita"
+						successMessage="Cita copiada."
+						emptyCitationMessage="No hay cita disponible."
 						copyErrorMessage="No se pudo copiar automáticamente."
 					>
 						<p class="m-0 text-[0.95rem] leading-[1.52] text-text-main">

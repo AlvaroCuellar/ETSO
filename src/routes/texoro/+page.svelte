@@ -35,7 +35,8 @@
 		SearchBooleanMode,
 		SearchProximityOrder,
 		StructuredSearchQuery,
-		TexoroIndexManifest
+		TexoroIndexManifest,
+		TexoroWorkMeta
 	} from '$lib/search';
 	import type { TexoroWorkerRequestPayload, TexoroWorkerResponse } from '$lib/search/worker-protocol';
 	import type { PageData } from './$types';
@@ -264,6 +265,8 @@
 	let infoModalOpen = $state(false);
 	let loadedIndexVersion = $state<string | null>(null);
 	const indexVersion = $derived(loadedIndexVersion ?? data.indexInfo?.indexVersion ?? 'n/d');
+	let worksMeta = $state<TexoroWorkMeta[] | null>(null);
+	let worksMetaLoadPromise: Promise<TexoroWorkMeta[]> | null = null;
 	let texoroWorker: Worker | null = null;
 	let texoroWorkerInitPromise: Promise<void> | null = null;
 	let texoroWorkerRequestId = 0;
@@ -393,37 +396,9 @@
 		};
 	};
 
-	const authorOptions = $derived.by<TokenOption[]>(() => {
-		const byId = new Map<string, string>();
-		for (const work of data.worksMeta) {
-			for (const set of [work.traditionalAttribution, work.stylometryAttribution]) {
-				if (set.unresolved) continue;
-				for (const group of set.groups) {
-					for (const member of group.members) {
-						const id = member.authorId?.trim();
-						const name = member.authorName?.trim();
-						if (!id || !name || byId.has(id)) continue;
-						byId.set(id, name);
-					}
-				}
-			}
-		}
-		return Array.from(byId.entries())
-			.map(([id, label]) => ({ id, label }))
-			.sort((a, b) => a.label.localeCompare(b.label, 'es'));
-	});
-
-	const genreOptions = $derived.by<TokenOption[]>(() => {
-		const values = Array.from(new Set(data.worksMeta.map((work) => work.genre.trim()).filter(Boolean)));
-		values.sort((a, b) => a.localeCompare(b, 'es'));
-		return values.map((value) => ({ id: value, label: value }));
-	});
-
-	const stateOptions = $derived.by<TokenOption[]>(() => {
-		const values = Array.from(new Set(data.worksMeta.map((work) => work.textState.trim()).filter(Boolean)));
-		values.sort((a, b) => a.localeCompare(b, 'es'));
-		return values.map((value) => ({ id: value, label: value }));
-	});
+	const authorOptions = $derived.by<TokenOption[]>(() => data.filterOptions.authors);
+	const genreOptions = $derived.by<TokenOption[]>(() => data.filterOptions.genres);
+	const stateOptions = $derived.by<TokenOption[]>(() => data.filterOptions.states);
 
 	const activeSearchTermCount = $derived.by(() => {
 		let count = mainQuery.trim() ? 1 : 0;
@@ -1424,6 +1399,29 @@
 		return (await response.json()) as T;
 	}
 
+	const fetchWorksMeta = async (): Promise<TexoroWorkMeta[]> => {
+		const response = await fetch('/api/texoro/work-meta');
+		if (!response.ok) {
+			throw new Error(`No se pudieron cargar los metadatos de TEXORO: ${response.status}`);
+		}
+		return (await response.json()) as TexoroWorkMeta[];
+	};
+
+	const loadWorksMeta = async (): Promise<TexoroWorkMeta[]> => {
+		if (worksMeta) return worksMeta;
+		if (!worksMetaLoadPromise) {
+			worksMetaLoadPromise = fetchWorksMeta()
+				.then((items) => {
+					worksMeta = items;
+					return items;
+				})
+				.finally(() => {
+					worksMetaLoadPromise = null;
+				});
+		}
+		return worksMetaLoadPromise;
+	};
+
 	const fetchIndexManifest = async (): Promise<TexoroIndexManifest> => {
 		if (!texoroIndexBaseUrl) {
 			throw new Error('Falta PUBLIC_R2_PUBLIC_ASSETS_BASE_URL para inicializar TEXORO.');
@@ -1495,6 +1493,7 @@
 
 		texoroWorkerInitPromise = (async () => {
 			try {
+				const loadedWorksMeta = await loadWorksMeta();
 				texoroWorker = createTexoroWorker();
 				if (!texoroWorker) {
 					throw new Error('Worker TEXORO no disponible');
@@ -1502,7 +1501,7 @@
 				const response = await requestTexoroWorker<{ manifest?: TexoroIndexManifest | null }>({
 					action: 'init',
 					indexBaseUrl: texoroIndexBaseUrl,
-					worksMeta: data.worksMeta
+					worksMeta: loadedWorksMeta
 				});
 				if (!response.manifest) {
 					throw new Error('El worker TEXORO no devolvió manifest');
@@ -1560,7 +1559,7 @@
 		query: string,
 		structuredQuery: StructuredSearchQuery
 	): Promise<SearchExecution> => {
-		if (texoroWorker) {
+		if (isEngineReady && texoroWorker) {
 			try {
 				const response = await requestTexoroWorker<{ execution?: SearchExecution }>({
 					action: 'search',

@@ -24,16 +24,29 @@
 		rows: ObraTableRow[];
 		mode?: 'standard' | 'informe';
 		emptyMessage?: string;
+		prefetchShortSummaries?: boolean;
+	}
+
+	type ShortSummaryStatus = 'loading' | 'loaded' | 'error' | 'missing';
+	type IdleHandle =
+		| { kind: 'idle'; id: number }
+		| { kind: 'timeout'; id: ReturnType<typeof globalThis.setTimeout> };
+
+	interface ShortSummaryState {
+		status: ShortSummaryStatus;
+		text: string;
 	}
 
 	let {
 		rows,
 		mode = 'standard',
-		emptyMessage = 'No se encontraron obras que coincidan con los criterios de búsqueda.'
+		emptyMessage = 'No se encontraron obras que coincidan con los criterios de búsqueda.',
+		prefetchShortSummaries = true
 	}: Props = $props();
 
 	let expandedRows = $state<Set<string>>(new Set());
 	let openDropdownRowId = $state<string | null>(null);
+	let shortSummaryByWorkId = $state<Map<string, ShortSummaryState>>(new Map());
 
 	const tableClass = $derived.by(() =>
 		mode === 'informe'
@@ -66,6 +79,8 @@
 			}`
 	);
 	const disabledIconClass = 'text-[rgba(114,130,145,0.75)]';
+	const SHORT_SUMMARY_PREFETCH_CONCURRENCY = 2;
+	const SHORT_SUMMARY_PREFETCH_TIMEOUT_MS = 1800;
 
 	onMount(() => {
 		const onDocumentClick = (event: MouseEvent): void => {
@@ -112,25 +127,130 @@
 			onlyTrad: false
 		};
 
+	const isUsableShortSummary = (value: string): boolean => {
+		const shortText = value.trim();
+		return shortText.length > 0 && shortText !== 'Sin resumen breve disponible.';
+	};
+
 	const isRowExpanded = (rowId: string): boolean => expandedRows.has(rowId);
 
-	const toggleRowExpanded = (rowId: string): void => {
+	const getShortSummaryState = (work: CatalogWork): ShortSummaryState | undefined =>
+		shortSummaryByWorkId.get(work.id);
+
+	const getShortSummaryText = (work: CatalogWork): string => {
+		const cached = getShortSummaryState(work);
+		if (cached?.status === 'loaded') return cached.text;
+		return work.shortSummary;
+	};
+
+	const setShortSummaryState = (workId: string, state: ShortSummaryState): void => {
+		shortSummaryByWorkId = new Map(shortSummaryByWorkId).set(workId, state);
+	};
+
+	const loadShortSummary = async (work: CatalogWork): Promise<void> => {
+		if (!work.hasSummaryFile) return;
+		if (isUsableShortSummary(work.shortSummary)) return;
+		if (shortSummaryByWorkId.has(work.id)) return;
+
+		setShortSummaryState(work.id, { status: 'loading', text: '' });
+
+		try {
+			const response = await fetch(`/api/works/${encodeURIComponent(work.id)}/short-summary`);
+			if (response.status === 404) {
+				setShortSummaryState(work.id, { status: 'missing', text: '' });
+				return;
+			}
+			if (!response.ok) {
+				throw new Error(`No se pudo cargar el resumen breve: ${response.status}`);
+			}
+
+			const parsed = (await response.json()) as { shortSummary?: unknown };
+			const shortSummary = typeof parsed.shortSummary === 'string' ? parsed.shortSummary : '';
+			setShortSummaryState(
+				work.id,
+				isUsableShortSummary(shortSummary)
+					? { status: 'loaded', text: shortSummary }
+					: { status: 'missing', text: '' }
+			);
+		} catch {
+			setShortSummaryState(work.id, { status: 'error', text: '' });
+		}
+	};
+
+	const requestIdle = (callback: () => void): IdleHandle => {
+		if ('requestIdleCallback' in window) {
+			return {
+				kind: 'idle',
+				id: window.requestIdleCallback(callback, { timeout: SHORT_SUMMARY_PREFETCH_TIMEOUT_MS })
+			};
+		}
+		return { kind: 'timeout', id: globalThis.setTimeout(callback, 450) };
+	};
+
+	const cancelIdle = (handle: IdleHandle): void => {
+		if (handle.kind === 'idle') {
+			window.cancelIdleCallback(handle.id);
+			return;
+		}
+		globalThis.clearTimeout(handle.id);
+	};
+
+	const prefetchShortSummariesInBackground = (sourceRows: ObraTableRow[]): (() => void) => {
+		const candidates = sourceRows
+			.map((row) => row.work)
+			.filter((work) => work.hasSummaryFile && !isUsableShortSummary(work.shortSummary));
+		if (candidates.length === 0) return () => {};
+
+		let cancelled = false;
+		let activeLoads = 0;
+		let nextIndex = 0;
+		let idleHandle: IdleHandle | null = null;
+
+		const pump = (): void => {
+			if (cancelled) return;
+
+			while (activeLoads < SHORT_SUMMARY_PREFETCH_CONCURRENCY && nextIndex < candidates.length) {
+				const work = candidates[nextIndex++];
+				activeLoads += 1;
+				loadShortSummary(work).finally(() => {
+					activeLoads -= 1;
+					pump();
+				});
+			}
+		};
+
+		idleHandle = requestIdle(pump);
+
+		return () => {
+			cancelled = true;
+			if (idleHandle !== null) cancelIdle(idleHandle);
+		};
+	};
+
+	$effect(() => {
+		if (!prefetchShortSummaries) return;
+		return prefetchShortSummariesInBackground(rows);
+	});
+
+	const toggleRowExpanded = (row: ObraTableRow): void => {
 		const next = new Set(expandedRows);
+		const rowId = row.rowId;
 		if (next.has(rowId)) {
 			next.delete(rowId);
 		} else {
 			next.add(rowId);
+			void loadShortSummary(row.work);
 		}
 		expandedRows = next;
 	};
 
-	const handleRowClick = (event: MouseEvent, rowId: string): void => {
+	const handleRowClick = (event: MouseEvent, row: ObraTableRow): void => {
 		const target = event.target as HTMLElement | null;
 		if (!target) return;
 		if (target.closest('a')) return;
 		if (target.closest('button')) return;
 		if (target.closest('.textos-dropdown')) return;
-		toggleRowExpanded(rowId);
+		toggleRowExpanded(row);
 	};
 
 	const hasAuthorLinks = (set: AttributionSet): boolean => !set.unresolved && set.groups.length > 0;
@@ -160,9 +280,7 @@
 	const hasSummaryFile = (work: CatalogWork): boolean => work.hasSummaryFile;
 
 	const hasShortSummary = (work: CatalogWork): boolean => {
-		const shortText = work.shortSummary.trim();
-		if (shortText && shortText !== 'Sin resumen breve disponible.') return true;
-		return false;
+		return isUsableShortSummary(getShortSummaryText(work));
 	};
 
 	const summaryUrl = (work: CatalogWork): string => `/obras/${work.slug}/resumen`;
@@ -242,6 +360,7 @@
 			<tbody class="max-md:block">
 				{#each rows as row}
 					{@const flags = resolveFilterFlags(row)}
+					{@const summaryState = getShortSummaryState(row.work)}
 					<tr
 						class={`obra-row cursor-pointer border-b border-border transition-colors hover:bg-surface-soft max-md:mb-3 max-md:block max-md:rounded-[8px] max-md:border max-md:border-border max-md:bg-white max-md:p-2 ${
 							isRowExpanded(row.rowId) ? 'expanded border-b-border-accent-blue bg-surface-accent-blue' : ''
@@ -254,7 +373,7 @@
 						data-filter-etso-yes={flags.etsoYes ? '1' : '0'}
 						data-filter-only-etso={flags.onlyEtso ? '1' : '0'}
 						data-filter-only-trad={flags.onlyTrad ? '1' : '0'}
-						onclick={(event) => handleRowClick(event, row.rowId)}
+						onclick={(event) => handleRowClick(event, row)}
 					>
 						{#if mode === 'informe'}
 							<td class={`${dataCellClass} text-center font-medium`} data-label="Posición">
@@ -527,13 +646,13 @@
 										onclick={(event) => {
 											event.preventDefault();
 											event.stopPropagation();
-											toggleRowExpanded(row.rowId);
+											toggleRowExpanded(row);
 										}}
 										onkeydown={(event) => {
 											if (event.key !== 'Enter' && event.key !== ' ') return;
 											event.preventDefault();
 											event.stopPropagation();
-											toggleRowExpanded(row.rowId);
+											toggleRowExpanded(row);
 										}}
 									>
 										Ver más
@@ -562,7 +681,20 @@
 										<div class="detail-section-title mb-2.5 text-[12px] font-semibold tracking-[0.5px] text-[#5a7a8a] uppercase">
 											Resumen breve automático
 										</div>
-										<p class="resumen-text mb-3 text-[14px] leading-[1.7] text-text-soft">{row.work.shortSummary}</p>
+										<p class="resumen-text mb-3 text-[14px] leading-[1.7] text-text-soft">{getShortSummaryText(row.work)}</p>
+									</div>
+								{:else if summaryState?.status === 'loading'}
+									<div class="detail-section detail-section--resumen mb-5 border-b border-[#dfe5ee] pb-3 last:mb-0">
+										<div class="detail-section-title mb-2.5 text-[12px] font-semibold tracking-[0.5px] text-[#5a7a8a] uppercase">
+											Resumen breve automático
+										</div>
+										<p class="resumen-text mb-3 text-[14px] leading-[1.7] text-text-soft italic">Cargando resumen...</p>
+									</div>
+								{:else if summaryState?.status === 'error'}
+									<div class="detail-section detail-section--resumen mb-5 border-b border-[#dfe5ee] pb-3 last:mb-0">
+										<p class="m-0 text-[13px] leading-[1.55] text-text-soft italic">
+											No se pudo cargar el resumen breve.
+										</p>
 									</div>
 								{/if}
 

@@ -2,8 +2,7 @@ import {
 	getAllAuthors,
 	getAllWorks,
 	getCatalogStats,
-	listGenres,
-	withWorkShortSummaries
+	listGenres
 } from '$lib/server/catalog-runtime';
 import {
 	inferWorkAuthorshipType,
@@ -190,7 +189,7 @@ export const load: PageServerLoad = async ({ url }) => {
 	const requestedPage = parsePage(url.searchParams);
 	const page = Math.min(requestedPage, totalPages);
 	const start = (page - 1) * PAGE_SIZE;
-	const pagedWorks = await withWorkShortSummaries(filteredWorks.slice(start, start + PAGE_SIZE));
+	const pagedWorks = filteredWorks.slice(start, start + PAGE_SIZE);
 	const stateOptions = Array.from(new Set(works.map((work) => work.textState).filter(Boolean))).sort((a, b) =>
 		a.localeCompare(b, 'es')
 	);

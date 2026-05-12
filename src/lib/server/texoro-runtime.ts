@@ -3,12 +3,13 @@ import { getAllWorks } from '$lib/server/catalog-runtime';
 import { readPrivateTextByTextKey } from '$lib/server/r2-private';
 import { getTexoroIndexBaseUrl } from '$lib/server/r2-public';
 
+import type { CatalogWork } from '$lib/domain/catalog';
 import type { SearchOptions, TexoroWorkMeta } from '$lib/search';
 
 let engine: TexoroSearchEngine | null = null;
 let enginePromise: Promise<TexoroSearchEngine> | null = null;
 
-const toWorkMeta = (work: Awaited<ReturnType<typeof getAllWorks>>[number]): TexoroWorkMeta => ({
+export const toTexoroWorkMeta = (work: CatalogWork): TexoroWorkMeta => ({
 	id: work.id,
 	title: work.title,
 	titleVariants: work.titleVariants,
@@ -44,6 +45,6 @@ export const getServerTexoroEngine = async (): Promise<TexoroSearchEngine> => {
 
 export const searchTexoro = async (query: string, options: SearchOptions = {}) => {
 	const [searchEngine, works] = await Promise.all([getServerTexoroEngine(), getAllWorks()]);
-	const workMeta = buildWorkMetaMap(works.map(toWorkMeta));
+	const workMeta = buildWorkMetaMap(works.map(toTexoroWorkMeta));
 	return searchEngine.search(query, workMeta, options);
 };

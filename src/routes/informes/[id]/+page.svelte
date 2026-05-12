@@ -408,6 +408,7 @@
 							<WorksTable
 								rows={rowsByAmbito[ambito]}
 								mode="informe"
+								prefetchShortSummaries={activeAmbito === ambito}
 								emptyMessage="No hay obras cercanas disponibles en este ámbito."
 							/>
 						</div>

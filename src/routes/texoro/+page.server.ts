@@ -1,5 +1,6 @@
 import { getAllWorks, getCatalogStats } from '$lib/server/catalog-runtime';
 import { env as publicEnv } from '$env/dynamic/public';
+import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
 
 import type { AttributionSet } from '$lib/domain/catalog';
 import type { TexoroIndexManifest } from '$lib/search';
@@ -67,6 +68,13 @@ const collectStringOptions = (
 		.sort((a, b) => a.localeCompare(b, 'es'))
 		.map((value) => ({ id: value, label: value }));
 
+const collectWorkOptions = (
+	works: Awaited<ReturnType<typeof getAllWorks>>
+): TokenOption[] =>
+	works
+		.map((work) => ({ id: work.id, label: formatDisplayWorkTitle(work.title) }))
+		.sort((a, b) => a.label.localeCompare(b.label, 'es'));
+
 const getTexoroInitialIndexInfo = async (fetch: typeof globalThis.fetch): Promise<TexoroInitialIndexInfo | null> => {
 	const texoroIndexBaseUrl = resolveTexoroIndexBaseUrl();
 	if (!texoroIndexBaseUrl) return null;
@@ -103,6 +111,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
 		indexInfo,
 		stats,
 		filterOptions: {
+			works: collectWorkOptions(works),
 			authors: collectAuthorOptions(works),
 			genres: collectStringOptions(works.map((work) => work.genre)),
 			states: collectStringOptions(works.map((work) => work.textState))

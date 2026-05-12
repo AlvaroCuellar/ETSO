@@ -41,6 +41,7 @@ import {
 	type InformeBibliographySection,
 	type InformeBibliographyView,
 	type InformeDistanceView,
+	type WorkAuthorshipType,
 	type WorkSummaryDetail
 } from '$lib/domain/catalog';
 import collaboratorsSource from '../../../data/colaboradores/colaboradores.json';
@@ -235,6 +236,32 @@ interface WorkShortSummaryRow {
 	resumen_breve: string | null;
 }
 
+export type ExamenWorksMatchMode = 'or' | 'and';
+
+export interface ExamenWorksFilters {
+	titulo: string;
+	genero: string[];
+	autor: string[];
+	tipo_autoria: string[];
+	autor_trad: string[];
+	autor_trad_match: ExamenWorksMatchMode;
+	autor_esto: string[];
+	autor_esto_match: ExamenWorksMatchMode;
+	confianza: string[];
+	estado: string[];
+	desde: string;
+	hasta: string;
+}
+
+export interface ExamenWorksPage {
+	works: CatalogWork[];
+	totalResults: number;
+	totalPages: number;
+	page: number;
+}
+
+const EXAMEN_FILTER_CACHE_LIMIT = 50;
+
 interface TempGroup {
 	order: number;
 	members: Array<{
@@ -336,6 +363,23 @@ const normalizeDistanceAmbito = (rawAmbito: string): Ambito | null => {
 };
 
 const normalizeShortSummary = (value: string | null | undefined): string => value?.trim() || EMPTY_SHORT_SUMMARY;
+
+const normalizeText = (value: string): string =>
+	value
+		.normalize('NFD')
+		.replace(/[\u0300-\u036f]/g, '')
+		.toLowerCase()
+		.trim();
+
+const parseYearMonth = (value: string): number | null => {
+	const match = value.match(/(\d{4})[/-](\d{1,2})/);
+	if (!match) return null;
+	const year = Number(match[1]);
+	const month = Number(match[2]);
+	if (!Number.isInteger(year) || !Number.isInteger(month)) return null;
+	if (month < 1 || month > 12) return null;
+	return year * 100 + month;
+};
 
 const assertTursoConfig = (): { databaseUrl: string; authToken: string } => {
 	if (!env.TURSO_DATABASE_URL || !env.TURSO_AUTH_TOKEN) {
@@ -762,6 +806,234 @@ export const listGenres = async (): Promise<string[]> =>
 	Array.from(new Set((await getSnapshot()).works.map((work) => work.genre))).sort((a, b) =>
 		a.localeCompare(b)
 	);
+
+const asWorkAuthorshipType = (value: string): WorkAuthorshipType | null => {
+	if (value === 'unica' || value === 'colaboracion' || value === 'desconocida') return value;
+	return null;
+};
+
+const collectAuthorIds = (set: AttributionSet): Set<string> => {
+	const authorIds = new Set<string>();
+	if (set.unresolved) return authorIds;
+
+	for (const group of set.groups) {
+		for (const member of group.members) {
+			if (!member.authorId) continue;
+			authorIds.add(member.authorId);
+		}
+	}
+	return authorIds;
+};
+
+const matchesByMode = (
+	haystack: Set<string>,
+	selectedIds: string[],
+	matchMode: ExamenWorksMatchMode
+): boolean => {
+	if (selectedIds.length === 0) return true;
+	if (matchMode === 'and') return selectedIds.every((candidate) => haystack.has(candidate));
+	return selectedIds.some((candidate) => haystack.has(candidate));
+};
+
+interface ExamenWorkSearchRecord {
+	work: CatalogWork;
+	titleSearch: string;
+	traditionalAuthorIds: Set<string>;
+	stylometryAuthorIds: Set<string>;
+	allAuthorIds: Set<string>;
+	stylometryConfidence: Set<Confidence>;
+	authorshipType: WorkAuthorshipType;
+	yearMonth: number | null;
+}
+
+const toExamenWorkSearchRecord = (work: CatalogWork): ExamenWorkSearchRecord => {
+	const traditionalAuthorIds = collectAuthorIds(work.traditionalAttribution);
+	const stylometryAuthorIds = collectAuthorIds(work.stylometryAttribution);
+	const allAuthorIds = new Set([...traditionalAuthorIds, ...stylometryAuthorIds]);
+	const stylometryConfidence = new Set<Confidence>();
+
+	if (!work.stylometryAttribution.unresolved) {
+		for (const group of work.stylometryAttribution.groups) {
+			for (const member of group.members) {
+				if (member.confidence) stylometryConfidence.add(member.confidence);
+			}
+		}
+	}
+
+	return {
+		work,
+		titleSearch: normalizeText([work.title, ...work.titleVariants].join(' ')),
+		traditionalAuthorIds,
+		stylometryAuthorIds,
+		allAuthorIds,
+		stylometryConfidence,
+		authorshipType: inferWorkAuthorshipType(work),
+		yearMonth: parseYearMonth(work.addedOn)
+	};
+};
+
+const examenSearchRecordsBySnapshot = new WeakMap<Snapshot, ExamenWorkSearchRecord[]>();
+const examenFilteredRecordsBySnapshot = new WeakMap<
+	Snapshot,
+	Map<string, ExamenWorkSearchRecord[]>
+>();
+
+const getExamenSearchRecords = (snapshot: Snapshot): ExamenWorkSearchRecord[] => {
+	const cached = examenSearchRecordsBySnapshot.get(snapshot);
+	if (cached) return cached;
+	const records = snapshot.works.map(toExamenWorkSearchRecord);
+	examenSearchRecordsBySnapshot.set(snapshot, records);
+	return records;
+};
+
+const normalizeFilterValues = (values: string[]): string[] =>
+	Array.from(new Set(values.map((value) => value.trim()).filter(Boolean))).sort((a, b) =>
+		a.localeCompare(b)
+	);
+
+const hasActiveExamenFilters = (filters: ExamenWorksFilters): boolean =>
+	Boolean(
+		filters.titulo.trim() ||
+			filters.genero.length > 0 ||
+			filters.autor.length > 0 ||
+			filters.tipo_autoria.length > 0 ||
+			filters.autor_trad.length > 0 ||
+			filters.autor_esto.length > 0 ||
+			filters.confianza.length > 0 ||
+			filters.estado.length > 0 ||
+			filters.desde.trim() ||
+			filters.hasta.trim()
+	);
+
+const createExamenFilterSignature = (filters: ExamenWorksFilters): string => {
+	const autorTrad = normalizeFilterValues(filters.autor_trad);
+	const autorEsto = normalizeFilterValues(filters.autor_esto);
+
+	return JSON.stringify({
+		titulo: normalizeText(filters.titulo),
+		genero: normalizeFilterValues(filters.genero),
+		autor: normalizeFilterValues(filters.autor),
+		tipo_autoria: normalizeFilterValues(filters.tipo_autoria),
+		autor_trad: autorTrad,
+		autor_trad_match: autorTrad.length > 0 ? filters.autor_trad_match : 'or',
+		autor_esto: autorEsto,
+		autor_esto_match: autorEsto.length > 0 ? filters.autor_esto_match : 'or',
+		confianza: normalizeFilterValues(filters.confianza),
+		estado: normalizeFilterValues(filters.estado),
+		desde: filters.desde.trim(),
+		hasta: filters.hasta.trim()
+	});
+};
+
+const getCachedExamenFilteredRecords = (
+	snapshot: Snapshot,
+	filters: ExamenWorksFilters
+): ExamenWorkSearchRecord[] => {
+	let filteredRecordsBySignature = examenFilteredRecordsBySnapshot.get(snapshot);
+	if (!filteredRecordsBySignature) {
+		filteredRecordsBySignature = new Map();
+		examenFilteredRecordsBySnapshot.set(snapshot, filteredRecordsBySignature);
+	}
+
+	const signature = createExamenFilterSignature(filters);
+	const cached = filteredRecordsBySignature.get(signature);
+	if (cached) return cached;
+
+	const records = getExamenSearchRecords(snapshot).filter((record) =>
+		matchesExamenFilters(record, filters)
+	);
+
+	if (filteredRecordsBySignature.size >= EXAMEN_FILTER_CACHE_LIMIT) {
+		const oldestSignature = filteredRecordsBySignature.keys().next().value;
+		if (oldestSignature) filteredRecordsBySignature.delete(oldestSignature);
+	}
+	filteredRecordsBySignature.set(signature, records);
+	return records;
+};
+
+const matchesConfidenceFilter = (
+	record: ExamenWorkSearchRecord,
+	selectedValues: string[]
+): boolean => {
+	if (selectedValues.length === 0) return true;
+	if (record.stylometryConfidence.size === 0) return false;
+	return selectedValues.some((selectedValue) => record.stylometryConfidence.has(selectedValue as Confidence));
+};
+
+const matchesDateRangeFilter = (
+	record: ExamenWorkSearchRecord,
+	filters: ExamenWorksFilters
+): boolean => {
+	if (!record.yearMonth) return true;
+	const fromYearMonth = parseYearMonth(filters.desde);
+	const toYearMonth = parseYearMonth(filters.hasta);
+
+	if (fromYearMonth && record.yearMonth < fromYearMonth) return false;
+	if (toYearMonth && record.yearMonth > toYearMonth) return false;
+	return true;
+};
+
+const matchesExamenFilters = (
+	record: ExamenWorkSearchRecord,
+	filters: ExamenWorksFilters
+): boolean => {
+	const normalizedTitle = normalizeText(filters.titulo);
+	const mainAuthorDisabled = filters.autor_trad.length > 0 || filters.autor_esto.length > 0;
+	const effectiveMainAuthors = mainAuthorDisabled ? [] : filters.autor;
+	const selectedAuthorshipValues = filters.tipo_autoria
+		.map((value) => asWorkAuthorshipType(value))
+		.filter((value): value is WorkAuthorshipType => value !== null);
+	const hasValidDateRange = !filters.desde || !filters.hasta || filters.desde <= filters.hasta;
+
+	if (normalizedTitle && !record.titleSearch.includes(normalizedTitle)) return false;
+	if (filters.genero.length > 0 && !filters.genero.includes(record.work.genre)) return false;
+	if (!matchesByMode(record.allAuthorIds, effectiveMainAuthors, 'or')) return false;
+	if (!matchesByMode(record.traditionalAuthorIds, filters.autor_trad, filters.autor_trad_match)) return false;
+	if (!matchesByMode(record.stylometryAuthorIds, filters.autor_esto, filters.autor_esto_match)) return false;
+	if (!matchesConfidenceFilter(record, filters.confianza)) return false;
+	if (selectedAuthorshipValues.length > 0 && !selectedAuthorshipValues.includes(record.authorshipType)) return false;
+	if (filters.estado.length > 0 && !filters.estado.includes(record.work.textState)) return false;
+	if (hasValidDateRange && !matchesDateRangeFilter(record, filters)) return false;
+
+	return true;
+};
+
+export const getExamenWorksPage = async (
+	filters: ExamenWorksFilters,
+	page: number,
+	pageSize: number
+): Promise<ExamenWorksPage> => {
+	const snapshot = await getSnapshot();
+	const safePageSize = Number.isFinite(pageSize) && pageSize > 0 ? Math.floor(pageSize) : 20;
+	const requestedPage = Number.isFinite(page) && page > 0 ? Math.floor(page) : 1;
+
+	if (!hasActiveExamenFilters(filters)) {
+		const totalResults = snapshot.works.length;
+		const totalPages = Math.max(1, Math.ceil(totalResults / safePageSize));
+		const safePage = Math.min(requestedPage, totalPages);
+		const start = (safePage - 1) * safePageSize;
+
+		return {
+			works: snapshot.works.slice(start, start + safePageSize),
+			totalResults,
+			totalPages,
+			page: safePage
+		};
+	}
+
+	const matchingRecords = getCachedExamenFilteredRecords(snapshot, filters);
+	const totalResults = matchingRecords.length;
+	const totalPages = Math.max(1, Math.ceil(totalResults / safePageSize));
+	const safePage = Math.min(requestedPage, totalPages);
+	const start = (safePage - 1) * safePageSize;
+
+	return {
+		works: matchingRecords.slice(start, start + safePageSize).map((record) => record.work),
+		totalResults,
+		totalPages,
+		page: safePage
+	};
+};
 
 export const getCatalogStats = async (): Promise<CatalogStats> => {
 	const snapshot = await getSnapshot();

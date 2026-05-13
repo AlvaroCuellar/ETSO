@@ -4,7 +4,12 @@ import { env } from '$env/dynamic/private';
 import { existsSync } from 'node:fs';
 import { readPrivateTextByWorkId } from '$lib/server/r2-private';
 import { fetchPublicR2Json, getSummariesBaseUrl } from '$lib/server/r2-public';
-import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
+import { buildWorkTitleSearchText, formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
+import {
+	buildReportSlugBase,
+	buildUniqueReportSlug,
+	normalizeReportSlugOverrides
+} from '$lib/utils/report-slug';
 import {
 	UNRESOLVED_AUTHOR_ID,
 	ambitos,
@@ -44,6 +49,7 @@ import {
 	type WorkAuthorshipType,
 	type WorkSummaryDetail
 } from '$lib/domain/catalog';
+import informeSlugOverridesSource from '$lib/data/informe-slug-overrides.json';
 import collaboratorsSource from '../../../data/colaboradores/colaboradores.json';
 import bibliographySource from '../../../data/referencias/bibliografia.json';
 import impactSource from '../../../data/referencias/repercusion.json';
@@ -55,6 +61,7 @@ const configuredCacheMs = Number.parseInt(env.CATALOG_CACHE_MS ?? '', 10);
 const CACHE_MS = Number.isFinite(configuredCacheMs) && configuredCacheMs > 0 ? configuredCacheMs : DEFAULT_CACHE_MS;
 const LOCAL_CATALOG_SQLITE_PATH = 'data/sqlite/etso-prueba.sqlite';
 const EMPTY_SHORT_SUMMARY = 'Sin resumen breve disponible.';
+const informeSlugOverrides = normalizeReportSlugOverrides(informeSlugOverridesSource);
 
 const escapeHtml = (value: string): string =>
 	value
@@ -68,6 +75,7 @@ interface Snapshot {
 	works: CatalogWork[];
 	workById: Map<string, CatalogWork>;
 	workBySlug: Map<string, CatalogWork>;
+	workByReportSlug: Map<string, CatalogWork>;
 	bicuveWorkBySlug: Map<string, CatalogWork>;
 	bicuveSlugByWorkId: Map<string, string>;
 	bicuveNameByWorkId: Map<string, string>;
@@ -184,7 +192,7 @@ interface WorkRow {
 	id: string;
 	slug: string | null;
 	titulo: string;
-	variaciones_titulo: string | null;
+	title_variants: string | null;
 	genero: string | null;
 	adicion: string | null;
 	estado_texto: string | null;
@@ -606,23 +614,29 @@ const createSnapshot = async (): Promise<Snapshot> => {
 
 	const worksTableColumns = await getRows<{ name: string }>('PRAGMA table_info(works)');
 	const hasWorkSlugColumn = worksTableColumns.some((column) => column.name === 'slug');
-	const hasWorkTitleVariantsColumn = worksTableColumns.some(
+	const hasWorkOtherTitlesColumn = worksTableColumns.some((column) => column.name === 'otrostitulos');
+	const hasWorkLegacyTitleVariantsColumn = worksTableColumns.some(
 		(column) => column.name === 'variaciones_titulo'
 	);
+	const titleVariantsSelect = hasWorkOtherTitlesColumn
+		? 'otrostitulos AS title_variants'
+		: hasWorkLegacyTitleVariantsColumn
+			? 'variaciones_titulo AS title_variants'
+			: 'NULL AS title_variants';
 
 	const workRows = await getRows<WorkRow>(
 		`SELECT id, ${hasWorkSlugColumn ? 'slug' : 'NULL AS slug'}, titulo,
-		 ${hasWorkTitleVariantsColumn ? 'variaciones_titulo' : 'NULL AS variaciones_titulo'},
+		 ${titleVariantsSelect},
 		 genero, adicion, estado_texto,
 		 examen_autorias, bicuve, bicuve_nombre, tiene_acceso_externo,
 		 procede, resultado1, resultado2,
 		 CASE WHEN resumen_breve IS NOT NULL AND TRIM(resumen_breve) <> '' THEN 1 ELSE 0 END AS has_resumen_breve
 		 FROM works
-		 WHERE examen_autorias = 1
 		 ORDER BY titulo COLLATE NOCASE`
 	);
 
 	const slugCounts = new Map<string, number>();
+	const reportSlugCounts = new Map<string, number>();
 	const bicuveSlugCounts = new Map<string, number>();
 	const bicuveSlugByWorkId = new Map<string, string>();
 	const bicuveNameByWorkId = new Map<string, string>();
@@ -640,6 +654,12 @@ const createSnapshot = async (): Promise<Snapshot> => {
 		const currentCount = (slugCounts.get(baseSlug) ?? 0) + 1;
 		slugCounts.set(baseSlug, currentCount);
 		const slug = currentCount === 1 ? baseSlug : `${baseSlug}-${currentCount}`;
+		const automaticReportSlug = hasReport
+			? buildUniqueReportSlug(buildReportSlugBase(row.titulo), reportSlugCounts)
+			: undefined;
+		const reportSlug = hasReport
+			? (informeSlugOverrides[row.id] ?? automaticReportSlug)
+			: undefined;
 		const bicuveNombre = row.bicuve_nombre?.trim() || 'ETSO';
 		bicuveNameByWorkId.set(row.id, bicuveNombre);
 		let bicuveSlug = '';
@@ -667,26 +687,30 @@ const createSnapshot = async (): Promise<Snapshot> => {
 			id: row.id,
 			slug,
 			title: row.titulo,
-			titleVariants: splitVariants(row.variaciones_titulo),
+			titleVariants: splitVariants(row.title_variants),
 			genre: row.genero?.trim() || 'Sin genero',
 			origin: row.procede?.trim() || 'Sin procedencia',
 			textState: row.estado_texto?.trim() || 'Sin estado',
 			addedOn: row.adicion?.trim() || 'Sin fecha',
 			shortSummary: EMPTY_SHORT_SUMMARY,
 			hasSummaryFile: hasSummary,
+			inAuthorshipExam: Number(row.examen_autorias) === 1,
 			result1: row.resultado1?.trim() || undefined,
 			result2: row.resultado2?.trim() || undefined,
 			traditionalAttribution,
 			stylometryAttribution,
 			textLinks: links,
-			reportId: hasReport ? row.id : undefined
+			reportId: hasReport ? row.id : undefined,
+			reportSlug
 		};
 	});
 
 	const workById = new Map(works.map((work) => [work.id, work] as const));
 	const workBySlug = new Map(works.map((work) => [work.slug, work] as const));
+	const workByReportSlug = new Map<string, CatalogWork>();
 	const bicuveWorkBySlug = new Map<string, CatalogWork>();
 	for (const work of works) {
+		if (work.reportSlug) workByReportSlug.set(work.reportSlug, work);
 		const bicuveSlug = bicuveSlugByWorkId.get(work.id);
 		if (bicuveSlug) bicuveWorkBySlug.set(bicuveSlug, work);
 	}
@@ -695,6 +719,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 		works,
 		workById,
 		workBySlug,
+		workByReportSlug,
 		bicuveWorkBySlug,
 		bicuveSlugByWorkId,
 		bicuveNameByWorkId,
@@ -769,11 +794,26 @@ const confidenceForAuthor = (set: CatalogWork['stylometryAttribution'], authorId
 
 export const getAllWorks = async (): Promise<CatalogWork[]> => (await getSnapshot()).works;
 
+const getAuthorshipExamWorksFromSnapshot = (snapshot: Snapshot): CatalogWork[] =>
+	snapshot.works.filter((work) => work.inAuthorshipExam);
+
+export const getAuthorshipExamWorks = async (): Promise<CatalogWork[]> =>
+	getAuthorshipExamWorksFromSnapshot(await getSnapshot());
+
+const hasBicuveText = (work: CatalogWork): boolean =>
+	work.textLinks.some((link) => link.kind === 'bicuve');
+
+export const getBicuveWorks = async (): Promise<CatalogWork[]> =>
+	(await getSnapshot()).works.filter(hasBicuveText);
+
 export const getWorkById = async (workId: string): Promise<CatalogWork | undefined> =>
 	(await getSnapshot()).workById.get(workId);
 
 export const getWorkBySlug = async (slug: string): Promise<CatalogWork | undefined> =>
 	(await getSnapshot()).workBySlug.get(slug);
+
+export const getWorkByReportSlug = async (slug: string): Promise<CatalogWork | undefined> =>
+	(await getSnapshot()).workByReportSlug.get(slug);
 
 export const getWorkShortSummaryById = async (workId: string): Promise<string> => {
 	const rows = await getRows<WorkShortSummaryRow>(
@@ -797,13 +837,31 @@ export const withWorkShortSummaries = async (works: CatalogWork[]): Promise<Cata
 export const getAllAuthors = async (): Promise<CatalogAuthor[]> =>
 	(await getSnapshot()).authors.filter((author) => author.id !== UNRESOLVED_AUTHOR_ID);
 
+export const getAuthorshipExamAuthors = async (): Promise<CatalogAuthor[]> => {
+	const snapshot = await getSnapshot();
+	const authorIds = new Set<string>();
+
+	for (const work of getAuthorshipExamWorksFromSnapshot(snapshot)) {
+		for (const authorId of collectAuthorIds(work.traditionalAttribution)) {
+			if (authorId !== UNRESOLVED_AUTHOR_ID) authorIds.add(authorId);
+		}
+		for (const authorId of collectAuthorIds(work.stylometryAttribution)) {
+			if (authorId !== UNRESOLVED_AUTHOR_ID) authorIds.add(authorId);
+		}
+	}
+
+	return snapshot.authors
+		.filter((author) => authorIds.has(author.id))
+		.sort((a, b) => a.name.localeCompare(b.name, 'es', { sensitivity: 'base' }));
+};
+
 export const getAuthorById = async (authorId: string): Promise<CatalogAuthor | undefined> => {
 	if (authorId === UNRESOLVED_AUTHOR_ID) return undefined;
 	return (await getSnapshot()).authorById.get(authorId);
 };
 
 export const listGenres = async (): Promise<string[]> =>
-	Array.from(new Set((await getSnapshot()).works.map((work) => work.genre))).sort((a, b) =>
+	Array.from(new Set(getAuthorshipExamWorksFromSnapshot(await getSnapshot()).map((work) => work.genre))).sort((a, b) =>
 		a.localeCompare(b)
 	);
 
@@ -862,7 +920,7 @@ const toExamenWorkSearchRecord = (work: CatalogWork): ExamenWorkSearchRecord => 
 
 	return {
 		work,
-		titleSearch: normalizeText([work.title, ...work.titleVariants].join(' ')),
+		titleSearch: normalizeText(buildWorkTitleSearchText(work.title, work.titleVariants)),
 		traditionalAuthorIds,
 		stylometryAuthorIds,
 		allAuthorIds,
@@ -881,7 +939,7 @@ const examenFilteredRecordsBySnapshot = new WeakMap<
 const getExamenSearchRecords = (snapshot: Snapshot): ExamenWorkSearchRecord[] => {
 	const cached = examenSearchRecordsBySnapshot.get(snapshot);
 	if (cached) return cached;
-	const records = snapshot.works.map(toExamenWorkSearchRecord);
+	const records = getAuthorshipExamWorksFromSnapshot(snapshot).map(toExamenWorkSearchRecord);
 	examenSearchRecordsBySnapshot.set(snapshot, records);
 	return records;
 };
@@ -1008,13 +1066,14 @@ export const getExamenWorksPage = async (
 	const requestedPage = Number.isFinite(page) && page > 0 ? Math.floor(page) : 1;
 
 	if (!hasActiveExamenFilters(filters)) {
-		const totalResults = snapshot.works.length;
+		const examenWorks = getAuthorshipExamWorksFromSnapshot(snapshot);
+		const totalResults = examenWorks.length;
 		const totalPages = Math.max(1, Math.ceil(totalResults / safePageSize));
 		const safePage = Math.min(requestedPage, totalPages);
 		const start = (safePage - 1) * safePageSize;
 
 		return {
-			works: snapshot.works.slice(start, start + safePageSize),
+			works: examenWorks.slice(start, start + safePageSize),
 			totalResults,
 			totalPages,
 			page: safePage
@@ -1037,9 +1096,7 @@ export const getExamenWorksPage = async (
 
 export const getCatalogStats = async (): Promise<CatalogStats> => {
 	const snapshot = await getSnapshot();
-	const bicuveTexts = snapshot.works.filter((work) =>
-		work.textLinks.some((link) => link.kind === 'bicuve')
-	).length;
+	const bicuveTexts = snapshot.works.filter(hasBicuveText).length;
 	const informes = snapshot.works.filter((work) => Boolean(work.reportId)).length;
 
 	return {
@@ -1054,7 +1111,7 @@ export const getAuthorWorks = async (authorId: string): Promise<AuthorWorkRelati
 	const snapshot = await getSnapshot();
 	if (!snapshot.authorById.has(authorId)) return [];
 
-	return snapshot.works
+	return getAuthorshipExamWorksFromSnapshot(snapshot)
 		.map((work) => {
 			const inTraditional = containsAuthor(work.traditionalAttribution, authorId);
 			const inStylometry = containsAuthor(work.stylometryAttribution, authorId);
@@ -1153,6 +1210,7 @@ export const getInformeById = async (informeId: string): Promise<CatalogInforme 
 	return {
 		id: work.id,
 		workId: work.id,
+		slug: work.reportSlug ?? buildReportSlugBase(work.title),
 		title: `Análisis estilométrico de ${work.title}`,
 		intro:
 			work.result1 ||
@@ -1172,6 +1230,12 @@ export const getInformeByWorkId = async (workId: string): Promise<CatalogInforme
 
 export const getInformeByWorkSlug = async (workSlug: string): Promise<CatalogInforme | undefined> => {
 	const work = await getWorkBySlug(workSlug);
+	if (!work) return undefined;
+	return getInformeById(work.id);
+};
+
+export const getInformeByReportSlug = async (reportSlug: string): Promise<CatalogInforme | undefined> => {
+	const work = await getWorkByReportSlug(reportSlug);
 	if (!work) return undefined;
 	return getInformeById(work.id);
 };

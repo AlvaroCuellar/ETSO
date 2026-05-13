@@ -17,7 +17,7 @@
 		type ObraTableFilterFlags,
 		type ObraTableRow
 	} from '$lib/domain/catalog';
-	import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
+	import { buildWorkTitleSearchText, formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
 	import { renderInlineItalicsHtml } from '$lib/utils/render-inline-italics-html';
 
 	interface Props {
@@ -366,7 +366,9 @@
 							isRowExpanded(row.rowId) ? 'expanded border-b-border-accent-blue bg-surface-accent-blue' : ''
 						}`}
 						data-obra-id={row.work.id}
-						data-title-search={normalizeForSearch([row.work.title, ...row.work.titleVariants].join(' '))}
+						data-title-search={normalizeForSearch(
+							buildWorkTitleSearchText(row.work.title, row.work.titleVariants)
+						)}
 						data-genero={normalizeForSearch(row.work.genre)}
 						data-filter-related-any={flags.relatedAny ? '1' : '0'}
 						data-filter-trad-any={flags.tradAny ? '1' : '0'}
@@ -516,7 +518,7 @@
 							<span class={mobileCellLabelClass}>Recursos</span>
 							<div class="actions relative flex flex-col gap-1.5 max-md:flex-wrap max-md:justify-start max-md:gap-2">
 								{#if row.work.reportId}
-									<a href={`/informes/${row.work.slug}`} class={actionButtonEnabledClass}>
+									<a href={`/informes/${row.work.reportSlug ?? row.work.slug}`} class={actionButtonEnabledClass}>
 										<span class="btn-left col-span-2 flex min-w-0 items-center gap-[7px]">
 											<span class="btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-brand-blue-dark" aria-hidden="true">
 												<ChartLine class="h-[14px] w-[14px] stroke-[2.1]" />

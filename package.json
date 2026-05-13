@@ -13,6 +13,7 @@
 		"prepare": "svelte-kit sync",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"compare:informe-slugs": "node scripts/compare-informe-slugs.mjs",
 		"index:texts": "node scripts/build-search-index.mjs",
 		"index:texts:compact": "node scripts/build-search-index.mjs --compact",
 		"index:validate": "node scripts/validate-search-index.mjs"
@@ -31,6 +32,7 @@
 	},
 	"dependencies": {
 		"@libsql/client": "^0.17.3",
+		"cheerio": "^1.2.0",
 		"echarts": "^6.0.0",
 		"lucide-svelte": "^1.0.1"
 	}

@@ -43,12 +43,14 @@ export interface CatalogWork {
 	addedOn: string;
 	shortSummary: string;
 	hasSummaryFile: boolean;
+	inAuthorshipExam: boolean;
 	result1?: string;
 	result2?: string;
 	traditionalAttribution: AttributionSet;
 	stylometryAttribution: AttributionSet;
 	textLinks: WorkResourceLink[];
 	reportId?: string;
+	reportSlug?: string;
 }
 
 export interface CatalogAuthor {
@@ -66,6 +68,7 @@ export interface DistanceRow {
 export interface CatalogInforme {
 	id: string;
 	workId: string;
+	slug: string;
 	title: string;
 	intro: string;
 	methodology: string;

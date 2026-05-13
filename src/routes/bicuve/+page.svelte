@@ -4,7 +4,11 @@
 	import HeroStatCard from '$lib/components/ui/HeroStatCard.svelte';
 	import fondoLogo from '$lib/assets/fondos/fondo-logo.png';
 	import { normalizePlainText } from '$lib/search/normalize';
-	import { formatDisplayWorkTitle, formatDisplayWorkTitleList } from '$lib/utils/format-display-work-title';
+	import {
+		buildWorkTitleSearchText,
+		formatDisplayWorkTitle,
+		formatDisplayWorkTitleList
+	} from '$lib/utils/format-display-work-title';
 	import BookOpen from 'lucide-svelte/icons/book-open';
 	import Feather from 'lucide-svelte/icons/feather';
 
@@ -22,7 +26,7 @@
 		if (!normalizedQuery) return data.works;
 
 		return data.works.filter((work) => {
-			const haystack = normalizeFilterText([work.title, ...work.titleVariants].join(' '));
+			const haystack = normalizeFilterText(buildWorkTitleSearchText(work.title, work.titleVariants));
 			return haystack.includes(normalizedQuery);
 		});
 	});

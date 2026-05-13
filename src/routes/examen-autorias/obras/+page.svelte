@@ -1,7 +1,11 @@
 	<script lang="ts">
 		import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 		import { normalizePlainText } from '$lib/search/normalize';
-		import { formatDisplayWorkTitle, formatDisplayWorkTitleList } from '$lib/utils/format-display-work-title';
+		import {
+			buildWorkTitleSearchText,
+			formatDisplayWorkTitle,
+			formatDisplayWorkTitleList
+		} from '$lib/utils/format-display-work-title';
 
 	import type { PageData } from './$types';
 
@@ -17,7 +21,7 @@
 		if (!normalizedQuery) return data.works;
 
 		return data.works.filter((work) => {
-			const haystack = normalizeFilterText([work.title, ...work.titleVariants].join(' '));
+			const haystack = normalizeFilterText(buildWorkTitleSearchText(work.title, work.titleVariants));
 			return haystack.includes(normalizedQuery);
 		});
 	});

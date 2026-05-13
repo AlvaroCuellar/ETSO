@@ -1,0 +1,12 @@
+{
+  "oldCsvRows": 2810,
+  "oldUniqueSlugs": 2810,
+  "dbInformeRows": 2984,
+  "matched": 2592,
+  "changed": 155,
+  "newOnly": 237,
+  "missingOld": 91,
+  "duplicatesReview": 180,
+  "manualOverridesTemplate": 318,
+  "overrides": 0
+}

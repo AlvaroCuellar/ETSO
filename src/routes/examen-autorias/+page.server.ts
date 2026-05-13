@@ -1,6 +1,6 @@
 import {
-	getAllAuthors,
-	getAllWorks,
+	getAuthorshipExamAuthors,
+	getAuthorshipExamWorks,
 	getCatalogStats,
 	getExamenWorksPage,
 	listGenres
@@ -45,14 +45,14 @@ const parseFilters = (params: URLSearchParams): ExamenWorksFilters => ({
 export const load: PageServerLoad = async ({ url }) => {
 	const filters = parseFilters(url.searchParams);
 	const requestedPage = parsePage(url.searchParams);
-	const [works, pageResult, authorOptions, genreOptions, stats] = await Promise.all([
-		getAllWorks(),
+	const [examWorks, pageResult, authorOptions, genreOptions, stats] = await Promise.all([
+		getAuthorshipExamWorks(),
 		getExamenWorksPage(filters, requestedPage, PAGE_SIZE),
-		getAllAuthors(),
+		getAuthorshipExamAuthors(),
 		listGenres(),
 		getCatalogStats()
 	]);
-	const stateOptions = Array.from(new Set(works.map((work) => work.textState).filter(Boolean))).sort((a, b) =>
+	const stateOptions = Array.from(new Set(examWorks.map((work) => work.textState).filter(Boolean))).sort((a, b) =>
 		a.localeCompare(b, 'es')
 	);
 
@@ -61,7 +61,10 @@ export const load: PageServerLoad = async ({ url }) => {
 		authorOptions,
 		genreOptions,
 		stateOptions,
-		stats,
+		stats: {
+			...stats,
+			works: examWorks.length
+		},
 		filters,
 		page: pageResult.page,
 		pageSize: PAGE_SIZE,

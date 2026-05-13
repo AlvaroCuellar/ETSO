@@ -114,7 +114,7 @@
 				<InfoCard label="Atribución de autoría" class="mb-5" bodyClass="gap-0 font-ui leading-[1.5]">
 					{#snippet action()}
 						{#if data.informe}
-							<InlineActionButton href={`/informes/${data.work.slug}`} icon={ChartLine}>
+							<InlineActionButton href={`/informes/${data.informe.slug}`} icon={ChartLine}>
 								Informe estilométrico
 							</InlineActionButton>
 						{/if}

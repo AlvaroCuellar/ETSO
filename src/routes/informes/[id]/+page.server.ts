@@ -4,6 +4,7 @@ import {
 	getAllAuthors,
 	getInformeBibliographyByInformeId,
 	getInformeById,
+	getInformeByReportSlug,
 	getInformeByWorkSlug,
 	getInformeDistanceRows,
 	getWorkById
@@ -12,19 +13,23 @@ import {
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ params }) => {
-	const informe = await getInformeByWorkSlug(params.id);
+	const informe = await getInformeByReportSlug(params.id);
 	if (!informe) {
+		const legacyWorkSlugInforme = await getInformeByWorkSlug(params.id);
+		if (legacyWorkSlugInforme) {
+			throw redirect(308, `/informes/${legacyWorkSlugInforme.slug}`);
+		}
+
 		const legacyInforme = await getInformeById(params.id);
 		if (legacyInforme) {
-			const legacyWork = await getWorkById(legacyInforme.workId);
-			if (legacyWork) throw redirect(308, `/informes/${legacyWork.slug}`);
+			throw redirect(308, `/informes/${legacyInforme.slug}`);
 		}
 		throw error(404, 'Informe no encontrado');
 	}
 
 	const work = await getWorkById(informe.workId);
 	if (!work) throw error(500, 'Obra del informe no disponible');
-	if (params.id !== work.slug) throw redirect(308, `/informes/${work.slug}`);
+	if (params.id !== informe.slug) throw redirect(308, `/informes/${informe.slug}`);
 
 	const [distanceEntries, authors] = await Promise.all([
 		Promise.all(ambitos.map(async (ambito) => [ambito, await getInformeDistanceRows(informe, ambito)] as const)),

@@ -12,7 +12,7 @@
 	import ComparisonMetricToggle from '$lib/components/search/ComparisonMetricToggle.svelte';
 	import TexoroLiveChart from '$lib/components/search/TexoroLiveChart.svelte';
 	import TexoroComparisonChart from '$lib/components/search/TexoroComparisonChart.svelte';
-	import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
+	import { buildWorkTitleSearchText, formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
 	import { formatAttribution, type AttributionSet } from '$lib/domain/catalog';
 	import fondoLogo from '$lib/assets/fondos/fondo-logo.png';
 	import BookOpen from 'lucide-svelte/icons/book-open';
@@ -457,7 +457,7 @@
 				if (!meta) return false;
 
 				if (normalizedTitle) {
-					const haystack = normalizeText([meta.title, ...meta.titleVariants].join(' '));
+					const haystack = normalizeText(buildWorkTitleSearchText(meta.title, meta.titleVariants));
 					if (!haystack.includes(normalizedTitle)) return false;
 				}
 

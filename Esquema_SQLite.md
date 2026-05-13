@@ -51,15 +51,18 @@ Ejemplo:
 ```sql
 CREATE TABLE works (
     id TEXT PRIMARY KEY,
+    archivo TEXT NOT NULL,
     titulo TEXT NOT NULL,
-    variaciones_titulo TEXT,
+    otrostitulos TEXT,
     genero TEXT,
     adicion TEXT,
     estado_texto TEXT,
-    examen_autorias INTEGER NOT NULL DEFAULT 0,
-    bicuve INTEGER NOT NULL DEFAULT 0,
+    citar TEXT,
+    examen_autorias INTEGER,
+    automatizacion_david INTEGER,
+    bicuve INTEGER,
     bicuve_nombre TEXT,
-    tiene_acceso_externo INTEGER NOT NULL DEFAULT 0,
+    tiene_acceso_externo INTEGER,
     procede TEXT,
     resultado1 TEXT,
     resultado2 TEXT,
@@ -74,8 +77,7 @@ CREATE TABLE works (
 ```sql
 CREATE TABLE authors (
     id TEXT PRIMARY KEY,
-    nombre TEXT NOT NULL,
-    variaciones_nombre TEXT
+    nombre TEXT NOT NULL
 );
 ```
 
@@ -85,11 +87,11 @@ CREATE TABLE authors (
 
 ```sql
 CREATE TABLE attribution_sets (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     work_id TEXT NOT NULL,
     attribution_type TEXT NOT NULL,
-    raw_expression TEXT NOT NULL,
-    FOREIGN KEY (work_id) REFERENCES works(id)
+    raw_expression TEXT,
+    FOREIGN KEY (work_id) REFERENCES works(id) ON DELETE CASCADE
 );
 ```
 
@@ -99,10 +101,10 @@ CREATE TABLE attribution_sets (
 
 ```sql
 CREATE TABLE attribution_groups (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     attribution_set_id INTEGER NOT NULL,
     group_order INTEGER NOT NULL,
-    FOREIGN KEY (attribution_set_id) REFERENCES attribution_sets(id)
+    FOREIGN KEY (attribution_set_id) REFERENCES attribution_sets(id) ON DELETE CASCADE
 );
 ```
 
@@ -112,13 +114,12 @@ CREATE TABLE attribution_groups (
 
 ```sql
 CREATE TABLE attribution_members (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     attribution_group_id INTEGER NOT NULL,
     author_id TEXT NOT NULL,
-    member_order INTEGER NOT NULL,
     confianza TEXT,
-    FOREIGN KEY (attribution_group_id) REFERENCES attribution_groups(id),
-    FOREIGN KEY (author_id) REFERENCES authors(id)
+    member_order INTEGER NOT NULL,
+    FOREIGN KEY (attribution_group_id) REFERENCES attribution_groups(id) ON DELETE CASCADE
 );
 ```
 
@@ -132,10 +133,9 @@ CREATE TABLE work_author_index (
     author_id TEXT NOT NULL,
     attribution_type TEXT NOT NULL,
     confianza TEXT,
-    occurrences INTEGER NOT NULL DEFAULT 1,
-    PRIMARY KEY (work_id, author_id, attribution_type),
-    FOREIGN KEY (work_id) REFERENCES works(id),
-    FOREIGN KEY (author_id) REFERENCES authors(id)
+    occurrences INTEGER NOT NULL,
+    PRIMARY KEY (work_id, author_id, attribution_type, confianza),
+    FOREIGN KEY (work_id) REFERENCES works(id) ON DELETE CASCADE
 );
 ```
 
@@ -145,13 +145,13 @@ CREATE TABLE work_author_index (
 
 ```sql
 CREATE TABLE text_access (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     work_id TEXT NOT NULL,
-    tipo TEXT NOT NULL,
-    etiqueta TEXT NOT NULL,
-    url TEXT NOT NULL,
-    position INTEGER NOT NULL DEFAULT 1,
-    FOREIGN KEY (work_id) REFERENCES works(id)
+    tipo TEXT,
+    etiqueta TEXT,
+    url TEXT,
+    position INTEGER,
+    FOREIGN KEY (work_id) REFERENCES works(id) ON DELETE CASCADE
 );
 ```
 
@@ -161,14 +161,13 @@ CREATE TABLE text_access (
 
 ```sql
 CREATE TABLE work_distances (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     work_id TEXT NOT NULL,
     ambito TEXT NOT NULL,
     rank INTEGER NOT NULL,
     related_work_id TEXT NOT NULL,
     distancia REAL NOT NULL,
-    FOREIGN KEY (work_id) REFERENCES works(id),
-    FOREIGN KEY (related_work_id) REFERENCES works(id)
+    FOREIGN KEY (work_id) REFERENCES works(id) ON DELETE CASCADE
 );
 ```
 
@@ -178,26 +177,19 @@ CREATE TABLE work_distances (
 
 ```sql
 CREATE INDEX idx_works_titulo ON works(titulo);
+CREATE INDEX idx_works_otrostitulos ON works(otrostitulos);
 CREATE INDEX idx_works_genero ON works(genero);
-CREATE INDEX idx_works_examen_autorias ON works(examen_autorias);
-CREATE INDEX idx_works_bicuve ON works(bicuve);
+CREATE INDEX idx_works_citar ON works(citar);
 
-CREATE INDEX idx_authors_nombre ON authors(nombre);
+CREATE INDEX idx_attr_work ON attribution_sets(work_id);
 
-CREATE INDEX idx_work_author_index_author_type
-ON work_author_index(author_id, attribution_type);
+CREATE INDEX idx_author_index_author ON work_author_index(author_id);
 
-CREATE INDEX idx_work_author_index_work_id
-ON work_author_index(work_id);
+CREATE INDEX idx_access_work ON text_access(work_id);
 
-CREATE INDEX idx_work_distances_work_ambito
-ON work_distances(work_id, ambito);
+CREATE INDEX idx_dist_work ON work_distances(work_id);
 
-CREATE INDEX idx_work_distances_work_ambito_rank
-ON work_distances(work_id, ambito, rank);
-
-CREATE INDEX idx_work_distances_related_work_id
-ON work_distances(related_work_id);
+CREATE INDEX idx_dist_work_ambito ON work_distances(work_id, ambito, rank);
 ```
 
 ---

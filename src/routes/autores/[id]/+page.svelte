@@ -3,6 +3,7 @@
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import PageHero from '$lib/components/ui/PageHero.svelte';
 	import autorBg from '$lib/assets/heros/autor-bg.jpg';
+	import { buildWorkTitleSearchText } from '$lib/utils/format-display-work-title';
 	import type { ObraTableRow } from '$lib/domain/catalog';
 
 	import type { PageData } from './$types';
@@ -44,7 +45,9 @@
 				if (!filterFlags[activeFilter]) return false;
 
 				if (normalizedTitle) {
-					const haystack = normalizeText([relation.work.title, ...relation.work.titleVariants].join(' '));
+					const haystack = normalizeText(
+						buildWorkTitleSearchText(relation.work.title, relation.work.titleVariants)
+					);
 					if (!haystack.includes(normalizedTitle)) return false;
 				}
 

@@ -3,12 +3,9 @@ import {
 	type AttributionSet,
 	type CatalogWork
 } from '$lib/domain/catalog';
-import { getAllWorks } from '$lib/server/catalog-runtime';
+import { getBicuveWorks } from '$lib/server/catalog-runtime';
 
 import type { PageServerLoad } from './$types';
-
-const hasBicuveText = (work: CatalogWork): boolean =>
-	work.textLinks.some((link) => link.kind === 'bicuve');
 
 const getBicuveSlug = (work: CatalogWork): string =>
 	work.textLinks
@@ -36,8 +33,7 @@ const countUniqueAuthors = (works: CatalogWork[]): number => {
 };
 
 export const load: PageServerLoad = async () => {
-	const bicuveWorks = (await getAllWorks())
-		.filter(hasBicuveText)
+	const bicuveWorks = (await getBicuveWorks())
 		.sort((a, b) => {
 			const titleComparison = a.title.localeCompare(b.title, 'es', { sensitivity: 'base' });
 			if (titleComparison !== 0) return titleComparison;

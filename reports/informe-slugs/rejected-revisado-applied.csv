@@ -1,0 +1,12 @@
+work_id,slug,reason
+CUBILLO_CondeDirlos(Transk-IMPR),analisis-estilometrico-el-conde-dirlos-el-conde-de-irlos,buena differs from automatic_slug
+LOPEZ-CASTRO_MarcoAntonio(Transk-MSS),analisis-estilometrico-marco-antonio-y-cleopatra-0,buena differs from automatic_slug
+ALARCON_NoHayMalQuePorBienNoVenga,analisis-estilometrico-no-hay-mal-que-por-bien-no-venga-don-domingo-de-don-blas,buena differs from automatic_slug
+CALDERONdudosa_MarcoAntonioYCleopatra(Transk-IMPR),analisis-estilometrico-marco-antonio-y-cleopatra,buena differs from automatic_slug
+ROJO_AntiocoYSeleuco(Burlesca)(Transk-MSS),analisis-estilometrico-antioco-y-seleuco-burlesca,buena equals automatic_slug
+DESCONOCIDO_CercoDeTunez(Transk-MSS),analisis-estilometrico-el-cerco-de-tunez,buena equals automatic_slug
+CANIZARES_MasAmadaDeCristo(PrimeraParte)(Transk-IMPR),analisis-estilometrico-la-mas-amada-de-cristo-santa-gertrudis-la-magna,buena equals automatic_slug
+VELEZ_NoviosDeHornachuelos(VersionManuscrito),analisis-estilometrico-los-novios-de-hornachuelos-mss-15429,buena equals automatic_slug
+MORETO_Parecido(RefundicionPosterior),analisis-estilometrico-el-parecido-refundicion-posterior,buena equals automatic_slug
+FERNANDEZ-MESA_SilvasYAyalas(Transk-MSS),analisis-estilometrico-los-silvas-y-ayalas,buena equals automatic_slug
+SANCHEZ-JUAN_CercoDeTunez(Transk-IMPR),analisis-estilometrico-el-cerco-de-tunez-0,buena equals automatic_slug

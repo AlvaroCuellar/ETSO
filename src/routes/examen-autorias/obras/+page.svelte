@@ -1,11 +1,10 @@
-	<script lang="ts">
-		import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
-		import { normalizePlainText } from '$lib/search/normalize';
-		import {
-			buildWorkTitleSearchText,
-			formatDisplayWorkTitle,
-			formatDisplayWorkTitleList
-		} from '$lib/utils/format-display-work-title';
+<script lang="ts">
+	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
+	import { normalizePlainText } from '$lib/search/normalize';
+	import {
+		buildWorkTitleSearchText,
+		formatDisplayWorkTitle
+	} from '$lib/utils/format-display-work-title';
 
 	import type { PageData } from './$types';
 
@@ -70,7 +69,14 @@
 						>
 							<p class="m-0 font-ui text-[0.99rem] font-semibold leading-[1.35] text-brand-blue-dark">{formatDisplayWorkTitle(work.title)}</p>
 							{#if work.titleVariants.length > 0}
-								<p class="m-0 text-[0.92rem] leading-[1.5] text-text-soft">{formatDisplayWorkTitleList(work.titleVariants).join(' | ')}</p>
+								<p class="m-0 text-[0.92rem] leading-[1.5] text-text-soft">
+									{#each work.titleVariants as variante, index}
+										<span class="italic">{formatDisplayWorkTitle(variante)}</span>
+										{#if index < work.titleVariants.length - 1}
+											<span class="mx-1 not-italic text-text-soft/65">|</span>
+										{/if}
+									{/each}
+								</p>
 							{/if}
 						</a>
 					{/each}

@@ -6,8 +6,7 @@
 	import { normalizePlainText } from '$lib/search/normalize';
 	import {
 		buildWorkTitleSearchText,
-		formatDisplayWorkTitle,
-		formatDisplayWorkTitleList
+		formatDisplayWorkTitle
 	} from '$lib/utils/format-display-work-title';
 	import BookOpen from 'lucide-svelte/icons/book-open';
 	import Feather from 'lucide-svelte/icons/feather';
@@ -108,7 +107,12 @@
 							</p>
 							{#if work.titleVariants.length > 0}
 								<p class="m-0 text-[0.92rem] leading-[1.5] text-text-soft">
-									{formatDisplayWorkTitleList(work.titleVariants).join(' | ')}
+									{#each work.titleVariants as variante, index}
+										<span class="italic">{formatDisplayWorkTitle(variante)}</span>
+										{#if index < work.titleVariants.length - 1}
+											<span class="mx-1 not-italic text-text-soft/65">|</span>
+										{/if}
+									{/each}
 								</p>
 							{/if}
 						</a>

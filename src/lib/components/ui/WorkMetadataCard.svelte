@@ -3,6 +3,7 @@
 	import InfoCard from '$lib/components/ui/InfoCard.svelte';
 	import InlineActionButton from '$lib/components/ui/InlineActionButton.svelte';
 	import { formatConfidence, type CatalogWork, type AttributionSet, type Confidence } from '$lib/domain/catalog';
+	import { renderInlineItalicsHtml } from '$lib/utils/render-inline-italics-html';
 
 	interface Props {
 		work: CatalogWork;
@@ -259,7 +260,9 @@
 			<dt class="m-0 font-ui text-[0.72rem] font-bold uppercase tracking-[0.06em] text-text-accent-purple">
 				Procedencia
 			</dt>
-			<dd class="m-0 text-[0.97rem] leading-[1.65] text-text-main">{procedeValue}</dd>
+			<dd class="m-0 text-[0.97rem] leading-[1.65] text-text-main">
+				{@html renderInlineItalicsHtml(procedeValue)}
+			</dd>
 		</div>
 	</dl>
 </InfoCard>

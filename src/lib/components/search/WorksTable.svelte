@@ -416,14 +416,14 @@
 								</a>
 							</div>
 							{#if row.work.titleVariants.length > 0}
-								<div class="variantes-titulo mt-1.5 pl-5 text-[13px] leading-[1.4] text-text-soft italic">
+								<div class="variantes-titulo mt-1.5 pl-5 text-[13px] leading-[1.4] text-text-soft">
 									<span class="variantes-prefix mr-1 inline-flex align-middle text-text-soft not-italic" aria-hidden="true">
 										<CornerDownRight class="h-3 w-3 stroke-[2.1]" />
 									</span>
 									{#each row.work.titleVariants as variante, index}
-										<span class="variante-item">{formatDisplayWorkTitle(variante)}</span>
+										<span class="variante-item italic">{formatDisplayWorkTitle(variante)}</span>
 										{#if index < row.work.titleVariants.length - 1}
-											<span class="variantes-sep text-text-soft/55"> | </span>
+											<span class="variantes-sep mx-1 text-text-soft/55 not-italic">|</span>
 										{/if}
 									{/each}
 								</div>

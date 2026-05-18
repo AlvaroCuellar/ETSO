@@ -98,12 +98,16 @@ export const load: PageServerLoad = async ({ fetch }) => {
 		getCatalogStats(),
 		getTexoroInitialIndexInfo(fetch)
 	]);
+	const authorOptions = collectAuthorOptions(works);
 
 	return {
 		indexInfo,
-		stats,
+		stats: {
+			...stats,
+			authors: authorOptions.length
+		},
 		filterOptions: {
-			authors: collectAuthorOptions(works),
+			authors: authorOptions,
 			genres: collectStringOptions(works.map((work) => work.genre)),
 			states: collectStringOptions(works.map((work) => work.textState))
 		}

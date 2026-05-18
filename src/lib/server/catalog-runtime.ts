@@ -329,6 +329,14 @@ const splitVariants = (value: string | null | undefined): string[] => {
 		.filter((chunk) => chunk.length > 0);
 };
 
+const splitTitleVariants = (value: string | null | undefined): string[] => {
+	if (!value) return [];
+	return value
+		.split('|')
+		.map((chunk) => chunk.trim())
+		.filter((chunk) => chunk.length > 0);
+};
+
 const ensureDistanceRecord = (): Record<Ambito, DistanceRow[]> => ({
 	obracompleta: [],
 	jornada1: [],
@@ -682,7 +690,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 			id: row.id,
 			slug,
 			title: row.titulo,
-			titleVariants: splitVariants(row.title_variants),
+			titleVariants: splitTitleVariants(row.title_variants),
 			genre: row.genero?.trim() || 'Sin genero',
 			origin: row.procede?.trim() || 'Sin procedencia',
 			textState: row.estado_texto?.trim() || 'Sin estado',

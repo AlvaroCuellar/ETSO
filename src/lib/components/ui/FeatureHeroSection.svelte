@@ -8,7 +8,7 @@
 		backgroundImage: string;
 		titleTag?: 'h1' | 'h2';
 		statsAriaLabel?: string;
-		statsLayout?: 'balanced' | 'wide-second';
+		statsLayout?: 'balanced' | 'wide-second' | 'three';
 		children?: Snippet;
 		stats?: Snippet;
 	}
@@ -26,15 +26,19 @@
 	}: Props = $props();
 
 	const sectionClass = $derived(
-		statsLayout === 'wide-second'
-			? 'grid items-start gap-[2.1rem] rounded-[14px] bg-surface-soft p-[clamp(1.2rem,2.4vw,2rem)] [background-repeat:no-repeat] [background-size:min(130vw,720px)_auto] [background-position:right_bottom] md:[background-size:min(90vw,680px)_auto] md:[background-position:right_bottom] min-[1201px]:grid-cols-[minmax(0,1.25fr)_minmax(580px,1fr)] min-[1201px]:[background-size:min(60vw,860px)_auto] min-[1201px]:[background-position:right_bottom]'
-			: 'grid items-start gap-[2.1rem] rounded-[14px] bg-surface-soft p-[clamp(1.2rem,2.4vw,2rem)] [background-repeat:no-repeat] [background-size:min(130vw,720px)_auto] [background-position:right_bottom] md:[background-size:min(90vw,680px)_auto] md:[background-position:right_bottom] min-[1201px]:grid-cols-[minmax(0,1.9fr)_minmax(320px,1fr)] min-[1201px]:[background-size:min(60vw,860px)_auto] min-[1201px]:[background-position:right_bottom]'
+		statsLayout === 'three'
+			? 'grid overflow-hidden items-start gap-[1.6rem] rounded-[14px] bg-surface-soft p-[clamp(1.05rem,2.4vw,2rem)] [background-repeat:no-repeat] [background-size:min(140vw,720px)_auto] [background-position:right_bottom] md:gap-[2rem] md:[background-size:min(90vw,680px)_auto] min-[1201px]:grid-cols-[minmax(0,1fr)_minmax(0,560px)] min-[1201px]:[background-size:min(58vw,840px)_auto]'
+			: statsLayout === 'wide-second'
+			? 'grid overflow-hidden items-start gap-[1.6rem] rounded-[14px] bg-surface-soft p-[clamp(1.05rem,2.4vw,2rem)] [background-repeat:no-repeat] [background-size:min(140vw,720px)_auto] [background-position:right_bottom] md:gap-[2rem] md:[background-size:min(90vw,680px)_auto] min-[1280px]:grid-cols-[minmax(0,1fr)_minmax(0,620px)] min-[1280px]:[background-size:min(58vw,840px)_auto]'
+			: 'grid overflow-hidden items-start gap-[1.6rem] rounded-[14px] bg-surface-soft p-[clamp(1.05rem,2.4vw,2rem)] [background-repeat:no-repeat] [background-size:min(140vw,720px)_auto] [background-position:right_bottom] md:gap-[2rem] md:[background-size:min(90vw,680px)_auto] min-[1201px]:grid-cols-[minmax(0,1.9fr)_minmax(0,420px)] min-[1201px]:[background-size:min(60vw,860px)_auto]'
 	);
 
 	const statsClass = $derived(
-		statsLayout === 'wide-second'
-			? 'grid w-full max-w-[420px] grid-cols-1 content-center items-end gap-[1.05rem] self-center justify-self-center md:max-w-[620px] md:grid-cols-[minmax(170px,0.82fr)_minmax(250px,1.18fr)] md:justify-self-start min-[1201px]:max-w-[620px] min-[1201px]:justify-self-start'
-			: 'grid w-full max-w-[420px] grid-cols-1 content-center items-end gap-[1.05rem] self-center justify-self-center md:max-w-[520px] md:grid-cols-2 md:justify-self-start min-[1201px]:max-w-[420px] min-[1201px]:justify-self-center'
+		statsLayout === 'three'
+			? 'grid w-full max-w-[420px] grid-cols-1 content-center items-stretch gap-[1rem] self-center justify-self-center sm:max-w-[560px] sm:grid-cols-2 sm:[&>*:nth-child(3)]:col-span-2 sm:[&>*:nth-child(3)]:justify-self-center sm:[&>*:nth-child(3)]:w-full sm:[&>*:nth-child(3)]:max-w-[272px] min-[1201px]:gap-x-[1rem] min-[1201px]:gap-y-[2.75rem] min-[1201px]:justify-self-start'
+		: statsLayout === 'wide-second'
+			? 'grid w-full max-w-[420px] grid-cols-1 content-center items-stretch gap-[1rem] self-center justify-self-center md:max-w-[620px] md:grid-cols-[minmax(170px,0.82fr)_minmax(250px,1.18fr)] min-[1280px]:justify-self-start'
+			: 'grid w-full max-w-[420px] grid-cols-1 content-center items-stretch gap-[1rem] self-center justify-self-center md:max-w-[520px] md:grid-cols-2 min-[1201px]:max-w-[420px]'
 	);
 </script>
 
@@ -42,7 +46,7 @@
 	class={sectionClass}
 	style={`background-image: url('${backgroundImage}')`}
 >
-	<div class="flex flex-col">
+	<div class="flex min-w-0 flex-col">
 		{#if eyebrow}
 			<p class="mb-0 mt-0 font-ui text-[0.8rem] font-semibold uppercase tracking-[0.05em] text-text-accent-purple">
 				{eyebrow}

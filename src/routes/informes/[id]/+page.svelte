@@ -10,6 +10,7 @@
 		formatDisplayWorkTitle,
 		formatPrefixedDisplayWorkTitleHtml
 	} from '$lib/utils/format-display-work-title';
+	import { renderInlineItalicsHtml } from '$lib/utils/render-inline-italics-html';
 
 	import type { PageData } from './$types';
 
@@ -339,7 +340,9 @@
 				<dt class="m-0 text-[0.72rem] font-bold uppercase tracking-[0.06em] text-text-accent-purple">
 					Procedencia
 				</dt>
-				<dd class="m-0 text-base leading-[1.6] text-text-main">{procedeValue}</dd>
+				<dd class="m-0 text-base leading-[1.6] text-text-main">
+					{@html renderInlineItalicsHtml(procedeValue)}
+				</dd>
 			</div>
 		</dl>
 	</section>

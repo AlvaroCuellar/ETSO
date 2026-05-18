@@ -2151,7 +2151,7 @@
 		subtitle="Búsquedas textuales en 3000 obras del Siglo de Oro"
 		backgroundImage={fondoLogo}
 		statsAriaLabel="Indicadores de TEXORO"
-		statsLayout="wide-second"
+		statsLayout="three"
 	>
 		<p class="mt-[1.8rem] mb-0 max-w-[64ch] font-['Lora',serif] text-[1.01rem] leading-[1.62] text-text-main">
 			TEXORO es una plataforma de búsqueda textual que permite consultar de forma unificada una amplia colección de textos del Siglo de Oro. El sistema ofrece acceso directo a obras teatrales y otros textos literarios procedentes de distintas tradiciones editoriales y documentales, con el objetivo de facilitar la exploración, localización y análisis del patrimonio textual aurisecular.
@@ -2173,7 +2173,9 @@
 		{#snippet stats()}
 			<HeroStatCard Icon={BookOpen} value={numberFormatter.format(displayIndexStats?.works ?? data.stats.works)} label="Obras indexadas" desktopOffset="up" />
 
-			<HeroStatCard Icon={Feather} value={displayIndexStats ? numberFormatter.format(displayIndexStats.tokens) : '--'} label="Palabras indexadas" desktopOffset="down" />
+			<HeroStatCard Icon={Search} value={displayIndexStats ? numberFormatter.format(displayIndexStats.tokens) : '--'} label="Palabras indexadas" desktopOffset="down" />
+
+			<HeroStatCard Icon={Feather} value={numberFormatter.format(data.stats.authors)} label="Autores" desktopOffset="up" />
 		{/snippet}
 	</FeatureHeroSection>
 

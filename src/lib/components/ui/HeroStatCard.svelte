@@ -28,19 +28,19 @@
 	const formatter = new Intl.NumberFormat('es-ES');
 
 	const offsetClass = (offset: DesktopOffset): string => {
-		if (offset === 'up') return 'lg:-translate-y-[14px]';
-		if (offset === 'down') return 'lg:translate-y-[14px]';
+		if (offset === 'up') return 'min-[1201px]:-translate-y-[14px]';
+		if (offset === 'down') return 'min-[1201px]:translate-y-[14px]';
 		return '';
 	};
 
 	const interactiveOffsetClass = (offset: DesktopOffset): string => {
-		if (offset === 'up') return 'hover:-translate-y-[2px] focus-visible:-translate-y-[2px] lg:hover:-translate-y-[18px] lg:focus-visible:-translate-y-[18px]';
-		if (offset === 'down') return 'hover:-translate-y-[2px] focus-visible:-translate-y-[2px] lg:hover:translate-y-[10px] lg:focus-visible:translate-y-[10px]';
+		if (offset === 'up') return 'hover:-translate-y-[2px] focus-visible:-translate-y-[2px] min-[1201px]:hover:-translate-y-[18px] min-[1201px]:focus-visible:-translate-y-[18px]';
+		if (offset === 'down') return 'hover:-translate-y-[2px] focus-visible:-translate-y-[2px] min-[1201px]:hover:translate-y-[10px] min-[1201px]:focus-visible:translate-y-[10px]';
 		return 'hover:-translate-y-[2px] focus-visible:-translate-y-[2px]';
 	};
 
 	const cardBaseClass =
-		'flex min-h-[170px] flex-col items-start gap-[0.65rem] rounded-[10px] border border-border-accent-blue bg-white px-[1.1rem] pb-[1.1rem] pt-[1.35rem] shadow-[0_8px_20px_rgba(25,37,77,0.08)] transition';
+		'flex min-h-[142px] flex-col items-start gap-[0.65rem] rounded-[10px] border border-border-accent-blue bg-white px-[1rem] pb-[1rem] pt-[1.15rem] shadow-[0_8px_20px_rgba(25,37,77,0.08)] transition sm:min-h-[158px] sm:px-[1.1rem] sm:pb-[1.1rem] sm:pt-[1.25rem]';
 
 	const parseNumericValue = (input: string | number): number | null => {
 		if (typeof input === 'number' && Number.isFinite(input)) return input;

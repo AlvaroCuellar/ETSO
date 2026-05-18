@@ -6,9 +6,19 @@ En Windows, el flujo recomendado es ejecutarlos desde Ubuntu/WSL, no desde Git B
 Eso evita problemas de rutas entre Windows y Linux y es lo más parecido al entorno
 de macOS/Linux.
 
+Desde PowerShell no uses `bash ...` a secas: en Windows puede resolver al lanzador
+de WSL o a Git Bash según la máquina. Usa el wrapper `deploy-windows.ps1` o abre
+una terminal Ubuntu/WSL y ejecuta los scripts Bash desde ahí.
+
 ## Requisitos
 
 ### Windows
+
+Comprobar el estado de Windows, WSL, Git Bash y herramientas:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File deploy/scripts/deploy-windows.ps1 doctor
+```
 
 Abrir Ubuntu:
 
@@ -65,8 +75,22 @@ Esa carpeta está ignorada por Git.
 Si Ubuntu no existe todavía:
 
 ```powershell
-wsl --install Ubuntu
+wsl --install -d Ubuntu
 ```
+
+Después de instalarla, abrir `Ubuntu` una vez para crear el usuario Linux.
+
+También se puede lanzar el flujo desde PowerShell, dejando que el wrapper use WSL
+si la distro existe y Git Bash como fallback:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File deploy/scripts/deploy-windows.ps1 check
+powershell -ExecutionPolicy Bypass -File deploy/scripts/deploy-windows.ps1 dry-run
+powershell -ExecutionPolicy Bypass -File deploy/scripts/deploy-windows.ps1 deploy
+```
+
+Si el nombre de la distro no es `Ubuntu`, ponerlo en `TURSO_WSL_DISTRO` dentro de
+`deploy/.env.deploy` o pasarlo con `-Distro`.
 
 ### macOS
 
@@ -101,6 +125,7 @@ Por defecto el builder usa 8 GB de heap de Node. Se puede ajustar con
 
 ## Comandos
 
+```bash
 # Probar entorno
 bash deploy/scripts/check-deploy-env.sh
 
@@ -116,3 +141,4 @@ bash deploy/scripts/deploy-all.sh
 
 # Borrar entrada temporal
 rm -rf deploy/input/
+```

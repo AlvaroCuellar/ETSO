@@ -10,6 +10,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 add_path_if_dir "$HOME/.turso"
+add_path_if_dir "$HOME/.local/etso-deploy/bin"
 add_path_if_dir "$ROOT_DIR/deploy/tools/node/bin"
 add_path_if_dir "$ROOT_DIR/deploy/tools/bin"
 add_path_if_dir "/c/Program Files/Amazon/AWSCLIV2"

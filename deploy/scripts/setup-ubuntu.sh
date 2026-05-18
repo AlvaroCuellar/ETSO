@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
-TOOLS_DIR="$ROOT_DIR/deploy/tools"
+TOOLS_DIR="${ETSO_DEPLOY_TOOLS_DIR:-$HOME/.local/etso-deploy}"
 TOOLS_BIN="$TOOLS_DIR/bin"
 
 if ! grep -qiE 'microsoft|wsl' /proc/version 2>/dev/null; then
@@ -13,6 +13,16 @@ if ! grep -qiE 'microsoft|wsl' /proc/version 2>/dev/null; then
 fi
 
 mkdir -p "$TOOLS_BIN" "$TOOLS_DIR/tmp"
+
+BASHRC="$HOME/.bashrc"
+PATH_LINE='export PATH="$HOME/.local/etso-deploy/bin:$PATH"'
+if [ -f "$BASHRC" ] && ! grep -Fq '.local/etso-deploy/bin' "$BASHRC"; then
+  {
+    echo ""
+    echo "# ETSO deploy tools"
+    echo "$PATH_LINE"
+  } >> "$BASHRC"
+fi
 
 command -v curl >/dev/null || { echo "Falta curl. Instálalo con: sudo apt-get install curl"; exit 1; }
 command -v tar >/dev/null || { echo "Falta tar. Instálalo con: sudo apt-get install tar"; exit 1; }
@@ -47,8 +57,17 @@ if ! command -v jq >/dev/null; then
   chmod +x "$TOOLS_BIN/jq"
 fi
 
-if ! command -v aws >/dev/null; then
-  echo "==> Instalando AWS CLI v2 en deploy/tools"
+export PATH="$TOOLS_BIN:$PATH"
+
+repair_aws_permissions() {
+  chmod -R u+rwX "$TOOLS_DIR/aws-cli" 2>/dev/null || true
+  chmod u+rwx "$TOOLS_BIN/aws" "$TOOLS_BIN/aws_completer" 2>/dev/null || true
+}
+
+repair_aws_permissions
+
+if ! command -v aws >/dev/null || ! aws --version >/dev/null 2>&1; then
+  echo "==> Instalando AWS CLI v2 en $TOOLS_DIR"
   TMP_DIR="$TOOLS_DIR/tmp/awscli"
   rm -rf "$TMP_DIR"
   mkdir -p "$TMP_DIR"
@@ -64,7 +83,8 @@ with zipfile.ZipFile(sys.argv[1]) as archive:
     archive.extractall(sys.argv[2])
 PY
   fi
-  "$TMP_DIR/aws/install" -i "$TOOLS_DIR/aws-cli" -b "$TOOLS_BIN" --update
+  bash "$TMP_DIR/aws/install" -i "$TOOLS_DIR/aws-cli" -b "$TOOLS_BIN" --update
+  repair_aws_permissions
   rm -rf "$TMP_DIR"
 fi
 

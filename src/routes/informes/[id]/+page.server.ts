@@ -15,9 +15,9 @@ import type { PageServerLoad } from './$types';
 export const load: PageServerLoad = async ({ params }) => {
 	const informe = await getInformeByReportSlug(params.id);
 	if (!informe) {
-		const legacyWorkSlugInforme = await getInformeByWorkSlug(params.id);
-		if (legacyWorkSlugInforme) {
-			throw redirect(308, `/informes/${legacyWorkSlugInforme.slug}`);
+		const workSlugInforme = await getInformeByWorkSlug(params.id);
+		if (workSlugInforme) {
+			throw redirect(308, `/informes/${workSlugInforme.slug}`);
 		}
 
 		const legacyInforme = await getInformeById(params.id);

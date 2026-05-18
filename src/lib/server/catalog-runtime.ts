@@ -5,11 +5,7 @@ import { existsSync } from 'node:fs';
 import { readPrivateTextByWorkId } from '$lib/server/r2-private';
 import { fetchPublicR2Json, getSummariesBaseUrl } from '$lib/server/r2-public';
 import { buildWorkTitleSearchText, formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
-import {
-	buildReportSlugBase,
-	buildUniqueReportSlug,
-	normalizeReportSlugOverrides
-} from '$lib/utils/report-slug';
+import { REPORT_SLUG_PREFIX } from '$lib/utils/report-slug';
 import {
 	UNRESOLVED_AUTHOR_ID,
 	ambitos,
@@ -49,7 +45,6 @@ import {
 	type WorkAuthorshipType,
 	type WorkSummaryDetail
 } from '$lib/domain/catalog';
-import informeSlugOverridesSource from '$lib/data/informe-slug-overrides.json';
 import collaboratorsSource from '../../../data/colaboradores/colaboradores.json';
 import bibliographySource from '../../../data/referencias/bibliografia.json';
 import impactSource from '../../../data/referencias/repercusion.json';
@@ -61,7 +56,7 @@ const configuredCacheMs = Number.parseInt(env.CATALOG_CACHE_MS ?? '', 10);
 const CACHE_MS = Number.isFinite(configuredCacheMs) && configuredCacheMs > 0 ? configuredCacheMs : DEFAULT_CACHE_MS;
 const LOCAL_CATALOG_SQLITE_PATH = 'data/sqlite/etso-prueba.sqlite';
 const EMPTY_SHORT_SUMMARY = 'Sin resumen breve disponible.';
-const informeSlugOverrides = normalizeReportSlugOverrides(informeSlugOverridesSource);
+const WORK_SLUG_PATTERN = /^[a-z0-9-]+$/;
 
 const escapeHtml = (value: string): string =>
 	value
@@ -477,17 +472,23 @@ const memberNameFromId = (authorId: string, authorMap: Map<string, CatalogAuthor
 		.join(' ');
 };
 
-const resolveWorkBaseSlug = (row: WorkRow): string => {
-	const preferred = row.slug?.trim() ? slugify(row.slug) : '';
-	if (preferred) return preferred;
-
-	const fromTitle = slugify(row.titulo ?? '');
-	if (fromTitle) return fromTitle;
-
-	const fromId = slugify(row.id ?? '');
-	if (fromId) return fromId;
-
-	return 'obra';
+const resolveWorkSlug = (row: WorkRow, seenSlugs: Map<string, string>): string => {
+	const slug = row.slug?.trim();
+	if (!slug) {
+		throw new Error(`La obra ${row.id} no tiene slug en Turso.`);
+	}
+	if (slug.startsWith(REPORT_SLUG_PREFIX)) {
+		throw new Error(`La obra ${row.id} incluye el prefijo de informe en works.slug: ${slug}`);
+	}
+	if (!WORK_SLUG_PATTERN.test(slug)) {
+		throw new Error(`La obra ${row.id} tiene un slug invalido en Turso: ${slug}`);
+	}
+	const existingWorkId = seenSlugs.get(slug);
+	if (existingWorkId) {
+		throw new Error(`Slug duplicado en Turso: ${slug} (${existingWorkId}, ${row.id})`);
+	}
+	seenSlugs.set(slug, row.id);
+	return slug;
 };
 
 const fetchSummaryFile = async (workId: string): Promise<SummaryFile | null> =>
@@ -614,6 +615,9 @@ const createSnapshot = async (): Promise<Snapshot> => {
 
 	const worksTableColumns = await getRows<{ name: string }>('PRAGMA table_info(works)');
 	const hasWorkSlugColumn = worksTableColumns.some((column) => column.name === 'slug');
+	if (!hasWorkSlugColumn) {
+		throw new Error('La tabla works de Turso no tiene columna slug.');
+	}
 	const hasWorkOtherTitlesColumn = worksTableColumns.some((column) => column.name === 'otrostitulos');
 	const hasWorkLegacyTitleVariantsColumn = worksTableColumns.some(
 		(column) => column.name === 'variaciones_titulo'
@@ -625,7 +629,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 			: 'NULL AS title_variants';
 
 	const workRows = await getRows<WorkRow>(
-		`SELECT id, ${hasWorkSlugColumn ? 'slug' : 'NULL AS slug'}, titulo,
+		`SELECT id, slug, titulo,
 		 ${titleVariantsSelect},
 		 genero, adicion, estado_texto,
 		 examen_autorias, bicuve, bicuve_nombre, tiene_acceso_externo,
@@ -635,8 +639,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 		 ORDER BY titulo COLLATE NOCASE`
 	);
 
-	const slugCounts = new Map<string, number>();
-	const reportSlugCounts = new Map<string, number>();
+	const seenWorkSlugs = new Map<string, string>();
 	const bicuveSlugCounts = new Map<string, number>();
 	const bicuveSlugByWorkId = new Map<string, string>();
 	const bicuveNameByWorkId = new Map<string, string>();
@@ -650,16 +653,8 @@ const createSnapshot = async (): Promise<Snapshot> => {
 		const hasSummary = Number(row.has_resumen_breve) === 1;
 		const hasReport = Boolean(row.resultado1?.trim() || row.resultado2?.trim());
 
-		const baseSlug = resolveWorkBaseSlug(row);
-		const currentCount = (slugCounts.get(baseSlug) ?? 0) + 1;
-		slugCounts.set(baseSlug, currentCount);
-		const slug = currentCount === 1 ? baseSlug : `${baseSlug}-${currentCount}`;
-		const automaticReportSlug = hasReport
-			? buildUniqueReportSlug(buildReportSlugBase(row.titulo), reportSlugCounts)
-			: undefined;
-		const reportSlug = hasReport
-			? (informeSlugOverrides[row.id] ?? automaticReportSlug)
-			: undefined;
+		const slug = resolveWorkSlug(row, seenWorkSlugs);
+		const reportSlug = hasReport ? `${REPORT_SLUG_PREFIX}${slug}` : undefined;
 		const bicuveNombre = row.bicuve_nombre?.trim() || 'ETSO';
 		bicuveNameByWorkId.set(row.id, bicuveNombre);
 		let bicuveSlug = '';
@@ -1195,6 +1190,7 @@ export const getInformeById = async (informeId: string): Promise<CatalogInforme 
 	const snapshot = await getSnapshot();
 	const work = snapshot.workById.get(informeId);
 	if (!work) return undefined;
+	if (!work.reportSlug) return undefined;
 
 	const distances = await getDistancesForWork(work.id);
 	if (!hasAnyDistanceRows(distances)) return undefined;
@@ -1210,7 +1206,7 @@ export const getInformeById = async (informeId: string): Promise<CatalogInforme 
 	return {
 		id: work.id,
 		workId: work.id,
-		slug: work.reportSlug ?? buildReportSlugBase(work.title),
+		slug: work.reportSlug,
 		title: `Análisis estilométrico de ${work.title}`,
 		intro:
 			work.result1 ||

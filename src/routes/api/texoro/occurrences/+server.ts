@@ -49,7 +49,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
 	const rawOptions = body?.options ?? {};
 	const options = {
-		maxItems: asPositiveNumber(rawOptions.maxItems, 300, 500),
+		maxItems: asPositiveNumber(rawOptions.maxItems, 300, 300),
 		snippetRadius: asPositiveNumber(rawOptions.snippetRadius, 115, 220),
 		snippetMode: normalizeSnippetMode(rawOptions.snippetMode),
 		lineContext: asPositiveNumber(rawOptions.lineContext, 3, 10)

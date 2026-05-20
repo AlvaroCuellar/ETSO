@@ -92,6 +92,9 @@ const combineGroups = (
 	return groups.flatMap((group) => clauses.map((clause) => [...group, clause]));
 };
 
+const isSimpleClause = (clause: ParsedQueryClause): clause is ParsedQueryTerm | ParsedQueryPhrase =>
+	clause.kind === 'term' || clause.kind === 'phrase';
+
 export const parseSearchQuery = (input: string, preserveEnie: boolean): ParsedQuery => {
 	const warnings: string[] = [];
 	const tokens = lexQuery(input.trim());
@@ -197,22 +200,39 @@ export const parseStructuredQuery = (
 	}
 	groups = combineGroups(groups, additionalClauses, normalizeBooleanMode(query.additionalMode));
 
-	const proximityClauses: ParsedQueryClause[] = [];
+	const proximityTerms: Array<{
+		right: ParsedQueryTerm | ParsedQueryPhrase;
+		distance: number;
+		order: SearchProximityOrder;
+	}> = [];
 	for (const item of query.proximityTerms ?? []) {
 		const right = valueToClause(item.value, preserveEnie);
 		if (!right) {
 			warnings.push(`No se pudo interpretar: ${item.value}`);
 			continue;
 		}
-		proximityClauses.push({
-			kind: 'proximity',
-			left: mainClause,
+		proximityTerms.push({
 			right,
 			distance: normalizeDistance(item.distance),
 			order: normalizeProximityOrder(item.order)
 		});
 	}
-	groups = combineGroups(groups, proximityClauses, normalizeBooleanMode(query.proximityMode));
+	if (proximityTerms.length > 0) {
+		const proximityMode = normalizeBooleanMode(query.proximityMode);
+		groups = groups.flatMap((group) => {
+			const baseClauses = group.filter(isSimpleClause);
+			const proximityClauses: ParsedQueryClause[] = proximityTerms.flatMap((term) =>
+				baseClauses.map((left) => ({
+					kind: 'proximity',
+					left,
+					right: term.right,
+					distance: term.distance,
+					order: term.order
+				}))
+			);
+			return combineGroups([group], proximityClauses, proximityMode);
+		});
+	}
 
 	const filteredGroups = groups.filter((group) => group.length > 0);
 	if (filteredGroups.length === 0) warnings.push('No hay terminos validos tras normalizacion');

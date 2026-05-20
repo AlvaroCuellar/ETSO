@@ -19,9 +19,11 @@
 	import ChevronDown from 'lucide-svelte/icons/chevron-down';
 	import ChevronLeft from 'lucide-svelte/icons/chevron-left';
 	import ChevronRight from 'lucide-svelte/icons/chevron-right';
+	import CornerDownLeft from 'lucide-svelte/icons/corner-down-left';
 	import Feather from 'lucide-svelte/icons/feather';
 	import Search from 'lucide-svelte/icons/search';
 	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
+	import X from 'lucide-svelte/icons/x';
 
 	import { normalizePattern, normalizePlainText } from '$lib/search';
 
@@ -79,6 +81,13 @@
 		regexes: RegExp[];
 		chipStyle: string;
 		markStyle: string;
+	}
+
+	type MatchDisplayPartKind = 'text' | 'connector' | 'meta';
+
+	interface MatchDisplayPart {
+		kind: MatchDisplayPartKind;
+		value: string;
 	}
 
 	interface SnippetToken {
@@ -203,6 +212,7 @@
 	const PREVIEW_BATCH_SIZE = 6;
 	const PREVIEW_SCROLL_THRESHOLD_PX = 900;
 	const OCCURRENCE_DETAILS_CACHE_LIMIT = 24;
+	const OCCURRENCE_MODAL_MAX_ITEMS = 300;
 	const TEXORO_PRIME_DEBOUNCE_MS = 500;
 
 	const stripTrailingSlash = (value: string): string => value.replace(/\/+$/, '');
@@ -358,7 +368,7 @@
 		if (match.kind === 'proximity') {
 			const proximity = parseProximityMatchSource(source);
 			if (proximity) {
-				return `${proximity.left} cerca de ${proximity.right} (máx. ${proximity.distance}, ${proximityOrderLabel(proximity.order)})`;
+				return `${proximity.right} cerca de ${proximity.left} (máx. ${proximity.distance}, ${proximityOrderLabel(proximity.order)})`;
 			}
 		}
 		if (match.kind === 'phrase' && source.startsWith('"') && source.endsWith('"')) {
@@ -369,6 +379,33 @@
 
 	const formatMatchDisplayLabel = (match: Pick<SearchResultMatch, 'kind' | 'source'>): string =>
 		submittedTermLabelByKey.get(`${match.kind}:${match.source}`) ?? formatMatchSource(match);
+
+	const matchDisplayParts = (
+		match: Pick<SearchResultMatch, 'kind' | 'source'>,
+		options: { includeProximityMeta?: boolean } = {}
+	): MatchDisplayPart[] => {
+		if (match.kind !== 'proximity') {
+			return [{ kind: 'text', value: formatMatchDisplayLabel(match) }];
+		}
+
+		const proximity = parseProximityMatchSource(match.source.trim());
+		if (!proximity) {
+			return [{ kind: 'text', value: formatMatchDisplayLabel(match) }];
+		}
+
+		const parts: MatchDisplayPart[] = [
+			{ kind: 'text', value: proximity.right },
+			{ kind: 'connector', value: 'cerca de' },
+			{ kind: 'text', value: proximity.left }
+		];
+		if (options.includeProximityMeta !== false) {
+			parts.push(
+				{ kind: 'meta', value: `máx. ${proximity.distance}` },
+				{ kind: 'meta', value: proximityOrderLabel(proximity.order) }
+			);
+		}
+		return parts;
+	};
 
 	const toChartBlock = (source: Map<string, number>, limit: number): ChartBlock => {
 		const sorted = Array.from(source.entries())
@@ -850,7 +887,22 @@
 		main: string,
 		term: Pick<ProximityQueryTerm, 'value' | 'distance' | 'order'>
 	): string =>
-		`${formatFormulaValue(main)} cerca de ${formatFormulaValue(term.value)} (máx. ${term.distance}, ${proximityOrderLabel(term.order)})`;
+		`${formatFormulaValue(term.value)} cerca de ${formatFormulaValue(main)} (máx. ${term.distance}, ${proximityOrderLabel(term.order)})`;
+
+	const uniqueSearchValues = (values: string[]): string[] => {
+		const seen = new Set<string>();
+		const output: string[] = [];
+		for (const value of values) {
+			const normalized = normalizeSearchValue(value);
+			if (!normalized || seen.has(normalized)) continue;
+			seen.add(normalized);
+			output.push(normalized);
+		}
+		return output;
+	};
+
+	const proximityBaseValuesForQuery = (query: StructuredSearchQuery): string[] =>
+		uniqueSearchValues([query.main, ...(query.additionalTerms ?? [])]).map(formatFormulaValue);
 
 	const textPart = (value: string): InterpretedQueryPart => ({ kind: 'text', value });
 	const termPart = (value: string): InterpretedQueryPart => ({ kind: 'term', value });
@@ -882,22 +934,41 @@
 
 	const appendProximityCondition = (
 		parts: InterpretedQueryPart[],
-		main: string,
-		term: Pick<ProximityQueryTerm, 'value' | 'distance'> & { order?: SearchProximityOrder }
+		baseTerms: string[],
+		mode: SearchBooleanMode,
+		term: Pick<ProximityQueryTerm, 'value' | 'distance'> & { order?: SearchProximityOrder },
+		options: { alternativeBaseTerms?: boolean } = {}
 	): void => {
 		parts.push(termPart(formatFormulaValue(term.value)));
 		parts.push(textPart(` a un máximo de ${term.distance} palabras de `));
-		parts.push(termPart(main));
+		if (baseTerms.length <= 1) {
+			parts.push(termPart(baseTerms[0] ?? ''));
+		} else if (options.alternativeBaseTerms) {
+			parts.push(
+				textPart(
+					mode === 'any'
+						? 'alguno de los términos buscados aplicables en cada alternativa'
+						: 'todos los términos buscados aplicables en cada alternativa'
+				)
+			);
+		} else {
+			parts.push(
+				textPart(
+					mode === 'any' ? 'al menos uno de estos términos: ' : 'todos estos términos: '
+				)
+			);
+			appendHumanTermList(parts, baseTerms, mode === 'any' ? 'o' : 'y');
+		}
 
 		if (term.order === 'after') {
-			parts.push(textPart(', después de '));
-			parts.push(termPart(main));
+			parts.push(textPart(baseTerms.length <= 1 ? ', después de ' : ', después del término base'));
+			if (baseTerms.length <= 1) parts.push(termPart(baseTerms[0] ?? ''));
 			return;
 		}
 
 		if (term.order === 'before') {
-			parts.push(textPart(', antes de '));
-			parts.push(termPart(main));
+			parts.push(textPart(baseTerms.length <= 1 ? ', antes de ' : ', antes del término base'));
+			if (baseTerms.length <= 1) parts.push(termPart(baseTerms[0] ?? ''));
 			return;
 		}
 
@@ -914,15 +985,18 @@
 			appendFormulaTerms(parts, additional, query.additionalMode === 'any' ? 'OR' : 'AND');
 			if (additional.length > 1 && query.additionalMode === 'any') parts.push(textPart(')'));
 		}
+		const proximityBaseTerms = proximityBaseValuesForQuery(query);
 		const proximity = (query.proximityTerms ?? [])
 			.filter((term) => term.value.trim())
-			.map((term): InterpretedQueryPart[] => [
-				operatorPart(`${proximityFormulaName(term.order ?? 'any')}(`),
-				termPart(main),
-				textPart(', '),
-				termPart(formatFormulaValue(term.value)),
-				textPart(`, <=${term.distance})`)
-			]);
+			.flatMap((term) =>
+				proximityBaseTerms.map((base): InterpretedQueryPart[] => [
+					operatorPart(`${proximityFormulaName(term.order ?? 'any')}(`),
+					termPart(base),
+					textPart(', '),
+					termPart(formatFormulaValue(term.value)),
+					textPart(`, <=${term.distance})`)
+				])
+			);
 		if (proximity.length > 0) {
 			parts.push(operatorPart('AND'));
 			if (proximity.length > 1) parts.push(textPart('('));
@@ -948,11 +1022,14 @@
 				parts.push(`(${additional.join(' OR ')})`);
 			}
 		}
+		const proximityBaseTerms = proximityBaseValuesForQuery(query);
 		const proximity = (query.proximityTerms ?? [])
 			.filter((term) => term.value.trim())
-			.map(
-				(term) =>
-					`${proximityFormulaName(term.order ?? 'any')}(${main}, ${formatFormulaValue(term.value)}, <=${term.distance})`
+			.flatMap((term) =>
+				proximityBaseTerms.map(
+					(base) =>
+						`${proximityFormulaName(term.order ?? 'any')}(${base}, ${formatFormulaValue(term.value)}, <=${term.distance})`
+				)
 			);
 		if (proximity.length > 0) {
 			parts.push(
@@ -986,21 +1063,15 @@
 		const proximity = (query.proximityTerms ?? []).filter((term) => term.value.trim());
 		if (proximity.length > 0) {
 			parts.push(textPart('. Además, '));
+			const proximityBaseTerms = proximityBaseValuesForQuery(query);
+			const alternativeBaseTerms =
+				query.additionalMode === 'any' && (query.additionalTerms ?? []).filter((term) => term.trim()).length > 1;
 
 			if (proximity.length === 1) {
 				const [term] = proximity;
-				parts.push(termPart(formatFormulaValue(term.value)));
-				parts.push(textPart(` debe aparecer a un máximo de ${term.distance} palabras de `));
-				parts.push(termPart(main));
-				if (term.order === 'after') {
-					parts.push(textPart(', después de '));
-					parts.push(termPart(main));
-				} else if (term.order === 'before') {
-					parts.push(textPart(', antes de '));
-					parts.push(termPart(main));
-				} else {
-					parts.push(textPart(', en cualquier orden'));
-				}
+				appendProximityCondition(parts, proximityBaseTerms, query.proximityMode ?? 'all', term, {
+					alternativeBaseTerms
+				});
 			} else {
 				parts.push(
 					textPart(
@@ -1011,7 +1082,9 @@
 				);
 				proximity.forEach((term, index) => {
 					if (index > 0) parts.push(textPart('; '));
-					appendProximityCondition(parts, main, term);
+					appendProximityCondition(parts, proximityBaseTerms, query.proximityMode ?? 'all', term, {
+						alternativeBaseTerms
+					});
 				});
 			}
 		}
@@ -1053,6 +1126,7 @@
 		for (const term of cleanAdditionalTerms) {
 			terms.push(buildTermDescriptor(term, term, additionalMode));
 		}
+		const proximityBaseTerms = uniqueSearchValues([normalizedMain, ...cleanAdditionalTerms]);
 
 		const cleanProximityTerms = proximityTerms
 			.map((term) => ({
@@ -1062,11 +1136,13 @@
 			}))
 			.filter((term) => term.value);
 		for (const term of cleanProximityTerms) {
-			terms.push({
-				key: `proximity:${formatProximitySourceForValue(normalizedMain, term)}`,
-				label: formatProximityDisplayLabel(normalizedMain, term),
-				operator: proximityMode
-			});
+			for (const baseTerm of proximityBaseTerms) {
+				terms.push({
+					key: `proximity:${formatProximitySourceForValue(baseTerm, term)}`,
+					label: formatProximityDisplayLabel(baseTerm, term),
+					operator: proximityMode
+				});
+			}
 		}
 
 		const structuredQuery: StructuredSearchQuery = {
@@ -1850,13 +1926,18 @@
 		return ranges.length > 0 ? renderHighlightedRanges(snippet, ranges) : escapeHtml(snippet);
 	};
 
-	const occurrencePositionLabel = (occurrence: SearchMatchOccurrence): string => {
+	const occurrencePositionParts = (
+		occurrence: SearchMatchOccurrence
+	): { prefix: string; value: string; suffix: string } => {
 		const highlightIndexes = occurrence.highlights?.map((highlight) => highlight.tokenIndex) ?? [];
 		const start = Math.min(occurrence.tokenIndex, ...highlightIndexes);
 		const end = Math.max(occurrence.tokenEndIndex ?? occurrence.tokenIndex, ...highlightIndexes);
 		const total = numberFormatter.format(occurrence.tokenCount);
-		if (start === end) return `palabra ${numberFormatter.format(start)} de ${total}`;
-		return `palabras ${numberFormatter.format(start)}-${numberFormatter.format(end)} de ${total}`;
+		return {
+			prefix: start === end ? 'palabra ' : 'palabras ',
+			value: start === end ? numberFormatter.format(start) : `${numberFormatter.format(start)}-${numberFormatter.format(end)}`,
+			suffix: ` de ${total}`
+		};
 	};
 
 	const closeOccurrenceModal = (): void => {
@@ -1899,7 +1980,7 @@
 			workId: result.workId,
 			match: assignment.match,
 			options: {
-				maxItems: 500,
+				maxItems: OCCURRENCE_MODAL_MAX_ITEMS,
 				snippetRadius: 115,
 				snippetMode: 'lines',
 				lineContext: 3
@@ -2187,31 +2268,31 @@
 		</p>
 
 		<form class="mt-4 grid gap-3" onsubmit={submitSearch}>
-			<div class="grid gap-3 md:grid-cols-[minmax(0,1fr)_auto]">
+			<div class="grid gap-3">
 				<div class="relative">
 					<input
 						type="search"
 						bind:value={mainQuery}
 						placeholder="Ejemplos: amor | amor constante | honor*"
-						class="h-[46px] w-full appearance-none rounded-[10px] border border-border bg-white px-11 py-2 text-[15px] text-text-main outline-none shadow-none transition focus:border-brand-blue/35 focus:shadow-none focus:outline-none focus-visible:border-brand-blue/35 focus-visible:outline-none"
+						class="h-[46px] w-full appearance-none rounded-[10px] border border-border bg-white py-2 pr-12 pl-11 text-[15px] text-text-main outline-none shadow-none transition focus:border-brand-blue/35 focus:shadow-none focus:outline-none focus-visible:border-brand-blue/35 focus-visible:outline-none"
 					/>
 					<span class="pointer-events-none absolute inset-y-0 left-3 inline-flex items-center text-text-accent-purple">
 						<Search class="h-4.5 w-4.5" />
 					</span>
+					<button
+						type="submit"
+						class="absolute inset-y-1.5 right-1.5 inline-flex w-9 items-center justify-center rounded-[8px] border-0 bg-surface-accent-blue text-brand-blue-dark transition hover:bg-border-accent-blue focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue/25 disabled:cursor-not-allowed disabled:opacity-55"
+						aria-label={isSearching ? 'Buscando' : 'Buscar'}
+						title={isSearching ? 'Buscando' : 'Buscar'}
+						disabled={isSearching}
+					>
+						{#if isSearching}
+							<LoaderCircle class="h-4 w-4 animate-spin" aria-hidden="true" />
+						{:else}
+							<CornerDownLeft class="h-4.5 w-4.5" aria-hidden="true" />
+						{/if}
+					</button>
 				</div>
-				<AppButton
-					type="submit"
-					variant="primary"
-					disabled={isSearching}
-					className="!h-[46px] !min-w-[180px] gap-2 !rounded-[10px] !px-5 !py-2 font-['Roboto',sans-serif] text-[0.93rem] font-semibold tracking-[0.02em]"
-				>
-					{#if isSearching}
-						<LoaderCircle class="h-4.5 w-4.5 animate-spin" />
-						Buscando...
-					{:else}
-						Buscar
-					{/if}
-				</AppButton>
 			</div>
 
 			<p class="m-0 text-[0.84rem] text-text-soft">
@@ -2286,12 +2367,17 @@
 							</div>
 
 							{#if additionalTerms.length === 0}
-								<p class="m-0 rounded-[9px] border border-dashed border-border-accent-blue bg-surface px-3 py-2 text-[0.86rem] text-text-soft">
-									No hay términos adicionales.
-								</p>
+								<button
+									type="button"
+									class="rounded-[9px] border border-dashed border-border-accent-blue bg-surface px-3 py-2 text-left text-[0.78rem] font-semibold text-text-soft transition hover:bg-surface-accent-blue hover:text-text-main disabled:cursor-not-allowed disabled:opacity-55"
+									disabled={additionalTerms.length + proximityTerms.length >= MAX_QUERY_TERMS - 1}
+									onclick={addAdditionalTerm}
+								>
+									Añadir términos adicionales
+								</button>
 							{:else}
 								{#each additionalTerms as term}
-									<div class="grid gap-2 rounded-[9px] border border-border bg-surface p-3 md:grid-cols-[minmax(0,1fr)_auto]">
+									<div class="grid gap-2 md:grid-cols-[minmax(0,1fr)_auto]">
 										<label class="sr-only" for={`additional-query-${term.id}`}>Término adicional</label>
 										<input
 											id={`additional-query-${term.id}`}
@@ -2311,21 +2397,21 @@
 										</button>
 									</div>
 								{/each}
-							{/if}
 
-							<div class="flex flex-wrap items-center justify-between gap-3">
-								<p class="m-0 text-[0.82rem] text-text-soft">
-									Condiciones activas: {activeSearchTermCount}/{MAX_QUERY_TERMS}
-								</p>
-								<button
-									type="button"
-									class="rounded-[8px] border border-border-accent-blue bg-surface-accent-blue px-3 py-2 text-[0.84rem] font-semibold text-brand-blue-dark transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-55"
-									disabled={additionalTerms.length + proximityTerms.length >= MAX_QUERY_TERMS - 1}
-									onclick={addAdditionalTerm}
-								>
-									Añadir término
-								</button>
-							</div>
+								<div class="grid gap-2">
+									<button
+										type="button"
+										class="rounded-[9px] border border-dashed border-border-accent-blue bg-surface px-3 py-2 text-left text-[0.78rem] font-semibold text-text-soft transition hover:bg-surface-accent-blue hover:text-text-main disabled:cursor-not-allowed disabled:opacity-55"
+										disabled={additionalTerms.length + proximityTerms.length >= MAX_QUERY_TERMS - 1}
+										onclick={addAdditionalTerm}
+									>
+										Añadir términos adicionales
+									</button>
+									<p class="m-0 text-[0.82rem] text-text-soft">
+										Condiciones activas: {activeSearchTermCount}/{MAX_QUERY_TERMS}
+									</p>
+								</div>
+							{/if}
 						</div>
 
 						<div class="grid gap-3 border-t border-border-accent-blue pt-4">
@@ -2368,12 +2454,17 @@
 							</div>
 
 							{#if proximityTerms.length === 0}
-								<p class="m-0 rounded-[9px] border border-dashed border-border-accent-blue bg-surface px-3 py-2 text-[0.86rem] text-text-soft">
-									No hay condiciones de proximidad.
-								</p>
+								<button
+									type="button"
+									class="rounded-[9px] border border-dashed border-border-accent-blue bg-surface px-3 py-2 text-left text-[0.78rem] font-semibold text-text-soft transition hover:bg-surface-accent-blue hover:text-text-main disabled:cursor-not-allowed disabled:opacity-55"
+									disabled={additionalTerms.length + proximityTerms.length >= MAX_QUERY_TERMS - 1}
+									onclick={addProximityTerm}
+								>
+									Añadir términos de distancia
+								</button>
 							{:else}
 								{#each proximityTerms as term}
-									<div class="grid gap-2 rounded-[9px] border border-border bg-surface p-3 md:grid-cols-[minmax(0,1fr)_112px_150px_auto]">
+									<div class="grid gap-2 md:grid-cols-[minmax(0,1fr)_112px_150px_auto]">
 										<label class="sr-only" for={`proximity-query-${term.id}`}>Término cercano</label>
 										<input
 											id={`proximity-query-${term.id}`}
@@ -2420,48 +2511,22 @@
 										</button>
 									</div>
 								{/each}
-							{/if}
 
-							<div class="flex justify-end">
-								<button
-									type="button"
-									class="rounded-[8px] border border-border-accent-blue bg-surface-accent-blue px-3 py-2 text-[0.84rem] font-semibold text-brand-blue-dark transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-55"
-									disabled={additionalTerms.length + proximityTerms.length >= MAX_QUERY_TERMS - 1}
-									onclick={addProximityTerm}
-								>
-									Añadir proximidad
-								</button>
-							</div>
+								<div class="grid gap-2">
+									<button
+										type="button"
+										class="rounded-[9px] border border-dashed border-border-accent-blue bg-surface px-3 py-2 text-left text-[0.78rem] font-semibold text-text-soft transition hover:bg-surface-accent-blue hover:text-text-main disabled:cursor-not-allowed disabled:opacity-55"
+										disabled={additionalTerms.length + proximityTerms.length >= MAX_QUERY_TERMS - 1}
+										onclick={addProximityTerm}
+									>
+										Añadir términos de distancia
+									</button>
+								</div>
+							{/if}
 						</div>
 					</div>
 				</div>
 			</div>
-
-			{#if interpretedQuery}
-				<div class="rounded-[10px] bg-surface-soft px-4 py-3">
-					<p class="m-0 text-[0.84rem] font-semibold text-brand-blue-dark">Consulta interpretada</p>
-					<p class="mt-1 mb-0 text-[0.9rem] leading-[1.75] text-text-main">
-						{#each interpretedQuery.summaryParts as part}
-							{#if part.kind === 'term'}
-								<span class={interpretedQueryTermClass} title={part.value}>{part.value}</span>
-							{:else}
-								<span>{part.value}</span>
-							{/if}
-						{/each}
-					</p>
-					<p class="mt-2 mb-0 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[0.78rem] text-text-soft">
-						{#each interpretedQuery.formulaParts as part}
-							{#if part.kind === 'term'}
-								<span class={interpretedQueryTermClass} title={part.value}>{part.value}</span>
-							{:else if part.kind === 'operator'}
-								<span class={interpretedQueryOperatorClass}>{part.value}</span>
-							{:else}
-								<span class="font-mono">{part.value}</span>
-							{/if}
-						{/each}
-					</p>
-				</div>
-			{/if}
 
 			<div class={`rounded-[10px] border border-border-accent-blue bg-white ${filtersOpen ? 'overflow-visible' : 'overflow-hidden'}`}>
 				<button
@@ -2580,16 +2645,56 @@
 				</div>
 			</div>
 
-			<div class="flex justify-end">
+			{#if interpretedQuery}
+				<div class="rounded-[10px] bg-surface-soft px-4 py-3">
+					<p class="m-0 font-['Roboto',sans-serif] text-[0.84rem] font-semibold text-brand-blue-dark">Consulta interpretada</p>
+					<p class="mt-1 mb-0 text-[0.9rem] leading-[1.75] text-text-main">
+						{#each interpretedQuery.summaryParts as part}
+							{#if part.kind === 'term'}
+								<span class={interpretedQueryTermClass} title={part.value}>{part.value}</span>
+							{:else}
+								<span>{part.value}</span>
+							{/if}
+						{/each}
+					</p>
+					<p class="mt-2 mb-0 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[0.78rem] text-text-soft">
+						{#each interpretedQuery.formulaParts as part}
+							{#if part.kind === 'term'}
+								<span class={interpretedQueryTermClass} title={part.value}>{part.value}</span>
+							{:else if part.kind === 'operator'}
+								<span class={interpretedQueryOperatorClass}>{part.value}</span>
+							{:else}
+								<span class="font-mono">{part.value}</span>
+							{/if}
+						{/each}
+					</p>
+				</div>
+			{/if}
+
+			<div class="flex flex-wrap justify-end gap-2">
 				<AppButton
 					href="/texoro"
 					variant="secondary"
+					className="!h-[40px] !min-w-[136px] !rounded-[10px] !border-transparent !px-5 !py-2 font-['Roboto',sans-serif] text-[0.9rem] font-semibold tracking-[0.02em] shadow-none"
 					onclick={(event) => {
 						event.preventDefault();
 						resetSearchControls();
 					}}
 				>
 					Limpiar campos
+				</AppButton>
+				<AppButton
+					type="submit"
+					variant="primary"
+					disabled={isSearching}
+					className="!h-[40px] !min-w-[136px] gap-2 !rounded-[10px] !px-5 !py-2 font-['Roboto',sans-serif] text-[0.9rem] font-semibold tracking-[0.02em]"
+				>
+					{#if isSearching}
+						<LoaderCircle class="h-4.5 w-4.5 animate-spin" />
+						Buscando...
+					{:else}
+						Buscar
+					{/if}
 				</AppButton>
 			</div>
 		</form>
@@ -2796,7 +2901,7 @@
 						bind:this={resultsPaginationRegion}
 						class="flex scroll-mt-24 flex-wrap items-center justify-between gap-3"
 					>
-						<p class="m-0 text-[0.88rem] font-normal text-text-main">
+						<p class="m-0 font-['Roboto',sans-serif] text-[0.88rem] font-normal text-text-main">
 							Mostrando
 							<span class="font-semibold text-brand-blue">
 								{numberFormatter.format(resultPageStart)}-{numberFormatter.format(resultPageEnd)}
@@ -2857,7 +2962,7 @@
 												Obra sin metadatos
 											{/if}
 										</h3>
-										<span class="w-fit shrink-0 rounded-full bg-surface-accent-blue px-2.5 py-1 text-[0.8rem] font-semibold whitespace-nowrap text-brand-blue-dark">
+										<span class="w-fit shrink-0 rounded-full bg-surface-accent-blue px-2.5 py-1 font-['Roboto',sans-serif] text-[0.8rem] font-semibold whitespace-nowrap text-brand-blue-dark">
 											{numberFormatter.format(resultOccurrences)} {resultOccurrences === 1 ? 'concurrencia' : 'concurrencias'}
 										</span>
 									</div>
@@ -2887,16 +2992,19 @@
 									<ol class="mt-3 m-0 list-none p-0 text-[0.95rem] leading-[1.55] text-text-main">
 										{#each preview.items as item, index}
 											{@const itemAssignment = assignments.find((assignment) => assignment.key === item.assignmentKey)}
-											<li class="grid grid-cols-[auto_minmax(0,1fr)] gap-3 border-t border-brand-blue/15 py-3 first:border-t-0 first:pt-0 last:pb-0">
+											{@const itemPosition = occurrencePositionParts(item)}
+											<li class="grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-1 border-t border-brand-blue/15 py-3 first:border-t-0 first:pt-0 last:pb-0">
 												<span class="font-['Roboto',sans-serif] text-[0.82rem] font-bold text-text-accent-purple">
-													{index + 1}#
+													#{index + 1}
 												</span>
-										<span class="texoro-occurrence-snippet block min-w-0">
-											{@html highlightExactOccurrenceSnippet(item.centeredSnippet, itemAssignment, item)}
-											<span class="ml-1 font-['Roboto',sans-serif] text-[0.76rem] text-text-soft">
-												{occurrencePositionLabel(item)}
-											</span>
-										</span>
+												<div class="grid min-w-0 gap-1 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start sm:gap-3">
+													<span class="texoro-occurrence-snippet block min-w-0">
+														{@html highlightExactOccurrenceSnippet(item.centeredSnippet, itemAssignment, item)}
+													</span>
+													<span class="font-['Roboto',sans-serif] text-[0.76rem] font-medium whitespace-nowrap text-text-accent-purple sm:text-right">
+														{itemPosition.prefix}<span class="font-bold">{itemPosition.value}</span>{itemPosition.suffix}
+													</span>
+												</div>
 											</li>
 										{/each}
 									</ol>
@@ -2906,19 +3014,33 @@
 									<p class="mt-3 mb-0 text-[0.9rem] text-text-soft">Cargando concurrencias...</p>
 								{/if}
 
-								<div class="mt-2 flex flex-wrap gap-1.5">
+								<div class="mt-4 flex flex-wrap gap-1.5">
 									{#each assignments as assignment}
 										<button
 											type="button"
-											class="rounded-full border px-2 py-[2px] font-['Roboto',sans-serif] text-[0.76rem] font-medium hover:brightness-95"
-											style={`${assignment.chipStyle} cursor:pointer;`}
+											class="texoro-more-button"
+											style="cursor:pointer;"
 											onpointerenter={() => prefetchOccurrenceDetails(result, assignment)}
 											onfocus={() => prefetchOccurrenceDetails(result, assignment)}
 											onclick={() => openOccurrenceModal(result, assignment)}
 											title={`Ver más concurrencias de ${formatMatchDisplayLabel(assignment.match)}`}
 										>
-											Ver más de {formatMatchDisplayLabel(assignment.match)}
-											({numberFormatter.format(assignment.match.occurrences)})
+											<span class="texoro-more-button__label">Ver más</span>
+											<span
+												class="texoro-more-button__term"
+												style={assignment.chipStyle}
+											>
+												{#each matchDisplayParts(assignment.match, { includeProximityMeta: false }) as part}
+													<span
+														class={part.kind === 'text' ? 'texoro-more-button__term-text' : 'texoro-more-button__meta'}
+													>
+														{part.value}
+													</span>
+												{/each}
+											</span>
+											<span class="texoro-more-button__count">
+												{numberFormatter.format(assignment.match.occurrences)}
+											</span>
 										</button>
 									{/each}
 								</div>
@@ -2967,31 +3089,84 @@
 
 {#if occurrenceModal}
 	<div class="fixed inset-0 z-40 flex items-center justify-center bg-black/45 px-3 py-4">
-		<div class="max-h-[88vh] w-full max-w-[880px] overflow-hidden rounded-[12px] border border-border-accent-blue bg-white shadow-[0_16px_40px_rgba(4,24,56,0.33)]">
-			<div class="flex items-start justify-between gap-3 border-b border-border-accent-blue px-4 py-3">
-				<div>
-					<h3 class="m-0 font-['Roboto',sans-serif] text-[1.02rem] font-semibold text-brand-blue-dark">
-						{occurrenceModal.assignment.match.kind === 'phrase'
-							? 'Concurrencias de frase'
-							: occurrenceModal.assignment.match.kind === 'proximity'
-								? 'Concurrencias por distancia'
-								: 'Concurrencias de término'}
-					</h3>
-					<p class="mt-1 mb-0 text-[0.9rem] text-text-soft">
-						{formatMatchDisplayLabel(occurrenceModal.assignment.match)}
-						{#if occurrenceModal.details}
-							({numberFormatter.format(occurrenceModal.details.count)})
-						{/if}
-					</p>
+		<button
+			type="button"
+			class="absolute inset-0 h-full w-full cursor-default border-0 bg-transparent p-0"
+			aria-label="Cerrar modal"
+			tabindex="-1"
+			onclick={closeOccurrenceModal}
+		></button>
+		<div
+			class="relative max-h-[88vh] w-full max-w-[880px] overflow-hidden rounded-[12px] border border-border-accent-blue bg-white shadow-[0_16px_40px_rgba(4,24,56,0.33)]"
+			role="dialog"
+			aria-modal="true"
+			aria-label={`Concurrencias de ${formatMatchDisplayLabel(occurrenceModal.assignment.match)}`}
+			tabindex="-1"
+		>
+			<div class="grid gap-3 border-b border-border-accent-blue bg-surface px-4 py-3">
+				<div class="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
+					<div class="min-w-0">
+						<h3 class="m-0 min-w-0 font-['Roboto',sans-serif] text-[1.08rem] leading-[1.25] font-semibold text-brand-blue-dark">
+							{#if occurrenceModal.result.meta}
+								<a
+									href={`/obras/${occurrenceModal.result.meta.slug}`}
+									class="block overflow-hidden text-ellipsis whitespace-nowrap text-brand-blue no-underline hover:text-brand-blue-dark"
+									title={formatDisplayWorkTitle(occurrenceModal.result.meta.title)}
+								>
+									{formatDisplayWorkTitle(occurrenceModal.result.meta.title)}
+								</a>
+							{:else}
+								Obra sin metadatos
+							{/if}
+						</h3>
+						<p class="mt-1 mb-0 overflow-hidden text-ellipsis whitespace-nowrap text-[0.78rem] leading-[1.35] text-text-soft" title={resultMetadataLine(occurrenceModal.result)}>
+							{#if occurrenceModal.result.meta}
+								<span class="font-['Roboto',sans-serif] font-semibold text-text-accent-purple">Trad.</span>
+								{formatCompactAttribution(occurrenceModal.result.meta.traditionalAttribution)}
+								<span class="mx-1 text-border">·</span>
+								<span class="font-['Roboto',sans-serif] font-semibold text-text-accent-purple">Estil.</span>
+								{formatCompactAttribution(occurrenceModal.result.meta.stylometryAttribution)}
+								<span class="mx-1 text-border">·</span>
+								<span class="font-['Roboto',sans-serif] font-semibold text-text-accent-purple">Género</span>
+								{occurrenceModal.result.meta.genre.trim() || 'Sin género'}
+							{:else}
+								{resultMetadataLine(occurrenceModal.result)}
+							{/if}
+						</p>
+					</div>
+					<button
+						type="button"
+						class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border-accent-blue bg-white text-brand-blue-dark transition hover:bg-surface-accent-blue focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue/25"
+						aria-label="Cerrar modal"
+						onclick={closeOccurrenceModal}
+					>
+						<X class="h-4 w-4" aria-hidden="true" />
+					</button>
 				</div>
-				<AppButton
-					type="button"
-					variant="ghost"
-					className="!rounded-[8px] !px-2.5 !py-1 font-['Roboto',sans-serif] text-[0.8rem] font-medium"
-					onclick={closeOccurrenceModal}
-				>
-					Cerrar
-				</AppButton>
+				<div class="flex flex-wrap items-center gap-2">
+					<span
+						class="inline-flex max-w-full items-center gap-1 overflow-hidden rounded-full px-2.5 py-1 font-['Roboto',sans-serif] text-[0.82rem] font-semibold whitespace-nowrap"
+						style={occurrenceModal.assignment.chipStyle}
+					>
+						{#each matchDisplayParts(occurrenceModal.assignment.match) as part}
+							<span
+								class={`${
+									part.kind === 'text'
+										? 'min-w-0 overflow-hidden text-ellipsis'
+										: 'shrink-0 text-[0.72rem] font-bold opacity-75'
+								}`}
+							>
+								{part.value}
+							</span>
+						{/each}
+					</span>
+					{#if occurrenceModal.details}
+						<span class="w-fit shrink-0 rounded-full bg-surface-accent-blue px-2.5 py-1 font-['Roboto',sans-serif] text-[0.8rem] font-semibold whitespace-nowrap text-brand-blue-dark">
+							{numberFormatter.format(occurrenceModal.details.count)}
+							{occurrenceModal.details.count === 1 ? 'concurrencia' : 'concurrencias'}
+						</span>
+					{/if}
+				</div>
 			</div>
 
 			<div class="max-h-[72vh] overflow-auto px-4 py-3">
@@ -3004,22 +3179,29 @@
 				{:else if occurrenceModal.details && occurrenceModal.details.items.length > 0}
 					<ul class="m-0 grid list-none gap-2 p-0">
 						{#each occurrenceModal.details.items as item, index}
+							{@const itemPosition = occurrencePositionParts(item)}
 							<li class="rounded-[9px] border border-border-accent-blue bg-surface px-3 py-2">
-								<p class="m-0 text-[0.79rem] font-semibold text-text-accent-purple">#{index + 1}</p>
+								<p class="m-0 font-['Roboto',sans-serif] text-[0.79rem] font-semibold text-text-accent-purple">#{index + 1}</p>
 								<p class="texoro-occurrence-modal-snippet mt-1 mb-0 text-[0.93rem] leading-[1.55] text-text-main">
 									{@html highlightExactOccurrenceSnippet(item.snippet, occurrenceModal.assignment, item)}
 								</p>
-								<p class="mt-1 mb-0 font-['Roboto',sans-serif] text-[0.75rem] text-text-soft">
-									{occurrencePositionLabel(item)}
+								<p class="mt-1 mb-0 font-['Roboto',sans-serif] text-[0.75rem] font-medium text-text-accent-purple">
+									{itemPosition.prefix}<span class="font-bold">{itemPosition.value}</span>{itemPosition.suffix}
 								</p>
 							</li>
 						{/each}
 					</ul>
 					{#if occurrenceModal.details.truncated}
-						<p class="mt-3 mb-0 text-[0.84rem] text-text-soft">
-							Se muestran las primeras {numberFormatter.format(occurrenceModal.details.items.length)} concurrencias de
-							{numberFormatter.format(occurrenceModal.details.count)}.
-						</p>
+						<div class="mt-3 grid gap-1 text-[0.84rem] text-text-soft">
+							<p class="m-0">
+								Se muestran las primeras {numberFormatter.format(occurrenceModal.details.items.length)} concurrencias de
+								{numberFormatter.format(occurrenceModal.details.count)}.
+							</p>
+							<p class="m-0">
+								Si necesitas acceder a todas las concurrencias,
+								<a href="/contacto" class="font-medium">contacta con nosotros</a>.
+							</p>
+						</div>
 					{/if}
 				{:else}
 					<p class="m-0 text-[0.93rem] text-text-soft">No hay concurrencias para mostrar.</p>
@@ -3041,6 +3223,79 @@
 	.texoro-occurrence-modal-snippet {
 		white-space: pre-wrap;
 		overflow-wrap: anywhere;
+	}
+
+	.texoro-more-button {
+		display: inline-flex;
+		max-width: 100%;
+		align-items: center;
+		gap: 0.25rem;
+		border: 0;
+		border-radius: 999px;
+		background: var(--color-surface-soft);
+		padding: 0.25rem 0.625rem;
+		font-family: var(--font-ui);
+		font-size: 0.8rem;
+		font-weight: 500;
+		line-height: 1;
+		color: var(--color-brand-blue-dark);
+		transition: background-color 160ms ease;
+	}
+
+	.texoro-more-button:hover {
+		background: var(--color-surface-accent-blue);
+	}
+
+	.texoro-more-button:focus-visible {
+		outline: 2px solid rgba(13, 63, 145, 0.25);
+		outline-offset: 2px;
+	}
+
+	.texoro-more-button__label {
+		flex: none;
+		font-weight: 500;
+		white-space: nowrap;
+	}
+
+	.texoro-more-button__term {
+		display: inline-flex;
+		min-width: 0;
+		max-width: 16rem;
+		align-items: center;
+		gap: 0.25rem;
+		overflow: hidden;
+		border-radius: 999px;
+		padding: 0.25rem 0.625rem;
+		font-size: 0.8rem;
+		font-weight: 600;
+		line-height: 1.05;
+		white-space: nowrap;
+	}
+
+	.texoro-more-button__term-text {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.texoro-more-button__meta {
+		flex: none;
+		font-size: 0.68rem;
+		font-weight: 600;
+		line-height: 1;
+		opacity: 0.72;
+	}
+
+	.texoro-more-button__count {
+		flex: none;
+		border-radius: 999px;
+		background: var(--color-surface-accent-blue);
+		padding: 0.25rem 0.625rem;
+		font-size: 0.8rem;
+		font-weight: 700;
+		line-height: 1;
+		color: var(--color-brand-blue-dark);
+		white-space: nowrap;
 	}
 
 	@media (min-width: 768px) {

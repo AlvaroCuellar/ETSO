@@ -101,6 +101,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
 	const authorOptions = collectAuthorOptions(works);
 
 	return {
+		texoroIndexBaseUrl: resolveTexoroIndexBaseUrl(),
 		indexInfo,
 		stats: {
 			...stats,

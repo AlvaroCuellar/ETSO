@@ -1,6 +1,5 @@
 ﻿<script lang="ts">
 	import { onMount, tick } from 'svelte';
-	import { env as publicEnv } from '$env/dynamic/public';
 	import MatchToggle from '$lib/components/search/MatchToggle.svelte';
 	import TokenMultiSelect from '$lib/components/search/TokenMultiSelect.svelte';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
@@ -222,13 +221,7 @@
 		const separator = url.includes('?') ? '&' : '?';
 		return `${url}${separator}t=${Date.now()}`;
 	};
-	const publicAssetsBaseUrl = stripTrailingSlash(
-		publicEnv.PUBLIC_R2_PUBLIC_ASSETS_BASE_URL || publicEnv.PUBLIC_R2_BASE_URL || ''
-	);
-	const texoroIndexBaseUrl = stripTrailingSlash(
-		publicEnv.PUBLIC_TEXORO_INDEX_BASE_URL ||
-			(publicAssetsBaseUrl ? joinUrl(publicAssetsBaseUrl, 'search') : '')
-	);
+	const texoroIndexBaseUrl = $derived(stripTrailingSlash(data.texoroIndexBaseUrl ?? ''));
 
 	let isEngineReady = $state(false);
 	let mainQuery = $state('');

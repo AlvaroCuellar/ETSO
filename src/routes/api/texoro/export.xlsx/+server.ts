@@ -20,6 +20,7 @@ const CONTEXT_EXPORT_LIMIT = 300;
 const RESULT_EXPORT_LIMIT = 100_000;
 const SNIPPET_RADIUS = 115;
 const LINE_CONTEXT = 3;
+const SLOW_API_LOG_MS = 1_500;
 
 interface SubmittedTermPayload {
 	key: string;
@@ -500,7 +501,8 @@ const addSummarySheet = (
 	applyReadableCells(summary);
 };
 
-export const POST: RequestHandler = async ({ request, url }) => {
+export const POST: RequestHandler = async ({ request }) => {
+	const startedAt = Date.now();
 	const payload = await normalizePayload(request);
 	const options: SearchOptions = {
 		limit: 1,
@@ -532,6 +534,10 @@ export const POST: RequestHandler = async ({ request, url }) => {
 		addSummarySheet(workbook, results, occurrenceRows.length, contextsTruncated, indexVersion);
 
 		const buffer = await workbook.xlsx.writeBuffer();
+		const elapsed = Date.now() - startedAt;
+		if (elapsed >= SLOW_API_LOG_MS) {
+			console.warn(`[api/texoro/export.xlsx] slow request: ${elapsed}ms`);
+		}
 		return new Response(buffer, {
 			headers: {
 				'content-type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',

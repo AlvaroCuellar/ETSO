@@ -34,6 +34,9 @@
 		return path === '/mas-informacion' || infoItems.some((item) => isActive(item.href));
 	};
 
+	const preloadDataForHref = (href: string): 'off' | undefined =>
+		href === '/texoro' || href === '/bicuve' ? 'off' : undefined;
+
 	const navLinkClass = (active: boolean): string =>
 		`inline-flex items-center rounded-card border px-4 py-2 text-[0.9rem] font-ui font-medium text-brand-blue no-underline transition hover:no-underline focus-visible:no-underline ${
 			active
@@ -98,7 +101,7 @@
 
 			<nav class="hidden items-center justify-end gap-2 font-ui min-[860px]:flex" aria-label="Navegación principal">
 				{#each navItems as item}
-					<a class={navLinkClass(isActive(item.href))} href={item.href}>{item.label}</a>
+					<a class={navLinkClass(isActive(item.href))} href={item.href} data-sveltekit-preload-data={preloadDataForHref(item.href)}>{item.label}</a>
 				{/each}
 
 				<details class="group relative" bind:open={desktopMoreInfoOpen} bind:this={desktopMoreInfoElement}>
@@ -151,6 +154,7 @@
 						<a
 							class={mobileLinkClass(isActive(item.href))}
 							href={item.href}
+							data-sveltekit-preload-data={preloadDataForHref(item.href)}
 							onclick={() => {
 								closeMobileMenu();
 							}}

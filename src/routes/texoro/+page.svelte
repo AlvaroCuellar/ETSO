@@ -26,6 +26,13 @@
 	import X from 'lucide-svelte/icons/x';
 
 	import { normalizePattern, normalizePlainText } from '$lib/search';
+	import {
+		initializeTexoroClientWorker,
+		isTexoroClientWorkerReady,
+		releaseTexoroClientWorker,
+		requestTexoroClientWorker,
+		terminateTexoroClientWorker
+	} from '$lib/search/texoro-client-worker';
 
 	import type {
 		SearchExecution,
@@ -40,7 +47,6 @@
 		TexoroIndexManifest,
 		TexoroWorkMeta
 	} from '$lib/search';
-	import type { TexoroWorkerRequestPayload, TexoroWorkerResponse } from '$lib/search/worker-protocol';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -280,16 +286,7 @@
 	const indexVersion = $derived(loadedIndexVersion ?? data.indexInfo?.indexVersion ?? 'n/d');
 	let worksMeta = $state<TexoroWorkMeta[] | null>(null);
 	let worksMetaLoadPromise: Promise<TexoroWorkMeta[]> | null = null;
-	let texoroWorker: Worker | null = null;
 	let texoroWorkerInitPromise: Promise<void> | null = null;
-	let texoroWorkerRequestId = 0;
-	const texoroWorkerPending = new Map<
-		number,
-		{
-			resolve: (value: unknown) => void;
-			reject: (cause: Error) => void;
-		}
-	>();
 
 	const sumResultOccurrences = (result: SearchResult): number =>
 		result.matches.reduce((sum, match) => sum + (match.occurrences ?? 0), 0);
@@ -1593,70 +1590,21 @@
 		loadedPreserveEnieForHighlight = manifest.normalization.preserveEnie;
 	};
 
-	const rejectTexoroWorkerPending = (message: string): void => {
-		for (const pending of texoroWorkerPending.values()) {
-			pending.reject(new Error(message));
-		}
-		texoroWorkerPending.clear();
-	};
-
-	const closeTexoroWorker = (message = 'Worker TEXORO cerrado'): void => {
-		texoroWorkerInitPromise = null;
-		if (!texoroWorker) return;
-		texoroWorker.terminate();
-		texoroWorker = null;
-		rejectTexoroWorkerPending(message);
-	};
-
-	const createTexoroWorker = (): Worker | null => {
-		try {
-			const worker = new Worker(new URL('./texoro.worker.ts', import.meta.url), { type: 'module' });
-			worker.onmessage = (event: MessageEvent<TexoroWorkerResponse>) => {
-				const response = event.data;
-				const pending = texoroWorkerPending.get(response.id);
-				if (!pending) return;
-				texoroWorkerPending.delete(response.id);
-				if (response.ok) {
-					pending.resolve(response.result);
-				} else {
-					pending.reject(new Error(response.error));
-				}
-			};
-			worker.onerror = (event) => {
-				const message = event.message || 'Error en el worker de TEXORO';
-				console.warn('[texoro] browser worker failed', message);
-				closeTexoroWorker(message);
-			};
-			return worker;
-		} catch (cause) {
-			console.warn('[texoro] browser worker unavailable', cause);
-			return null;
-		}
-	};
-
 	const initializeTexoroWorker = async (): Promise<void> => {
-		if (isEngineReady && texoroWorker) return;
+		if (isEngineReady && isTexoroClientWorkerReady()) return;
 		if (texoroWorkerInitPromise) return texoroWorkerInitPromise;
 
 		texoroWorkerInitPromise = (async () => {
 			try {
 				const loadedWorksMeta = await loadWorksMeta();
-				texoroWorker = createTexoroWorker();
-				if (!texoroWorker) {
-					throw new Error('Worker TEXORO no disponible');
-				}
-				const response = await requestTexoroWorker<{ manifest?: TexoroIndexManifest | null }>({
-					action: 'init',
+				const manifest = await initializeTexoroClientWorker({
 					indexBaseUrl: texoroIndexBaseUrl,
 					worksMeta: loadedWorksMeta
 				});
-				if (!response.manifest) {
-					throw new Error('El worker TEXORO no devolvió manifest');
-				}
-				applyIndexManifest(response.manifest);
+				applyIndexManifest(manifest);
 			} catch (cause) {
 				console.warn('[texoro] using server search fallback', cause);
-				closeTexoroWorker('Worker TEXORO no disponible');
+				terminateTexoroClientWorker('Worker TEXORO no disponible');
 				try {
 					applyIndexManifest(await fetchIndexManifest());
 				} catch (manifestCause) {
@@ -1669,22 +1617,6 @@
 		})();
 
 		return texoroWorkerInitPromise;
-	};
-
-	const requestTexoroWorker = async <T>(
-		request: TexoroWorkerRequestPayload
-	): Promise<T> => {
-		if (!texoroWorker) {
-			throw new Error('Worker TEXORO no disponible');
-		}
-		const id = ++texoroWorkerRequestId;
-		return new Promise<T>((resolve, reject) => {
-			texoroWorkerPending.set(id, {
-				resolve: (value) => resolve(value as T),
-				reject
-			});
-			texoroWorker?.postMessage({ id, ...request });
-		});
 	};
 
 	const runServerSearch = async (
@@ -1706,9 +1638,9 @@
 		query: string,
 		structuredQuery: StructuredSearchQuery
 	): Promise<SearchExecution> => {
-		if (isEngineReady && texoroWorker) {
+		if (isEngineReady && isTexoroClientWorkerReady()) {
 			try {
-				const response = await requestTexoroWorker<{ execution?: SearchExecution }>({
+				const response = await requestTexoroClientWorker<{ execution?: SearchExecution }>({
 					action: 'search',
 					query,
 					structuredQuery,
@@ -1722,7 +1654,7 @@
 				if (response.execution) return response.execution;
 			} catch (cause) {
 				console.warn('[texoro] browser search failed; using server fallback', cause);
-				closeTexoroWorker('Worker TEXORO desactivado tras error de búsqueda');
+				terminateTexoroClientWorker('Worker TEXORO desactivado tras error de busqueda');
 			}
 		}
 
@@ -2142,13 +2074,19 @@
 			proximityMode,
 			...proximityTerms.map((term) => `${term.order}:${term.distance}:${term.value}`)
 		].join('\u0001');
-		if (!primeSignature || !isEngineReady || !texoroWorker || isSearching || !canPrimeCurrentQuery()) {
+		if (
+			!primeSignature ||
+			!isEngineReady ||
+			!isTexoroClientWorkerReady() ||
+			isSearching ||
+			!canPrimeCurrentQuery()
+		) {
 			return;
 		}
 
 		const timer = window.setTimeout(() => {
 			const { query, structuredQuery } = buildEffectiveQuery();
-			void requestTexoroWorker<void>({
+			void requestTexoroClientWorker<void>({
 				action: 'prime',
 				query,
 				structuredQuery,
@@ -2199,9 +2137,9 @@
 		initDelayTimer = window.setTimeout(() => {
 			initIdleHandle = scheduleIdle(() => {
 				void initializeTexoroWorker().then(() => {
-					if (!texoroWorker) return;
+					if (!isTexoroClientWorkerReady()) return;
 					warmupIdleHandle = scheduleIdle(() => {
-						void requestTexoroWorker<void>({ action: 'warmup' }).catch((cause) => {
+						void requestTexoroClientWorker<void>({ action: 'warmup' }).catch((cause) => {
 							console.warn('[texoro] warmup failed', cause);
 						});
 					}, 2500);
@@ -2215,7 +2153,7 @@
 			if (initDelayTimer) window.clearTimeout(initDelayTimer);
 			cancelIdle(initIdleHandle);
 			cancelIdle(warmupIdleHandle);
-			closeTexoroWorker();
+			releaseTexoroClientWorker();
 		};
 	});
 

@@ -62,7 +62,7 @@
 	onMount(() => {
 		void (async () => {
 			try {
-				const response = await fetch(data.summaryUrl);
+				const response = await fetch(data.summaryProxyUrl);
 				if (!response.ok) {
 					throw new Error(`No se pudo cargar el resumen desde R2: ${response.status}`);
 				}

@@ -54,6 +54,8 @@ type SqlArg = string | number | bigint | boolean | null | Uint8Array | Date;
 const DEFAULT_CACHE_MS = 10 * 60 * 1000;
 const configuredCacheMs = Number.parseInt(env.CATALOG_CACHE_MS ?? '', 10);
 const CACHE_MS = Number.isFinite(configuredCacheMs) && configuredCacheMs > 0 ? configuredCacheMs : DEFAULT_CACHE_MS;
+const SLOW_QUERY_LOG_MS = 450;
+const SLOW_SNAPSHOT_LOG_MS = 1200;
 const LOCAL_CATALOG_SQLITE_PATH = 'data/sqlite/etso-prueba.sqlite';
 const EMPTY_SHORT_SUMMARY = 'Sin resumen breve disponible.';
 const WORK_SLUG_PATTERN = /^[a-z0-9-]+$/;
@@ -198,6 +200,7 @@ interface WorkRow {
 	procede: string | null;
 	resultado1: string | null;
 	resultado2: string | null;
+	resumen_breve: string | null;
 	has_resumen_breve: number;
 }
 
@@ -233,10 +236,6 @@ interface DistanceRowRaw {
 	rank: number;
 	related_work_id: string;
 	distancia: number;
-}
-
-interface WorkShortSummaryRow {
-	resumen_breve: string | null;
 }
 
 export type ExamenWorksMatchMode = 'or' | 'and';
@@ -320,6 +319,12 @@ let cachedAt = 0;
 let dbClient: ReturnType<typeof createClient> | null = null;
 let dbClientMode: 'configured' | 'local-fallback' | null = null;
 let warnedLocalCatalogFallback = false;
+
+const logIfSlow = (label: string, startedAt: number, metadata = ''): void => {
+	const elapsed = Date.now() - startedAt;
+	if (elapsed < SLOW_QUERY_LOG_MS) return;
+	console.warn(`[catalog-runtime] slow ${label}: ${elapsed}ms${metadata ? ` ${metadata}` : ''}`);
+};
 
 const splitVariants = (value: string | null | undefined): string[] => {
 	if (!value) return [];
@@ -446,6 +451,7 @@ const isFetchFailure = (cause: unknown): boolean =>
 	cause instanceof Error && cause.message.toLowerCase().includes('fetch failed');
 
 const getRows = async <T>(sql: string, args?: SqlArg[]): Promise<T[]> => {
+	const startedAt = Date.now();
 	const db = getDbClient();
 	let result;
 	try {
@@ -458,6 +464,7 @@ const getRows = async <T>(sql: string, args?: SqlArg[]): Promise<T[]> => {
 		dbClient = createLocalFallbackDbClient();
 		result = args ? await dbClient.execute(sql, args) : await dbClient.execute(sql);
 	}
+	logIfSlow('query', startedAt, sql.replace(/\s+/g, ' ').trim().slice(0, 120));
 	return result.rows as unknown as T[];
 };
 
@@ -641,7 +648,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 		 ${titleVariantsSelect},
 		 genero, adicion, estado_texto,
 		 examen_autorias, bicuve, bicuve_nombre, tiene_acceso_externo,
-		 procede, resultado1, resultado2,
+		 procede, resultado1, resultado2, resumen_breve,
 		 CASE WHEN resumen_breve IS NOT NULL AND TRIM(resumen_breve) <> '' THEN 1 ELSE 0 END AS has_resumen_breve
 		 FROM works
 		 ORDER BY titulo COLLATE NOCASE`
@@ -695,7 +702,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 			origin: row.procede?.trim() || 'Sin procedencia',
 			textState: row.estado_texto?.trim() || 'Sin estado',
 			addedOn: row.adicion?.trim() || 'Sin fecha',
-			shortSummary: EMPTY_SHORT_SUMMARY,
+			shortSummary: normalizeShortSummary(row.resumen_breve),
 			hasSummaryFile: hasSummary,
 			inAuthorshipExam: Number(row.examen_autorias) === 1,
 			result1: row.resultado1?.trim() || undefined,
@@ -731,26 +738,47 @@ const createSnapshot = async (): Promise<Snapshot> => {
 	};
 };
 
+const refreshSnapshot = (): Promise<Snapshot> => {
+	if (cachedSnapshotPromise) return cachedSnapshotPromise;
+
+	const startedAt = Date.now();
+	cachedSnapshotPromise = createSnapshot()
+		.then((snapshot) => {
+			cachedSnapshot = snapshot;
+			cachedAt = Date.now();
+			const elapsed = cachedAt - startedAt;
+			if (elapsed >= SLOW_SNAPSHOT_LOG_MS) {
+				console.warn(`[catalog-runtime] snapshot rebuilt in ${elapsed}ms`);
+			}
+			return snapshot;
+		})
+		.catch((cause) => {
+			console.error('[catalog-runtime] snapshot refresh failed', cause);
+			if (cachedSnapshot) return cachedSnapshot;
+			throw cause;
+		})
+		.finally(() => {
+			cachedSnapshotPromise = null;
+		});
+
+	return cachedSnapshotPromise;
+};
+
 const getSnapshot = async (): Promise<Snapshot> => {
 	const now = Date.now();
 	if (cachedSnapshot && now - cachedAt < CACHE_MS) {
 		return cachedSnapshot;
 	}
 
-	if (!cachedSnapshotPromise) {
-		cachedSnapshotPromise = createSnapshot()
-			.then((snapshot) => {
-				cachedSnapshot = snapshot;
-				cachedAt = Date.now();
-				return snapshot;
-			})
-			.finally(() => {
-				cachedSnapshotPromise = null;
-			});
+	if (cachedSnapshot) {
+		void refreshSnapshot();
+		return cachedSnapshot;
 	}
 
-	return cachedSnapshotPromise;
+	return refreshSnapshot();
 };
+
+const distancesBySnapshot = new WeakMap<Snapshot, Map<string, Promise<Record<Ambito, DistanceRow[]>>>>();
 
 const normalizeSummaryNamedItems = (
 	rows: Array<{ nombre?: string; descripcion?: string }> | undefined
@@ -819,23 +847,14 @@ export const getWorkByReportSlug = async (slug: string): Promise<CatalogWork | u
 	(await getSnapshot()).workByReportSlug.get(slug);
 
 export const getWorkShortSummaryById = async (workId: string): Promise<string> => {
-	const rows = await getRows<WorkShortSummaryRow>(
-		`SELECT resumen_breve
-		 FROM works
-		 WHERE id = ?
-		 LIMIT 1`,
-		[workId]
-	);
-	return normalizeShortSummary(rows[0]?.resumen_breve);
+	const work = (await getSnapshot()).workById.get(workId);
+	return normalizeShortSummary(work?.shortSummary);
 };
 
-export const withWorkShortSummary = async (work: CatalogWork): Promise<CatalogWork> => ({
-	...work,
-	shortSummary: await getWorkShortSummaryById(work.id)
-});
+export const withWorkShortSummary = async (work: CatalogWork): Promise<CatalogWork> => work;
 
 export const withWorkShortSummaries = async (works: CatalogWork[]): Promise<CatalogWork[]> =>
-	Promise.all(works.map((work) => withWorkShortSummary(work)));
+	works;
 
 export const getAllAuthors = async (): Promise<CatalogAuthor[]> =>
 	(await getSnapshot()).authors.filter((author) => author.id !== UNRESOLVED_AUTHOR_ID);
@@ -1171,7 +1190,7 @@ export const getWorkSummaryDetailById = async (
 	};
 };
 
-const getDistancesForWork = async (workId: string): Promise<Record<Ambito, DistanceRow[]>> => {
+const loadDistancesForWork = async (workId: string): Promise<Record<Ambito, DistanceRow[]>> => {
 	const distances = ensureDistanceRecord();
 	const rows = await getRows<DistanceRowRaw>(
 		`SELECT work_id, ambito, rank, related_work_id, distancia
@@ -1194,13 +1213,34 @@ const getDistancesForWork = async (workId: string): Promise<Record<Ambito, Dista
 	return distances;
 };
 
+const getDistancesForWork = (
+	snapshot: Snapshot,
+	workId: string
+): Promise<Record<Ambito, DistanceRow[]>> => {
+	let cache = distancesBySnapshot.get(snapshot);
+	if (!cache) {
+		cache = new Map();
+		distancesBySnapshot.set(snapshot, cache);
+	}
+
+	const cached = cache.get(workId);
+	if (cached) return cached;
+
+	const pending = loadDistancesForWork(workId).catch((cause) => {
+		cache?.delete(workId);
+		throw cause;
+	});
+	cache.set(workId, pending);
+	return pending;
+};
+
 export const getInformeById = async (informeId: string): Promise<CatalogInforme | undefined> => {
 	const snapshot = await getSnapshot();
 	const work = snapshot.workById.get(informeId);
 	if (!work) return undefined;
 	if (!work.reportSlug) return undefined;
 
-	const distances = await getDistancesForWork(work.id);
+	const distances = await getDistancesForWork(snapshot, work.id);
 	if (!hasAnyDistanceRows(distances)) return undefined;
 
 	const confidenceLabel = work.stylometryAttribution.unresolved

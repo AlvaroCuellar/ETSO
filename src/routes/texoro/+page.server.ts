@@ -8,10 +8,8 @@ import type { PageServerLoad } from './$types';
 const stripTrailingSlash = (value: string): string => value.replace(/\/+$/, '');
 const joinUrl = (base: string, path: string): string =>
 	`${stripTrailingSlash(base)}/${path.replace(/^\/+/, '')}`;
-const withCacheBuster = (url: string): string => {
-	const separator = url.includes('?') ? '&' : '?';
-	return `${url}${separator}t=${Date.now()}`;
-};
+const TEXORO_INDEX_INFO_CACHE_MS = 5 * 60 * 1000;
+const SLOW_TEXORO_INDEX_INFO_MS = 700;
 
 interface TexoroInitialIndexInfo {
 	stats: {
@@ -27,6 +25,15 @@ interface TokenOption {
 	id: string;
 	label: string;
 }
+
+let cachedIndexInfo:
+	| {
+			baseUrl: string;
+			cachedAt: number;
+			value: TexoroInitialIndexInfo;
+	  }
+	| null = null;
+let cachedIndexInfoPromise: Promise<TexoroInitialIndexInfo | null> | null = null;
 
 const resolveTexoroIndexBaseUrl = (): string => {
 	const publicAssetsBaseUrl = stripTrailingSlash(
@@ -70,26 +77,51 @@ const collectStringOptions = (
 const getTexoroInitialIndexInfo = async (fetch: typeof globalThis.fetch): Promise<TexoroInitialIndexInfo | null> => {
 	const texoroIndexBaseUrl = resolveTexoroIndexBaseUrl();
 	if (!texoroIndexBaseUrl) return null;
-
-	try {
-		const response = await fetch(withCacheBuster(joinUrl(texoroIndexBaseUrl, 'manifest.json')), {
-			cache: 'no-store'
-		});
-		if (!response.ok) return null;
-
-		const manifest = (await response.json()) as TexoroIndexManifest;
-		return {
-			stats: {
-				works: manifest.stats.works,
-				tokens: manifest.stats.tokens,
-				vocabSize: manifest.stats.vocabSize
-			},
-			indexVersion: manifest.indexVersion,
-			preserveEnie: manifest.normalization.preserveEnie
-		};
-	} catch {
-		return null;
+	const now = Date.now();
+	if (
+		cachedIndexInfo &&
+		cachedIndexInfo.baseUrl === texoroIndexBaseUrl &&
+		now - cachedIndexInfo.cachedAt < TEXORO_INDEX_INFO_CACHE_MS
+	) {
+		return cachedIndexInfo.value;
 	}
+	if (cachedIndexInfoPromise) return cachedIndexInfoPromise;
+
+	cachedIndexInfoPromise = (async () => {
+		const startedAt = Date.now();
+		try {
+			const response = await fetch(joinUrl(texoroIndexBaseUrl, 'manifest.json'));
+			if (!response.ok) return cachedIndexInfo?.baseUrl === texoroIndexBaseUrl ? cachedIndexInfo.value : null;
+
+			const manifest = (await response.json()) as TexoroIndexManifest;
+			const value = {
+				stats: {
+					works: manifest.stats.works,
+					tokens: manifest.stats.tokens,
+					vocabSize: manifest.stats.vocabSize
+				},
+				indexVersion: manifest.indexVersion,
+				preserveEnie: manifest.normalization.preserveEnie
+			};
+			cachedIndexInfo = {
+				baseUrl: texoroIndexBaseUrl,
+				cachedAt: Date.now(),
+				value
+			};
+			const elapsed = Date.now() - startedAt;
+			if (elapsed >= SLOW_TEXORO_INDEX_INFO_MS) {
+				console.warn(`[texoro] slow initial manifest load: ${elapsed}ms`);
+			}
+			return value;
+		} catch (cause) {
+			console.warn('[texoro] initial manifest load failed', cause);
+			return cachedIndexInfo?.baseUrl === texoroIndexBaseUrl ? cachedIndexInfo.value : null;
+		} finally {
+			cachedIndexInfoPromise = null;
+		}
+	})();
+
+	return cachedIndexInfoPromise;
 };
 
 export const load: PageServerLoad = async ({ fetch }) => {

@@ -9,7 +9,7 @@ export const GET: RequestHandler = async () => {
 
 	return json(worksMeta, {
 		headers: {
-			'cache-control': 'public, max-age=300'
+			'cache-control': 'public, max-age=300, s-maxage=600, stale-while-revalidate=3600'
 		}
 	});
 };

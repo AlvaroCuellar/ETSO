@@ -24,13 +24,9 @@
 		rows: ObraTableRow[];
 		mode?: 'standard' | 'informe';
 		emptyMessage?: string;
-		prefetchShortSummaries?: boolean;
 	}
 
 	type ShortSummaryStatus = 'loading' | 'loaded' | 'error' | 'missing';
-	type IdleHandle =
-		| { kind: 'idle'; id: number }
-		| { kind: 'timeout'; id: ReturnType<typeof globalThis.setTimeout> };
 
 	interface ShortSummaryState {
 		status: ShortSummaryStatus;
@@ -40,8 +36,7 @@
 	let {
 		rows,
 		mode = 'standard',
-		emptyMessage = 'No se encontraron obras que coincidan con los criterios de búsqueda.',
-		prefetchShortSummaries = true
+		emptyMessage = 'No se encontraron obras que coincidan con los criterios de búsqueda.'
 	}: Props = $props();
 
 	let expandedRows = $state<Set<string>>(new Set());
@@ -79,8 +74,6 @@
 			}`
 	);
 	const disabledIconClass = 'text-[rgba(114,130,145,0.75)]';
-	const SHORT_SUMMARY_PREFETCH_CONCURRENCY = 2;
-	const SHORT_SUMMARY_PREFETCH_TIMEOUT_MS = 1800;
 
 	onMount(() => {
 		const onDocumentClick = (event: MouseEvent): void => {
@@ -176,61 +169,6 @@
 			setShortSummaryState(work.id, { status: 'error', text: '' });
 		}
 	};
-
-	const requestIdle = (callback: () => void): IdleHandle => {
-		if ('requestIdleCallback' in window) {
-			return {
-				kind: 'idle',
-				id: window.requestIdleCallback(callback, { timeout: SHORT_SUMMARY_PREFETCH_TIMEOUT_MS })
-			};
-		}
-		return { kind: 'timeout', id: globalThis.setTimeout(callback, 450) };
-	};
-
-	const cancelIdle = (handle: IdleHandle): void => {
-		if (handle.kind === 'idle') {
-			window.cancelIdleCallback(handle.id);
-			return;
-		}
-		globalThis.clearTimeout(handle.id);
-	};
-
-	const prefetchShortSummariesInBackground = (sourceRows: ObraTableRow[]): (() => void) => {
-		const candidates = sourceRows
-			.map((row) => row.work)
-			.filter((work) => work.hasSummaryFile && !isUsableShortSummary(work.shortSummary));
-		if (candidates.length === 0) return () => {};
-
-		let cancelled = false;
-		let activeLoads = 0;
-		let nextIndex = 0;
-		let idleHandle: IdleHandle | null = null;
-
-		const pump = (): void => {
-			if (cancelled) return;
-
-			while (activeLoads < SHORT_SUMMARY_PREFETCH_CONCURRENCY && nextIndex < candidates.length) {
-				const work = candidates[nextIndex++];
-				activeLoads += 1;
-				loadShortSummary(work).finally(() => {
-					activeLoads -= 1;
-					pump();
-				});
-			}
-		};
-
-		idleHandle = requestIdle(pump);
-
-		return () => {
-			cancelled = true;
-			if (idleHandle !== null) cancelIdle(idleHandle);
-		};
-	};
-
-	$effect(() => {
-		if (!prefetchShortSummaries) return;
-		return prefetchShortSummariesInBackground(rows);
-	});
 
 	const toggleRowExpanded = (row: ObraTableRow): void => {
 		const next = new Set(expandedRows);
@@ -518,7 +456,7 @@
 							<span class={mobileCellLabelClass}>Recursos</span>
 							<div class="actions relative flex flex-col gap-1.5 max-md:flex-wrap max-md:justify-start max-md:gap-2">
 								{#if row.work.reportId && row.work.reportSlug}
-									<a href={`/informes/${row.work.reportSlug}`} class={actionButtonEnabledClass}>
+									<a href={`/informes/${row.work.reportSlug}`} class={actionButtonEnabledClass} data-sveltekit-preload-data="off">
 										<span class="btn-left col-span-2 flex min-w-0 items-center gap-[7px]">
 											<span class="btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-brand-blue-dark" aria-hidden="true">
 												<ChartLine class="h-[14px] w-[14px] stroke-[2.1]" />
@@ -577,6 +515,7 @@
 												{#each row.work.textLinks as link}
 													<a
 														href={link.href}
+														data-sveltekit-preload-data={link.kind === 'bicuve' ? 'off' : undefined}
 														class="textos-dropdown-item grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-2 rounded-[6px] px-2.5 py-[9px] text-[12px] font-normal text-text-main no-underline transition-all hover:bg-surface-accent-blue hover:text-text-main hover:no-underline focus:bg-surface-accent-blue focus:text-text-main focus:no-underline focus:outline-none focus-visible:bg-surface-accent-blue focus-visible:text-text-main focus-visible:no-underline focus-visible:outline-none"
 														target={link.external ? '_blank' : undefined}
 														rel={link.external ? 'noopener noreferrer' : undefined}

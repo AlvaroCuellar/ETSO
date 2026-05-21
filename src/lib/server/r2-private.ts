@@ -6,6 +6,45 @@ const DEFAULT_TEXT_PREFIX = '';
 const R2_REGION = 'auto';
 const R2_SERVICE = 's3';
 const R2_PAYLOAD_HASH = 'UNSIGNED-PAYLOAD';
+const PRIVATE_TEXT_CACHE_TTL_MS = 10 * 60 * 1000;
+const PRIVATE_TEXT_CACHE_MAX_ITEMS = 8;
+const PRIVATE_TEXT_CACHE_MAX_BYTES = 24 * 1024 * 1024;
+const SLOW_R2_LOG_MS = 900;
+
+interface PrivateTextCacheEntry {
+	cachedAt: number;
+	estimatedBytes: number;
+	value?: string | null;
+	promise?: Promise<string | null>;
+}
+
+const privateTextCache = new Map<string, PrivateTextCacheEntry>();
+
+const estimateTextBytes = (value: string | null): number => (value ? value.length * 2 : 0);
+
+const prunePrivateTextCache = (): void => {
+	let totalBytes = 0;
+	for (const entry of privateTextCache.values()) {
+		totalBytes += entry.estimatedBytes;
+	}
+
+	while (
+		privateTextCache.size > PRIVATE_TEXT_CACHE_MAX_ITEMS ||
+		totalBytes > PRIVATE_TEXT_CACHE_MAX_BYTES
+	) {
+		const oldestKey = privateTextCache.keys().next().value;
+		if (!oldestKey) return;
+		const oldest = privateTextCache.get(oldestKey);
+		totalBytes -= oldest?.estimatedBytes ?? 0;
+		privateTextCache.delete(oldestKey);
+	}
+};
+
+const logSlowR2 = (label: string, startedAt: number, key: string): void => {
+	const elapsed = Date.now() - startedAt;
+	if (elapsed < SLOW_R2_LOG_MS) return;
+	console.warn(`[r2-private] slow ${label}: ${elapsed}ms ${key}`);
+};
 
 const encodeRfc3986 = (value: string): string =>
 	encodeURIComponent(value).replace(/[!'()*]/g, (char) =>
@@ -116,9 +155,9 @@ const signedR2Get = async (key: string, range?: string): Promise<Response> => {
 	});
 };
 
-export const readPrivateTextByTextKey = async (textKey: string): Promise<string | null> => {
+const loadPrivateTextByFileName = async (fileName: string): Promise<string | null> => {
 	const { textPrefix } = assertR2Config();
-	const fileName = ensurePlainFileName(textKey);
+	const startedAt = Date.now();
 
 	for (const prefix of uniqueTextPrefixes(textPrefix)) {
 		const response = await signedR2Get(joinTextKey(prefix, fileName));
@@ -127,10 +166,50 @@ export const readPrivateTextByTextKey = async (textKey: string): Promise<string 
 			throw new Error(`No se pudo leer texto privado desde R2: ${response.status}`);
 		}
 
-		return response.text();
+		const text = await response.text();
+		logSlowR2('text read', startedAt, fileName);
+		return text;
 	}
 
+	logSlowR2('text miss', startedAt, fileName);
 	return null;
+};
+
+export const readPrivateTextByTextKey = async (textKey: string): Promise<string | null> => {
+	const fileName = ensurePlainFileName(textKey);
+	const now = Date.now();
+	const cached = privateTextCache.get(fileName);
+
+	if (cached?.promise) return cached.promise;
+	if (cached && now - cached.cachedAt < PRIVATE_TEXT_CACHE_TTL_MS) {
+		privateTextCache.delete(fileName);
+		privateTextCache.set(fileName, cached);
+		return cached.value ?? null;
+	}
+
+	const promise = loadPrivateTextByFileName(fileName)
+		.then((value) => {
+			const entry: PrivateTextCacheEntry = {
+				cachedAt: Date.now(),
+				estimatedBytes: estimateTextBytes(value),
+				value
+			};
+			privateTextCache.set(fileName, entry);
+			prunePrivateTextCache();
+			return value;
+		})
+		.catch((cause) => {
+			privateTextCache.delete(fileName);
+			throw cause;
+		});
+
+	privateTextCache.set(fileName, {
+		cachedAt: now,
+		estimatedBytes: 0,
+		promise
+	});
+
+	return promise;
 };
 
 export const readPrivateTextByWorkId = async (workId: string): Promise<string | null> =>

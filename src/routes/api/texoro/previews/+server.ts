@@ -4,6 +4,8 @@ import { getServerTexoroEngine } from '$lib/server/texoro-runtime';
 import type { RequestHandler } from './$types';
 import type { SearchResultMatch } from '$lib/search';
 
+const SLOW_API_LOG_MS = 700;
+
 const asPositiveNumber = (value: unknown, fallback: number, max: number): number => {
 	if (typeof value !== 'number' || !Number.isFinite(value) || value <= 0) return fallback;
 	return Math.min(Math.floor(value), max);
@@ -24,6 +26,7 @@ const normalizeMatch = (value: unknown): SearchResultMatch | null => {
 };
 
 export const POST: RequestHandler = async ({ request }) => {
+	const startedAt = Date.now();
 	const body = (await request.json().catch(() => null)) as
 		| { items?: unknown; options?: Record<string, unknown> }
 		| null;
@@ -53,7 +56,12 @@ export const POST: RequestHandler = async ({ request }) => {
 
 	try {
 		const engine = await getServerTexoroEngine();
-		return json(await engine.getPreviewsForResults(items, options));
+		const result = await engine.getPreviewsForResults(items, options);
+		const elapsed = Date.now() - startedAt;
+		if (elapsed >= SLOW_API_LOG_MS) {
+			console.warn(`[api/texoro/previews] slow request: ${elapsed}ms`);
+		}
+		return json(result);
 	} catch (cause) {
 		console.error('[api/texoro/previews] Unable to load previews', cause);
 		throw error(500, cause instanceof Error ? cause.message : 'No se pudieron cargar los fragmentos');

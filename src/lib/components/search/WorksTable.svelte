@@ -27,6 +27,9 @@
 	}
 
 	type ShortSummaryStatus = 'loading' | 'loaded' | 'error' | 'missing';
+	type MobileWorksView = 'cards' | 'table';
+
+	const MOBILE_VIEW_STORAGE_KEY = 'etso:works-table-mobile-view';
 
 	interface ShortSummaryState {
 		status: ShortSummaryStatus;
@@ -42,17 +45,40 @@
 	let expandedRows = $state<Set<string>>(new Set());
 	let openDropdownRowId = $state<string | null>(null);
 	let shortSummaryByWorkId = $state<Map<string, ShortSummaryState>>(new Map());
+	let mobileView = $state<MobileWorksView>('cards');
 
+	const isMobileTableView = $derived(mobileView === 'table');
+
+	const resultsShellClass = 'works-table-results min-w-0 w-full max-w-full';
 	const tableClass = $derived.by(() =>
-		mode === 'informe'
-			? 'obra-table-shared obra-table-shared--informe w-full min-w-[980px] border-collapse text-[13px] max-md:block max-md:min-w-0'
-			: 'obra-table-shared obra-table-shared--standard w-full min-w-[980px] border-collapse text-[13px] max-md:block max-md:min-w-0'
+		`${mode === 'informe' ? 'obra-table-shared--informe' : 'obra-table-shared--standard'} obra-table-shared w-full min-w-[980px] border-collapse text-[13px] ${
+			isMobileTableView ? 'max-md:table max-md:w-[980px]' : 'max-md:block max-md:min-w-0'
+		}`
 	);
+	const wrapperClass = $derived.by(
+		() =>
+			`table-wrapper obra-table-shared-container min-w-0 w-full max-w-full overflow-x-auto overflow-y-visible rounded-t-[15px] font-['Roboto',sans-serif] ${
+				isMobileTableView
+					? 'max-md:block max-md:w-full max-md:max-w-full max-md:overflow-x-auto max-md:overscroll-x-contain'
+					: 'max-md:overflow-visible max-md:rounded-none'
+			}`
+	);
+	const tableHeadClass = $derived.by(() =>
+		`bg-brand-blue-dark text-white ${isMobileTableView ? '' : 'max-md:hidden'}`
+	);
+	const tableBodyClass = $derived.by(() => (isMobileTableView ? '' : 'max-md:block'));
 	const detailColspan = $derived.by(() => (mode === 'informe' ? 7 : 5));
-	const dataCellClass =
-		'overflow-visible px-3 py-4 align-top text-[13px] max-md:block max-md:border-0 max-md:px-3 max-md:py-[10px]';
-	const mobileCellLabelClass =
-		'mb-[6px] hidden text-[12px] font-semibold uppercase text-[#5a7a8a] max-md:block';
+	const dataCellClass = $derived.by(
+		() =>
+			`overflow-visible px-3 py-4 align-top text-[13px] ${
+				isMobileTableView ? '' : 'max-md:block max-md:border-0 max-md:px-3 max-md:py-[10px]'
+			}`
+	);
+	const mobileCellLabelClass = $derived.by(() =>
+		`mb-[6px] hidden text-[12px] font-semibold uppercase text-[#5a7a8a] ${
+			isMobileTableView ? '' : 'max-md:block'
+		}`
+	);
 	const actionButtonBaseClass = $derived.by(
 		() =>
 			`btn-action grid w-full min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 rounded-[8px] border text-left font-normal text-text-main no-underline transition-all ${
@@ -75,7 +101,70 @@
 	);
 	const disabledIconClass = 'text-[rgba(114,130,145,0.75)]';
 
+	const mobileViewButtonClass = (view: MobileWorksView): string =>
+		`relative z-10 rounded-full border-0 bg-transparent px-3 py-1.5 text-[0.78rem] font-semibold outline-none transition-colors ${
+			mobileView === view ? 'text-brand-blue-dark' : 'text-text-soft hover:text-brand-blue-dark'
+		}`;
+
+	const setMobileView = (view: MobileWorksView): void => {
+		mobileView = view;
+		openDropdownRowId = null;
+		try {
+			window.localStorage.setItem(MOBILE_VIEW_STORAGE_KEY, view);
+		} catch {
+			// La preferencia es opcional; si localStorage no está disponible, la UI sigue funcionando.
+		}
+	};
+
+	const rowClass = (rowId: string): string => {
+		const expanded = isRowExpanded(rowId);
+		const base = 'obra-row cursor-pointer border-b border-border transition-colors hover:bg-surface-soft';
+		if (isMobileTableView) {
+			return `${base} ${expanded ? 'expanded border-b-border-accent-blue' : ''}`;
+		}
+		return `${base} max-md:block max-md:rounded-[8px] max-md:border max-md:border-border max-md:bg-white max-md:p-2 ${
+			expanded
+				? 'expanded border-b-border-accent-blue max-md:mb-0 max-md:rounded-b-none max-md:border-b-0'
+				: 'max-md:mb-3'
+		}`;
+	};
+
+	const expandIconClass = (rowId: string): string =>
+		`expand-icon inline-flex h-3 w-3 flex-shrink-0 items-center justify-center ${
+			isMobileTableView ? '' : 'max-md:hidden'
+		} ${isRowExpanded(rowId) ? 'text-brand-blue-dark' : 'text-text-soft'}`;
+
+	const detailRowClass = (rowId: string): string => {
+		const expanded = isRowExpanded(rowId);
+		const displayClass = expanded ? (isMobileTableView ? 'table-row' : 'table-row max-md:block') : 'hidden';
+		const mobileCardClass = isMobileTableView
+			? ''
+			: 'max-md:mb-3 max-md:rounded-b-[8px] max-md:border max-md:border-t-0 max-md:border-border max-md:bg-white';
+		return `${displayClass} detail-row border-b border-border bg-white ${mobileCardClass}`;
+	};
+
+	const detailCellClass = $derived.by(() =>
+		isMobileTableView ? '' : 'max-md:block max-md:border-0 max-md:p-0'
+	);
+	const detailContentClass = $derived.by(() =>
+		`detail-content animate-[works-table-slide-down_0.24s_ease] px-6 py-5 ${
+			isMobileTableView ? '' : 'max-md:px-3 max-md:py-4'
+		}`
+	);
+	const detailMetadataGridClass = $derived.by(() =>
+		`metadata-grid grid grid-cols-3 gap-[14px] ${isMobileTableView ? '' : 'max-md:grid-cols-1'}`
+	);
+
 	onMount(() => {
+		try {
+			const storedView = window.localStorage.getItem(MOBILE_VIEW_STORAGE_KEY);
+			if (storedView === 'cards' || storedView === 'table') {
+				mobileView = storedView;
+			}
+		} catch {
+			mobileView = 'cards';
+		}
+
 		const onDocumentClick = (event: MouseEvent): void => {
 			if (!openDropdownRowId) return;
 			const target = event.target as HTMLElement | null;
@@ -241,9 +330,40 @@
 {#if rows.length === 0}
 	<div class="py-10 px-5 text-center text-[16px] text-text-soft">{emptyMessage}</div>
 {:else}
-	<div class="table-wrapper obra-table-shared-container min-w-0 w-full max-w-full overflow-x-auto overflow-y-visible rounded-t-[15px] font-['Roboto',sans-serif]">
-		<table class={tableClass}>
-			<thead class="bg-brand-blue-dark text-white max-md:hidden">
+	<div class={resultsShellClass} data-mobile-view={mobileView}>
+		<div class="mb-3 hidden justify-end max-md:flex max-md:justify-center">
+			<div
+				role="group"
+				aria-label="Vista de resultados"
+				class="relative grid grid-cols-2 rounded-full bg-surface-soft p-1"
+			>
+				<span
+					class={`pointer-events-none absolute top-1 bottom-1 left-1 w-[calc(50%-0.25rem)] rounded-full bg-white shadow-soft transition-transform duration-200 ease-out ${
+						mobileView === 'table' ? 'translate-x-full' : 'translate-x-0'
+					}`}
+					aria-hidden="true"
+				></span>
+				<button
+					type="button"
+					class={mobileViewButtonClass('cards')}
+					aria-pressed={mobileView === 'cards'}
+					onclick={() => setMobileView('cards')}
+				>
+					Tarjetas
+				</button>
+				<button
+					type="button"
+					class={mobileViewButtonClass('table')}
+					aria-pressed={mobileView === 'table'}
+					onclick={() => setMobileView('table')}
+				>
+					Tabla
+				</button>
+			</div>
+		</div>
+		<div class={wrapperClass}>
+			<table class={tableClass}>
+			<thead class={tableHeadClass}>
 				<tr>
 					{#if mode === 'informe'}
 						<th class="obra-table-col--position w-[82px] px-3 py-[14px] text-left text-[13px] font-medium tracking-[0.5px] uppercase" scope="col">
@@ -295,14 +415,12 @@
 					</th>
 				</tr>
 			</thead>
-			<tbody class="max-md:block">
+			<tbody class={tableBodyClass}>
 				{#each rows as row}
 					{@const flags = resolveFilterFlags(row)}
 					{@const summaryState = getShortSummaryState(row.work)}
 					<tr
-						class={`obra-row cursor-pointer border-b border-border transition-colors hover:bg-surface-soft max-md:mb-3 max-md:block max-md:rounded-[8px] max-md:border max-md:border-border max-md:bg-white max-md:p-2 ${
-							isRowExpanded(row.rowId) ? 'expanded border-b-border-accent-blue bg-surface-accent-blue' : ''
-						}`}
+						class={rowClass(row.rowId)}
 						data-obra-id={row.work.id}
 						data-title-search={normalizeForSearch(
 							buildWorkTitleSearchText(row.work.title, row.work.titleVariants)
@@ -335,9 +453,7 @@
 							<span class={mobileCellLabelClass}>Título</span>
 							<div class="obra-title flex select-none items-center gap-2 font-medium text-text-main">
 								<span
-									class={`expand-icon inline-flex h-3 w-3 flex-shrink-0 items-center justify-center max-md:hidden ${
-										isRowExpanded(row.rowId) ? 'text-brand-blue-dark' : 'text-text-soft'
-									}`}
+									class={expandIconClass(row.rowId)}
 									aria-hidden="true"
 								>
 									{#if isRowExpanded(row.rowId)}
@@ -348,9 +464,12 @@
 								</span>
 								<a
 									href={`/obras/${row.work.slug}`}
-									class="text-text-main visited:text-text-main no-underline hover:underline focus:underline focus-visible:underline"
+									class="inline-flex items-baseline gap-1 text-text-main visited:text-text-main no-underline hover:underline focus:underline focus-visible:underline"
 								>
-									{formatDisplayWorkTitle(row.work.title)}
+									<span>{formatDisplayWorkTitle(row.work.title)}</span>
+									<span class="hidden flex-none translate-y-[2px] text-text-soft max-md:inline-flex" aria-hidden="true">
+										<ExternalLink class="h-3.5 w-3.5" />
+									</span>
 								</a>
 							</div>
 							{#if row.work.titleVariants.length > 0}
@@ -378,9 +497,12 @@
 												{#if canLinkAuthor(member.authorId)}
 													<a
 														href={`/autores/${member.authorId}`}
-														class="autor-name font-normal text-text-main visited:text-text-main no-underline hover:underline focus:underline focus-visible:underline"
+														class="autor-name inline-flex items-baseline gap-1 font-normal text-text-main visited:text-text-main no-underline hover:underline focus:underline focus-visible:underline"
 													>
-														{member.authorName}
+														<span>{member.authorName}</span>
+														<span class="hidden flex-none translate-y-[2px] text-text-soft max-md:inline-flex" aria-hidden="true">
+															<ExternalLink class="h-3 w-3" />
+														</span>
 													</a>
 												{:else}
 													<span class="autor-name font-normal text-text-main">{member.authorName}</span>
@@ -416,9 +538,12 @@
 												{#if canLinkAuthor(member.authorId)}
 													<a
 														href={`/autores/${member.authorId}`}
-														class="autor-name font-normal text-text-main visited:text-text-main no-underline hover:underline focus:underline focus-visible:underline"
+														class="autor-name inline-flex items-baseline gap-1 font-normal text-text-main visited:text-text-main no-underline hover:underline focus:underline focus-visible:underline"
 													>
-														{member.authorName}
+														<span>{member.authorName}</span>
+														<span class="hidden flex-none translate-y-[2px] text-text-soft max-md:inline-flex" aria-hidden="true">
+															<ExternalLink class="h-3 w-3" />
+														</span>
 													</a>
 												{:else}
 													<span class="autor-name font-normal text-text-main">{member.authorName}</span>
@@ -578,7 +703,7 @@
 									</span>
 								{/if}
 
-								<div class="ver-mas mt-2 hidden text-center max-md:mt-[10px] max-md:block">
+								<div class={`ver-mas mt-2 hidden text-center max-md:mt-[10px] ${isMobileTableView ? '' : 'max-md:block'}`}>
 									<span
 										class="toggle-detail inline-block rounded-[4px] bg-transparent px-2 py-1.5 text-[14px] leading-none font-semibold text-brand-blue-dark"
 										role="button"
@@ -596,7 +721,7 @@
 											toggleRowExpanded(row);
 										}}
 									>
-										Ver más
+										{isRowExpanded(row.rowId) ? 'Ver menos' : 'Ver más'}
 									</span>
 									<div
 										class={`toggle-down mt-1.5 inline-flex items-center justify-center leading-none text-brand-blue-dark transition-transform ${
@@ -612,11 +737,11 @@
 					</tr>
 
 					<tr
-						class={`${isRowExpanded(row.rowId) ? 'table-row' : 'hidden'} detail-row border-b border-border bg-surface-accent-blue max-md:block`}
+						class={detailRowClass(row.rowId)}
 						hidden={!isRowExpanded(row.rowId)}
 					>
-						<td colspan={detailColspan} class="max-md:block max-md:border-0 max-md:p-0">
-							<div class="detail-content animate-[works-table-slide-down_0.24s_ease] px-6 py-5">
+						<td colspan={detailColspan} class={detailCellClass}>
+							<div class={detailContentClass}>
 								{#if hasShortSummary(row.work)}
 									<div class="detail-section detail-section--resumen mb-5 border-b border-[#dfe5ee] pb-3 last:mb-0">
 										<div class="detail-section-title mb-2.5 text-[12px] font-semibold tracking-[0.5px] text-[#5a7a8a] uppercase">
@@ -640,7 +765,7 @@
 								{/if}
 
 								<div class="detail-section mb-5 last:mb-0">
-									<div class="metadata-grid grid grid-cols-3 gap-[14px] max-md:grid-cols-1">
+									<div class={detailMetadataGridClass}>
 										<div class="metadata-item flex flex-col gap-1">
 											<span class="metadata-label mb-1 block text-[12px] font-semibold text-[#5a7a8a] uppercase">
 												Texto empleado
@@ -682,7 +807,8 @@
 					</tr>
 				{/each}
 			</tbody>
-		</table>
+			</table>
+		</div>
 	</div>
 {/if}
 
@@ -723,6 +849,34 @@
 
 	.obra-table-shared-container thead th:last-child {
 		border-top-right-radius: 8px;
+	}
+
+	@media (max-width: 767.98px) {
+		.works-table-results[data-mobile-view='table'] {
+			contain: inline-size;
+			overflow-x: hidden;
+			overflow-x: clip;
+			width: 100%;
+			max-width: 100%;
+			min-width: 0;
+		}
+
+		.works-table-results[data-mobile-view='table'] .obra-table-shared-container {
+			display: block;
+			width: 100%;
+			max-width: 100%;
+			min-width: 0;
+			overflow-x: auto;
+			overflow-y: hidden;
+			-webkit-overflow-scrolling: touch;
+			overscroll-behavior-x: contain;
+		}
+
+		.works-table-results[data-mobile-view='table'] .obra-table-shared {
+			width: 980px;
+			min-width: 980px;
+			max-width: none;
+		}
 	}
 
 	@keyframes works-table-slide-down {

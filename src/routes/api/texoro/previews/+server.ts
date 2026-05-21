@@ -5,6 +5,7 @@ import type { RequestHandler } from './$types';
 import type { SearchResultMatch } from '$lib/search';
 
 const SLOW_API_LOG_MS = 700;
+const PREVIEW_REQUEST_ITEM_LIMIT = 20;
 
 const asPositiveNumber = (value: unknown, fallback: number, max: number): number => {
 	if (typeof value !== 'number' || !Number.isFinite(value) || value <= 0) return fallback;
@@ -30,7 +31,7 @@ export const POST: RequestHandler = async ({ request }) => {
 	const body = (await request.json().catch(() => null)) as
 		| { items?: unknown; options?: Record<string, unknown> }
 		| null;
-	const rawItems = Array.isArray(body?.items) ? body.items.slice(0, 8) : [];
+	const rawItems = Array.isArray(body?.items) ? body.items.slice(0, PREVIEW_REQUEST_ITEM_LIMIT) : [];
 	const items = rawItems
 		.map((item) => {
 			if (!item || typeof item !== 'object') return null;

@@ -499,7 +499,7 @@
 
 				{#if citationSection && citationSectionEntries.length > 0}
 					<section
-						class="rounded-[10px] border border-border-accent-blue bg-surface px-[0.9rem] py-[0.8rem] max-md:px-[0.8rem] max-md:py-[0.75rem]"
+						class="rounded-[10px] bg-white px-[0.9rem] py-[0.8rem] max-md:px-[0.8rem] max-md:py-[0.75rem]"
 						aria-label={citationSection.lead}
 					>
 						<p class="mb-[0.65rem] mt-0 text-[0.95rem] font-medium leading-[1.45] text-brand-blue-dark">
@@ -534,7 +534,7 @@
 
 				{#each extraRegularSections as section}
 					<section
-						class="rounded-[10px] border border-border-accent-blue bg-surface px-[0.9rem] py-[0.8rem] max-md:px-[0.8rem] max-md:py-[0.75rem]"
+						class="rounded-[10px] bg-white px-[0.9rem] py-[0.8rem] max-md:px-[0.8rem] max-md:py-[0.75rem]"
 						aria-label={section.lead}
 					>
 						<p class="mb-[0.65rem] mt-0 text-[0.95rem] font-medium leading-[1.45] text-brand-blue-dark">
@@ -569,10 +569,10 @@
 
 				{#each collapsibleSections as section}
 					<details
-						class="informe-bibliografia-disclosure overflow-hidden rounded-[10px] border border-border-accent-blue bg-surface"
+						class="informe-bibliografia-disclosure rounded-[10px] bg-white transition-[background-color,box-shadow] duration-200 open:overflow-visible open:bg-[var(--color-surface-subtle)] open:shadow-[0_8px_24px_rgba(25,46,80,0.06)]"
 						open={section.defaultOpen === true}
 					>
-						<summary class="informe-bibliografia-summary cursor-pointer list-none px-[0.9rem] py-[0.65rem] text-[0.9rem] font-semibold text-brand-blue-dark max-md:px-[0.8rem] max-md:py-[0.6rem]">
+						<summary class="informe-bibliografia-summary cursor-pointer list-none px-[0.9rem] py-[0.65rem] text-[0.9rem] font-semibold text-brand-blue-dark transition hover:rounded-[10px] hover:bg-surface-accent-blue max-md:px-[0.8rem] max-md:py-[0.6rem]">
 							<span class="inline-flex items-center gap-[0.35rem]">
 								<span
 									class="informe-bibliografia-summary-icon inline-flex h-[13px] w-[13px] items-center justify-center text-text-accent-purple transition-transform"
@@ -584,7 +584,7 @@
 							</span>
 						</summary>
 						<div
-							class="border-t border-border-accent-blue px-[0.9rem] pb-[0.8rem] pt-0 max-md:px-[0.8rem] max-md:pb-[0.75rem]"
+							class="px-[0.9rem] pb-[0.8rem] pt-0 max-md:px-[0.8rem] max-md:pb-[0.75rem]"
 							aria-label={section.lead}
 						>
 							<p class="mb-[0.65rem] mt-0 text-[0.95rem] font-medium leading-[1.45] text-brand-blue-dark">

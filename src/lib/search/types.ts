@@ -1,5 +1,7 @@
 ﻿import type { AttributionSet } from '$lib/domain/catalog';
 
+import type { WorkResourceLink } from '$lib/domain/catalog';
+
 export interface TexoroManifestShard {
 	id: string;
 	file: string;
@@ -201,6 +203,7 @@ export interface TexoroWorkMeta {
 	shortSummary: string;
 	traditionalAttribution: AttributionSet;
 	stylometryAttribution: AttributionSet;
+	textLinks: WorkResourceLink[];
 }
 
 export interface ParsedQueryTerm {
@@ -285,11 +288,12 @@ export interface SearchExecution {
 }
 
 export type SearchBooleanMode = 'all' | 'any';
+export type AdditionalSearchMode = SearchBooleanMode | 'globalAny';
 export type SearchProximityOrder = 'any' | 'after' | 'before';
 
 export interface StructuredSearchQuery {
 	main: string;
-	additionalMode?: SearchBooleanMode;
+	additionalMode?: AdditionalSearchMode;
 	additionalTerms?: string[];
 	proximityMode?: SearchBooleanMode;
 	proximityTerms?: Array<{

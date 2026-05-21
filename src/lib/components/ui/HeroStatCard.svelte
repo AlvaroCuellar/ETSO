@@ -40,7 +40,7 @@
 	};
 
 	const cardBaseClass =
-		'flex min-h-[142px] flex-col items-start gap-[0.65rem] rounded-[10px] border border-border-accent-blue bg-white px-[1rem] pb-[1rem] pt-[1.15rem] shadow-[0_8px_20px_rgba(25,37,77,0.08)] transition sm:min-h-[158px] sm:px-[1.1rem] sm:pb-[1.1rem] sm:pt-[1.25rem]';
+		'flex min-h-[142px] flex-col items-start gap-[0.65rem] rounded-[10px] bg-white px-[1rem] pb-[1rem] pt-[1.15rem] shadow-[0_8px_20px_rgba(25,37,77,0.08)] transition sm:min-h-[158px] sm:px-[1.1rem] sm:pb-[1.1rem] sm:pt-[1.25rem]';
 
 	const parseNumericValue = (input: string | number): number | null => {
 		if (typeof input === 'number' && Number.isFinite(input)) return input;
@@ -102,7 +102,7 @@
 	<a
 		href={href}
 		aria-label={ariaLabel}
-		class={`group ${`${cardBaseClass} ${offsetClass(desktopOffset)} ${interactiveOffsetClass(desktopOffset)} text-inherit no-underline hover:border-border-accent-blue hover:bg-surface hover:no-underline focus-visible:border-border-accent-blue focus-visible:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue/20`.trim()}`}
+		class={`group ${`${cardBaseClass} ${offsetClass(desktopOffset)} ${interactiveOffsetClass(desktopOffset)} text-inherit no-underline hover:bg-surface hover:no-underline focus-visible:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue/20`.trim()}`}
 	>
 		<div class="flex w-full items-start justify-between gap-3">
 			<div class="inline-flex h-[2.2rem] w-[2.2rem] items-center justify-center text-text-accent-purple" aria-hidden="true">

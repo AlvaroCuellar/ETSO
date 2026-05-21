@@ -1,7 +1,7 @@
 ﻿import type { ParsedQuery, ParsedQueryClause } from './types';
 import { normalizePattern } from './normalize';
 import type { ParsedQueryPhrase, ParsedQueryTerm } from './types';
-import type { SearchBooleanMode, SearchProximityOrder, StructuredSearchQuery } from './types';
+import type { AdditionalSearchMode, SearchBooleanMode, SearchProximityOrder, StructuredSearchQuery } from './types';
 
 export type StructuredSearchInputClause =
 	| { kind: 'term'; value: string; operator?: 'and' | 'or' | null }
@@ -75,6 +75,9 @@ const valueToClause = (value: string, preserveEnie: boolean): ParsedQueryTerm | 
 
 const normalizeBooleanMode = (value: SearchBooleanMode | undefined): SearchBooleanMode =>
 	value === 'any' ? 'any' : 'all';
+
+const normalizeAdditionalMode = (value: AdditionalSearchMode | undefined): AdditionalSearchMode =>
+	value === 'any' || value === 'globalAny' ? value : 'all';
 
 const normalizeProximityOrder = (value: SearchProximityOrder | undefined): SearchProximityOrder =>
 	value === 'before' || value === 'after' ? value : 'any';
@@ -198,7 +201,13 @@ export const parseStructuredQuery = (
 		}
 		additionalClauses.push(clause);
 	}
-	groups = combineGroups(groups, additionalClauses, normalizeBooleanMode(query.additionalMode));
+	const additionalMode = normalizeAdditionalMode(query.additionalMode);
+	if (additionalClauses.length > 0) {
+		groups =
+			additionalMode === 'globalAny'
+				? [mainClause, ...additionalClauses].map((clause) => [clause])
+				: combineGroups(groups, additionalClauses, additionalMode);
+	}
 
 	const proximityTerms: Array<{
 		right: ParsedQueryTerm | ParsedQueryPhrase;

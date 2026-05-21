@@ -285,18 +285,19 @@
 		{/snippet}
 	</FeatureHeroSection>
 
-	<div class="font-['Roboto',sans-serif] leading-[1.6] text-text-main">
+	<section class="rounded-[14px] p-5 font-['Roboto',sans-serif] leading-[1.6] text-text-main">
 		<div class="min-w-0">
-			<form method="GET" action="/examen-autorias" onsubmit={applySearch}>
-				<div class="mb-[1.6rem]">
-					<div class="mb-[0.9rem]">
-						<div class="mb-[15px] border-b-2 border-border pb-2 text-[14px] font-bold tracking-[0.5px] text-text-soft uppercase">
-							Búsqueda
-						</div>
+			<h2 class="m-0 font-['Roboto',sans-serif] text-[1.45rem] font-bold text-brand-blue-dark">Buscar en Examen de autorías</h2>
+			<p class="mt-2 mb-0 text-[0.98rem] text-text-soft">
+				Filtra las obras del corpus por título, género, atribuciones, estado textual y fecha de incorporación.
+			</p>
 
-						<div class="mb-[15px] grid grid-cols-1 gap-5 min-[1201px]:grid-cols-[3fr_1fr]">
+			<form class="mt-5 grid gap-6" method="GET" action="/examen-autorias" onsubmit={applySearch}>
+				<div class="grid gap-5">
+					<div class="grid gap-5">
+						<div class="grid grid-cols-1 gap-5 min-[1201px]:grid-cols-[3fr_1fr]">
 							<div class="relative flex flex-col">
-								<label class="mb-[6px] inline-flex items-center gap-1 text-[14px] font-semibold text-text-soft" for="filtro-titulo">
+								<label class="mb-[6px] inline-flex items-center gap-1 font-['Roboto',sans-serif] text-[14px] font-semibold text-text-soft" for="filtro-titulo">
 									Título
 									<span class="group relative inline-flex items-center">
 										<span
@@ -317,7 +318,7 @@
 									id="filtro-titulo"
 									name="titulo"
 									type="text"
-									class="rounded-[4px] border border-border px-3 py-[10px] text-[14px] transition focus:border-brand-blue/35 focus:shadow-[0_0_0_3px_rgba(13,63,145,0.1)] focus:outline-none"
+									class="box-border h-[46px] w-full rounded-[10px] border border-border bg-white px-3 text-[15px] text-text-main transition focus:border-brand-blue/35 focus:shadow-[0_0_0_3px_rgba(13,63,145,0.1)] focus:outline-none"
 									placeholder="Ej: cada paso peligro, verdades amor..."
 									bind:value={title}
 								/>
@@ -337,7 +338,7 @@
 							/>
 						</div>
 
-						<div class="mb-0 grid grid-cols-1 gap-5">
+						<div class="grid grid-cols-1 gap-5">
 							<TokenMultiSelect
 								name="autor_ids"
 								label="Atribución"
@@ -352,24 +353,21 @@
 								}}
 							/>
 						</div>
-
 					</div>
 
-					<div class={`mt-[0.9rem] rounded-[8px] border border-border-accent-blue bg-white ${advancedOpen ? 'overflow-visible' : 'overflow-hidden'}`}>
+					<div class={`rounded-[10px] transition-[background-color,box-shadow] duration-200 ${advancedOpen ? 'overflow-visible bg-[var(--color-surface-subtle)] shadow-[0_8px_24px_rgba(25,46,80,0.06)]' : 'overflow-hidden bg-white'}`}>
 						<button
 							type="button"
-							class="w-full cursor-pointer border-0 bg-transparent px-4 py-[0.9rem] text-left text-[14px] font-semibold text-brand-blue-dark transition hover:bg-surface-accent-blue"
+							class="flex w-full items-center justify-between gap-3 cursor-pointer border-0 bg-transparent px-4 py-[0.9rem] text-left font-['Roboto',sans-serif] text-[0.92rem] font-semibold text-brand-blue-dark transition hover:rounded-[10px] hover:bg-surface-accent-blue"
 							data-target="advanced-content"
 							aria-expanded={advancedOpen ? 'true' : 'false'}
 							onclick={() => {
 								advancedOpen = !advancedOpen;
 							}}
 						>
-							<span class="flex items-center justify-between">
-								Más filtros
-								<span class={`inline-flex items-center justify-center transition-transform duration-200 ${advancedOpen ? 'rotate-180' : ''}`} aria-hidden="true">
-									<ChevronDown class="h-[14px] w-[14px] stroke-[2.2]" />
-								</span>
+							<span>Más filtros</span>
+							<span class={`inline-flex items-center justify-center transition-transform duration-200 ${advancedOpen ? 'rotate-180' : ''}`} aria-hidden="true">
+								<ChevronDown class="h-[15px] w-[15px] stroke-[2.2]" />
 							</span>
 						</button>
 
@@ -381,115 +379,116 @@
 									: 'max-h-0 border-transparent py-0 opacity-0'
 							}`}
 						>
-							<div class="mb-[0.8rem] bg-transparent py-[0.8rem]">
-								<div class="mb-[15px] border-b-2 border-border pb-2 text-[14px] font-bold tracking-[0.5px] text-text-soft uppercase">
-									Filtros de autoría
-								</div>
+							<div class="grid gap-6 bg-transparent py-3">
+								<section class="grid gap-4">
+									<h3 class="m-0 font-['Roboto',sans-serif] text-[0.98rem] font-semibold text-brand-blue-dark">
+										Filtros de autoría
+									</h3>
 
-								<div class="grid grid-cols-1 gap-4 min-[1201px]:grid-cols-2">
-									<div class="flex flex-col gap-3 rounded-[8px] border border-border bg-surface p-[14px]">
-										<TokenMultiSelect
-											name="autor_trad_ids"
-											label="Atribución tradicional"
-											placeholder="Escribe y selecciona autores"
-											options={authorOptions}
-											selectedIds={selectedTradAuthors}
-											helpText="Autores propuestos desde la tradición filológica. Puedes seleccionar varios."
-											inputClass="js-author-multiselect"
-											onChange={(nextIds) => {
-												selectedTradAuthors = nextIds;
-											}}
-										/>
-
-										<MatchToggle
-											name="autor_match_trad"
-											value={tradMatch}
-											helpText="OR muestra obras con cualquiera de los autores seleccionados. AND exige que estén todos."
-											onChange={(next) => {
-												tradMatch = next;
-											}}
-										/>
-									</div>
-
-									<div class="flex flex-col gap-3 rounded-[8px] border border-border bg-surface p-[14px]">
-										<TokenMultiSelect
-											name="autor_esto_ids"
-											label="Atribución estilometría"
-											placeholder="Escribe y selecciona autores"
-											options={authorOptions}
-											selectedIds={selectedEstoAuthors}
-											helpText="Autores propuestos a partir del análisis estilométrico. Puedes seleccionar varios."
-											inputClass="js-author-multiselect"
-											onChange={(nextIds) => {
-												selectedEstoAuthors = nextIds;
-											}}
-										/>
-
-										<div class="mb-0 grid grid-cols-1 items-start gap-4 md:grid-cols-2">
-											<MatchToggle
-												name="autor_match_esto"
-												value={estoMatch}
-												helpText="OR muestra obras con cualquiera de los autores seleccionados. AND exige que estén todos."
-												onChange={(next) => {
-													estoMatch = next;
+									<div class="grid grid-cols-1 gap-5 min-[1201px]:grid-cols-2">
+										<div class="flex flex-col gap-4 rounded-[8px] border border-border bg-[var(--color-surface-subtle)] p-4">
+											<TokenMultiSelect
+												name="autor_trad_ids"
+												label="Atribución tradicional"
+												placeholder="Escribe y selecciona autores"
+												options={authorOptions}
+												selectedIds={selectedTradAuthors}
+												helpText="Autores propuestos desde la tradición filológica. Puedes seleccionar varios."
+												inputClass="js-author-multiselect"
+												onChange={(nextIds) => {
+													selectedTradAuthors = nextIds;
 												}}
 											/>
 
-											<TokenMultiSelect
-												name="nivel_confianza"
-												label="Nivel de confianza"
-												placeholder="Selecciona uno o varios niveles"
-												options={confidenceOptions}
-												selectedIds={selectedConfidence}
-												helpText="Filtra por el grado de certeza de la atribución resultante del análisis estilométrico."
-												inputClass="js-static-multiselect"
-												onChange={(nextIds) => {
-													selectedConfidence = nextIds;
+											<MatchToggle
+												name="autor_match_trad"
+												value={tradMatch}
+												helpText="OR muestra obras con cualquiera de los autores seleccionados. AND exige que estén todos."
+												onChange={(next) => {
+													tradMatch = next;
 												}}
 											/>
 										</div>
+
+										<div class="flex flex-col gap-4 rounded-[8px] border border-border bg-[var(--color-surface-subtle)] p-4">
+											<TokenMultiSelect
+												name="autor_esto_ids"
+												label="Atribución estilometría"
+												placeholder="Escribe y selecciona autores"
+												options={authorOptions}
+												selectedIds={selectedEstoAuthors}
+												helpText="Autores propuestos a partir del análisis estilométrico. Puedes seleccionar varios."
+												inputClass="js-author-multiselect"
+												onChange={(nextIds) => {
+													selectedEstoAuthors = nextIds;
+												}}
+											/>
+
+											<div class="grid grid-cols-1 items-start gap-5 md:grid-cols-2">
+												<MatchToggle
+													name="autor_match_esto"
+													value={estoMatch}
+													helpText="OR muestra obras con cualquiera de los autores seleccionados. AND exige que estén todos."
+													onChange={(next) => {
+														estoMatch = next;
+													}}
+												/>
+
+												<TokenMultiSelect
+													name="nivel_confianza"
+													label="Nivel de confianza"
+													placeholder="Selecciona uno o varios niveles"
+													options={confidenceOptions}
+													selectedIds={selectedConfidence}
+													helpText="Filtra por el grado de certeza de la atribución resultante del análisis estilométrico."
+													inputClass="js-static-multiselect"
+													onChange={(nextIds) => {
+														selectedConfidence = nextIds;
+													}}
+												/>
+											</div>
+										</div>
 									</div>
-								</div>
 
-								<div class="mt-[18px] grid grid-cols-1 gap-5 rounded-[8px] border border-dashed border-border-accent-blue bg-surface-accent-blue p-3 md:grid-cols-2">
-									<TokenMultiSelect
-										name="tipo_autoria"
-										label="Tipo de autoría"
-										placeholder="Cualquiera"
-										options={authorshipTypeOptions}
-										selectedIds={selectedAuthorshipTypes}
-										helpText="Deja este campo en Cualquiera para mostrar obras de cualquier tipo de autoría. Puedes filtrar por obras de un solo autor (Única) o de varios autores (Colaboración)."
-										inputClass="js-static-multiselect"
-										onChange={(nextIds) => {
-											selectedAuthorshipTypes = nextIds;
-										}}
-									/>
-								</div>
-							</div>
+									<div class="grid grid-cols-1 gap-5">
+										<TokenMultiSelect
+											name="tipo_autoria"
+											label="Tipo de autoría"
+											placeholder="Cualquiera"
+											options={authorshipTypeOptions}
+											selectedIds={selectedAuthorshipTypes}
+											helpText="Deja este campo en Cualquiera para mostrar obras de cualquier tipo de autoría. Puedes filtrar por obras de un solo autor (Única) o de varios autores (Colaboración)."
+											inputClass="js-static-multiselect"
+											onChange={(nextIds) => {
+												selectedAuthorshipTypes = nextIds;
+											}}
+										/>
+									</div>
+								</section>
 
-							<div class="mb-[0.8rem] bg-transparent py-[0.8rem]">
-								<div class="mb-[15px] border-b-2 border-border pb-2 text-[14px] font-bold tracking-[0.5px] text-text-soft uppercase">
-									Filtros técnicos
-								</div>
+								<section class="grid gap-4 border-t border-border-accent-blue pt-5">
+									<h3 class="m-0 font-['Roboto',sans-serif] text-[0.98rem] font-semibold text-brand-blue-dark">
+										Filtros técnicos
+									</h3>
 
-								<div class="mb-[15px] grid grid-cols-1 gap-5 md:grid-cols-2">
-									<TokenMultiSelect
-										name="estado"
-										label="Estado del texto"
-										placeholder="Escribe y selecciona estados"
-										options={stateOptions}
-										selectedIds={selectedStates}
-										helpText="Selecciona uno o varios estados del texto utilizado para el análisis estilométrico."
-										inputClass="js-static-multiselect"
-										onChange={(nextIds) => {
-											selectedStates = nextIds;
-										}}
-									/>
-								</div>
+									<div class="grid grid-cols-1 gap-5">
+										<TokenMultiSelect
+											name="estado"
+											label="Estado del texto"
+											placeholder="Escribe y selecciona estados"
+											options={stateOptions}
+											selectedIds={selectedStates}
+											helpText="Selecciona uno o varios estados del texto utilizado para el análisis estilométrico."
+											inputClass="js-static-multiselect"
+											onChange={(nextIds) => {
+												selectedStates = nextIds;
+											}}
+										/>
+									</div>
 
-								<div class="mb-[15px] grid grid-cols-1 gap-5 md:grid-cols-2">
-									<div class="relative flex flex-col">
-										<label class="mb-[6px] inline-flex items-center gap-1 text-[14px] font-semibold text-text-soft" for="filtro-fecha-desde">
+									<div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+										<div class="relative flex flex-col">
+										<label class="mb-[6px] inline-flex items-center gap-1 font-['Roboto',sans-serif] text-[14px] font-semibold text-text-soft" for="filtro-fecha-desde">
 											Fecha de adición o modificación (desde)
 											<span class="group relative inline-flex items-center">
 												<span
@@ -510,13 +509,13 @@
 											id="filtro-fecha-desde"
 											name="desde"
 											type="date"
-											class="rounded-[4px] border border-border px-3 py-[10px] text-[14px] transition focus:border-brand-blue/35 focus:shadow-[0_0_0_3px_rgba(13,63,145,0.1)] focus:outline-none"
+											class="h-[42px] rounded-[10px] border border-border bg-white px-3 text-[15px] text-text-main transition focus:border-brand-blue/35 focus:shadow-[0_0_0_3px_rgba(13,63,145,0.1)] focus:outline-none"
 											bind:value={dateFrom}
 										/>
-									</div>
+										</div>
 
-									<div class="relative flex flex-col">
-										<label class="mb-[6px] inline-flex items-center gap-1 text-[14px] font-semibold text-text-soft" for="filtro-fecha-hasta">
+										<div class="relative flex flex-col">
+										<label class="mb-[6px] inline-flex items-center gap-1 font-['Roboto',sans-serif] text-[14px] font-semibold text-text-soft" for="filtro-fecha-hasta">
 											Fecha de adición o modificación (hasta)
 											<span class="group relative inline-flex items-center">
 												<span
@@ -537,30 +536,37 @@
 											id="filtro-fecha-hasta"
 											name="hasta"
 											type="date"
-											class="rounded-[4px] border border-border px-3 py-[10px] text-[14px] transition focus:border-brand-blue/35 focus:shadow-[0_0_0_3px_rgba(13,63,145,0.1)] focus:outline-none"
+											class="h-[42px] rounded-[10px] border border-border bg-white px-3 text-[15px] text-text-main transition focus:border-brand-blue/35 focus:shadow-[0_0_0_3px_rgba(13,63,145,0.1)] focus:outline-none"
 											bind:value={dateTo}
 										/>
+										</div>
 									</div>
-								</div>
 
 								{#if dateRangeError}
 									<div class="mt-1 text-[12px] text-text-soft italic" role="alert">{dateRangeError}</div>
 								{/if}
+								</section>
 							</div>
 						</div>
 					</div>
 
-					<div class="mt-5 flex flex-col gap-[10px] md:flex-row md:justify-end">
+					<div class="flex flex-wrap justify-end gap-2">
 						<AppButton
 							href="/examen-autorias"
 							variant="secondary"
+							className="!h-[40px] !min-w-[136px] !rounded-[10px] !border-transparent !px-5 !py-2 font-['Roboto',sans-serif] text-[0.9rem] font-semibold tracking-[0.02em] shadow-none"
 							onclick={(event) => {
 								void clearFilters(event);
 							}}
 						>
 							Limpiar campos
 						</AppButton>
-						<AppButton type="submit" variant="primary" disabled={isSearching} className="gap-2">
+						<AppButton
+							type="submit"
+							variant="primary"
+							disabled={isSearching}
+							className="!h-[40px] !min-w-[136px] gap-2 !rounded-[10px] !px-5 !py-2 font-['Roboto',sans-serif] text-[0.9rem] font-semibold tracking-[0.02em]"
+						>
 							{#if isSearching}
 								<LoaderCircle class="h-4.5 w-4.5 animate-spin" />
 								Buscando...
@@ -575,7 +581,7 @@
 			<div
 				id="examen-resultados"
 				bind:this={resultsRegion}
-				class="relative scroll-mt-6 outline-none"
+				class="mt-14 relative scroll-mt-6 outline-none"
 				aria-live="polite"
 				aria-busy={isSearching ? 'true' : 'false'}
 				role="region"
@@ -585,9 +591,9 @@
 				{#if tableRows.length > 0}
 					<div
 						bind:this={paginationRegion}
-						class="mb-5 flex scroll-mt-24 flex-wrap items-center justify-between gap-3 border-b-2 border-border pb-[15px]"
+						class="mb-5 flex scroll-mt-24 flex-wrap items-center justify-between gap-3 border-b-2 border-border pb-[15px] max-md:flex-col max-md:justify-center max-md:gap-2 max-md:text-center"
 					>
-						<p class="m-0 text-[0.88rem] font-normal text-text-main">
+						<p class="m-0 text-[0.88rem] font-normal text-text-main max-md:w-full">
 							<span class="font-semibold text-brand-blue">{data.totalResults}</span> resultados ·
 							Mostrando
 							<span class="font-semibold text-brand-blue">
@@ -595,7 +601,7 @@
 							</span>
 						</p>
 						{#if data.totalPages > 1}
-							<div class="flex items-center gap-2">
+							<div class="flex items-center justify-center gap-2 max-md:w-full">
 								<AppButton
 									type="button"
 									variant="secondary"
@@ -636,7 +642,7 @@
 					emptyMessage="No se encontraron obras que coincidan con los criterios de búsqueda."
 				/>
 				{#if data.totalPages > 1}
-					<nav class="mt-4 flex flex-wrap items-center justify-end gap-2" aria-label="Paginación de obras">
+					<nav class="mt-4 flex flex-wrap items-center justify-end gap-2 max-md:justify-center" aria-label="Paginación de obras">
 						<AppButton
 							type="button"
 							variant="secondary"
@@ -671,5 +677,5 @@
 				{/if}
 			</div>
 		</div>
-	</div>
+	</section>
 </div>

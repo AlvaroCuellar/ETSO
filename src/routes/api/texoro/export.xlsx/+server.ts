@@ -6,6 +6,7 @@ import { buildWorkTitleSearchText, formatDisplayWorkTitle } from '$lib/utils/for
 
 import type { RequestHandler } from './$types';
 import type {
+	AdditionalSearchMode,
 	SearchBooleanMode,
 	SearchExecution,
 	SearchMatchOccurrence,
@@ -62,6 +63,15 @@ const normalizeStringList = (value: unknown, max = 80): string[] =>
 const normalizeBooleanMode = (value: unknown): SearchBooleanMode =>
 	value === 'any' ? 'any' : 'all';
 
+const normalizeAdditionalMode = (value: unknown): AdditionalSearchMode =>
+	value === 'any' || value === 'globalAny' ? value : 'all';
+
+const additionalModeLabel = (mode: AdditionalSearchMode | undefined): string => {
+	if (mode === 'globalAny') return 'Cualquiera, incluido principal';
+	if (mode === 'any') return 'Puede aparecer cualquiera';
+	return 'Deben aparecer todos';
+};
+
 const normalizeStructuredQuery = (value: unknown): StructuredSearchQuery | undefined => {
 	if (!value || typeof value !== 'object') return undefined;
 	const raw = value as Record<string, unknown>;
@@ -70,7 +80,7 @@ const normalizeStructuredQuery = (value: unknown): StructuredSearchQuery | undef
 
 	return {
 		main,
-		additionalMode: normalizeBooleanMode(raw.additionalMode),
+		additionalMode: normalizeAdditionalMode(raw.additionalMode),
 		additionalTerms: normalizeStringList(raw.additionalTerms, 9),
 		proximityMode: normalizeBooleanMode(raw.proximityMode),
 		proximityTerms: Array.isArray(raw.proximityTerms)
@@ -417,7 +427,7 @@ const addQuerySheet = (
 		['Consulta técnica', payload.query],
 		['Búsqueda principal', query?.main ?? payload.query],
 		['Términos adicionales', query?.additionalTerms?.join('; ') || 'Sin términos adicionales'],
-		['Modo términos adicionales', query?.additionalMode === 'any' ? 'Puede aparecer cualquiera' : 'Deben aparecer todos'],
+		['Modo términos adicionales', additionalModeLabel(query?.additionalMode)],
 		['Condiciones de proximidad', proximityDescription],
 		['Modo proximidad', query?.proximityMode === 'any' ? 'Basta con una' : 'Todas las condiciones'],
 		['Filtro título', payload.filters.title || 'Sin filtro'],

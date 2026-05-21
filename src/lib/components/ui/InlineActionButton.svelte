@@ -8,6 +8,9 @@
 		ariaLabel?: string;
 		title?: string;
 		class?: string;
+		preloadData?: 'off' | 'hover' | 'tap';
+		target?: '_blank' | '_self' | '_parent' | '_top';
+		rel?: string;
 		icon?: ComponentType<SvelteComponent>;
 		iconMotion?: 'none' | 'diagonal';
 		onclick?: (event: MouseEvent) => void;
@@ -21,6 +24,9 @@
 		ariaLabel = '',
 		title = '',
 		class: className = '',
+		preloadData,
+		target,
+		rel,
 		icon: Icon,
 		iconMotion = 'none',
 		onclick,
@@ -57,12 +63,15 @@
 		aria-disabled={disabled ? 'true' : undefined}
 		aria-label={ariaLabel || undefined}
 		title={title || undefined}
+		data-sveltekit-preload-data={preloadData}
+		{target}
+		rel={rel || (target === '_blank' ? 'noopener noreferrer' : undefined)}
 		onclick={handleClick}
 	>
-		<span>{@render children?.()}</span>
 		{#if Icon}
 			<Icon class={iconClasses} aria-hidden="true" />
 		{/if}
+		<span>{@render children?.()}</span>
 	</a>
 {:else}
 	<button
@@ -73,10 +82,10 @@
 		title={title || undefined}
 		onclick={handleClick}
 	>
-		<span>{@render children?.()}</span>
 		{#if Icon}
 			<Icon class={iconClasses} aria-hidden="true" />
 		{/if}
+		<span>{@render children?.()}</span>
 	</button>
 {/if}
 

@@ -40,21 +40,21 @@
 	const navLinkClass = (active: boolean): string =>
 		`inline-flex items-center rounded-card border px-4 py-2 text-[0.9rem] font-ui font-medium text-brand-blue no-underline transition hover:no-underline focus-visible:no-underline ${
 			active
-				? 'border-border-accent-purple bg-surface-accent-purple text-brand-blue-dark'
+				? 'border-transparent bg-surface-accent-purple text-brand-purple'
 				: 'border-transparent hover:bg-surface-accent-blue'
 		}`;
 
 	const menuLinkClass = (active: boolean): string =>
 		`block rounded-md border px-2.5 py-2 text-[0.86rem] font-ui font-medium text-brand-blue no-underline transition hover:no-underline focus-visible:no-underline ${
 			active
-				? 'border-border-accent-purple bg-surface-accent-purple text-brand-blue-dark'
+				? 'border-transparent bg-surface-accent-purple text-brand-purple'
 				: 'border-transparent hover:bg-surface-accent-blue'
 		}`;
 
 	const mobileLinkClass = (active: boolean): string =>
 		`block rounded-card border px-4 py-2.5 text-[0.94rem] font-ui font-medium text-brand-blue no-underline transition hover:no-underline focus-visible:no-underline ${
 			active
-				? 'border-border-accent-purple bg-surface-accent-purple text-brand-blue-dark'
+				? 'border-transparent bg-surface-accent-purple text-brand-purple'
 				: 'border-border-accent-blue bg-white hover:bg-surface-accent-blue'
 		}`;
 

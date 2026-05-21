@@ -18,7 +18,8 @@ export const toTexoroWorkMeta = (work: CatalogWork): TexoroWorkMeta => ({
 	textState: work.textState,
 	shortSummary: work.shortSummary,
 	traditionalAttribution: work.traditionalAttribution,
-	stylometryAttribution: work.stylometryAttribution
+	stylometryAttribution: work.stylometryAttribution,
+	textLinks: work.textLinks
 });
 
 export const getServerTexoroEngine = async (): Promise<TexoroSearchEngine> => {

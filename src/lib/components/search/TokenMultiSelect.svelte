@@ -114,6 +114,13 @@
 		activeIndex = -1;
 	};
 
+	const focusInput = (): void => {
+		if (disabled) return;
+		openDropdown();
+		const input = wrapperElement?.querySelector('input');
+		if (input) input.focus();
+	};
+
 	const handleInput = (event: Event): void => {
 		query = (event.currentTarget as HTMLInputElement).value;
 		isOpen = !disabled && filteredOptions.length > 0;
@@ -175,7 +182,17 @@
 		{/if}
 	</label>
 
-	<div class="autocomplete-wrapper author-multiselect-wrapper" class:is-disabled={disabled} bind:this={wrapperElement}>
+	<div 
+		class="autocomplete-wrapper author-multiselect-wrapper" 
+		class:is-disabled={disabled} 
+		bind:this={wrapperElement}
+		onclick={focusInput}
+		onkeydown={(e) => {
+			if (e.key === 'Enter') focusInput();
+		}}
+		role="button"
+		tabindex="0"
+	>
 		<div class="author-chips">
 			{#each selectedIds as selectedId}
 				<span class="author-chip">
@@ -185,19 +202,29 @@
 						class="author-chip-remove"
 						aria-label="Quitar opción"
 						disabled={disabled}
-						onclick={() => removeOption(selectedId)}
+						onclick={(e) => {
+							e.stopPropagation();
+							removeOption(selectedId);
+						}}
 					>
 						<X />
 					</button>
 				</span>
 			{/each}
-		</div>
-
-		<div class="author-input-row">
+			
 			{#if showAddHint}
-				<span class="author-add-hint" aria-hidden="true">
+				<button 
+					type="button" 
+					class="author-add-hint" 
+					aria-label="Añadir opción"
+					disabled={disabled}
+					onclick={(e) => {
+						e.stopPropagation();
+						focusInput();
+					}}
+				>
 					<Plus />
-				</span>
+				</button>
 			{/if}
 			<input
 				id={inputId}
@@ -207,7 +234,6 @@
 				value={query}
 				disabled={disabled}
 				onfocus={openDropdown}
-				onclick={openDropdown}
 				oninput={handleInput}
 				onkeydown={handleKeyDown}
 			/>
@@ -245,6 +271,7 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 0.25rem;
+		font-family: 'Roboto', sans-serif;
 		font-size: 14px;
 		font-weight: 600;
 		color: var(--color-text-soft);
@@ -302,10 +329,15 @@
 
 	.author-multiselect-wrapper {
 		border: 1px solid var(--color-border);
-		border-radius: 4px;
-		background: var(--color-surface);
-		padding: 6px 8px;
-		min-height: 44px;
+		border-radius: 10px;
+		background: #ffffff;
+		padding: 6px 12px;
+		min-height: 42px;
+		transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.author-multiselect-wrapper:focus-within {
+		border-color: rgba(13, 63, 145, 0.35); /* focus:border-brand-blue/35 */
 	}
 
 	.author-multiselect-wrapper.is-disabled {
@@ -316,12 +348,8 @@
 	.author-chips {
 		display: flex;
 		flex-wrap: wrap;
+		align-items: center;
 		gap: 6px;
-		margin-bottom: 4px;
-	}
-
-	.author-chips:empty {
-		margin-bottom: 0;
 	}
 
 	.author-chip {
@@ -329,11 +357,12 @@
 		align-items: center;
 		gap: 6px;
 		background: var(--color-surface-accent-purple);
-		border: 1px solid var(--color-border-accent-purple);
+		border: 0;
 		color: var(--color-text-accent-purple);
 		border-radius: 999px;
-		padding: 3px 8px;
-		font-size: 12px;
+		padding: 4px 10px;
+		font-size: 13px;
+		font-weight: 500;
 		line-height: 1;
 	}
 
@@ -352,33 +381,39 @@
 	}
 
 	.author-chip-remove :global(svg) {
-		width: 12px;
-		height: 12px;
+		width: 14px;
+		height: 14px;
 		stroke-width: 2.2;
+		transition: opacity 0.2s;
 	}
 
-	.author-input-row {
-		display: flex;
-		align-items: center;
-		gap: 6px;
+	.author-chip-remove:hover :global(svg) {
+		opacity: 0.7;
 	}
 
 	.author-add-hint {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		width: 18px;
-		height: 18px;
-		border: 1px solid var(--color-border-accent-purple);
+		width: 20px;
+		height: 20px;
+		border: 0;
 		border-radius: 999px;
 		background: var(--color-surface-accent-purple);
 		color: var(--color-text-accent-purple);
 		flex: 0 0 auto;
+		cursor: pointer;
+		padding: 0;
+		transition: opacity 0.2s;
+	}
+
+	.author-add-hint:hover {
+		opacity: 0.8;
 	}
 
 	.author-add-hint :global(svg) {
-		width: 12px;
-		height: 12px;
+		width: 14px;
+		height: 14px;
 		stroke-width: 2.2;
 	}
 
@@ -386,11 +421,18 @@
 	input.js-static-multiselect {
 		border: 0;
 		box-shadow: none;
-		width: 100%;
+		min-width: 60px;
+		flex: 1 1 0%;
 		height: auto;
 		padding: 4px 2px;
-		font-size: 14px;
+		font-size: 15px;
+		color: var(--color-text-main);
 		background: transparent;
+	}
+
+	input.js-author-multiselect::placeholder,
+	input.js-static-multiselect::placeholder {
+		font-size: 15px;
 	}
 
 	input.js-author-multiselect:focus,

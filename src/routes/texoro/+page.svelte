@@ -3,16 +3,22 @@
 	import MatchToggle from '$lib/components/search/MatchToggle.svelte';
 	import TokenMultiSelect from '$lib/components/search/TokenMultiSelect.svelte';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
-	import AttributionView from '$lib/components/ui/AttributionView.svelte';
 	import AppButton from '$lib/components/ui/AppButton.svelte';
 	import FeatureHeroSection from '$lib/components/ui/FeatureHeroSection.svelte';
 	import HeroStatCard from '$lib/components/ui/HeroStatCard.svelte';
+	import InlineActionButton from '$lib/components/ui/InlineActionButton.svelte';
 	import ChartModeToggle from '$lib/components/search/ChartModeToggle.svelte';
 	import ComparisonMetricToggle from '$lib/components/search/ComparisonMetricToggle.svelte';
 	import TexoroLiveChart from '$lib/components/search/TexoroLiveChart.svelte';
 	import TexoroComparisonChart from '$lib/components/search/TexoroComparisonChart.svelte';
 	import { buildWorkTitleSearchText, formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
-	import { formatAttribution, type AttributionSet } from '$lib/domain/catalog';
+	import {
+		formatAttribution,
+		formatConfidence,
+		UNRESOLVED_AUTHOR_ID,
+		type AttributionSet,
+		type Confidence
+	} from '$lib/domain/catalog';
 	import fondoLogo from '$lib/assets/fondos/fondo-logo.png';
 	import BookOpen from 'lucide-svelte/icons/book-open';
 	import ChevronDown from 'lucide-svelte/icons/chevron-down';
@@ -35,6 +41,7 @@
 	} from '$lib/search/texoro-client-worker';
 
 	import type {
+		AdditionalSearchMode,
 		SearchExecution,
 		SearchMatchOccurrence,
 		SearchMatchOccurrences,
@@ -220,9 +227,6 @@
 	const RESULT_PREVIEW_OCCURRENCE_LIMIT = 10;
 	const RESULT_PREVIEW_SNIPPET_RADIUS = 115;
 	const RESULT_PREVIEW_VISIBLE_RADIUS = 70;
-	const PREVIEW_INITIAL_DOC_LIMIT = 8;
-	const PREVIEW_BATCH_SIZE = 6;
-	const PREVIEW_SCROLL_THRESHOLD_PX = 900;
 	const OCCURRENCE_DETAILS_CACHE_LIMIT = 24;
 	const OCCURRENCE_MODAL_MAX_ITEMS = 300;
 	const TEXORO_PRIME_DEBOUNCE_MS = 500;
@@ -241,11 +245,18 @@
 	let advancedSearchOpen = $state(false);
 	let filtersOpen = $state(false);
 	let additionalTerms = $state<AdditionalQueryTerm[]>([]);
-	let additionalMode = $state<SearchBooleanMode>('all');
-	let additionalModePreview = $state<SearchBooleanMode | null>(null);
+	let additionalMode = $state<AdditionalSearchMode>('all');
+	let additionalModePreview = $state<AdditionalSearchMode | null>(null);
+	let additionalModeAllButton = $state<HTMLButtonElement | null>(null);
+	let additionalModeAnyButton = $state<HTMLButtonElement | null>(null);
+	let additionalModeGlobalAnyButton = $state<HTMLButtonElement | null>(null);
+	let additionalModePillStyle = $state('opacity: 0;');
 	let proximityTerms = $state<ProximityQueryTerm[]>([]);
 	let proximityMode = $state<SearchBooleanMode>('all');
 	let proximityModePreview = $state<SearchBooleanMode | null>(null);
+	let proximityModeAllButton = $state<HTMLButtonElement | null>(null);
+	let proximityModeAnyButton = $state<HTMLButtonElement | null>(null);
+	let proximityModePillStyle = $state('opacity: 0;');
 	let nextAdditionalTermId = 1;
 	let nextProximityTermId = 1;
 	let titleFilter = $state('');
@@ -258,6 +269,7 @@
 	let submittedTerms = $state<SubmittedQueryTerm[]>([]);
 	let lastSubmittedSearch = $state<SubmittedSearch | null>(null);
 	let isSearching = $state(false);
+	let isPreparingResults = $state(false);
 	let isExporting = $state(false);
 	let searchError = $state('');
 	let exportError = $state('');
@@ -270,8 +282,8 @@
 	let loadedPreserveEnieForHighlight = $state<boolean | null>(null);
 	const preserveEnieForHighlight = $derived(loadedPreserveEnieForHighlight ?? data.indexInfo?.preserveEnie ?? true);
 	let occurrenceModal = $state<OccurrenceModalState | null>(null);
+	let occurrenceModalScrolled = $state(false);
 	let occurrencePreviews = $state<Map<number, ResultOccurrencePreview>>(new Map());
-	let previewLoadLimit = $state(PREVIEW_INITIAL_DOC_LIMIT);
 	let occurrenceLoading = $state(false);
 	let occurrenceError = $state('');
 	let occurrenceDetailsCache = $state<Map<string, SearchMatchOccurrences>>(new Map());
@@ -287,6 +299,8 @@
 	let worksMeta = $state<TexoroWorkMeta[] | null>(null);
 	let worksMetaLoadPromise: Promise<TexoroWorkMeta[]> | null = null;
 	let texoroWorkerInitPromise: Promise<void> | null = null;
+	let searchRequestId = 0;
+	let visiblePreviewRequestId = 0;
 
 	const sumResultOccurrences = (result: SearchResult): number =>
 		result.matches.reduce((sum, match) => sum + (match.occurrences ?? 0), 0);
@@ -481,14 +495,12 @@
 		].join('\u0002');
 		filterSignature;
 		resultsPage = 1;
-		previewLoadLimit = PREVIEW_INITIAL_DOC_LIMIT;
 	});
 
-	const filteredResults = $derived.by(() => {
-		if (!searchExecution) return [] as SearchResult[];
+	const filterExecutionResults = (execution: SearchExecution): SearchResult[] => {
 		const normalizedTitle = normalizeText(titleFilter);
 
-		return searchExecution.allResults
+		return execution.allResults
 			.filter((result) => {
 				const meta = result.meta;
 				if (!meta) return false;
@@ -519,6 +531,16 @@
 					b.score - a.score ||
 					a.docId - b.docId
 			);
+	};
+
+	const getVisibleResultsForExecution = (execution: SearchExecution, page: number): SearchResult[] => {
+		const start = (Math.max(1, page) - 1) * RESULTS_PAGE_SIZE;
+		return filterExecutionResults(execution).slice(start, start + RESULTS_PAGE_SIZE);
+	};
+
+	const filteredResults = $derived.by(() => {
+		if (!searchExecution) return [] as SearchResult[];
+		return filterExecutionResults(searchExecution);
 	});
 
 	const resultPageCount = $derived.by(() =>
@@ -532,6 +554,22 @@
 		const start = (resultsPage - 1) * RESULTS_PAGE_SIZE;
 		return filteredResults.slice(start, start + RESULTS_PAGE_SIZE);
 	});
+	const visibleResultsHavePreviews = $derived.by(() =>
+		visibleResults.every((result) => result.matches.length === 0 || occurrencePreviews.has(result.docId))
+	);
+	const visiblePreviewSignature = $derived.by(() =>
+		visibleResults
+			.map((result) =>
+				[
+					result.docId,
+					result.matches.map((match) => `${match.kind}:${match.source}:${match.occurrences}`).join('\u0003')
+				].join('\u0004')
+			)
+			.join('\u0005')
+	);
+	const shouldShowResultsLoader = $derived(
+		Boolean(searchExecution && filteredResults.length > 0 && (isPreparingResults || !visibleResultsHavePreviews))
+	);
 	const filteredTextsWithOccurrences = $derived.by(() => filteredResults.length);
 	const filteredTotalOccurrences = $derived.by(() =>
 		filteredResults.reduce((sum, result) => sum + sumResultOccurrences(result), 0)
@@ -540,7 +578,6 @@
 	$effect(() => {
 		if (resultsPage > resultPageCount) {
 			resultsPage = resultPageCount;
-			previewLoadLimit = PREVIEW_INITIAL_DOC_LIMIT;
 		}
 	});
 
@@ -593,11 +630,23 @@
 	const modePillButtonClass =
 		'relative z-10 rounded-full border-0 [border-width:0px] bg-transparent px-3 py-1.5 text-[0.78rem] font-semibold outline-none ring-0 transition-colors focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0';
 	const modePillIndicatorClass =
-		'pointer-events-none absolute top-1 bottom-1 left-1 w-[calc(50%-0.25rem)] rounded-full bg-white shadow-soft transition-transform duration-200 ease-out';
+		'pointer-events-none absolute top-1 bottom-1 left-0 rounded-full bg-white shadow-soft transition-[opacity,transform,width] duration-200 ease-out';
+	const additionalModePillIndicatorClass =
+		'pointer-events-none absolute top-1 bottom-1 left-0 rounded-full bg-white shadow-soft transition-[opacity,transform,width] duration-200 ease-out';
 	const interpretedQueryTermClass =
 		'inline-flex max-w-full items-center rounded-full bg-surface-accent-purple px-2.5 py-1 font-semibold leading-none text-text-accent-purple align-middle';
 	const interpretedQueryOperatorClass =
 		'font-mono text-[0.76rem] font-semibold uppercase text-text-soft';
+	const attributionConnectorLabel = (set: AttributionSet): string => (set.connector === 'and' ? 'Y' : 'O');
+	const canLinkAuthor = (authorId: string | undefined): boolean =>
+		Boolean(authorId && authorId !== UNRESOLVED_AUTHOR_ID);
+	const confidenceClass = (confidence?: Confidence): string => {
+		const baseClass =
+			'ml-1 inline-block rounded-[12px] px-[7px] py-[2px] align-middle text-[10px] font-medium tracking-[0.2px] uppercase';
+		if (confidence === 'segura') return `${baseClass} bg-[#d4edda] text-[#155724]`;
+		if (confidence === 'probable') return `${baseClass} bg-[#d1ecf1] text-[#0c5460]`;
+		return `${baseClass} bg-[#fff3cd] text-[#856404]`;
+	};
 
 	const additionalModeVisual = $derived(additionalModePreview ?? additionalMode);
 	const proximityModeVisual = $derived(proximityModePreview ?? proximityMode);
@@ -611,6 +660,7 @@
 		const connectorLabel = (operator: string | null): string => {
 			if (operator === 'all') return 'AND';
 			if (operator === 'any') return 'OR';
+			if (operator === 'globalAny') return 'OR';
 			return operator?.toUpperCase() ?? '';
 		};
 		const expression = submittedTerms
@@ -794,6 +844,9 @@
 		return `Trad. ${traditional} · Estil. ${stylometry} · Género ${genre}`;
 	};
 
+	const getBicuveLink = (meta: TexoroWorkMeta) =>
+		meta.textLinks?.find((link) => link.kind === 'bicuve') ?? null;
+
 	const createAdditionalTerm = (): AdditionalQueryTerm => ({
 		id: nextAdditionalTermId++,
 		value: ''
@@ -820,9 +873,25 @@
 		additionalTerms = additionalTerms.map((term) => (term.id === termId ? { ...term, value } : term));
 	};
 
-	const setAdditionalMode = (event: MouseEvent, mode: SearchBooleanMode): void => {
+	const setAdditionalMode = (event: MouseEvent, mode: AdditionalSearchMode): void => {
 		additionalMode = mode;
 		(event.currentTarget as HTMLButtonElement).blur();
+	};
+
+	const getAdditionalModeButton = (mode: AdditionalSearchMode): HTMLButtonElement | null => {
+		if (mode === 'any') return additionalModeAnyButton;
+		if (mode === 'globalAny') return additionalModeGlobalAnyButton;
+		return additionalModeAllButton;
+	};
+
+	const updateAdditionalModePill = async (): Promise<void> => {
+		await tick();
+		const button = getAdditionalModeButton(additionalModeVisual);
+		if (!button) {
+			additionalModePillStyle = 'opacity: 0;';
+			return;
+		}
+		additionalModePillStyle = `width: ${button.offsetWidth}px; transform: translateX(${button.offsetLeft}px); opacity: 1;`;
 	};
 
 	const addProximityTerm = (): void => {
@@ -851,6 +920,19 @@
 	const setProximityMode = (event: MouseEvent, mode: SearchBooleanMode): void => {
 		proximityMode = mode;
 		(event.currentTarget as HTMLButtonElement).blur();
+	};
+
+	const getProximityModeButton = (mode: SearchBooleanMode): HTMLButtonElement | null =>
+		mode === 'any' ? proximityModeAnyButton : proximityModeAllButton;
+
+	const updateProximityModePill = async (): Promise<void> => {
+		await tick();
+		const button = getProximityModeButton(proximityModeVisual);
+		if (!button) {
+			proximityModePillStyle = 'opacity: 0;';
+			return;
+		}
+		proximityModePillStyle = `width: ${button.offsetWidth}px; transform: translateX(${button.offsetLeft}px); opacity: 1;`;
 	};
 
 	const normalizeSearchValue = (value: string): string => value.trim().replace(/\s+/g, ' ');
@@ -977,13 +1059,22 @@
 
 	const buildTechnicalFormulaParts = (query: StructuredSearchQuery): InterpretedQueryPart[] => {
 		const main = formatFormulaValue(query.main);
-		const parts: InterpretedQueryPart[] = [termPart(main)];
+		const parts: InterpretedQueryPart[] = [];
 		const additional = (query.additionalTerms ?? []).map(formatFormulaValue).filter(Boolean);
+		if (query.additionalMode === 'globalAny' && additional.length > 0) {
+			parts.push(textPart('('));
+			appendFormulaTerms(parts, [main, ...additional], 'OR');
+			parts.push(textPart(')'));
+		} else {
+			parts.push(termPart(main));
+		}
 		if (additional.length > 0) {
-			parts.push(operatorPart('AND'));
-			if (additional.length > 1 && query.additionalMode === 'any') parts.push(textPart('('));
-			appendFormulaTerms(parts, additional, query.additionalMode === 'any' ? 'OR' : 'AND');
-			if (additional.length > 1 && query.additionalMode === 'any') parts.push(textPart(')'));
+			if (query.additionalMode !== 'globalAny') {
+				parts.push(operatorPart('AND'));
+				if (additional.length > 1 && query.additionalMode === 'any') parts.push(textPart('('));
+				appendFormulaTerms(parts, additional, query.additionalMode === 'any' ? 'OR' : 'AND');
+				if (additional.length > 1 && query.additionalMode === 'any') parts.push(textPart(')'));
+			}
 		}
 		const proximityBaseTerms = proximityBaseValuesForQuery(query);
 		const proximity = (query.proximityTerms ?? [])
@@ -1011,9 +1102,12 @@
 
 	const buildTechnicalFormula = (query: StructuredSearchQuery): string => {
 		const main = formatFormulaValue(query.main);
-		const parts = [main];
 		const additional = (query.additionalTerms ?? []).map(formatFormulaValue).filter(Boolean);
-		if (additional.length > 0) {
+		const parts =
+			query.additionalMode === 'globalAny' && additional.length > 0
+				? [`(${[main, ...additional].join(' OR ')})`]
+				: [main];
+		if (additional.length > 0 && query.additionalMode !== 'globalAny') {
 			if (additional.length === 1) {
 				parts.push(additional[0]);
 			} else if (query.additionalMode === 'all') {
@@ -1046,7 +1140,11 @@
 		const parts: InterpretedQueryPart[] = [textPart('Buscar '), termPart(main)];
 		const additional = (query.additionalTerms ?? []).map(formatFormulaValue).filter(Boolean);
 		if (additional.length > 0) {
-			if (additional.length === 1) {
+			if (query.additionalMode === 'globalAny') {
+				parts.length = 0;
+				parts.push(textPart('Buscar obras que contienen cualquiera de estos términos: '));
+				appendHumanTermList(parts, [main, ...additional], 'o');
+			} else if (additional.length === 1) {
 				parts.push(textPart(' en obras que también contienen '));
 				parts.push(termPart(additional[0]));
 			} else {
@@ -1065,7 +1163,9 @@
 			parts.push(textPart('. Además, '));
 			const proximityBaseTerms = proximityBaseValuesForQuery(query);
 			const alternativeBaseTerms =
-				query.additionalMode === 'any' && (query.additionalTerms ?? []).filter((term) => term.trim()).length > 1;
+				query.additionalMode === 'globalAny'
+					? (query.additionalTerms ?? []).filter((term) => term.trim()).length > 0
+					: query.additionalMode === 'any' && (query.additionalTerms ?? []).filter((term) => term.trim()).length > 1;
 
 			if (proximity.length === 1) {
 				const [term] = proximity;
@@ -1210,12 +1310,14 @@
 		lastSubmittedSearch = null;
 		searchExecution = null;
 		resultsPage = 1;
+		isPreparingResults = false;
 		searchError = '';
 		exportError = '';
 		occurrencePreviews = new Map();
-		previewLoadLimit = PREVIEW_INITIAL_DOC_LIMIT;
 		occurrenceDetailsCache = new Map();
 		occurrenceDetailsLoads = new Map();
+		searchRequestId += 1;
+		visiblePreviewRequestId += 1;
 	};
 
 	const drawWrappedText = (
@@ -1507,12 +1609,6 @@
 		};
 	};
 
-	const setOccurrencePreview = (docId: number, preview: ResultOccurrencePreview): void => {
-		const next = new Map(occurrencePreviews);
-		next.set(docId, preview);
-		occurrencePreviews = next;
-	};
-
 	async function postJson<T>(url: string, body: unknown): Promise<T> {
 		const response = await fetch(url, {
 			method: 'POST',
@@ -1661,19 +1757,12 @@
 		return runServerSearch(query, structuredQuery);
 	};
 
-	const loadResultOccurrencePreviews = async (results: SearchResult[]): Promise<void> => {
-		if (!searchExecution) return;
-		const queryAtStart = searchExecution.query;
-		const eligible = results.filter((result) => {
-			const preview = occurrencePreviews.get(result.docId);
-			return !preview?.loading && !preview?.items.length && !preview?.error && result.matches.length > 0;
-		});
-		if (eligible.length === 0) return;
-
-		for (const result of eligible) {
-			setOccurrencePreview(result.docId, { loading: true, items: [], error: '' });
-		}
-
+	const buildOccurrencePreviewMap = async (
+		results: SearchResult[]
+	): Promise<Map<number, ResultOccurrencePreview>> => {
+		const previews = new Map<number, ResultOccurrencePreview>();
+		const eligible = results.filter((result) => result.matches.length > 0);
+		if (eligible.length === 0) return previews;
 		try {
 			const response = await postJson<{
 				items: Array<{
@@ -1692,7 +1781,6 @@
 					snippetRadius: RESULT_PREVIEW_SNIPPET_RADIUS
 				}
 			});
-			if (searchExecution?.query !== queryAtStart) return;
 			const byDoc = new Map(response.items.map((item) => [item.docId, item]));
 			for (const result of eligible) {
 				const assignments = buildMatchAssignments(result.matches);
@@ -1715,40 +1803,27 @@
 							};
 						})
 						.sort((a, b) => a.start - b.start || a.end - b.end) ?? [];
-				setOccurrencePreview(result.docId, { loading: false, items: previewItems, error: '' });
+				previews.set(result.docId, { loading: false, items: previewItems, error: '' });
 			}
 		} catch (cause) {
-			if (searchExecution?.query !== queryAtStart) return;
 			for (const result of eligible) {
-				setOccurrencePreview(result.docId, {
+				previews.set(result.docId, {
 					loading: false,
 					items: [],
 					error: cause instanceof Error ? cause.message : 'No se pudieron cargar las concurrencias'
 				});
 			}
 		}
+		return previews;
 	};
 
-	const increasePreviewWindowIfNeeded = (): void => {
-		if (!searchExecution || visibleResults.length === 0) return;
-		let nextLimit = previewLoadLimit;
-		const preloadLine = window.innerHeight + PREVIEW_SCROLL_THRESHOLD_PX;
-		const resultCards = document.querySelectorAll<HTMLElement>('[data-texoro-result-index]');
-
-		for (const card of resultCards) {
-			if (card.getBoundingClientRect().top > preloadLine) continue;
-			const index = Number(card.dataset.texoroResultIndex);
-			if (!Number.isFinite(index)) continue;
-			nextLimit = Math.max(nextLimit, index + 1 + PREVIEW_BATCH_SIZE);
+	const mergeOccurrencePreviewMap = (previews: Map<number, ResultOccurrencePreview>): void => {
+		if (previews.size === 0) return;
+		const next = new Map(occurrencePreviews);
+		for (const [docId, preview] of previews) {
+			next.set(docId, preview);
 		}
-
-		const nearPageBottom =
-			window.scrollY + window.innerHeight >=
-			document.documentElement.scrollHeight - PREVIEW_SCROLL_THRESHOLD_PX;
-		if (nearPageBottom) nextLimit = visibleResults.length;
-
-		if (nextLimit <= previewLoadLimit) return;
-		previewLoadLimit = Math.min(visibleResults.length, nextLimit);
+		occurrencePreviews = next;
 	};
 
 	const collectHighlightRanges = (snippet: string, assignments: MatchAssignment[]): HighlightRange[] => {
@@ -1894,6 +1969,7 @@
 
 	const closeOccurrenceModal = (): void => {
 		occurrenceModal = null;
+		occurrenceModalScrolled = false;
 		occurrenceLoading = false;
 		occurrenceError = '';
 	};
@@ -1965,6 +2041,7 @@
 		const cached = occurrenceDetailsCache.get(occurrenceDetailsKey(result, assignment)) ?? null;
 		occurrenceError = '';
 		occurrenceLoading = !cached;
+		occurrenceModalScrolled = false;
 		occurrenceModal = {
 			result,
 			assignment,
@@ -2005,10 +2082,22 @@
 	const navigateResultsPage = async (page: number): Promise<void> => {
 		const nextPage = Math.min(Math.max(1, page), resultPageCount);
 		if (nextPage === resultsPage) return;
+		const requestId = ++visiblePreviewRequestId;
+		isPreparingResults = true;
 		resultsPage = nextPage;
-		previewLoadLimit = PREVIEW_INITIAL_DOC_LIMIT;
 		await scrollToResults();
-		queueMicrotask(increasePreviewWindowIfNeeded);
+		const pageResults = visibleResults;
+		try {
+			if (pageResults.some((result) => result.matches.length > 0 && !occurrencePreviews.has(result.docId))) {
+				const previews = await buildOccurrencePreviewMap(pageResults);
+				if (requestId !== visiblePreviewRequestId) return;
+				mergeOccurrencePreviewMap(previews);
+			}
+		} finally {
+			if (requestId === visiblePreviewRequestId) {
+				isPreparingResults = false;
+			}
+		}
 	};
 
 	const exportCurrentSearch = async (): Promise<void> => {
@@ -2062,8 +2151,30 @@
 	};
 
 	$effect(() => {
-		if (!searchExecution || visibleResults.length === 0) return;
-		void loadResultOccurrencePreviews(visibleResults.slice(0, previewLoadLimit));
+		const signature = visiblePreviewSignature;
+		if (
+			!searchExecution ||
+			isSearching ||
+			isPreparingResults ||
+			!signature ||
+			visibleResults.length === 0 ||
+			visibleResultsHavePreviews
+		) {
+			return;
+		}
+		const requestId = ++visiblePreviewRequestId;
+		isPreparingResults = true;
+		void (async () => {
+			try {
+				const previews = await buildOccurrencePreviewMap(visibleResults);
+				if (requestId !== visiblePreviewRequestId) return;
+				mergeOccurrencePreviewMap(previews);
+			} finally {
+				if (requestId === visiblePreviewRequestId) {
+					isPreparingResults = false;
+				}
+			}
+		})();
 	});
 
 	$effect(() => {
@@ -2101,8 +2212,22 @@
 		};
 	});
 
+	$effect(() => {
+		additionalModeVisual;
+		additionalModeAllButton;
+		additionalModeAnyButton;
+		additionalModeGlobalAnyButton;
+		void updateAdditionalModePill();
+	});
+
+	$effect(() => {
+		proximityModeVisual;
+		proximityModeAllButton;
+		proximityModeAnyButton;
+		void updateProximityModePill();
+	});
+
 	onMount(() => {
-		let previewScrollFrame = 0;
 		let initDelayTimer = 0;
 		let initIdleHandle = 0;
 		let warmupIdleHandle = 0;
@@ -2124,16 +2249,13 @@
 			}
 			globalThis.clearTimeout(handle);
 		};
-		const onScroll = (): void => {
-			if (previewScrollFrame) return;
-			previewScrollFrame = window.requestAnimationFrame(() => {
-				previewScrollFrame = 0;
-				increasePreviewWindowIfNeeded();
-			});
+		const handleResize = (): void => {
+			void updateAdditionalModePill();
+			void updateProximityModePill();
 		};
-		window.addEventListener('scroll', onScroll, { passive: true });
-		queueMicrotask(onScroll);
-
+		window.addEventListener('resize', handleResize);
+		void updateAdditionalModePill();
+		void updateProximityModePill();
 		initDelayTimer = window.setTimeout(() => {
 			initIdleHandle = scheduleIdle(() => {
 				void initializeTexoroWorker().then(() => {
@@ -2148,8 +2270,7 @@
 		}, 2500);
 
 		return () => {
-			window.removeEventListener('scroll', onScroll);
-			if (previewScrollFrame) window.cancelAnimationFrame(previewScrollFrame);
+			window.removeEventListener('resize', handleResize);
 			if (initDelayTimer) window.clearTimeout(initDelayTimer);
 			cancelIdle(initIdleHandle);
 			cancelIdle(warmupIdleHandle);
@@ -2163,10 +2284,10 @@
 		exportError = '';
 		searchExecution = null;
 		resultsPage = 1;
+		isPreparingResults = false;
 		submittedTerms = [];
 		lastSubmittedSearch = null;
 		occurrencePreviews = new Map();
-		previewLoadLimit = PREVIEW_INITIAL_DOC_LIMIT;
 		occurrenceDetailsCache = new Map();
 		occurrenceDetailsLoads = new Map();
 		chartCopyPending = { author: false, genre: false };
@@ -2204,21 +2325,109 @@
 		}
 
 		const { query, terms, structuredQuery } = buildEffectiveQuery();
+		const requestId = ++searchRequestId;
+		visiblePreviewRequestId += 1;
 		isSearching = true;
+		isPreparingResults = false;
 		try {
+			const execution = await runBrowserFirstSearch(query, structuredQuery);
+			if (requestId !== searchRequestId) return;
+			isPreparingResults = true;
+			const firstPageResults = getVisibleResultsForExecution(execution, 1);
+			const previews = await buildOccurrencePreviewMap(firstPageResults);
+			if (requestId !== searchRequestId) return;
 			submittedTerms = terms;
 			lastSubmittedSearch = { query, structuredQuery, terms };
-			searchExecution = await runBrowserFirstSearch(query, structuredQuery);
-			queueMicrotask(increasePreviewWindowIfNeeded);
+			occurrencePreviews = previews;
+			searchExecution = execution;
 		} catch (cause) {
 			submittedTerms = [];
 			lastSubmittedSearch = null;
 			searchError = cause instanceof Error ? cause.message : 'Error ejecutando la búsqueda';
 		} finally {
-			isSearching = false;
+			if (requestId === searchRequestId) {
+				isSearching = false;
+				isPreparingResults = false;
+			}
 		}
 	};
 </script>
+
+{#snippet attributionExpression(set: AttributionSet, unresolvedLabel: string, emptyLabel: string)}
+	{#if set.unresolved}
+		<span class="text-text-soft italic">{unresolvedLabel}</span>
+	{:else if set.groups.length > 0}
+		<div class="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+			{#each set.groups as group, groupIndex}
+				<span class="inline-flex flex-wrap items-center gap-x-1.5 gap-y-1">
+					{#each group.members as member, memberIndex}
+						{#if canLinkAuthor(member.authorId)}
+							<a
+								href={`/autores/${member.authorId}`}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="text-brand-blue no-underline hover:underline focus:underline focus-visible:underline"
+							>
+								{member.authorName}
+							</a>
+						{:else}
+							<span>{member.authorName}</span>
+						{/if}
+						{#if member.confidence}
+							<span class={confidenceClass(member.confidence)}>
+								{formatConfidence(member.confidence)}
+							</span>
+						{/if}
+						{#if memberIndex < group.members.length - 1}
+							<span class="inline-block rounded-[3px] bg-surface-accent-purple px-1.5 py-[1px] align-middle text-[10px] font-semibold text-text-accent-purple uppercase">
+								Y
+							</span>
+						{/if}
+					{/each}
+				</span>
+				{#if groupIndex < set.groups.length - 1}
+					<span class="inline-block rounded-[3px] bg-surface-accent-purple px-1.5 py-[1px] align-middle text-[10px] font-semibold text-text-accent-purple uppercase">
+						{attributionConnectorLabel(set)}
+					</span>
+				{/if}
+			{/each}
+		</div>
+	{:else}
+		<span class="text-text-soft italic">{emptyLabel}</span>
+	{/if}
+{/snippet}
+
+{#snippet resultMetadataBlock(meta: TexoroWorkMeta, metadataTitle: string)}
+	<div class="grid w-fit max-w-full gap-x-10 gap-y-3 md:grid-cols-[auto_auto] md:items-start" title={metadataTitle}>
+		<div class="min-w-0 max-w-full">
+			<p class="m-0 font-['Roboto',sans-serif] text-[0.72rem] font-bold tracking-[0.08em] text-text-accent-purple uppercase">
+				Atribuciones
+			</p>
+			<dl class="mt-2 grid w-fit max-w-full gap-x-8 gap-y-2 sm:grid-cols-[auto_auto]">
+				<div class="min-w-0 max-w-full">
+					<dt class="font-['Roboto',sans-serif] text-[0.76rem] font-semibold text-text-soft">Tradicional</dt>
+					<dd class="m-0 min-w-0 text-[0.86rem] leading-[1.35] text-text-main">
+						{@render attributionExpression(meta.traditionalAttribution, 'No determinada', 'No determinada')}
+					</dd>
+				</div>
+				<div class="min-w-0 max-w-full">
+					<dt class="font-['Roboto',sans-serif] text-[0.76rem] font-semibold text-text-soft">Estilometría</dt>
+					<dd class="m-0 min-w-0 text-[0.86rem] leading-[1.35] text-text-main">
+						{@render attributionExpression(meta.stylometryAttribution, 'El análisis no apunta hacia ningún autor', 'No disponible')}
+					</dd>
+				</div>
+			</dl>
+		</div>
+		<div class="min-w-0 max-w-full">
+			<p class="m-0 font-['Roboto',sans-serif] text-[0.72rem] font-bold tracking-[0.08em] text-text-accent-purple uppercase">
+				Género
+			</p>
+			<p class="mt-2 mb-0 text-[0.86rem] leading-[1.35] text-text-main">
+				{meta.genre.trim() || 'Sin género'}
+			</p>
+		</div>
+	</div>
+{/snippet}
 
 <div class="grid gap-6">
 	<Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'TEXORO' }]} />
@@ -2257,15 +2466,15 @@
 		{/snippet}
 	</FeatureHeroSection>
 
-	<section class="rounded-[14px] p-5">
+	<section class="rounded-[14px] p-5 font-['Roboto',sans-serif]">
 		<h2 class="m-0 font-['Roboto',sans-serif] text-[1.45rem] font-bold text-brand-blue-dark">Buscar en TEXORO</h2>
 		<p class="mt-2 mb-0 text-[0.98rem] text-text-soft">
 			Busca una palabra, frase exacta o patrón con comodines <code>*</code> y <code>?</code>. Si escribes varias
 			palabras, se buscan como frase exacta.
 		</p>
 
-		<form class="mt-4 grid gap-3" onsubmit={submitSearch}>
-			<div class="grid gap-3">
+		<form class="mt-5 grid gap-4" onsubmit={submitSearch}>
+			<div class="grid gap-4">
 				<div class="relative">
 					<input
 						type="search"
@@ -2279,11 +2488,11 @@
 					<button
 						type="submit"
 						class="absolute inset-y-1.5 right-1.5 inline-flex w-9 items-center justify-center rounded-[8px] border-0 bg-surface-accent-blue text-brand-blue-dark transition hover:bg-border-accent-blue focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue/25 disabled:cursor-not-allowed disabled:opacity-55"
-						aria-label={isSearching ? 'Buscando' : 'Buscar'}
-						title={isSearching ? 'Buscando' : 'Buscar'}
-						disabled={isSearching}
+						aria-label={isPreparingResults ? 'Preparando resultados' : isSearching ? 'Buscando' : 'Buscar'}
+						title={isPreparingResults ? 'Preparando resultados' : isSearching ? 'Buscando' : 'Buscar'}
+						disabled={isSearching || isPreparingResults}
 					>
-						{#if isSearching}
+						{#if isSearching || isPreparingResults}
 							<LoaderCircle class="h-4 w-4 animate-spin" aria-hidden="true" />
 						{:else}
 							<CornerDownLeft class="h-4.5 w-4.5" aria-hidden="true" />
@@ -2296,10 +2505,14 @@
 				Para combinar varios términos o buscar cercanías, abre la búsqueda avanzada.
 			</p>
 
-			<div class={`rounded-[10px] border border-border-accent-blue bg-white ${advancedSearchOpen ? 'overflow-visible' : 'overflow-hidden'}`}>
+			<div
+				class={`rounded-[10px] transition-[background-color,box-shadow] duration-200 ${
+					advancedSearchOpen ? 'overflow-visible bg-[var(--color-surface-subtle)] shadow-[0_8px_24px_rgba(25,46,80,0.06)]' : 'overflow-hidden bg-white'
+				}`}
+			>
 				<button
 					type="button"
-					class="flex w-full items-center justify-between gap-3 border-0 bg-transparent px-4 py-3 text-left font-['Roboto',sans-serif] text-[0.92rem] font-semibold text-brand-blue-dark transition hover:bg-surface-accent-blue"
+					class="flex w-full items-center justify-between gap-3 border-0 bg-transparent px-4 py-3 text-left font-['Roboto',sans-serif] text-[0.92rem] font-semibold text-brand-blue-dark transition hover:rounded-[10px] hover:bg-surface-accent-blue"
 					aria-expanded={advancedSearchOpen}
 					onclick={() => {
 						advancedSearchOpen = !advancedSearchOpen;
@@ -2314,7 +2527,7 @@
 				<div
 					class={`border-t px-4 transition-[max-height,padding,opacity] duration-300 ease-out ${
 						advancedSearchOpen
-							? 'max-h-[2200px] overflow-visible border-border-accent-blue py-4 opacity-100'
+							? 'max-h-[2200px] overflow-visible border-border-accent-blue py-5 opacity-100'
 							: 'max-h-0 border-transparent py-0 opacity-0'
 					}`}
 				>
@@ -2323,7 +2536,7 @@
 						condiciones contando la búsqueda principal.
 					</p>
 
-					<div class="mt-4 grid gap-5">
+					<div class="mt-5 grid gap-6">
 						<div class="grid gap-3">
 							<div class="flex flex-wrap items-center justify-between gap-3">
 								<div>
@@ -2337,28 +2550,40 @@
 								<div
 									role="group"
 									aria-label="Modo de combinación de términos adicionales"
-									class="relative grid grid-cols-2 rounded-full bg-surface-soft p-1"
+									class="relative grid max-w-full grid-cols-[auto_auto_auto] rounded-full bg-surface-soft p-1"
 									onmouseleave={() => (additionalModePreview = null)}
 								>
 									<span
-										class={`${modePillIndicatorClass} ${additionalModeVisual === 'any' ? 'translate-x-full' : 'translate-x-0'}`}
+										class={additionalModePillIndicatorClass}
+										style={additionalModePillStyle}
 										aria-hidden="true"
 									></span>
 									<button
 										type="button"
+										bind:this={additionalModeAllButton}
 										class={`${modePillButtonClass} ${additionalModeVisual === 'all' ? 'text-brand-blue-dark' : 'text-text-soft hover:text-brand-blue-dark'}`}
 										onmouseenter={() => (additionalModePreview = 'all')}
 										onclick={(event) => setAdditionalMode(event, 'all')}
 									>
-										Deben aparecer todos
+										Principal + adicionales
 									</button>
 									<button
 										type="button"
+										bind:this={additionalModeAnyButton}
 										class={`${modePillButtonClass} ${additionalModeVisual === 'any' ? 'text-brand-blue-dark' : 'text-text-soft hover:text-brand-blue-dark'}`}
 										onmouseenter={() => (additionalModePreview = 'any')}
 										onclick={(event) => setAdditionalMode(event, 'any')}
 									>
-										Puede aparecer cualquiera
+										Principal + algún adicional
+									</button>
+									<button
+										type="button"
+										bind:this={additionalModeGlobalAnyButton}
+										class={`${modePillButtonClass} ${additionalModeVisual === 'globalAny' ? 'text-brand-blue-dark' : 'text-text-soft hover:text-brand-blue-dark'}`}
+										onmouseenter={() => (additionalModePreview = 'globalAny')}
+										onclick={(event) => setAdditionalMode(event, 'globalAny')}
+									>
+										Cualquiera
 									</button>
 								</div>
 							</div>
@@ -2381,13 +2606,13 @@
 											type="search"
 											value={term.value}
 											placeholder="Ej: honra | honra constante | desdich?"
-											class="h-[42px] rounded-[8px] border border-border bg-white px-3 text-[0.92rem] text-text-main outline-none transition focus:border-brand-blue/35"
+											class="h-[42px] rounded-[10px] border border-border bg-white px-3 text-[15px] text-text-main outline-none transition focus:border-brand-blue/35"
 											oninput={(event) =>
 												updateAdditionalTermValue(term.id, (event.currentTarget as HTMLInputElement).value)}
 										/>
 										<button
 											type="button"
-											class="h-[42px] rounded-[8px] border border-border bg-white px-3 text-[0.84rem] font-semibold text-text-soft transition hover:border-[#d7b5bf] hover:bg-[#fff5f7] hover:text-[#8f1e36]"
+											class="h-[42px] rounded-[10px] border border-border bg-white px-3 text-[0.84rem] font-semibold text-text-soft transition hover:border-[#d7b5bf] hover:bg-[#fff5f7] hover:text-[#8f1e36]"
 											onclick={() => removeAdditionalTerm(term.id)}
 										>
 											Eliminar
@@ -2411,7 +2636,7 @@
 							{/if}
 						</div>
 
-						<div class="grid gap-3 border-t border-border-accent-blue pt-4">
+						<div class="grid gap-3 border-t border-border-accent-blue pt-5">
 							<div class="flex flex-wrap items-center justify-between gap-3">
 								<div>
 									<h3 class="m-0 font-['Roboto',sans-serif] text-[0.98rem] font-semibold text-brand-blue-dark">
@@ -2424,15 +2649,17 @@
 								<div
 									role="group"
 									aria-label="Modo de combinación de condiciones de proximidad"
-									class="relative grid grid-cols-2 rounded-full bg-surface-soft p-1"
+									class="relative grid max-w-full grid-cols-[auto_auto] rounded-full bg-surface-soft p-1"
 									onmouseleave={() => (proximityModePreview = null)}
 								>
 									<span
-										class={`${modePillIndicatorClass} ${proximityModeVisual === 'any' ? 'translate-x-full' : 'translate-x-0'}`}
+										class={modePillIndicatorClass}
+										style={proximityModePillStyle}
 										aria-hidden="true"
 									></span>
 									<button
 										type="button"
+										bind:this={proximityModeAllButton}
 										class={`${modePillButtonClass} ${proximityModeVisual === 'all' ? 'text-brand-blue-dark' : 'text-text-soft hover:text-brand-blue-dark'}`}
 										onmouseenter={() => (proximityModePreview = 'all')}
 										onclick={(event) => setProximityMode(event, 'all')}
@@ -2441,6 +2668,7 @@
 									</button>
 									<button
 										type="button"
+										bind:this={proximityModeAnyButton}
 										class={`${modePillButtonClass} ${proximityModeVisual === 'any' ? 'text-brand-blue-dark' : 'text-text-soft hover:text-brand-blue-dark'}`}
 										onmouseenter={() => (proximityModePreview = 'any')}
 										onclick={(event) => setProximityMode(event, 'any')}
@@ -2468,7 +2696,7 @@
 											type="search"
 											value={term.value}
 											placeholder="Término cercano"
-											class="h-[42px] rounded-[8px] border border-border bg-white px-3 text-[0.92rem] text-text-main outline-none transition focus:border-brand-blue/35"
+											class="h-[42px] rounded-[10px] border border-border bg-white px-3 text-[15px] text-text-main outline-none transition focus:border-brand-blue/35"
 											oninput={(event) =>
 												updateProximityTermValue(term.id, (event.currentTarget as HTMLInputElement).value)}
 										/>
@@ -2480,14 +2708,14 @@
 											max="100"
 											value={term.distance}
 											title="Distancia máxima en palabras intermedias"
-											class="h-[42px] rounded-[8px] border border-border bg-white px-3 text-[0.92rem] text-text-main outline-none transition focus:border-brand-blue/35"
+											class="h-[42px] rounded-[10px] border border-border bg-white px-3 text-[15px] text-text-main outline-none transition focus:border-brand-blue/35"
 											oninput={(event) =>
 												updateProximityTermDistance(term.id, Number((event.currentTarget as HTMLInputElement).value))}
 										/>
 										<label class="sr-only" for={`proximity-order-${term.id}`}>Orden</label>
 										<select
 											id={`proximity-order-${term.id}`}
-											class="h-[42px] rounded-[8px] border border-border bg-white px-3 text-[0.92rem] text-text-main outline-none transition focus:border-brand-blue/35"
+											class="h-[42px] rounded-[10px] border border-border bg-white px-3 text-[15px] text-text-main outline-none transition focus:border-brand-blue/35"
 											value={term.order}
 											onchange={(event) =>
 												updateProximityTermOrder(
@@ -2501,7 +2729,7 @@
 										</select>
 										<button
 											type="button"
-											class="h-[42px] rounded-[8px] border border-border bg-white px-3 text-[0.84rem] font-semibold text-text-soft transition hover:border-[#d7b5bf] hover:bg-[#fff5f7] hover:text-[#8f1e36]"
+											class="h-[42px] rounded-[10px] border border-border bg-white px-3 text-[0.84rem] font-semibold text-text-soft transition hover:border-[#d7b5bf] hover:bg-[#fff5f7] hover:text-[#8f1e36]"
 											onclick={() => removeProximityTerm(term.id)}
 										>
 											Eliminar
@@ -2525,10 +2753,14 @@
 				</div>
 			</div>
 
-			<div class={`rounded-[10px] border border-border-accent-blue bg-white ${filtersOpen ? 'overflow-visible' : 'overflow-hidden'}`}>
+			<div
+				class={`rounded-[10px] transition-[background-color,box-shadow] duration-200 ${
+					filtersOpen ? 'overflow-visible bg-[var(--color-surface-subtle)] shadow-[0_8px_24px_rgba(25,46,80,0.06)]' : 'overflow-hidden bg-white'
+				}`}
+			>
 				<button
 					type="button"
-					class="flex w-full items-center justify-between gap-3 border-0 bg-transparent px-4 py-3 text-left font-['Roboto',sans-serif] text-[0.92rem] font-semibold text-brand-blue-dark transition hover:bg-surface-accent-blue"
+					class="flex w-full items-center justify-between gap-3 border-0 bg-transparent px-4 py-3 text-left font-['Roboto',sans-serif] text-[0.92rem] font-semibold text-brand-blue-dark transition hover:rounded-[10px] hover:bg-surface-accent-blue"
 					aria-expanded={filtersOpen}
 					onclick={() => {
 						filtersOpen = !filtersOpen;
@@ -2543,22 +2775,36 @@
 				<div
 					class={`border-t px-4 transition-[max-height,padding,opacity] duration-300 ease-out ${
 						filtersOpen
-							? 'max-h-[1600px] overflow-visible border-border-accent-blue py-4 opacity-100'
+							? 'max-h-[1600px] overflow-visible border-border-accent-blue py-5 opacity-100'
 							: 'max-h-0 border-transparent py-0 opacity-0'
 					}`}
 				>
-					<div class="grid gap-5">
+					<div class="grid gap-6">
 						<div class="grid gap-5 md:grid-cols-2">
 							<div class="flex flex-col">
-								<label class="mb-[6px] text-[14px] font-semibold text-text-soft" for="texoro-title-filter">
+								<label class="mb-[6px] inline-flex items-center gap-1 font-['Roboto',sans-serif] text-[14px] font-semibold text-text-soft" for="texoro-title-filter">
 									Título
+									<span class="group relative inline-flex items-center">
+										<span
+											class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border-accent-blue bg-surface-accent-blue text-[12px] leading-none font-bold text-brand-blue-dark"
+											role="button"
+											tabindex="0"
+										>
+											?
+										</span>
+										<span
+											class="invisible absolute top-[calc(100%+8px)] left-0 z-20 w-[min(320px,78vw)] rounded-[6px] border border-border bg-white px-[10px] py-2 text-[12px] leading-[1.35] font-normal text-text-soft opacity-0 shadow-[0_8px_18px_rgba(0,0,0,0.08)] transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
+										>
+											Filtra las obras por palabras del título después de ejecutar la búsqueda textual.
+										</span>
+									</span>
 								</label>
 								<input
 									id="texoro-title-filter"
 									type="text"
 									bind:value={titleFilter}
 									placeholder="Ej: desdén, fuerza del interés..."
-									class="rounded-[8px] border border-border px-3 py-[10px] text-[14px] transition focus:border-brand-blue/35 focus:shadow-[0_0_0_3px_rgba(13,63,145,0.1)] focus:outline-none"
+									class="h-[42px] w-full rounded-[10px] border border-border bg-white px-3 text-[15px] text-text-main transition focus:border-brand-blue/35 focus:shadow-[0_0_0_3px_rgba(13,63,145,0.1)] focus:outline-none"
 								/>
 							</div>
 
@@ -2576,8 +2822,8 @@
 							/>
 						</div>
 
-						<div class="grid gap-4 md:grid-cols-2">
-							<div class="flex flex-col gap-3 rounded-[8px] border border-border bg-surface p-[14px]">
+						<div class="grid gap-5 md:grid-cols-2">
+							<div class="flex flex-col gap-4 rounded-[8px] border border-border bg-[var(--color-surface-subtle)] p-4">
 								<TokenMultiSelect
 									name="texoro-traditional-attribution"
 									label="Atribución tradicional"
@@ -2601,7 +2847,7 @@
 								/>
 							</div>
 
-							<div class="flex flex-col gap-3 rounded-[8px] border border-border bg-surface p-[14px]">
+							<div class="flex flex-col gap-4 rounded-[8px] border border-border bg-[var(--color-surface-subtle)] p-4">
 								<TokenMultiSelect
 									name="texoro-stylometry-attribution"
 									label="Atribución estilometría"
@@ -2683,10 +2929,10 @@
 				<AppButton
 					type="submit"
 					variant="primary"
-					disabled={isSearching}
+					disabled={isSearching || isPreparingResults}
 					className="!h-[40px] !min-w-[136px] gap-2 !rounded-[10px] !px-5 !py-2 font-['Roboto',sans-serif] text-[0.9rem] font-semibold tracking-[0.02em]"
 				>
-					{#if isSearching}
+					{#if isSearching || isPreparingResults}
 						<LoaderCircle class="h-4.5 w-4.5 animate-spin" />
 						Buscando...
 					{:else}
@@ -2700,26 +2946,38 @@
 			<p class="mt-3 mb-0 rounded-[9px] border border-[#f3c0ca] bg-[#fff5f7] px-3 py-2 text-[0.92rem] text-[#8f1e36]">{searchError}</p>
 		{/if}
 
+		{#if (isSearching || isPreparingResults) && !searchExecution}
+			<div
+				id="texoro-resultados"
+				bind:this={resultsRegion}
+				class="mt-14 flex scroll-mt-6 items-center gap-3 rounded-[12px] border border-border-accent-blue bg-white px-4 py-5 text-brand-blue-dark shadow-[0_6px_16px_rgba(25,46,80,0.07)]"
+				aria-live="polite"
+				aria-busy="true"
+			>
+				<LoaderCircle class="h-5 w-5 animate-spin" aria-hidden="true" />
+				<p class="m-0 font-['Roboto',sans-serif] text-[0.95rem] font-semibold">
+					{isPreparingResults ? 'Preparando resultados y contextos...' : 'Buscando en TEXORO...'}
+				</p>
+			</div>
+		{/if}
+
 		{#if searchExecution}
 			<div
 				id="texoro-resultados"
 				bind:this={resultsRegion}
-				class="mt-4 grid scroll-mt-6 gap-4"
+				class="mt-14 grid scroll-mt-6 gap-4"
 				aria-live="polite"
 			>
 				<div class="flex flex-wrap items-center justify-between gap-3">
 					<div>
-						<p class="m-0 font-['Roboto',sans-serif] text-[1rem] font-semibold text-brand-blue-dark">
+						<h2 class="m-0 font-['Roboto',sans-serif] text-[1.45rem] font-bold text-brand-blue-dark">
 							Resultados de búsqueda
-						</p>
-						<p class="mt-1 mb-0 text-[0.84rem] text-text-soft">
-							La exportación incluye todos los resultados filtrados y un máximo de 300 contextos.
-						</p>
+						</h2>
 					</div>
 					<AppButton
 						type="button"
 						variant="secondary"
-						disabled={isExporting || !lastSubmittedSearch || filteredResults.length === 0}
+						disabled={isExporting || isPreparingResults || !lastSubmittedSearch || filteredResults.length === 0}
 						className="!h-[40px] !rounded-[10px] !px-4 !py-2 font-['Roboto',sans-serif] text-[0.88rem] font-semibold"
 						title="Exportar resultados filtrados en XLSX"
 						onclick={() => {
@@ -2920,7 +3178,18 @@
 					</div>
 				{/if}
 
-				{#if filteredResults.length === 0}
+				{#if shouldShowResultsLoader}
+					<div
+						class="flex items-center gap-3 rounded-[12px] border border-border-accent-blue bg-white px-4 py-5 text-brand-blue-dark shadow-[0_6px_16px_rgba(25,46,80,0.07)]"
+						aria-live="polite"
+						aria-busy="true"
+					>
+						<LoaderCircle class="h-5 w-5 animate-spin" aria-hidden="true" />
+						<p class="m-0 font-['Roboto',sans-serif] text-[0.95rem] font-semibold">
+							Preparando resultados y contextos...
+						</p>
+					</div>
+				{:else if filteredResults.length === 0}
 					<p class="m-0 text-[0.96rem] text-text-soft">
 						{hasActiveFilters
 							? 'No se encontraron coincidencias con los filtros aplicados.'
@@ -2943,7 +3212,7 @@
 								<AppButton
 									type="button"
 									variant="secondary"
-									disabled={resultsPage <= 1}
+									disabled={isPreparingResults || resultsPage <= 1}
 									className="!h-9 !w-9 !rounded-full !border-transparent !bg-transparent !p-0 !text-brand-blue-dark shadow-none hover:!bg-surface-soft"
 									title="Página anterior"
 									onclick={() => {
@@ -2960,7 +3229,7 @@
 								<AppButton
 									type="button"
 									variant="secondary"
-									disabled={resultsPage >= resultPageCount}
+									disabled={isPreparingResults || resultsPage >= resultPageCount}
 									className="!h-9 !w-9 !rounded-full !border-transparent !bg-transparent !p-0 !text-brand-blue-dark shadow-none hover:!bg-surface-soft"
 									title="Página siguiente"
 									onclick={() => {
@@ -2979,100 +3248,114 @@
 							{@const resultOccurrences = sumResultOccurrences(result)}
 							{@const preview = occurrencePreviews.get(result.docId)}
 							{@const metadataLine = resultMetadataLine(result)}
+							{@const bicuveLink = result.meta ? getBicuveLink(result.meta) : null}
 							<li
-								class="rounded-[11px] border border-border-accent-blue bg-white px-4 py-3 shadow-[0_6px_16px_rgba(25,46,80,0.07)]"
+								class="overflow-hidden rounded-[11px] bg-white shadow-[0_6px_16px_rgba(25,46,80,0.07)]"
 								data-texoro-result-index={resultIndex}
 							>
-								<div class="grid gap-1.5">
-									<div class="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
+								<div class="grid gap-3 bg-surface-soft px-4 py-3">
+									<div class="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
 										<h3 class="m-0 min-w-0 font-['Roboto',sans-serif] text-[1.03rem] leading-[1.25] font-semibold text-brand-blue-dark">
 											{#if result.meta}
-												<a href={`/obras/${result.meta.slug}`} class="block overflow-hidden text-ellipsis whitespace-nowrap text-brand-blue no-underline hover:text-brand-blue-dark" title={formatDisplayWorkTitle(result.meta.title)}>{formatDisplayWorkTitle(result.meta.title)}</a>
+												<a
+													href={`/obras/${result.meta.slug}`}
+													target="_blank"
+													rel="noopener noreferrer"
+													class="inline whitespace-normal break-words text-brand-blue no-underline hover:text-brand-blue-dark"
+													title={formatDisplayWorkTitle(result.meta.title)}
+												>{formatDisplayWorkTitle(result.meta.title)}</a>
 											{:else}
 												Obra sin metadatos
 											{/if}
 										</h3>
-										<span class="w-fit shrink-0 rounded-full bg-surface-accent-blue px-2.5 py-1 font-['Roboto',sans-serif] text-[0.8rem] font-semibold whitespace-nowrap text-brand-blue-dark">
-											{numberFormatter.format(resultOccurrences)} {resultOccurrences === 1 ? 'concurrencia' : 'concurrencias'}
-										</span>
+										<div class="flex min-w-0 flex-wrap items-center gap-2 sm:justify-end">
+											{#if bicuveLink}
+												<InlineActionButton
+													href={bicuveLink.href}
+													icon={BookOpen}
+													preloadData="off"
+													target="_blank"
+													title="Acceso al texto"
+													class="!min-h-[1.75rem] !px-2.5 !py-1 text-[0.78rem]"
+												>
+													Acceso texto
+												</InlineActionButton>
+											{/if}
+											<span class="w-fit shrink-0 rounded-full bg-surface-accent-blue px-2.5 py-1 font-['Roboto',sans-serif] text-[0.8rem] font-semibold whitespace-nowrap text-brand-blue-dark">
+												{numberFormatter.format(resultOccurrences)} {resultOccurrences === 1 ? 'concurrencia' : 'concurrencias'}
+											</span>
+										</div>
 									</div>
-									<p class="m-0 overflow-hidden text-ellipsis whitespace-nowrap text-[0.78rem] leading-[1.35] text-text-soft" title={metadataLine}>
-										{#if result.meta}
-											<span class="font-['Roboto',sans-serif] font-semibold text-text-accent-purple">Trad.</span>
-											{formatCompactAttribution(result.meta.traditionalAttribution)}
-											<span class="mx-1 text-border">·</span>
-											<span class="font-['Roboto',sans-serif] font-semibold text-text-accent-purple">Estil.</span>
-											{formatCompactAttribution(result.meta.stylometryAttribution)}
-											<span class="mx-1 text-border">·</span>
-											<span class="font-['Roboto',sans-serif] font-semibold text-text-accent-purple">Género</span>
-											{result.meta.genre.trim() || 'Sin género'}
-										{:else}
-											{metadataLine}
-										{/if}
-									</p>
+									{#if result.meta}
+										{@render resultMetadataBlock(result.meta, metadataLine)}
+									{:else}
+										<p class="m-0 text-[0.86rem] leading-[1.35] text-text-soft">{metadataLine}</p>
+									{/if}
 								</div>
 
-								{#if preview?.loading}
-									<p class="mt-3 mb-0 text-[0.9rem] text-text-soft">Cargando concurrencias...</p>
-								{:else if preview?.error}
-									<p class="mt-3 mb-0 rounded-[9px] border border-[#f3c0ca] bg-[#fff5f7] px-3 py-2 text-[0.88rem] text-[#8f1e36]">
-										{preview.error}
-									</p>
-								{:else if preview?.items.length}
-									<ol class="mt-3 m-0 list-none p-0 text-[0.95rem] leading-[1.55] text-text-main">
-										{#each preview.items as item, index}
-											{@const itemAssignment = assignments.find((assignment) => assignment.key === item.assignmentKey)}
-											{@const itemPosition = occurrencePositionParts(item)}
-											<li class="grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-1 border-t border-brand-blue/15 py-3 first:border-t-0 first:pt-0 last:pb-0">
-												<span class="font-['Roboto',sans-serif] text-[0.82rem] font-bold text-text-accent-purple">
-													#{index + 1}
-												</span>
-												<div class="grid min-w-0 gap-1 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start sm:gap-3">
-													<span class="texoro-occurrence-snippet block min-w-0">
-														{@html highlightExactOccurrenceSnippet(item.centeredSnippet, itemAssignment, item)}
+								<div class="px-4 py-3">
+									{#if preview?.loading}
+										<p class="mt-3 mb-0 text-[0.9rem] text-text-soft">Cargando concurrencias...</p>
+									{:else if preview?.error}
+										<p class="mt-3 mb-0 rounded-[9px] border border-[#f3c0ca] bg-[#fff5f7] px-3 py-2 text-[0.88rem] text-[#8f1e36]">
+											{preview.error}
+										</p>
+									{:else if preview?.items.length}
+										<ol class="mt-3 m-0 list-none p-0 text-[0.95rem] leading-[1.55] text-text-main">
+											{#each preview.items as item, index}
+												{@const itemAssignment = assignments.find((assignment) => assignment.key === item.assignmentKey)}
+												{@const itemPosition = occurrencePositionParts(item)}
+												<li class="grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-1 border-t border-brand-blue/15 py-3 first:border-t-0 first:pt-0 last:pb-0">
+													<span class="font-['Roboto',sans-serif] text-[0.82rem] font-bold text-text-accent-purple">
+														#{index + 1}
 													</span>
-													<span class="font-['Roboto',sans-serif] text-[0.76rem] font-medium whitespace-nowrap text-text-accent-purple sm:text-right">
-														{itemPosition.prefix}<span class="font-bold">{itemPosition.value}</span>{itemPosition.suffix}
-													</span>
-												</div>
-											</li>
-										{/each}
-									</ol>
-								{:else if preview}
-									<p class="mt-3 mb-0 text-[0.9rem] text-text-soft">No hay concurrencias para mostrar.</p>
-								{:else}
-									<p class="mt-3 mb-0 text-[0.9rem] text-text-soft">Cargando concurrencias...</p>
-								{/if}
+													<div class="grid min-w-0 gap-1 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start sm:gap-3">
+														<span class="texoro-occurrence-snippet block min-w-0">
+															{@html highlightExactOccurrenceSnippet(item.centeredSnippet, itemAssignment, item)}
+														</span>
+														<span class="font-['Roboto',sans-serif] text-[0.76rem] font-medium whitespace-nowrap text-text-accent-purple sm:text-right">
+															{itemPosition.prefix}<span class="font-bold">{itemPosition.value}</span>{itemPosition.suffix}
+														</span>
+													</div>
+												</li>
+											{/each}
+										</ol>
+									{:else if preview}
+										<p class="mt-3 mb-0 text-[0.9rem] text-text-soft">No hay concurrencias para mostrar.</p>
+									{:else}
+										<p class="mt-3 mb-0 text-[0.9rem] text-text-soft">Cargando concurrencias...</p>
+									{/if}
 
-								<div class="mt-4 flex flex-wrap gap-1.5">
-									{#each assignments as assignment}
-										<button
-											type="button"
-											class="texoro-more-button"
-											style="cursor:pointer;"
-											onpointerenter={() => prefetchOccurrenceDetails(result, assignment)}
-											onfocus={() => prefetchOccurrenceDetails(result, assignment)}
-											onclick={() => openOccurrenceModal(result, assignment)}
-											title={`Ver más concurrencias de ${formatMatchDisplayLabel(assignment.match)}`}
-										>
-											<span class="texoro-more-button__label">Ver más</span>
-											<span
-												class="texoro-more-button__term"
-												style={assignment.chipStyle}
+									<div class="mt-4 flex flex-wrap gap-1.5">
+										{#each assignments as assignment}
+											<button
+												type="button"
+												class="texoro-more-button"
+												style="cursor:pointer;"
+												onpointerenter={() => prefetchOccurrenceDetails(result, assignment)}
+												onfocus={() => prefetchOccurrenceDetails(result, assignment)}
+												onclick={() => openOccurrenceModal(result, assignment)}
+												title={`Ver más concurrencias de ${formatMatchDisplayLabel(assignment.match)}`}
 											>
-												{#each matchDisplayParts(assignment.match, { includeProximityMeta: false }) as part}
-													<span
-														class={part.kind === 'text' ? 'texoro-more-button__term-text' : 'texoro-more-button__meta'}
-													>
-														{part.value}
-													</span>
-												{/each}
-											</span>
-											<span class="texoro-more-button__count">
-												{numberFormatter.format(assignment.match.occurrences)}
-											</span>
-										</button>
-									{/each}
+												<span class="texoro-more-button__label">Ver más</span>
+												<span
+													class="texoro-more-button__term"
+													style={assignment.chipStyle}
+												>
+													{#each matchDisplayParts(assignment.match, { includeProximityMeta: false }) as part}
+														<span
+															class={part.kind === 'text' ? 'texoro-more-button__term-text' : 'texoro-more-button__meta'}
+														>
+															{part.value}
+														</span>
+													{/each}
+												</span>
+												<span class="texoro-more-button__count">
+													{numberFormatter.format(assignment.match.occurrences)}
+												</span>
+											</button>
+										{/each}
+									</div>
 								</div>
 							</li>
 						{/each}
@@ -3082,7 +3365,7 @@
 							<AppButton
 								type="button"
 								variant="secondary"
-								disabled={resultsPage <= 1}
+								disabled={isPreparingResults || resultsPage <= 1}
 								className="!h-9 !w-9 !rounded-full !border-transparent !bg-transparent !p-0 !text-brand-blue-dark shadow-none hover:!bg-surface-soft"
 								title="Página anterior"
 								onclick={() => {
@@ -3099,7 +3382,7 @@
 							<AppButton
 								type="button"
 								variant="secondary"
-								disabled={resultsPage >= resultPageCount}
+								disabled={isPreparingResults || resultsPage >= resultPageCount}
 								className="!h-9 !w-9 !rounded-full !border-transparent !bg-transparent !p-0 !text-brand-blue-dark shadow-none hover:!bg-surface-soft"
 								title="Página siguiente"
 								onclick={() => {
@@ -3127,20 +3410,22 @@
 			onclick={closeOccurrenceModal}
 		></button>
 		<div
-			class="relative max-h-[88vh] w-full max-w-[880px] overflow-hidden rounded-[12px] border border-border-accent-blue bg-white shadow-[0_16px_40px_rgba(4,24,56,0.33)]"
+			class="relative max-h-[88vh] w-full max-w-[880px] overflow-hidden rounded-[12px] bg-white shadow-[0_16px_40px_rgba(4,24,56,0.33)]"
 			role="dialog"
 			aria-modal="true"
 			aria-label={`Concurrencias de ${formatMatchDisplayLabel(occurrenceModal.assignment.match)}`}
 			tabindex="-1"
 		>
-			<div class="grid gap-3 border-b border-border-accent-blue bg-surface px-4 py-3">
-				<div class="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
+			<div class="relative grid gap-3 bg-surface-soft px-4 py-3 sm:gap-5">
+				<div class="min-w-0 pr-11">
 					<div class="min-w-0">
 						<h3 class="m-0 min-w-0 font-['Roboto',sans-serif] text-[1.08rem] leading-[1.25] font-semibold text-brand-blue-dark">
 							{#if occurrenceModal.result.meta}
 								<a
 									href={`/obras/${occurrenceModal.result.meta.slug}`}
-									class="block overflow-hidden text-ellipsis whitespace-nowrap text-brand-blue no-underline hover:text-brand-blue-dark"
+									target="_blank"
+									rel="noopener noreferrer"
+									class="inline whitespace-normal break-words text-brand-blue no-underline hover:text-brand-blue-dark"
 									title={formatDisplayWorkTitle(occurrenceModal.result.meta.title)}
 								>
 									{formatDisplayWorkTitle(occurrenceModal.result.meta.title)}
@@ -3149,29 +3434,22 @@
 								Obra sin metadatos
 							{/if}
 						</h3>
-						<p class="mt-1 mb-0 overflow-hidden text-ellipsis whitespace-nowrap text-[0.78rem] leading-[1.35] text-text-soft" title={resultMetadataLine(occurrenceModal.result)}>
-							{#if occurrenceModal.result.meta}
-								<span class="font-['Roboto',sans-serif] font-semibold text-text-accent-purple">Trad.</span>
-								{formatCompactAttribution(occurrenceModal.result.meta.traditionalAttribution)}
-								<span class="mx-1 text-border">·</span>
-								<span class="font-['Roboto',sans-serif] font-semibold text-text-accent-purple">Estil.</span>
-								{formatCompactAttribution(occurrenceModal.result.meta.stylometryAttribution)}
-								<span class="mx-1 text-border">·</span>
-								<span class="font-['Roboto',sans-serif] font-semibold text-text-accent-purple">Género</span>
-								{occurrenceModal.result.meta.genre.trim() || 'Sin género'}
-							{:else}
-								{resultMetadataLine(occurrenceModal.result)}
-							{/if}
-						</p>
 					</div>
-					<button
-						type="button"
-						class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border-accent-blue bg-white text-brand-blue-dark transition hover:bg-surface-accent-blue focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue/25"
-						aria-label="Cerrar modal"
-						onclick={closeOccurrenceModal}
-					>
-						<X class="h-4 w-4" aria-hidden="true" />
-					</button>
+				</div>
+				<button
+					type="button"
+					class="absolute top-2.5 right-3 inline-flex h-9 w-9 items-center justify-center rounded-full border-0 bg-transparent text-brand-blue-dark transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue/25"
+					aria-label="Cerrar modal"
+					onclick={closeOccurrenceModal}
+				>
+					<X class="h-4 w-4" aria-hidden="true" />
+				</button>
+				<div class="pt-1" class:texoro-modal-metadata--hidden-mobile={occurrenceModalScrolled}>
+					{#if occurrenceModal.result.meta}
+						{@render resultMetadataBlock(occurrenceModal.result.meta, resultMetadataLine(occurrenceModal.result))}
+					{:else}
+						<p class="m-0 text-[0.86rem] leading-[1.35] text-text-soft">{resultMetadataLine(occurrenceModal.result)}</p>
+					{/if}
 				</div>
 				<div class="flex flex-wrap items-center gap-2">
 					<span
@@ -3199,7 +3477,12 @@
 				</div>
 			</div>
 
-			<div class="max-h-[72vh] overflow-auto px-4 py-3">
+			<div
+				class="max-h-[72vh] overflow-auto px-4 py-3"
+				onscroll={(event) => {
+					occurrenceModalScrolled = event.currentTarget.scrollTop > 8;
+				}}
+			>
 				{#if occurrenceLoading}
 					<p class="m-0 text-[0.93rem] text-text-soft">Cargando concurrencias...</p>
 				{:else if occurrenceError}
@@ -3210,14 +3493,18 @@
 					<ul class="m-0 grid list-none gap-2 p-0">
 						{#each occurrenceModal.details.items as item, index}
 							{@const itemPosition = occurrencePositionParts(item)}
-							<li class="rounded-[9px] border border-border-accent-blue bg-surface px-3 py-2">
-								<p class="m-0 font-['Roboto',sans-serif] text-[0.79rem] font-semibold text-text-accent-purple">#{index + 1}</p>
-								<p class="texoro-occurrence-modal-snippet mt-1 mb-0 text-[0.93rem] leading-[1.55] text-text-main">
-									{@html highlightExactOccurrenceSnippet(item.snippet, occurrenceModal.assignment, item)}
-								</p>
-								<p class="mt-1 mb-0 font-['Roboto',sans-serif] text-[0.75rem] font-medium text-text-accent-purple">
-									{itemPosition.prefix}<span class="font-bold">{itemPosition.value}</span>{itemPosition.suffix}
-								</p>
+							<li class="overflow-hidden rounded-[9px] bg-white shadow-[0_4px_12px_rgba(25,46,80,0.06)]">
+								<div class="grid gap-2 bg-surface-soft px-3 py-2 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center">
+									<p class="m-0 font-['Roboto',sans-serif] text-[0.79rem] font-semibold text-text-accent-purple">#{index + 1}</p>
+									<p class="m-0 font-['Roboto',sans-serif] text-[0.75rem] font-medium text-text-accent-purple sm:text-right">
+										{itemPosition.prefix}{itemPosition.value}{itemPosition.suffix}
+									</p>
+								</div>
+								<div class="px-3 py-2">
+									<p class="texoro-occurrence-modal-snippet m-0 text-[0.93rem] leading-[1.55] text-text-main">
+										{@html highlightExactOccurrenceSnippet(item.snippet, occurrenceModal.assignment, item)}
+									</p>
+								</div>
 							</li>
 						{/each}
 					</ul>
@@ -3246,6 +3533,7 @@
 		display: -webkit-box;
 		overflow: hidden;
 		-webkit-box-orient: vertical;
+		font-family: var(--font-reading);
 		line-clamp: 3;
 		-webkit-line-clamp: 3;
 	}
@@ -3253,6 +3541,12 @@
 	.texoro-occurrence-modal-snippet {
 		white-space: pre-wrap;
 		overflow-wrap: anywhere;
+	}
+
+	@media (max-width: 639px) {
+		.texoro-modal-metadata--hidden-mobile {
+			display: none;
+		}
 	}
 
 	.texoro-more-button {

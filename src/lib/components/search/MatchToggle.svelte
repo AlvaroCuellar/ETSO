@@ -80,6 +80,7 @@
 	}
 
 	.fieldset-legend {
+		font-family: 'Roboto', sans-serif;
 		font-weight: 600;
 		font-size: 14px;
 		color: var(--color-text-soft);

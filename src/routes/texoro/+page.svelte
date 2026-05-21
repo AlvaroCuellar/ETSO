@@ -19,6 +19,7 @@
 	import ChevronLeft from 'lucide-svelte/icons/chevron-left';
 	import ChevronRight from 'lucide-svelte/icons/chevron-right';
 	import CornerDownLeft from 'lucide-svelte/icons/corner-down-left';
+	import Download from 'lucide-svelte/icons/download';
 	import Feather from 'lucide-svelte/icons/feather';
 	import Search from 'lucide-svelte/icons/search';
 	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
@@ -179,6 +180,12 @@
 		operator: string | null;
 	}
 
+	interface SubmittedSearch {
+		query: string;
+		structuredQuery: StructuredSearchQuery;
+		terms: SubmittedQueryTerm[];
+	}
+
 	type InterpretedQueryPartKind = 'text' | 'term' | 'operator';
 
 	interface InterpretedQueryPart {
@@ -243,8 +250,11 @@
 	let estoMatch = $state<'or' | 'and'>('or');
 	let selectedStates = $state<string[]>([]);
 	let submittedTerms = $state<SubmittedQueryTerm[]>([]);
+	let lastSubmittedSearch = $state<SubmittedSearch | null>(null);
 	let isSearching = $state(false);
+	let isExporting = $state(false);
 	let searchError = $state('');
+	let exportError = $state('');
 	let searchExecution = $state<SearchExecution | null>(null);
 	let resultsPage = $state(1);
 	let resultsRegion = $state<HTMLElement | null>(null);
@@ -1200,9 +1210,11 @@
 		estoMatch = 'or';
 		selectedStates = [];
 		submittedTerms = [];
+		lastSubmittedSearch = null;
 		searchExecution = null;
 		resultsPage = 1;
 		searchError = '';
+		exportError = '';
 		occurrencePreviews = new Map();
 		previewLoadLimit = PREVIEW_INITIAL_DOC_LIMIT;
 		occurrenceDetailsCache = new Map();
@@ -1517,6 +1529,21 @@
 			throw new Error(message || `Error HTTP ${response.status}`);
 		}
 		return (await response.json()) as T;
+	}
+
+	async function postBlob(url: string, body: unknown): Promise<Blob> {
+		const response = await fetch(url, {
+			method: 'POST',
+			headers: {
+				'content-type': 'application/json'
+			},
+			body: JSON.stringify(body)
+		});
+		if (!response.ok) {
+			const message = await response.text().catch(() => '');
+			throw new Error(message || `Error HTTP ${response.status}`);
+		}
+		return await response.blob();
 	}
 
 	const fetchWorksMeta = async (): Promise<TexoroWorkMeta[]> => {
@@ -2052,6 +2079,41 @@
 		queueMicrotask(increasePreviewWindowIfNeeded);
 	};
 
+	const exportCurrentSearch = async (): Promise<void> => {
+		if (!lastSubmittedSearch || !searchExecution) return;
+		exportError = '';
+		isExporting = true;
+		try {
+			const blob = await postBlob('/api/texoro/export.xlsx', {
+				query: lastSubmittedSearch.query,
+				structuredQuery: lastSubmittedSearch.structuredQuery,
+				terms: lastSubmittedSearch.terms,
+				filters: {
+					title: titleFilter,
+					genres: selectedGenres,
+					traditionalAuthorIds: selectedTradAuthors,
+					traditionalMatch: tradMatch,
+					stylometryAuthorIds: selectedEstoAuthors,
+					stylometryMatch: estoMatch,
+					states: selectedStates
+				}
+			});
+			const downloadUrl = URL.createObjectURL(blob);
+			const anchor = document.createElement('a');
+			const stamp = new Date().toISOString().slice(0, 10);
+			anchor.href = downloadUrl;
+			anchor.download = `texoro-resultados-${stamp}.xlsx`;
+			document.body.append(anchor);
+			anchor.click();
+			anchor.remove();
+			URL.revokeObjectURL(downloadUrl);
+		} catch (cause) {
+			exportError = cause instanceof Error ? cause.message : 'No se pudo exportar la búsqueda';
+		} finally {
+			isExporting = false;
+		}
+	};
+
 	const canPrimeCurrentQuery = (): boolean => {
 		const trimmedMain = mainQuery.trim();
 		if (!trimmedMain || !QUERY_ALLOWED_PATTERN.test(trimmedMain)) return false;
@@ -2160,9 +2222,11 @@
 	const submitSearch = async (event: SubmitEvent): Promise<void> => {
 		event.preventDefault();
 		searchError = '';
+		exportError = '';
 		searchExecution = null;
 		resultsPage = 1;
 		submittedTerms = [];
+		lastSubmittedSearch = null;
 		occurrencePreviews = new Map();
 		previewLoadLimit = PREVIEW_INITIAL_DOC_LIMIT;
 		occurrenceDetailsCache = new Map();
@@ -2205,10 +2269,12 @@
 		isSearching = true;
 		try {
 			submittedTerms = terms;
+			lastSubmittedSearch = { query, structuredQuery, terms };
 			searchExecution = await runBrowserFirstSearch(query, structuredQuery);
 			queueMicrotask(increasePreviewWindowIfNeeded);
 		} catch (cause) {
 			submittedTerms = [];
+			lastSubmittedSearch = null;
 			searchError = cause instanceof Error ? cause.message : 'Error ejecutando la búsqueda';
 		} finally {
 			isSearching = false;
@@ -2703,6 +2769,39 @@
 				class="mt-4 grid scroll-mt-6 gap-4"
 				aria-live="polite"
 			>
+				<div class="flex flex-wrap items-center justify-between gap-3">
+					<div>
+						<p class="m-0 font-['Roboto',sans-serif] text-[1rem] font-semibold text-brand-blue-dark">
+							Resultados de búsqueda
+						</p>
+						<p class="mt-1 mb-0 text-[0.84rem] text-text-soft">
+							La exportación incluye todos los resultados filtrados y un máximo de 300 contextos.
+						</p>
+					</div>
+					<AppButton
+						type="button"
+						variant="secondary"
+						disabled={isExporting || !lastSubmittedSearch || filteredResults.length === 0}
+						className="!h-[40px] !rounded-[10px] !px-4 !py-2 font-['Roboto',sans-serif] text-[0.88rem] font-semibold"
+						title="Exportar resultados filtrados en XLSX"
+						onclick={() => {
+							void exportCurrentSearch();
+						}}
+					>
+						{#if isExporting}
+							<LoaderCircle class="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+							Exportando...
+						{:else}
+							<Download class="mr-2 h-4 w-4" aria-hidden="true" />
+							Exportar XLSX
+						{/if}
+					</AppButton>
+				</div>
+
+				{#if exportError}
+					<p class="m-0 rounded-[9px] border border-[#f3c0ca] bg-[#fff5f7] px-3 py-2 text-[0.92rem] text-[#8f1e36]">{exportError}</p>
+				{/if}
+
 				<div class="grid gap-3 text-center md:grid-cols-2">
 					<div class="rounded-[12px] bg-surface-soft px-4 py-5">
 						<p class="m-0 font-['Roboto',sans-serif] text-[2.4rem] leading-none font-bold text-brand-blue-dark">

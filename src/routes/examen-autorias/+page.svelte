@@ -1,5 +1,5 @@
 ﻿<script lang="ts">
-	import { tick } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { goto } from '$app/navigation';
 	import MatchToggle from '$lib/components/search/MatchToggle.svelte';
 	import TokenMultiSelect from '$lib/components/search/TokenMultiSelect.svelte';
@@ -24,10 +24,22 @@
 		label: string;
 	}
 
+	interface ExamenOptionsPayload {
+		authors: Array<{ id: string; name: string }>;
+		genres: string[];
+		states: string[];
+	}
+
 	type ExamenPageFilters = PageData['filters'];
 
 	let { data }: { data: PageData } = $props();
 	const getInitialFilters = () => data.filters;
+	const getInitialAuthorOptions = (): TokenOption[] =>
+		data.authorOptions.map((author) => ({ id: author.id, label: author.name }));
+	const getInitialGenreOptions = (): TokenOption[] =>
+		data.genreOptions.map((genre) => ({ id: genre, label: genre }));
+	const getInitialStateOptions = (): TokenOption[] =>
+		data.stateOptions.map((value) => ({ id: value, label: value }));
 	const initialFilters = getInitialFilters();
 
 	let title = $state(initialFilters.titulo);
@@ -56,6 +68,41 @@
 	let isSearching = $state(false);
 	let resultsRegion = $state<HTMLElement | null>(null);
 	let paginationRegion = $state<HTMLElement | null>(null);
+	let authorOptionItems = $state<TokenOption[]>(getInitialAuthorOptions());
+	let genreOptionItems = $state<TokenOption[]>(getInitialGenreOptions());
+	let stateOptionItems = $state<TokenOption[]>(getInitialStateOptions());
+
+	const mergeOptions = (base: TokenOption[], next: TokenOption[]): TokenOption[] => {
+		const byId = new Map<string, TokenOption>();
+		for (const option of base) byId.set(option.id, option);
+		for (const option of next) byId.set(option.id, option);
+		return Array.from(byId.values()).sort((a, b) => a.label.localeCompare(b.label, 'es', { sensitivity: 'base' }));
+	};
+
+	onMount(() => {
+		const loadFilterOptions = async (): Promise<void> => {
+			try {
+				const response = await fetch('/api/examen-autorias/options');
+				if (!response.ok) return;
+				const payload = (await response.json()) as ExamenOptionsPayload;
+				authorOptionItems = mergeOptions(
+					authorOptionItems,
+					payload.authors.map((author) => ({ id: author.id, label: author.name }))
+				);
+				genreOptionItems = mergeOptions(
+					genreOptionItems,
+					payload.genres.map((genre) => ({ id: genre, label: genre }))
+				);
+				stateOptionItems = mergeOptions(
+					stateOptionItems,
+					payload.states.map((value) => ({ id: value, label: value }))
+				);
+			} catch {
+				// Las opciones completas no bloquean la tabla; los filtros seleccionados ya llegan en SSR.
+			}
+		};
+		void loadFilterOptions();
+	});
 
 	const hasAdvancedFilterValues = (filters: ExamenPageFilters): boolean =>
 		filters.tipo_autoria.length > 0 ||
@@ -87,17 +134,23 @@
 		if (nextSignature === appliedFilterSignature) return;
 		appliedFilterSignature = nextSignature;
 		applyFiltersToState(data.filters);
+		authorOptionItems = mergeOptions(
+			authorOptionItems,
+			data.authorOptions.map((author) => ({ id: author.id, label: author.name }))
+		);
+		genreOptionItems = mergeOptions(
+			genreOptionItems,
+			data.genreOptions.map((genre) => ({ id: genre, label: genre }))
+		);
+		stateOptionItems = mergeOptions(
+			stateOptionItems,
+			data.stateOptions.map((value) => ({ id: value, label: value }))
+		);
 	});
 
-	const authorOptions = $derived.by<TokenOption[]>(() =>
-		data.authorOptions.map((author) => ({ id: author.id, label: author.name }))
-	);
-	const genreOptions = $derived.by<TokenOption[]>(() =>
-		data.genreOptions.map((genre) => ({ id: genre, label: genre }))
-	);
-	const stateOptions = $derived.by<TokenOption[]>(() =>
-		data.stateOptions.map((value) => ({ id: value, label: value }))
-	);
+	const authorOptions = $derived(authorOptionItems);
+	const genreOptions = $derived(genreOptionItems);
+	const stateOptions = $derived(stateOptionItems);
 	const confidenceOptions: TokenOption[] = [
 		{ id: 'segura', label: 'Segura' },
 		{ id: 'probable', label: 'Probable' }
@@ -140,7 +193,7 @@
 	);
 
 	const totalWorks = $derived.by(() => data.stats.works);
-	const totalDramaturgos = $derived.by(() => data.authorOptions.length);
+	const totalDramaturgos = $derived.by(() => data.stats.authors);
 
 	const appendValues = (params: URLSearchParams, key: string, values: string[]): void => {
 		for (const value of values) {
@@ -355,7 +408,7 @@
 						</div>
 					</div>
 
-					<div class={`rounded-[10px] transition-[background-color,box-shadow] duration-200 ${advancedOpen ? 'overflow-visible bg-[var(--color-surface-subtle)] shadow-[0_8px_24px_rgba(25,46,80,0.06)]' : 'overflow-hidden bg-white'}`}>
+					<div class={`rounded-[10px] border border-border/70 bg-[var(--color-surface-subtle)] transition-[background-color,box-shadow] duration-200 ${advancedOpen ? 'overflow-visible shadow-[0_8px_24px_rgba(25,46,80,0.06)]' : 'overflow-hidden'}`}>
 						<button
 							type="button"
 							class="flex w-full items-center justify-between gap-3 cursor-pointer border-0 bg-transparent px-4 py-[0.9rem] text-left font-['Roboto',sans-serif] text-[0.92rem] font-semibold text-brand-blue-dark transition hover:rounded-[10px] hover:bg-surface-accent-blue"

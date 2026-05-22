@@ -1,9 +1,7 @@
 import {
-	getAuthorshipExamAuthors,
-	getAuthorshipExamWorks,
-	getCatalogStats,
+	getExamenCatalogStats,
+	getSelectedExamenFilterOptions,
 	getExamenWorksPage,
-	listGenres
 } from '$lib/server/catalog-runtime';
 
 import type { ExamenWorksFilters, ExamenWorksMatchMode } from '$lib/server/catalog-runtime';
@@ -45,26 +43,18 @@ const parseFilters = (params: URLSearchParams): ExamenWorksFilters => ({
 export const load: PageServerLoad = async ({ url }) => {
 	const filters = parseFilters(url.searchParams);
 	const requestedPage = parsePage(url.searchParams);
-	const [examWorks, pageResult, authorOptions, genreOptions, stats] = await Promise.all([
-		getAuthorshipExamWorks(),
+	const [pageResult, filterOptions, stats] = await Promise.all([
 		getExamenWorksPage(filters, requestedPage, PAGE_SIZE),
-		getAuthorshipExamAuthors(),
-		listGenres(),
-		getCatalogStats()
+		getSelectedExamenFilterOptions(filters),
+		getExamenCatalogStats()
 	]);
-	const stateOptions = Array.from(new Set(examWorks.map((work) => work.textState).filter(Boolean))).sort((a, b) =>
-		a.localeCompare(b, 'es')
-	);
 
 	return {
 		works: pageResult.works,
-		authorOptions,
-		genreOptions,
-		stateOptions,
-		stats: {
-			...stats,
-			works: examWorks.length
-		},
+		authorOptions: filterOptions.authors,
+		genreOptions: filterOptions.genres,
+		stateOptions: filterOptions.states,
+		stats,
 		filters,
 		page: pageResult.page,
 		pageSize: PAGE_SIZE,

@@ -198,9 +198,7 @@ interface WorkRow {
 	bicuve_nombre: string | null;
 	tiene_acceso_externo: number;
 	procede: string | null;
-	resultado1: string | null;
-	resultado2: string | null;
-	resumen_breve: string | null;
+	has_report: number;
 	has_resumen_breve: number;
 }
 
@@ -262,6 +260,12 @@ export interface ExamenWorksPage {
 	page: number;
 }
 
+export interface ExamenFilterOptions {
+	authors: CatalogAuthor[];
+	genres: string[];
+	states: string[];
+}
+
 const EXAMEN_FILTER_CACHE_LIMIT = 50;
 
 interface TempGroup {
@@ -319,6 +323,9 @@ let cachedAt = 0;
 let dbClient: ReturnType<typeof createClient> | null = null;
 let dbClientMode: 'configured' | 'local-fallback' | null = null;
 let warnedLocalCatalogFallback = false;
+const tableColumnsByName = new Map<string, Set<string>>();
+const shortSummaryByWorkId = new Map<string, { cachedAt: number; value: string }>();
+const reportResultsByWorkId = new Map<string, { cachedAt: number; result1?: string; result2?: string }>();
 
 const logIfSlow = (label: string, startedAt: number, metadata = ''): void => {
 	const elapsed = Date.now() - startedAt;
@@ -468,6 +475,293 @@ const getRows = async <T>(sql: string, args?: SqlArg[]): Promise<T[]> => {
 	return result.rows as unknown as T[];
 };
 
+const getTableColumnNames = async (tableName: 'authors' | 'works'): Promise<Set<string>> => {
+	const cached = tableColumnsByName.get(tableName);
+	if (cached) return cached;
+
+	const rows = await getRows<{ name: string }>(`PRAGMA table_info(${tableName})`);
+	const columns = new Set(rows.map((column) => column.name));
+	tableColumnsByName.set(tableName, columns);
+	return columns;
+};
+
+const createPlaceholders = (values: readonly unknown[]): string => values.map(() => '?').join(', ');
+
+const getAuthorVariantsSelect = async (): Promise<string> => {
+	const authorsTableColumns = await getTableColumnNames('authors');
+	return authorsTableColumns.has('variaciones_nombre') ? 'variaciones_nombre' : 'NULL AS variaciones_nombre';
+};
+
+const getTitleVariantsSelect = async (): Promise<string> => {
+	const worksTableColumns = await getTableColumnNames('works');
+	if (!worksTableColumns.has('slug')) {
+		throw new Error('La tabla works de Turso no tiene columna slug.');
+	}
+	if (worksTableColumns.has('otrostitulos')) return 'otrostitulos AS title_variants';
+	if (worksTableColumns.has('variaciones_titulo')) return 'variaciones_titulo AS title_variants';
+	return 'NULL AS title_variants';
+};
+
+const getTitleVariantsFilterExpression = async (): Promise<string> => {
+	const worksTableColumns = await getTableColumnNames('works');
+	if (worksTableColumns.has('otrostitulos')) return 'w.otrostitulos';
+	if (worksTableColumns.has('variaciones_titulo')) return 'w.variaciones_titulo';
+	return "''";
+};
+
+const toCatalogAuthors = (rows: AuthorRow[]): CatalogAuthor[] =>
+	rows.map((row) => ({
+		id: row.id,
+		name: row.nombre,
+		nameVariants: splitVariants(row.variaciones_nombre)
+	}));
+
+const loadAuthorsByIds = async (authorIds: Iterable<string>): Promise<Map<string, CatalogAuthor>> => {
+	const ids = Array.from(new Set(Array.from(authorIds).filter((id) => id && id !== UNRESOLVED_AUTHOR_ID)));
+	if (ids.length === 0) return new Map();
+	const variantsSelect = await getAuthorVariantsSelect();
+	const rows = await getRows<AuthorRow>(
+		`SELECT id, nombre, ${variantsSelect}
+		 FROM authors
+		 WHERE id IN (${createPlaceholders(ids)})`,
+		ids
+	);
+	return new Map(toCatalogAuthors(rows).map((author) => [author.id, author] as const));
+};
+
+const normalizeAttributionRows = (
+	attributionRows: AttributionRow[],
+	authorById: Map<string, CatalogAuthor>
+): Map<string, AttributionSet> => {
+	const tempSets = new Map<number, TempSet>();
+	for (const row of attributionRows) {
+		if (!tempSets.has(row.set_id)) {
+			tempSets.set(row.set_id, {
+				workId: row.work_id,
+				attributionType: row.attribution_type,
+				rawExpression: row.raw_expression,
+				groups: new Map()
+			});
+		}
+
+		const set = tempSets.get(row.set_id)!;
+		if (row.group_id == null || row.group_order == null) continue;
+
+		if (!set.groups.has(row.group_id)) {
+			set.groups.set(row.group_id, {
+				order: row.group_order,
+				members: []
+			});
+		}
+
+		if (row.author_id) {
+			set.groups.get(row.group_id)!.members.push({
+				memberOrder: row.member_order ?? 0,
+				authorId: row.author_id,
+				confidence: row.confianza
+			});
+		}
+	}
+
+	const attributionByWorkType = new Map<string, AttributionSet>();
+	for (const set of tempSets.values()) {
+		const sortedGroups = [...set.groups.values()]
+			.sort((a, b) => a.order - b.order)
+			.map((group): AttributionGroup => {
+				const members = group.members
+					.sort((a, b) => a.memberOrder - b.memberOrder)
+					.map((member): AttributionMember => ({
+						authorId: member.authorId,
+						authorName: memberNameFromId(member.authorId, authorById),
+						confidence: normalizeConfidence(member.confidence)
+					}));
+				return { members };
+			})
+			.filter((group) => group.members.length > 0);
+
+		const unresolved =
+			set.rawExpression.toLowerCase().includes(UNRESOLVED_AUTHOR_ID) ||
+			sortedGroups.some((group) =>
+				group.members.some((member) => member.authorId === UNRESOLVED_AUTHOR_ID)
+			);
+
+		const normalized: AttributionSet = unresolved
+			? {
+					groups: [],
+					connector: 'and',
+					unresolved: true,
+					rawExpression: set.rawExpression
+				}
+			: {
+					groups: sortedGroups,
+					connector: resolveConnector(set.rawExpression),
+					rawExpression: set.rawExpression
+				};
+
+		attributionByWorkType.set(`${set.workId}::${set.attributionType}`, normalized);
+	}
+	return attributionByWorkType;
+};
+
+const loadAttributionRowsByWorkIds = async (workIds: string[]): Promise<AttributionRow[]> => {
+	if (workIds.length === 0) return [];
+	return getRows<AttributionRow>(
+		`SELECT
+			s.id AS set_id,
+			s.work_id,
+			s.attribution_type,
+			s.raw_expression,
+			g.id AS group_id,
+			g.group_order,
+			m.author_id,
+			m.member_order,
+			m.confianza
+		 FROM attribution_sets s
+		 LEFT JOIN attribution_groups g ON g.attribution_set_id = s.id
+		 LEFT JOIN attribution_members m ON m.attribution_group_id = g.id
+		 WHERE s.work_id IN (${createPlaceholders(workIds)})
+		 ORDER BY s.work_id, s.attribution_type, g.group_order, m.member_order`,
+		workIds
+	);
+};
+
+const buildTextAccessByWork = (rows: TextAccessRow[]): Map<string, CatalogWork['textLinks']> => {
+	const textAccessByWork = new Map<string, CatalogWork['textLinks']>();
+	for (const row of rows) {
+		if (!textAccessByWork.has(row.work_id)) {
+			textAccessByWork.set(row.work_id, []);
+		}
+		textAccessByWork.get(row.work_id)!.push({
+			label: row.etiqueta || row.tipo || 'Acceso externo',
+			href: row.url,
+			kind: 'texto_externo',
+			external: true
+		});
+	}
+	return textAccessByWork;
+};
+
+const loadTextAccessByWorkIds = async (workIds: string[]): Promise<Map<string, CatalogWork['textLinks']>> => {
+	if (workIds.length === 0) return new Map();
+	const rows = await getRows<TextAccessRow>(
+		`SELECT work_id, tipo, etiqueta, url, position
+		 FROM text_access
+		 WHERE work_id IN (${createPlaceholders(workIds)})
+		 ORDER BY work_id, position`,
+		workIds
+	);
+	return buildTextAccessByWork(rows);
+};
+
+const buildCatalogWorksFromRows = (
+	workRows: WorkRow[],
+	attributionByWorkType: Map<string, AttributionSet>,
+	textAccessByWork: Map<string, CatalogWork['textLinks']>
+): {
+	works: CatalogWork[];
+	bicuveSlugByWorkId: Map<string, string>;
+	bicuveNameByWorkId: Map<string, string>;
+} => {
+	const seenWorkSlugs = new Map<string, string>();
+	const bicuveSlugCounts = new Map<string, number>();
+	const bicuveSlugByWorkId = new Map<string, string>();
+	const bicuveNameByWorkId = new Map<string, string>();
+
+	const works = workRows.map((row) => {
+		const traditionalAttribution =
+			attributionByWorkType.get(`${row.id}::tradicional`) ?? makeEmptyAttributionSet();
+		const stylometryAttribution =
+			attributionByWorkType.get(`${row.id}::estilometria`) ?? makeEmptyAttributionSet();
+
+		const hasSummary = Number(row.has_resumen_breve) === 1;
+		const hasReport = Number(row.has_report) === 1;
+		const slug = resolveWorkSlug(row, seenWorkSlugs);
+		const reportSlug = hasReport ? `${REPORT_SLUG_PREFIX}${slug}` : undefined;
+		const bicuveNombre = row.bicuve_nombre?.trim() || 'ETSO';
+		bicuveNameByWorkId.set(row.id, bicuveNombre);
+
+		let bicuveSlug = '';
+		if (Number(row.bicuve) === 1) {
+			const bicuveBaseSlug = slugify(row.titulo ?? '') || slugify(row.id ?? '') || 'texto';
+			const bicuveSlugCount = (bicuveSlugCounts.get(bicuveBaseSlug) ?? 0) + 1;
+			bicuveSlugCounts.set(bicuveBaseSlug, bicuveSlugCount);
+			bicuveSlug = bicuveSlugCount === 1 ? bicuveBaseSlug : `${bicuveBaseSlug}-${bicuveSlugCount}`;
+			bicuveSlugByWorkId.set(row.id, bicuveSlug);
+		}
+
+		const links: CatalogWork['textLinks'] = [];
+		if (Number(row.bicuve) === 1) {
+			links.push({
+				label: 'Texto BICUVE',
+				href: `/bicuve/${bicuveSlug}`,
+				kind: 'bicuve'
+			});
+		}
+		for (const link of textAccessByWork.get(row.id) ?? []) {
+			links.push(link);
+		}
+
+		return {
+			id: row.id,
+			slug,
+			title: row.titulo,
+			titleVariants: splitTitleVariants(row.title_variants),
+			genre: row.genero?.trim() || 'Sin genero',
+			origin: row.procede?.trim() || 'Sin procedencia',
+			textState: row.estado_texto?.trim() || 'Sin estado',
+			addedOn: row.adicion?.trim() || 'Sin fecha',
+			shortSummary: EMPTY_SHORT_SUMMARY,
+			hasSummaryFile: hasSummary,
+			inAuthorshipExam: Number(row.examen_autorias) === 1,
+			traditionalAttribution,
+			stylometryAttribution,
+			textLinks: links,
+			reportId: hasReport ? row.id : undefined,
+			reportSlug
+		};
+	});
+
+	return {
+		works,
+		bicuveSlugByWorkId,
+		bicuveNameByWorkId
+	};
+};
+
+const loadWorkRowsByIds = async (workIds: string[]): Promise<WorkRow[]> => {
+	if (workIds.length === 0) return [];
+	const titleVariantsSelect = await getTitleVariantsSelect();
+	const orderCases = workIds.map((_, index) => `WHEN ? THEN ${index}`).join(' ');
+	return getRows<WorkRow>(
+		`SELECT id, slug, titulo,
+		 ${titleVariantsSelect},
+		 genero, adicion, estado_texto,
+		 examen_autorias, bicuve, bicuve_nombre, tiene_acceso_externo,
+		 procede,
+		 CASE WHEN resultado1 IS NULL AND resultado2 IS NULL THEN 0 ELSE 1 END AS has_report,
+		 CASE WHEN resumen_breve IS NULL THEN 0 ELSE 1 END AS has_resumen_breve
+		 FROM works
+		 WHERE id IN (${createPlaceholders(workIds)})
+		 ORDER BY CASE id ${orderCases} ELSE ${workIds.length} END`,
+		[...workIds, ...workIds]
+	);
+};
+
+const hydrateWorksByIds = async (workIds: string[]): Promise<CatalogWork[]> => {
+	const ids = Array.from(new Set(workIds));
+	if (ids.length === 0) return [];
+	const attributionRows = await loadAttributionRowsByWorkIds(ids);
+	const authorById = await loadAuthorsByIds(
+		attributionRows.map((row) => row.author_id ?? '').filter(Boolean)
+	);
+	const [workRows, textAccessByWork] = await Promise.all([
+		loadWorkRowsByIds(ids),
+		loadTextAccessByWorkIds(ids)
+	]);
+	const attributionByWorkType = normalizeAttributionRows(attributionRows, authorById);
+	return buildCatalogWorksFromRows(workRows, attributionByWorkType, textAccessByWork).works;
+};
+
 const resolveConnector = (rawExpression: string): 'and' | 'or' => {
 	if (/\bOR\b/i.test(rawExpression)) return 'or';
 	return 'and';
@@ -510,8 +804,8 @@ const fetchSummaryFile = async (workId: string): Promise<SummaryFile | null> =>
 	fetchPublicR2Json<SummaryFile>(getSummariesBaseUrl(), `${workId}.json`);
 
 const createSnapshot = async (): Promise<Snapshot> => {
-	const authorsTableColumns = await getRows<{ name: string }>('PRAGMA table_info(authors)');
-	const hasAuthorVariantsColumn = authorsTableColumns.some((column) => column.name === 'variaciones_nombre');
+	const authorsTableColumns = await getTableColumnNames('authors');
+	const hasAuthorVariantsColumn = authorsTableColumns.has('variaciones_nombre');
 	const authorRows = await getRows<AuthorRow>(
 		`SELECT id, nombre, ${hasAuthorVariantsColumn ? 'variaciones_nombre' : 'NULL AS variaciones_nombre'}
 		 FROM authors
@@ -628,15 +922,13 @@ const createSnapshot = async (): Promise<Snapshot> => {
 		});
 	}
 
-	const worksTableColumns = await getRows<{ name: string }>('PRAGMA table_info(works)');
-	const hasWorkSlugColumn = worksTableColumns.some((column) => column.name === 'slug');
+	const worksTableColumns = await getTableColumnNames('works');
+	const hasWorkSlugColumn = worksTableColumns.has('slug');
 	if (!hasWorkSlugColumn) {
 		throw new Error('La tabla works de Turso no tiene columna slug.');
 	}
-	const hasWorkOtherTitlesColumn = worksTableColumns.some((column) => column.name === 'otrostitulos');
-	const hasWorkLegacyTitleVariantsColumn = worksTableColumns.some(
-		(column) => column.name === 'variaciones_titulo'
-	);
+	const hasWorkOtherTitlesColumn = worksTableColumns.has('otrostitulos');
+	const hasWorkLegacyTitleVariantsColumn = worksTableColumns.has('variaciones_titulo');
 	const titleVariantsSelect = hasWorkOtherTitlesColumn
 		? 'otrostitulos AS title_variants'
 		: hasWorkLegacyTitleVariantsColumn
@@ -648,8 +940,9 @@ const createSnapshot = async (): Promise<Snapshot> => {
 		 ${titleVariantsSelect},
 		 genero, adicion, estado_texto,
 		 examen_autorias, bicuve, bicuve_nombre, tiene_acceso_externo,
-		 procede, resultado1, resultado2, resumen_breve,
-		 CASE WHEN resumen_breve IS NOT NULL AND TRIM(resumen_breve) <> '' THEN 1 ELSE 0 END AS has_resumen_breve
+		 procede,
+		 CASE WHEN resultado1 IS NULL AND resultado2 IS NULL THEN 0 ELSE 1 END AS has_report,
+		 CASE WHEN resumen_breve IS NULL THEN 0 ELSE 1 END AS has_resumen_breve
 		 FROM works
 		 ORDER BY titulo COLLATE NOCASE`
 	);
@@ -666,7 +959,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 			attributionByWorkType.get(`${row.id}::estilometria`) ?? makeEmptyAttributionSet();
 
 		const hasSummary = Number(row.has_resumen_breve) === 1;
-		const hasReport = Boolean(row.resultado1?.trim() || row.resultado2?.trim());
+		const hasReport = Number(row.has_report) === 1;
 
 		const slug = resolveWorkSlug(row, seenWorkSlugs);
 		const reportSlug = hasReport ? `${REPORT_SLUG_PREFIX}${slug}` : undefined;
@@ -702,11 +995,9 @@ const createSnapshot = async (): Promise<Snapshot> => {
 			origin: row.procede?.trim() || 'Sin procedencia',
 			textState: row.estado_texto?.trim() || 'Sin estado',
 			addedOn: row.adicion?.trim() || 'Sin fecha',
-			shortSummary: normalizeShortSummary(row.resumen_breve),
+			shortSummary: EMPTY_SHORT_SUMMARY,
 			hasSummaryFile: hasSummary,
 			inAuthorshipExam: Number(row.examen_autorias) === 1,
-			result1: row.resultado1?.trim() || undefined,
-			result2: row.resultado2?.trim() || undefined,
 			traditionalAttribution,
 			stylometryAttribution,
 			textLinks: links,
@@ -847,14 +1138,56 @@ export const getWorkByReportSlug = async (slug: string): Promise<CatalogWork | u
 	(await getSnapshot()).workByReportSlug.get(slug);
 
 export const getWorkShortSummaryById = async (workId: string): Promise<string> => {
-	const work = (await getSnapshot()).workById.get(workId);
-	return normalizeShortSummary(work?.shortSummary);
+	const cached = shortSummaryByWorkId.get(workId);
+	const now = Date.now();
+	if (cached && now - cached.cachedAt < CACHE_MS) return cached.value;
+
+	const rows = await getRows<{ resumen_breve: string | null }>(
+		'SELECT resumen_breve FROM works WHERE id = ? LIMIT 1',
+		[workId]
+	);
+	const value = normalizeShortSummary(rows[0]?.resumen_breve);
+	shortSummaryByWorkId.set(workId, { cachedAt: now, value });
+	return value;
 };
 
-export const withWorkShortSummary = async (work: CatalogWork): Promise<CatalogWork> => work;
+export const withWorkShortSummary = async (work: CatalogWork): Promise<CatalogWork> => ({
+	...work,
+	shortSummary: await getWorkShortSummaryById(work.id)
+});
 
 export const withWorkShortSummaries = async (works: CatalogWork[]): Promise<CatalogWork[]> =>
-	works;
+	Promise.all(works.map((work) => withWorkShortSummary(work)));
+
+const getWorkReportResultsById = async (
+	workId: string
+): Promise<{ result1?: string; result2?: string }> => {
+	const cached = reportResultsByWorkId.get(workId);
+	const now = Date.now();
+	if (cached && now - cached.cachedAt < CACHE_MS) {
+		return {
+			result1: cached.result1,
+			result2: cached.result2
+		};
+	}
+
+	const rows = await getRows<{ resultado1: string | null; resultado2: string | null }>(
+		'SELECT resultado1, resultado2 FROM works WHERE id = ? LIMIT 1',
+		[workId]
+	);
+	const result1 = rows[0]?.resultado1?.trim();
+	const result2 = rows[0]?.resultado2?.trim();
+	const value: { result1?: string; result2?: string } = {};
+	if (result1) value.result1 = result1;
+	if (result2) value.result2 = result2;
+	reportResultsByWorkId.set(workId, { cachedAt: now, ...value });
+	return value;
+};
+
+export const withWorkReportResults = async (work: CatalogWork): Promise<CatalogWork> => ({
+	...work,
+	...(await getWorkReportResultsById(work.id))
+});
 
 export const getAllAuthors = async (): Promise<CatalogAuthor[]> =>
 	(await getSnapshot()).authors.filter((author) => author.id !== UNRESOLVED_AUTHOR_ID);
@@ -1078,41 +1411,287 @@ const matchesExamenFilters = (
 	return true;
 };
 
+interface SqlWhereClause {
+	sql: string;
+	args: SqlArg[];
+}
+
+const normalizeSqlFilterValues = (values: string[]): string[] =>
+	Array.from(new Set(values.map((value) => value.trim()).filter(Boolean)));
+
+const addInFilter = (
+	conditions: string[],
+	args: SqlArg[],
+	expression: string,
+	values: string[]
+): void => {
+	const normalized = normalizeSqlFilterValues(values);
+	if (normalized.length === 0) return;
+	conditions.push(`${expression} IN (${createPlaceholders(normalized)})`);
+	args.push(...normalized);
+};
+
+const addAuthorFilter = (
+	conditions: string[],
+	args: SqlArg[],
+	authorIds: string[],
+	attributionType: string | null,
+	matchMode: ExamenWorksMatchMode
+): void => {
+	const ids = normalizeSqlFilterValues(authorIds);
+	if (ids.length === 0) return;
+	const typeCondition = attributionType ? ' AND wai.attribution_type = ?' : '';
+	const typeArgs = attributionType ? [attributionType] : [];
+
+	if (matchMode === 'and') {
+		conditions.push(
+			`w.id IN (
+				SELECT wai.work_id
+				FROM work_author_index wai
+				WHERE wai.author_id IN (${createPlaceholders(ids)})${typeCondition}
+				GROUP BY wai.work_id
+				HAVING COUNT(DISTINCT wai.author_id) = ?
+			)`
+		);
+		args.push(...ids, ...typeArgs, ids.length);
+		return;
+	}
+
+	conditions.push(
+		`EXISTS (
+			SELECT 1
+			FROM work_author_index wai
+			WHERE wai.work_id = w.id
+				AND wai.author_id IN (${createPlaceholders(ids)})${typeCondition}
+		)`
+	);
+	args.push(...ids, ...typeArgs);
+};
+
+const stylometryAuthorCountSql = `(
+	SELECT COUNT(DISTINCT wai.author_id)
+	FROM work_author_index wai
+	WHERE wai.work_id = w.id
+		AND wai.attribution_type = 'estilometria'
+		AND wai.author_id <> '${UNRESOLVED_AUTHOR_ID}'
+)`;
+
+const traditionalAuthorCountSql = `(
+	SELECT COUNT(DISTINCT wai.author_id)
+	FROM work_author_index wai
+	WHERE wai.work_id = w.id
+		AND wai.attribution_type = 'tradicional'
+		AND wai.author_id <> '${UNRESOLVED_AUTHOR_ID}'
+)`;
+
+const stylometryUnresolvedSql = `EXISTS (
+	SELECT 1
+	FROM work_author_index wai
+	WHERE wai.work_id = w.id
+		AND wai.attribution_type = 'estilometria'
+		AND wai.author_id = '${UNRESOLVED_AUTHOR_ID}'
+)`;
+
+const addAuthorshipTypeFilter = (conditions: string[], values: string[]): void => {
+	const selected = normalizeSqlFilterValues(values)
+		.map((value) => asWorkAuthorshipType(value))
+		.filter((value): value is WorkAuthorshipType => value !== null);
+	if (selected.length === 0) return;
+
+	const typeConditions: string[] = [];
+	if (selected.includes('unica')) {
+		typeConditions.push(`(
+			(${stylometryAuthorCountSql} = 1)
+			OR (${stylometryAuthorCountSql} = 0 AND NOT ${stylometryUnresolvedSql} AND ${traditionalAuthorCountSql} = 1)
+		)`);
+	}
+	if (selected.includes('colaboracion')) {
+		typeConditions.push(`(
+			(${stylometryAuthorCountSql} > 1)
+			OR (${stylometryAuthorCountSql} = 0 AND NOT ${stylometryUnresolvedSql} AND ${traditionalAuthorCountSql} > 1)
+		)`);
+	}
+	if (selected.includes('desconocida')) {
+		typeConditions.push(`(${stylometryUnresolvedSql} OR (${stylometryAuthorCountSql} = 0 AND ${traditionalAuthorCountSql} = 0))`);
+	}
+
+	if (typeConditions.length > 0) {
+		conditions.push(`(${typeConditions.join(' OR ')})`);
+	}
+};
+
+const addConfidenceFilter = (conditions: string[], args: SqlArg[], values: string[]): void => {
+	const selected = normalizeSqlFilterValues(values).flatMap((value) =>
+		value === 'no_concluyente' ? ['no_concluyente', 'sin_confianza'] : [value]
+	);
+	if (selected.length === 0) return;
+	conditions.push(
+		`EXISTS (
+			SELECT 1
+			FROM work_author_index wai
+			WHERE wai.work_id = w.id
+				AND wai.attribution_type = 'estilometria'
+				AND wai.confianza IN (${createPlaceholders(selected)})
+		)`
+	);
+	args.push(...selected);
+};
+
+const yearMonthSql = "CAST(REPLACE(SUBSTR(w.adicion, 1, 7), '/', '') AS INTEGER)";
+const validYearMonthSql = "w.adicion GLOB '[0-9][0-9][0-9][0-9][/-][0-9]*'";
+
+const addDateRangeFilter = (conditions: string[], args: SqlArg[], filters: ExamenWorksFilters): void => {
+	const fromYearMonth = parseYearMonth(filters.desde);
+	const toYearMonth = parseYearMonth(filters.hasta);
+	if (fromYearMonth) {
+		conditions.push(`(w.adicion IS NULL OR NOT ${validYearMonthSql} OR ${yearMonthSql} >= ?)`);
+		args.push(fromYearMonth);
+	}
+	if (toYearMonth) {
+		conditions.push(`(w.adicion IS NULL OR NOT ${validYearMonthSql} OR ${yearMonthSql} <= ?)`);
+		args.push(toYearMonth);
+	}
+};
+
+const buildExamenWhereClause = async (filters: ExamenWorksFilters): Promise<SqlWhereClause> => {
+	const conditions = ['w.examen_autorias = 1'];
+	const args: SqlArg[] = [];
+	const normalizedTitle = filters.titulo.trim();
+
+	if (normalizedTitle) {
+		const titleVariantsFilterExpression = await getTitleVariantsFilterExpression();
+		const likeValue = `%${normalizedTitle}%`;
+		conditions.push(`(w.titulo LIKE ? COLLATE NOCASE OR COALESCE(${titleVariantsFilterExpression}, '') LIKE ? COLLATE NOCASE)`);
+		args.push(likeValue, likeValue);
+	}
+
+	addInFilter(conditions, args, "COALESCE(NULLIF(TRIM(w.genero), ''), 'Sin genero')", filters.genero);
+	const mainAuthorDisabled = filters.autor_trad.length > 0 || filters.autor_esto.length > 0;
+	if (!mainAuthorDisabled) addAuthorFilter(conditions, args, filters.autor, null, 'or');
+	addAuthorFilter(conditions, args, filters.autor_trad, 'tradicional', filters.autor_trad_match);
+	addAuthorFilter(conditions, args, filters.autor_esto, 'estilometria', filters.autor_esto_match);
+	addConfidenceFilter(conditions, args, filters.confianza);
+	addAuthorshipTypeFilter(conditions, filters.tipo_autoria);
+	addInFilter(conditions, args, "COALESCE(NULLIF(TRIM(w.estado_texto), ''), 'Sin estado')", filters.estado);
+	addDateRangeFilter(conditions, args, filters);
+
+	return {
+		sql: conditions.join('\n AND '),
+		args
+	};
+};
+
 export const getExamenWorksPage = async (
 	filters: ExamenWorksFilters,
 	page: number,
 	pageSize: number
 ): Promise<ExamenWorksPage> => {
-	const snapshot = await getSnapshot();
 	const safePageSize = Number.isFinite(pageSize) && pageSize > 0 ? Math.floor(pageSize) : 20;
 	const requestedPage = Number.isFinite(page) && page > 0 ? Math.floor(page) : 1;
-
-	if (!hasActiveExamenFilters(filters)) {
-		const examenWorks = getAuthorshipExamWorksFromSnapshot(snapshot);
-		const totalResults = examenWorks.length;
-		const totalPages = Math.max(1, Math.ceil(totalResults / safePageSize));
-		const safePage = Math.min(requestedPage, totalPages);
-		const start = (safePage - 1) * safePageSize;
-
-		return {
-			works: examenWorks.slice(start, start + safePageSize),
-			totalResults,
-			totalPages,
-			page: safePage
-		};
-	}
-
-	const matchingRecords = getCachedExamenFilteredRecords(snapshot, filters);
-	const totalResults = matchingRecords.length;
+	const where = await buildExamenWhereClause(filters);
+	const totalRows = await getRows<{ total: number }>(
+		`SELECT COUNT(*) AS total
+		 FROM works w
+		 WHERE ${where.sql}`,
+		where.args
+	);
+	const totalResults = Number(totalRows[0]?.total ?? 0);
 	const totalPages = Math.max(1, Math.ceil(totalResults / safePageSize));
 	const safePage = Math.min(requestedPage, totalPages);
-	const start = (safePage - 1) * safePageSize;
+	const offset = (safePage - 1) * safePageSize;
+	const idRows =
+		totalResults === 0
+			? []
+			: await getRows<{ id: string }>(
+					`SELECT w.id
+					 FROM works w
+					 WHERE ${where.sql}
+					 ORDER BY w.titulo COLLATE NOCASE, w.id
+					 LIMIT ? OFFSET ?`,
+					[...where.args, safePageSize, offset]
+				);
+	const ids = idRows.map((row) => row.id);
 
 	return {
-		works: matchingRecords.slice(start, start + safePageSize).map((record) => record.work),
+		works: await hydrateWorksByIds(ids),
 		totalResults,
 		totalPages,
 		page: safePage
+	};
+};
+
+export const getExamenFilterOptions = async (): Promise<ExamenFilterOptions> => {
+	const authorVariantsSelect = await getAuthorVariantsSelect();
+	const [authorRows, genreRows, stateRows] = await Promise.all([
+		getRows<AuthorRow>(
+			`SELECT DISTINCT a.id, a.nombre, ${authorVariantsSelect}
+			 FROM authors a
+			 JOIN work_author_index wai ON wai.author_id = a.id
+			 JOIN works w ON w.id = wai.work_id
+			 WHERE w.examen_autorias = 1
+				AND a.id <> ?
+			 ORDER BY a.nombre COLLATE NOCASE`,
+			[UNRESOLVED_AUTHOR_ID]
+		),
+		getRows<{ value: string }>(
+			`SELECT DISTINCT COALESCE(NULLIF(TRIM(genero), ''), 'Sin genero') AS value
+			 FROM works
+			 WHERE examen_autorias = 1
+			 ORDER BY value COLLATE NOCASE`
+		),
+		getRows<{ value: string }>(
+			`SELECT DISTINCT COALESCE(NULLIF(TRIM(estado_texto), ''), 'Sin estado') AS value
+			 FROM works
+			 WHERE examen_autorias = 1
+			 ORDER BY value COLLATE NOCASE`
+		)
+	]);
+
+	return {
+		authors: toCatalogAuthors(authorRows),
+		genres: genreRows.map((row) => row.value).filter(Boolean),
+		states: stateRows.map((row) => row.value).filter(Boolean)
+	};
+};
+
+export const getSelectedExamenFilterOptions = async (
+	filters: ExamenWorksFilters
+): Promise<ExamenFilterOptions> => {
+	const selectedAuthorIds = new Set([...filters.autor, ...filters.autor_trad, ...filters.autor_esto]);
+	const authorById = await loadAuthorsByIds(selectedAuthorIds);
+	return {
+		authors: Array.from(authorById.values()).sort((a, b) =>
+			a.name.localeCompare(b.name, 'es', { sensitivity: 'base' })
+		),
+		genres: normalizeSqlFilterValues(filters.genero),
+		states: normalizeSqlFilterValues(filters.estado)
+	};
+};
+
+export const getExamenCatalogStats = async (): Promise<CatalogStats> => {
+	const [worksRows, authorRows, informeRows, bicuveRows] = await Promise.all([
+		getRows<{ total: number }>('SELECT COUNT(*) AS total FROM works WHERE examen_autorias = 1'),
+		getRows<{ total: number }>(
+			`SELECT COUNT(DISTINCT wai.author_id) AS total
+			 FROM work_author_index wai
+			 JOIN works w ON w.id = wai.work_id
+			 WHERE w.examen_autorias = 1
+				AND wai.author_id <> ?`,
+			[UNRESOLVED_AUTHOR_ID]
+		),
+		getRows<{ total: number }>(
+			`SELECT COUNT(*) AS total
+			 FROM works
+			 WHERE resultado1 IS NOT NULL OR resultado2 IS NOT NULL`
+		),
+		getRows<{ total: number }>('SELECT COUNT(*) AS total FROM works WHERE bicuve = 1')
+	]);
+
+	return {
+		works: Number(worksRows[0]?.total ?? 0),
+		authors: Number(authorRows[0]?.total ?? 0),
+		informes: Number(informeRows[0]?.total ?? 0),
+		bicuveTexts: Number(bicuveRows[0]?.total ?? 0)
 	};
 };
 
@@ -1242,6 +1821,7 @@ export const getInformeById = async (informeId: string): Promise<CatalogInforme 
 
 	const distances = await getDistancesForWork(snapshot, work.id);
 	if (!hasAnyDistanceRows(distances)) return undefined;
+	const reportResults = await getWorkReportResultsById(work.id);
 
 	const confidenceLabel = work.stylometryAttribution.unresolved
 		? 'sin autoria determinada'
@@ -1257,12 +1837,12 @@ export const getInformeById = async (informeId: string): Promise<CatalogInforme 
 		slug: work.reportSlug,
 		title: `Análisis estilométrico de ${work.title}`,
 		intro:
-			work.result1 ||
+			reportResults.result1 ||
 			'Informe generado desde Turso para validar visualización y flujo de consulta.',
 		methodology:
 			'Se muestran las distancias cargadas en work_distances desde Turso. En la versión final, esta sección podrá enriquecerse con servicios de cálculo oficiales del proyecto.',
 		conclusion:
-			work.result2 ||
+			reportResults.result2 ||
 			`Lectura preliminar para ${work.title} con perfil ${inferWorkAuthorshipType(work)} y nivel ${confidenceLabel}.`,
 		citation: `ETSO. Análisis estilométrico de ${work.title}. Dataset alojado en Turso.`,
 		distances

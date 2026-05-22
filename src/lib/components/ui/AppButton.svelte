@@ -8,6 +8,8 @@
 		disabled?: boolean;
 		className?: string;
 		onclick?: (event: MouseEvent) => void;
+		onfocus?: (event: FocusEvent) => void;
+		onpointerenter?: (event: PointerEvent) => void;
 		title?: string;
 		ariaPressed?: boolean;
 		children?: Snippet;
@@ -20,6 +22,8 @@
 		disabled = false,
 		className = '',
 		onclick = () => {},
+		onfocus = () => {},
+		onpointerenter = () => {},
 		title = '',
 		ariaPressed = false,
 		children
@@ -48,6 +52,8 @@
 		class={classes}
 		aria-disabled={disabled ? 'true' : undefined}
 		title={title || undefined}
+		{onfocus}
+		{onpointerenter}
 		onclick={(event) => {
 			if (disabled) {
 				event.preventDefault();
@@ -59,7 +65,7 @@
 		{@render children?.()}
 	</a>
 {:else}
-	<button type={type} class={classes} {disabled} {onclick} aria-pressed={ariaPressed ? 'true' : undefined} title={title || undefined}>
+	<button type={type} class={classes} {disabled} {onclick} {onfocus} {onpointerenter} aria-pressed={ariaPressed ? 'true' : undefined} title={title || undefined}>
 		{@render children?.()}
 	</button>
 {/if}

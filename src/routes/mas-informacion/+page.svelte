@@ -11,7 +11,6 @@
 		<ul class="grid gap-2 font-ui">
 			<li><a class="font-medium hover:underline" href="/transcripciones-automaticas">Transcripciones automáticas</a></li>
 			<li><a class="font-medium hover:underline" href="/colaboradores">Colaboradores</a></li>
-			<li><a class="font-medium hover:underline" href="/repercusion">Repercusión</a></li>
 			<li><a class="font-medium hover:underline" href="/contacto">Contacto</a></li>
 		</ul>
 	</section>

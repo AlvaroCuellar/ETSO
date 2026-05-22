@@ -71,6 +71,83 @@ interface TextWarmupOptions {
 	docIds?: number[];
 }
 
+interface NormalizedSearchMetadataFilters {
+	genres: string[];
+	states: string[];
+	traditionalAuthorIds: string[];
+	traditionalMatch: 'or' | 'and';
+	stylometryAuthorIds: string[];
+	stylometryMatch: 'or' | 'and';
+	hasFilters: boolean;
+}
+
+const collectAuthorIds = (set: TexoroWorkMeta['traditionalAttribution']): Set<string> => {
+	const authorIds = new Set<string>();
+	if (set.unresolved) return authorIds;
+	for (const group of set.groups) {
+		for (const member of group.members) {
+			const id = member.authorId?.trim();
+			if (id) authorIds.add(id);
+		}
+	}
+	return authorIds;
+};
+
+const matchesByMode = (haystack: Set<string>, selectedIds: string[], mode: 'or' | 'and' = 'or'): boolean => {
+	if (selectedIds.length === 0) return true;
+	if (mode === 'and') return selectedIds.every((id) => haystack.has(id));
+	return selectedIds.some((id) => haystack.has(id));
+};
+
+const normalizeOptionList = (values: string[] | undefined): string[] =>
+	Array.from(new Set((values ?? []).map((value) => value.trim()).filter(Boolean)));
+
+const buildMetadataFilters = (options: SearchOptions): NormalizedSearchMetadataFilters => {
+	const genres = normalizeOptionList(options.genres);
+	const states = normalizeOptionList(options.states);
+	const traditionalAuthorIds = normalizeOptionList(options.traditionalAuthorIds);
+	const stylometryAuthorIds = normalizeOptionList(options.stylometryAuthorIds);
+	return {
+		genres,
+		states,
+		traditionalAuthorIds,
+		traditionalMatch: options.traditionalMatch === 'and' ? 'and' : 'or',
+		stylometryAuthorIds,
+		stylometryMatch: options.stylometryMatch === 'and' ? 'and' : 'or',
+		hasFilters:
+			genres.length > 0 ||
+			states.length > 0 ||
+			traditionalAuthorIds.length > 0 ||
+			stylometryAuthorIds.length > 0
+	};
+};
+
+const matchesMetadataFilters = (meta: TexoroWorkMeta | undefined, filters: NormalizedSearchMetadataFilters): boolean => {
+	if (!filters.hasFilters) return true;
+	if (!meta) return false;
+	if (filters.genres.length > 0 && !filters.genres.includes(meta.genre)) return false;
+	if (filters.states.length > 0 && !filters.states.includes(meta.textState)) return false;
+	if (
+		!matchesByMode(
+			collectAuthorIds(meta.traditionalAttribution),
+			filters.traditionalAuthorIds,
+			filters.traditionalMatch
+		)
+	) {
+		return false;
+	}
+	if (
+		!matchesByMode(
+			collectAuthorIds(meta.stylometryAttribution),
+			filters.stylometryAuthorIds,
+			filters.stylometryMatch
+		)
+	) {
+		return false;
+	}
+	return true;
+};
+
 interface TermMeta {
 	term: string;
 	termId: number;
@@ -663,7 +740,28 @@ export class TexoroSearchEngine {
 		}
 
 		const candidates = unionSets(groupEvaluations.map((group) => group.docs));
-		const orderedCandidates = sortedNumeric(candidates).sort(
+		const selectedWorkIds = new Set((options.workIds ?? []).map((id) => id.trim()).filter(Boolean));
+		const metadataFilters = buildMetadataFilters(options);
+		const restrictedCandidates =
+			selectedWorkIds.size > 0
+				? new Set(
+						Array.from(candidates).filter((docId) => {
+							const row = this.#docRowById.get(docId);
+							return row
+								? selectedWorkIds.has(row[1]) &&
+									matchesMetadataFilters(workMetaById.get(row[1]), metadataFilters)
+								: false;
+						})
+					)
+				: metadataFilters.hasFilters
+					? new Set(
+							Array.from(candidates).filter((docId) => {
+								const row = this.#docRowById.get(docId);
+								return row ? matchesMetadataFilters(workMetaById.get(row[1]), metadataFilters) : false;
+							})
+						)
+					: candidates;
+		const orderedCandidates = sortedNumeric(restrictedCandidates).sort(
 			(a, b) => (retrievalScores.get(b) ?? 0) - (retrievalScores.get(a) ?? 0)
 		);
 
@@ -1063,14 +1161,14 @@ export class TexoroSearchEngine {
 				const details = await this.getOccurrencesForMatch(
 					{ docId: item.docId, workId: item.workId },
 					match,
-					{ maxItems: match.kind === 'proximity' ? 1 : remainingItems, snippetRadius }
+					{ maxItems: remainingItems, snippetRadius }
 				);
 				for (const occurrence of details.items) {
 					snippets.push({
 						...occurrence,
 						matchKey: `${match.kind}:${match.source}`
 					});
-					if (match.kind === 'proximity' || snippets.length >= maxItemsPerDoc) break;
+					if (snippets.length >= maxItemsPerDoc) break;
 				}
 			}
 			output.push({ docId: item.docId, workId: item.workId, snippets });

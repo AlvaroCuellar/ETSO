@@ -7,7 +7,8 @@ import {
 	getInformeByReportSlug,
 	getInformeByWorkSlug,
 	getInformeDistanceRows,
-	getWorkById
+	getWorkById,
+	withWorkReportResults
 } from '$lib/server/catalog-runtime';
 
 import type { PageServerLoad } from './$types';
@@ -40,7 +41,7 @@ export const load: PageServerLoad = async ({ params }) => {
 
 	return {
 		informe,
-		work,
+		work: await withWorkReportResults(work),
 		distances,
 		authors,
 		bibliography

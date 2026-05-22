@@ -45,6 +45,7 @@
 	let expandedRows = $state<Set<string>>(new Set());
 	let openDropdownRowId = $state<string | null>(null);
 	let shortSummaryByWorkId = $state<Map<string, ShortSummaryState>>(new Map());
+	const shortSummaryPromises = new Map<string, Promise<void>>();
 	let mobileView = $state<MobileWorksView>('cards');
 
 	const isMobileTableView = $derived(mobileView === 'table');
@@ -155,6 +156,19 @@
 		`metadata-grid grid grid-cols-3 gap-[14px] ${isMobileTableView ? '' : 'max-md:grid-cols-1'}`
 	);
 
+	const scheduleIdle = (callback: () => void): (() => void) => {
+		const idleWindow = window as Window & {
+			requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
+			cancelIdleCallback?: (handle: number) => void;
+		};
+		if (idleWindow.requestIdleCallback && idleWindow.cancelIdleCallback) {
+			const handle = idleWindow.requestIdleCallback(callback, { timeout: 1400 });
+			return () => idleWindow.cancelIdleCallback?.(handle);
+		}
+		const handle = window.setTimeout(callback, 500);
+		return () => window.clearTimeout(handle);
+	};
+
 	onMount(() => {
 		try {
 			const storedView = window.localStorage.getItem(MOBILE_VIEW_STORAGE_KEY);
@@ -186,10 +200,16 @@
 
 		document.addEventListener('click', onDocumentClick);
 		document.addEventListener('keydown', onEscape);
+		const cancelIdlePrefetch = scheduleIdle(() => {
+			for (const row of rows.slice(0, 20)) {
+				void prefetchShortSummary(row.work);
+			}
+		});
 
 		return () => {
 			document.removeEventListener('click', onDocumentClick);
 			document.removeEventListener('keydown', onEscape);
+			cancelIdlePrefetch();
 		};
 	});
 
@@ -232,41 +252,64 @@
 	const loadShortSummary = async (work: CatalogWork): Promise<void> => {
 		if (!work.hasSummaryFile) return;
 		if (isUsableShortSummary(work.shortSummary)) return;
-		if (shortSummaryByWorkId.has(work.id)) return;
+		const current = shortSummaryByWorkId.get(work.id);
+		if (current && current.status !== 'loading') return;
+		const pending = shortSummaryPromises.get(work.id);
+		if (pending) return pending;
 
-		setShortSummaryState(work.id, { status: 'loading', text: '' });
+		const promise = (async () => {
+			setShortSummaryState(work.id, { status: 'loading', text: '' });
+			try {
+				const response = await fetch(`/api/works/${encodeURIComponent(work.id)}/short-summary`);
+				if (response.status === 404) {
+					setShortSummaryState(work.id, { status: 'missing', text: '' });
+					return;
+				}
+				if (!response.ok) {
+					throw new Error(`No se pudo cargar el resumen breve: ${response.status}`);
+				}
 
-		try {
-			const response = await fetch(`/api/works/${encodeURIComponent(work.id)}/short-summary`);
-			if (response.status === 404) {
-				setShortSummaryState(work.id, { status: 'missing', text: '' });
-				return;
+				const parsed = (await response.json()) as { shortSummary?: unknown };
+				const shortSummary = typeof parsed.shortSummary === 'string' ? parsed.shortSummary : '';
+				setShortSummaryState(
+					work.id,
+					isUsableShortSummary(shortSummary)
+						? { status: 'loaded', text: shortSummary }
+						: { status: 'missing', text: '' }
+				);
+			} catch {
+				setShortSummaryState(work.id, { status: 'error', text: '' });
+			} finally {
+				shortSummaryPromises.delete(work.id);
 			}
-			if (!response.ok) {
-				throw new Error(`No se pudo cargar el resumen breve: ${response.status}`);
-			}
+		})();
 
-			const parsed = (await response.json()) as { shortSummary?: unknown };
-			const shortSummary = typeof parsed.shortSummary === 'string' ? parsed.shortSummary : '';
-			setShortSummaryState(
-				work.id,
-				isUsableShortSummary(shortSummary)
-					? { status: 'loaded', text: shortSummary }
-					: { status: 'missing', text: '' }
-			);
-		} catch {
-			setShortSummaryState(work.id, { status: 'error', text: '' });
-		}
+		shortSummaryPromises.set(work.id, promise);
+		return promise;
 	};
 
-	const toggleRowExpanded = (row: ObraTableRow): void => {
+	const prefetchShortSummary = async (work: CatalogWork): Promise<void> => {
+		await loadShortSummary(work);
+	};
+
+	$effect(() => {
+		const works = rows.slice(0, 20).map((row) => row.work);
+		const cancelIdlePrefetch = scheduleIdle(() => {
+			for (const work of works) {
+				void prefetchShortSummary(work);
+			}
+		});
+		return cancelIdlePrefetch;
+	});
+
+	const toggleRowExpanded = async (row: ObraTableRow): Promise<void> => {
 		const next = new Set(expandedRows);
 		const rowId = row.rowId;
 		if (next.has(rowId)) {
 			next.delete(rowId);
 		} else {
+			await loadShortSummary(row.work);
 			next.add(rowId);
-			void loadShortSummary(row.work);
 		}
 		expandedRows = next;
 	};
@@ -277,7 +320,7 @@
 		if (target.closest('a')) return;
 		if (target.closest('button')) return;
 		if (target.closest('.textos-dropdown')) return;
-		toggleRowExpanded(row);
+		void toggleRowExpanded(row);
 	};
 
 	const hasAuthorLinks = (set: AttributionSet): boolean => !set.unresolved && set.groups.length > 0;
@@ -431,6 +474,12 @@
 						data-filter-etso-yes={flags.etsoYes ? '1' : '0'}
 						data-filter-only-etso={flags.onlyEtso ? '1' : '0'}
 						data-filter-only-trad={flags.onlyTrad ? '1' : '0'}
+						onpointerenter={() => {
+							void prefetchShortSummary(row.work);
+						}}
+						onfocusin={() => {
+							void prefetchShortSummary(row.work);
+						}}
 						onclick={(event) => handleRowClick(event, row)}
 					>
 						{#if mode === 'informe'}
@@ -712,13 +761,13 @@
 										onclick={(event) => {
 											event.preventDefault();
 											event.stopPropagation();
-											toggleRowExpanded(row);
+											void toggleRowExpanded(row);
 										}}
 										onkeydown={(event) => {
 											if (event.key !== 'Enter' && event.key !== ' ') return;
 											event.preventDefault();
 											event.stopPropagation();
-											toggleRowExpanded(row);
+											void toggleRowExpanded(row);
 										}}
 									>
 										{isRowExpanded(row.rowId) ? 'Ver menos' : 'Ver más'}

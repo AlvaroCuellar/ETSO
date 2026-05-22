@@ -1,5 +1,6 @@
 import { getAllWorks, getCatalogStats } from '$lib/server/catalog-runtime';
 import { env as publicEnv } from '$env/dynamic/public';
+import { buildWorkTitleSearchText, formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
 
 import type { AttributionSet } from '$lib/domain/catalog';
 import type { TexoroIndexManifest } from '$lib/search';
@@ -24,6 +25,7 @@ interface TexoroInitialIndexInfo {
 interface TokenOption {
 	id: string;
 	label: string;
+	searchText?: string;
 }
 
 let cachedIndexInfo:
@@ -73,6 +75,17 @@ const collectStringOptions = (
 	Array.from(new Set(values.map((value) => value.trim()).filter(Boolean)))
 		.sort((a, b) => a.localeCompare(b, 'es'))
 		.map((value) => ({ id: value, label: value }));
+
+const collectTitleOptions = (
+	works: Awaited<ReturnType<typeof getAllWorks>>
+): TokenOption[] =>
+	works
+		.map((work) => ({
+			id: work.id,
+			label: formatDisplayWorkTitle(work.title),
+			searchText: buildWorkTitleSearchText(work.title, work.titleVariants)
+		}))
+		.sort((a, b) => a.label.localeCompare(b.label, 'es'));
 
 const getTexoroInitialIndexInfo = async (fetch: typeof globalThis.fetch): Promise<TexoroInitialIndexInfo | null> => {
 	const texoroIndexBaseUrl = resolveTexoroIndexBaseUrl();
@@ -140,6 +153,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
 			authors: authorOptions.length
 		},
 		filterOptions: {
+			titles: collectTitleOptions(works),
 			authors: authorOptions,
 			genres: collectStringOptions(works.map((work) => work.genre)),
 			states: collectStringOptions(works.map((work) => work.textState))

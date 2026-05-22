@@ -31,6 +31,8 @@ interface SubmittedTermPayload {
 
 interface TexoroExportFilters {
 	title: string;
+	titleIds: string[];
+	titleLabels: string[];
 	genres: string[];
 	traditionalAuthorIds: string[];
 	traditionalMatch: 'or' | 'and';
@@ -122,6 +124,8 @@ const normalizeFilters = (value: unknown): TexoroExportFilters => {
 	const raw = value && typeof value === 'object' ? (value as Record<string, unknown>) : {};
 	return {
 		title: normalizeString(raw.title),
+		titleIds: normalizeStringList(raw.titleIds, 5_000),
+		titleLabels: normalizeStringList(raw.titleLabels, 5_000),
 		genres: normalizeStringList(raw.genres),
 		traditionalAuthorIds: normalizeStringList(raw.traditionalAuthorIds),
 		traditionalMatch: raw.traditionalMatch === 'and' ? 'and' : 'or',
@@ -194,12 +198,20 @@ const collectStylometryAuthors = (result: SearchResult): string[] => {
 const sumResultOccurrences = (result: SearchResult): number =>
 	result.matches.reduce((sum, match) => sum + (match.occurrences ?? 0), 0);
 
+const formatTitleFilter = (filters: TexoroExportFilters): string => {
+	if (filters.titleLabels.length > 0) return filters.titleLabels.join('; ');
+	if (filters.titleIds.length > 0) return filters.titleIds.join('; ');
+	return filters.title || 'Sin filtro';
+};
+
 const filterResults = (execution: SearchExecution, filters: TexoroExportFilters): SearchResult[] => {
 	const normalizedTitle = normalizeText(filters.title);
+	const selectedWorkIds = new Set(filters.titleIds);
 	return execution.allResults
 		.filter((result) => {
 			const meta = result.meta;
 			if (!meta) return false;
+			if (selectedWorkIds.size > 0 && !selectedWorkIds.has(result.workId)) return false;
 			if (normalizedTitle) {
 				const haystack = normalizeText(buildWorkTitleSearchText(meta.title, meta.titleVariants));
 				if (!haystack.includes(normalizedTitle)) return false;
@@ -430,7 +442,7 @@ const addQuerySheet = (
 		['Modo términos adicionales', additionalModeLabel(query?.additionalMode)],
 		['Condiciones de proximidad', proximityDescription],
 		['Modo proximidad', query?.proximityMode === 'any' ? 'Basta con una' : 'Todas las condiciones'],
-		['Filtro título', payload.filters.title || 'Sin filtro'],
+		['Filtro título', formatTitleFilter(payload.filters)],
 		['Filtro géneros', payload.filters.genres.join('; ') || 'Sin filtro'],
 		['Filtro autoría tradicional', payload.filters.traditionalAuthorIds.join('; ') || 'Sin filtro'],
 		['Modo autoría tradicional', payload.filters.traditionalMatch],
@@ -519,7 +531,14 @@ export const POST: RequestHandler = async ({ request }) => {
 		maxPhraseVerificationDocs: 220,
 		snippetRadius: SNIPPET_RADIUS,
 		includeSnippets: false,
-		structuredQuery: payload.structuredQuery
+		structuredQuery: payload.structuredQuery,
+		workIds: payload.filters.titleIds,
+		genres: payload.filters.genres,
+		states: payload.filters.states,
+		traditionalAuthorIds: payload.filters.traditionalAuthorIds,
+		traditionalMatch: payload.filters.traditionalMatch,
+		stylometryAuthorIds: payload.filters.stylometryAuthorIds,
+		stylometryMatch: payload.filters.stylometryMatch
 	};
 
 	try {

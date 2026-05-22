@@ -5,8 +5,8 @@
 	import ChevronRight from 'lucide-svelte/icons/chevron-right';
 	import Globe from 'lucide-svelte/icons/globe';
 	import Mail from 'lucide-svelte/icons/mail';
-	import estilometriaHero from '$lib/assets/heros/estilometria.png';
-	import texoroHero from '$lib/assets/heros/texoro.png';
+	import estilometriaHero from '$lib/assets/heros/estilometria.webp';
+	import texoroHero from '$lib/assets/heros/texoro.webp';
 	import transcripcionHero from '$lib/assets/heros/transcripcion.jpeg';
 	import grafoImage from '$lib/assets/heros/grafo.png';
 	import informesImage from '$lib/assets/heros/informes.png';
@@ -91,20 +91,13 @@
 
 	const AUTOPLAY_MS = 7000;
 	let activeIndex = $state(0);
-	let loadedSlideIndexes = $state([0]);
 	let autoplayHandle: ReturnType<typeof setInterval> | null = null;
 	let prefersReducedMotion = false;
 
 	const normalizeSlideIndex = (index: number): number => (index + slides.length) % slides.length;
 
-	const ensureSlideLoaded = (index: number): void => {
-		if (loadedSlideIndexes.includes(index)) return;
-		loadedSlideIndexes = [...loadedSlideIndexes, index];
-	};
-
 	const goToSlide = (nextIndex: number): void => {
 		const normalizedIndex = normalizeSlideIndex(nextIndex);
-		ensureSlideLoaded(normalizedIndex);
 		activeIndex = normalizedIndex;
 	};
 
@@ -173,18 +166,14 @@
 		>
 			{#each slides as slide, index}
 				<article class="relative h-full min-w-full">
-					{#if loadedSlideIndexes.includes(index)}
-						<img
-							src={slide.image}
-							alt={slide.alt}
-							class="h-full w-full object-cover"
-							loading={index === 0 ? 'eager' : 'lazy'}
-							fetchpriority={index === 0 ? 'high' : 'auto'}
-							decoding="async"
-						/>
-					{:else}
-						<div class="h-full w-full bg-brand-blue-dark"></div>
-					{/if}
+					<img
+						src={slide.image}
+						alt={slide.alt}
+						class="h-full w-full object-cover"
+						loading={index === 0 ? 'eager' : 'lazy'}
+						fetchpriority={index === 0 ? 'high' : 'low'}
+						decoding="async"
+					/>
 					<div class="absolute inset-0 bg-[rgba(8,21,52,0.48)]"></div>
 
 					<div class="absolute inset-0 flex items-end pb-12 md:items-center md:pb-0">

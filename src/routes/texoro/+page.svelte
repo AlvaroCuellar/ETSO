@@ -11,7 +11,7 @@
 	import ComparisonMetricToggle from '$lib/components/search/ComparisonMetricToggle.svelte';
 	import TexoroLiveChart from '$lib/components/search/TexoroLiveChart.svelte';
 	import TexoroComparisonChart from '$lib/components/search/TexoroComparisonChart.svelte';
-	import { buildWorkTitleSearchText, formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
+	import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
 	import {
 		formatAttribution,
 		formatConfidence,
@@ -185,6 +185,7 @@
 	interface TokenOption {
 		id: string;
 		label: string;
+		searchText?: string;
 	}
 
 	interface SubmittedQueryTerm {
@@ -193,10 +194,22 @@
 		operator: string | null;
 	}
 
+	interface TexoroSearchFilters {
+		titleIds: string[];
+		titleLabels: string[];
+		genres: string[];
+		traditionalAuthorIds: string[];
+		traditionalMatch: 'or' | 'and';
+		stylometryAuthorIds: string[];
+		stylometryMatch: 'or' | 'and';
+		states: string[];
+	}
+
 	interface SubmittedSearch {
 		query: string;
 		structuredQuery: StructuredSearchQuery;
 		terms: SubmittedQueryTerm[];
+		filters: TexoroSearchFilters;
 	}
 
 	type InterpretedQueryPartKind = 'text' | 'term' | 'operator';
@@ -225,6 +238,8 @@
 	const QUERY_ALLOWED_PATTERN = /^[\p{L}\p{N}*?\s]+$/u;
 	const SHOW_AUTOMATIC_CHARTS = false;
 	const RESULT_PREVIEW_OCCURRENCE_LIMIT = 10;
+	const INITIAL_PREVIEW_RESULT_COUNT = 3;
+	const RESULT_PREVIEW_SCROLL_ROOT_MARGIN = '700px 0px';
 	const RESULT_PREVIEW_SNIPPET_RADIUS = 115;
 	const RESULT_PREVIEW_VISIBLE_RADIUS = 70;
 	const OCCURRENCE_DETAILS_CACHE_LIMIT = 24;
@@ -259,7 +274,7 @@
 	let proximityModePillStyle = $state('opacity: 0;');
 	let nextAdditionalTermId = 1;
 	let nextProximityTermId = 1;
-	let titleFilter = $state('');
+	let selectedTitleIds = $state<string[]>([]);
 	let selectedGenres = $state<string[]>([]);
 	let selectedTradAuthors = $state<string[]>([]);
 	let tradMatch = $state<'or' | 'and'>('or');
@@ -284,10 +299,13 @@
 	let occurrenceModal = $state<OccurrenceModalState | null>(null);
 	let occurrenceModalScrolled = $state(false);
 	let occurrencePreviews = $state<Map<number, ResultOccurrencePreview>>(new Map());
+	let previewLoadsByDocId = $state<Map<number, Promise<void>>>(new Map());
+	let queuedPreviewDocIds = $state<Set<number>>(new Set());
 	let occurrenceLoading = $state(false);
 	let occurrenceError = $state('');
 	let occurrenceDetailsCache = $state<Map<string, SearchMatchOccurrences>>(new Map());
 	let occurrenceDetailsLoads = $state<Map<string, Promise<SearchMatchOccurrences>>>(new Map());
+	let openingOccurrenceKey = $state<string | null>(null);
 	let chartMode = $state<ChartMode>('bars');
 	let comparisonMetric = $state<ComparisonMetric>('frequency10k');
 	let chartCopyPending = $state<Record<ChartKey, boolean>>({ author: false, genre: false });
@@ -301,42 +319,10 @@
 	let texoroWorkerInitPromise: Promise<void> | null = null;
 	let searchRequestId = 0;
 	let visiblePreviewRequestId = 0;
+	let previewRequestVersion = 0;
 
 	const sumResultOccurrences = (result: SearchResult): number =>
 		result.matches.reduce((sum, match) => sum + (match.occurrences ?? 0), 0);
-
-	const normalizeText = (value: string): string =>
-		value
-			.normalize('NFD')
-			.replace(/[\u0300-\u036f]/g, '')
-			.toLowerCase()
-			.trim();
-
-	const collectAuthorIds = (set: AttributionSet): Set<string> => {
-		const authorIds = new Set<string>();
-		if (set.unresolved) return authorIds;
-
-		for (const group of set.groups) {
-			for (const member of group.members) {
-				if (!member.authorId) continue;
-				authorIds.add(member.authorId);
-			}
-		}
-
-		return authorIds;
-	};
-
-	const matchesByMode = (
-		haystack: Set<string>,
-		selectedIds: string[],
-		matchMode: 'or' | 'and'
-	): boolean => {
-		if (selectedIds.length === 0) return true;
-		if (matchMode === 'and') {
-			return selectedIds.every((candidate) => haystack.has(candidate));
-		}
-		return selectedIds.some((candidate) => haystack.has(candidate));
-	};
 
 	const collectStylometryAuthors = (result: SearchResult): string[] => {
 		const set = result.meta?.stylometryAttribution;
@@ -448,8 +434,13 @@
 	};
 
 	const authorOptions = $derived.by<TokenOption[]>(() => data.filterOptions.authors);
+	const titleOptions = $derived.by<TokenOption[]>(() => data.filterOptions.titles);
 	const genreOptions = $derived.by<TokenOption[]>(() => data.filterOptions.genres);
 	const stateOptions = $derived.by<TokenOption[]>(() => data.filterOptions.states);
+	const titleLabelById = $derived.by(() => new Map(titleOptions.map((option) => [option.id, option.label] as const)));
+	const selectedTitleLabels = $derived.by(() =>
+		selectedTitleIds.map((id) => titleLabelById.get(id) ?? id)
+	);
 
 	const activeSearchTermCount = $derived.by(() => {
 		let count = mainQuery.trim() ? 1 : 0;
@@ -464,12 +455,51 @@
 
 	const hasActiveFilters = $derived.by(
 		() =>
-			Boolean(titleFilter.trim()) ||
+			selectedTitleIds.length > 0 ||
 			selectedGenres.length > 0 ||
 			selectedTradAuthors.length > 0 ||
 			selectedEstoAuthors.length > 0 ||
 			selectedStates.length > 0
 	);
+	const filtersHaveValues = (filters: TexoroSearchFilters): boolean =>
+		filters.titleIds.length > 0 ||
+		filters.genres.length > 0 ||
+		filters.traditionalAuthorIds.length > 0 ||
+		filters.stylometryAuthorIds.length > 0 ||
+		filters.states.length > 0;
+	const submittedHasActiveFilters = $derived.by(() =>
+		lastSubmittedSearch ? filtersHaveValues(lastSubmittedSearch.filters) : false
+	);
+
+	const buildCurrentSearchFilters = (): TexoroSearchFilters => ({
+		titleIds: [...selectedTitleIds],
+		titleLabels: [...selectedTitleLabels],
+		genres: [...selectedGenres],
+		traditionalAuthorIds: [...selectedTradAuthors],
+		traditionalMatch: tradMatch,
+		stylometryAuthorIds: [...selectedEstoAuthors],
+		stylometryMatch: estoMatch,
+		states: [...selectedStates]
+	});
+
+	const buildSearchFilterOptions = (filters: TexoroSearchFilters): Pick<
+		SearchOptions,
+		| 'workIds'
+		| 'genres'
+		| 'states'
+		| 'traditionalAuthorIds'
+		| 'traditionalMatch'
+		| 'stylometryAuthorIds'
+		| 'stylometryMatch'
+	> => ({
+		workIds: filters.titleIds,
+		genres: filters.genres,
+		states: filters.states,
+		traditionalAuthorIds: filters.traditionalAuthorIds,
+		traditionalMatch: filters.traditionalMatch,
+		stylometryAuthorIds: filters.stylometryAuthorIds,
+		stylometryMatch: filters.stylometryMatch
+	});
 
 	$effect(() => {
 		if (additionalTerms.length > 0 || proximityTerms.length > 0) {
@@ -483,64 +513,14 @@
 		}
 	});
 
-	$effect(() => {
-		const filterSignature = [
-			titleFilter,
-			selectedGenres.join('\u0001'),
-			selectedTradAuthors.join('\u0001'),
-			tradMatch,
-			selectedEstoAuthors.join('\u0001'),
-			estoMatch,
-			selectedStates.join('\u0001')
-		].join('\u0002');
-		filterSignature;
-		resultsPage = 1;
-	});
-
-	const filterExecutionResults = (execution: SearchExecution): SearchResult[] => {
-		const normalizedTitle = normalizeText(titleFilter);
-
-		return execution.allResults
-			.filter((result) => {
-				const meta = result.meta;
-				if (!meta) return false;
-
-				if (normalizedTitle) {
-					const haystack = normalizeText(buildWorkTitleSearchText(meta.title, meta.titleVariants));
-					if (!haystack.includes(normalizedTitle)) return false;
-				}
-
-				if (selectedGenres.length > 0 && !selectedGenres.includes(meta.genre)) return false;
-				if (
-					!matchesByMode(collectAuthorIds(meta.traditionalAttribution), selectedTradAuthors, tradMatch)
-				) {
-					return false;
-				}
-				if (
-					!matchesByMode(collectAuthorIds(meta.stylometryAttribution), selectedEstoAuthors, estoMatch)
-				) {
-					return false;
-				}
-				if (selectedStates.length > 0 && !selectedStates.includes(meta.textState)) return false;
-
-				return true;
-			})
-			.sort(
-				(a, b) =>
-					sumResultOccurrences(b) - sumResultOccurrences(a) ||
-					b.score - a.score ||
-					a.docId - b.docId
-			);
-	};
-
-	const getVisibleResultsForExecution = (execution: SearchExecution, page: number): SearchResult[] => {
-		const start = (Math.max(1, page) - 1) * RESULTS_PAGE_SIZE;
-		return filterExecutionResults(execution).slice(start, start + RESULTS_PAGE_SIZE);
-	};
-
 	const filteredResults = $derived.by(() => {
 		if (!searchExecution) return [] as SearchResult[];
-		return filterExecutionResults(searchExecution);
+		return [...searchExecution.allResults].sort(
+			(a, b) =>
+				sumResultOccurrences(b) - sumResultOccurrences(a) ||
+				b.score - a.score ||
+				a.docId - b.docId
+		);
 	});
 
 	const resultPageCount = $derived.by(() =>
@@ -554,9 +534,6 @@
 		const start = (resultsPage - 1) * RESULTS_PAGE_SIZE;
 		return filteredResults.slice(start, start + RESULTS_PAGE_SIZE);
 	});
-	const visibleResultsHavePreviews = $derived.by(() =>
-		visibleResults.every((result) => result.matches.length === 0 || occurrencePreviews.has(result.docId))
-	);
 	const visiblePreviewSignature = $derived.by(() =>
 		visibleResults
 			.map((result) =>
@@ -566,9 +543,6 @@
 				].join('\u0004')
 			)
 			.join('\u0005')
-	);
-	const shouldShowResultsLoader = $derived(
-		Boolean(searchExecution && filteredResults.length > 0 && (isPreparingResults || !visibleResultsHavePreviews))
 	);
 	const filteredTextsWithOccurrences = $derived.by(() => filteredResults.length);
 	const filteredTotalOccurrences = $derived.by(() =>
@@ -1299,7 +1273,7 @@
 		additionalMode = 'all';
 		proximityTerms = [];
 		proximityMode = 'all';
-		titleFilter = '';
+		selectedTitleIds = [];
 		selectedGenres = [];
 		selectedTradAuthors = [];
 		tradMatch = 'or';
@@ -1314,10 +1288,14 @@
 		searchError = '';
 		exportError = '';
 		occurrencePreviews = new Map();
+		previewLoadsByDocId = new Map();
+		queuedPreviewDocIds = new Set();
 		occurrenceDetailsCache = new Map();
 		occurrenceDetailsLoads = new Map();
+		openingOccurrenceKey = null;
 		searchRequestId += 1;
 		visiblePreviewRequestId += 1;
+		previewRequestVersion += 1;
 	};
 
 	const drawWrappedText = (
@@ -1717,7 +1695,8 @@
 
 	const runServerSearch = async (
 		query: string,
-		structuredQuery: StructuredSearchQuery
+		structuredQuery: StructuredSearchQuery,
+		filters: TexoroSearchFilters
 	): Promise<SearchExecution> =>
 		postJson<SearchExecution>('/api/texoro/search', {
 			query,
@@ -1726,13 +1705,15 @@
 				limit: RESULTS_PAGE_SIZE,
 				maxPhraseVerificationDocs: 220,
 				snippetRadius: 115,
-				includeSnippets: false
+				includeSnippets: false,
+				...buildSearchFilterOptions(filters)
 			}
 		});
 
 	const runBrowserFirstSearch = async (
 		query: string,
-		structuredQuery: StructuredSearchQuery
+		structuredQuery: StructuredSearchQuery,
+		filters: TexoroSearchFilters
 	): Promise<SearchExecution> => {
 		if (isEngineReady && isTexoroClientWorkerReady()) {
 			try {
@@ -1744,7 +1725,8 @@
 						limit: RESULTS_PAGE_SIZE,
 						maxPhraseVerificationDocs: 220,
 						snippetRadius: 115,
-						includeSnippets: false
+						includeSnippets: false,
+						...buildSearchFilterOptions(filters)
 					}
 				});
 				if (response.execution) return response.execution;
@@ -1754,7 +1736,7 @@
 			}
 		}
 
-		return runServerSearch(query, structuredQuery);
+		return runServerSearch(query, structuredQuery, filters);
 	};
 
 	const buildOccurrencePreviewMap = async (
@@ -1824,6 +1806,111 @@
 			next.set(docId, preview);
 		}
 		occurrencePreviews = next;
+	};
+
+	const getResultsForPage = (page: number): SearchResult[] => {
+		const start = (Math.max(1, page) - 1) * RESULTS_PAGE_SIZE;
+		return filteredResults.slice(start, start + RESULTS_PAGE_SIZE);
+	};
+
+	const prefetchResultPreviews = (results: SearchResult[]): Promise<void> => {
+		const eligible = results.filter(
+			(result) =>
+				result.matches.length > 0 &&
+				!occurrencePreviews.has(result.docId) &&
+				!previewLoadsByDocId.has(result.docId)
+		);
+		if (eligible.length === 0) return Promise.resolve();
+
+		const version = previewRequestVersion;
+		const docIds = eligible.map((result) => result.docId);
+		const pending = (async () => {
+			try {
+				const previews = await buildOccurrencePreviewMap(eligible);
+				if (version !== previewRequestVersion) return;
+				mergeOccurrencePreviewMap(previews);
+			} finally {
+				if (version !== previewRequestVersion) return;
+				const nextLoads = new Map(previewLoadsByDocId);
+				const nextQueued = new Set(queuedPreviewDocIds);
+				for (const docId of docIds) {
+					nextLoads.delete(docId);
+					nextQueued.delete(docId);
+				}
+				previewLoadsByDocId = nextLoads;
+				queuedPreviewDocIds = nextQueued;
+			}
+		})();
+
+		const nextLoads = new Map(previewLoadsByDocId);
+		const nextQueued = new Set(queuedPreviewDocIds);
+		for (const docId of docIds) {
+			nextLoads.set(docId, pending);
+			nextQueued.add(docId);
+		}
+		previewLoadsByDocId = nextLoads;
+		queuedPreviewDocIds = nextQueued;
+		return pending;
+	};
+
+	const prefetchResultsPage = (page: number, mode: 'top' | 'all' = 'top'): void => {
+		const pageResults = getResultsForPage(page);
+		if (pageResults.length === 0) return;
+		const candidates =
+			mode === 'all' ? pageResults : pageResults.slice(0, INITIAL_PREVIEW_RESULT_COUNT);
+		void prefetchResultPreviews(candidates);
+	};
+
+	const prefetchAdjacentPage = (page: number): void => {
+		const nextPage = Math.min(Math.max(1, page), resultPageCount);
+		if (nextPage === resultsPage) return;
+		prefetchResultsPage(nextPage, 'all');
+	};
+
+	const hasPendingPreview = (result: SearchResult): boolean =>
+		result.matches.length > 0 &&
+		!occurrencePreviews.has(result.docId) &&
+		(previewLoadsByDocId.has(result.docId) || queuedPreviewDocIds.has(result.docId));
+
+	const observeResultRow = (node: HTMLElement, result: SearchResult) => {
+		let current = result;
+		let observer: IntersectionObserver | null = null;
+		const loadPreview = (): void => {
+			if (current.matches.length === 0 || occurrencePreviews.has(current.docId)) return;
+			void prefetchResultPreviews([current]);
+		};
+
+		if (typeof IntersectionObserver === 'undefined') {
+			loadPreview();
+			return {
+				update(next: SearchResult) {
+					const changed = next.docId !== current.docId;
+					current = next;
+					if (changed) loadPreview();
+				},
+				destroy() {}
+			};
+		}
+
+		observer = new IntersectionObserver(
+			(entries) => {
+				if (!entries.some((entry) => entry.isIntersecting)) return;
+				loadPreview();
+			},
+			{ rootMargin: RESULT_PREVIEW_SCROLL_ROOT_MARGIN }
+		);
+		observer.observe(node);
+
+		return {
+			update(next: SearchResult) {
+				const changed = next.docId !== current.docId;
+				current = next;
+				if (changed) loadPreview();
+			},
+			destroy() {
+				observer?.disconnect();
+			}
+		};
 	};
 
 	const collectHighlightRanges = (snippet: string, assignments: MatchAssignment[]): HighlightRange[] => {
@@ -1972,6 +2059,7 @@
 		occurrenceModalScrolled = false;
 		occurrenceLoading = false;
 		occurrenceError = '';
+		openingOccurrenceKey = null;
 	};
 
 	const occurrenceDetailsKey = (result: SearchResult, assignment: MatchAssignment): string =>
@@ -2038,34 +2126,40 @@
 		result: SearchResult,
 		assignment: MatchAssignment
 	): Promise<void> => {
-		const cached = occurrenceDetailsCache.get(occurrenceDetailsKey(result, assignment)) ?? null;
+		const key = occurrenceDetailsKey(result, assignment);
+		const cached = occurrenceDetailsCache.get(key) ?? null;
 		occurrenceError = '';
-		occurrenceLoading = !cached;
+		occurrenceLoading = false;
 		occurrenceModalScrolled = false;
-		occurrenceModal = {
-			result,
-			assignment,
-			details: cached
-		};
-		if (cached) return;
+		if (cached) {
+			occurrenceModal = {
+				result,
+				assignment,
+				details: cached
+			};
+			return;
+		}
+
+		openingOccurrenceKey = key;
 		try {
 			const details = await loadOccurrenceDetails(result, assignment);
-			if (!occurrenceModal) return;
-			if (
-				occurrenceModal.result.docId !== result.docId ||
-				occurrenceModal.assignment.key !== assignment.key
-			) {
-				return;
-			}
+			if (openingOccurrenceKey !== key) return;
 			occurrenceModal = {
 				result,
 				assignment,
 				details
 			};
 		} catch (cause) {
+			if (openingOccurrenceKey !== key) return;
+			occurrenceModal = {
+				result,
+				assignment,
+				details: null
+			};
 			occurrenceError =
 				cause instanceof Error ? cause.message : 'No se pudieron cargar las concurrencias';
 		} finally {
+			if (openingOccurrenceKey === key) openingOccurrenceKey = null;
 			occurrenceLoading = false;
 		}
 	};
@@ -2082,22 +2176,10 @@
 	const navigateResultsPage = async (page: number): Promise<void> => {
 		const nextPage = Math.min(Math.max(1, page), resultPageCount);
 		if (nextPage === resultsPage) return;
-		const requestId = ++visiblePreviewRequestId;
-		isPreparingResults = true;
+		visiblePreviewRequestId += 1;
 		resultsPage = nextPage;
 		await scrollToResults();
-		const pageResults = visibleResults;
-		try {
-			if (pageResults.some((result) => result.matches.length > 0 && !occurrencePreviews.has(result.docId))) {
-				const previews = await buildOccurrencePreviewMap(pageResults);
-				if (requestId !== visiblePreviewRequestId) return;
-				mergeOccurrencePreviewMap(previews);
-			}
-		} finally {
-			if (requestId === visiblePreviewRequestId) {
-				isPreparingResults = false;
-			}
-		}
+		prefetchResultsPage(nextPage, 'top');
 	};
 
 	const exportCurrentSearch = async (): Promise<void> => {
@@ -2109,15 +2191,7 @@
 				query: lastSubmittedSearch.query,
 				structuredQuery: lastSubmittedSearch.structuredQuery,
 				terms: lastSubmittedSearch.terms,
-				filters: {
-					title: titleFilter,
-					genres: selectedGenres,
-					traditionalAuthorIds: selectedTradAuthors,
-					traditionalMatch: tradMatch,
-					stylometryAuthorIds: selectedEstoAuthors,
-					stylometryMatch: estoMatch,
-					states: selectedStates
-				}
+				filters: lastSubmittedSearch.filters
 			});
 			const downloadUrl = URL.createObjectURL(blob);
 			const anchor = document.createElement('a');
@@ -2152,29 +2226,10 @@
 
 	$effect(() => {
 		const signature = visiblePreviewSignature;
-		if (
-			!searchExecution ||
-			isSearching ||
-			isPreparingResults ||
-			!signature ||
-			visibleResults.length === 0 ||
-			visibleResultsHavePreviews
-		) {
+		if (!searchExecution || isSearching || !signature || visibleResults.length === 0) {
 			return;
 		}
-		const requestId = ++visiblePreviewRequestId;
-		isPreparingResults = true;
-		void (async () => {
-			try {
-				const previews = await buildOccurrencePreviewMap(visibleResults);
-				if (requestId !== visiblePreviewRequestId) return;
-				mergeOccurrencePreviewMap(previews);
-			} finally {
-				if (requestId === visiblePreviewRequestId) {
-					isPreparingResults = false;
-				}
-			}
-		})();
+		prefetchResultsPage(resultsPage, 'top');
 	});
 
 	$effect(() => {
@@ -2288,8 +2343,12 @@
 		submittedTerms = [];
 		lastSubmittedSearch = null;
 		occurrencePreviews = new Map();
+		previewLoadsByDocId = new Map();
+		queuedPreviewDocIds = new Set();
 		occurrenceDetailsCache = new Map();
 		occurrenceDetailsLoads = new Map();
+		openingOccurrenceKey = null;
+		previewRequestVersion += 1;
 		chartCopyPending = { author: false, genre: false };
 		const mainValidationError = validateSearchTerm(mainQuery, 'Búsqueda principal');
 		if (mainValidationError) {
@@ -2325,21 +2384,21 @@
 		}
 
 		const { query, terms, structuredQuery } = buildEffectiveQuery();
+		const filters = buildCurrentSearchFilters();
 		const requestId = ++searchRequestId;
 		visiblePreviewRequestId += 1;
 		isSearching = true;
 		isPreparingResults = false;
 		try {
-			const execution = await runBrowserFirstSearch(query, structuredQuery);
-			if (requestId !== searchRequestId) return;
-			isPreparingResults = true;
-			const firstPageResults = getVisibleResultsForExecution(execution, 1);
-			const previews = await buildOccurrencePreviewMap(firstPageResults);
+			const execution = await runBrowserFirstSearch(query, structuredQuery, filters);
 			if (requestId !== searchRequestId) return;
 			submittedTerms = terms;
-			lastSubmittedSearch = { query, structuredQuery, terms };
-			occurrencePreviews = previews;
+			lastSubmittedSearch = { query, structuredQuery, terms, filters };
 			searchExecution = execution;
+			void tick().then(() => {
+				if (requestId !== searchRequestId) return;
+				prefetchResultsPage(1, 'top');
+			});
 		} catch (cause) {
 			submittedTerms = [];
 			lastSubmittedSearch = null;
@@ -2506,8 +2565,8 @@
 			</p>
 
 			<div
-				class={`rounded-[10px] transition-[background-color,box-shadow] duration-200 ${
-					advancedSearchOpen ? 'overflow-visible bg-[var(--color-surface-subtle)] shadow-[0_8px_24px_rgba(25,46,80,0.06)]' : 'overflow-hidden bg-white'
+				class={`rounded-[10px] border border-border/70 bg-[var(--color-surface-subtle)] transition-[background-color,box-shadow] duration-200 ${
+					advancedSearchOpen ? 'overflow-visible shadow-[0_8px_24px_rgba(25,46,80,0.06)]' : 'overflow-hidden'
 				}`}
 			>
 				<button
@@ -2754,8 +2813,8 @@
 			</div>
 
 			<div
-				class={`rounded-[10px] transition-[background-color,box-shadow] duration-200 ${
-					filtersOpen ? 'overflow-visible bg-[var(--color-surface-subtle)] shadow-[0_8px_24px_rgba(25,46,80,0.06)]' : 'overflow-hidden bg-white'
+				class={`rounded-[10px] border border-border/70 bg-[var(--color-surface-subtle)] transition-[background-color,box-shadow] duration-200 ${
+					filtersOpen ? 'overflow-visible shadow-[0_8px_24px_rgba(25,46,80,0.06)]' : 'overflow-hidden'
 				}`}
 			>
 				<button
@@ -2781,32 +2840,18 @@
 				>
 					<div class="grid gap-6">
 						<div class="grid gap-5 md:grid-cols-2">
-							<div class="flex flex-col">
-								<label class="mb-[6px] inline-flex items-center gap-1 font-['Roboto',sans-serif] text-[14px] font-semibold text-text-soft" for="texoro-title-filter">
-									Título
-									<span class="group relative inline-flex items-center">
-										<span
-											class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border-accent-blue bg-surface-accent-blue text-[12px] leading-none font-bold text-brand-blue-dark"
-											role="button"
-											tabindex="0"
-										>
-											?
-										</span>
-										<span
-											class="invisible absolute top-[calc(100%+8px)] left-0 z-20 w-[min(320px,78vw)] rounded-[6px] border border-border bg-white px-[10px] py-2 text-[12px] leading-[1.35] font-normal text-text-soft opacity-0 shadow-[0_8px_18px_rgba(0,0,0,0.08)] transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
-										>
-											Filtra las obras por palabras del título después de ejecutar la búsqueda textual.
-										</span>
-									</span>
-								</label>
-								<input
-									id="texoro-title-filter"
-									type="text"
-									bind:value={titleFilter}
-									placeholder="Ej: desdén, fuerza del interés..."
-									class="h-[42px] w-full rounded-[10px] border border-border bg-white px-3 text-[15px] text-text-main transition focus:border-brand-blue/35 focus:shadow-[0_0_0_3px_rgba(13,63,145,0.1)] focus:outline-none"
-								/>
-							</div>
+							<TokenMultiSelect
+								name="texoro-title"
+								label="Título"
+								placeholder="Escribe y selecciona títulos"
+								options={titleOptions}
+								selectedIds={selectedTitleIds}
+								helpText="Selecciona una o varias obras para limitar la búsqueda textual a esos títulos."
+								inputClass="js-static-multiselect"
+								onChange={(nextIds) => {
+									selectedTitleIds = nextIds;
+								}}
+							/>
 
 							<TokenMultiSelect
 								name="texoro-genero"
@@ -3017,7 +3062,7 @@
 					</div>
 				</div>
 
-				{#if hasActiveFilters}
+				{#if submittedHasActiveFilters}
 					<p class="m-0 rounded-[9px] border border-border-accent-blue bg-surface px-3 py-2 text-[0.84rem] text-text-soft">
 						Los resultados están recalculados sobre el subconjunto filtrado.
 					</p>
@@ -3178,20 +3223,9 @@
 					</div>
 				{/if}
 
-				{#if shouldShowResultsLoader}
-					<div
-						class="flex items-center gap-3 rounded-[12px] border border-border-accent-blue bg-white px-4 py-5 text-brand-blue-dark shadow-[0_6px_16px_rgba(25,46,80,0.07)]"
-						aria-live="polite"
-						aria-busy="true"
-					>
-						<LoaderCircle class="h-5 w-5 animate-spin" aria-hidden="true" />
-						<p class="m-0 font-['Roboto',sans-serif] text-[0.95rem] font-semibold">
-							Preparando resultados y contextos...
-						</p>
-					</div>
-				{:else if filteredResults.length === 0}
+				{#if filteredResults.length === 0}
 					<p class="m-0 text-[0.96rem] text-text-soft">
-						{hasActiveFilters
+						{submittedHasActiveFilters
 							? 'No se encontraron coincidencias con los filtros aplicados.'
 							: 'No se encontraron coincidencias.'}
 					</p>
@@ -3212,9 +3246,11 @@
 								<AppButton
 									type="button"
 									variant="secondary"
-									disabled={isPreparingResults || resultsPage <= 1}
+									disabled={resultsPage <= 1}
 									className="!h-9 !w-9 !rounded-full !border-transparent !bg-transparent !p-0 !text-brand-blue-dark shadow-none hover:!bg-surface-soft"
 									title="Página anterior"
+									onfocus={() => prefetchAdjacentPage(resultsPage - 1)}
+									onpointerenter={() => prefetchAdjacentPage(resultsPage - 1)}
 									onclick={() => {
 										void navigateResultsPage(resultsPage - 1);
 									}}
@@ -3229,9 +3265,11 @@
 								<AppButton
 									type="button"
 									variant="secondary"
-									disabled={isPreparingResults || resultsPage >= resultPageCount}
+									disabled={resultsPage >= resultPageCount}
 									className="!h-9 !w-9 !rounded-full !border-transparent !bg-transparent !p-0 !text-brand-blue-dark shadow-none hover:!bg-surface-soft"
 									title="Página siguiente"
+									onfocus={() => prefetchAdjacentPage(resultsPage + 1)}
+									onpointerenter={() => prefetchAdjacentPage(resultsPage + 1)}
 									onclick={() => {
 										void navigateResultsPage(resultsPage + 1);
 									}}
@@ -3243,7 +3281,7 @@
 						{/if}
 					</div>
 					<ul class="m-0 grid list-none gap-3 p-0">
-						{#each visibleResults as result, resultIndex}
+						{#each visibleResults as result, resultIndex (result.docId)}
 							{@const assignments = buildMatchAssignments(result.matches)}
 							{@const resultOccurrences = sumResultOccurrences(result)}
 							{@const preview = occurrencePreviews.get(result.docId)}
@@ -3252,6 +3290,7 @@
 							<li
 								class="overflow-hidden rounded-[11px] bg-white shadow-[0_6px_16px_rgba(25,46,80,0.07)]"
 								data-texoro-result-index={resultIndex}
+								use:observeResultRow={result}
 							>
 								<div class="grid gap-3 bg-surface-soft px-4 py-3">
 									<div class="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
@@ -3294,9 +3333,7 @@
 								</div>
 
 								<div class="px-4 py-3">
-									{#if preview?.loading}
-										<p class="mt-3 mb-0 text-[0.9rem] text-text-soft">Cargando concurrencias...</p>
-									{:else if preview?.error}
+									{#if preview?.error}
 										<p class="mt-3 mb-0 rounded-[9px] border border-[#f3c0ca] bg-[#fff5f7] px-3 py-2 text-[0.88rem] text-[#8f1e36]">
 											{preview.error}
 										</p>
@@ -3322,8 +3359,10 @@
 										</ol>
 									{:else if preview}
 										<p class="mt-3 mb-0 text-[0.9rem] text-text-soft">No hay concurrencias para mostrar.</p>
+									{:else if hasPendingPreview(result)}
+										<div class="texoro-preview-reserve mt-3" aria-hidden="true"></div>
 									{:else}
-										<p class="mt-3 mb-0 text-[0.9rem] text-text-soft">Cargando concurrencias...</p>
+										<div class="texoro-preview-reserve mt-3" aria-hidden="true"></div>
 									{/if}
 
 									<div class="mt-4 flex flex-wrap gap-1.5">
@@ -3332,7 +3371,11 @@
 												type="button"
 												class="texoro-more-button"
 												style="cursor:pointer;"
+												disabled={openingOccurrenceKey === occurrenceDetailsKey(result, assignment)}
+												aria-busy={openingOccurrenceKey === occurrenceDetailsKey(result, assignment) ? 'true' : undefined}
 												onpointerenter={() => prefetchOccurrenceDetails(result, assignment)}
+												onpointerdown={() => prefetchOccurrenceDetails(result, assignment)}
+												ontouchstart={() => prefetchOccurrenceDetails(result, assignment)}
 												onfocus={() => prefetchOccurrenceDetails(result, assignment)}
 												onclick={() => openOccurrenceModal(result, assignment)}
 												title={`Ver más concurrencias de ${formatMatchDisplayLabel(assignment.match)}`}
@@ -3365,9 +3408,11 @@
 							<AppButton
 								type="button"
 								variant="secondary"
-								disabled={isPreparingResults || resultsPage <= 1}
+								disabled={resultsPage <= 1}
 								className="!h-9 !w-9 !rounded-full !border-transparent !bg-transparent !p-0 !text-brand-blue-dark shadow-none hover:!bg-surface-soft"
 								title="Página anterior"
+								onfocus={() => prefetchAdjacentPage(resultsPage - 1)}
+								onpointerenter={() => prefetchAdjacentPage(resultsPage - 1)}
 								onclick={() => {
 									void navigateResultsPage(resultsPage - 1);
 								}}
@@ -3382,9 +3427,11 @@
 							<AppButton
 								type="button"
 								variant="secondary"
-								disabled={isPreparingResults || resultsPage >= resultPageCount}
+								disabled={resultsPage >= resultPageCount}
 								className="!h-9 !w-9 !rounded-full !border-transparent !bg-transparent !p-0 !text-brand-blue-dark shadow-none hover:!bg-surface-soft"
 								title="Página siguiente"
+								onfocus={() => prefetchAdjacentPage(resultsPage + 1)}
+								onpointerenter={() => prefetchAdjacentPage(resultsPage + 1)}
 								onclick={() => {
 									void navigateResultsPage(resultsPage + 1);
 								}}
@@ -3543,6 +3590,10 @@
 		overflow-wrap: anywhere;
 	}
 
+	.texoro-preview-reserve {
+		min-height: 7.25rem;
+	}
+
 	@media (max-width: 639px) {
 		.texoro-modal-metadata--hidden-mobile {
 			display: none;
@@ -3568,6 +3619,11 @@
 
 	.texoro-more-button:hover {
 		background: var(--color-surface-accent-blue);
+	}
+
+	.texoro-more-button:disabled {
+		cursor: wait;
+		opacity: 0.72;
 	}
 
 	.texoro-more-button:focus-visible {

@@ -6,6 +6,7 @@
 	interface TokenOption {
 		id: string;
 		label: string;
+		searchText?: string;
 	}
 
 	interface Props {
@@ -57,7 +58,7 @@
 		const baseOptions = options.filter((option) => !selectedSet.has(option.id));
 		if (!normalizedQuery) return baseOptions.slice(0, 80);
 		return baseOptions
-			.filter((option) => normalizeForSearch(option.label).includes(normalizedQuery))
+			.filter((option) => normalizeForSearch(option.searchText ?? option.label).includes(normalizedQuery))
 			.slice(0, 80);
 	});
 

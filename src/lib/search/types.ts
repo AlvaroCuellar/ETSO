@@ -308,6 +308,13 @@ export interface SearchOptions {
 	maxPhraseVerificationDocs?: number;
 	snippetRadius?: number;
 	includeSnippets?: boolean;
+	workIds?: string[];
+	genres?: string[];
+	states?: string[];
+	traditionalAuthorIds?: string[];
+	traditionalMatch?: 'or' | 'and';
+	stylometryAuthorIds?: string[];
+	stylometryMatch?: 'or' | 'and';
 	structuredQuery?: StructuredSearchQuery;
 	structuredClauses?: Array<
 		| { kind: 'term'; value: string; operator?: 'and' | 'or' | null }

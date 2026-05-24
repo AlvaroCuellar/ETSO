@@ -1,9 +1,9 @@
 {
-  "intro": "Equipo, colaboradores y entidades que participan o colaboran con el proyecto ETSO.",
+  "intro": "Equipo, colaboradores y entidades que participan en el proyecto.",
   "sections": [
     {
       "id": "team",
-      "title": "Equipo",
+      "title": "Dirección",
       "description": "Investigadores responsables del proyecto",
       "presentation": "featured_cards",
       "items": [

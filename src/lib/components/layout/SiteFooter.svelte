@@ -1,4 +1,4 @@
-<script lang="ts">
+﻿<script lang="ts">
 	import logoEtso from '$lib/assets/logos/etso-logo-light.png';
 	import thaliaLogo from '$lib/assets/logos/thalia.png';
 	import prolopeLogo from '$lib/assets/logos/prolope-logo.png';
@@ -112,7 +112,20 @@
 		</div>
 
 		<div class="mt-8 border-t border-white/16 pt-6 text-center text-[0.84rem] text-white/80">
-			© 2026 ETSO. Todos los derechos reservados.
+			&copy; 2026 ETSO.
+			<a class="text-white/90 underline transition hover:text-white" href="/licencias">Licencias de contenido</a>
+			y
+			<a class="text-white/90 underline transition hover:text-white" href="/privacidad">privacidad</a>.
+			Desarrollo web:
+			<a
+				class="text-white/90 underline transition hover:text-white"
+				href="https://dxvidmr.github.io"
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				David Merino Recalde
+			</a>.
 		</div>
 	</div>
 </footer>
+

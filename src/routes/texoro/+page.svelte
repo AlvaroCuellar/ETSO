@@ -280,14 +280,12 @@
 	let filtersOpen = $state(false);
 	let additionalTerms = $state<AdditionalQueryTerm[]>([]);
 	let additionalMode = $state<AdditionalSearchMode>('all');
-	let additionalModePreview = $state<AdditionalSearchMode | null>(null);
 	let additionalModeAllButton = $state<HTMLButtonElement | null>(null);
 	let additionalModeAnyButton = $state<HTMLButtonElement | null>(null);
 	let additionalModeGlobalAnyButton = $state<HTMLButtonElement | null>(null);
 	let additionalModePillStyle = $state('opacity: 0;');
 	let proximityTerms = $state<ProximityQueryTerm[]>([]);
 	let proximityMode = $state<SearchBooleanMode>('all');
-	let proximityModePreview = $state<SearchBooleanMode | null>(null);
 	let proximityModeAllButton = $state<HTMLButtonElement | null>(null);
 	let proximityModeAnyButton = $state<HTMLButtonElement | null>(null);
 	let proximityModePillStyle = $state('opacity: 0;');
@@ -655,9 +653,6 @@
 		return `${baseClass} bg-[#fff3cd] text-[#856404]`;
 	};
 
-	const additionalModeVisual = $derived(additionalModePreview ?? additionalMode);
-	const proximityModeVisual = $derived(proximityModePreview ?? proximityMode);
-
 	const queryClauseCount = $derived.by(() => submittedTerms.length);
 
 	const queryLabelNoun = $derived.by(() => (queryClauseCount === 1 ? 'Término' : 'Términos'));
@@ -893,7 +888,7 @@
 
 	const updateAdditionalModePill = async (): Promise<void> => {
 		await tick();
-		const button = getAdditionalModeButton(additionalModeVisual);
+		const button = getAdditionalModeButton(additionalMode);
 		if (!button) {
 			additionalModePillStyle = 'opacity: 0;';
 			return;
@@ -934,7 +929,7 @@
 
 	const updateProximityModePill = async (): Promise<void> => {
 		await tick();
-		const button = getProximityModeButton(proximityModeVisual);
+		const button = getProximityModeButton(proximityMode);
 		if (!button) {
 			proximityModePillStyle = 'opacity: 0;';
 			return;
@@ -2459,7 +2454,7 @@
 	});
 
 	$effect(() => {
-		additionalModeVisual;
+		additionalMode;
 		additionalModeAllButton;
 		additionalModeAnyButton;
 		additionalModeGlobalAnyButton;
@@ -2467,7 +2462,7 @@
 	});
 
 	$effect(() => {
-		proximityModeVisual;
+		proximityMode;
 		proximityModeAllButton;
 		proximityModeAnyButton;
 		void updateProximityModePill();
@@ -2820,7 +2815,6 @@
 									role="group"
 									aria-label="Modo de combinación de términos adicionales"
 									class="relative grid max-w-full grid-cols-[auto_auto_auto] rounded-full bg-surface-soft p-1"
-									onmouseleave={() => (additionalModePreview = null)}
 								>
 									<span
 										class={additionalModePillIndicatorClass}
@@ -2830,8 +2824,7 @@
 									<button
 										type="button"
 										bind:this={additionalModeAllButton}
-										class={`${modePillButtonClass} ${additionalModeVisual === 'all' ? 'text-brand-blue-dark' : 'text-text-soft hover:text-brand-blue-dark'}`}
-										onmouseenter={() => (additionalModePreview = 'all')}
+										class={`${modePillButtonClass} ${additionalMode === 'all' ? 'text-brand-blue-dark' : 'text-text-soft hover:text-brand-blue-dark'}`}
 										onclick={(event) => setAdditionalMode(event, 'all')}
 									>
 										Principal + adicionales
@@ -2839,8 +2832,7 @@
 									<button
 										type="button"
 										bind:this={additionalModeAnyButton}
-										class={`${modePillButtonClass} ${additionalModeVisual === 'any' ? 'text-brand-blue-dark' : 'text-text-soft hover:text-brand-blue-dark'}`}
-										onmouseenter={() => (additionalModePreview = 'any')}
+										class={`${modePillButtonClass} ${additionalMode === 'any' ? 'text-brand-blue-dark' : 'text-text-soft hover:text-brand-blue-dark'}`}
 										onclick={(event) => setAdditionalMode(event, 'any')}
 									>
 										Principal + algún adicional
@@ -2848,8 +2840,7 @@
 									<button
 										type="button"
 										bind:this={additionalModeGlobalAnyButton}
-										class={`${modePillButtonClass} ${additionalModeVisual === 'globalAny' ? 'text-brand-blue-dark' : 'text-text-soft hover:text-brand-blue-dark'}`}
-										onmouseenter={() => (additionalModePreview = 'globalAny')}
+										class={`${modePillButtonClass} ${additionalMode === 'globalAny' ? 'text-brand-blue-dark' : 'text-text-soft hover:text-brand-blue-dark'}`}
 										onclick={(event) => setAdditionalMode(event, 'globalAny')}
 									>
 										Cualquiera
@@ -2919,7 +2910,6 @@
 									role="group"
 									aria-label="Modo de combinación de condiciones de proximidad"
 									class="relative grid max-w-full grid-cols-[auto_auto] rounded-full bg-surface-soft p-1"
-									onmouseleave={() => (proximityModePreview = null)}
 								>
 									<span
 										class={modePillIndicatorClass}
@@ -2929,8 +2919,7 @@
 									<button
 										type="button"
 										bind:this={proximityModeAllButton}
-										class={`${modePillButtonClass} ${proximityModeVisual === 'all' ? 'text-brand-blue-dark' : 'text-text-soft hover:text-brand-blue-dark'}`}
-										onmouseenter={() => (proximityModePreview = 'all')}
+										class={`${modePillButtonClass} ${proximityMode === 'all' ? 'text-brand-blue-dark' : 'text-text-soft hover:text-brand-blue-dark'}`}
 										onclick={(event) => setProximityMode(event, 'all')}
 									>
 										Todas las condiciones
@@ -2938,8 +2927,7 @@
 									<button
 										type="button"
 										bind:this={proximityModeAnyButton}
-										class={`${modePillButtonClass} ${proximityModeVisual === 'any' ? 'text-brand-blue-dark' : 'text-text-soft hover:text-brand-blue-dark'}`}
-										onmouseenter={() => (proximityModePreview = 'any')}
+										class={`${modePillButtonClass} ${proximityMode === 'any' ? 'text-brand-blue-dark' : 'text-text-soft hover:text-brand-blue-dark'}`}
 										onclick={(event) => setProximityMode(event, 'any')}
 									>
 										Basta con una

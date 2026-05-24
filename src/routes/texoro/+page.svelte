@@ -2332,6 +2332,15 @@
 		infoModalOpen = false;
 	};
 
+	$effect(() => {
+		if (!infoModalOpen && !occurrenceModal) return;
+		const previousOverflow = document.body.style.overflow;
+		document.body.style.overflow = 'hidden';
+		return () => {
+			document.body.style.overflow = previousOverflow;
+		};
+	});
+
 	const scrollToResults = async (): Promise<void> => {
 		await tick();
 		(resultsPaginationRegion ?? resultsRegion)?.scrollIntoView({ block: 'start', behavior: 'smooth' });
@@ -2683,10 +2692,10 @@
 		statsLayout="three"
 	>
 		<p class="mt-[1.8rem] mb-0 max-w-[64ch] font-['Lora',serif] text-[1.01rem] leading-[1.62] text-text-main">
-			TEXORO es una plataforma de búsqueda textual que permite consultar de forma unificada una amplia colección de textos del Siglo de Oro. El sistema ofrece acceso directo a obras teatrales y otros textos literarios procedentes de distintas tradiciones editoriales y documentales, con el objetivo de facilitar la exploración, localización y análisis del patrimonio textual aurisecular.
+			TEXORO es una plataforma de búsqueda textual que permite consultar de forma unificada un amplio corpus de obras del Siglo de Oro. El recurso reúne cerca de 3000 textos, con más de 38 millones de palabras indexadas y obras de más de 400 autores, y ofrece distintas posibilidades para explorar el patrimonio literario aurisecular desde criterios léxicos, textuales y documentales.
 		</p>
 		<p class="mt-[1.25rem] mb-0 max-w-[64ch] font-['Lora',serif] text-[1.01rem] leading-[1.62] text-text-main">
-			La búsqueda funciona en dos fases: primero recupera obras candidatas con índices ligeros; después verifica frase exacta y patrones complejos sobre los TXT candidatos.
+			El buscador permite localizar palabras, frases exactas y patrones con comodines, así como realizar consultas avanzadas mediante la combinación de términos, condiciones de proximidad y filtros por título, género, atribución tradicional, atribución estilométrica o estado del texto. De este modo, TEXORO facilita tanto búsquedas puntuales como exploraciones más complejas sobre la presencia, distribución y relación de palabras o expresiones en el conjunto del corpus.
 		</p>
 		<div class="mt-[1.25rem]">
 			<AppButton
@@ -2695,7 +2704,7 @@
 				className="!h-[38px] !rounded-[10px] !px-4 !py-1.5 font-['Roboto',sans-serif] text-[0.83rem] font-semibold"
 				onclick={() => (infoModalOpen = true)}
 			>
-				Más info
+				Guía de búsqueda
 			</AppButton>
 		</div>
 
@@ -3664,7 +3673,7 @@
 			onclick={closeOccurrenceModal}
 		></button>
 		<div
-			class="relative max-h-[88vh] w-full max-w-[880px] overflow-hidden rounded-[12px] bg-white shadow-[0_16px_40px_rgba(4,24,56,0.33)]"
+			class="relative grid max-h-[88vh] w-full max-w-[880px] grid-rows-[auto_minmax(0,1fr)] overflow-hidden rounded-[12px] bg-white shadow-[0_16px_40px_rgba(4,24,56,0.33)]"
 			role="dialog"
 			aria-modal="true"
 			aria-label={`Ocurrencias de ${formatMatchDisplayLabel(occurrenceModal.assignment.match)}`}
@@ -3732,7 +3741,7 @@
 			</div>
 
 			<div
-				class="max-h-[72vh] overflow-auto px-4 py-3"
+				class="min-h-0 overflow-auto overscroll-contain px-4 pt-3 pb-6"
 				onscroll={(event) => {
 					occurrenceModalScrolled = event.currentTarget.scrollTop > 8;
 				}}
@@ -3895,47 +3904,97 @@
 
 {#if infoModalOpen}
 	<div class="fixed inset-0 z-40 flex items-center justify-center bg-black/45 px-3 py-4">
-		<div class="max-h-[88vh] w-full max-w-[900px] overflow-hidden rounded-[12px] border border-border-accent-blue bg-white shadow-[0_16px_40px_rgba(4,24,56,0.33)]">
-			<div class="flex items-start justify-between gap-3 border-b border-border-accent-blue px-4 py-3">
-				<div>
-					<h3 class="m-0 font-['Roboto',sans-serif] text-[1.02rem] font-semibold text-brand-blue-dark">
-						Cómo funciona TEXORO
+		<button
+			type="button"
+			class="absolute inset-0 h-full w-full cursor-default border-0 bg-transparent p-0"
+			aria-label="Cerrar guía"
+			tabindex="-1"
+			onclick={closeInfoModal}
+		></button>
+		<div
+			class="relative grid max-h-[88vh] w-full max-w-[900px] grid-rows-[auto_minmax(0,1fr)] overflow-hidden rounded-[12px] bg-white shadow-[0_16px_40px_rgba(4,24,56,0.33)]"
+			role="dialog"
+			aria-modal="true"
+			aria-label="Guía de búsqueda en TEXORO"
+			tabindex="-1"
+		>
+			<div class="relative bg-surface-soft px-4 py-3">
+				<div class="min-w-0 pr-11">
+					<h3 class="m-0 font-['Roboto',sans-serif] text-[1.08rem] leading-[1.25] font-semibold text-brand-blue-dark">
+						Guía de búsqueda en TEXORO
 					</h3>
 					<p class="mt-1 mb-0 text-[0.9rem] text-text-soft">
-						Búsqueda textual por capas sobre corpus del Siglo de Oro.
+						Uso del buscador textual y de sus opciones avanzadas.
 					</p>
 				</div>
-				<AppButton
+				<button
 					type="button"
-					variant="ghost"
-					className="!rounded-[8px] !px-2.5 !py-1 font-['Roboto',sans-serif] text-[0.8rem] font-medium"
+					class="absolute top-2.5 right-3 inline-flex h-9 w-9 items-center justify-center rounded-full border-0 bg-transparent text-brand-blue-dark transition hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue/25"
+					aria-label="Cerrar guía"
 					onclick={closeInfoModal}
 				>
-					Cerrar
-				</AppButton>
+					<X class="h-4 w-4" aria-hidden="true" />
+				</button>
 			</div>
 
-			<div class="max-h-[72vh] overflow-auto px-4 py-3">
-				<p class="m-0 text-[0.94rem] leading-[1.55] text-text-main">
-					El buscador recupera primero obras candidatas con un índice ligero y, después, verifica coincidencias exactas sobre los TXT candidatos para confirmar frase y mostrar contexto.
-				</p>
-				<h4 class="mb-0 mt-4 font-['Roboto',sans-serif] text-[0.94rem] font-semibold text-text-accent-purple">Consultas disponibles</h4>
-				<ul class="mb-0 mt-2 pl-5 text-[0.92rem] leading-[1.52] text-text-main">
-					<li>Palabra exacta: <code>amor</code>.</li>
-					<li>Varias palabras en la búsqueda principal: <code>amor constante</code> se interpreta como frase exacta.</li>
-					<li>Comodines: <code>am*</code>, <code>a*or</code>, <code>am?r</code>, <code>???</code>.</li>
-					<li>Los operadores <code>AND</code> y <code>OR</code> se aplican desde el bloque de Búsqueda avanzada.</li>
-					<li>Solo se admiten letras, números, espacios y los comodines <code>*</code> y <code>?</code>.</li>
-				</ul>
-				<h4 class="mb-0 mt-4 font-['Roboto',sans-serif] text-[0.94rem] font-semibold text-text-accent-purple">Lectura de gráficos</h4>
-				<ul class="mb-0 mt-2 pl-5 text-[0.92rem] leading-[1.52] text-text-main">
-					<li>Los gráficos se calculan en vivo con las ocurrencias del subconjunto activo de resultados.</li>
-					<li>En autoría, la ocurrencia de cada obra se reparte proporcionalmente entre autores asignados.</li>
-					<li>En género, se suma el total de ocurrencias por género textual.</li>
-					<li>En consultas con varios términos se activa una comparativa por autor y género con métrica seleccionable.</li>
-					<li>La métrica <code>Frecuencia/10k</code> se calcula directamente por obra y se agrega en el gráfico.</li>
-					<li>Los botones permiten alternar entre barras y circular porcentual, y descargar en PNG con cita.</li>
-				</ul>
+			<div class="grid min-h-0 gap-4 overflow-auto overscroll-contain bg-surface-soft px-4 pt-4 pb-6">
+				<section class="rounded-[12px] bg-white px-4 py-3 shadow-[0_6px_16px_rgba(25,46,80,0.06)]">
+					<h4 class="m-0 font-['Roboto',sans-serif] text-[0.95rem] font-semibold text-brand-blue-dark">Qué hace el buscador</h4>
+					<p class="mt-2 mb-0 text-[0.94rem] leading-[1.55] text-text-main">
+						TEXORO busca palabras, frases exactas y patrones en el corpus. Primero localiza obras candidatas con índices de búsqueda y, cuando hace falta, verifica los textos para confirmar coincidencias y preparar contextos de lectura.
+					</p>
+				</section>
+
+				<div class="grid gap-4 lg:grid-cols-2">
+					<section class="rounded-[12px] bg-white px-4 py-3 shadow-[0_6px_16px_rgba(25,46,80,0.05)]">
+						<h4 class="m-0 font-['Roboto',sans-serif] text-[0.94rem] font-semibold text-text-accent-purple">Búsqueda básica</h4>
+						<ul class="mb-0 mt-2 grid gap-2 pl-5 text-[0.92rem] leading-[1.52] text-text-main">
+							<li><b>Palabra exacta:</b> <code>amor</code>.</li>
+							<li><b>Frase exacta:</b> si escribes varias palabras, por ejemplo <code>amor constante</code>, se buscan juntas y en ese orden.</li>
+							<li><b>Caracteres permitidos:</b> letras, números, espacios y los comodines <code>*</code> y <code>?</code>.</li>
+						</ul>
+					</section>
+
+					<section class="rounded-[12px] bg-white px-4 py-3 shadow-[0_6px_16px_rgba(25,46,80,0.05)]">
+						<h4 class="m-0 font-['Roboto',sans-serif] text-[0.94rem] font-semibold text-text-accent-purple">Comodines</h4>
+						<div class="mt-2 grid gap-3 text-[0.92rem] leading-[1.52] text-text-main">
+							<div>
+								<p class="m-0 font-['Roboto',sans-serif] font-semibold text-brand-blue-dark"><code>*</code> abre una parte de la palabra</p>
+								<ul class="mb-0 mt-1 grid gap-1 pl-5">
+									<li><code>amor*</code> encuentra <i>amor</i>, <i>amores</i> o <i>amoroso</i>.</li>
+									<li><code>*mente</code> encuentra palabras acabadas en <i>mente</i>.</li>
+									<li><code>a*or</code> localiza palabras que empiezan por <i>a</i> y terminan en <i>or</i>.</li>
+								</ul>
+							</div>
+							<div>
+								<p class="m-0 font-['Roboto',sans-serif] font-semibold text-brand-blue-dark"><code>?</code> sustituye una sola letra</p>
+								<ul class="mb-0 mt-1 grid gap-1 pl-5">
+									<li><code>am?r</code> puede localizar palabras de cuatro letras como <i>amar</i> o <i>amor</i>.</li>
+								</ul>
+							</div>
+						</div>
+					</section>
+
+					<section class="rounded-[12px] bg-white px-4 py-3 shadow-[0_6px_16px_rgba(25,46,80,0.05)]">
+						<h4 class="m-0 font-['Roboto',sans-serif] text-[0.94rem] font-semibold text-text-accent-purple">Búsqueda avanzada</h4>
+						<ul class="mb-0 mt-2 grid gap-2 pl-5 text-[0.92rem] leading-[1.52] text-text-main">
+							<li><b>Términos adicionales:</b> puedes exigir que aparezcan todos, al menos uno, o buscar cualquiera de los términos.</li>
+							<li><b>Proximidad:</b> añade términos que deban aparecer cerca de la búsqueda principal, con distancia máxima y orden.</li>
+							<li><b>Filtros:</b> limita por título, género, atribución tradicional, atribución estilométrica o estado del texto.</li>
+						</ul>
+					</section>
+
+					<section class="rounded-[12px] bg-white px-4 py-3 shadow-[0_6px_16px_rgba(25,46,80,0.05)]">
+						<h4 class="m-0 font-['Roboto',sans-serif] text-[0.94rem] font-semibold text-text-accent-purple">Resultados</h4>
+						<ul class="mb-0 mt-2 grid gap-2 pl-5 text-[0.92rem] leading-[1.52] text-text-main">
+							<li>La consulta interpretada resume antes de buscar qué se enviará al motor.</li>
+							<li>Los resultados se ordenan por relevancia y número de ocurrencias.</li>
+							<li>En cada obra se cargan contextos breves de las primeras ocurrencias visibles.</li>
+							<li>El detalle de ocurrencias muestra fragmentos localizados y posición aproximada en la obra.</li>
+							<li>La exportación XLSX guarda consulta, filtros, resultados y ocurrencias disponibles.</li>
+						</ul>
+					</section>
+				</div>
 			</div>
 		</div>
 	</div>

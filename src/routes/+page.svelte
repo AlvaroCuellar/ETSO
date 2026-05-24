@@ -274,9 +274,9 @@
 			</p>
 			<p class="m-0">
 				Se pueden consultar aquí ejemplos en los que la estilometría ratifica la atribución tradicional, como
-				en La dama boba, Don Gil de las calzas verdes o El médico de su honra, y también casos en los que la
-				estilometría apunta hacia una autoría inesperada y potencialmente esclarecedora, como en La francesa
-				Laura, La monja alférez o La puerta Macarena (Primera parte). Debemos tener en cuenta que las nuevas
+				en <b><i>La dama boba</i></b>, <b><i>Don Gil de las calzas verdes</i></b> o <b><i>El médico de su honra</i></b>, y también casos en los que la
+				estilometría apunta hacia una autoría inesperada y potencialmente esclarecedora, como en <b><i>La francesa
+				Laura</i></b>, <b><i>La monja alférez</i></b> o <b><i>La puerta Macarena</i></b> (Primera parte). Debemos tener en cuenta que las nuevas
 				atribuciones aquí señaladas son meros indicios de autoría arrojados por el proceso informático de forma
 				automática. Todos los casos deben ser estudiados pormenorizadamente desde la filología atendiendo a sus
 				complejidades particulares.

@@ -1039,16 +1039,16 @@
 		const cleanOrder = term.order ?? 'any';
 		parts.push(termPart(quoteTerm(term.value)));
 		if (cleanOrder === 'after') {
-			parts.push(textPart(` hasta ${term.distance} palabras después de `));
+			parts.push(textPart(` aparezca hasta ${term.distance} palabras después de `));
 			appendProximityTargets(parts, baseTerms, mode, { repeatPrefix: 'de ' });
 			return;
 		}
 		if (cleanOrder === 'before') {
-			parts.push(textPart(` hasta ${term.distance} palabras antes de `));
+			parts.push(textPart(` aparezca hasta ${term.distance} palabras antes de `));
 			appendProximityTargets(parts, baseTerms, mode, { repeatPrefix: 'de ' });
 			return;
 		}
-		parts.push(textPart(` a un máximo de ${term.distance} palabras de `));
+		parts.push(textPart(` aparezca a un máximo de ${term.distance} palabras de `));
 		appendProximityTargets(parts, baseTerms, mode, { repeatPrefix: 'de ' });
 		parts.push(textPart(', en cualquier orden'));
 	};
@@ -1076,7 +1076,7 @@
 	}
 
 	const buildTextualClause = (query: StructuredSearchQuery): InterpretedQueryPart[] => {
-		const parts: InterpretedQueryPart[] = [textPart('Buscar ')];
+		const parts: InterpretedQueryPart[] = [];
 		const main = normalizeSearchValue(query.main);
 		const additionalRaw = (query.additionalTerms ?? []).map(normalizeSearchValue).filter(Boolean);
 		const proximityBaseTerms = uniqueSearchValues([main, ...additionalRaw]);
@@ -1084,22 +1084,23 @@
 		const quotedAdditional = additionalRaw.map((term) => quoteTerm(term));
 
 		if (query.additionalMode === 'globalAny' && additionalRaw.length > 0) {
-			parts.length = 0;
-			parts.push(textPart('Buscar cualquiera de estos términos: '));
+			parts.push(textPart('Buscar textos que incluyan al menos uno de estos términos: '));
 			appendHumanTermList(parts, [quotedMain, ...quotedAdditional], 'o');
 		} else {
 			if (isPatternTerm(main)) {
-				parts.push(textPart('el patrón '));
+				parts.push(textPart('Buscar textos que incluyan el patrón '));
 			} else if (isExactPhraseTerm(main)) {
-				parts.push(textPart('la frase exacta '));
+				parts.push(textPart('Buscar textos que incluyan la frase exacta '));
+			} else {
+				parts.push(textPart('Buscar textos que incluyan '));
 			}
 			parts.push(termPart(quotedMain));
 			if (quotedAdditional.length > 0) {
 				if (query.additionalMode === 'any') {
-					parts.push(textPart(' y al menos uno de estos términos: '));
+					parts.push(textPart(' y que incluyan al menos uno de estos términos: '));
 					appendHumanTermList(parts, quotedAdditional, 'o');
 				} else {
-					parts.push(textPart(' y también '));
+					parts.push(textPart(' y que también incluyan '));
 					appendHumanTermList(parts, quotedAdditional, 'y');
 				}
 			}
@@ -1113,17 +1114,17 @@
 			}))
 			.filter((term) => term.value);
 		if (proximity.length === 1) {
-			parts.push(textPart(' con '));
+			parts.push(textPart(' y en los que '));
 			appendProximityRelativeToBases(parts, proximityBaseTerms, query.proximityMode ?? 'all', proximity[0]);
 		} else if (proximity.length > 1) {
 			if (query.proximityMode === 'any') {
-				parts.push(textPart(' con al menos una de estas cercanías: '));
+				parts.push(textPart(' y en los que se cumpla al menos una de estas cercanías: '));
 				proximity.forEach((term, index) => {
 					if (index > 0) parts.push(textPart(' o '));
 					appendProximityRelativeToBases(parts, proximityBaseTerms, query.proximityMode ?? 'all', term);
 				});
 			} else {
-				parts.push(textPart(' con '));
+				parts.push(textPart(' y en los que se cumplan todas estas cercanías: '));
 				proximity.forEach((term, index) => {
 					if (index > 0) parts.push(textPart(' y '));
 					appendProximityRelativeToBases(parts, proximityBaseTerms, query.proximityMode ?? 'all', term);

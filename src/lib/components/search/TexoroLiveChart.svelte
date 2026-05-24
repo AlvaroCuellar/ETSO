@@ -263,5 +263,5 @@
 	bind:this={host}
 	class={`w-full rounded-[9px] ${className}`.trim()}
 	style={`height:${height}px;`}
-	aria-label="Grafico de concurrencias"
+	aria-label="Grafico de ocurrencias"
 ></div>

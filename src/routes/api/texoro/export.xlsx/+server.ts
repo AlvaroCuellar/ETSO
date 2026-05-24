@@ -360,7 +360,7 @@ const addResultsSheet = (
 		{ header: 'Estado textual', key: 'textState', width: 22 },
 		{ header: 'Atribución tradicional', key: 'traditionalAttribution', width: 42 },
 		{ header: 'Atribución estilométrica', key: 'stylometryAttribution', width: 42 },
-		{ header: 'Total concurrencias', key: 'totalOccurrences', width: 20 },
+		{ header: 'Total ocurrencias', key: 'totalOccurrences', width: 20 },
 		{ header: 'Palabras del texto', key: 'tokenCount', width: 18 },
 		...matchColumns.map((term, index) => ({
 			header: columnSafeLabel(term.label),
@@ -391,7 +391,7 @@ const addResultsSheet = (
 };
 
 const addOccurrencesSheet = (workbook: ExcelJS.Workbook, rows: OccurrenceExportRow[]): void => {
-	const worksheet = workbook.addWorksheet('Concurrencias');
+	const worksheet = workbook.addWorksheet('Ocurrencias');
 	setColumns(worksheet, [
 		{ header: 'Orden', key: 'rank', width: 9 },
 		{ header: 'Título', key: 'title', width: 38 },
@@ -456,7 +456,7 @@ const addQuerySheet = (
 		['Contextos truncados', contextsTruncated ? 'sí' : 'no'],
 		[
 			'Nota de derechos',
-			'Por motivos de derechos de reproducción, la exportación incluye únicamente una muestra limitada de contextos. Para acceder a conjuntos completos de concurrencias, contacte con el equipo de ETSO.'
+			'Por motivos de derechos de reproducción, la exportación incluye únicamente una muestra limitada de contextos. Para acceder a conjuntos completos de ocurrencias, contacte con el equipo de ETSO.'
 		]
 	]);
 };
@@ -472,7 +472,7 @@ const addSummarySheet = (
 	const totalOccurrences = results.reduce((sum, result) => sum + sumResultOccurrences(result), 0);
 	addKeyValueRows(summary, [
 		['Total obras encontradas', results.length],
-		['Total concurrencias', totalOccurrences],
+		['Total ocurrencias', totalOccurrences],
 		['Contextos incluidos', contextCount],
 		['Contextos truncados', contextsTruncated ? 'sí' : 'no'],
 		['Límite global de contextos', CONTEXT_EXPORT_LIMIT],
@@ -492,7 +492,7 @@ const addSummarySheet = (
 	summary.addRow([]);
 	const genreTitle = summary.addRow(['Distribución por género']);
 	genreTitle.font = { bold: true, color: { argb: 'FF0D3F91' } };
-	const genreHeader = summary.addRow(['Género', 'Obras', 'Concurrencias']);
+	const genreHeader = summary.addRow(['Género', 'Obras', 'Ocurrencias']);
 	genreHeader.font = { bold: true };
 	Array.from(genreRows.entries())
 		.sort((a, b) => b[1].occurrences - a[1].occurrences || a[0].localeCompare(b[0], 'es'))
@@ -513,7 +513,7 @@ const addSummarySheet = (
 	summary.addRow([]);
 	const authorTitle = summary.addRow(['Distribución por autoría estilométrica']);
 	authorTitle.font = { bold: true, color: { argb: 'FF0D3F91' } };
-	const authorHeader = summary.addRow(['Autoría estilométrica', 'Obras', 'Concurrencias']);
+	const authorHeader = summary.addRow(['Autoría estilométrica', 'Obras', 'Ocurrencias']);
 	authorHeader.font = { bold: true };
 	Array.from(authorRows.entries())
 		.sort((a, b) => b[1].occurrences - a[1].occurrences || a[0].localeCompare(b[0], 'es'))

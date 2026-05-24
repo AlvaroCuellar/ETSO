@@ -44,7 +44,7 @@
 		disabled={disabled}
 		ariaPressed={value === 'occurrences'}
 	>
-		Concurrencias
+		Ocurrencias
 	</AppButton>
 	<AppButton
 		type="button"

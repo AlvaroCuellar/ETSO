@@ -221,7 +221,6 @@
 
 	interface InterpretedQueryView {
 		summaryParts: InterpretedQueryPart[];
-		formulaParts: InterpretedQueryPart[];
 	}
 
 	type ChartKey = 'author' | 'genre';
@@ -437,7 +436,10 @@
 	const titleOptions = $derived.by<TokenOption[]>(() => data.filterOptions.titles);
 	const genreOptions = $derived.by<TokenOption[]>(() => data.filterOptions.genres);
 	const stateOptions = $derived.by<TokenOption[]>(() => data.filterOptions.states);
+	const authorLabelById = $derived.by(() => new Map(authorOptions.map((option) => [option.id, option.label] as const)));
 	const titleLabelById = $derived.by(() => new Map(titleOptions.map((option) => [option.id, option.label] as const)));
+	const genreLabelById = $derived.by(() => new Map(genreOptions.map((option) => [option.id, option.label] as const)));
+	const stateLabelById = $derived.by(() => new Map(stateOptions.map((option) => [option.id, option.label] as const)));
 	const selectedTitleLabels = $derived.by(() =>
 		selectedTitleIds.map((id) => titleLabelById.get(id) ?? id)
 	);
@@ -592,8 +594,8 @@
 	});
 
 	const chartTitles: Record<ChartKey, string> = {
-		author: 'Concurrencias por autor',
-		genre: 'Concurrencias por género'
+		author: 'Ocurrencias por autor',
+		genre: 'Ocurrencias por género'
 	};
 
 	const chartEmptyMessages: Record<ChartKey, string> = {
@@ -609,8 +611,6 @@
 		'pointer-events-none absolute top-1 bottom-1 left-0 rounded-full bg-white shadow-soft transition-[opacity,transform,width] duration-200 ease-out';
 	const interpretedQueryTermClass =
 		'inline-flex max-w-full items-center rounded-full bg-surface-accent-purple px-2.5 py-1 font-semibold leading-none text-text-accent-purple align-middle';
-	const interpretedQueryOperatorClass =
-		'font-mono text-[0.76rem] font-semibold uppercase text-text-soft';
 	const attributionConnectorLabel = (set: AttributionSet): string => (set.connector === 'and' ? 'Y' : 'O');
 	const canLinkAuthor = (authorId: string | undefined): boolean =>
 		Boolean(authorId && authorId !== UNRESOLVED_AUTHOR_ID);
@@ -789,7 +789,7 @@
 	});
 
 	const comparisonMetricLabel = $derived.by(() => {
-		if (comparisonMetric === 'occurrences') return 'Concurrencias';
+		if (comparisonMetric === 'occurrences') return 'Ocurrencias';
 		if (comparisonMetric === 'share') return 'Reparto porcentual';
 		return 'Frecuencia por 10.000 palabras';
 	});
@@ -962,7 +962,9 @@
 
 	const textPart = (value: string): InterpretedQueryPart => ({ kind: 'text', value });
 	const termPart = (value: string): InterpretedQueryPart => ({ kind: 'term', value });
-	const operatorPart = (value: string): InterpretedQueryPart => ({ kind: 'operator', value });
+	const quoteTerm = (value: string): string => `“${normalizeSearchValue(value)}”`;
+	const isPatternTerm = (value: string): boolean => /[*?]/.test(value);
+	const isExactPhraseTerm = (value: string): boolean => /\s/.test(normalizeSearchValue(value));
 
 	const appendHumanTermList = (
 		parts: InterpretedQueryPart[],
@@ -977,99 +979,208 @@
 		});
 	};
 
-	const appendFormulaTerms = (
-		parts: InterpretedQueryPart[],
-		terms: string[],
-		operator: 'AND' | 'OR'
-	): void => {
-		terms.forEach((term, index) => {
-			if (index > 0) parts.push(operatorPart(operator));
-			parts.push(termPart(term));
-		});
-	};
-
-	const appendProximityCondition = (
+	const appendProximityTargets = (
 		parts: InterpretedQueryPart[],
 		baseTerms: string[],
 		mode: SearchBooleanMode,
-		term: Pick<ProximityQueryTerm, 'value' | 'distance'> & { order?: SearchProximityOrder },
-		options: { alternativeBaseTerms?: boolean } = {}
+		options: { repeatPrefix: string }
 	): void => {
-		parts.push(termPart(formatFormulaValue(term.value)));
+		const quotedBaseTerms = baseTerms.map((base) => quoteTerm(base));
+		if (quotedBaseTerms.length <= 1) {
+			parts.push(termPart(quotedBaseTerms[0] ?? quoteTerm('')));
+			return;
+		}
+		if (mode === 'any') {
+			parts.push(textPart(`al menos uno de estos términos: `));
+			appendHumanTermList(parts, quotedBaseTerms, 'o');
+			return;
+		}
+		parts.push(termPart(quotedBaseTerms[0]));
+		for (let index = 1; index < quotedBaseTerms.length; index += 1) {
+			parts.push(textPart(index === quotedBaseTerms.length - 1 ? ` y ${options.repeatPrefix}` : `, ${options.repeatPrefix}`));
+			parts.push(termPart(quotedBaseTerms[index]));
+		}
+	};
+
+	const appendProximityRelativeToBases = (
+		parts: InterpretedQueryPart[],
+		baseTerms: string[],
+		mode: SearchBooleanMode,
+		term: Pick<ProximityQueryTerm, 'value' | 'distance'> & { order?: SearchProximityOrder }
+	): void => {
+		const cleanOrder = term.order ?? 'any';
+		parts.push(termPart(quoteTerm(term.value)));
+		if (cleanOrder === 'after') {
+			parts.push(textPart(` hasta ${term.distance} palabras después de `));
+			appendProximityTargets(parts, baseTerms, mode, { repeatPrefix: 'de ' });
+			return;
+		}
+		if (cleanOrder === 'before') {
+			parts.push(textPart(` hasta ${term.distance} palabras antes de `));
+			appendProximityTargets(parts, baseTerms, mode, { repeatPrefix: 'de ' });
+			return;
+		}
 		parts.push(textPart(` a un máximo de ${term.distance} palabras de `));
-		if (baseTerms.length <= 1) {
-			parts.push(termPart(baseTerms[0] ?? ''));
-		} else if (options.alternativeBaseTerms) {
-			parts.push(
-				textPart(
-					mode === 'any'
-						? 'alguno de los términos buscados aplicables en cada alternativa'
-						: 'todos los términos buscados aplicables en cada alternativa'
-				)
-			);
-		} else {
-			parts.push(
-				textPart(
-					mode === 'any' ? 'al menos uno de estos términos: ' : 'todos estos términos: '
-				)
-			);
-			appendHumanTermList(parts, baseTerms, mode === 'any' ? 'o' : 'y');
-		}
-
-		if (term.order === 'after') {
-			parts.push(textPart(baseTerms.length <= 1 ? ', después de ' : ', después del término base'));
-			if (baseTerms.length <= 1) parts.push(termPart(baseTerms[0] ?? ''));
-			return;
-		}
-
-		if (term.order === 'before') {
-			parts.push(textPart(baseTerms.length <= 1 ? ', antes de ' : ', antes del término base'));
-			if (baseTerms.length <= 1) parts.push(termPart(baseTerms[0] ?? ''));
-			return;
-		}
-
+		appendProximityTargets(parts, baseTerms, mode, { repeatPrefix: 'de ' });
 		parts.push(textPart(', en cualquier orden'));
 	};
 
-	const buildTechnicalFormulaParts = (query: StructuredSearchQuery): InterpretedQueryPart[] => {
-		const main = formatFormulaValue(query.main);
-		const parts: InterpretedQueryPart[] = [];
-		const additional = (query.additionalTerms ?? []).map(formatFormulaValue).filter(Boolean);
-		if (query.additionalMode === 'globalAny' && additional.length > 0) {
-			parts.push(textPart('('));
-			appendFormulaTerms(parts, [main, ...additional], 'OR');
-			parts.push(textPart(')'));
-		} else {
-			parts.push(termPart(main));
+	const resolveFilterLabels = (ids: string[], labelById: Map<string, string>): string[] => {
+		const output: string[] = [];
+		const seen = new Set<string>();
+		for (const id of ids) {
+			const label = (labelById.get(id) ?? id).trim();
+			if (!label || seen.has(label)) continue;
+			seen.add(label);
+			output.push(label);
 		}
-		if (additional.length > 0) {
-			if (query.additionalMode !== 'globalAny') {
-				parts.push(operatorPart('AND'));
-				if (additional.length > 1 && query.additionalMode === 'any') parts.push(textPart('('));
-				appendFormulaTerms(parts, additional, query.additionalMode === 'any' ? 'OR' : 'AND');
-				if (additional.length > 1 && query.additionalMode === 'any') parts.push(textPart(')'));
+		return output;
+	};
+
+	interface InterpretedFilterView {
+		titles: string[];
+		genres: string[];
+		traditionalAuthors: string[];
+		traditionalMatch: 'or' | 'and';
+		stylometryAuthors: string[];
+		stylometryMatch: 'or' | 'and';
+		states: string[];
+	}
+
+	const buildTextualClause = (query: StructuredSearchQuery): InterpretedQueryPart[] => {
+		const parts: InterpretedQueryPart[] = [textPart('Buscar ')];
+		const main = normalizeSearchValue(query.main);
+		const additionalRaw = (query.additionalTerms ?? []).map(normalizeSearchValue).filter(Boolean);
+		const proximityBaseTerms = uniqueSearchValues([main, ...additionalRaw]);
+		const quotedMain = quoteTerm(main);
+		const quotedAdditional = additionalRaw.map((term) => quoteTerm(term));
+
+		if (query.additionalMode === 'globalAny' && additionalRaw.length > 0) {
+			parts.length = 0;
+			parts.push(textPart('Buscar cualquiera de estos términos: '));
+			appendHumanTermList(parts, [quotedMain, ...quotedAdditional], 'o');
+		} else {
+			if (isPatternTerm(main)) {
+				parts.push(textPart('el patrón '));
+			} else if (isExactPhraseTerm(main)) {
+				parts.push(textPart('la frase exacta '));
+			}
+			parts.push(termPart(quotedMain));
+			if (quotedAdditional.length > 0) {
+				if (query.additionalMode === 'any') {
+					parts.push(textPart(' y al menos uno de estos términos: '));
+					appendHumanTermList(parts, quotedAdditional, 'o');
+				} else {
+					parts.push(textPart(' y también '));
+					appendHumanTermList(parts, quotedAdditional, 'y');
+				}
 			}
 		}
-		const proximityBaseTerms = proximityBaseValuesForQuery(query);
+
 		const proximity = (query.proximityTerms ?? [])
-			.filter((term) => term.value.trim())
-			.flatMap((term) =>
-				proximityBaseTerms.map((base): InterpretedQueryPart[] => [
-					operatorPart(`${proximityFormulaName(term.order ?? 'any')}(`),
-					termPart(base),
-					textPart(', '),
-					termPart(formatFormulaValue(term.value)),
-					textPart(`, <=${term.distance})`)
-				])
+			.map((term) => ({
+				value: normalizeSearchValue(term.value),
+				distance: term.distance,
+				order: term.order ?? 'any'
+			}))
+			.filter((term) => term.value);
+		if (proximity.length === 1) {
+			parts.push(textPart(' con '));
+			appendProximityRelativeToBases(parts, proximityBaseTerms, query.proximityMode ?? 'all', proximity[0]);
+		} else if (proximity.length > 1) {
+			if (query.proximityMode === 'any') {
+				parts.push(textPart(' con al menos una de estas cercanías: '));
+				proximity.forEach((term, index) => {
+					if (index > 0) parts.push(textPart(' o '));
+					appendProximityRelativeToBases(parts, proximityBaseTerms, query.proximityMode ?? 'all', term);
+				});
+			} else {
+				parts.push(textPart(' con '));
+				proximity.forEach((term, index) => {
+					if (index > 0) parts.push(textPart(' y '));
+					appendProximityRelativeToBases(parts, proximityBaseTerms, query.proximityMode ?? 'all', term);
+				});
+			}
+		}
+
+		return parts;
+	};
+
+	const buildFiltersClause = (filters: InterpretedFilterView): InterpretedQueryPart[] => {
+		const parts: InterpretedQueryPart[] = [];
+		const hasFilters =
+			filters.titles.length > 0 ||
+			filters.genres.length > 0 ||
+			filters.states.length > 0 ||
+			filters.traditionalAuthors.length > 0 ||
+			filters.stylometryAuthors.length > 0;
+		if (!hasFilters) return parts;
+
+		parts.push(textPart('Limitar a obras '));
+		let hasPrevious = false;
+		const pushJoin = (prefix = 'y ') => {
+			if (hasPrevious) parts.push(textPart(`${prefix}`));
+			hasPrevious = true;
+		};
+
+		if (filters.titles.length > 0) {
+			pushJoin();
+			parts.push(textPart('tituladas '));
+			appendHumanTermList(parts, filters.titles.map(quoteTerm), 'o');
+			parts.push(textPart(' '));
+		}
+		if (filters.genres.length > 0) {
+			pushJoin();
+			if (filters.genres.length === 1) {
+				parts.push(textPart('del género '));
+				parts.push(termPart(quoteTerm(filters.genres[0])));
+			} else {
+				parts.push(textPart('de los géneros '));
+				appendHumanTermList(parts, filters.genres.map(quoteTerm), 'o');
+			}
+			parts.push(textPart(' '));
+		}
+		if (filters.states.length > 0) {
+			pushJoin();
+			parts.push(textPart('en estado '));
+			appendHumanTermList(parts, filters.states.map(quoteTerm), 'o');
+			parts.push(textPart(' '));
+		}
+		if (filters.traditionalAuthors.length > 0) {
+			pushJoin('y con ');
+			parts.push(
+				textPart(
+					filters.traditionalMatch === 'and'
+						? 'atribución tradicional conjunta a '
+						: 'atribución tradicional a '
+				)
 			);
-		if (proximity.length > 0) {
-			parts.push(operatorPart('AND'));
-			if (proximity.length > 1) parts.push(textPart('('));
-			proximity.forEach((group, index) => {
-				if (index > 0) parts.push(operatorPart(query.proximityMode === 'any' ? 'OR' : 'AND'));
-				parts.push(...group);
-			});
-			if (proximity.length > 1) parts.push(textPart(')'));
+			appendHumanTermList(
+				parts,
+				filters.traditionalAuthors.map(quoteTerm),
+				filters.traditionalMatch === 'and' ? 'y' : 'o'
+			);
+			parts.push(textPart(' '));
+		}
+		if (filters.stylometryAuthors.length > 0) {
+			pushJoin('y con ');
+			parts.push(
+				textPart(
+					filters.stylometryMatch === 'and'
+						? 'atribución estilométrica conjunta a '
+						: 'atribución estilométrica a '
+				)
+			);
+			appendHumanTermList(
+				parts,
+				filters.stylometryAuthors.map(quoteTerm),
+				filters.stylometryMatch === 'and' ? 'y' : 'o'
+			);
+			parts.push(textPart(' '));
+		}
+
+		if (parts.length > 0 && parts[parts.length - 1].kind === 'text') {
+			parts[parts.length - 1].value = parts[parts.length - 1].value.replace(/\s+$/, '');
 		}
 		return parts;
 	};
@@ -1109,58 +1220,16 @@
 		return parts.join(' AND ');
 	};
 
-	const buildInterpretedSummaryParts = (query: StructuredSearchQuery): InterpretedQueryPart[] => {
-		const main = formatFormulaValue(query.main);
-		const parts: InterpretedQueryPart[] = [textPart('Buscar '), termPart(main)];
-		const additional = (query.additionalTerms ?? []).map(formatFormulaValue).filter(Boolean);
-		if (additional.length > 0) {
-			if (query.additionalMode === 'globalAny') {
-				parts.length = 0;
-				parts.push(textPart('Buscar obras que contienen cualquiera de estos términos: '));
-				appendHumanTermList(parts, [main, ...additional], 'o');
-			} else if (additional.length === 1) {
-				parts.push(textPart(' en obras que también contienen '));
-				parts.push(termPart(additional[0]));
-			} else {
-				parts.push(
-					textPart(
-						query.additionalMode === 'any'
-							? ' en obras que también contienen al menos uno de estos términos: '
-							: ' en obras que también contienen todos estos términos: '
-					)
-				);
-				appendHumanTermList(parts, additional, query.additionalMode === 'any' ? 'o' : 'y');
-			}
-		}
-		const proximity = (query.proximityTerms ?? []).filter((term) => term.value.trim());
-		if (proximity.length > 0) {
-			parts.push(textPart('. Además, '));
-			const proximityBaseTerms = proximityBaseValuesForQuery(query);
-			const alternativeBaseTerms =
-				query.additionalMode === 'globalAny'
-					? (query.additionalTerms ?? []).filter((term) => term.trim()).length > 0
-					: query.additionalMode === 'any' && (query.additionalTerms ?? []).filter((term) => term.trim()).length > 1;
-
-			if (proximity.length === 1) {
-				const [term] = proximity;
-				appendProximityCondition(parts, proximityBaseTerms, query.proximityMode ?? 'all', term, {
-					alternativeBaseTerms
-				});
-			} else {
-				parts.push(
-					textPart(
-						query.proximityMode === 'any'
-							? 'debe cumplirse al menos una de estas condiciones de cercanía: '
-							: 'deben cumplirse estas condiciones de cercanía: '
-					)
-				);
-				proximity.forEach((term, index) => {
-					if (index > 0) parts.push(textPart('; '));
-					appendProximityCondition(parts, proximityBaseTerms, query.proximityMode ?? 'all', term, {
-						alternativeBaseTerms
-					});
-				});
-			}
+	const buildInterpretedSummaryParts = (
+		query: StructuredSearchQuery,
+		filters: InterpretedFilterView
+	): InterpretedQueryPart[] => {
+		const parts: InterpretedQueryPart[] = [];
+		parts.push(...buildTextualClause(query));
+		const filterParts = buildFiltersClause(filters);
+		if (filterParts.length > 0) {
+			parts.push(textPart('. '));
+			parts.push(...filterParts);
 		}
 		parts.push(textPart('.'));
 		return parts;
@@ -1250,9 +1319,17 @@
 				}))
 				.filter((term) => term.value)
 		};
+		const interpretedFilters: InterpretedFilterView = {
+			titles: resolveFilterLabels(selectedTitleIds, titleLabelById),
+			genres: resolveFilterLabels(selectedGenres, genreLabelById),
+			traditionalAuthors: resolveFilterLabels(selectedTradAuthors, authorLabelById),
+			traditionalMatch: tradMatch,
+			stylometryAuthors: resolveFilterLabels(selectedEstoAuthors, authorLabelById),
+			stylometryMatch: estoMatch,
+			states: resolveFilterLabels(selectedStates, stateLabelById)
+		};
 		return {
-			summaryParts: buildInterpretedSummaryParts(structuredQuery),
-			formulaParts: buildTechnicalFormulaParts(structuredQuery)
+			summaryParts: buildInterpretedSummaryParts(structuredQuery, interpretedFilters)
 		};
 	});
 
@@ -1380,7 +1457,7 @@
 			ctx.fillStyle = exportTextStrong;
 			ctx.font = '600 22px Roboto, sans-serif';
 			ctx.fillText(
-				`Total de concurrencias en gráfico: ${decimalFormatter.format(chart.total)} · Modo: ${
+				`Total de ocurrencias en gráfico: ${decimalFormatter.format(chart.total)} · Modo: ${
 					chartMode === 'bars' ? 'Barras' : 'Circular %'
 				}`,
 				64,
@@ -1407,7 +1484,7 @@
 				`Cita sugerida: ETSO, TEXORO. "${exportTitle}". ` +
 				`Consulta: "${queryTermsLabel}". ` +
 				`Generado el ${dateText}. ` +
-				`Resultados: ${filteredTextsWithOccurrences} textos, ${decimalFormatter.format(filteredTotalOccurrences)} concurrencias. ` +
+				`Resultados: ${filteredTextsWithOccurrences} textos, ${decimalFormatter.format(filteredTotalOccurrences)} ocurrencias. ` +
 				`Índice: ${indexVersion}. Fuente: ${sourceUrl}.`;
 
 			ctx.fillStyle = exportText;
@@ -1792,7 +1869,7 @@
 				previews.set(result.docId, {
 					loading: false,
 					items: [],
-					error: cause instanceof Error ? cause.message : 'No se pudieron cargar las concurrencias'
+					error: cause instanceof Error ? cause.message : 'No se pudieron cargar las ocurrencias'
 				});
 			}
 		}
@@ -2157,7 +2234,7 @@
 				details: null
 			};
 			occurrenceError =
-				cause instanceof Error ? cause.message : 'No se pudieron cargar las concurrencias';
+				cause instanceof Error ? cause.message : 'No se pudieron cargar las ocurrencias';
 		} finally {
 			if (openingOccurrenceKey === key) openingOccurrenceKey = null;
 			occurrenceLoading = false;
@@ -2945,17 +3022,6 @@
 							{/if}
 						{/each}
 					</p>
-					<p class="mt-2 mb-0 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[0.78rem] text-text-soft">
-						{#each interpretedQuery.formulaParts as part}
-							{#if part.kind === 'term'}
-								<span class={interpretedQueryTermClass} title={part.value}>{part.value}</span>
-							{:else if part.kind === 'operator'}
-								<span class={interpretedQueryOperatorClass}>{part.value}</span>
-							{:else}
-								<span class="font-mono">{part.value}</span>
-							{/if}
-						{/each}
-					</p>
 				</div>
 			{/if}
 
@@ -3049,7 +3115,7 @@
 							{numberFormatter.format(filteredTotalOccurrences)}
 						</p>
 						<p class="mt-2 mb-0 text-[0.9rem] font-semibold tracking-[0.03em] text-text-soft uppercase">
-							Concurrencias
+							Ocurrencias
 						</p>
 					</div>
 					<div class="rounded-[12px] bg-surface-soft px-4 py-5">
@@ -3057,7 +3123,7 @@
 							{numberFormatter.format(filteredTextsWithOccurrences)}
 						</p>
 						<p class="mt-2 mb-0 text-[0.9rem] font-semibold tracking-[0.03em] text-text-soft uppercase">
-							Textos con concurrencias
+							Textos con ocurrencias
 						</p>
 					</div>
 				</div>
@@ -3079,7 +3145,7 @@
 						<div class="flex flex-wrap items-start justify-between gap-3">
 							<div>
 								<h3 class="m-0 font-['Roboto',sans-serif] text-[1rem] font-semibold text-brand-blue-dark">
-									Distribución general de concurrencias
+									Distribución general de ocurrencias
 								</h3>
 								<p class="mt-1 mb-0 text-[0.78rem] text-text-soft">
 									{queryLabelNoun}:
@@ -3321,7 +3387,7 @@
 												</InlineActionButton>
 											{/if}
 											<span class="w-fit shrink-0 rounded-full bg-surface-accent-blue px-2.5 py-1 font-['Roboto',sans-serif] text-[0.8rem] font-semibold whitespace-nowrap text-brand-blue-dark">
-												{numberFormatter.format(resultOccurrences)} {resultOccurrences === 1 ? 'concurrencia' : 'concurrencias'}
+												{numberFormatter.format(resultOccurrences)} {resultOccurrences === 1 ? 'ocurrencia' : 'ocurrencias'}
 											</span>
 										</div>
 									</div>
@@ -3358,7 +3424,7 @@
 											{/each}
 										</ol>
 									{:else if preview}
-										<p class="mt-3 mb-0 text-[0.9rem] text-text-soft">No hay concurrencias para mostrar.</p>
+										<p class="mt-3 mb-0 text-[0.9rem] text-text-soft">No hay ocurrencias para mostrar.</p>
 									{:else if hasPendingPreview(result)}
 										<div class="texoro-preview-reserve mt-3" aria-hidden="true"></div>
 									{:else}
@@ -3378,7 +3444,7 @@
 												ontouchstart={() => prefetchOccurrenceDetails(result, assignment)}
 												onfocus={() => prefetchOccurrenceDetails(result, assignment)}
 												onclick={() => openOccurrenceModal(result, assignment)}
-												title={`Ver más concurrencias de ${formatMatchDisplayLabel(assignment.match)}`}
+												title={`Ver más ocurrencias de ${formatMatchDisplayLabel(assignment.match)}`}
 											>
 												<span class="texoro-more-button__label">Ver más</span>
 												<span
@@ -3460,7 +3526,7 @@
 			class="relative max-h-[88vh] w-full max-w-[880px] overflow-hidden rounded-[12px] bg-white shadow-[0_16px_40px_rgba(4,24,56,0.33)]"
 			role="dialog"
 			aria-modal="true"
-			aria-label={`Concurrencias de ${formatMatchDisplayLabel(occurrenceModal.assignment.match)}`}
+			aria-label={`Ocurrencias de ${formatMatchDisplayLabel(occurrenceModal.assignment.match)}`}
 			tabindex="-1"
 		>
 			<div class="relative grid gap-3 bg-surface-soft px-4 py-3 sm:gap-5">
@@ -3518,7 +3584,7 @@
 					{#if occurrenceModal.details}
 						<span class="w-fit shrink-0 rounded-full bg-surface-accent-blue px-2.5 py-1 font-['Roboto',sans-serif] text-[0.8rem] font-semibold whitespace-nowrap text-brand-blue-dark">
 							{numberFormatter.format(occurrenceModal.details.count)}
-							{occurrenceModal.details.count === 1 ? 'concurrencia' : 'concurrencias'}
+							{occurrenceModal.details.count === 1 ? 'ocurrencia' : 'ocurrencias'}
 						</span>
 					{/if}
 				</div>
@@ -3531,7 +3597,7 @@
 				}}
 			>
 				{#if occurrenceLoading}
-					<p class="m-0 text-[0.93rem] text-text-soft">Cargando concurrencias...</p>
+					<p class="m-0 text-[0.93rem] text-text-soft">Cargando ocurrencias...</p>
 				{:else if occurrenceError}
 					<p class="m-0 rounded-[9px] border border-[#f3c0ca] bg-[#fff5f7] px-3 py-2 text-[0.9rem] text-[#8f1e36]">
 						{occurrenceError}
@@ -3558,17 +3624,17 @@
 					{#if occurrenceModal.details.truncated}
 						<div class="mt-3 grid gap-1 text-[0.84rem] text-text-soft">
 							<p class="m-0">
-								Se muestran las primeras {numberFormatter.format(occurrenceModal.details.items.length)} concurrencias de
+								Se muestran las primeras {numberFormatter.format(occurrenceModal.details.items.length)} ocurrencias de
 								{numberFormatter.format(occurrenceModal.details.count)}.
 							</p>
 							<p class="m-0">
-								Si necesitas acceder a todas las concurrencias,
+								Si necesitas acceder a todas las ocurrencias,
 								<a href="/contacto" class="font-medium">contacta con nosotros</a>.
 							</p>
 						</div>
 					{/if}
 				{:else}
-					<p class="m-0 text-[0.93rem] text-text-soft">No hay concurrencias para mostrar.</p>
+					<p class="m-0 text-[0.93rem] text-text-soft">No hay ocurrencias para mostrar.</p>
 				{/if}
 			</div>
 		</div>
@@ -3722,9 +3788,9 @@
 				</ul>
 				<h4 class="mb-0 mt-4 font-['Roboto',sans-serif] text-[0.94rem] font-semibold text-text-accent-purple">Lectura de gráficos</h4>
 				<ul class="mb-0 mt-2 pl-5 text-[0.92rem] leading-[1.52] text-text-main">
-					<li>Los gráficos se calculan en vivo con las concurrencias del subconjunto activo de resultados.</li>
-					<li>En autoría, la concurrencia de cada obra se reparte proporcionalmente entre autores asignados.</li>
-					<li>En género, se suma el total de concurrencias por género textual.</li>
+					<li>Los gráficos se calculan en vivo con las ocurrencias del subconjunto activo de resultados.</li>
+					<li>En autoría, la ocurrencia de cada obra se reparte proporcionalmente entre autores asignados.</li>
+					<li>En género, se suma el total de ocurrencias por género textual.</li>
 					<li>En consultas con varios términos se activa una comparativa por autor y género con métrica seleccionable.</li>
 					<li>La métrica <code>Frecuencia/10k</code> se calcula directamente por obra y se agrega en el gráfico.</li>
 					<li>Los botones permiten alternar entre barras y circular porcentual, y descargar en PNG con cita.</li>

@@ -47,7 +47,7 @@ export const POST: RequestHandler = async ({ request }) => {
 	const workId = typeof body?.workId === 'string' ? body.workId.trim() : '';
 	const match = normalizeMatch(body?.match);
 	if (docId === null || !workId || !match) {
-		throw error(400, 'Parametros de concurrencias invalidos');
+		throw error(400, 'Parametros de ocurrencias invalidos');
 	}
 
 	const rawOptions = body?.options ?? {};
@@ -68,6 +68,6 @@ export const POST: RequestHandler = async ({ request }) => {
 		return json(result);
 	} catch (cause) {
 		console.error('[api/texoro/occurrences] Unable to load occurrences', cause);
-		throw error(500, cause instanceof Error ? cause.message : 'No se pudieron cargar las concurrencias');
+		throw error(500, cause instanceof Error ? cause.message : 'No se pudieron cargar las ocurrencias');
 	}
 };

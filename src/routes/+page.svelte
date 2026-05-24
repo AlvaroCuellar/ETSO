@@ -61,7 +61,7 @@
 		{
 			image: resumenesHero,
 			title: 'Resúmenes automáticos',
-			description: 'Consulta los resúmenes automáticos de todas las obras a través de Examen de Autorías o TEXORO.',
+			description: 'Consulta los resúmenes automáticos de todas las obras a través de Examen de autorías o TEXORO.',
 			alt: 'Resúmenes automáticos de las obras'
 		}
 	];

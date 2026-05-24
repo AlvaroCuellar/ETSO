@@ -10,7 +10,7 @@
 		<p class="max-w-[72ch] leading-[1.62] text-text-main">Selecciona una sección:</p>
 		<ul class="grid gap-2 font-ui">
 			<li><a class="font-medium hover:underline" href="/transcripciones-automaticas">Transcripciones automáticas</a></li>
-			<li><a class="font-medium hover:underline" href="/colaboradores">Colaboradores</a></li>
+			<li><a class="font-medium hover:underline" href="/equipo">Equipo</a></li>
 			<li><a class="font-medium hover:underline" href="/contacto">Contacto</a></li>
 		</ul>
 	</section>

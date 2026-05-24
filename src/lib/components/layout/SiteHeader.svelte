@@ -15,7 +15,7 @@
 
 	const infoItems = [
 		{ href: '/transcripciones-automaticas', label: 'Transcripciones automáticas' },
-		{ href: '/colaboradores', label: 'Colaboradores' },
+		{ href: '/equipo', label: 'Equipo' },
 		{ href: '/contacto', label: 'Contacto' }
 	] as const;
 

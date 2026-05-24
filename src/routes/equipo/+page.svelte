@@ -19,19 +19,19 @@
 	<Breadcrumbs
 		items={[
 			{ label: 'Inicio', href: '/' },
-			{ label: 'Colaboradores' }
+			{ label: 'Equipo' }
 		]}
 	/>
 
 	<section class="grid gap-3">
-		<h1 class="text-[clamp(1.6rem,2.7vw,2.1rem)] font-bold text-brand-blue-dark">Colaboradores</h1>
+		<h1 class="text-[clamp(1.6rem,2.7vw,2.1rem)] font-bold text-brand-blue-dark">Equipo</h1>
 		{#if data.collaboratorsView.intro}
 			<p class="leading-[1.66] text-text-main">{data.collaboratorsView.intro}</p>
 		{/if}
 	</section>
 
 	{#if !hasAnyData(data.collaboratorsView.sections)}
-		<p class="m-0 italic text-text-soft">No hay datos de colaboradores disponibles.</p>
+		<p class="m-0 italic text-text-soft">No hay datos de equipo disponibles.</p>
 	{:else}
 		<div class="grid gap-8">
 			{#each data.collaboratorsView.sections as section}

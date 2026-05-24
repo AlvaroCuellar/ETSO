@@ -54,14 +54,14 @@
 		{
 			image: bicuveHero,
 			title: 'BICUVE',
-			description: 'Consulta más de 1500 textos digitales del Siglo de Oro en acceso abierto.',
+			description: 'Consulta más de 1500 textos digitales del Siglo de Oro en acceso abierto',
 			alt: 'Biblioteca digital BICUVE',
 			link: '/bicuve'
 		},
 		{
 			image: resumenesHero,
 			title: 'Resúmenes automáticos',
-			description: 'Consulta los resúmenes automáticos de todas las obras a través de Examen de autorías o TEXORO.',
+			description: 'Consulta los resúmenes automáticos de todas las obras a través de Examen de autorías o TEXORO',
 			alt: 'Resúmenes automáticos de las obras'
 		}
 	];

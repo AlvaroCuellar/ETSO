@@ -10,7 +10,10 @@ export type TexoroWorkerRequest =
 	| {
 			id: number;
 			action: 'warmup';
-			wildcard?: boolean;
+	  }
+	| {
+			id: number;
+			action: 'warmupWildcard';
 	  }
 	| {
 			id: number;
@@ -18,7 +21,10 @@ export type TexoroWorkerRequest =
 			query: string;
 			structuredQuery?: SearchOptions['structuredQuery'];
 			structuredClauses?: SearchOptions['structuredClauses'];
+			options?: SearchOptions;
 			wildcard?: boolean;
+			prefetchTexts?: boolean;
+			textLimit?: number;
 	  }
 	| {
 			id: number;

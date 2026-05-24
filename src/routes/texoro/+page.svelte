@@ -12,6 +12,7 @@
 	import TexoroLiveChart from '$lib/components/search/TexoroLiveChart.svelte';
 	import TexoroComparisonChart from '$lib/components/search/TexoroComparisonChart.svelte';
 	import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
+	import { getClientMemoryCache, loadClientMemoryCache } from '$lib/utils/client-memory-cache';
 	import {
 		formatAttribution,
 		formatConfidence,
@@ -188,6 +189,22 @@
 		searchText?: string;
 	}
 
+	interface TexoroStatsPayload {
+		works: number;
+		authors: number;
+		tokens: number;
+		vocabSize: number;
+		indexVersion: string;
+		preserveEnie: boolean;
+	}
+
+	interface TexoroOptionsPayload {
+		titles: TokenOption[];
+		authors: TokenOption[];
+		genres: TokenOption[];
+		states: TokenOption[];
+	}
+
 	interface SubmittedQueryTerm {
 		key: string;
 		label: string;
@@ -244,6 +261,8 @@
 	const OCCURRENCE_DETAILS_CACHE_LIMIT = 24;
 	const OCCURRENCE_MODAL_MAX_ITEMS = 300;
 	const TEXORO_PRIME_DEBOUNCE_MS = 500;
+	const TEXORO_STATS_CACHE_KEY = 'texoro:stats';
+	const TEXORO_OPTIONS_CACHE_KEY = 'texoro:options';
 
 	const stripTrailingSlash = (value: string): string => value.replace(/\/+$/, '');
 	const joinUrl = (base: string, path: string): string =>
@@ -253,6 +272,7 @@
 		return `${url}${separator}t=${Date.now()}`;
 	};
 	const texoroIndexBaseUrl = $derived(stripTrailingSlash(data.texoroIndexBaseUrl ?? ''));
+	const initialStatsPayload = getClientMemoryCache<TexoroStatsPayload>(TEXORO_STATS_CACHE_KEY);
 
 	let isEngineReady = $state(false);
 	let mainQuery = $state('');
@@ -292,9 +312,16 @@
 	let resultsRegion = $state<HTMLElement | null>(null);
 	let resultsPaginationRegion = $state<HTMLElement | null>(null);
 	let indexStats = $state<{ works: number; tokens: number; vocabSize: number } | null>(null);
-	const displayIndexStats = $derived(indexStats ?? data.indexInfo?.stats ?? null);
+	let statsPayload = $state<TexoroStatsPayload | null>(initialStatsPayload);
+	let isStatsLoading = $state(!initialStatsPayload);
+	const displayIndexStats = $derived(
+		indexStats ??
+			(statsPayload
+				? { works: statsPayload.works, tokens: statsPayload.tokens, vocabSize: statsPayload.vocabSize }
+				: null)
+	);
 	let loadedPreserveEnieForHighlight = $state<boolean | null>(null);
-	const preserveEnieForHighlight = $derived(loadedPreserveEnieForHighlight ?? data.indexInfo?.preserveEnie ?? true);
+	const preserveEnieForHighlight = $derived(loadedPreserveEnieForHighlight ?? statsPayload?.preserveEnie ?? true);
 	let occurrenceModal = $state<OccurrenceModalState | null>(null);
 	let occurrenceModalScrolled = $state(false);
 	let occurrencePreviews = $state<Map<number, ResultOccurrencePreview>>(new Map());
@@ -312,10 +339,16 @@
 	let genreChartRef = $state<TexoroLiveChart | null>(null);
 	let infoModalOpen = $state(false);
 	let loadedIndexVersion = $state<string | null>(null);
-	const indexVersion = $derived(loadedIndexVersion ?? data.indexInfo?.indexVersion ?? 'n/d');
+	const indexVersion = $derived(loadedIndexVersion ?? statsPayload?.indexVersion ?? 'n/d');
 	let worksMeta = $state<TexoroWorkMeta[] | null>(null);
 	let worksMetaLoadPromise: Promise<TexoroWorkMeta[]> | null = null;
 	let texoroWorkerInitPromise: Promise<void> | null = null;
+	let statsLoadPromise: Promise<void> | null = null;
+	let optionsLoadPromise: Promise<void> | null = null;
+	let titleOptionItems = $state<TokenOption[]>([]);
+	let authorOptionItems = $state<TokenOption[]>([]);
+	let genreOptionItems = $state<TokenOption[]>([]);
+	let stateOptionItems = $state<TokenOption[]>([]);
 	let searchRequestId = 0;
 	let visiblePreviewRequestId = 0;
 	let previewRequestVersion = 0;
@@ -432,10 +465,10 @@
 		};
 	};
 
-	const authorOptions = $derived.by<TokenOption[]>(() => data.filterOptions.authors);
-	const titleOptions = $derived.by<TokenOption[]>(() => data.filterOptions.titles);
-	const genreOptions = $derived.by<TokenOption[]>(() => data.filterOptions.genres);
-	const stateOptions = $derived.by<TokenOption[]>(() => data.filterOptions.states);
+	const authorOptions = $derived(authorOptionItems);
+	const titleOptions = $derived(titleOptionItems);
+	const genreOptions = $derived(genreOptionItems);
+	const stateOptions = $derived(stateOptionItems);
 	const authorLabelById = $derived.by(() => new Map(authorOptions.map((option) => [option.id, option.label] as const)));
 	const titleLabelById = $derived.by(() => new Map(titleOptions.map((option) => [option.id, option.label] as const)));
 	const genreLabelById = $derived.by(() => new Map(genreOptions.map((option) => [option.id, option.label] as const)));
@@ -1694,6 +1727,60 @@
 		return await response.blob();
 	}
 
+	const loadTexoroStats = async (): Promise<void> => {
+		const cached = getClientMemoryCache<TexoroStatsPayload>(TEXORO_STATS_CACHE_KEY);
+		if (cached) {
+			statsPayload = cached;
+			isStatsLoading = false;
+			return;
+		}
+		if (statsLoadPromise) return statsLoadPromise;
+		statsLoadPromise = (async () => {
+			try {
+				statsPayload = await loadClientMemoryCache<TexoroStatsPayload>(TEXORO_STATS_CACHE_KEY, async () => {
+					const response = await fetch('/api/texoro/stats');
+					if (!response.ok) throw new Error(`No se pudieron cargar los indicadores de TEXORO: ${response.status}`);
+					return (await response.json()) as TexoroStatsPayload;
+				});
+			} catch (cause) {
+				console.warn('[texoro] stats load failed', cause);
+				statsPayload = null;
+			} finally {
+				isStatsLoading = false;
+			}
+		})();
+		return statsLoadPromise;
+	};
+
+	const ensureTexoroOptionsLoaded = async (): Promise<void> => {
+		const cached = getClientMemoryCache<TexoroOptionsPayload>(TEXORO_OPTIONS_CACHE_KEY);
+		if (cached) {
+			titleOptionItems = cached.titles;
+			authorOptionItems = cached.authors;
+			genreOptionItems = cached.genres;
+			stateOptionItems = cached.states;
+			return;
+		}
+		if (optionsLoadPromise) return optionsLoadPromise;
+		optionsLoadPromise = (async () => {
+			try {
+				const payload = await loadClientMemoryCache<TexoroOptionsPayload>(TEXORO_OPTIONS_CACHE_KEY, async () => {
+					const response = await fetch('/api/texoro/options');
+					if (!response.ok) throw new Error(`No se pudieron cargar los filtros de TEXORO: ${response.status}`);
+					return (await response.json()) as TexoroOptionsPayload;
+				});
+				titleOptionItems = payload.titles;
+				authorOptionItems = payload.authors;
+				genreOptionItems = payload.genres;
+				stateOptionItems = payload.states;
+			} catch (cause) {
+				console.warn('[texoro] options load failed', cause);
+				optionsLoadPromise = null;
+			}
+		})();
+		return optionsLoadPromise;
+	};
+
 	const fetchWorksMeta = async (): Promise<TexoroWorkMeta[]> => {
 		const response = await fetch('/api/texoro/work-meta');
 		if (!response.ok) {
@@ -2310,17 +2397,23 @@
 	});
 
 	$effect(() => {
+		const filters = buildCurrentSearchFilters();
 		const primeSignature = [
 			mainQuery,
 			additionalMode,
 			...additionalTerms.map((term) => term.value),
 			proximityMode,
-			...proximityTerms.map((term) => `${term.order}:${term.distance}:${term.value}`)
+			...proximityTerms.map((term) => `${term.order}:${term.distance}:${term.value}`),
+			...filters.titleIds,
+			...filters.genres,
+			...filters.traditionalAuthorIds,
+			filters.traditionalMatch,
+			...filters.stylometryAuthorIds,
+			filters.stylometryMatch,
+			...filters.states
 		].join('\u0001');
 		if (
 			!primeSignature ||
-			!isEngineReady ||
-			!isTexoroClientWorkerReady() ||
 			isSearching ||
 			!canPrimeCurrentQuery()
 		) {
@@ -2329,14 +2422,26 @@
 
 		const timer = window.setTimeout(() => {
 			const { query, structuredQuery } = buildEffectiveQuery();
-			void requestTexoroClientWorker<void>({
-				action: 'prime',
-				query,
-				structuredQuery,
-				wildcard: /[*?]/.test(query)
-			}).catch((cause) => {
-				console.warn('[texoro] prime failed', cause);
-			});
+			const shouldPrefetchTexts =
+				/\s/.test(mainQuery.trim()) ||
+				additionalTerms.some((term) => term.value.trim()) ||
+				proximityTerms.some((term) => term.value.trim());
+			void initializeTexoroWorker()
+				.then(() => {
+					if (!isTexoroClientWorkerReady()) return;
+					return requestTexoroClientWorker<void>({
+						action: 'prime',
+						query,
+						structuredQuery,
+						options: buildSearchFilterOptions(filters),
+						wildcard: /[*?]/.test(query),
+						prefetchTexts: shouldPrefetchTexts,
+						textLimit: shouldPrefetchTexts ? 8 : undefined
+					});
+				})
+				.catch((cause) => {
+					console.warn('[texoro] prime failed', cause);
+				});
 		}, TEXORO_PRIME_DEBOUNCE_MS);
 
 		return () => {
@@ -2388,6 +2493,7 @@
 		window.addEventListener('resize', handleResize);
 		void updateAdditionalModePill();
 		void updateProximityModePill();
+		void loadTexoroStats();
 		initDelayTimer = window.setTimeout(() => {
 			initIdleHandle = scheduleIdle(() => {
 				void initializeTexoroWorker().then(() => {
@@ -2594,11 +2700,29 @@
 		</div>
 
 		{#snippet stats()}
-			<HeroStatCard Icon={BookOpen} value={numberFormatter.format(displayIndexStats?.works ?? data.stats.works)} label="Obras indexadas" desktopOffset="up" />
+			<HeroStatCard
+				Icon={BookOpen}
+				value={numberFormatter.format(displayIndexStats?.works ?? 0)}
+				label="Obras indexadas"
+				desktopOffset="up"
+				loading={isStatsLoading || !displayIndexStats}
+			/>
 
-			<HeroStatCard Icon={Search} value={displayIndexStats ? numberFormatter.format(displayIndexStats.tokens) : '--'} label="Palabras indexadas" desktopOffset="down" />
+			<HeroStatCard
+				Icon={Search}
+				value={numberFormatter.format(displayIndexStats?.tokens ?? 0)}
+				label="Palabras indexadas"
+				desktopOffset="down"
+				loading={isStatsLoading || !displayIndexStats}
+			/>
 
-			<HeroStatCard Icon={Feather} value={numberFormatter.format(data.stats.authors)} label="Autores" desktopOffset="up" />
+			<HeroStatCard
+				Icon={Feather}
+				value={numberFormatter.format(statsPayload?.authors ?? 0)}
+				label="Autores"
+				desktopOffset="up"
+				loading={isStatsLoading || !statsPayload}
+			/>
 		{/snippet}
 	</FeatureHeroSection>
 
@@ -2899,7 +3023,9 @@
 					class="flex w-full items-center justify-between gap-3 border-0 bg-transparent px-4 py-3 text-left font-['Roboto',sans-serif] text-[0.92rem] font-semibold text-brand-blue-dark transition hover:rounded-[10px] hover:bg-surface-accent-blue"
 					aria-expanded={filtersOpen}
 					onclick={() => {
-						filtersOpen = !filtersOpen;
+						const nextOpen = !filtersOpen;
+						filtersOpen = nextOpen;
+						if (nextOpen) void ensureTexoroOptionsLoaded();
 					}}
 				>
 					<span>Filtros</span>
@@ -2925,6 +3051,9 @@
 								selectedIds={selectedTitleIds}
 								helpText="Selecciona una o varias obras para limitar la búsqueda textual a esos títulos."
 								inputClass="js-static-multiselect"
+								onIntent={() => {
+									void ensureTexoroOptionsLoaded();
+								}}
 								onChange={(nextIds) => {
 									selectedTitleIds = nextIds;
 								}}
@@ -2938,6 +3067,9 @@
 								selectedIds={selectedGenres}
 								helpText="Selecciona uno o varios géneros para limitar los resultados."
 								inputClass="js-static-multiselect"
+								onIntent={() => {
+									void ensureTexoroOptionsLoaded();
+								}}
 								onChange={(nextIds) => {
 									selectedGenres = nextIds;
 								}}
@@ -2954,6 +3086,9 @@
 									selectedIds={selectedTradAuthors}
 									helpText="Autores propuestos por la tradición filológica."
 									inputClass="js-author-multiselect"
+									onIntent={() => {
+										void ensureTexoroOptionsLoaded();
+									}}
 									onChange={(nextIds) => {
 										selectedTradAuthors = nextIds;
 									}}
@@ -2978,6 +3113,9 @@
 									selectedIds={selectedEstoAuthors}
 									helpText="Autores sugeridos por el análisis estilométrico."
 									inputClass="js-author-multiselect"
+									onIntent={() => {
+										void ensureTexoroOptionsLoaded();
+									}}
 									onChange={(nextIds) => {
 										selectedEstoAuthors = nextIds;
 									}}
@@ -3002,6 +3140,9 @@
 							selectedIds={selectedStates}
 							helpText="Limita los resultados al estado del texto utilizado en TEXORO."
 							inputClass="js-static-multiselect"
+							onIntent={() => {
+								void ensureTexoroOptionsLoaded();
+							}}
 							onChange={(nextIds) => {
 								selectedStates = nextIds;
 							}}

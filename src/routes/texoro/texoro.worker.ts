@@ -38,11 +38,13 @@ const handleRequest = async (request: TexoroWorkerRequest): Promise<void> => {
 	const searchEngine = ensureEngine();
 
 	if (request.action === 'warmup') {
-		if (request.wildcard) {
-			await searchEngine.warmupWildcardSupport();
-		} else {
-			await searchEngine.warmupForFirstSearch();
-		}
+		await searchEngine.warmupForFirstSearch();
+		postResponse({ id: request.id, ok: true });
+		return;
+	}
+
+	if (request.action === 'warmupWildcard') {
+		await searchEngine.warmupWildcardSupport();
 		postResponse({ id: request.id, ok: true });
 		return;
 	}
@@ -50,8 +52,12 @@ const handleRequest = async (request: TexoroWorkerRequest): Promise<void> => {
 	if (request.action === 'prime') {
 		await Promise.all([
 			searchEngine.primeQuery(request.query, {
+				...(request.options ?? {}),
 				structuredQuery: request.structuredQuery,
-				structuredClauses: request.structuredClauses
+				structuredClauses: request.structuredClauses,
+				prefetchTexts: request.prefetchTexts,
+				textLimit: request.textLimit,
+				workMetaById
 			}),
 			request.wildcard ? searchEngine.warmupWildcardSupport() : Promise.resolve()
 		]);

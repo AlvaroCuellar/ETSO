@@ -63,6 +63,14 @@ interface PrimeQueryOptions {
 	prefetchTexts?: boolean;
 	textLimit?: number;
 	textConcurrency?: number;
+	workMetaById?: Map<string, TexoroWorkMeta>;
+	workIds?: string[];
+	genres?: string[];
+	states?: string[];
+	traditionalAuthorIds?: string[];
+	traditionalMatch?: 'or' | 'and';
+	stylometryAuthorIds?: string[];
+	stylometryMatch?: 'or' | 'and';
 }
 
 interface TextWarmupOptions {
@@ -550,6 +558,7 @@ export class TexoroSearchEngine {
 	#positionsShardLoads = new Map<string, Promise<Map<number, TexoroPositionsDoc[]>>>();
 	#firstSearchWarmupPromise: Promise<void> | null = null;
 	#wildcardWarmupPromise: Promise<void> | null = null;
+	#wildcardSupportPromise: Promise<void> | null = null;
 	#primedQueries = new Map<string, Promise<void>>();
 	#positionsShardLoadCount = 0;
 	#textLoadCount = 0;
@@ -589,6 +598,7 @@ export class TexoroSearchEngine {
 
 		this.#wildcardWarmupPromise = (async () => {
 			await this.initialize();
+			await this.#ensureWildcardSupport();
 			await Promise.all([
 				this.warmupForFirstSearch(options),
 				this.#warmupKgramShards(options.kgramBudgetBytes ?? DEFAULT_WARMUP_KGRAM_BUDGET)
@@ -644,7 +654,29 @@ export class TexoroSearchEngine {
 
 			if (!options.prefetchTexts) return;
 
-			const orderedCandidates = sortedNumeric(unionSets(groupEvaluations.map((group) => group.docs))).sort(
+			const candidates = unionSets(groupEvaluations.map((group) => group.docs));
+			const selectedWorkIds = new Set((options.workIds ?? []).map((id) => id.trim()).filter(Boolean));
+			const metadataFilters = buildMetadataFilters(options);
+			const restrictedCandidates =
+				selectedWorkIds.size > 0
+					? new Set(
+							Array.from(candidates).filter((docId) => {
+								const row = this.#docRowById.get(docId);
+								return row
+									? selectedWorkIds.has(row[1]) &&
+										matchesMetadataFilters(options.workMetaById?.get(row[1]), metadataFilters)
+									: false;
+							})
+						)
+					: metadataFilters.hasFilters
+						? new Set(
+								Array.from(candidates).filter((docId) => {
+									const row = this.#docRowById.get(docId);
+									return row ? matchesMetadataFilters(options.workMetaById?.get(row[1]), metadataFilters) : false;
+								})
+							)
+						: candidates;
+			const orderedCandidates = sortedNumeric(restrictedCandidates).sort(
 				(a, b) => (retrievalScores.get(b) ?? 0) - (retrievalScores.get(a) ?? 0)
 			);
 			if (orderedCandidates.length === 0) return;
@@ -682,20 +714,38 @@ export class TexoroSearchEngine {
 			await this.#cache.clearMismatchedVersion(manifest.indexVersion);
 		}
 
-		const [worksFile, vocabRoot, kgramsRoot, wildcardLengths] = await Promise.all([
+		const [worksFile, vocabRoot] = await Promise.all([
 			this.#fetchJson<TexoroWorksFile>('works.json', manifest.indexVersion),
-			this.#fetchJson<TexoroVocabRoot>('vocab.json', manifest.indexVersion),
-			this.#fetchJson<TexoroKgramsRoot>('kgrams.json', manifest.indexVersion),
-			this.#fetchJson<TexoroWildcardLengths>('wildcard-lengths.json', manifest.indexVersion)
+			this.#fetchJson<TexoroVocabRoot>('vocab.json', manifest.indexVersion)
 		]);
 
 		this.#worksFile = worksFile;
 		this.#vocabRoot = vocabRoot;
-		this.#kgramsRoot = kgramsRoot;
-		this.#wildcardLengths = wildcardLengths;
 
 		this.#docRowById = new Map(worksFile.works.map((row) => [row[0], row]));
 		this.#initialized = true;
+	}
+
+	async #ensureWildcardSupport(): Promise<void> {
+		if (this.#kgramsRoot && this.#wildcardLengths) return;
+		if (this.#wildcardSupportPromise) return this.#wildcardSupportPromise;
+
+		this.#wildcardSupportPromise = (async () => {
+			await this.initialize();
+			const indexVersion = this.#manifest?.indexVersion ?? null;
+			const [kgramsRoot, wildcardLengths] = await Promise.all([
+				this.#fetchJson<TexoroKgramsRoot>('kgrams.json', indexVersion),
+				this.#fetchJson<TexoroWildcardLengths>('wildcard-lengths.json', indexVersion)
+			]);
+			this.#kgramsRoot = kgramsRoot;
+			this.#wildcardLengths = wildcardLengths;
+		})();
+
+		try {
+			await this.#wildcardSupportPromise;
+		} finally {
+			this.#wildcardSupportPromise = null;
+		}
 	}
 
 	async search(query: string, workMetaById: Map<string, TexoroWorkMeta>, options: SearchOptions = {}): Promise<SearchExecution> {
@@ -1477,6 +1527,7 @@ export class TexoroSearchEngine {
 	}
 
 	async #resolveWildcardPattern(pattern: string): Promise<number[]> {
+		await this.#ensureWildcardSupport();
 		const allStars = /^\*+$/.test(pattern);
 		if (allStars) {
 			return this.#getAllTermIds();

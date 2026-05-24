@@ -4,6 +4,7 @@
 	import Menu from 'lucide-svelte/icons/menu';
 	import X from 'lucide-svelte/icons/x';
 	import logoEtso from '$lib/assets/logos/logo-etso.png';
+	import { loadClientMemoryCache } from '$lib/utils/client-memory-cache';
 
 	const navItems = [
 		{ href: '/examen-autorias', label: 'Examen de autorías' },
@@ -22,7 +23,6 @@
 	let mobileMenuOpen = $state(false);
 	let mobileMoreInfoOpen = $state(false);
 	let desktopMoreInfoElement: HTMLDetailsElement | null = null;
-	let examenStatsPreloadRequest: Promise<void> | null = null;
 
 	const isActive = (href: string): boolean => {
 		const path = page.url.pathname;
@@ -38,12 +38,21 @@
 		href === '/examen-autorias' || href === '/texoro' || href === '/bicuve' ? 'off' : undefined;
 
 	const preloadForHref = (href: string): void => {
-		if (href !== '/examen-autorias' || typeof window === 'undefined' || examenStatsPreloadRequest) return;
-		examenStatsPreloadRequest = fetch('/api/examen-autorias/stats')
-			.then(() => undefined)
-			.catch(() => {
-				examenStatsPreloadRequest = null;
-			});
+		if (typeof window === 'undefined') return;
+		if (href === '/examen-autorias') {
+			void loadClientMemoryCache('examen-autorias:stats', async () => {
+				const response = await fetch('/api/examen-autorias/stats');
+				if (!response.ok) throw new Error(`No se pudieron precargar los stats de Examen: ${response.status}`);
+				return response.json() as Promise<unknown>;
+			}).catch(() => {});
+			return;
+		}
+		if (href !== '/texoro') return;
+		void loadClientMemoryCache('texoro:stats', async () => {
+			const response = await fetch('/api/texoro/stats');
+			if (!response.ok) throw new Error(`No se pudieron precargar los stats de TEXORO: ${response.status}`);
+			return response.json() as Promise<unknown>;
+		}).catch(() => {});
 	};
 
 	const navLinkClass = (active: boolean): string =>

@@ -9,6 +9,7 @@
 	import FeatureHeroSection from '$lib/components/ui/FeatureHeroSection.svelte';
 	import HeroStatCard from '$lib/components/ui/HeroStatCard.svelte';
 	import fondoLogo from '$lib/assets/fondos/fondo-logo.png';
+	import { getClientMemoryCache, loadClientMemoryCache } from '$lib/utils/client-memory-cache';
 	import BookOpen from 'lucide-svelte/icons/book-open';
 	import ChevronDown from 'lucide-svelte/icons/chevron-down';
 	import ChevronLeft from 'lucide-svelte/icons/chevron-left';
@@ -39,6 +40,8 @@
 	}
 
 	type ExamenPageFilters = PageData['filters'];
+	const EXAMEN_STATS_CACHE_KEY = 'examen-autorias:stats';
+	const EXAMEN_OPTIONS_CACHE_KEY = 'examen-autorias:options';
 
 	let { data }: { data: PageData } = $props();
 	const getInitialFilters = () => data.filters;
@@ -51,6 +54,7 @@
 	const getInitialStateOptions = (): TokenOption[] =>
 		data.stateOptions.map((value) => ({ id: value, label: value }));
 	const initialFilters = getInitialFilters();
+	const initialCatalogStats = getClientMemoryCache<CatalogStats>(EXAMEN_STATS_CACHE_KEY);
 
 	let title = $state(initialFilters.titulo);
 	let selectedGenres = $state<string[]>([...initialFilters.genero]);
@@ -83,8 +87,8 @@
 	let authorOptionItems = $state<TokenOption[]>(getInitialAuthorOptions());
 	let genreOptionItems = $state<TokenOption[]>(getInitialGenreOptions());
 	let stateOptionItems = $state<TokenOption[]>(getInitialStateOptions());
-	let catalogStats = $state<CatalogStats | null>(null);
-	let isStatsLoading = $state(true);
+	let catalogStats = $state<CatalogStats | null>(initialCatalogStats);
+	let isStatsLoading = $state(!initialCatalogStats);
 	let works = $state<CatalogWork[]>([]);
 	let resultsPage = $state(getInitialPage());
 	let pageSize = $state(getInitialPageSize());
@@ -102,12 +106,20 @@
 	};
 
 	const loadStats = async (): Promise<void> => {
+		const cached = getClientMemoryCache<CatalogStats>(EXAMEN_STATS_CACHE_KEY);
+		if (cached) {
+			catalogStats = cached;
+			isStatsLoading = false;
+			return;
+		}
 		if (statsRequest) return statsRequest;
 		statsRequest = (async () => {
 			try {
-				const response = await fetch('/api/examen-autorias/stats');
-				if (!response.ok) throw new Error('No se pudieron cargar los indicadores.');
-				catalogStats = (await response.json()) as CatalogStats;
+				catalogStats = await loadClientMemoryCache<CatalogStats>(EXAMEN_STATS_CACHE_KEY, async () => {
+					const response = await fetch('/api/examen-autorias/stats');
+					if (!response.ok) throw new Error('No se pudieron cargar los indicadores.');
+					return (await response.json()) as CatalogStats;
+				});
 			} catch {
 				catalogStats = null;
 			} finally {
@@ -118,12 +130,30 @@
 	};
 
 	const ensureFilterOptionsLoaded = async (): Promise<void> => {
+		const cached = getClientMemoryCache<ExamenOptionsPayload>(EXAMEN_OPTIONS_CACHE_KEY);
+		if (cached) {
+			authorOptionItems = mergeOptions(
+				authorOptionItems,
+				cached.authors.map((author) => ({ id: author.id, label: author.name }))
+			);
+			genreOptionItems = mergeOptions(
+				genreOptionItems,
+				cached.genres.map((genre) => ({ id: genre, label: genre }))
+			);
+			stateOptionItems = mergeOptions(
+				stateOptionItems,
+				cached.states.map((value) => ({ id: value, label: value }))
+			);
+			return;
+		}
 		if (filterOptionsRequest) return filterOptionsRequest;
 		filterOptionsRequest = (async () => {
 			try {
-				const response = await fetch('/api/examen-autorias/options');
-				if (!response.ok) return;
-				const payload = (await response.json()) as ExamenOptionsPayload;
+				const payload = await loadClientMemoryCache<ExamenOptionsPayload>(EXAMEN_OPTIONS_CACHE_KEY, async () => {
+					const response = await fetch('/api/examen-autorias/options');
+					if (!response.ok) throw new Error(`No se pudieron cargar los filtros (${response.status}).`);
+					return (await response.json()) as ExamenOptionsPayload;
+				});
 				authorOptionItems = mergeOptions(
 					authorOptionItems,
 					payload.authors.map((author) => ({ id: author.id, label: author.name }))

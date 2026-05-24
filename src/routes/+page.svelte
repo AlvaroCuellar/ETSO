@@ -381,24 +381,10 @@
 				¿Cómo te podemos ayudar? ¿Cómo nos puedes ayudar?
 			</h2>
 			<p class="m-0">
-				Podemos ayudarte a investigar la autoría de obras teatrales del Siglo de Oro. Si el informe de la obra
-				que te interesa no está todavía en CETSO, escríbenos y nos pondremos en contacto contigo. De igual
-				manera, si tienes interés en algún texto procedente de la transcripción y modernización automática de
-				impresos y manuscritos, o si quieres más información sobre estos procesos, puedes escribirnos al
-				respecto. En TEXORO se pueden realizar búsquedas en los 36 millones de palabras que componen el corpus
-				actualmente, pero si te interesa realizar una búsqueda avanzada (en construcción ahora mismo) puedes
-				escribirnos.
+				Podemos ayudarte a explorar los distintos recursos disponibles para el estudio del teatro y la literatura del Siglo de Oro. En Examen de autorías se pueden consultar los informes estilométricos de las obras incorporadas al corpus, con indicios sobre sus posibles relaciones de autoría. TEXORO permite realizar búsquedas textuales sobre cerca de 3000 obras y más de 38 millones de palabras, con opciones para localizar palabras, frases, patrones, combinaciones de términos y relaciones de proximidad. BICUVE ofrece acceso abierto a textos digitales procedentes, en buena medida, de transcripciones automáticas de impresos y manuscritos. Además, los resúmenes automáticos permiten obtener una primera orientación sobre el argumento y el contenido de las obras, siempre como ayuda inicial y no como sustituto de la lectura o del análisis filológico.
 			</p>
 			<p class="m-0">
-				Nos puedes ayudar enviándonos textos del Siglo de Oro que todavía no tengamos en la base de datos. Nos
-				comprometemos a responderte con un informe personalizado y a indicar la procedencia del texto en nuestro
-				portal (si es que quieres que se haga público). Necesitamos también ayuda en múltiples trabajos dentro
-				del proyecto, así que si te interesa el mundo de las Humanidades Digitales y el Siglo de Oro ponte en
-				contacto con nosotros. Citar el proyecto nos ayuda mucho a difundir nuestro trabajo y a conseguir becas
-				y financiación para poder seguir nuestra labor. Finalmente, se trata de un trabajo amplio que abarca
-				multitud de textos y autores, por lo que es difícil tener todos los datos controlados. Si encuentras
-				cualquier tipo de error o errata en la información de la página te estaremos muy agradecidos si nos los
-				comunicas a través del contacto.
+				También puedes colaborar con nosotros enviándonos textos del Siglo de Oro que todavía no estén incorporados a nuestros recursos, información bibliográfica, noticias sobre atribuciones, datos sobre testimonios o cualquier material que pueda mejorar el conjunto. La colaboración de investigadores, docentes y especialistas resulta fundamental para seguir ampliando, revisando y corrigiendo la información disponible. Por ello, si encuentras errores, erratas, problemas en los textos, fallos en los resúmenes automáticos o datos que puedan precisarse mejor, te agradeceremos que nos envíes tus sugerencias de corrección. Citar nuestros recursos en publicaciones, trabajos académicos o actividades docentes también nos ayuda a difundir el proyecto y a obtener el apoyo necesario para mantenerlo y ampliarlo.
 			</p>
 			<div class="pt-1">
 				<a

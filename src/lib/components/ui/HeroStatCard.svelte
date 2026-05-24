@@ -11,6 +11,7 @@
 		href?: string;
 		ariaLabel?: string;
 		desktopOffset?: DesktopOffset;
+		loading?: boolean;
 	}
 
 	let {
@@ -19,7 +20,8 @@
 		label,
 		href = undefined,
 		ariaLabel = undefined,
-		desktopOffset = 'none'
+		desktopOffset = 'none',
+		loading = false
 	}: Props = $props();
 
 	let displayValue = $state('');
@@ -52,6 +54,12 @@
 	};
 
 	const syncDisplayValue = (): void => {
+		if (loading) {
+			cancelAnimationFrame(animationFrame);
+			displayValue = '';
+			return;
+		}
+
 		const targetNumber = parseNumericValue(value);
 		if (typeof window === 'undefined' || targetNumber === null) {
 			displayValue = String(value);
@@ -94,6 +102,7 @@
 
 	$effect(() => {
 		value;
+		loading;
 		syncDisplayValue();
 	});
 </script>
@@ -113,8 +122,12 @@
 				aria-hidden="true"
 			/>
 		</div>
-		<div class="min-w-0">
-			<div class="max-w-full whitespace-nowrap text-[clamp(1.8rem,2.7vw,2.35rem)] leading-none font-bold text-brand-blue-dark">{displayValue}</div>
+		<div class="min-w-0" aria-busy={loading ? 'true' : 'false'}>
+			{#if loading}
+				<div class="h-[2.35rem] w-[6.5rem] max-w-full animate-pulse rounded-[8px] bg-surface-accent-blue" aria-hidden="true"></div>
+			{:else}
+				<div class="max-w-full whitespace-nowrap text-[clamp(1.8rem,2.7vw,2.35rem)] leading-none font-bold text-brand-blue-dark">{displayValue}</div>
+			{/if}
 			<div class="font-ui text-[1.04rem] font-medium text-text-main">{label}</div>
 		</div>
 	</a>
@@ -123,8 +136,12 @@
 		<div class="inline-flex h-[2.2rem] w-[2.2rem] items-center justify-center text-text-accent-purple" aria-hidden="true">
 			<Icon class="h-[1.9rem] w-[1.9rem] stroke-[2.2]" />
 		</div>
-		<div class="min-w-0">
-			<div class="max-w-full whitespace-nowrap text-[clamp(1.8rem,2.7vw,2.35rem)] leading-none font-bold text-brand-blue-dark">{displayValue}</div>
+		<div class="min-w-0" aria-busy={loading ? 'true' : 'false'}>
+			{#if loading}
+				<div class="h-[2.35rem] w-[6.5rem] max-w-full animate-pulse rounded-[8px] bg-surface-accent-blue" aria-hidden="true"></div>
+			{:else}
+				<div class="max-w-full whitespace-nowrap text-[clamp(1.8rem,2.7vw,2.35rem)] leading-none font-bold text-brand-blue-dark">{displayValue}</div>
+			{/if}
 			<div class="font-ui text-[1.04rem] font-medium text-text-main">{label}</div>
 		</div>
 	</article>

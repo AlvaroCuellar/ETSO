@@ -15,7 +15,7 @@
 	import ChevronRight from 'lucide-svelte/icons/chevron-right';
 	import Feather from 'lucide-svelte/icons/feather';
 	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
-	import type { ObraTableRow } from '$lib/domain/catalog';
+	import type { CatalogStats, CatalogWork, ObraTableRow } from '$lib/domain/catalog';
 
 	import type { PageData } from './$types';
 
@@ -30,10 +30,20 @@
 		states: string[];
 	}
 
+	interface ExamenWorksPayload {
+		works: CatalogWork[];
+		page: number;
+		pageSize: number;
+		totalPages: number;
+		totalResults: number;
+	}
+
 	type ExamenPageFilters = PageData['filters'];
 
 	let { data }: { data: PageData } = $props();
 	const getInitialFilters = () => data.filters;
+	const getInitialPage = () => data.page;
+	const getInitialPageSize = () => data.pageSize;
 	const getInitialAuthorOptions = (): TokenOption[] =>
 		data.authorOptions.map((author) => ({ id: author.id, label: author.name }));
 	const getInitialGenreOptions = (): TokenOption[] =>
@@ -66,11 +76,23 @@
 	let dateTo = $state(initialFilters.hasta);
 	let appliedFilterSignature = $state(JSON.stringify(initialFilters));
 	let isSearching = $state(false);
+	let isResultsLoading = $state(true);
+	let resultsError = $state('');
 	let resultsRegion = $state<HTMLElement | null>(null);
 	let paginationRegion = $state<HTMLElement | null>(null);
 	let authorOptionItems = $state<TokenOption[]>(getInitialAuthorOptions());
 	let genreOptionItems = $state<TokenOption[]>(getInitialGenreOptions());
 	let stateOptionItems = $state<TokenOption[]>(getInitialStateOptions());
+	let catalogStats = $state<CatalogStats | null>(null);
+	let isStatsLoading = $state(true);
+	let works = $state<CatalogWork[]>([]);
+	let resultsPage = $state(getInitialPage());
+	let pageSize = $state(getInitialPageSize());
+	let totalPages = $state(1);
+	let totalResults = $state(0);
+	let resultsRequestId = 0;
+	let statsRequest: Promise<void> | null = null;
+	let filterOptionsRequest: Promise<void> | null = null;
 
 	const mergeOptions = (base: TokenOption[], next: TokenOption[]): TokenOption[] => {
 		const byId = new Map<string, TokenOption>();
@@ -79,8 +101,25 @@
 		return Array.from(byId.values()).sort((a, b) => a.label.localeCompare(b.label, 'es', { sensitivity: 'base' }));
 	};
 
-	onMount(() => {
-		const loadFilterOptions = async (): Promise<void> => {
+	const loadStats = async (): Promise<void> => {
+		if (statsRequest) return statsRequest;
+		statsRequest = (async () => {
+			try {
+				const response = await fetch('/api/examen-autorias/stats');
+				if (!response.ok) throw new Error('No se pudieron cargar los indicadores.');
+				catalogStats = (await response.json()) as CatalogStats;
+			} catch {
+				catalogStats = null;
+			} finally {
+				isStatsLoading = false;
+			}
+		})();
+		return statsRequest;
+	};
+
+	const ensureFilterOptionsLoaded = async (): Promise<void> => {
+		if (filterOptionsRequest) return filterOptionsRequest;
+		filterOptionsRequest = (async () => {
 			try {
 				const response = await fetch('/api/examen-autorias/options');
 				if (!response.ok) return;
@@ -99,9 +138,15 @@
 				);
 			} catch {
 				// Las opciones completas no bloquean la tabla; los filtros seleccionados ya llegan en SSR.
+				filterOptionsRequest = null;
 			}
-		};
-		void loadFilterOptions();
+		})();
+		return filterOptionsRequest;
+	};
+
+	onMount(() => {
+		void loadStats();
+		void loadResultsForParams(new URLSearchParams(window.location.search));
 	});
 
 	const hasAdvancedFilterValues = (filters: ExamenPageFilters): boolean =>
@@ -186,14 +231,14 @@
 	});
 
 	const tableRows = $derived.by<ObraTableRow[]>(() =>
-		data.works.map((work) => ({
+		works.map((work) => ({
 			rowId: work.id,
 			work
 		}))
 	);
 
-	const totalWorks = $derived.by(() => data.stats.works);
-	const totalDramaturgos = $derived.by(() => data.stats.authors);
+	const totalWorks = $derived.by(() => catalogStats?.works ?? 0);
+	const totalDramaturgos = $derived.by(() => catalogStats?.authors ?? 0);
 
 	const appendValues = (params: URLSearchParams, key: string, values: string[]): void => {
 		for (const value of values) {
@@ -226,6 +271,11 @@
 		return query ? `/examen-autorias?${query}` : '/examen-autorias';
 	};
 
+	const buildWorksApiUrl = (params: URLSearchParams): string => {
+		const query = params.toString();
+		return query ? `/api/examen-autorias/works?${query}` : '/api/examen-autorias/works';
+	};
+
 	const buildPaginationUrl = (page: number): string => {
 		const params = new URLSearchParams();
 		if (data.filters.titulo.trim()) params.set('titulo', data.filters.titulo.trim());
@@ -249,6 +299,34 @@
 		return query ? `/examen-autorias?${query}` : '/examen-autorias';
 	};
 
+	const loadResultsForParams = async (params: URLSearchParams): Promise<void> => {
+		const requestId = ++resultsRequestId;
+		isResultsLoading = true;
+		resultsError = '';
+		works = [];
+		try {
+			const response = await fetch(buildWorksApiUrl(params));
+			if (!response.ok) throw new Error(`No se pudieron cargar los resultados (${response.status}).`);
+			const payload = (await response.json()) as ExamenWorksPayload;
+			if (requestId !== resultsRequestId) return;
+			works = Array.isArray(payload.works) ? payload.works : [];
+			resultsPage = payload.page;
+			pageSize = payload.pageSize;
+			totalPages = payload.totalPages;
+			totalResults = payload.totalResults;
+		} catch (cause) {
+			if (requestId !== resultsRequestId) return;
+			resultsError = cause instanceof Error ? cause.message : 'No se pudieron cargar los resultados.';
+			works = [];
+			resultsPage = 1;
+			pageSize = data.pageSize;
+			totalPages = 1;
+			totalResults = 0;
+		} finally {
+			if (requestId === resultsRequestId) isResultsLoading = false;
+		}
+	};
+
 	const scrollToResults = async (): Promise<void> => {
 		await tick();
 		(paginationRegion ?? resultsRegion)?.scrollIntoView({ block: 'start', behavior: 'smooth' });
@@ -258,6 +336,8 @@
 		isSearching = true;
 		try {
 			await goto(url, { noScroll: true, keepFocus: true });
+			const nextUrl = new URL(url, window.location.origin);
+			await loadResultsForParams(nextUrl.searchParams);
 			if (scrollToTable) {
 				await scrollToResults();
 			}
@@ -273,7 +353,7 @@
 	};
 
 	const navigateToPage = async (page: number): Promise<void> => {
-		if (page < 1 || page > data.totalPages || page === data.page) return;
+		if (page < 1 || page > totalPages || page === resultsPage) return;
 		await navigateToUrl(buildPaginationUrl(page));
 	};
 
@@ -325,6 +405,7 @@
 				value={totalWorks}
 				label="Obras"
 				desktopOffset="up"
+				loading={isStatsLoading || !catalogStats}
 			/>
 
 			<HeroStatCard
@@ -334,6 +415,7 @@
 				value={totalDramaturgos}
 				label="Dramaturgos"
 				desktopOffset="down"
+				loading={isStatsLoading || !catalogStats}
 			/>
 		{/snippet}
 	</FeatureHeroSection>
@@ -385,6 +467,9 @@
 								selectedIds={selectedGenres}
 								helpText="Selecciona uno o varios géneros. Puedes escribir para filtrar opciones."
 								inputClass="js-static-multiselect"
+								onIntent={() => {
+									void ensureFilterOptionsLoaded();
+								}}
 								onChange={(nextIds) => {
 									selectedGenres = nextIds;
 								}}
@@ -401,6 +486,9 @@
 								disabled={mainAuthorDisabled}
 								helpText="Permite multiselección de autores. Este campo se desactiva si usas Atribución tradicional o estilometría en Más filtros."
 								inputClass="js-author-multiselect"
+								onIntent={() => {
+									void ensureFilterOptionsLoaded();
+								}}
 								onChange={(nextIds) => {
 									selectedMainAuthors = nextIds;
 								}}
@@ -415,7 +503,9 @@
 							data-target="advanced-content"
 							aria-expanded={advancedOpen ? 'true' : 'false'}
 							onclick={() => {
-								advancedOpen = !advancedOpen;
+								const nextOpen = !advancedOpen;
+								advancedOpen = nextOpen;
+								if (nextOpen) void ensureFilterOptionsLoaded();
 							}}
 						>
 							<span>Más filtros</span>
@@ -448,6 +538,9 @@
 												selectedIds={selectedTradAuthors}
 												helpText="Autores propuestos desde la tradición filológica. Puedes seleccionar varios."
 												inputClass="js-author-multiselect"
+												onIntent={() => {
+													void ensureFilterOptionsLoaded();
+												}}
 												onChange={(nextIds) => {
 													selectedTradAuthors = nextIds;
 												}}
@@ -472,6 +565,9 @@
 												selectedIds={selectedEstoAuthors}
 												helpText="Autores propuestos a partir del análisis estilométrico. Puedes seleccionar varios."
 												inputClass="js-author-multiselect"
+												onIntent={() => {
+													void ensureFilterOptionsLoaded();
+												}}
 												onChange={(nextIds) => {
 													selectedEstoAuthors = nextIds;
 												}}
@@ -495,6 +591,9 @@
 													selectedIds={selectedConfidence}
 													helpText="Filtra por el grado de certeza de la atribución resultante del análisis estilométrico."
 													inputClass="js-static-multiselect"
+													onIntent={() => {
+														void ensureFilterOptionsLoaded();
+													}}
 													onChange={(nextIds) => {
 														selectedConfidence = nextIds;
 													}}
@@ -512,6 +611,9 @@
 											selectedIds={selectedAuthorshipTypes}
 											helpText="Deja este campo en Cualquiera para mostrar obras de cualquier tipo de autoría. Puedes filtrar por obras de un solo autor (Única) o de varios autores (Colaboración)."
 											inputClass="js-static-multiselect"
+											onIntent={() => {
+												void ensureFilterOptionsLoaded();
+											}}
 											onChange={(nextIds) => {
 												selectedAuthorshipTypes = nextIds;
 											}}
@@ -533,6 +635,9 @@
 											selectedIds={selectedStates}
 											helpText="Selecciona uno o varios estados del texto utilizado para el análisis estilométrico."
 											inputClass="js-static-multiselect"
+											onIntent={() => {
+												void ensureFilterOptionsLoaded();
+											}}
 											onChange={(nextIds) => {
 												selectedStates = nextIds;
 											}}
@@ -636,7 +741,7 @@
 				bind:this={resultsRegion}
 				class="mt-14 relative scroll-mt-6 outline-none"
 				aria-live="polite"
-				aria-busy={isSearching ? 'true' : 'false'}
+				aria-busy={isSearching || isResultsLoading ? 'true' : 'false'}
 				role="region"
 				aria-label="Resultados de búsqueda"
 				tabindex="-1"
@@ -647,39 +752,39 @@
 						class="mb-5 flex scroll-mt-24 flex-wrap items-center justify-between gap-3 border-b-2 border-border pb-[15px] max-md:flex-col max-md:justify-center max-md:gap-2 max-md:text-center"
 					>
 						<p class="m-0 text-[0.88rem] font-normal text-text-main max-md:w-full">
-							<span class="font-semibold text-brand-blue">{data.totalResults}</span> resultados ·
+							<span class="font-semibold text-brand-blue">{totalResults}</span> resultados ·
 							Mostrando
 							<span class="font-semibold text-brand-blue">
-								{(data.page - 1) * data.pageSize + 1}-{(data.page - 1) * data.pageSize + data.works.length}
+								{(resultsPage - 1) * pageSize + 1}-{(resultsPage - 1) * pageSize + works.length}
 							</span>
 						</p>
-						{#if data.totalPages > 1}
+						{#if totalPages > 1}
 							<div class="flex items-center justify-center gap-2 max-md:w-full">
 								<AppButton
 									type="button"
 									variant="secondary"
-									disabled={data.page <= 1 || isSearching}
+									disabled={resultsPage <= 1 || isSearching || isResultsLoading}
 									className="!h-9 !w-9 !rounded-full !border-transparent !bg-transparent !p-0 !text-brand-blue-dark shadow-none hover:!bg-surface-soft"
 									title="Página anterior"
 									onclick={() => {
-										void navigateToPage(data.page - 1);
+										void navigateToPage(resultsPage - 1);
 									}}
 								>
 									<ChevronLeft class="h-5 w-5" aria-hidden="true" />
 									<span class="sr-only">Anterior</span>
 								</AppButton>
 								<span class="font-['Roboto',sans-serif] text-[0.86rem] font-normal text-text-main">
-									Página <span class="font-semibold text-brand-blue">{data.page}</span> de
-									<span class="font-semibold text-brand-blue">{data.totalPages}</span>
+									Página <span class="font-semibold text-brand-blue">{resultsPage}</span> de
+									<span class="font-semibold text-brand-blue">{totalPages}</span>
 								</span>
 								<AppButton
 									type="button"
 									variant="secondary"
-									disabled={data.page >= data.totalPages || isSearching}
+									disabled={resultsPage >= totalPages || isSearching || isResultsLoading}
 									className="!h-9 !w-9 !rounded-full !border-transparent !bg-transparent !p-0 !text-brand-blue-dark shadow-none hover:!bg-surface-soft"
 									title="Página siguiente"
 									onclick={() => {
-										void navigateToPage(data.page + 1);
+										void navigateToPage(resultsPage + 1);
 									}}
 								>
 									<ChevronRight class="h-5 w-5" aria-hidden="true" />
@@ -689,38 +794,47 @@
 						{/if}
 					</div>
 				{/if}
-				<WorksTable
-					rows={tableRows}
-					mode="standard"
-					emptyMessage="No se encontraron obras que coincidan con los criterios de búsqueda."
-				/>
-				{#if data.totalPages > 1}
+				{#if isResultsLoading}
+					<div class="flex items-center gap-3 rounded-[12px] border border-border-accent-blue bg-white px-4 py-5 text-brand-blue-dark shadow-[0_6px_16px_rgba(25,46,80,0.07)]">
+						<LoaderCircle class="h-5 w-5 animate-spin" aria-hidden="true" />
+						<p class="m-0 font-['Roboto',sans-serif] text-[0.95rem] font-semibold">Cargando resultados...</p>
+					</div>
+				{:else if resultsError}
+					<p class="m-0 rounded-[9px] border border-[#f3c0ca] bg-[#fff5f7] px-3 py-2 text-[0.92rem] text-[#8f1e36]">{resultsError}</p>
+				{:else}
+					<WorksTable
+						rows={tableRows}
+						mode="standard"
+						emptyMessage="No se encontraron obras que coincidan con los criterios de búsqueda."
+					/>
+				{/if}
+				{#if !isResultsLoading && !resultsError && totalPages > 1}
 					<nav class="mt-4 flex flex-wrap items-center justify-end gap-2 max-md:justify-center" aria-label="Paginación de obras">
 						<AppButton
 							type="button"
 							variant="secondary"
-							disabled={data.page <= 1 || isSearching}
+							disabled={resultsPage <= 1 || isSearching}
 							className="!h-9 !w-9 !rounded-full !border-transparent !bg-transparent !p-0 !text-brand-blue-dark shadow-none hover:!bg-surface-soft"
 							title="Página anterior"
 							onclick={() => {
-								void navigateToPage(data.page - 1);
+								void navigateToPage(resultsPage - 1);
 							}}
 						>
 							<ChevronLeft class="h-5 w-5" aria-hidden="true" />
 							<span class="sr-only">Anterior</span>
 						</AppButton>
 						<span class="font-['Roboto',sans-serif] text-[0.86rem] font-normal text-text-main">
-							Página <span class="font-semibold text-brand-blue">{data.page}</span> de
-							<span class="font-semibold text-brand-blue">{data.totalPages}</span>
+							Página <span class="font-semibold text-brand-blue">{resultsPage}</span> de
+							<span class="font-semibold text-brand-blue">{totalPages}</span>
 						</span>
 						<AppButton
 							type="button"
 							variant="secondary"
-							disabled={data.page >= data.totalPages || isSearching}
+							disabled={resultsPage >= totalPages || isSearching}
 							className="!h-9 !w-9 !rounded-full !border-transparent !bg-transparent !p-0 !text-brand-blue-dark shadow-none hover:!bg-surface-soft"
 							title="Página siguiente"
 							onclick={() => {
-								void navigateToPage(data.page + 1);
+								void navigateToPage(resultsPage + 1);
 							}}
 						>
 							<ChevronRight class="h-5 w-5" aria-hidden="true" />

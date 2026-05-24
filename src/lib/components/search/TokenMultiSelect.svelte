@@ -19,6 +19,7 @@
 		inputClass?: string;
 		name?: string;
 		onChange?: (nextIds: string[]) => void;
+		onIntent?: () => void;
 	}
 
 	let {
@@ -30,7 +31,8 @@
 		helpText = '',
 		inputClass = 'js-static-multiselect',
 		name = '',
-		onChange = () => {}
+		onChange = () => {},
+		onIntent = () => {}
 	}: Props = $props();
 
 	let wrapperElement = $state<HTMLDivElement | null>(null);
@@ -106,7 +108,7 @@
 
 	const openDropdown = (): void => {
 		if (disabled) return;
-		isOpen = filteredOptions.length > 0;
+		isOpen = true;
 		activeIndex = -1;
 	};
 
@@ -115,16 +117,23 @@
 		activeIndex = -1;
 	};
 
+	const signalIntent = (): void => {
+		if (disabled) return;
+		onIntent();
+	};
+
 	const focusInput = (): void => {
 		if (disabled) return;
+		signalIntent();
 		openDropdown();
 		const input = wrapperElement?.querySelector('input');
 		if (input) input.focus();
 	};
 
 	const handleInput = (event: Event): void => {
+		signalIntent();
 		query = (event.currentTarget as HTMLInputElement).value;
-		isOpen = !disabled && filteredOptions.length > 0;
+		isOpen = !disabled;
 		activeIndex = -1;
 	};
 
@@ -139,6 +148,7 @@
 
 		if (!isOpen && (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ')) {
 			event.preventDefault();
+			signalIntent();
 			openDropdown();
 			return;
 		}
@@ -234,7 +244,10 @@
 				placeholder={selectedIds.length > 0 ? '' : placeholder}
 				value={query}
 				disabled={disabled}
-				onfocus={openDropdown}
+				onfocus={() => {
+					signalIntent();
+					openDropdown();
+				}}
 				oninput={handleInput}
 				onkeydown={handleKeyDown}
 			/>

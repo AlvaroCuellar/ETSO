@@ -22,6 +22,7 @@
 	let mobileMenuOpen = $state(false);
 	let mobileMoreInfoOpen = $state(false);
 	let desktopMoreInfoElement: HTMLDetailsElement | null = null;
+	let examenStatsPreloadRequest: Promise<void> | null = null;
 
 	const isActive = (href: string): boolean => {
 		const path = page.url.pathname;
@@ -34,7 +35,16 @@
 	};
 
 	const preloadDataForHref = (href: string): 'off' | undefined =>
-		href === '/texoro' || href === '/bicuve' ? 'off' : undefined;
+		href === '/examen-autorias' || href === '/texoro' || href === '/bicuve' ? 'off' : undefined;
+
+	const preloadForHref = (href: string): void => {
+		if (href !== '/examen-autorias' || typeof window === 'undefined' || examenStatsPreloadRequest) return;
+		examenStatsPreloadRequest = fetch('/api/examen-autorias/stats')
+			.then(() => undefined)
+			.catch(() => {
+				examenStatsPreloadRequest = null;
+			});
+	};
 
 	const navLinkClass = (active: boolean): string =>
 		`inline-flex items-center rounded-card border px-4 py-2 text-[0.9rem] font-ui font-medium text-brand-blue no-underline transition hover:no-underline focus-visible:no-underline ${
@@ -100,7 +110,22 @@
 
 			<nav class="hidden items-center justify-end gap-2 font-ui min-[860px]:flex" aria-label="Navegación principal">
 				{#each navItems as item}
-					<a class={navLinkClass(isActive(item.href))} href={item.href} data-sveltekit-preload-data={preloadDataForHref(item.href)}>{item.label}</a>
+					<a
+						class={navLinkClass(isActive(item.href))}
+						href={item.href}
+						data-sveltekit-preload-data={preloadDataForHref(item.href)}
+						onpointerenter={() => {
+							preloadForHref(item.href);
+						}}
+						onfocus={() => {
+							preloadForHref(item.href);
+						}}
+						ontouchstart={() => {
+							preloadForHref(item.href);
+						}}
+					>
+						{item.label}
+					</a>
 				{/each}
 
 				<details class="group relative" bind:open={desktopMoreInfoOpen} bind:this={desktopMoreInfoElement}>
@@ -154,6 +179,15 @@
 							class={mobileLinkClass(isActive(item.href))}
 							href={item.href}
 							data-sveltekit-preload-data={preloadDataForHref(item.href)}
+							onpointerenter={() => {
+								preloadForHref(item.href);
+							}}
+							onfocus={() => {
+								preloadForHref(item.href);
+							}}
+							ontouchstart={() => {
+								preloadForHref(item.href);
+							}}
 							onclick={() => {
 								closeMobileMenu();
 							}}

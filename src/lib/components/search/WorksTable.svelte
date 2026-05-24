@@ -156,19 +156,6 @@
 		`metadata-grid grid grid-cols-3 gap-[14px] ${isMobileTableView ? '' : 'max-md:grid-cols-1'}`
 	);
 
-	const scheduleIdle = (callback: () => void): (() => void) => {
-		const idleWindow = window as Window & {
-			requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
-			cancelIdleCallback?: (handle: number) => void;
-		};
-		if (idleWindow.requestIdleCallback && idleWindow.cancelIdleCallback) {
-			const handle = idleWindow.requestIdleCallback(callback, { timeout: 1400 });
-			return () => idleWindow.cancelIdleCallback?.(handle);
-		}
-		const handle = window.setTimeout(callback, 500);
-		return () => window.clearTimeout(handle);
-	};
-
 	onMount(() => {
 		try {
 			const storedView = window.localStorage.getItem(MOBILE_VIEW_STORAGE_KEY);
@@ -200,16 +187,10 @@
 
 		document.addEventListener('click', onDocumentClick);
 		document.addEventListener('keydown', onEscape);
-		const cancelIdlePrefetch = scheduleIdle(() => {
-			for (const row of rows.slice(0, 20)) {
-				void prefetchShortSummary(row.work);
-			}
-		});
 
 		return () => {
 			document.removeEventListener('click', onDocumentClick);
 			document.removeEventListener('keydown', onEscape);
-			cancelIdlePrefetch();
 		};
 	});
 
@@ -291,16 +272,6 @@
 	const prefetchShortSummary = async (work: CatalogWork): Promise<void> => {
 		await loadShortSummary(work);
 	};
-
-	$effect(() => {
-		const works = rows.slice(0, 20).map((row) => row.work);
-		const cancelIdlePrefetch = scheduleIdle(() => {
-			for (const work of works) {
-				void prefetchShortSummary(work);
-			}
-		});
-		return cancelIdlePrefetch;
-	});
 
 	const toggleRowExpanded = async (row: ObraTableRow): Promise<void> => {
 		const next = new Set(expandedRows);
@@ -478,6 +449,9 @@
 							void prefetchShortSummary(row.work);
 						}}
 						onfocusin={() => {
+							void prefetchShortSummary(row.work);
+						}}
+						ontouchstart={() => {
 							void prefetchShortSummary(row.work);
 						}}
 						onclick={(event) => handleRowClick(event, row)}

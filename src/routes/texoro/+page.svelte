@@ -14,11 +14,7 @@
 	import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
 	import { getClientMemoryCache, loadClientMemoryCache } from '$lib/utils/client-memory-cache';
 	import {
-		formatAttribution,
-		formatConfidence,
-		UNRESOLVED_AUTHOR_ID,
-		type AttributionSet,
-		type Confidence
+		type AttributionSet
 	} from '$lib/domain/catalog';
 	import fondoLogo from '$lib/assets/fondos/fondo-logo.png';
 	import BookOpen from 'lucide-svelte/icons/book-open';
@@ -259,7 +255,7 @@
 	const RESULT_PREVIEW_SNIPPET_RADIUS = 115;
 	const RESULT_PREVIEW_VISIBLE_RADIUS = 70;
 	const OCCURRENCE_DETAILS_CACHE_LIMIT = 24;
-	const OCCURRENCE_MODAL_MAX_ITEMS = 300;
+	const OCCURRENCE_MODAL_MAX_ITEMS = 100;
 	const TEXORO_PRIME_DEBOUNCE_MS = 500;
 	const TEXORO_STATS_CACHE_KEY = 'texoro:stats';
 	const TEXORO_OPTIONS_CACHE_KEY = 'texoro:options';
@@ -642,17 +638,6 @@
 		'pointer-events-none absolute top-1 bottom-1 left-0 rounded-full bg-white shadow-soft transition-[opacity,transform,width] duration-200 ease-out';
 	const interpretedQueryTermClass =
 		'inline-flex max-w-full items-center rounded-full bg-surface-accent-purple px-2.5 py-1 font-semibold leading-none text-text-accent-purple align-middle';
-	const attributionConnectorLabel = (set: AttributionSet): string => (set.connector === 'and' ? 'Y' : 'O');
-	const canLinkAuthor = (authorId: string | undefined): boolean =>
-		Boolean(authorId && authorId !== UNRESOLVED_AUTHOR_ID);
-	const confidenceClass = (confidence?: Confidence): string => {
-		const baseClass =
-			'ml-1 inline-block rounded-[12px] px-[7px] py-[2px] align-middle text-[10px] font-medium tracking-[0.2px] uppercase';
-		if (confidence === 'segura') return `${baseClass} bg-[#d4edda] text-[#155724]`;
-		if (confidence === 'probable') return `${baseClass} bg-[#d1ecf1] text-[#0c5460]`;
-		return `${baseClass} bg-[#fff3cd] text-[#856404]`;
-	};
-
 	const queryClauseCount = $derived.by(() => submittedTerms.length);
 
 	const queryLabelNoun = $derived.by(() => (queryClauseCount === 1 ? 'Término' : 'Términos'));
@@ -827,14 +812,29 @@
 		return suffix ? `${chartTitles[chartKey]} · ${queryLabelNoun}: ${suffix}` : chartTitles[chartKey];
 	};
 
+	const formatNameList = (names: string[]): string => {
+		if (names.length === 0) return '';
+		if (names.length === 1) return names[0];
+		if (names.length === 2) return `${names[0]} y ${names[1]}`;
+		return `${names.slice(0, -1).join(', ')} y ${names[names.length - 1]}`;
+	};
+
 	const formatCompactAttribution = (set: AttributionSet): string => {
 		if (set.unresolved) return 'No determinada';
-		const label = formatAttribution(set).trim();
-		if (!label || label === 'Sin datos') return 'Sin datos';
-		if (label === 'Autoria no determinada' || label === 'Autoría no determinada') {
-			return 'No determinada';
+		if (!set.groups.length) return 'Sin datos';
+
+		const names: string[] = [];
+		const seen = new Set<string>();
+		for (const group of set.groups) {
+			for (const member of group.members) {
+				const authorName = member.authorName.trim();
+				if (!authorName || seen.has(authorName)) continue;
+				seen.add(authorName);
+				names.push(authorName);
+			}
 		}
-		return label;
+		if (!names.length) return 'Sin datos';
+		return formatNameList(names);
 	};
 
 	const resultMetadataLine = (result: SearchResult): string => {
@@ -2600,77 +2600,41 @@
 	};
 </script>
 
-{#snippet attributionExpression(set: AttributionSet, unresolvedLabel: string, emptyLabel: string)}
-	{#if set.unresolved}
-		<span class="text-text-soft italic">{unresolvedLabel}</span>
-	{:else if set.groups.length > 0}
-		<div class="flex flex-wrap items-center gap-x-1.5 gap-y-1">
-			{#each set.groups as group, groupIndex}
-				<span class="inline-flex flex-wrap items-center gap-x-1.5 gap-y-1">
-					{#each group.members as member, memberIndex}
-						{#if canLinkAuthor(member.authorId)}
-							<a
-								href={`/autores/${member.authorId}`}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="text-brand-blue no-underline hover:underline focus:underline focus-visible:underline"
-							>
-								{member.authorName}
-							</a>
-						{:else}
-							<span>{member.authorName}</span>
-						{/if}
-						{#if member.confidence}
-							<span class={confidenceClass(member.confidence)}>
-								{formatConfidence(member.confidence)}
-							</span>
-						{/if}
-						{#if memberIndex < group.members.length - 1}
-							<span class="inline-block rounded-[3px] bg-surface-accent-purple px-1.5 py-[1px] align-middle text-[10px] font-semibold text-text-accent-purple uppercase">
-								Y
-							</span>
-						{/if}
-					{/each}
-				</span>
-				{#if groupIndex < set.groups.length - 1}
-					<span class="inline-block rounded-[3px] bg-surface-accent-purple px-1.5 py-[1px] align-middle text-[10px] font-semibold text-text-accent-purple uppercase">
-						{attributionConnectorLabel(set)}
-					</span>
-				{/if}
-			{/each}
-		</div>
-	{:else}
-		<span class="text-text-soft italic">{emptyLabel}</span>
-	{/if}
-{/snippet}
-
 {#snippet resultMetadataBlock(meta: TexoroWorkMeta, metadataTitle: string)}
-	<div class="grid w-fit max-w-full gap-x-10 gap-y-3 md:grid-cols-[auto_auto] md:items-start" title={metadataTitle}>
-		<div class="min-w-0 max-w-full">
-			<p class="m-0 font-['Roboto',sans-serif] text-[0.72rem] font-bold tracking-[0.08em] text-text-accent-purple uppercase">
-				Atribuciones
+	<div
+		class="flex min-w-0 max-w-full flex-wrap items-start gap-x-4 gap-y-1 md:gap-x-5"
+		title={metadataTitle}
+	>
+		<div class="grid min-w-0 max-w-full content-start">
+			<p class="m-0 text-[0.68rem] leading-[1.2] font-semibold uppercase text-text-accent-purple">
+				Atribución tradicional
 			</p>
-			<dl class="mt-2 grid w-fit max-w-full gap-x-8 gap-y-2 sm:grid-cols-[auto_auto]">
-				<div class="min-w-0 max-w-full">
-					<dt class="font-['Roboto',sans-serif] text-[0.76rem] font-semibold text-text-soft">Tradicional</dt>
-					<dd class="m-0 min-w-0 text-[0.86rem] leading-[1.35] text-text-main">
-						{@render attributionExpression(meta.traditionalAttribution, 'No determinada', 'No determinada')}
-					</dd>
-				</div>
-				<div class="min-w-0 max-w-full">
-					<dt class="font-['Roboto',sans-serif] text-[0.76rem] font-semibold text-text-soft">Estilometría</dt>
-					<dd class="m-0 min-w-0 text-[0.86rem] leading-[1.35] text-text-main">
-						{@render attributionExpression(meta.stylometryAttribution, 'El análisis no apunta hacia ningún autor', 'No disponible')}
-					</dd>
-				</div>
-			</dl>
+			<p class="m-0 text-[0.86rem] leading-[1.2] text-text-main">
+				{formatCompactAttribution(meta.traditionalAttribution)}
+			</p>
 		</div>
-		<div class="min-w-0 max-w-full">
-			<p class="m-0 font-['Roboto',sans-serif] text-[0.72rem] font-bold tracking-[0.08em] text-text-accent-purple uppercase">
+		<div class="grid min-w-0 max-w-full content-start">
+			<p class="m-0 text-[0.68rem] leading-[1.2] font-semibold uppercase text-text-accent-purple">
+				Atribución estilométrica
+			</p>
+			<p class="m-0 text-[0.86rem] leading-[1.2] text-text-main">
+				{formatCompactAttribution(meta.stylometryAttribution)}
+			</p>
+		</div>
+		<div class="grid min-w-0 max-w-full content-start">
+			<p class="m-0 text-[0.68rem] leading-[1.2] font-semibold uppercase text-text-accent-purple">
 				Género
 			</p>
-			<p class="mt-2 mb-0 text-[0.86rem] leading-[1.35] text-text-main">
+			<p class="m-0 text-[0.86rem] leading-[1.2] text-text-main">
 				{meta.genre.trim() || 'Sin género'}
+			</p>
+		</div>
+		<div class="grid min-w-0 max-w-full content-start">
+			<p class="m-0 text-[0.68rem] leading-[1.2] font-semibold uppercase text-text-accent-purple">
+				Estado del texto
+			</p>
+			<p class="m-0 text-[0.86rem] leading-[1.2] text-text-main">
+				{meta.textState.trim() || 'Sin estado'}
 			</p>
 		</div>
 	</div>

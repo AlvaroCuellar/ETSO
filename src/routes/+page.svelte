@@ -7,7 +7,8 @@
 	import Mail from 'lucide-svelte/icons/mail';
 	import estilometriaHero from '$lib/assets/heros/estilometria.webp';
 	import texoroHero from '$lib/assets/heros/texoro.webp';
-	import transcripcionHero from '$lib/assets/heros/transcripcion.jpeg';
+	import bicuveHero from '$lib/assets/heros/biblioteca.webp';
+	import resumenesHero from '$lib/assets/heros/resumenes.webp';
 	import grafoImage from '$lib/assets/heros/grafo.png';
 	import informesImage from '$lib/assets/heros/informes.png';
 	import ayudaImage from '$lib/assets/heros/ayuda.jpg';
@@ -18,6 +19,7 @@
 		title: string;
 		description: string;
 		alt: string;
+		link?: string;
 	}
 
 	interface TeamMember {
@@ -37,21 +39,30 @@
 	const slides: HomeSlide[] = [
 		{
 			image: estilometriaHero,
-			title: 'Análisis estilométrico de autoría',
-			description: 'Consulta el examen de autorías y los informes de cada obra.',
-			alt: 'Visualización de análisis estilométrico del proyecto ETSO'
+			title: 'Examen de autorías',
+			description: 'Consulta los informes estilométricos de 3000 obras teatrales del Siglo de Oro',
+			alt: 'Visualización de análisis estilométrico del proyecto ETSO',
+			link: '/examen-autorias'
 		},
 		{
 			image: texoroHero,
-			title: 'Búsquedas en el corpus',
-			description: 'En TEXORO puedes realizar búsquedas en 3000 textos teatrales.',
-			alt: 'Interfaz de búsqueda textual de TEXORO'
+			title: 'TEXORO',
+			description: 'Realiza búsquedas textuales complejas en un corpus del Siglo de Oro de 38 millones de palabras',
+			alt: 'Interfaz de búsqueda textual de TEXORO',
+			link: '/texoro'
 		},
 		{
-			image: transcripcionHero,
-			title: 'Transcripción y modernización automática de impresos y manuscritos',
-			description: 'Consulta nuestros procesos de transcripción automática.',
-			alt: 'Proceso de transcripción automática de textos antiguos'
+			image: bicuveHero,
+			title: 'BICUVE',
+			description: 'Consulta más de 1500 textos digitales del Siglo de Oro en acceso abierto.',
+			alt: 'Biblioteca digital BICUVE',
+			link: '/bicuve'
+		},
+		{
+			image: resumenesHero,
+			title: 'Resúmenes automáticos',
+			description: 'Consulta los resúmenes automáticos de todas las obras a través de Examen de Autorías o TEXORO.',
+			alt: 'Resúmenes automáticos de las obras'
 		}
 	];
 
@@ -185,6 +196,16 @@
 								<p class="mt-4 max-w-[50rem] font-reading text-[clamp(1rem,1.5vw,1.35rem)] leading-[1.45] text-white/92">
 									{slide.description}
 								</p>
+								{#if slide.link}
+									<div class="mt-8">
+										<a
+											href={slide.link}
+											class="inline-flex items-center rounded-card border border-white/60 bg-white/15 px-6 py-3 font-ui text-[0.95rem] font-semibold tracking-[0.03em] text-white no-underline transition hover:bg-white/25 hover:no-underline"
+										>
+											Acceder
+										</a>
+									</div>
+								{/if}
 							</div>
 						</div>
 					</div>

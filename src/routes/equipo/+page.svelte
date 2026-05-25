@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
+	import TeamProfileCard from '$lib/components/ui/TeamProfileCard.svelte';
 
 	import type { EditorialItem, EditorialSection } from '$lib/domain/catalog';
 	import type { PageData } from './$types';
@@ -47,22 +48,32 @@
 						{#if section.presentation === 'featured_cards'}
 							<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 								{#each section.items as item}
-									<article class="overflow-hidden rounded-card border border-border bg-surface shadow-soft md:mx-auto md:w-full md:max-w-[24rem]">
-										{#if item.image}
-											<img src={item.image} alt={`Imagen de ${item.title}`} class="block h-auto w-full" loading="lazy" />
-										{/if}
-										<div class="grid gap-2 p-4">
-											<h3 class="m-0 font-ui text-[1rem] font-semibold leading-[1.3] text-brand-blue-dark">{item.title}</h3>
-
-											{#if itemMeta(item)}
-												<p class="m-0 text-[0.92rem] leading-[1.55] text-text-soft">{itemMeta(item)}</p>
+									{#if section.id === 'team' && item.image}
+										<TeamProfileCard
+											title={item.title}
+											image={item.image}
+											organizations={item.organizations}
+											summary={item.summary}
+											links={item.links}
+										/>
+									{:else}
+										<article class="overflow-hidden rounded-card border border-border bg-surface shadow-soft md:mx-auto md:w-full md:max-w-[24rem]">
+											{#if item.image}
+												<img src={item.image} alt={`Imagen de ${item.title}`} class="block h-auto w-full" loading="lazy" />
 											{/if}
+											<div class="grid gap-2 p-4">
+												<h3 class="m-0 font-['Roboto',sans-serif] text-[1rem] font-semibold leading-[1.3] text-text-soft">{item.title}</h3>
 
-											{#if item.summary}
-												<p class="m-0 text-[0.96rem] leading-[1.62] text-text-main">{item.summary}</p>
-											{/if}
-										</div>
-									</article>
+												{#if itemMeta(item)}
+													<p class="m-0 font-['Lora',serif] text-[0.92rem] leading-[1.55] text-text-soft">{itemMeta(item)}</p>
+												{/if}
+
+												{#if item.summary}
+													<p class="m-0 font-['Lora',serif] text-[0.96rem] leading-[1.62] text-text-main">{item.summary}</p>
+												{/if}
+											</div>
+										</article>
+									{/if}
 								{/each}
 							</div>
 						{:else if section.presentation === 'media_cards'}
@@ -80,10 +91,10 @@
 											</div>
 										{/if}
 										<div class="grid gap-2 p-4">
-											<h3 class="m-0 font-ui text-[1rem] font-semibold leading-[1.3] text-brand-blue-dark">{item.title}</h3>
+											<h3 class="m-0 font-['Roboto',sans-serif] text-[1rem] font-semibold leading-[1.3] text-text-soft">{item.title}</h3>
 
 											{#if item.summary}
-												<p class="m-0 text-[0.95rem] leading-[1.6] text-text-main">{item.summary}</p>
+												<p class="m-0 font-['Lora',serif] text-[0.95rem] leading-[1.6] text-text-main">{item.summary}</p>
 											{/if}
 										</div>
 									</article>
@@ -96,14 +107,14 @@
 										<article class="grid gap-1.5 rounded-card bg-surface-soft px-4 py-3">
 											{#if itemMeta(item)}
 												<p class="m-0 text-[0.95rem] leading-[1.5] text-text-main">
-													<span class="block font-semibold text-brand-blue-dark">{item.title}</span>
-													<span class="block text-text-soft">{itemMeta(item)}</span>
+													<span class="block font-['Roboto',sans-serif] font-semibold text-text-soft">{item.title}</span>
+													<span class="block font-['Lora',serif] text-text-soft">{itemMeta(item)}</span>
 												</p>
 											{:else}
-												<h3 class="m-0 text-[0.98rem] font-semibold leading-[1.35] text-brand-blue-dark">{item.title}</h3>
+												<h3 class="m-0 font-['Roboto',sans-serif] text-[0.98rem] font-semibold leading-[1.35] text-text-soft">{item.title}</h3>
 											{/if}
 											{#if item.summary}
-												<p class="m-0 text-[0.95rem] leading-[1.58] text-text-main">{item.summary}</p>
+												<p class="m-0 font-['Lora',serif] text-[0.95rem] leading-[1.58] text-text-main">{item.summary}</p>
 											{/if}
 										</article>
 									{/each}
@@ -113,12 +124,12 @@
 									<div class="divide-y divide-border-accent-blue">
 										{#each section.items as item}
 											<article class="grid gap-1.5 px-4 py-3 md:px-5">
-												<h3 class="m-0 text-[0.98rem] font-semibold leading-[1.35] text-brand-blue-dark">{item.title}</h3>
+												<h3 class="m-0 font-['Roboto',sans-serif] text-[0.98rem] font-semibold leading-[1.35] text-text-soft">{item.title}</h3>
 												{#if itemMeta(item)}
-													<p class="m-0 text-[0.9rem] leading-[1.5] text-text-soft">{itemMeta(item)}</p>
+													<p class="m-0 font-['Lora',serif] text-[0.9rem] leading-[1.5] text-text-soft">{itemMeta(item)}</p>
 												{/if}
 												{#if item.summary}
-													<p class="m-0 text-[0.95rem] leading-[1.58] text-text-main">{item.summary}</p>
+													<p class="m-0 font-['Lora',serif] text-[0.95rem] leading-[1.58] text-text-main">{item.summary}</p>
 												{/if}
 											</article>
 										{/each}
@@ -135,17 +146,14 @@
 							</div>
 						{:else if section.presentation === 'callout'}
 							{#each section.items as item}
-								<article class="grid gap-4 rounded-card border border-border-accent-purple bg-surface-accent-blue p-4 shadow-soft md:grid-cols-[minmax(0,1fr)_15rem] md:items-center">
+								<article class="grid gap-4 md:grid-cols-[minmax(0,1fr)_15rem] md:items-center">
 									<div class="grid gap-3">
-										<p class="m-0 font-ui text-[0.76rem] font-semibold uppercase tracking-[0.05em] text-text-accent-purple">
-											Agradecimiento
-										</p>
-										<h3 class="m-0 text-[1rem] font-semibold leading-[1.3] text-brand-blue-dark">{item.title}</h3>
+										<h3 class="m-0 font-['Roboto',sans-serif] text-[1rem] font-semibold leading-[1.3] text-text-soft">{item.title}</h3>
 										{#if item.summary}
-											<p class="m-0 leading-[1.62] text-text-main">{item.summary}</p>
+											<p class="m-0 font-['Lora',serif] leading-[1.62] text-text-main">{item.summary}</p>
 										{/if}
 										{#if item.organizations.length > 0}
-											<ul class="m-0 grid gap-1.5 pl-5 text-[0.95rem] leading-[1.6] text-text-main">
+											<ul class="m-0 grid gap-1.5 pl-5 font-['Lora',serif] text-[0.95rem] leading-[1.6] text-text-main">
 												{#each item.organizations as organization}
 													<li>{organization}</li>
 												{/each}

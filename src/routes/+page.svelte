@@ -1,10 +1,8 @@
 <script lang="ts">
-	import type { ComponentType } from 'svelte';
 	import { onMount } from 'svelte';
 	import ChevronLeft from 'lucide-svelte/icons/chevron-left';
 	import ChevronRight from 'lucide-svelte/icons/chevron-right';
-	import Globe from 'lucide-svelte/icons/globe';
-	import Mail from 'lucide-svelte/icons/mail';
+	import TeamProfileCard from '$lib/components/ui/TeamProfileCard.svelte';
 	import estilometriaHero from '$lib/assets/heros/estilometria.webp';
 	import texoroHero from '$lib/assets/heros/texoro.webp';
 	import bicuveHero from '$lib/assets/heros/biblioteca.webp';
@@ -33,7 +31,6 @@
 	interface TeamLink {
 		label: string;
 		href: string;
-		icon: ComponentType;
 	}
 
 	const slides: HomeSlide[] = [
@@ -75,13 +72,11 @@
 			links: [
 				{
 					label: 'Correo de Álvaro Cuéllar',
-					href: 'mailto:alvaro.cuellar@uab.cat',
-					icon: Mail
+					href: 'mailto:alvaro.cuellar@uab.cat'
 				},
 				{
 					label: 'Web de Álvaro Cuéllar',
-					href: 'https://www.alvarocuellar.com/',
-					icon: Globe
+					href: 'https://www.alvarocuellar.com/'
 				}
 			]
 		},
@@ -93,8 +88,7 @@
 			links: [
 				{
 					label: 'Correo de Germán Vega García-Luengos',
-					href: 'mailto:german.vega@uva.es',
-					icon: Mail
+					href: 'mailto:german.vega@uva.es'
 				}
 			]
 		}
@@ -408,42 +402,16 @@
 
 		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 			{#each teamMembers as member}
-				<article class="group overflow-hidden rounded-card border border-border bg-surface shadow-soft transition md:mx-auto md:w-full md:max-w-[24rem]">
-					<div class="relative">
-						<img src={member.image} alt={`Imagen de ${member.title}`} class="block h-auto w-full" loading="lazy" />
-
-						{#if member.links.length > 0}
-							<div
-								class="pointer-events-none absolute inset-0 bg-[rgba(248,248,250,0.42)] opacity-0 transition duration-200 group-hover:opacity-100 group-focus-within:opacity-100"
-							></div>
-							<div
-								class="absolute inset-x-0 bottom-4 flex justify-center gap-3 opacity-0 transition duration-200 group-hover:opacity-100 group-focus-within:opacity-100"
-							>
-								{#each member.links as link}
-									<a
-										href={link.href}
-										target={link.href.startsWith('http') ? '_blank' : undefined}
-										rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-										aria-label={link.label}
-										title={link.label}
-										class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/60 bg-white/92 text-text-accent-purple no-underline shadow-soft transition hover:bg-white hover:text-brand-purple-dark hover:no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-									>
-										<link.icon class="h-[1.05rem] w-[1.05rem]" aria-hidden="true" />
-									</a>
-								{/each}
-							</div>
-						{/if}
-					</div>
-
-					<div class="grid gap-2 p-4">
-						<h3 class="m-0 font-ui text-[1rem] font-semibold leading-[1.3] text-brand-blue-dark">{member.title}</h3>
-						<p class="m-0 text-[0.92rem] leading-[1.55] text-text-soft">{member.organizations.join(' | ')}</p>
-						{#if member.summary}
-							<p class="m-0 text-[0.96rem] leading-[1.62] text-text-main">{member.summary}</p>
-						{/if}
-					</div>
-				</article>
+				<TeamProfileCard
+					title={member.title}
+					image={member.image}
+					organizations={member.organizations}
+					summary={member.summary}
+					links={member.links}
+				/>
 			{/each}
 		</div>
 	</div>
 </section>
+
+

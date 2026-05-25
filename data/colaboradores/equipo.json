@@ -19,7 +19,16 @@
             "Universitat Autònoma de Barcelona"
           ],
           "tags": [],
-          "links": [],
+          "links": [
+            {
+              "label": "Correo de Álvaro Cuéllar",
+              "href": "mailto:alvaro.cuellar@uab.cat"
+            },
+            {
+              "label": "Web de Álvaro Cuéllar",
+              "href": "https://www.alvarocuellar.com/"
+            }
+          ],
           "image": "/images/colaboradores/FotoAlvaroCuellar.png"
         },
         {
@@ -34,8 +43,36 @@
             "Universidad de Valladolid"
           ],
           "tags": [],
-          "links": [],
+          "links": [
+            {
+              "label": "Correo de Germán Vega García-Luengos",
+              "href": "mailto:german.vega@uva.es"
+            }
+          ],
           "image": "/images/colaboradores/FotoGermanVega.jpg"
+        }
+      ]
+    },
+    {
+      "id": "web-development",
+      "title": "Desarrollo web",
+      "description": "",
+      "presentation": "compact_list",
+      "items": [
+        {
+          "id": "web-development-david-merino-recalde",
+          "title": "David Merino Recalde",
+          "summary": "",
+          "type": "person",
+          "status": "active",
+          "year": null,
+          "people": [],
+          "organizations": [
+            "Universitat Autònoma de Barcelona"
+          ],
+          "tags": [],
+          "links": [],
+          "image": null
         }
       ]
     },

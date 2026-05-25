@@ -17,11 +17,14 @@ import type {
 	StructuredSearchQuery
 } from '$lib/search';
 
-const CONTEXT_EXPORT_LIMIT = 300;
+const CONTEXT_EXPORT_LIMIT_PER_WORK = 100;
 const RESULT_EXPORT_LIMIT = 100_000;
 const SNIPPET_RADIUS = 115;
 const LINE_CONTEXT = 3;
 const SLOW_API_LOG_MS = 1_500;
+const UNRESOLVED_ATTRIBUTION_LABEL = 'El análisis no apunta hacia ningún autor';
+const CONTEXT_LIMIT_NOTICE =
+	'Para evitar la saturación de la base de datos, se limita la recuperación de ocurrencias a 100 por obra como máximo. Si necesitas los listados completos, contacta con el equipo de ETSO.';
 
 interface SubmittedTermPayload {
 	key: string;
@@ -156,10 +159,10 @@ const normalizeText = (value: string): string =>
 		.trim();
 
 const formatCompactAttribution = (set: AttributionSet): string => {
-	if (set.unresolved) return 'No determinada';
+	if (set.unresolved) return UNRESOLVED_ATTRIBUTION_LABEL;
 	const label = formatAttribution(set).trim();
 	if (!label || label === 'Sin datos') return 'Sin datos';
-	if (label === 'Autoria no determinada' || label === 'Autoría no determinada') return 'No determinada';
+	if (label === 'Autoria no determinada' || label === 'Autoría no determinada') return UNRESOLVED_ATTRIBUTION_LABEL;
 	return label;
 };
 
@@ -179,20 +182,6 @@ const matchesByMode = (haystack: Set<string>, selectedIds: string[], mode: 'or' 
 	if (selectedIds.length === 0) return true;
 	if (mode === 'and') return selectedIds.every((id) => haystack.has(id));
 	return selectedIds.some((id) => haystack.has(id));
-};
-
-const collectStylometryAuthors = (result: SearchResult): string[] => {
-	const set = result.meta?.stylometryAttribution;
-	if (!set || set.unresolved) return [];
-	const authorById = new Map<string, string>();
-	for (const group of set.groups) {
-		for (const member of group.members) {
-			const id = member.authorId?.trim();
-			const name = member.authorName?.trim();
-			if (id && name && !authorById.has(id)) authorById.set(id, name);
-		}
-	}
-	return Array.from(authorById.values());
 };
 
 const sumResultOccurrences = (result: SearchResult): number =>
@@ -312,7 +301,7 @@ const buildOccurrenceRows = async (results: SearchResult[], matchColumns: Submit
 	const labelByKey = new Map(matchColumns.map((term) => [term.key, term.label]));
 
 	for (const result of results) {
-		if (rows.length >= CONTEXT_EXPORT_LIMIT) break;
+		let workContextCount = 0;
 		const matchOrder = new Map(matchColumns.map((term, index) => [term.key, index]));
 		const matches = result.matches
 			.slice()
@@ -324,8 +313,8 @@ const buildOccurrenceRows = async (results: SearchResult[], matchColumns: Submit
 			);
 
 		for (const match of matches) {
-			if (rows.length >= CONTEXT_EXPORT_LIMIT) break;
-			const remaining = CONTEXT_EXPORT_LIMIT - rows.length;
+			if (workContextCount >= CONTEXT_EXPORT_LIMIT_PER_WORK) break;
+			const remaining = CONTEXT_EXPORT_LIMIT_PER_WORK - workContextCount;
 			const details = await engine.getOccurrencesForMatch({ docId: result.docId, workId: result.workId }, match, {
 				maxItems: remaining,
 				snippetRadius: SNIPPET_RADIUS,
@@ -339,7 +328,8 @@ const buildOccurrenceRows = async (results: SearchResult[], matchColumns: Submit
 					matchLabel: labelByKey.get(keyForMatch(match)) ?? defaultMatchLabel(match),
 					item
 				});
-				if (rows.length >= CONTEXT_EXPORT_LIMIT) break;
+				workContextCount += 1;
+				if (workContextCount >= CONTEXT_EXPORT_LIMIT_PER_WORK) break;
 			}
 		}
 	}
@@ -425,8 +415,7 @@ const addQuerySheet = (
 	workbook: ExcelJS.Workbook,
 	payload: TexoroExportPayload,
 	execution: SearchExecution,
-	indexVersion: string,
-	contextsTruncated: boolean
+	indexVersion: string
 ): void => {
 	const worksheet = workbook.addWorksheet('Consulta');
 	const query = payload.structuredQuery;
@@ -452,75 +441,8 @@ const addQuerySheet = (
 		['Versión del índice', indexVersion],
 		['Avisos de consulta', execution.parsed.warnings.join('; ') || 'Sin avisos'],
 		['Fecha de exportación', new Date().toISOString()],
-		['Límite de contextos', CONTEXT_EXPORT_LIMIT],
-		['Contextos truncados', contextsTruncated ? 'sí' : 'no'],
-		[
-			'Nota de derechos',
-			'Por motivos de derechos de reproducción, la exportación incluye únicamente una muestra limitada de contextos. Para acceder a conjuntos completos de ocurrencias, contacte con el equipo de ETSO.'
-		]
+		['Límite de contextos', CONTEXT_LIMIT_NOTICE]
 	]);
-};
-
-const addSummarySheet = (
-	workbook: ExcelJS.Workbook,
-	results: SearchResult[],
-	contextCount: number,
-	contextsTruncated: boolean,
-	indexVersion: string
-): void => {
-	const summary = workbook.addWorksheet('Resumen');
-	const totalOccurrences = results.reduce((sum, result) => sum + sumResultOccurrences(result), 0);
-	addKeyValueRows(summary, [
-		['Total obras encontradas', results.length],
-		['Total ocurrencias', totalOccurrences],
-		['Contextos incluidos', contextCount],
-		['Contextos truncados', contextsTruncated ? 'sí' : 'no'],
-		['Límite global de contextos', CONTEXT_EXPORT_LIMIT],
-		['Versión del índice', indexVersion]
-	]);
-	summary.getColumn(3).width = 18;
-
-	const genreRows = new Map<string, { works: number; occurrences: number }>();
-	for (const result of results) {
-		const label = result.meta?.genre?.trim() || 'Sin género';
-		const current = genreRows.get(label) ?? { works: 0, occurrences: 0 };
-		current.works += 1;
-		current.occurrences += sumResultOccurrences(result);
-		genreRows.set(label, current);
-	}
-
-	summary.addRow([]);
-	const genreTitle = summary.addRow(['Distribución por género']);
-	genreTitle.font = { bold: true, color: { argb: 'FF0D3F91' } };
-	const genreHeader = summary.addRow(['Género', 'Obras', 'Ocurrencias']);
-	genreHeader.font = { bold: true };
-	Array.from(genreRows.entries())
-		.sort((a, b) => b[1].occurrences - a[1].occurrences || a[0].localeCompare(b[0], 'es'))
-		.forEach(([label, values]) => summary.addRow([label, values.works, values.occurrences]));
-
-	const authorRows = new Map<string, { works: number; occurrences: number }>();
-	for (const result of results) {
-		const authors = collectStylometryAuthors(result);
-		const labels = authors.length > 0 ? authors : ['Sin atribución estilométrica'];
-		const occurrencesShare = sumResultOccurrences(result) / labels.length;
-		for (const label of labels) {
-			const current = authorRows.get(label) ?? { works: 0, occurrences: 0 };
-			current.works += 1;
-			current.occurrences += occurrencesShare;
-			authorRows.set(label, current);
-		}
-	}
-	summary.addRow([]);
-	const authorTitle = summary.addRow(['Distribución por autoría estilométrica']);
-	authorTitle.font = { bold: true, color: { argb: 'FF0D3F91' } };
-	const authorHeader = summary.addRow(['Autoría estilométrica', 'Obras', 'Ocurrencias']);
-	authorHeader.font = { bold: true };
-	Array.from(authorRows.entries())
-		.sort((a, b) => b[1].occurrences - a[1].occurrences || a[0].localeCompare(b[0], 'es'))
-		.forEach(([label, values]) =>
-			summary.addRow([label, values.works, Math.round(values.occurrences * 100) / 100])
-		);
-	applyReadableCells(summary);
 };
 
 export const POST: RequestHandler = async ({ request }) => {
@@ -548,8 +470,6 @@ export const POST: RequestHandler = async ({ request }) => {
 		const results = filterResults(execution, payload.filters);
 		const matchColumns = buildMatchColumns(payload.terms, results);
 		const occurrenceRows = await buildOccurrenceRows(results, matchColumns);
-		const totalOccurrences = results.reduce((sum, result) => sum + sumResultOccurrences(result), 0);
-		const contextsTruncated = totalOccurrences > occurrenceRows.length;
 
 		const workbook = new ExcelJS.Workbook();
 		workbook.creator = 'ETSO TEXORO';
@@ -559,8 +479,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		addResultsSheet(workbook, results, matchColumns);
 		addOccurrencesSheet(workbook, occurrenceRows);
-		addQuerySheet(workbook, payload, execution, indexVersion, contextsTruncated);
-		addSummarySheet(workbook, results, occurrenceRows.length, contextsTruncated, indexVersion);
+		addQuerySheet(workbook, payload, execution, indexVersion);
 
 		const buffer = await workbook.xlsx.writeBuffer();
 		const elapsed = Date.now() - startedAt;

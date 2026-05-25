@@ -1734,6 +1734,18 @@
 		return await response.blob();
 	}
 
+	const formatDownloadStamp = (date: Date): string => {
+		const pad = (value: number): string => String(value).padStart(2, '0');
+		return [
+			date.getFullYear(),
+			pad(date.getMonth() + 1),
+			pad(date.getDate()),
+			pad(date.getHours()),
+			pad(date.getMinutes()),
+			pad(date.getSeconds())
+		].join('-');
+	};
+
 	const loadTexoroStats = async (): Promise<void> => {
 		const cached = getClientMemoryCache<TexoroStatsPayload>(TEXORO_STATS_CACHE_KEY);
 		if (cached) {
@@ -2375,7 +2387,7 @@
 			});
 			const downloadUrl = URL.createObjectURL(blob);
 			const anchor = document.createElement('a');
-			const stamp = new Date().toISOString().slice(0, 10);
+			const stamp = formatDownloadStamp(new Date());
 			anchor.href = downloadUrl;
 			anchor.download = `texoro-resultados-${stamp}.xlsx`;
 			document.body.append(anchor);
@@ -3224,7 +3236,7 @@
 						variant="secondary"
 						disabled={isExporting || isPreparingResults || !lastSubmittedSearch || filteredResults.length === 0}
 						className="!h-[40px] !rounded-[10px] !px-4 !py-2 font-['Roboto',sans-serif] text-[0.88rem] font-semibold"
-						title="Exportar resultados filtrados en XLSX"
+						title="Exportar resultados filtrados"
 						onclick={() => {
 							void exportCurrentSearch();
 						}}
@@ -3234,7 +3246,7 @@
 							Exportando...
 						{:else}
 							<Download class="mr-2 h-4 w-4" aria-hidden="true" />
-							Exportar XLSX
+							Exportar resultados
 						{/if}
 					</AppButton>
 				</div>

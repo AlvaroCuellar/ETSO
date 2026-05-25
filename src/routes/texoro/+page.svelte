@@ -6,7 +6,6 @@
 	import AppButton from '$lib/components/ui/AppButton.svelte';
 	import FeatureHeroSection from '$lib/components/ui/FeatureHeroSection.svelte';
 	import HeroStatCard from '$lib/components/ui/HeroStatCard.svelte';
-	import InlineActionButton from '$lib/components/ui/InlineActionButton.svelte';
 	import ChartModeToggle from '$lib/components/search/ChartModeToggle.svelte';
 	import ComparisonMetricToggle from '$lib/components/search/ComparisonMetricToggle.svelte';
 	import TexoroLiveChart from '$lib/components/search/TexoroLiveChart.svelte';
@@ -23,7 +22,9 @@
 	import ChevronRight from 'lucide-svelte/icons/chevron-right';
 	import CornerDownLeft from 'lucide-svelte/icons/corner-down-left';
 	import Download from 'lucide-svelte/icons/download';
+	import ExternalLink from 'lucide-svelte/icons/external-link';
 	import Feather from 'lucide-svelte/icons/feather';
+	import FolderOpen from 'lucide-svelte/icons/folder-open';
 	import Search from 'lucide-svelte/icons/search';
 	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
 	import X from 'lucide-svelte/icons/x';
@@ -318,6 +319,7 @@
 	const preserveEnieForHighlight = $derived(loadedPreserveEnieForHighlight ?? statsPayload?.preserveEnie ?? true);
 	let occurrenceModal = $state<OccurrenceModalState | null>(null);
 	let occurrenceModalScrolled = $state(false);
+	let openTextDropdownDocId = $state<number | null>(null);
 	let occurrencePreviews = $state<Map<number, ResultOccurrencePreview>>(new Map());
 	let previewLoadsByDocId = $state<Map<number, Promise<void>>>(new Map());
 	let queuedPreviewDocIds = $state<Set<number>>(new Set());
@@ -846,8 +848,17 @@
 		return `Trad. ${traditional} · Estil. ${stylometry} · Género ${genre}`;
 	};
 
-	const getBicuveLink = (meta: TexoroWorkMeta) =>
-		meta.textLinks?.find((link) => link.kind === 'bicuve') ?? null;
+	const closeTextDropdown = (): void => {
+		openTextDropdownDocId = null;
+	};
+
+	const toggleTextDropdown = (event: MouseEvent, docId: number): void => {
+		event.stopPropagation();
+		openTextDropdownDocId = openTextDropdownDocId === docId ? null : docId;
+	};
+
+	const resultTextLinks = (result: SearchResult): TexoroWorkMeta['textLinks'] =>
+		(result.meta?.textLinks ?? []).filter((link) => link.href.trim().length > 0);
 
 	const createAdditionalTerm = (): AdditionalQueryTerm => ({
 		id: nextAdditionalTermId++,
@@ -2495,7 +2506,24 @@
 			void updateAdditionalModePill();
 			void updateProximityModePill();
 		};
+		const onDocumentClick = (event: MouseEvent): void => {
+			if (!openTextDropdownDocId) return;
+			const target = event.target as HTMLElement | null;
+			if (!target) {
+				closeTextDropdown();
+				return;
+			}
+			if (target.closest('.texoro-textos-dropdown-wrapper')) return;
+			if (target.closest('.texoro-textos-dropdown')) return;
+			closeTextDropdown();
+		};
+		const onEscape = (event: KeyboardEvent): void => {
+			if (event.key !== 'Escape') return;
+			closeTextDropdown();
+		};
 		window.addEventListener('resize', handleResize);
+		document.addEventListener('click', onDocumentClick);
+		document.addEventListener('keydown', onEscape);
 		void updateAdditionalModePill();
 		void updateProximityModePill();
 		void loadTexoroStats();
@@ -2514,6 +2542,8 @@
 
 		return () => {
 			window.removeEventListener('resize', handleResize);
+			document.removeEventListener('click', onDocumentClick);
+			document.removeEventListener('keydown', onEscape);
 			if (initDelayTimer) window.clearTimeout(initDelayTimer);
 			cancelIdle(initIdleHandle);
 			cancelIdle(warmupIdleHandle);
@@ -2535,6 +2565,7 @@
 		queuedPreviewDocIds = new Set();
 		occurrenceDetailsCache = new Map();
 		occurrenceDetailsLoads = new Map();
+		closeTextDropdown();
 		openingOccurrenceKey = null;
 		previewRequestVersion += 1;
 		chartCopyPending = { author: false, genre: false };
@@ -2602,7 +2633,7 @@
 
 {#snippet resultMetadataBlock(meta: TexoroWorkMeta, metadataTitle: string)}
 	<div
-		class="flex min-w-0 max-w-full flex-wrap items-start gap-x-4 gap-y-1 md:gap-x-5"
+		class="flex min-w-0 max-w-full flex-wrap items-start gap-x-4 gap-y-1 font-['Roboto',sans-serif] md:gap-x-5"
 		title={metadataTitle}
 	>
 		<div class="grid min-w-0 max-w-full content-start">
@@ -3455,7 +3486,7 @@
 							{@const resultOccurrences = sumResultOccurrences(result)}
 							{@const preview = occurrencePreviews.get(result.docId)}
 							{@const metadataLine = resultMetadataLine(result)}
-							{@const bicuveLink = result.meta ? getBicuveLink(result.meta) : null}
+							{@const textLinks = resultTextLinks(result)}
 							<li
 								class="overflow-hidden rounded-[11px] bg-white shadow-[0_6px_16px_rgba(25,46,80,0.07)]"
 								data-texoro-result-index={resultIndex}
@@ -3477,17 +3508,72 @@
 											{/if}
 										</h3>
 										<div class="flex min-w-0 flex-wrap items-center gap-2 sm:justify-end">
-											{#if bicuveLink}
-												<InlineActionButton
-													href={bicuveLink.href}
-													icon={BookOpen}
-													preloadData="off"
-													target="_blank"
-													title="Acceso al texto"
-													class="!min-h-[1.75rem] !px-2.5 !py-1 text-[0.78rem]"
+											{#if textLinks.length > 0}
+												<div class="texoro-textos-dropdown-wrapper relative">
+													<button
+														type="button"
+														class="grid min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 rounded-[8px] border border-border-accent-blue bg-white px-[10px] py-2 text-left font-['Roboto',sans-serif] text-[12px] font-normal text-text-main transition-all hover:bg-surface-accent-blue focus:outline-3 focus:outline-brand-blue/15 focus:outline-offset-1"
+														aria-haspopup="true"
+														aria-expanded={openTextDropdownDocId === result.docId ? 'true' : 'false'}
+														title="Acceso al texto"
+														onclick={(event) => toggleTextDropdown(event, result.docId)}
+													>
+														<span class="inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-brand-blue-dark" aria-hidden="true">
+															<FolderOpen class="h-[14px] w-[14px] stroke-[2.1]" />
+														</span>
+														<span class="block overflow-hidden text-ellipsis whitespace-nowrap leading-[1.2] text-[0.82rem]">Acceso al texto</span>
+														{#if openTextDropdownDocId === result.docId}
+															<span class="inline-flex h-[13px] w-[13px] items-center justify-center text-text-soft" aria-hidden="true">
+																<ChevronDown class="h-[13px] w-[13px] stroke-[2.2]" />
+															</span>
+														{:else}
+															<span class="inline-flex h-[13px] w-[13px] items-center justify-center text-text-soft" aria-hidden="true">
+																<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
+															</span>
+														{/if}
+													</button>
+													{#if openTextDropdownDocId === result.docId}
+														<div
+															class="texoro-textos-dropdown absolute right-0 top-[calc(100%+4px)] z-20 max-h-[min(300px,calc(100vh-24px))] min-w-[220px] max-w-[320px] overflow-y-auto rounded-[8px] border border-border-accent-blue bg-white p-1.5 font-['Roboto',sans-serif] shadow-[0_10px_28px_rgba(7,36,110,0.16)]"
+														>
+															{#each textLinks as link}
+																<a
+																	href={link.href}
+																	data-sveltekit-preload-data={link.kind === 'bicuve' ? 'off' : undefined}
+																	class="grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-2 rounded-[6px] px-2.5 py-[9px] text-[12px] font-normal text-text-main no-underline transition-all hover:bg-surface-accent-blue hover:text-text-main hover:no-underline focus:bg-surface-accent-blue focus:text-text-main focus:no-underline focus:outline-none focus-visible:bg-surface-accent-blue focus-visible:text-text-main focus-visible:no-underline focus-visible:outline-none"
+																	target="_blank"
+																	rel="noopener noreferrer"
+																>
+																	<span class="inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-brand-blue-dark" aria-hidden="true">
+																		{#if link.kind === 'bicuve'}
+																			<BookOpen class="h-[14px] w-[14px] stroke-[2.1]" />
+																		{:else}
+																			<ExternalLink class="h-[14px] w-[14px] stroke-[2.1]" />
+																		{/if}
+																	</span>
+																	<span class="block min-w-0 whitespace-normal break-words leading-[1.35]">{link.label}</span>
+																	<span class="mt-[2px] inline-flex h-3 w-3 flex-none items-center justify-center text-text-soft" aria-hidden="true">
+																		<ChevronRight class="h-3 w-3 stroke-[2.1]" />
+																	</span>
+																</a>
+															{/each}
+														</div>
+													{/if}
+												</div>
+											{:else}
+												<span
+													class="grid min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 rounded-[8px] border border-[rgba(91,111,132,0.22)] bg-[#f8f9fb] px-[10px] py-2 text-left font-['Roboto',sans-serif] text-[12px] font-normal text-[rgba(73,90,108,0.62)] opacity-[0.78]"
+													aria-disabled="true"
+													title="Sin acceso al texto"
 												>
-													Acceso texto
-												</InlineActionButton>
+													<span class="inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-[rgba(114,130,145,0.75)]" aria-hidden="true">
+														<FolderOpen class="h-[14px] w-[14px] stroke-[2.1]" />
+													</span>
+													<span class="block overflow-hidden text-ellipsis whitespace-nowrap leading-[1.2] text-[0.82rem]">Acceso al texto</span>
+													<span class="inline-flex h-[13px] w-[13px] items-center justify-center text-[rgba(114,130,145,0.75)]" aria-hidden="true">
+														<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
+													</span>
+												</span>
 											{/if}
 											<span class="w-fit shrink-0 rounded-full bg-surface-accent-blue px-2.5 py-1 font-['Roboto',sans-serif] text-[0.8rem] font-semibold whitespace-nowrap text-brand-blue-dark">
 												{numberFormatter.format(resultOccurrences)} {resultOccurrences === 1 ? 'ocurrencia' : 'ocurrencias'}

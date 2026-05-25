@@ -45,7 +45,7 @@ import {
 	type WorkAuthorshipType,
 	type WorkSummaryDetail
 } from '$lib/domain/catalog';
-import collaboratorsSource from '../../../data/colaboradores/colaboradores.json';
+import collaboratorsSource from '../../../data/colaboradores/equipo.json';
 import bibliographySource from '../../../data/referencias/bibliografia.json';
 import impactSource from '../../../data/referencias/repercusion.json';
 

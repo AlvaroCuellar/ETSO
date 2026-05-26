@@ -3633,7 +3633,19 @@
 											{numberFormatter.format(resultOccurrences)} {resultOccurrences === 1 ? 'ocurrencia' : 'ocurrencias'}
 										</span>
 									</div>
-									{@render resultMetaDisclosure(result.meta, metadataLine, result.docId, textLinks)}
+									<div class="md:hidden">
+	{@render resultMetaDisclosure(result.meta, metadataLine, result.docId, textLinks)}
+</div>
+
+<div class="hidden md:grid md:grid-cols-[minmax(0,1fr)_auto] md:items-start md:gap-4">
+	{#if result.meta}
+		{@render resultMetadataBlock(result.meta, metadataLine)}
+	{:else}
+		<p class="m-0 text-[0.86rem] leading-[1.35] text-text-soft">{metadataLine}</p>
+	{/if}
+
+	{@render resultTextAccessControl(result.docId, textLinks)}
+</div>
 								</div>
 
 								<div class="px-4 py-3">

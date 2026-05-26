@@ -90,7 +90,7 @@
 	{/if}
 {/snippet}
 
-<div class="grid gap-6">
+<div class="grid min-w-0 max-w-full gap-6">
 	<Breadcrumbs
 		items={[
 			{ label: 'Inicio', href: '/' },
@@ -108,10 +108,10 @@
 		backgroundImage={heroBg}
 	/>
 
-	<div class="mx-auto w-full max-w-[1280px] px-[0.35rem] font-ui md:px-0">
-		<div class="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(19rem,24rem)]">
-			<div class="min-w-0">
-				<InfoCard label="Atribución de autoría" class="mb-5" bodyClass="gap-0 font-ui leading-[1.5]">
+	<div class="mx-auto w-full min-w-0 max-w-[1280px] font-ui">
+		<div class="grid min-w-0 max-w-full grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(19rem,24rem)] lg:gap-8">
+			<div class="grid min-w-0 max-w-full gap-5">
+				<InfoCard label="Atribución de autoría" bodyClass="gap-0 font-ui leading-[1.5]">
 					{#snippet action()}
 						{#if data.informe}
 							<InlineActionButton href={`/informes/${data.informe.slug}`} icon={ChartLine}>
@@ -223,7 +223,7 @@
 						{/if}
 				</InfoCard>
 
-				<InfoCard id="resumen-automatico" label="Resumen automático de la obra" class="mb-5">
+				<InfoCard id="resumen-automatico" label="Resumen automático de la obra">
 					{#snippet action()}
 						{#if data.work.hasSummaryFile}
 							<InlineActionButton href={`/obras/${data.work.slug}/resumen`} icon={AlignLeft}>
@@ -245,8 +245,8 @@
 
 			</div>
 
-			<aside class="min-w-0">
-				<InfoCard label="Acceso al texto" class="mb-5" bodyClass="font-ui leading-[1.5]">
+			<aside class="grid min-w-0 max-w-full content-start gap-5">
+				<InfoCard label="Acceso al texto" bodyClass="font-ui leading-[1.5]">
 					<div class="grid gap-2.5">
 						{@render textAccessActions()}
 					</div>

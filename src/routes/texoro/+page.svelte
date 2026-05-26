@@ -2681,11 +2681,11 @@
 {/snippet}
 
 {#snippet resultTextAccessControl(docId: number, textLinks: TexoroWorkMeta['textLinks'])}
-	<div class="texoro-textos-dropdown-wrapper relative w-full max-w-full sm:w-auto">
+	<div class="texoro-textos-dropdown-wrapper relative w-full max-w-full md:w-auto">
 		{#if textLinks.length > 0}
 			<button
 				type="button"
-				class="grid max-w-full min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 rounded-[8px] border border-border-accent-blue bg-white px-[10px] py-2 text-left font-['Roboto',sans-serif] text-[12px] font-normal text-text-main transition-all hover:bg-surface-accent-blue focus:outline-3 focus:outline-brand-blue/15 focus:outline-offset-1"
+				class="grid w-full max-w-full min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 rounded-[8px] border border-border-accent-blue bg-white px-[10px] py-2 text-left font-['Roboto',sans-serif] text-[12px] font-normal text-text-main transition-all hover:bg-surface-accent-blue focus:outline-3 focus:outline-brand-blue/15 focus:outline-offset-1 md:w-auto"
 				aria-haspopup="true"
 				aria-expanded={openTextDropdownDocId === docId ? 'true' : 'false'}
 				title="Acceso al texto"
@@ -2707,7 +2707,7 @@
 			</button>
 			{#if openTextDropdownDocId === docId}
 				<div
-					class="texoro-textos-dropdown absolute left-0 top-[calc(100%+4px)] z-20 max-h-[min(300px,calc(100vh-24px))] w-full min-w-0 max-w-full overflow-x-hidden overflow-y-auto rounded-[8px] border border-border-accent-blue bg-white p-1.5 font-['Roboto',sans-serif] shadow-[0_10px_28px_rgba(7,36,110,0.16)] sm:left-auto sm:right-0 sm:w-auto sm:min-w-[220px] sm:max-w-[320px]"
+					class="texoro-textos-dropdown absolute left-0 top-[calc(100%+4px)] z-20 max-h-[min(300px,calc(100vh-24px))] w-full min-w-0 max-w-full overflow-x-hidden overflow-y-auto rounded-[8px] border border-border-accent-blue bg-white p-1.5 font-['Roboto',sans-serif] shadow-[0_10px_28px_rgba(7,36,110,0.16)] md:left-auto md:right-0 md:w-auto md:min-w-[220px] md:max-w-[320px]"
 				>
 					{#each textLinks as link}
 						<a
@@ -2734,7 +2734,7 @@
 			{/if}
 		{:else}
 			<span
-				class="grid min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 rounded-[8px] border border-[rgba(91,111,132,0.22)] bg-[#f8f9fb] px-[10px] py-2 text-left font-['Roboto',sans-serif] text-[12px] font-normal text-[rgba(73,90,108,0.62)] opacity-[0.78]"
+				class="grid w-full min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 rounded-[8px] border border-[rgba(91,111,132,0.22)] bg-[#f8f9fb] px-[10px] py-2 text-left font-['Roboto',sans-serif] text-[12px] font-normal text-[rgba(73,90,108,0.62)] opacity-[0.78] md:w-auto"
 				aria-disabled="true"
 				title="Sin acceso al texto"
 			>
@@ -2824,7 +2824,7 @@
 		{/snippet}
 	</FeatureHeroSection>
 
-	<section class="rounded-[14px] p-5 font-['Roboto',sans-serif]">
+	<section class="rounded-[14px] px-0 py-5 font-['Roboto',sans-serif] md:p-5">
 		<h2 class="m-0 font-['Roboto',sans-serif] text-[1.45rem] font-bold text-brand-blue-dark">Buscar en TEXORO</h2>
 		<p class="mt-2 mb-0 text-[0.98rem] text-text-soft">
 			Busca una palabra, frase exacta o patrón con comodines <code>*</code> y <code>?</code>. Si escribes varias
@@ -3602,7 +3602,7 @@
 							</div>
 						{/if}
 					</div>
-					<ul class="m-0 grid list-none gap-3 p-0 max-md:mx-[-8px]">
+					<ul class="m-0 grid min-w-0 w-full max-w-full list-none gap-3 p-0">
 						{#each visibleResults as result, resultIndex (result.docId)}
 							{@const assignments = buildMatchAssignments(result.matches)}
 							{@const resultOccurrences = sumResultOccurrences(result)}
@@ -3615,7 +3615,7 @@
 								use:observeResultRow={result}
 							>
 								<div class="grid gap-3 bg-surface-soft px-4 py-3">
-									<div class="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
+									<div class="grid min-w-0 gap-2 md:grid-cols-[minmax(0,1fr)_auto] md:items-start">
 										<h3 class="m-0 min-w-0 font-['Roboto',sans-serif] text-[1.03rem] leading-[1.25] font-semibold text-brand-blue-dark">
 											{#if result.meta}
 												<a
@@ -3629,23 +3629,26 @@
 												Obra sin metadatos
 											{/if}
 										</h3>
-										<span class="w-fit max-w-full rounded-full bg-surface-accent-blue px-2.5 py-1 text-center font-['Roboto',sans-serif] text-[0.8rem] font-semibold whitespace-normal text-brand-blue-dark sm:justify-self-end">
-											{numberFormatter.format(resultOccurrences)} {resultOccurrences === 1 ? 'ocurrencia' : 'ocurrencias'}
-										</span>
+										<div class="flex min-w-0 max-w-full flex-wrap items-center gap-2 md:justify-self-end">
+											<div class="hidden min-w-0 max-w-full md:block">
+												{@render resultTextAccessControl(result.docId, textLinks)}
+											</div>
+											<span class="w-fit max-w-full rounded-full bg-surface-accent-blue px-2.5 py-1 text-center font-['Roboto',sans-serif] text-[0.8rem] font-semibold whitespace-normal text-brand-blue-dark">
+												{numberFormatter.format(resultOccurrences)} {resultOccurrences === 1 ? 'ocurrencia' : 'ocurrencias'}
+											</span>
+										</div>
 									</div>
 									<div class="md:hidden">
-	{@render resultMetaDisclosure(result.meta, metadataLine, result.docId, textLinks)}
-</div>
+										{@render resultMetaDisclosure(result.meta, metadataLine, result.docId, textLinks)}
+									</div>
 
-<div class="hidden md:grid md:grid-cols-[minmax(0,1fr)_auto] md:items-start md:gap-4">
-	{#if result.meta}
-		{@render resultMetadataBlock(result.meta, metadataLine)}
-	{:else}
-		<p class="m-0 text-[0.86rem] leading-[1.35] text-text-soft">{metadataLine}</p>
-	{/if}
-
-	{@render resultTextAccessControl(result.docId, textLinks)}
-</div>
+									<div class="hidden md:block">
+										{#if result.meta}
+											{@render resultMetadataBlock(result.meta, metadataLine)}
+										{:else}
+											<p class="m-0 text-[0.86rem] leading-[1.35] text-text-soft">{metadataLine}</p>
+										{/if}
+									</div>
 								</div>
 
 								<div class="px-4 py-3">
@@ -3774,13 +3777,13 @@
 			onclick={closeOccurrenceModal}
 		></button>
 		<div
-			class="relative grid max-h-[88vh] w-full max-w-[880px] grid-rows-[auto_minmax(0,1fr)] overflow-hidden rounded-[12px] bg-white shadow-[0_16px_40px_rgba(4,24,56,0.33)]"
+			class="relative grid max-h-[88vh] w-full max-w-[880px] grid-rows-[auto_minmax(0,1fr)] overflow-visible rounded-[12px] bg-white shadow-[0_16px_40px_rgba(4,24,56,0.33)]"
 			role="dialog"
 			aria-modal="true"
 			aria-label={`Ocurrencias de ${formatMatchDisplayLabel(occurrenceModal.assignment.match)}`}
 			tabindex="-1"
 		>
-			<div class="relative grid gap-3 bg-surface-soft px-4 py-3 sm:gap-4">
+			<div class="relative z-10 grid gap-3 rounded-t-[12px] bg-surface-soft px-4 py-3 sm:gap-4">
 				<div class="min-w-0 pr-11">
 					<div class="min-w-0">
 						<h3 class="m-0 min-w-0 font-['Roboto',sans-serif] text-[1.08rem] leading-[1.25] font-semibold text-brand-blue-dark">
@@ -3832,12 +3835,24 @@
 						{/each}
 					</span>
 				</div>
-				<div>
+				<div class="md:hidden">
 					{@render resultMetaDisclosure(occurrenceModal.result.meta, resultMetadataLine(occurrenceModal.result), occurrenceModal.result.docId, occurrenceTextLinks)}
+				</div>
+				<div class="hidden md:grid md:grid-cols-[minmax(0,1fr)_auto] md:items-start md:gap-4">
+					<div class="min-w-0">
+						{#if occurrenceModal.result.meta}
+							{@render resultMetadataBlock(occurrenceModal.result.meta, resultMetadataLine(occurrenceModal.result))}
+						{:else}
+							<p class="m-0 text-[0.86rem] leading-[1.35] text-text-soft">{resultMetadataLine(occurrenceModal.result)}</p>
+						{/if}
+					</div>
+					<div class="min-w-0 justify-self-end">
+						{@render resultTextAccessControl(occurrenceModal.result.docId, occurrenceTextLinks)}
+					</div>
 				</div>
 			</div>
 
-			<div class="min-h-0 overflow-auto overscroll-contain px-4 pt-3 pb-6">
+			<div class="min-h-0 overflow-auto overscroll-contain rounded-b-[12px] bg-white px-4 pt-3 pb-6">
 				{#if occurrenceLoading}
 					<p class="m-0 text-[0.93rem] text-text-soft">Cargando ocurrencias...</p>
 				{:else if occurrenceError}
@@ -3849,9 +3864,9 @@
 						{#each occurrenceModal.details.items as item, index}
 							{@const itemPosition = occurrencePositionParts(item)}
 							<li class="overflow-hidden rounded-[9px] bg-white shadow-[0_4px_12px_rgba(25,46,80,0.06)]">
-								<div class="grid gap-2 bg-surface-soft px-3 py-2 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center">
-									<p class="m-0 font-['Roboto',sans-serif] text-[0.79rem] font-semibold text-text-accent-purple">#{index + 1}</p>
-									<p class="m-0 font-['Roboto',sans-serif] text-[0.75rem] font-medium text-text-accent-purple sm:text-right">
+								<div class="flex min-w-0 flex-nowrap items-center justify-between gap-2 bg-surface-soft px-3 py-2">
+									<p class="m-0 shrink-0 font-['Roboto',sans-serif] text-[0.79rem] font-semibold text-text-accent-purple">#{index + 1}</p>
+									<p class="m-0 min-w-0 shrink whitespace-nowrap text-right font-['Roboto',sans-serif] text-[0.75rem] font-medium text-text-accent-purple">
 										{itemPosition.prefix}{itemPosition.value}{itemPosition.suffix}
 									</p>
 								</div>

@@ -291,7 +291,7 @@
 	}));
 </script>
 
-<div class="grid gap-6">
+<div class="grid min-w-0 max-w-full gap-6">
 	<Breadcrumbs
 		items={[
 			{ label: 'Inicio', href: '/' },
@@ -310,8 +310,8 @@
 		backgroundImage={informeBg}
 	/>
 
-	<section class="font-ui">
-		<dl class="m-0 grid gap-4 rounded-[10px] bg-surface-soft px-4 py-4 md:grid-cols-[minmax(9rem,0.55fr)_minmax(0,1.45fr)] md:px-5">
+	<section class="min-w-0 max-w-full font-ui">
+		<dl class="m-0 grid min-w-0 max-w-full gap-4 rounded-[10px] bg-surface-soft px-4 py-4 md:grid-cols-[minmax(9rem,0.55fr)_minmax(0,1.45fr)] md:px-5">
 			<div class="grid content-start gap-1.5">
 				<dt class="m-0 text-[0.72rem] font-bold uppercase tracking-[0.06em] text-text-accent-purple">
 					Atribución tradicional
@@ -347,20 +347,20 @@
 		</dl>
 	</section>
 
-	<section class="mt-1">
-		<div class="mb-5 grid gap-2">
+	<section class="mt-1 min-w-0 max-w-full">
+		<div class="mb-5 grid min-w-0 max-w-full gap-2">
 			<h2 class="m-0 text-[clamp(1.2rem,2vw,1.45rem)] font-semibold leading-[1.2] text-brand-blue-dark">
 				Obras más cercanas por ámbito
 			</h2>
 			<p class="m-0 text-[0.97rem] leading-[1.62] text-text-soft">{methodologyLead}</p>
 		</div>
 
-		<div class="font-ui">
+		<div class="min-w-0 max-w-full font-ui">
 			{#if availableAmbitos.length > 1}
-				<div class="mb-3 md:hidden">
+				<div class="mb-3 min-w-0 max-w-full md:hidden">
 					<select
 						id="mobile-acto-selector"
-						class="w-full cursor-pointer rounded-[8px] border-2 border-border-accent-blue bg-surface-accent-blue px-4 py-3 font-semibold text-brand-blue-dark transition-all focus:outline-none focus:ring-4 focus:ring-brand-blue/15"
+						class="w-full min-w-0 max-w-full cursor-pointer rounded-[8px] border-2 border-border-accent-blue bg-surface-accent-blue px-4 py-3 font-semibold text-brand-blue-dark transition-all focus:outline-none focus:ring-4 focus:ring-brand-blue/15"
 						value={activeAmbito}
 						onchange={(event) => {
 							activeAmbito = (event.currentTarget as HTMLSelectElement).value as Ambito;
@@ -400,14 +400,14 @@
 				</ul>
 			{/if}
 
-			<div>
+			<div class="min-w-0 max-w-full">
 				{#if availableAmbitos.length === 0}
 					<div class="rounded-[10px] border border-border-accent-blue bg-surface-accent-blue p-4 text-text-main">
 						No hay distancias disponibles para este informe.
 					</div>
 				{:else}
 					{#each availableAmbitos as ambito}
-						<div class={activeAmbito === ambito ? 'block' : 'hidden'} id={`acto-${ambito}`}>
+						<div class={`${activeAmbito === ambito ? 'block' : 'hidden'} min-w-0 max-w-full`} id={`acto-${ambito}`}>
 							<WorksTable
 								rows={rowsByAmbito[ambito]}
 								mode="informe"

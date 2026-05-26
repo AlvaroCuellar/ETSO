@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import Plus from 'lucide-svelte/icons/plus';
 	import X from 'lucide-svelte/icons/x';
+	import HelpBubble from './HelpBubble.svelte';
 
 	interface TokenOption {
 		id: string;
@@ -181,17 +182,12 @@
 </script>
 
 <div class="field-with-help filter-group">
-	<label class="field-label-with-help" for={inputId}>
-		{label}
+	<div class="field-label-with-help">
+		<label class="field-label" for={inputId}>{label}</label>
 		{#if helpText}
-			<span class="field-help-anchor">
-				<span class="field-help-trigger" role="button" tabindex="0" aria-label={`Ayuda sobre ${label}`}>
-					?
-				</span>
-				<span class="field-help-popover" id={helpId}>{helpText}</span>
-			</span>
+			<HelpBubble id={helpId} label={label} text={helpText} />
 		{/if}
-	</label>
+	</div>
 
 	<div 
 		class="autocomplete-wrapper author-multiselect-wrapper" 
@@ -284,7 +280,9 @@
 	}
 
 	.field-label-with-help {
+		position: relative;
 		display: inline-flex;
+		width: 100%;
 		min-width: 0;
 		max-width: 100%;
 		align-items: center;
@@ -295,50 +293,8 @@
 		color: var(--color-text-soft);
 	}
 
-	.field-help-anchor {
-		position: relative;
-		display: inline-flex;
-		align-items: center;
-	}
-
-	.field-help-trigger {
-		width: 20px;
-		height: 20px;
-		border: 1px solid var(--color-border-accent-blue);
-		border-radius: 999px;
-		background: var(--color-surface-accent-blue);
-		color: var(--color-brand-blue-dark);
-		font-size: 12px;
-		font-weight: 700;
-		line-height: 1;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		cursor: help;
-	}
-
-	.field-help-popover {
-		position: absolute;
-		top: calc(100% + 8px);
-		left: 0;
-		width: min(320px, calc(100vw - 2rem));
-		max-width: calc(100vw - 2rem);
-		padding: 8px 10px;
-		border: 1px solid var(--color-border);
-		border-radius: 6px;
-		background: #fff;
-		color: #3d4c63;
-		font-size: 12px;
-		line-height: 1.35;
-		font-weight: 400;
-		box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
-		display: none;
-		z-index: 20;
-	}
-
-	.field-help-anchor:hover .field-help-popover,
-	.field-help-anchor:focus-within .field-help-popover {
-		display: block;
+	.field-label {
+		min-width: 0;
 	}
 
 	.autocomplete-wrapper {

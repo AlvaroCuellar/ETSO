@@ -82,7 +82,7 @@
 	};
 </script>
 
-<div class="grid gap-6">
+<div class="grid min-w-0 max-w-full gap-6">
 	<Breadcrumbs
 		items={[
 			{ label: 'Inicio', href: '/' },
@@ -100,9 +100,9 @@
 		backgroundImage={autorBg}
 	/>
 
-	<div class="mx-auto w-full max-w-[1280px] font-ui">
-		<div class="grid grid-cols-1">
-			<div class="min-w-0">
+	<div class="mx-auto w-full min-w-0 max-w-[1280px] font-ui">
+		<div class="grid min-w-0 max-w-full grid-cols-1">
+			<div class="min-w-0 max-w-full">
 				<div class="mb-5">
 					<div class="mb-[0.9rem] grid grid-cols-1 gap-[0.9rem] md:grid-cols-2 lg:grid-cols-3">
 						<div class="min-w-0">
@@ -204,8 +204,8 @@
 					</div>
 				</div>
 
-				<div class="mt-1">
-					<div class="mb-4 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+				<div class="mt-1 min-w-0 max-w-full">
+					<div class="mb-4 flex min-w-0 max-w-full flex-col gap-4 md:flex-row md:items-end md:justify-between">
 						<label class="flex w-full max-w-none flex-col gap-1.5 md:max-w-[360px]">
 							<span class="text-[0.9rem] leading-[1.2] font-medium text-[#30465e]">Buscar por título</span>
 							<input
@@ -231,7 +231,9 @@
 						</label>
 					</div>
 
-					<WorksTable rows={tableRows} mode="standard" emptyMessage="" />
+					<div class="min-w-0 max-w-full">
+						<WorksTable rows={tableRows} mode="standard" emptyMessage="" />
+					</div>
 
 					{#if tableRows.length === 0}
 						<div class="mt-4 rounded-[10px] border border-brand-blue/20 bg-brand-blue/10 px-4 py-4 text-[#29445f]">

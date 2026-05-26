@@ -50,37 +50,17 @@
 
 	const isMobileTableView = $derived(mobileView === 'table');
 
-	const resultsShellClass =
-		'works-table-results min-w-0 w-full max-w-full max-md:mx-[-8px] max-md:w-[calc(100%+16px)] max-md:max-w-[calc(100%+16px)]';
+	const resultsShellClass = 'works-table-results min-w-0 w-full max-w-full';
 	const tableClass = $derived.by(() =>
-		`${mode === 'informe' ? 'obra-table-shared--informe' : 'obra-table-shared--standard'} obra-table-shared w-full min-w-[980px] border-collapse text-[13px] ${
-			isMobileTableView ? 'max-md:table max-md:w-[980px]' : 'max-md:block max-md:min-w-0'
-		}`
+		`${mode === 'informe' ? 'obra-table-shared--informe' : 'obra-table-shared--standard'} obra-table-shared w-[980px] min-w-[980px] border-collapse text-[13px] md:w-full`
 	);
-	const wrapperClass = $derived.by(
-		() =>
-			`table-wrapper obra-table-shared-container min-w-0 w-full max-w-full overflow-x-auto overflow-y-visible rounded-t-[15px] font-['Roboto',sans-serif] ${
-				isMobileTableView
-					? 'max-md:block max-md:w-full max-md:max-w-full max-md:overflow-x-auto max-md:overscroll-x-contain'
-					: 'max-md:overflow-visible max-md:rounded-none'
-			}`
-	);
-	const tableHeadClass = $derived.by(() =>
-		`bg-brand-blue text-white ${isMobileTableView ? '' : 'max-md:hidden'}`
-	);
-	const tableBodyClass = $derived.by(() => (isMobileTableView ? '' : 'max-md:block'));
+	const wrapperClass = 'table-wrapper obra-table-shared-container min-w-0 w-full max-w-full overflow-x-auto overflow-y-visible rounded-t-[15px] font-[\'Roboto\',sans-serif] max-md:overscroll-x-contain';
+	const tableHeadClass = 'bg-brand-blue text-white';
+	const tableBodyClass = '';
 	const detailColspan = $derived.by(() => (mode === 'informe' ? 7 : 5));
-	const dataCellClass = $derived.by(
-		() =>
-			`overflow-visible px-3 py-4 align-top text-[13px] ${
-				isMobileTableView ? '' : 'max-md:block max-md:border-0 max-md:px-3 max-md:py-[10px]'
-			}`
-	);
-	const mobileCellLabelClass = $derived.by(() =>
-		`mb-[6px] hidden text-[12px] font-semibold uppercase text-text-soft ${
-			isMobileTableView ? '' : 'max-md:block'
-		}`
-	);
+	const dataCellClass = 'overflow-visible px-3 py-4 align-top text-[13px]';
+	const mobileCardLabelClass = 'mb-[6px] block text-[12px] font-semibold uppercase text-text-soft';
+	const mobileCardFieldClass = 'grid min-w-0 max-w-full gap-[6px] text-[13px] leading-[1.55] text-text-main';
 	const actionButtonBaseClass = $derived.by(
 		() =>
 			`btn-action grid w-full min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 rounded-[8px] border text-left font-normal text-text-main no-underline transition-all ${
@@ -121,41 +101,19 @@
 	const rowClass = (rowId: string): string => {
 		const expanded = isRowExpanded(rowId);
 		const base = 'obra-row cursor-pointer border-b border-border transition-colors hover:bg-surface-soft';
-		if (isMobileTableView) {
-			return `${base} ${expanded ? 'expanded border-b-border-accent-blue' : ''}`;
-		}
-		return `${base} max-md:block max-md:rounded-card max-md:border max-md:border-border max-md:bg-white max-md:p-2 ${
-			expanded
-				? 'expanded border-b-border-accent-blue max-md:mb-0 max-md:rounded-b-none max-md:border-b-0'
-				: 'max-md:mb-3'
-		}`;
+		return `${base} ${expanded ? 'expanded border-b-border-accent-blue' : ''}`;
 	};
 
 	const expandIconClass = (rowId: string): string =>
-		`expand-icon inline-flex h-3 w-3 flex-shrink-0 items-center justify-center ${
-			isMobileTableView ? '' : 'max-md:hidden'
-		} ${isRowExpanded(rowId) ? 'text-brand-blue-dark' : 'text-text-soft'}`;
+		`expand-icon inline-flex h-3 w-3 flex-shrink-0 items-center justify-center ${isRowExpanded(rowId) ? 'text-brand-blue-dark' : 'text-text-soft'}`;
 
 	const detailRowClass = (rowId: string): string => {
 		const expanded = isRowExpanded(rowId);
-		const displayClass = expanded ? (isMobileTableView ? 'table-row' : 'table-row max-md:block') : 'hidden';
-		const mobileCardClass = isMobileTableView
-			? ''
-			: 'max-md:mb-3 max-md:rounded-b-card max-md:border max-md:border-t-0 max-md:border-border max-md:bg-white';
-		return `${displayClass} detail-row border-b border-border bg-white ${mobileCardClass}`;
+		return `${expanded ? 'table-row' : 'hidden'} detail-row border-b border-border bg-white`;
 	};
 
-	const detailCellClass = $derived.by(() =>
-		isMobileTableView ? '' : 'max-md:block max-md:border-0 max-md:p-0'
-	);
-	const detailContentClass = $derived.by(() =>
-		`detail-content animate-[works-table-slide-down_0.24s_ease] px-6 py-5 ${
-			isMobileTableView ? '' : 'max-md:px-3 max-md:py-4'
-		}`
-	);
-	const detailMetadataGridClass = $derived.by(() =>
-		`metadata-grid grid grid-cols-3 gap-[14px] ${isMobileTableView ? '' : 'max-md:grid-cols-1'}`
-	);
+	const detailCellClass = '';
+	const detailMetadataGridClass = 'metadata-grid grid grid-cols-3 gap-[14px]';
 
 	onMount(() => {
 		try {
@@ -342,11 +300,367 @@
 	};
 </script>
 
+{#snippet workTitle(row: ObraTableRow, showExpandIcon: boolean)}
+	<div class="obra-title flex min-w-0 select-none items-center gap-2 font-medium text-text-main">
+		{#if showExpandIcon}
+			<span class={expandIconClass(row.rowId)} aria-hidden="true">
+				{#if isRowExpanded(row.rowId)}
+					<ChevronDown class="h-3 w-3 stroke-[2.3]" />
+				{:else}
+					<ChevronRight class="h-3 w-3 stroke-[2.3]" />
+				{/if}
+			</span>
+		{/if}
+		<a
+			href={`/obras/${row.work.slug}`}
+			class="inline-flex min-w-0 items-baseline gap-1 text-text-main visited:text-text-main no-underline hover:underline focus:underline focus-visible:underline"
+		>
+			<span class="min-w-0 overflow-wrap-anywhere">{formatDisplayWorkTitle(row.work.title)}</span>
+			<span class="hidden flex-none translate-y-[2px] text-text-soft max-md:inline-flex" aria-hidden="true">
+				<ExternalLink class="h-3.5 w-3.5" />
+			</span>
+		</a>
+	</div>
+	{#if row.work.titleVariants.length > 0}
+		<div class="variantes-titulo mt-1.5 min-w-0 pl-5 text-[13px] leading-[1.4] text-text-soft">
+			<span class="variantes-prefix mr-1 inline-flex align-middle text-text-soft not-italic" aria-hidden="true">
+				<CornerDownRight class="h-3 w-3 stroke-[2.1]" />
+			</span>
+			{#each row.work.titleVariants as variante, index}
+				<span class="variante-item italic">{formatDisplayWorkTitle(variante)}</span>
+				{#if index < row.work.titleVariants.length - 1}
+					<span class="variantes-sep mx-1 text-text-soft/55 not-italic">|</span>
+				{/if}
+			{/each}
+		</div>
+	{/if}
+{/snippet}
+
+{#snippet traditionalAttribution(row: ObraTableRow)}
+	{#if hasAuthorLinks(row.work.traditionalAttribution)}
+		<div class="autor-list min-w-0 leading-[1.6]">
+			{#each row.work.traditionalAttribution.groups as group, groupIndex}
+				<span class="autor-group">
+					{#each group.members as member, memberIndex}
+						{#if canLinkAuthor(member.authorId)}
+							<a
+								href={`/autores/${member.authorId}`}
+								class="autor-name inline-flex min-w-0 items-baseline gap-1 font-normal text-text-main visited:text-text-main no-underline hover:underline focus:underline focus-visible:underline"
+							>
+								<span class="min-w-0 overflow-wrap-anywhere">{member.authorName}</span>
+								<span class="hidden flex-none translate-y-[2px] text-text-soft max-md:inline-flex" aria-hidden="true">
+									<ExternalLink class="h-3 w-3" />
+								</span>
+							</a>
+						{:else}
+							<span class="autor-name font-normal text-text-main">{member.authorName}</span>
+						{/if}
+						{#if memberIndex < group.members.length - 1}
+							<span class="logic-operator mx-1 inline-block rounded-[3px] bg-surface-accent-purple px-1.5 py-[1px] align-middle text-[10px] font-semibold text-text-accent-purple uppercase">
+								Y
+							</span>
+						{/if}
+					{/each}
+				</span>
+				{#if groupIndex < row.work.traditionalAttribution.groups.length - 1}
+					<span class="logic-operator mx-1 inline-block rounded-[3px] bg-surface-accent-purple px-1.5 py-[1px] align-middle text-[10px] font-semibold text-text-accent-purple uppercase">
+						{connectorLabel(row.work.traditionalAttribution)}
+					</span>
+				{/if}
+			{/each}
+		</div>
+	{:else}
+		<span class="desconocido text-text-soft italic">Desconocido</span>
+	{/if}
+{/snippet}
+
+{#snippet stylometryAttribution(row: ObraTableRow)}
+	{#if row.work.stylometryAttribution.unresolved}
+		<span class="desconocido text-text-soft italic">El análisis no apunta hacia ningún autor</span>
+	{:else if row.work.stylometryAttribution.groups.length > 0}
+		<div class="autor-list min-w-0 leading-[1.6]">
+			{#each row.work.stylometryAttribution.groups as group, groupIndex}
+				<span class="autor-group">
+					{#each group.members as member, memberIndex}
+						{#if canLinkAuthor(member.authorId)}
+							<a
+								href={`/autores/${member.authorId}`}
+								class="autor-name inline-flex min-w-0 items-baseline gap-1 font-normal text-text-main visited:text-text-main no-underline hover:underline focus:underline focus-visible:underline"
+							>
+								<span class="min-w-0 overflow-wrap-anywhere">{member.authorName}</span>
+								<span class="hidden flex-none translate-y-[2px] text-text-soft max-md:inline-flex" aria-hidden="true">
+									<ExternalLink class="h-3 w-3" />
+								</span>
+							</a>
+						{:else}
+							<span class="autor-name font-normal text-text-main">{member.authorName}</span>
+						{/if}
+						{#if member.confidence}
+							<span class={confidenceClass(member.confidence)}>
+								{formatConfidence(member.confidence)}
+							</span>
+						{/if}
+						{#if memberIndex < group.members.length - 1}
+							<span class="logic-operator mx-1 inline-block rounded-[3px] bg-surface-accent-purple px-1.5 py-[1px] align-middle text-[10px] font-semibold text-text-accent-purple uppercase">
+								Y
+							</span>
+						{/if}
+					{/each}
+				</span>
+				{#if groupIndex < row.work.stylometryAttribution.groups.length - 1}
+					<span class="logic-operator mx-1 inline-block rounded-[3px] bg-surface-accent-purple px-1.5 py-[1px] align-middle text-[10px] font-semibold text-text-accent-purple uppercase">
+						{connectorLabel(row.work.stylometryAttribution)}
+					</span>
+				{/if}
+			{/each}
+		</div>
+	{:else}
+		<span class="desconocido text-text-soft italic">No disponible</span>
+	{/if}
+{/snippet}
+
+{#snippet genreValue(row: ObraTableRow)}
+	{row.work.genre || '-'}
+{/snippet}
+
+{#snippet resourceActions(row: ObraTableRow, showToggle: boolean)}
+	<div class="actions relative flex min-w-0 max-w-full flex-col gap-2">
+		{#if row.work.reportId && row.work.reportSlug}
+			<a href={`/informes/${row.work.reportSlug}`} class={actionButtonEnabledClass} data-sveltekit-preload-data="off">
+				<span class="btn-left col-span-2 flex min-w-0 items-center gap-[7px]">
+					<span class="btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-brand-blue-dark" aria-hidden="true">
+						<ChartLine class="h-[14px] w-[14px] stroke-[2.1]" />
+					</span>
+					<span class={actionLabelClass}>
+						{mode === 'informe' ? 'Informe' : 'Informe estilométrico'}
+					</span>
+				</span>
+				<span class="btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center text-text-soft" aria-hidden="true">
+					<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
+				</span>
+			</a>
+		{:else}
+			<span class={actionButtonDisabledClass}>
+				<span class="btn-left col-span-2 flex min-w-0 items-center gap-[7px]">
+					<span class={`btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center ${disabledIconClass}`} aria-hidden="true">
+						<ChartLine class="h-[14px] w-[14px] stroke-[2.1]" />
+					</span>
+					<span class={actionLabelClass}>
+						{mode === 'informe' ? 'Informe' : 'Informe estilométrico'}
+					</span>
+				</span>
+				<span class={`btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center ${disabledIconClass}`} aria-hidden="true">
+					<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
+				</span>
+			</span>
+		{/if}
+
+		{#if row.work.textLinks.length > 0}
+			<div class="textos-dropdown-wrapper relative w-full max-w-full">
+				<button
+					type="button"
+					class={`${actionButtonEnabledClass} btn-texto textos-toggle`}
+					aria-haspopup="true"
+					aria-expanded={openDropdownRowId === row.rowId ? 'true' : 'false'}
+					onclick={(event) => toggleTextDropdown(event, row.rowId)}
+				>
+					<span class="btn-left col-span-2 flex min-w-0 items-center gap-[7px]">
+						<span class="btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-brand-blue-dark" aria-hidden="true">
+							<FolderOpen class="h-[14px] w-[14px] stroke-[2.1]" />
+						</span>
+						<span class={actionLabelClass}>{mode === 'informe' ? 'Texto' : 'Acceso al texto'}</span>
+					</span>
+					<span class="btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center text-text-soft" aria-hidden="true">
+						{#if openDropdownRowId === row.rowId}
+							<ChevronDown class="h-[13px] w-[13px] stroke-[2.2]" />
+						{:else}
+							<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
+						{/if}
+					</span>
+				</button>
+				{#if openDropdownRowId === row.rowId}
+					<div
+						class="textos-dropdown absolute left-0 top-[calc(100%+4px)] z-10 max-h-[min(300px,calc(100vh-24px))] min-w-full max-w-[320px] overflow-x-hidden overflow-y-auto rounded-[8px] border border-border-accent-blue bg-white p-1.5 font-['Roboto',sans-serif] shadow-[0_10px_28px_rgba(7,36,110,0.16)] max-md:w-full max-md:min-w-0 max-md:max-w-full"
+					>
+						{#each row.work.textLinks as link}
+							<a
+								href={link.href}
+								data-sveltekit-preload-data={link.kind === 'bicuve' ? 'off' : undefined}
+								class="textos-dropdown-item grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-2 rounded-[6px] px-2.5 py-[9px] text-[12px] font-normal text-text-main no-underline transition-all hover:bg-surface-accent-blue hover:text-text-main hover:no-underline focus:bg-surface-accent-blue focus:text-text-main focus:no-underline focus:outline-none focus-visible:bg-surface-accent-blue focus-visible:text-text-main focus-visible:no-underline focus-visible:outline-none"
+								target={link.external ? '_blank' : undefined}
+								rel={link.external ? 'noopener noreferrer' : undefined}
+							>
+								<span class="textos-dropdown-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-brand-blue-dark" aria-hidden="true">
+									{#if link.kind === 'bicuve'}
+										<BookOpen class="h-[14px] w-[14px] stroke-[2.1]" />
+									{:else}
+										<ExternalLink class="h-[14px] w-[14px] stroke-[2.1]" />
+									{/if}
+								</span>
+								<span class="textos-dropdown-body flex min-w-0 flex-col">
+									<span class="textos-dropdown-label block whitespace-normal break-words leading-[1.35]">{link.label}</span>
+								</span>
+								<span class="textos-dropdown-item-arrow mt-[2px] inline-flex h-3 w-3 flex-none items-center justify-center text-text-soft" aria-hidden="true">
+									<ChevronRight class="h-3 w-3 stroke-[2.1]" />
+								</span>
+							</a>
+						{/each}
+					</div>
+				{/if}
+			</div>
+		{:else}
+			<span class={actionButtonDisabledClass}>
+				<span class="btn-left col-span-2 flex min-w-0 items-center gap-[7px]">
+					<span class={`btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center ${disabledIconClass}`} aria-hidden="true">
+						<FolderOpen class="h-[14px] w-[14px] stroke-[2.1]" />
+					</span>
+					<span class={actionLabelClass}>{mode === 'informe' ? 'Texto' : 'Acceso al texto'}</span>
+				</span>
+				<span class={`btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center ${disabledIconClass}`} aria-hidden="true">
+					<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
+				</span>
+			</span>
+		{/if}
+
+		{#if hasSummaryFile(row.work)}
+			<a href={summaryUrl(row.work)} class={actionButtonEnabledClass}>
+				<span class="btn-left col-span-2 flex min-w-0 items-center gap-[7px]">
+					<span class="btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-brand-blue-dark" aria-hidden="true">
+						<AlignLeft class="h-[14px] w-[14px] stroke-[2.1]" />
+					</span>
+					<span class={actionLabelClass}>{mode === 'informe' ? 'Resumen' : 'Resumen automático'}</span>
+				</span>
+				<span class="btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center text-text-soft" aria-hidden="true">
+					<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
+				</span>
+			</a>
+		{:else}
+			<span class={actionButtonDisabledClass}>
+				<span class="btn-left col-span-2 flex min-w-0 items-center gap-[7px]">
+					<span class={`btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center ${disabledIconClass}`} aria-hidden="true">
+						<AlignLeft class="h-[14px] w-[14px] stroke-[2.1]" />
+					</span>
+					<span class={actionLabelClass}>{mode === 'informe' ? 'Resumen' : 'Resumen automático'}</span>
+				</span>
+				<span class={`btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center ${disabledIconClass}`} aria-hidden="true">
+					<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
+				</span>
+			</span>
+		{/if}
+
+		{#if showToggle}
+			<div class="ver-mas mt-[10px] text-center">
+				<span
+					class="toggle-detail inline-block rounded-[4px] bg-transparent px-2 py-1.5 text-[14px] leading-none font-semibold text-brand-blue-dark"
+					role="button"
+					tabindex="0"
+					aria-expanded={isRowExpanded(row.rowId) ? 'true' : 'false'}
+					onpointerenter={() => {
+						void prefetchShortSummary(row.work);
+					}}
+					onfocus={() => {
+						void prefetchShortSummary(row.work);
+					}}
+					ontouchstart={() => {
+						void prefetchShortSummary(row.work);
+					}}
+					onclick={(event) => {
+						event.preventDefault();
+						event.stopPropagation();
+						void toggleRowExpanded(row);
+					}}
+					onkeydown={(event) => {
+						if (event.key !== 'Enter' && event.key !== ' ') return;
+						event.preventDefault();
+						event.stopPropagation();
+						void toggleRowExpanded(row);
+					}}
+				>
+					{isRowExpanded(row.rowId) ? 'Ver menos' : 'Ver más'}
+				</span>
+				<div
+					class={`toggle-down mt-1.5 inline-flex items-center justify-center leading-none text-brand-blue-dark transition-transform ${
+						isRowExpanded(row.rowId) ? 'rotate-180' : ''
+					}`}
+					aria-hidden="true"
+				>
+					<ChevronDown class="h-[14px] w-[14px] stroke-[2.2]" />
+				</div>
+			</div>
+		{/if}
+	</div>
+{/snippet}
+
+{#snippet detailPanel(row: ObraTableRow, summaryState: ShortSummaryState | undefined, compact: boolean)}
+	<div class={`detail-content animate-[works-table-slide-down_0.24s_ease] ${compact ? 'border-t border-border px-3 py-4' : 'px-6 py-5'}`}>
+		{#if hasShortSummary(row.work)}
+			<div class="detail-section detail-section--resumen mb-5 border-b border-[#dfe5ee] pb-3 last:mb-0">
+				<div class="detail-section-title mb-2.5 text-[12px] font-semibold tracking-[0.5px] text-text-soft uppercase">
+					Resumen breve automático
+				</div>
+				<p class="resumen-text mb-3 text-[14px] leading-[1.7] text-text-soft">{getShortSummaryText(row.work)}</p>
+			</div>
+		{:else if summaryState?.status === 'loading'}
+			<div class="detail-section detail-section--resumen mb-5 border-b border-[#dfe5ee] pb-3 last:mb-0">
+				<div class="detail-section-title mb-2.5 text-[12px] font-semibold tracking-[0.5px] text-text-soft uppercase">
+					Resumen breve automático
+				</div>
+				<p class="resumen-text mb-3 text-[14px] leading-[1.7] text-text-soft italic">Cargando resumen...</p>
+			</div>
+		{:else if summaryState?.status === 'error'}
+			<div class="detail-section detail-section--resumen mb-5 border-b border-[#dfe5ee] pb-3 last:mb-0">
+				<p class="m-0 text-[13px] leading-[1.55] text-text-soft italic">
+					No se pudo cargar el resumen breve.
+				</p>
+			</div>
+		{/if}
+
+		<div class="detail-section mb-5 last:mb-0">
+			<div class={compact ? 'metadata-grid grid grid-cols-1 gap-[14px]' : detailMetadataGridClass}>
+				<div class="metadata-item flex min-w-0 flex-col gap-1">
+					<span class="metadata-label mb-1 block text-[12px] font-semibold text-text-soft uppercase">
+						Texto empleado
+					</span>
+					{#if row.work.origin}
+						<span class="metadata-value overflow-wrap-anywhere text-[14px] text-text-main">
+							{@html renderInlineItalicsHtml(row.work.origin)}
+						</span>
+					{:else}
+						<span class="metadata-value not-available text-[14px] text-text-soft italic">No disponible</span>
+					{/if}
+				</div>
+
+				<div class="metadata-item flex min-w-0 flex-col gap-1">
+					<span class="metadata-label mb-1 block text-[12px] font-semibold text-text-soft uppercase">
+						Estado del texto
+					</span>
+					{#if row.work.textState}
+						<span class="metadata-value overflow-wrap-anywhere text-[14px] text-text-main">{row.work.textState}</span>
+					{:else}
+						<span class="metadata-value not-available text-[14px] text-text-soft italic">No disponible</span>
+					{/if}
+				</div>
+
+				<div class="metadata-item flex min-w-0 flex-col gap-1">
+					<span class="metadata-label mb-1 block text-[12px] font-semibold text-text-soft uppercase">
+						Fecha de adición o modificación
+					</span>
+					{#if row.work.addedOn}
+						<span class="metadata-value text-[14px] text-text-main">{row.work.addedOn}</span>
+					{:else}
+						<span class="metadata-value not-available text-[14px] text-text-soft italic">No disponible</span>
+					{/if}
+				</div>
+			</div>
+		</div>
+	</div>
+{/snippet}
+
 {#if rows.length === 0}
 	<div class="py-10 px-5 text-center text-[16px] text-text-soft">{emptyMessage}</div>
 {:else}
 	<div class={resultsShellClass} data-mobile-view={mobileView}>
-		<div class="mb-3 hidden justify-end max-md:flex max-md:justify-center">
+		<div class="works-table-mobile-view-toggle mb-3 justify-end">
 			<div
 				role="group"
 				aria-label="Vista de resultados"
@@ -376,7 +690,78 @@
 				</button>
 			</div>
 		</div>
-		<div class={wrapperClass}>
+		{#if !isMobileTableView}
+			<div class="works-table-mobile-cards grid min-w-0 max-w-full gap-3 md:hidden">
+				{#each rows as row}
+					{@const flags = resolveFilterFlags(row)}
+					{@const summaryState = getShortSummaryState(row.work)}
+					<article
+						class="works-table-mobile-card min-w-0 max-w-full rounded-card border border-border bg-white p-3 font-['Roboto',sans-serif] text-text-main"
+						data-obra-id={row.work.id}
+						data-title-search={normalizeForSearch(
+							buildWorkTitleSearchText(row.work.title, row.work.titleVariants)
+						)}
+						data-genero={normalizeForSearch(row.work.genre)}
+						data-filter-related-any={flags.relatedAny ? '1' : '0'}
+						data-filter-trad-any={flags.tradAny ? '1' : '0'}
+						data-filter-etso-yes={flags.etsoYes ? '1' : '0'}
+						data-filter-only-etso={flags.onlyEtso ? '1' : '0'}
+						data-filter-only-trad={flags.onlyTrad ? '1' : '0'}
+					>
+						<div class="grid min-w-0 max-w-full gap-4">
+							{#if mode === 'informe'}
+								<div class="grid grid-cols-2 items-start gap-4 text-center">
+									<div class="grid min-w-0 gap-[6px]">
+										<span class={mobileCardLabelClass}>Posición</span>
+										<span class="font-medium text-text-main">{positionValue(row)}</span>
+									</div>
+									<div class="grid min-w-0 justify-items-center gap-[6px]">
+										<span class={mobileCardLabelClass}>Distancia</span>
+										<span
+											class="distance-badge inline-block rounded-[12px] px-[0.55rem] py-[0.22rem] text-[0.75rem] font-medium"
+											style={`background-color: ${row.badgeColor ?? '#0D3F91'}; color: #fff;`}
+										>
+											{distanceValue(row)}
+										</span>
+									</div>
+								</div>
+							{/if}
+
+							<div class={mobileCardFieldClass}>
+								<span class={mobileCardLabelClass}>Título</span>
+								{@render workTitle(row, false)}
+							</div>
+
+							<div class={mobileCardFieldClass}>
+								<span class={mobileCardLabelClass}>Atribución tradicional</span>
+								{@render traditionalAttribution(row)}
+							</div>
+
+							<div class={mobileCardFieldClass}>
+								<span class={mobileCardLabelClass}>Atribución estilometría</span>
+								{@render stylometryAttribution(row)}
+							</div>
+
+							<div class={mobileCardFieldClass}>
+								<span class={mobileCardLabelClass}>Género</span>
+								{@render genreValue(row)}
+							</div>
+
+							<div class={mobileCardFieldClass}>
+								<span class={mobileCardLabelClass}>Recursos</span>
+								{@render resourceActions(row, true)}
+							</div>
+						</div>
+
+						{#if isRowExpanded(row.rowId)}
+							{@render detailPanel(row, summaryState, true)}
+						{/if}
+					</article>
+				{/each}
+			</div>
+		{/if}
+
+		<div class={`${wrapperClass} ${isMobileTableView ? '' : 'max-md:hidden'}`}>
 			<table class={tableClass}>
 			<thead class={tableHeadClass}>
 				<tr>
@@ -459,11 +844,9 @@
 					>
 						{#if mode === 'informe'}
 							<td class={`${dataCellClass} text-center font-medium`} data-label="Posición">
-								<span class={mobileCellLabelClass}>Posición</span>
 								{positionValue(row)}
 							</td>
 							<td class={`${dataCellClass} text-right whitespace-nowrap`} data-label="Distancia">
-								<span class={mobileCellLabelClass}>Distancia</span>
 								<span
 									class="distance-badge inline-block rounded-[12px] px-[0.55rem] py-[0.22rem] text-[0.75rem] font-medium"
 									style={`background-color: ${row.badgeColor ?? '#0D3F91'}; color: #fff;`}
@@ -474,289 +857,23 @@
 						{/if}
 
 						<td class={dataCellClass} data-label="Título">
-							<span class={mobileCellLabelClass}>Título</span>
-							<div class="obra-title flex select-none items-center gap-2 font-medium text-text-main">
-								<span
-									class={expandIconClass(row.rowId)}
-									aria-hidden="true"
-								>
-									{#if isRowExpanded(row.rowId)}
-										<ChevronDown class="h-3 w-3 stroke-[2.3]" />
-									{:else}
-										<ChevronRight class="h-3 w-3 stroke-[2.3]" />
-									{/if}
-								</span>
-								<a
-									href={`/obras/${row.work.slug}`}
-									class="inline-flex items-baseline gap-1 text-text-main visited:text-text-main no-underline hover:underline focus:underline focus-visible:underline"
-								>
-									<span>{formatDisplayWorkTitle(row.work.title)}</span>
-									<span class="hidden flex-none translate-y-[2px] text-text-soft max-md:inline-flex" aria-hidden="true">
-										<ExternalLink class="h-3.5 w-3.5" />
-									</span>
-								</a>
-							</div>
-							{#if row.work.titleVariants.length > 0}
-								<div class="variantes-titulo mt-1.5 pl-5 text-[13px] leading-[1.4] text-text-soft">
-									<span class="variantes-prefix mr-1 inline-flex align-middle text-text-soft not-italic" aria-hidden="true">
-										<CornerDownRight class="h-3 w-3 stroke-[2.1]" />
-									</span>
-									{#each row.work.titleVariants as variante, index}
-										<span class="variante-item italic">{formatDisplayWorkTitle(variante)}</span>
-										{#if index < row.work.titleVariants.length - 1}
-											<span class="variantes-sep mx-1 text-text-soft/55 not-italic">|</span>
-										{/if}
-									{/each}
-								</div>
-							{/if}
+							{@render workTitle(row, true)}
 						</td>
 
 						<td class={dataCellClass} data-label="Atribución tradicional">
-							<span class={mobileCellLabelClass}>Atribución tradicional</span>
-							{#if hasAuthorLinks(row.work.traditionalAttribution)}
-								<div class="autor-list leading-[1.6]">
-									{#each row.work.traditionalAttribution.groups as group, groupIndex}
-										<span class="autor-group">
-											{#each group.members as member, memberIndex}
-												{#if canLinkAuthor(member.authorId)}
-													<a
-														href={`/autores/${member.authorId}`}
-														class="autor-name inline-flex items-baseline gap-1 font-normal text-text-main visited:text-text-main no-underline hover:underline focus:underline focus-visible:underline"
-													>
-														<span>{member.authorName}</span>
-														<span class="hidden flex-none translate-y-[2px] text-text-soft max-md:inline-flex" aria-hidden="true">
-															<ExternalLink class="h-3 w-3" />
-														</span>
-													</a>
-												{:else}
-													<span class="autor-name font-normal text-text-main">{member.authorName}</span>
-												{/if}
-												{#if memberIndex < group.members.length - 1}
-													<span class="logic-operator mx-1 inline-block rounded-[3px] bg-surface-accent-purple px-1.5 py-[1px] align-middle text-[10px] font-semibold text-text-accent-purple uppercase">
-														Y
-													</span>
-												{/if}
-											{/each}
-										</span>
-										{#if groupIndex < row.work.traditionalAttribution.groups.length - 1}
-											<span class="logic-operator mx-1 inline-block rounded-[3px] bg-surface-accent-purple px-1.5 py-[1px] align-middle text-[10px] font-semibold text-text-accent-purple uppercase">
-												{connectorLabel(row.work.traditionalAttribution)}
-											</span>
-										{/if}
-									{/each}
-								</div>
-							{:else}
-								<span class="desconocido text-text-soft italic">Desconocido</span>
-							{/if}
+							{@render traditionalAttribution(row)}
 						</td>
 
 						<td class={dataCellClass} data-label="Atribución estilometría">
-							<span class={mobileCellLabelClass}>Atribución estilometría</span>
-							{#if row.work.stylometryAttribution.unresolved}
-								<span class="desconocido text-text-soft italic">El análisis no apunta hacia ningún autor</span>
-							{:else if row.work.stylometryAttribution.groups.length > 0}
-								<div class="autor-list leading-[1.6]">
-									{#each row.work.stylometryAttribution.groups as group, groupIndex}
-										<span class="autor-group">
-											{#each group.members as member, memberIndex}
-												{#if canLinkAuthor(member.authorId)}
-													<a
-														href={`/autores/${member.authorId}`}
-														class="autor-name inline-flex items-baseline gap-1 font-normal text-text-main visited:text-text-main no-underline hover:underline focus:underline focus-visible:underline"
-													>
-														<span>{member.authorName}</span>
-														<span class="hidden flex-none translate-y-[2px] text-text-soft max-md:inline-flex" aria-hidden="true">
-															<ExternalLink class="h-3 w-3" />
-														</span>
-													</a>
-												{:else}
-													<span class="autor-name font-normal text-text-main">{member.authorName}</span>
-												{/if}
-												{#if member.confidence}
-													<span class={confidenceClass(member.confidence)}>
-														{formatConfidence(member.confidence)}
-													</span>
-												{/if}
-												{#if memberIndex < group.members.length - 1}
-													<span class="logic-operator mx-1 inline-block rounded-[3px] bg-surface-accent-purple px-1.5 py-[1px] align-middle text-[10px] font-semibold text-text-accent-purple uppercase">
-														Y
-													</span>
-												{/if}
-											{/each}
-										</span>
-										{#if groupIndex < row.work.stylometryAttribution.groups.length - 1}
-											<span class="logic-operator mx-1 inline-block rounded-[3px] bg-surface-accent-purple px-1.5 py-[1px] align-middle text-[10px] font-semibold text-text-accent-purple uppercase">
-												{connectorLabel(row.work.stylometryAttribution)}
-											</span>
-										{/if}
-									{/each}
-								</div>
-							{:else}
-								<span class="desconocido text-text-soft italic">No disponible</span>
-							{/if}
+							{@render stylometryAttribution(row)}
 						</td>
 
 						<td class={dataCellClass} data-label="Género">
-							<span class={mobileCellLabelClass}>Género</span>
-							{row.work.genre || '-'}
+							{@render genreValue(row)}
 						</td>
 
 						<td class={dataCellClass} data-label="Recursos">
-							<span class={mobileCellLabelClass}>Recursos</span>
-							<div class="actions relative flex flex-col gap-1.5 max-md:flex-wrap max-md:justify-start max-md:gap-2">
-								{#if row.work.reportId && row.work.reportSlug}
-									<a href={`/informes/${row.work.reportSlug}`} class={actionButtonEnabledClass} data-sveltekit-preload-data="off">
-										<span class="btn-left col-span-2 flex min-w-0 items-center gap-[7px]">
-											<span class="btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-brand-blue-dark" aria-hidden="true">
-												<ChartLine class="h-[14px] w-[14px] stroke-[2.1]" />
-											</span>
-											<span class={actionLabelClass}>
-												{mode === 'informe' ? 'Informe' : 'Informe estilométrico'}
-											</span>
-										</span>
-										<span class="btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center text-text-soft" aria-hidden="true">
-											<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
-										</span>
-									</a>
-								{:else}
-									<span class={actionButtonDisabledClass}>
-										<span class="btn-left col-span-2 flex min-w-0 items-center gap-[7px]">
-											<span class={`btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center ${disabledIconClass}`} aria-hidden="true">
-												<ChartLine class="h-[14px] w-[14px] stroke-[2.1]" />
-											</span>
-											<span class={actionLabelClass}>
-												{mode === 'informe' ? 'Informe' : 'Informe estilométrico'}
-											</span>
-										</span>
-										<span class={`btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center ${disabledIconClass}`} aria-hidden="true">
-											<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
-										</span>
-									</span>
-								{/if}
-
-								{#if row.work.textLinks.length > 0}
-									<div class="textos-dropdown-wrapper relative w-full">
-										<button
-											type="button"
-											class={`${actionButtonEnabledClass} btn-texto textos-toggle`}
-											aria-haspopup="true"
-											aria-expanded={openDropdownRowId === row.rowId ? 'true' : 'false'}
-											onclick={(event) => toggleTextDropdown(event, row.rowId)}
-										>
-											<span class="btn-left col-span-2 flex min-w-0 items-center gap-[7px]">
-												<span class="btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-brand-blue-dark" aria-hidden="true">
-													<FolderOpen class="h-[14px] w-[14px] stroke-[2.1]" />
-												</span>
-												<span class={actionLabelClass}>{mode === 'informe' ? 'Texto' : 'Acceso al texto'}</span>
-											</span>
-											<span class="btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center text-text-soft" aria-hidden="true">
-												{#if openDropdownRowId === row.rowId}
-													<ChevronDown class="h-[13px] w-[13px] stroke-[2.2]" />
-												{:else}
-													<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
-												{/if}
-											</span>
-										</button>
-										{#if openDropdownRowId === row.rowId}
-											<div
-												class="textos-dropdown absolute left-0 top-[calc(100%+4px)] z-10 max-h-[min(300px,calc(100vh-24px))] min-w-full max-w-[320px] overflow-x-hidden overflow-y-auto rounded-[8px] border border-border-accent-blue bg-white p-1.5 font-['Roboto',sans-serif] shadow-[0_10px_28px_rgba(7,36,110,0.16)] max-md:w-full max-md:min-w-0 max-md:max-w-full"
-											>
-												{#each row.work.textLinks as link}
-													<a
-														href={link.href}
-														data-sveltekit-preload-data={link.kind === 'bicuve' ? 'off' : undefined}
-														class="textos-dropdown-item grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-2 rounded-[6px] px-2.5 py-[9px] text-[12px] font-normal text-text-main no-underline transition-all hover:bg-surface-accent-blue hover:text-text-main hover:no-underline focus:bg-surface-accent-blue focus:text-text-main focus:no-underline focus:outline-none focus-visible:bg-surface-accent-blue focus-visible:text-text-main focus-visible:no-underline focus-visible:outline-none"
-														target={link.external ? '_blank' : undefined}
-														rel={link.external ? 'noopener noreferrer' : undefined}
-													>
-														<span class="textos-dropdown-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-brand-blue-dark" aria-hidden="true">
-															{#if link.kind === 'bicuve'}
-																<BookOpen class="h-[14px] w-[14px] stroke-[2.1]" />
-															{:else}
-																<ExternalLink class="h-[14px] w-[14px] stroke-[2.1]" />
-															{/if}
-														</span>
-														<span class="textos-dropdown-body flex min-w-0 flex-col">
-															<span class="textos-dropdown-label block whitespace-normal break-words leading-[1.35]">{link.label}</span>
-														</span>
-														<span class="textos-dropdown-item-arrow mt-[2px] inline-flex h-3 w-3 flex-none items-center justify-center text-text-soft" aria-hidden="true">
-															<ChevronRight class="h-3 w-3 stroke-[2.1]" />
-														</span>
-													</a>
-												{/each}
-											</div>
-										{/if}
-									</div>
-								{:else}
-									<span class={actionButtonDisabledClass}>
-										<span class="btn-left col-span-2 flex min-w-0 items-center gap-[7px]">
-											<span class={`btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center ${disabledIconClass}`} aria-hidden="true">
-												<FolderOpen class="h-[14px] w-[14px] stroke-[2.1]" />
-											</span>
-											<span class={actionLabelClass}>{mode === 'informe' ? 'Texto' : 'Acceso al texto'}</span>
-										</span>
-										<span class={`btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center ${disabledIconClass}`} aria-hidden="true">
-											<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
-										</span>
-									</span>
-								{/if}
-
-								{#if hasSummaryFile(row.work)}
-									<a href={summaryUrl(row.work)} class={actionButtonEnabledClass}>
-										<span class="btn-left col-span-2 flex min-w-0 items-center gap-[7px]">
-											<span class="btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-brand-blue-dark" aria-hidden="true">
-												<AlignLeft class="h-[14px] w-[14px] stroke-[2.1]" />
-											</span>
-											<span class={actionLabelClass}>{mode === 'informe' ? 'Resumen' : 'Resumen automático'}</span>
-										</span>
-										<span class="btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center text-text-soft" aria-hidden="true">
-											<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
-										</span>
-									</a>
-								{:else}
-									<span class={actionButtonDisabledClass}>
-										<span class="btn-left col-span-2 flex min-w-0 items-center gap-[7px]">
-											<span class={`btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center ${disabledIconClass}`} aria-hidden="true">
-												<AlignLeft class="h-[14px] w-[14px] stroke-[2.1]" />
-											</span>
-											<span class={actionLabelClass}>{mode === 'informe' ? 'Resumen' : 'Resumen automático'}</span>
-										</span>
-										<span class={`btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center ${disabledIconClass}`} aria-hidden="true">
-											<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
-										</span>
-									</span>
-								{/if}
-
-								<div class={`ver-mas mt-2 hidden text-center max-md:mt-[10px] ${isMobileTableView ? '' : 'max-md:block'}`}>
-									<span
-										class="toggle-detail inline-block rounded-[4px] bg-transparent px-2 py-1.5 text-[14px] leading-none font-semibold text-brand-blue-dark"
-										role="button"
-										tabindex="0"
-										aria-expanded={isRowExpanded(row.rowId) ? 'true' : 'false'}
-										onclick={(event) => {
-											event.preventDefault();
-											event.stopPropagation();
-											void toggleRowExpanded(row);
-										}}
-										onkeydown={(event) => {
-											if (event.key !== 'Enter' && event.key !== ' ') return;
-											event.preventDefault();
-											event.stopPropagation();
-											void toggleRowExpanded(row);
-										}}
-									>
-										{isRowExpanded(row.rowId) ? 'Ver menos' : 'Ver más'}
-									</span>
-									<div
-										class={`toggle-down mt-1.5 inline-flex items-center justify-center leading-none text-brand-blue-dark transition-transform ${
-											isRowExpanded(row.rowId) ? 'rotate-180' : ''
-										}`}
-										aria-hidden="true"
-									>
-										<ChevronDown class="h-[14px] w-[14px] stroke-[2.2]" />
-									</div>
-								</div>
-							</div>
+							{@render resourceActions(row, false)}
 						</td>
 					</tr>
 
@@ -765,68 +882,7 @@
 						hidden={!isRowExpanded(row.rowId)}
 					>
 						<td colspan={detailColspan} class={detailCellClass}>
-							<div class={detailContentClass}>
-								{#if hasShortSummary(row.work)}
-									<div class="detail-section detail-section--resumen mb-5 border-b border-[#dfe5ee] pb-3 last:mb-0">
-										<div class="detail-section-title mb-2.5 text-[12px] font-semibold tracking-[0.5px] text-text-soft uppercase">
-											Resumen breve automático
-										</div>
-										<p class="resumen-text mb-3 text-[14px] leading-[1.7] text-text-soft">{getShortSummaryText(row.work)}</p>
-									</div>
-								{:else if summaryState?.status === 'loading'}
-									<div class="detail-section detail-section--resumen mb-5 border-b border-[#dfe5ee] pb-3 last:mb-0">
-										<div class="detail-section-title mb-2.5 text-[12px] font-semibold tracking-[0.5px] text-text-soft uppercase">
-											Resumen breve automático
-										</div>
-										<p class="resumen-text mb-3 text-[14px] leading-[1.7] text-text-soft italic">Cargando resumen...</p>
-									</div>
-								{:else if summaryState?.status === 'error'}
-									<div class="detail-section detail-section--resumen mb-5 border-b border-[#dfe5ee] pb-3 last:mb-0">
-										<p class="m-0 text-[13px] leading-[1.55] text-text-soft italic">
-											No se pudo cargar el resumen breve.
-										</p>
-									</div>
-								{/if}
-
-								<div class="detail-section mb-5 last:mb-0">
-									<div class={detailMetadataGridClass}>
-										<div class="metadata-item flex flex-col gap-1">
-											<span class="metadata-label mb-1 block text-[12px] font-semibold text-text-soft uppercase">
-												Texto empleado
-											</span>
-											{#if row.work.origin}
-												<span class="metadata-value text-[14px] text-text-main">
-													{@html renderInlineItalicsHtml(row.work.origin)}
-												</span>
-											{:else}
-												<span class="metadata-value not-available text-[14px] text-text-soft italic">No disponible</span>
-											{/if}
-										</div>
-
-										<div class="metadata-item flex flex-col gap-1">
-											<span class="metadata-label mb-1 block text-[12px] font-semibold text-text-soft uppercase">
-												Estado del texto
-											</span>
-											{#if row.work.textState}
-												<span class="metadata-value text-[14px] text-text-main">{row.work.textState}</span>
-											{:else}
-												<span class="metadata-value not-available text-[14px] text-text-soft italic">No disponible</span>
-											{/if}
-										</div>
-
-										<div class="metadata-item flex flex-col gap-1">
-											<span class="metadata-label mb-1 block text-[12px] font-semibold text-text-soft uppercase">
-												Fecha de adición o modificación
-											</span>
-											{#if row.work.addedOn}
-												<span class="metadata-value text-[14px] text-text-main">{row.work.addedOn}</span>
-											{:else}
-												<span class="metadata-value not-available text-[14px] text-text-soft italic">No disponible</span>
-											{/if}
-										</div>
-									</div>
-								</div>
-							</div>
+							{@render detailPanel(row, summaryState, false)}
 						</td>
 					</tr>
 				{/each}
@@ -837,33 +893,52 @@
 {/if}
 
 <style>
+	.overflow-wrap-anywhere {
+		overflow-wrap: anywhere;
+	}
+
 	.obra-table-shared-container a,
 	.obra-table-shared-container a:link,
-	.obra-table-shared-container a:visited {
+	.obra-table-shared-container a:visited,
+	.works-table-mobile-cards a,
+	.works-table-mobile-cards a:link,
+	.works-table-mobile-cards a:visited {
 		color: inherit;
 	}
 
 	.obra-table-shared-container a:hover,
-	.obra-table-shared-container a:focus-visible {
+	.obra-table-shared-container a:focus-visible,
+	.works-table-mobile-cards a:hover,
+	.works-table-mobile-cards a:focus-visible {
 		text-decoration: underline;
 	}
 
 	.obra-table-shared-container .obra-title a,
 	.obra-table-shared-container .obra-title a:visited,
 	.obra-table-shared-container .autor-name,
-	.obra-table-shared-container .autor-name:visited {
+	.obra-table-shared-container .autor-name:visited,
+	.works-table-mobile-cards .obra-title a,
+	.works-table-mobile-cards .obra-title a:visited,
+	.works-table-mobile-cards .autor-name,
+	.works-table-mobile-cards .autor-name:visited {
 		color: var(--color-text-main);
 	}
 
 	.obra-table-shared-container .btn-action,
-	.obra-table-shared-container .textos-dropdown-item {
+	.obra-table-shared-container .textos-dropdown-item,
+	.works-table-mobile-cards .btn-action,
+	.works-table-mobile-cards .textos-dropdown-item {
 		color: var(--color-text-main);
 	}
 
 	.obra-table-shared-container .btn-action:hover,
 	.obra-table-shared-container .btn-action:focus-visible,
 	.obra-table-shared-container .textos-dropdown-item:hover,
-	.obra-table-shared-container .textos-dropdown-item:focus-visible {
+	.obra-table-shared-container .textos-dropdown-item:focus-visible,
+	.works-table-mobile-cards .btn-action:hover,
+	.works-table-mobile-cards .btn-action:focus-visible,
+	.works-table-mobile-cards .textos-dropdown-item:hover,
+	.works-table-mobile-cards .textos-dropdown-item:focus-visible {
 		text-decoration: none;
 	}
 
@@ -875,14 +950,28 @@
 		border-top-right-radius: 8px;
 	}
 
+	.works-table-mobile-view-toggle {
+		display: none;
+	}
+
 	@media (max-width: 767.98px) {
-		.works-table-results[data-mobile-view='table'] {
+		.works-table-mobile-view-toggle {
+			display: flex;
+			justify-content: center;
+		}
+
+		.works-table-results {
 			contain: inline-size;
-			width: calc(100% + 16px);
-			max-width: calc(100% + 16px);
+			width: 100%;
+			max-width: 100%;
 			min-width: 0;
-			margin-right: -8px;
-			margin-left: -8px;
+		}
+
+		.works-table-mobile-cards,
+		.works-table-mobile-card {
+			width: 100%;
+			max-width: 100%;
+			min-width: 0;
 		}
 
 		.works-table-results[data-mobile-view='table'] .obra-table-shared-container {

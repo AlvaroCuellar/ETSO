@@ -76,6 +76,13 @@
 				: 'border-border-accent-blue bg-white hover:bg-surface-accent-blue'
 		}`;
 
+	const mobileMoreInfoButtonClass = (active: boolean): string =>
+		`mobile-header-tap-reset appearance-none flex w-full items-center justify-between rounded-card border px-4 py-2.5 text-left text-[0.94rem] font-ui font-medium text-brand-blue no-underline transition hover:no-underline focus:outline-none focus:ring-0 focus-visible:no-underline focus-visible:outline-none focus-visible:ring-0 ${
+			active
+				? 'border-transparent bg-surface-accent-purple text-brand-purple'
+				: 'border-border-accent-blue bg-white hover:bg-surface-accent-blue focus:bg-white'
+		}`;
+
 	function closeMobileMenu(): void {
 		mobileMenuOpen = false;
 		mobileMoreInfoOpen = false;
@@ -83,6 +90,13 @@
 
 	function closeDesktopDropdown(): void {
 		desktopMoreInfoOpen = false;
+	}
+
+	function blurAfterPointerActivation(event: MouseEvent): void {
+		// Keep focus for keyboard activation (detail === 0), blur only pointer clicks/taps.
+		if (event.detail === 0) return;
+		const target = event.currentTarget;
+		if (target instanceof HTMLElement) target.blur();
 	}
 
 	function handleWindowKeydown(event: KeyboardEvent): void {
@@ -162,7 +176,7 @@
 
 			<button
 				type="button"
-				class="inline-flex h-10 w-10 items-center justify-center rounded-card border border-border-accent-blue bg-white text-brand-blue transition hover:bg-surface-accent-blue focus-visible:outline-2 focus-visible:outline-brand-blue/25 min-[860px]:hidden"
+				class="mobile-header-tap-reset appearance-none inline-flex h-10 w-10 items-center justify-center rounded-card border border-border-accent-blue bg-white text-brand-blue transition hover:bg-surface-accent-blue focus-visible:outline-2 focus-visible:outline-brand-blue/25 min-[860px]:hidden"
 				aria-controls="mobile-primary-nav"
 				aria-expanded={mobileMenuOpen ? 'true' : 'false'}
 				aria-label={mobileMenuOpen ? 'Cerrar menú principal' : 'Abrir menú principal'}
@@ -171,6 +185,7 @@
 					mobileMenuOpen = next;
 					if (!next) mobileMoreInfoOpen = false;
 				}}
+				onmouseup={blurAfterPointerActivation}
 			>
 				{#if mobileMenuOpen}
 					<X class="h-5 w-5" aria-hidden="true" />
@@ -185,7 +200,7 @@
 				<nav class="grid gap-2 font-ui" aria-label="Navegación principal móvil">
 					{#each navItems as item}
 						<a
-							class={mobileLinkClass(isActive(item.href))}
+							class={`mobile-header-tap-reset ${mobileLinkClass(isActive(item.href))}`}
 							href={item.href}
 							data-sveltekit-preload-data={preloadDataForHref(item.href)}
 							onpointerenter={() => {
@@ -205,15 +220,16 @@
 						</a>
 					{/each}
 
-					<div class="rounded-card border border-border-accent-blue bg-white p-1.5">
+					<div class="grid gap-1">
 						<button
 							type="button"
-							class="flex w-full items-center justify-between rounded-md px-2.5 py-2 text-left text-[0.9rem] font-medium text-brand-blue transition outline-none ring-0 hover:bg-surface-accent-blue focus:outline-none focus:ring-0 focus-visible:bg-surface-accent-blue focus-visible:outline-none focus-visible:ring-0"
+							class={`mobile-more-info-trigger ${mobileMoreInfoButtonClass(isMoreInfoActive())}`}
 							aria-expanded={mobileMoreInfoOpen ? 'true' : 'false'}
 							aria-controls="mobile-more-info"
 							onclick={() => {
 								mobileMoreInfoOpen = !mobileMoreInfoOpen;
 							}}
+							onmouseup={blurAfterPointerActivation}
 						>
 							<span class="pointer-events-none">Más información</span>
 							<ChevronDown
@@ -226,7 +242,7 @@
 							<div id="mobile-more-info" class="mt-1 grid gap-1">
 								{#each infoItems as item}
 									<a
-										class={menuLinkClass(isActive(item.href))}
+										class={`mobile-header-tap-reset ${menuLinkClass(isActive(item.href))}`}
 										href={item.href}
 										onclick={() => {
 											closeMobileMenu();
@@ -243,3 +259,30 @@
 		{/if}
 	</div>
 </header>
+
+<style>
+	@media (hover: none) and (pointer: coarse) {
+		.mobile-header-tap-reset {
+			-webkit-tap-highlight-color: transparent;
+			appearance: none;
+			-webkit-appearance: none;
+			-webkit-touch-callout: none;
+		}
+
+		.mobile-header-tap-reset:focus,
+		.mobile-header-tap-reset:focus-visible,
+		.mobile-header-tap-reset:active {
+			outline: none;
+			box-shadow: none;
+		}
+	}
+
+	/* The global reset `button { font: inherit; }` can override Tailwind font utilities.
+	   Force this trigger to match mobile nav links exactly. */
+	.mobile-more-info-trigger {
+		font-family: var(--font-ui) !important;
+		font-size: 15.04px !important; /* 0.94rem with 16px root */
+		font-weight: 500 !important;
+		line-height: 22.56px !important; /* 1.5 * 15.04px */
+	}
+</style>

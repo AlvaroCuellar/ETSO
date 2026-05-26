@@ -1,4 +1,6 @@
 <script lang="ts">
+	import HelpBubble from './HelpBubble.svelte';
+
 	interface Props {
 		name: string;
 		label?: string;
@@ -29,12 +31,7 @@
 	<legend class="fieldset-legend field-label-with-help">
 		{label}
 		{#if helpText}
-			<span class="field-help-anchor">
-				<span class="field-help-trigger" role="button" tabindex="0" aria-label={`Ayuda sobre ${label}`}>
-					?
-				</span>
-				<span class="field-help-popover" id={helpId}>{helpText}</span>
-			</span>
+			<HelpBubble id={helpId} label={label} text={helpText} />
 		{/if}
 	</legend>
 
@@ -73,6 +70,7 @@
 
 <style>
 	.radio-group {
+		position: relative;
 		border: 0;
 		margin: 0;
 		padding: 0;
@@ -80,6 +78,8 @@
 	}
 
 	.fieldset-legend {
+		position: relative;
+		width: 100%;
 		font-family: 'Roboto', sans-serif;
 		font-weight: 600;
 		font-size: 14px;
@@ -89,52 +89,6 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 0.25rem;
-	}
-
-	.field-help-anchor {
-		position: relative;
-		display: inline-flex;
-		align-items: center;
-	}
-
-	.field-help-trigger {
-		width: 20px;
-		height: 20px;
-		border: 1px solid var(--color-border-accent-blue);
-		border-radius: 999px;
-		background: var(--color-surface-accent-blue);
-		color: var(--color-brand-blue-dark);
-		font-size: 12px;
-		font-weight: 700;
-		line-height: 1;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		cursor: help;
-	}
-
-	.field-help-popover {
-		position: absolute;
-		top: calc(100% + 8px);
-		left: 0;
-		width: min(320px, calc(100vw - 2rem));
-		max-width: calc(100vw - 2rem);
-		padding: 8px 10px;
-		border: 1px solid var(--color-border);
-		border-radius: 6px;
-		background: #fff;
-		color: #3d4c63;
-		font-size: 12px;
-		line-height: 1.35;
-		font-weight: 400;
-		box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
-		display: none;
-		z-index: 20;
-	}
-
-	.field-help-anchor:hover .field-help-popover,
-	.field-help-anchor:focus-within .field-help-popover {
-		display: block;
 	}
 
 	.form-radios {

@@ -1,6 +1,7 @@
 ﻿<script lang="ts">
 	import { onMount, tick } from 'svelte';
 	import { goto } from '$app/navigation';
+	import HelpBubble from '$lib/components/search/HelpBubble.svelte';
 	import MatchToggle from '$lib/components/search/MatchToggle.svelte';
 	import TokenMultiSelect from '$lib/components/search/TokenMultiSelect.svelte';
 	import WorksTable from '$lib/components/search/WorksTable.svelte';
@@ -445,7 +446,7 @@
 	};
 </script>
 
-<div class="grid gap-6">
+<div class="grid min-w-0 max-w-full gap-6">
 	<Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'Examen de autorías' }]} />
 
 	<FeatureHeroSection
@@ -502,35 +503,26 @@
 		{/snippet}
 	</FeatureHeroSection>
 
-	<section class="rounded-[14px] p-5 font-['Roboto',sans-serif] leading-[1.6] text-text-main">
+	<section class="min-w-0 max-w-full rounded-[14px] px-0 py-5 font-['Roboto',sans-serif] leading-[1.6] text-text-main md:p-5">
 		<div class="min-w-0">
 			<h2 class="m-0 font-['Roboto',sans-serif] text-[1.45rem] font-bold text-brand-blue-dark">Buscar en Examen de autorías</h2>
 			<p class="mt-2 mb-0 text-[0.98rem] text-text-soft">
 				Filtra las obras del corpus por título, género, atribuciones, estado textual y fecha de incorporación.
 			</p>
 
-			<form class="mt-5 grid gap-6" method="GET" action="/examen-autorias" onsubmit={applySearch}>
+			<form class="mt-5 grid min-w-0 max-w-full gap-6" method="GET" action="/examen-autorias" onsubmit={applySearch}>
 				<div class="grid gap-5">
 					<div class="grid gap-5">
 						<div class="grid grid-cols-1 gap-5 min-[1201px]:grid-cols-[3fr_1fr]">
 							<div class="relative flex flex-col">
-								<label class="mb-[6px] inline-flex items-center gap-1 font-['Roboto',sans-serif] text-[14px] font-semibold text-text-soft" for="filtro-titulo">
-									Título
-									<span class="group relative inline-flex items-center">
-										<span
-											class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border-accent-blue bg-surface-accent-blue text-[12px] leading-none font-bold text-brand-blue-dark"
-											role="button"
-											tabindex="0"
-										>
-											?
-										</span>
-										<span
-											class="invisible absolute top-[calc(100%+8px)] left-0 z-20 w-[min(320px,78vw)] rounded-[6px] border border-border bg-white px-[10px] py-2 text-[12px] leading-[1.35] font-normal text-text-soft opacity-0 shadow-[0_8px_18px_rgba(0,0,0,0.08)] transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
-										>
-											Busca por palabras del título.
-										</span>
-									</span>
-								</label>
+								<div class="relative mb-[6px] inline-flex w-full items-center gap-1 font-['Roboto',sans-serif] text-[14px] font-semibold text-text-soft">
+									<label for="filtro-titulo">Título</label>
+									<HelpBubble
+										id="help-filtro-titulo"
+										label="Título"
+										text="Busca por palabras del título."
+									/>
+								</div>
 								<input
 									id="filtro-titulo"
 									name="titulo"
@@ -728,57 +720,39 @@
 
 									<div class="grid grid-cols-1 gap-5 md:grid-cols-2">
 										<div class="relative flex flex-col">
-										<label class="mb-[6px] inline-flex items-center gap-1 font-['Roboto',sans-serif] text-[14px] font-semibold text-text-soft" for="filtro-fecha-desde">
-											Fecha de adición o modificación (desde)
-											<span class="group relative inline-flex items-center">
-												<span
-													class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border-accent-blue bg-surface-accent-blue text-[12px] leading-none font-bold text-brand-blue-dark"
-													role="button"
-													tabindex="0"
-												>
-													?
-												</span>
-												<span
-													class="invisible absolute top-[calc(100%+8px)] left-0 z-20 w-[min(320px,calc(100vw_-_2rem))] max-w-[calc(100vw_-_2rem)] rounded-[6px] border border-border bg-white px-[10px] py-2 text-[12px] leading-[1.35] font-normal text-text-soft opacity-0 shadow-[0_8px_18px_rgba(0,0,0,0.08)] transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
-												>
-													Incluye obras añadidas o modificadas desde esta fecha.
-												</span>
-											</span>
-										</label>
-										<input
-											id="filtro-fecha-desde"
-											name="desde"
-											type="date"
-											class="h-[42px] rounded-[10px] border border-border bg-white px-3 text-[15px] text-text-main transition focus:border-brand-blue/35 focus:shadow-[0_0_0_3px_rgba(13,63,145,0.1)] focus:outline-none"
-											bind:value={dateFrom}
-										/>
+											<div class="relative mb-[6px] inline-flex w-full items-center gap-1 font-['Roboto',sans-serif] text-[14px] font-semibold text-text-soft">
+												<label for="filtro-fecha-desde">Fecha de adición o modificación (desde)</label>
+												<HelpBubble
+													id="help-filtro-fecha-desde"
+													label="Fecha de adición o modificación (desde)"
+													text="Incluye obras añadidas o modificadas desde esta fecha."
+												/>
+											</div>
+											<input
+												id="filtro-fecha-desde"
+												name="desde"
+												type="date"
+												class="h-[42px] rounded-[10px] border border-border bg-white px-3 text-[15px] text-text-main transition focus:border-brand-blue/35 focus:shadow-[0_0_0_3px_rgba(13,63,145,0.1)] focus:outline-none"
+												bind:value={dateFrom}
+											/>
 										</div>
 
 										<div class="relative flex flex-col">
-										<label class="mb-[6px] inline-flex items-center gap-1 font-['Roboto',sans-serif] text-[14px] font-semibold text-text-soft" for="filtro-fecha-hasta">
-											Fecha de adición o modificación (hasta)
-											<span class="group relative inline-flex items-center">
-												<span
-													class="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-border-accent-blue bg-surface-accent-blue text-[12px] leading-none font-bold text-brand-blue-dark"
-													role="button"
-													tabindex="0"
-												>
-													?
-												</span>
-												<span
-													class="invisible absolute top-[calc(100%+8px)] left-0 z-20 w-[min(320px,calc(100vw_-_2rem))] max-w-[calc(100vw_-_2rem)] rounded-[6px] border border-border bg-white px-[10px] py-2 text-[12px] leading-[1.35] font-normal text-text-soft opacity-0 shadow-[0_8px_18px_rgba(0,0,0,0.08)] transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
-												>
-													Incluye obras añadidas o modificadas hasta esta fecha.
-												</span>
-											</span>
-										</label>
-										<input
-											id="filtro-fecha-hasta"
-											name="hasta"
-											type="date"
-											class="h-[42px] rounded-[10px] border border-border bg-white px-3 text-[15px] text-text-main transition focus:border-brand-blue/35 focus:shadow-[0_0_0_3px_rgba(13,63,145,0.1)] focus:outline-none"
-											bind:value={dateTo}
-										/>
+											<div class="relative mb-[6px] inline-flex w-full items-center gap-1 font-['Roboto',sans-serif] text-[14px] font-semibold text-text-soft">
+												<label for="filtro-fecha-hasta">Fecha de adición o modificación (hasta)</label>
+												<HelpBubble
+													id="help-filtro-fecha-hasta"
+													label="Fecha de adición o modificación (hasta)"
+													text="Incluye obras añadidas o modificadas hasta esta fecha."
+												/>
+											</div>
+											<input
+												id="filtro-fecha-hasta"
+												name="hasta"
+												type="date"
+												class="h-[42px] rounded-[10px] border border-border bg-white px-3 text-[15px] text-text-main transition focus:border-brand-blue/35 focus:shadow-[0_0_0_3px_rgba(13,63,145,0.1)] focus:outline-none"
+												bind:value={dateTo}
+											/>
 										</div>
 									</div>
 
@@ -821,7 +795,7 @@
 			<div
 				id="examen-resultados"
 				bind:this={resultsRegion}
-				class="mt-14 relative scroll-mt-6 outline-none"
+				class="relative mt-14 min-w-0 max-w-full scroll-mt-6 outline-none"
 				aria-live="polite"
 				aria-busy={isSearching || isResultsLoading ? 'true' : 'false'}
 				role="region"
@@ -890,11 +864,13 @@
 				{:else if resultsError}
 					<p class="m-0 rounded-[9px] border border-[#f3c0ca] bg-[#fff5f7] px-3 py-2 text-[0.92rem] text-[#8f1e36]">{resultsError}</p>
 				{:else}
-					<WorksTable
-						rows={tableRows}
-						mode="standard"
-						emptyMessage="No se encontraron obras que coincidan con los criterios de búsqueda."
-					/>
+					<div class="min-w-0 max-w-full">
+						<WorksTable
+							rows={tableRows}
+							mode="standard"
+							emptyMessage="No se encontraron obras que coincidan con los criterios de búsqueda."
+						/>
+					</div>
 				{/if}
 				{#if !isResultsLoading && !resultsError && totalPages > 1}
 					<nav class="mt-4 flex flex-wrap items-center justify-end gap-2 max-md:justify-center" aria-label="Paginación de obras">

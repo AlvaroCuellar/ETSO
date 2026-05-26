@@ -26,7 +26,7 @@
 <div class="flex min-h-screen min-w-0 flex-col bg-white font-reading text-text-main">
 	<SiteHeader />
 	<main class="min-w-0 flex-1 py-8 lg:py-12">
-		<div class="mx-auto w-full min-w-0 max-w-7xl px-4 sm:px-5 lg:px-6">
+		<div class="mx-auto w-full min-w-0 max-w-7xl px-3 sm:px-5 lg:px-6">
 			{@render children()}
 		</div>
 	</main>

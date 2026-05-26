@@ -19,7 +19,7 @@
 <footer class="mt-12 border-t border-brand-purple/20 bg-brand-blue font-ui text-white">
 	<div class="mx-auto w-full max-w-7xl px-4 py-10 sm:px-5 lg:px-14 xl:px-10">
 		<div class="grid gap-10">
-			<div class="grid items-start gap-8 md:grid-cols-2 md:gap-10">
+			<div class="order-3 grid items-start gap-8 md:grid-cols-2 md:gap-10">
 				<div class="grid w-full gap-8 sm:grid-cols-2">
 					<div class="grid content-start gap-3">
 						<p class="m-0 text-[0.8rem] font-ui font-semibold tracking-[0.04em] text-white/72 uppercase">
@@ -55,9 +55,9 @@
 				</div>
 			</div>
 
-			<div class="border-t border-white/16"></div>
+			<div class="order-2 border-t border-white/16"></div>
 
-			<div class="grid items-start gap-8 md:grid-cols-2 md:gap-10">
+			<div class="order-1 grid items-start gap-8 md:grid-cols-2 md:gap-10">
 				<div class="grid max-w-[34rem] gap-3 text-[0.9rem] leading-[1.55] text-white/86">
 					<p class="m-0 text-white/64">Esta página web ha sido desarrollada gracias a la financiación principal de:</p>
 					<a

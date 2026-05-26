@@ -98,6 +98,8 @@
 	let activeIndex = $state(0);
 	let autoplayHandle: ReturnType<typeof setInterval> | null = null;
 	let prefersReducedMotion = false;
+	let carouselTouchStartX = 0;
+	let carouselTouchStartY = 0;
 
 	const normalizeSlideIndex = (index: number): number => (index + slides.length) % slides.length;
 
@@ -148,6 +150,28 @@
 		}
 	};
 
+	const handleCarouselTouchStart = (event: TouchEvent): void => {
+		const touch = event.changedTouches[0];
+		if (!touch) return;
+		carouselTouchStartX = touch.clientX;
+		carouselTouchStartY = touch.clientY;
+	};
+
+	const handleCarouselTouchEnd = (event: TouchEvent): void => {
+		const touch = event.changedTouches[0];
+		if (!touch) return;
+		const deltaX = touch.clientX - carouselTouchStartX;
+		const deltaY = touch.clientY - carouselTouchStartY;
+		if (Math.abs(deltaX) < 48 || Math.abs(deltaX) < Math.abs(deltaY) * 1.25) return;
+		stopAutoplay();
+		if (deltaX < 0) {
+			goToNext();
+		} else {
+			goToPrevious();
+		}
+		startAutoplay();
+	};
+
 	onMount(() => {
 		prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 		startAutoplay();
@@ -161,10 +185,16 @@
 <svelte:window onkeydown={handleCarouselKeydown} />
 
 <section
-	class="group relative left-1/2 right-1/2 w-screen -translate-x-1/2 overflow-hidden"
+	class="group relative left-1/2 right-1/2 w-[100dvw] max-w-[100dvw] -translate-x-1/2 overflow-hidden"
 	aria-label="Secciones destacadas de ETSO"
 >
-	<div class="relative h-[56vh] min-h-[25rem] w-full max-h-[44rem]">
+	<div
+		class="relative h-[56vh] min-h-[25rem] w-full max-h-[44rem] [touch-action:pan-y]"
+		role="group"
+		aria-label="Carrusel de secciones destacadas"
+		ontouchstart={handleCarouselTouchStart}
+		ontouchend={handleCarouselTouchEnd}
+	>
 		<div
 			class="absolute inset-0 flex transition-transform duration-700 ease-out"
 			style={`transform: translateX(-${activeIndex * 100}%);`}
@@ -279,9 +309,9 @@
 	</div>
 </section>
 
-<section class="mx-auto mt-6 w-full max-w-7xl p-5 md:p-6 lg:p-8">
+<section class="relative left-1/2 right-1/2 mt-6 w-[100dvw] max-w-[100dvw] -translate-x-1/2 md:left-auto md:right-auto md:mx-auto md:w-full md:max-w-7xl md:translate-x-0 md:p-6 lg:p-8">
 	<div class="grid items-stretch gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,35%)] lg:gap-8">
-		<div class="grid gap-4 rounded-card bg-brand-blue px-5 py-5 text-white shadow-soft md:px-6 md:py-6 lg:px-8 lg:py-8">
+		<div class="grid gap-4 rounded-card bg-brand-blue px-5 py-6 text-white shadow-soft md:px-7 md:py-7 lg:px-8 lg:py-8">
 			<p class="m-0 font-ui text-[0.78rem] font-semibold uppercase tracking-[0.05em] text-white/85">
 				Humanidades digitales
 			</p>
@@ -305,7 +335,7 @@
 			</p>
 		</div>
 
-		<div class="overflow-hidden">
+		<div class="min-h-[18rem] overflow-hidden md:min-h-[24rem] lg:min-h-full">
 			<img
 				src={informesImage}
 				alt="Panel de informes estilométricos de ETSO"
@@ -317,10 +347,10 @@
 </section>
 
 <section
-	class="relative left-1/2 right-1/2 mt-8 w-screen -translate-x-1/2 overflow-hidden bg-cover bg-center bg-no-repeat"
+	class="relative left-1/2 right-1/2 mt-8 w-[100dvw] max-w-[100dvw] -translate-x-1/2 overflow-hidden bg-cover bg-center bg-no-repeat"
 	style={`background-image: linear-gradient(rgba(0, 38, 129, 0.52), rgba(0, 38, 129, 0.52)), url('${fondoEscritura}')`}
 >
-	<div class="mx-auto w-full max-w-7xl px-4 py-14 text-center text-white sm:px-5 md:py-16 lg:px-6 lg:py-20">
+	<div class="mx-auto w-full max-w-7xl px-4 py-14 text-left text-white sm:px-5 md:py-16 md:text-center lg:px-6 lg:py-20">
 		<div class="mx-auto max-w-5xl">
 			<h2 class="font-ui text-[clamp(1.6rem,3.2vw,2.5rem)] leading-[1.15] font-bold">
 				TEXORO: Textos del Siglo de Oro
@@ -348,7 +378,7 @@
 	</div>
 </section>
 
-<section class="mx-auto mt-8 w-full max-w-7xl px-5 md:px-6 lg:px-8">
+<section class="mx-auto mt-8 w-full max-w-7xl px-2 md:px-6 lg:px-8">
 	<div class="relative overflow-hidden rounded-card bg-neutral-100 px-5 py-6 text-brand-blue-dark md:px-7 md:py-8 lg:px-10 lg:py-10">
 		<img
 			src={librosHero}
@@ -394,7 +424,7 @@
 </section>
 
 <section class="mx-auto mt-8 w-full max-w-7xl p-5 md:p-6 lg:p-8">
-	<div class="grid gap-5 text-[1.03rem] leading-[1.72] text-center text-text-soft">
+	<div class="grid gap-5 text-left text-[1.03rem] leading-[1.72] text-text-soft md:text-center">
 		<h2 class="m-0 font-ui text-[clamp(1.6rem,3.2vw,2.5rem)] leading-[1.15] font-bold text-brand-blue-dark">
 			¿Cómo te podemos ayudar? ¿Cómo nos puedes ayudar?
 		</h2> 
@@ -417,7 +447,7 @@
 
 <section class="mx-auto mt-8 w-full max-w-7xl p-5 md:p-6 lg:p-8">
 		<div class="grid gap-4">
-			<div class="grid gap-1 text-center">
+			<div class="grid gap-1 text-left md:text-center">
 				<h2 class="m-0 font-ui text-[clamp(1.4rem,2.6vw,2rem)] font-semibold leading-[1.2] text-brand-blue-dark">
 					ETSO es un proyecto de
 				</h2>

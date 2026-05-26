@@ -136,7 +136,7 @@
 				rel="noopener noreferrer"
 			>
 				David Merino Recalde
-			</a>.
+			</a>
 		</div>
 	</div>
 </footer>

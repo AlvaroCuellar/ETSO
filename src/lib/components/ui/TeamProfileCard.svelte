@@ -21,20 +21,40 @@
 		links?: TeamProfileLink[];
 	} = $props();
 
+	let linksVisible = $state(false);
+
 	const isExternalHref = (href: string): boolean => /^https?:\/\//i.test(href);
 	const isMailHref = (href: string): boolean => /^mailto:/i.test(href);
+
+	const toggleLinks = (): void => {
+		if (links.length === 0) return;
+		linksVisible = !linksVisible;
+	};
 </script>
 
-<article class="group overflow-hidden rounded-card border border-border bg-surface shadow-soft transition md:mx-auto md:w-full md:max-w-[24rem]">
+<article
+	class="group relative overflow-hidden rounded-card border border-border bg-surface shadow-soft transition md:mx-auto md:w-full md:max-w-[24rem]"
+	class:cursor-pointer={links.length > 0}
+>
+	{#if links.length > 0}
+		<button
+			type="button"
+			class="absolute inset-0 z-10 cursor-pointer border-0 bg-transparent p-0"
+			aria-label={`Mostrar enlaces de ${title}`}
+			aria-expanded={linksVisible ? 'true' : 'false'}
+			onclick={toggleLinks}
+		></button>
+	{/if}
+
 	<div class="relative">
 		<img src={image} alt={`Imagen de ${title}`} class="block h-auto w-full" loading="lazy" />
 
 		{#if links.length > 0}
 			<div
-				class="pointer-events-none absolute inset-0 bg-[rgba(248,248,250,0.42)] opacity-0 transition duration-200 group-hover:opacity-100 group-focus-within:opacity-100"
+				class={`pointer-events-none absolute inset-0 bg-[rgba(248,248,250,0.42)] transition duration-200 group-hover:opacity-100 group-focus-within:opacity-100 ${linksVisible ? 'opacity-100' : 'opacity-0'}`}
 			></div>
 			<div
-				class="absolute inset-x-0 bottom-4 flex justify-center gap-3 opacity-0 transition duration-200 group-hover:opacity-100 group-focus-within:opacity-100"
+				class={`absolute inset-x-0 bottom-4 z-20 flex justify-center gap-3 transition duration-200 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100 ${linksVisible ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'}`}
 			>
 				{#each links as link}
 					<a

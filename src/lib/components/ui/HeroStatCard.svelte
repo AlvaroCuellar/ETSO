@@ -126,7 +126,7 @@
 			{#if loading}
 				<div class="h-[2.35rem] w-[6.5rem] max-w-full animate-pulse rounded-[8px] bg-surface-accent-blue" aria-hidden="true"></div>
 			{:else}
-				<div class="max-w-full whitespace-nowrap text-[clamp(1.8rem,2.7vw,2.35rem)] leading-none font-bold text-brand-blue-dark">{displayValue}</div>
+				<div class="w-full max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-[clamp(1.55rem,8vw,2.35rem)] leading-none font-bold text-brand-blue-dark">{displayValue}</div>
 			{/if}
 			<div class="font-ui text-[1.04rem] font-medium text-text-main">{label}</div>
 		</div>
@@ -140,7 +140,7 @@
 			{#if loading}
 				<div class="h-[2.35rem] w-[6.5rem] max-w-full animate-pulse rounded-[8px] bg-surface-accent-blue" aria-hidden="true"></div>
 			{:else}
-				<div class="max-w-full whitespace-nowrap text-[clamp(1.8rem,2.7vw,2.35rem)] leading-none font-bold text-brand-blue-dark">{displayValue}</div>
+				<div class="w-full max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-[clamp(1.55rem,8vw,2.35rem)] leading-none font-bold text-brand-blue-dark">{displayValue}</div>
 			{/if}
 			<div class="font-ui text-[1.04rem] font-medium text-text-main">{label}</div>
 		</div>

@@ -117,7 +117,8 @@
 		position: absolute;
 		top: calc(100% + 8px);
 		left: 0;
-		width: min(320px, 78vw);
+		width: min(320px, calc(100vw - 2rem));
+		max-width: calc(100vw - 2rem);
 		padding: 8px 10px;
 		border: 1px solid var(--color-border);
 		border-radius: 6px;
@@ -142,6 +143,8 @@
 
 	.match-toggle {
 		display: inline-flex;
+		max-width: 100%;
+		flex-wrap: wrap;
 		gap: 6px;
 		background: var(--color-surface-accent-blue);
 		border: 1px solid var(--color-border-accent-blue);

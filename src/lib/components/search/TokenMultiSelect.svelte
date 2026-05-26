@@ -277,12 +277,16 @@
 	.field-with-help {
 		position: relative;
 		display: flex;
+		min-width: 0;
+		max-width: 100%;
 		flex-direction: column;
 		gap: 0.4rem;
 	}
 
 	.field-label-with-help {
 		display: inline-flex;
+		min-width: 0;
+		max-width: 100%;
 		align-items: center;
 		gap: 0.25rem;
 		font-family: 'Roboto', sans-serif;
@@ -317,7 +321,8 @@
 		position: absolute;
 		top: calc(100% + 8px);
 		left: 0;
-		width: min(320px, 78vw);
+		width: min(320px, calc(100vw - 2rem));
+		max-width: calc(100vw - 2rem);
 		padding: 8px 10px;
 		border: 1px solid var(--color-border);
 		border-radius: 6px;
@@ -339,6 +344,8 @@
 	.autocomplete-wrapper {
 		position: relative;
 		width: 100%;
+		min-width: 0;
+		max-width: 100%;
 	}
 
 	.author-multiselect-wrapper {
@@ -346,6 +353,7 @@
 		border-radius: 10px;
 		background: #ffffff;
 		padding: 6px 12px;
+		max-width: 100%;
 		min-height: 42px;
 		transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 	}
@@ -361,6 +369,8 @@
 
 	.author-chips {
 		display: flex;
+		min-width: 0;
+		max-width: 100%;
 		flex-wrap: wrap;
 		align-items: center;
 		gap: 6px;
@@ -368,6 +378,8 @@
 
 	.author-chip {
 		display: inline-flex;
+		min-width: 0;
+		max-width: 100%;
 		align-items: center;
 		gap: 6px;
 		background: var(--color-surface-accent-purple);
@@ -378,6 +390,14 @@
 		font-size: 13px;
 		font-weight: 500;
 		line-height: 1;
+	}
+
+	.author-chip-label {
+		min-width: 0;
+		max-width: 100%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	.author-chip-remove {
@@ -436,6 +456,7 @@
 		border: 0;
 		box-shadow: none;
 		min-width: 60px;
+		max-width: 100%;
 		flex: 1 1 0%;
 		height: auto;
 		padding: 4px 2px;
@@ -466,6 +487,8 @@
 		border-radius: 0 0 4px 4px;
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 		max-height: 250px;
+		max-width: 100%;
+		overflow-x: hidden;
 		overflow-y: auto;
 		z-index: 25;
 	}
@@ -479,6 +502,7 @@
 		border-bottom: 1px solid #f0f0f0;
 		font-size: 14px;
 		text-align: left;
+		overflow-wrap: anywhere;
 		background: var(--color-surface);
 	}
 

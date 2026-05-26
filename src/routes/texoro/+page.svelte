@@ -318,7 +318,6 @@
 	let loadedPreserveEnieForHighlight = $state<boolean | null>(null);
 	const preserveEnieForHighlight = $derived(loadedPreserveEnieForHighlight ?? statsPayload?.preserveEnie ?? true);
 	let occurrenceModal = $state<OccurrenceModalState | null>(null);
-	let occurrenceModalScrolled = $state(false);
 	let openTextDropdownDocId = $state<number | null>(null);
 	let occurrencePreviews = $state<Map<number, ResultOccurrencePreview>>(new Map());
 	let previewLoadsByDocId = $state<Map<number, Promise<void>>>(new Map());
@@ -633,11 +632,11 @@
 	};
 
 	const modePillButtonClass =
-		'relative z-10 rounded-full border-0 [border-width:0px] bg-transparent px-3 py-1.5 text-[0.78rem] font-semibold outline-none ring-0 transition-colors focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0';
+		'relative z-10 min-w-0 rounded-full border-0 [border-width:0px] bg-transparent px-3 py-1.5 text-[0.78rem] font-semibold outline-none ring-0 transition-colors focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 max-sm:w-full max-sm:text-left';
 	const modePillIndicatorClass =
-		'pointer-events-none absolute top-1 bottom-1 left-0 rounded-full bg-white shadow-soft transition-[opacity,transform,width] duration-200 ease-out';
+		'pointer-events-none absolute top-1 bottom-1 left-0 rounded-full bg-white shadow-soft transition-[opacity,transform,width] duration-200 ease-out max-sm:hidden';
 	const additionalModePillIndicatorClass =
-		'pointer-events-none absolute top-1 bottom-1 left-0 rounded-full bg-white shadow-soft transition-[opacity,transform,width] duration-200 ease-out';
+		'pointer-events-none absolute top-1 bottom-1 left-0 rounded-full bg-white shadow-soft transition-[opacity,transform,width] duration-200 ease-out max-sm:hidden';
 	const interpretedQueryTermClass =
 		'inline-flex max-w-full items-center rounded-full bg-surface-accent-purple px-2.5 py-1 font-semibold leading-none text-text-accent-purple align-middle';
 	const queryClauseCount = $derived.by(() => submittedTerms.length);
@@ -2239,7 +2238,6 @@
 
 	const closeOccurrenceModal = (): void => {
 		occurrenceModal = null;
-		occurrenceModalScrolled = false;
 		occurrenceLoading = false;
 		occurrenceError = '';
 		openingOccurrenceKey = null;
@@ -2313,7 +2311,6 @@
 		const cached = occurrenceDetailsCache.get(key) ?? null;
 		occurrenceError = '';
 		occurrenceLoading = false;
-		occurrenceModalScrolled = false;
 		if (cached) {
 			occurrenceModal = {
 				result,
@@ -2645,7 +2642,7 @@
 
 {#snippet resultMetadataBlock(meta: TexoroWorkMeta, metadataTitle: string)}
 	<div
-		class="flex min-w-0 max-w-full flex-wrap items-start gap-x-4 gap-y-1 font-['Roboto',sans-serif] md:gap-x-5"
+		class="grid min-w-0 max-w-full grid-cols-1 gap-2 font-['Roboto',sans-serif] sm:flex sm:flex-wrap sm:items-start sm:gap-x-4 sm:gap-y-1 md:gap-x-5"
 		title={metadataTitle}
 	>
 		<div class="grid min-w-0 max-w-full content-start">
@@ -2681,6 +2678,95 @@
 			</p>
 		</div>
 	</div>
+{/snippet}
+
+{#snippet resultTextAccessControl(docId: number, textLinks: TexoroWorkMeta['textLinks'])}
+	<div class="texoro-textos-dropdown-wrapper relative w-full max-w-full sm:w-auto">
+		{#if textLinks.length > 0}
+			<button
+				type="button"
+				class="grid max-w-full min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 rounded-[8px] border border-border-accent-blue bg-white px-[10px] py-2 text-left font-['Roboto',sans-serif] text-[12px] font-normal text-text-main transition-all hover:bg-surface-accent-blue focus:outline-3 focus:outline-brand-blue/15 focus:outline-offset-1"
+				aria-haspopup="true"
+				aria-expanded={openTextDropdownDocId === docId ? 'true' : 'false'}
+				title="Acceso al texto"
+				onclick={(event) => toggleTextDropdown(event, docId)}
+			>
+				<span class="inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-brand-blue-dark" aria-hidden="true">
+					<FolderOpen class="h-[14px] w-[14px] stroke-[2.1]" />
+				</span>
+				<span class="block overflow-hidden text-ellipsis whitespace-nowrap leading-[1.2] text-[0.82rem]">Acceso al texto</span>
+				{#if openTextDropdownDocId === docId}
+					<span class="inline-flex h-[13px] w-[13px] items-center justify-center text-text-soft" aria-hidden="true">
+						<ChevronDown class="h-[13px] w-[13px] stroke-[2.2]" />
+					</span>
+				{:else}
+					<span class="inline-flex h-[13px] w-[13px] items-center justify-center text-text-soft" aria-hidden="true">
+						<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
+					</span>
+				{/if}
+			</button>
+			{#if openTextDropdownDocId === docId}
+				<div
+					class="texoro-textos-dropdown absolute left-0 top-[calc(100%+4px)] z-20 max-h-[min(300px,calc(100vh-24px))] w-full min-w-0 max-w-full overflow-x-hidden overflow-y-auto rounded-[8px] border border-border-accent-blue bg-white p-1.5 font-['Roboto',sans-serif] shadow-[0_10px_28px_rgba(7,36,110,0.16)] sm:left-auto sm:right-0 sm:w-auto sm:min-w-[220px] sm:max-w-[320px]"
+				>
+					{#each textLinks as link}
+						<a
+							href={link.href}
+							data-sveltekit-preload-data={link.kind === 'bicuve' ? 'off' : undefined}
+							class="grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-2 rounded-[6px] px-2.5 py-[9px] text-[12px] font-normal text-text-main no-underline transition-all hover:bg-surface-accent-blue hover:text-text-main hover:no-underline focus:bg-surface-accent-blue focus:text-text-main focus:no-underline focus:outline-none focus-visible:bg-surface-accent-blue focus-visible:text-text-main focus-visible:no-underline focus-visible:outline-none"
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							<span class="inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-brand-blue-dark" aria-hidden="true">
+								{#if link.kind === 'bicuve'}
+									<BookOpen class="h-[14px] w-[14px] stroke-[2.1]" />
+								{:else}
+									<ExternalLink class="h-[14px] w-[14px] stroke-[2.1]" />
+								{/if}
+							</span>
+							<span class="block min-w-0 whitespace-normal break-words leading-[1.35]">{link.label}</span>
+							<span class="mt-[2px] inline-flex h-3 w-3 flex-none items-center justify-center text-text-soft" aria-hidden="true">
+								<ChevronRight class="h-3 w-3 stroke-[2.1]" />
+							</span>
+						</a>
+					{/each}
+				</div>
+			{/if}
+		{:else}
+			<span
+				class="grid min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 rounded-[8px] border border-[rgba(91,111,132,0.22)] bg-[#f8f9fb] px-[10px] py-2 text-left font-['Roboto',sans-serif] text-[12px] font-normal text-[rgba(73,90,108,0.62)] opacity-[0.78]"
+				aria-disabled="true"
+				title="Sin acceso al texto"
+			>
+				<span class="inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-[rgba(114,130,145,0.75)]" aria-hidden="true">
+					<FolderOpen class="h-[14px] w-[14px] stroke-[2.1]" />
+				</span>
+				<span class="block overflow-hidden text-ellipsis whitespace-nowrap leading-[1.2] text-[0.82rem]">Acceso al texto</span>
+				<span class="inline-flex h-[13px] w-[13px] items-center justify-center text-[rgba(114,130,145,0.75)]" aria-hidden="true">
+					<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
+				</span>
+			</span>
+		{/if}
+	</div>
+{/snippet}
+
+{#snippet resultMetaDisclosure(meta: TexoroWorkMeta | null | undefined, metadataLine: string, docId: number, textLinks: TexoroWorkMeta['textLinks'])}
+	<details class="texoro-result-disclosure group min-w-0 max-w-full">
+		<summary class="flex w-fit max-w-full cursor-pointer list-none items-center gap-1.5 rounded-[8px] px-0 py-0.5 font-['Roboto',sans-serif] text-[0.78rem] font-semibold text-text-soft transition hover:text-brand-blue-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue/20">
+			<span class="min-w-0 overflow-hidden text-ellipsis whitespace-nowrap">Metadatos y acceso al texto</span>
+			<ChevronDown class="h-3.5 w-3.5 shrink-0 transition-transform group-open:rotate-180" aria-hidden="true" />
+		</summary>
+		<div class="mt-2 grid min-w-0 max-w-full gap-3">
+			{#if meta}
+				{@render resultMetadataBlock(meta, metadataLine)}
+			{:else}
+				<p class="m-0 text-[0.86rem] leading-[1.35] text-text-soft">{metadataLine}</p>
+			{/if}
+			<div class="flex min-w-0 max-w-full justify-start">
+				{@render resultTextAccessControl(docId, textLinks)}
+			</div>
+		</div>
+	</details>
 {/snippet}
 
 <div class="grid gap-6">
@@ -2822,7 +2908,7 @@
 								<div
 									role="group"
 									aria-label="Modo de combinación de términos adicionales"
-									class="relative grid max-w-full grid-cols-[auto_auto_auto] rounded-full bg-surface-soft p-1"
+									class="relative grid w-full min-w-0 max-w-full grid-cols-1 rounded-[12px] bg-surface-soft p-1 sm:w-auto sm:grid-cols-[auto_auto_auto] sm:rounded-full"
 								>
 									<span
 										class={additionalModePillIndicatorClass}
@@ -2832,7 +2918,7 @@
 									<button
 										type="button"
 										bind:this={additionalModeAllButton}
-										class={`${modePillButtonClass} ${additionalMode === 'all' ? 'text-brand-blue-dark' : 'text-text-soft hover:text-brand-blue-dark'}`}
+										class={`${modePillButtonClass} ${additionalMode === 'all' ? 'text-brand-blue-dark max-sm:bg-white max-sm:shadow-soft' : 'text-text-soft hover:text-brand-blue-dark'}`}
 										onclick={(event) => setAdditionalMode(event, 'all')}
 									>
 										Principal + adicionales
@@ -2840,7 +2926,7 @@
 									<button
 										type="button"
 										bind:this={additionalModeAnyButton}
-										class={`${modePillButtonClass} ${additionalMode === 'any' ? 'text-brand-blue-dark' : 'text-text-soft hover:text-brand-blue-dark'}`}
+										class={`${modePillButtonClass} ${additionalMode === 'any' ? 'text-brand-blue-dark max-sm:bg-white max-sm:shadow-soft' : 'text-text-soft hover:text-brand-blue-dark'}`}
 										onclick={(event) => setAdditionalMode(event, 'any')}
 									>
 										Principal + algún adicional
@@ -2848,7 +2934,7 @@
 									<button
 										type="button"
 										bind:this={additionalModeGlobalAnyButton}
-										class={`${modePillButtonClass} ${additionalMode === 'globalAny' ? 'text-brand-blue-dark' : 'text-text-soft hover:text-brand-blue-dark'}`}
+										class={`${modePillButtonClass} ${additionalMode === 'globalAny' ? 'text-brand-blue-dark max-sm:bg-white max-sm:shadow-soft' : 'text-text-soft hover:text-brand-blue-dark'}`}
 										onclick={(event) => setAdditionalMode(event, 'globalAny')}
 									>
 										Cualquiera
@@ -2866,8 +2952,20 @@
 									Añadir términos adicionales
 								</button>
 							{:else}
-								{#each additionalTerms as term}
-									<div class="grid gap-2 md:grid-cols-[minmax(0,1fr)_auto]">
+								{#each additionalTerms as term, index}
+									<div class="grid gap-2 rounded-[10px] bg-surface-soft p-2 md:bg-transparent md:p-0 md:grid-cols-[minmax(0,1fr)_auto]">
+										<div class="flex items-center justify-between gap-2 md:hidden">
+											<span class="font-['Roboto',sans-serif] text-[0.76rem] font-semibold text-text-soft">
+												Término adicional {index + 1}
+											</span>
+											<button
+												type="button"
+												class="rounded-[8px] border-0 bg-transparent px-2 py-1 text-[0.76rem] font-semibold text-text-soft transition hover:bg-[#fff5f7] hover:text-[#8f1e36]"
+												onclick={() => removeAdditionalTerm(term.id)}
+											>
+												Eliminar
+											</button>
+										</div>
 										<label class="sr-only" for={`additional-query-${term.id}`}>Término adicional</label>
 										<input
 											id={`additional-query-${term.id}`}
@@ -2880,7 +2978,7 @@
 										/>
 										<button
 											type="button"
-											class="h-[42px] rounded-[10px] border border-border bg-white px-3 text-[0.84rem] font-semibold text-text-soft transition hover:border-[#d7b5bf] hover:bg-[#fff5f7] hover:text-[#8f1e36]"
+											class="hidden h-[42px] rounded-[10px] border border-border bg-white px-3 text-[0.84rem] font-semibold text-text-soft transition hover:border-[#d7b5bf] hover:bg-[#fff5f7] hover:text-[#8f1e36] md:block"
 											onclick={() => removeAdditionalTerm(term.id)}
 										>
 											Eliminar
@@ -2917,7 +3015,7 @@
 								<div
 									role="group"
 									aria-label="Modo de combinación de condiciones de proximidad"
-									class="relative grid max-w-full grid-cols-[auto_auto] rounded-full bg-surface-soft p-1"
+									class="relative grid w-full min-w-0 max-w-full grid-cols-1 rounded-[12px] bg-surface-soft p-1 sm:w-auto sm:grid-cols-[auto_auto] sm:rounded-full"
 								>
 									<span
 										class={modePillIndicatorClass}
@@ -2927,7 +3025,7 @@
 									<button
 										type="button"
 										bind:this={proximityModeAllButton}
-										class={`${modePillButtonClass} ${proximityMode === 'all' ? 'text-brand-blue-dark' : 'text-text-soft hover:text-brand-blue-dark'}`}
+										class={`${modePillButtonClass} ${proximityMode === 'all' ? 'text-brand-blue-dark max-sm:bg-white max-sm:shadow-soft' : 'text-text-soft hover:text-brand-blue-dark'}`}
 										onclick={(event) => setProximityMode(event, 'all')}
 									>
 										Todas las condiciones
@@ -2935,7 +3033,7 @@
 									<button
 										type="button"
 										bind:this={proximityModeAnyButton}
-										class={`${modePillButtonClass} ${proximityMode === 'any' ? 'text-brand-blue-dark' : 'text-text-soft hover:text-brand-blue-dark'}`}
+										class={`${modePillButtonClass} ${proximityMode === 'any' ? 'text-brand-blue-dark max-sm:bg-white max-sm:shadow-soft' : 'text-text-soft hover:text-brand-blue-dark'}`}
 										onclick={(event) => setProximityMode(event, 'any')}
 									>
 										Basta con una
@@ -2953,8 +3051,20 @@
 									Añadir términos de distancia
 								</button>
 							{:else}
-								{#each proximityTerms as term}
-									<div class="grid gap-2 md:grid-cols-[minmax(0,1fr)_112px_150px_auto]">
+								{#each proximityTerms as term, index}
+									<div class="grid gap-2 rounded-[10px] bg-surface-soft p-2 md:bg-transparent md:p-0 md:grid-cols-[minmax(0,1fr)_112px_150px_auto]">
+										<div class="flex items-center justify-between gap-2 md:hidden">
+											<span class="font-['Roboto',sans-serif] text-[0.76rem] font-semibold text-text-soft">
+												Proximidad {index + 1}
+											</span>
+											<button
+												type="button"
+												class="rounded-[8px] border-0 bg-transparent px-2 py-1 text-[0.76rem] font-semibold text-text-soft transition hover:bg-[#fff5f7] hover:text-[#8f1e36]"
+												onclick={() => removeProximityTerm(term.id)}
+											>
+												Eliminar
+											</button>
+										</div>
 										<label class="sr-only" for={`proximity-query-${term.id}`}>Término cercano</label>
 										<input
 											id={`proximity-query-${term.id}`}
@@ -2994,7 +3104,7 @@
 										</select>
 										<button
 											type="button"
-											class="h-[42px] rounded-[10px] border border-border bg-white px-3 text-[0.84rem] font-semibold text-text-soft transition hover:border-[#d7b5bf] hover:bg-[#fff5f7] hover:text-[#8f1e36]"
+											class="hidden h-[42px] rounded-[10px] border border-border bg-white px-3 text-[0.84rem] font-semibold text-text-soft transition hover:border-[#d7b5bf] hover:bg-[#fff5f7] hover:text-[#8f1e36] md:block"
 											onclick={() => removeProximityTerm(term.id)}
 										>
 											Eliminar
@@ -3171,11 +3281,11 @@
 				</div>
 			{/if}
 
-			<div class="flex flex-wrap justify-end gap-2">
+			<div class="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:justify-end">
 				<AppButton
 					href="/texoro"
 					variant="secondary"
-					className="!h-[40px] !min-w-[136px] !rounded-[10px] !border-transparent !px-5 !py-2 font-['Roboto',sans-serif] text-[0.9rem] font-semibold tracking-[0.02em] shadow-none"
+					className="!h-[40px] !min-w-0 !w-full !rounded-[10px] !border-transparent !px-3 !py-2 font-['Roboto',sans-serif] text-[0.86rem] font-semibold tracking-[0.02em] shadow-none sm:!min-w-[136px] sm:!w-auto sm:!px-5 sm:text-[0.9rem]"
 					onclick={(event) => {
 						event.preventDefault();
 						resetSearchControls();
@@ -3187,7 +3297,7 @@
 					type="submit"
 					variant="primary"
 					disabled={isSearching || isPreparingResults}
-					className="!h-[40px] !min-w-[136px] gap-2 !rounded-[10px] !px-5 !py-2 font-['Roboto',sans-serif] text-[0.9rem] font-semibold tracking-[0.02em]"
+					className="!h-[40px] !min-w-0 !w-full gap-2 !rounded-[10px] !px-3 !py-2 font-['Roboto',sans-serif] text-[0.86rem] font-semibold tracking-[0.02em] sm:!min-w-[136px] sm:!w-auto sm:!px-5 sm:text-[0.9rem]"
 				>
 					{#if isSearching || isPreparingResults}
 						<LoaderCircle class="h-4.5 w-4.5 animate-spin" />
@@ -3225,8 +3335,8 @@
 				class="mt-14 grid scroll-mt-6 gap-4"
 				aria-live="polite"
 			>
-				<div class="flex flex-wrap items-center justify-between gap-3">
-					<div>
+				<div class="flex flex-wrap items-center justify-between gap-3 max-md:flex-col max-md:justify-center max-md:text-center">
+					<div class="max-md:w-full">
 						<h2 class="m-0 font-['Roboto',sans-serif] text-[1.45rem] font-bold text-brand-blue-dark">
 							Resultados de búsqueda
 						</h2>
@@ -3235,7 +3345,7 @@
 						type="button"
 						variant="secondary"
 						disabled={isExporting || isPreparingResults || !lastSubmittedSearch || filteredResults.length === 0}
-						className="!h-[40px] !rounded-[10px] !px-4 !py-2 font-['Roboto',sans-serif] text-[0.88rem] font-semibold"
+						className="!h-[40px] !rounded-[10px] !px-4 !py-2 font-['Roboto',sans-serif] text-[0.88rem] font-semibold max-md:!mx-auto"
 						title="Exportar resultados filtrados"
 						onclick={() => {
 							void exportCurrentSearch();
@@ -3444,9 +3554,9 @@
 				{:else}
 					<div
 						bind:this={resultsPaginationRegion}
-						class="flex scroll-mt-24 flex-wrap items-center justify-between gap-3"
+						class="flex scroll-mt-24 flex-wrap items-center justify-between gap-3 max-md:flex-col max-md:justify-center max-md:gap-2 max-md:text-center"
 					>
-						<p class="m-0 font-['Roboto',sans-serif] text-[0.88rem] font-normal text-text-main">
+						<p class="m-0 font-['Roboto',sans-serif] text-[0.88rem] font-normal text-text-main max-md:w-full">
 							Mostrando
 							<span class="font-semibold text-brand-blue">
 								{numberFormatter.format(resultPageStart)}-{numberFormatter.format(resultPageEnd)}
@@ -3454,7 +3564,7 @@
 							de <span class="font-semibold text-brand-blue">{numberFormatter.format(filteredResults.length)}</span> resultados
 						</p>
 						{#if resultPageCount > 1}
-							<div class="flex items-center gap-2">
+							<div class="flex items-center justify-center gap-2 max-md:w-full">
 								<AppButton
 									type="button"
 									variant="secondary"
@@ -3492,7 +3602,7 @@
 							</div>
 						{/if}
 					</div>
-					<ul class="m-0 grid list-none gap-3 p-0">
+					<ul class="m-0 grid list-none gap-3 p-0 max-md:mx-[-8px]">
 						{#each visibleResults as result, resultIndex (result.docId)}
 							{@const assignments = buildMatchAssignments(result.matches)}
 							{@const resultOccurrences = sumResultOccurrences(result)}
@@ -3505,7 +3615,7 @@
 								use:observeResultRow={result}
 							>
 								<div class="grid gap-3 bg-surface-soft px-4 py-3">
-									<div class="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+									<div class="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
 										<h3 class="m-0 min-w-0 font-['Roboto',sans-serif] text-[1.03rem] leading-[1.25] font-semibold text-brand-blue-dark">
 											{#if result.meta}
 												<a
@@ -3519,84 +3629,11 @@
 												Obra sin metadatos
 											{/if}
 										</h3>
-										<div class="flex min-w-0 flex-wrap items-center gap-2 sm:justify-end">
-											{#if textLinks.length > 0}
-												<div class="texoro-textos-dropdown-wrapper relative">
-													<button
-														type="button"
-														class="grid min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 rounded-[8px] border border-border-accent-blue bg-white px-[10px] py-2 text-left font-['Roboto',sans-serif] text-[12px] font-normal text-text-main transition-all hover:bg-surface-accent-blue focus:outline-3 focus:outline-brand-blue/15 focus:outline-offset-1"
-														aria-haspopup="true"
-														aria-expanded={openTextDropdownDocId === result.docId ? 'true' : 'false'}
-														title="Acceso al texto"
-														onclick={(event) => toggleTextDropdown(event, result.docId)}
-													>
-														<span class="inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-brand-blue-dark" aria-hidden="true">
-															<FolderOpen class="h-[14px] w-[14px] stroke-[2.1]" />
-														</span>
-														<span class="block overflow-hidden text-ellipsis whitespace-nowrap leading-[1.2] text-[0.82rem]">Acceso al texto</span>
-														{#if openTextDropdownDocId === result.docId}
-															<span class="inline-flex h-[13px] w-[13px] items-center justify-center text-text-soft" aria-hidden="true">
-																<ChevronDown class="h-[13px] w-[13px] stroke-[2.2]" />
-															</span>
-														{:else}
-															<span class="inline-flex h-[13px] w-[13px] items-center justify-center text-text-soft" aria-hidden="true">
-																<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
-															</span>
-														{/if}
-													</button>
-													{#if openTextDropdownDocId === result.docId}
-														<div
-															class="texoro-textos-dropdown absolute right-0 top-[calc(100%+4px)] z-20 max-h-[min(300px,calc(100vh-24px))] min-w-[220px] max-w-[320px] overflow-y-auto rounded-[8px] border border-border-accent-blue bg-white p-1.5 font-['Roboto',sans-serif] shadow-[0_10px_28px_rgba(7,36,110,0.16)]"
-														>
-															{#each textLinks as link}
-																<a
-																	href={link.href}
-																	data-sveltekit-preload-data={link.kind === 'bicuve' ? 'off' : undefined}
-																	class="grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-2 rounded-[6px] px-2.5 py-[9px] text-[12px] font-normal text-text-main no-underline transition-all hover:bg-surface-accent-blue hover:text-text-main hover:no-underline focus:bg-surface-accent-blue focus:text-text-main focus:no-underline focus:outline-none focus-visible:bg-surface-accent-blue focus-visible:text-text-main focus-visible:no-underline focus-visible:outline-none"
-																	target="_blank"
-																	rel="noopener noreferrer"
-																>
-																	<span class="inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-brand-blue-dark" aria-hidden="true">
-																		{#if link.kind === 'bicuve'}
-																			<BookOpen class="h-[14px] w-[14px] stroke-[2.1]" />
-																		{:else}
-																			<ExternalLink class="h-[14px] w-[14px] stroke-[2.1]" />
-																		{/if}
-																	</span>
-																	<span class="block min-w-0 whitespace-normal break-words leading-[1.35]">{link.label}</span>
-																	<span class="mt-[2px] inline-flex h-3 w-3 flex-none items-center justify-center text-text-soft" aria-hidden="true">
-																		<ChevronRight class="h-3 w-3 stroke-[2.1]" />
-																	</span>
-																</a>
-															{/each}
-														</div>
-													{/if}
-												</div>
-											{:else}
-												<span
-													class="grid min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 rounded-[8px] border border-[rgba(91,111,132,0.22)] bg-[#f8f9fb] px-[10px] py-2 text-left font-['Roboto',sans-serif] text-[12px] font-normal text-[rgba(73,90,108,0.62)] opacity-[0.78]"
-													aria-disabled="true"
-													title="Sin acceso al texto"
-												>
-													<span class="inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-[rgba(114,130,145,0.75)]" aria-hidden="true">
-														<FolderOpen class="h-[14px] w-[14px] stroke-[2.1]" />
-													</span>
-													<span class="block overflow-hidden text-ellipsis whitespace-nowrap leading-[1.2] text-[0.82rem]">Acceso al texto</span>
-													<span class="inline-flex h-[13px] w-[13px] items-center justify-center text-[rgba(114,130,145,0.75)]" aria-hidden="true">
-														<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
-													</span>
-												</span>
-											{/if}
-											<span class="w-fit shrink-0 rounded-full bg-surface-accent-blue px-2.5 py-1 font-['Roboto',sans-serif] text-[0.8rem] font-semibold whitespace-nowrap text-brand-blue-dark">
-												{numberFormatter.format(resultOccurrences)} {resultOccurrences === 1 ? 'ocurrencia' : 'ocurrencias'}
-											</span>
-										</div>
+										<span class="w-fit max-w-full rounded-full bg-surface-accent-blue px-2.5 py-1 text-center font-['Roboto',sans-serif] text-[0.8rem] font-semibold whitespace-normal text-brand-blue-dark sm:justify-self-end">
+											{numberFormatter.format(resultOccurrences)} {resultOccurrences === 1 ? 'ocurrencia' : 'ocurrencias'}
+										</span>
 									</div>
-									{#if result.meta}
-										{@render resultMetadataBlock(result.meta, metadataLine)}
-									{:else}
-										<p class="m-0 text-[0.86rem] leading-[1.35] text-text-soft">{metadataLine}</p>
-									{/if}
+									{@render resultMetaDisclosure(result.meta, metadataLine, result.docId, textLinks)}
 								</div>
 
 								<div class="px-4 py-3">
@@ -3671,7 +3708,7 @@
 						{/each}
 					</ul>
 					{#if resultPageCount > 1}
-						<div class="flex flex-wrap items-center justify-end gap-2">
+						<div class="flex flex-wrap items-center justify-center gap-2">
 							<AppButton
 								type="button"
 								variant="secondary"
@@ -3715,6 +3752,7 @@
 </div>
 
 {#if occurrenceModal}
+	{@const occurrenceTextLinks = resultTextLinks(occurrenceModal.result)}
 	<div class="fixed inset-0 z-40 flex items-center justify-center bg-black/45 px-3 py-4">
 		<button
 			type="button"
@@ -3730,7 +3768,7 @@
 			aria-label={`Ocurrencias de ${formatMatchDisplayLabel(occurrenceModal.assignment.match)}`}
 			tabindex="-1"
 		>
-			<div class="relative grid gap-3 bg-surface-soft px-4 py-3 sm:gap-5">
+			<div class="relative grid gap-3 bg-surface-soft px-4 py-3 sm:gap-4">
 				<div class="min-w-0 pr-11">
 					<div class="min-w-0">
 						<h3 class="m-0 min-w-0 font-['Roboto',sans-serif] text-[1.08rem] leading-[1.25] font-semibold text-brand-blue-dark">
@@ -3758,14 +3796,13 @@
 				>
 					<X class="h-4 w-4" aria-hidden="true" />
 				</button>
-				<div class="pt-1" class:texoro-modal-metadata--hidden-mobile={occurrenceModalScrolled}>
-					{#if occurrenceModal.result.meta}
-						{@render resultMetadataBlock(occurrenceModal.result.meta, resultMetadataLine(occurrenceModal.result))}
-					{:else}
-						<p class="m-0 text-[0.86rem] leading-[1.35] text-text-soft">{resultMetadataLine(occurrenceModal.result)}</p>
+				<div class="flex min-w-0 max-w-full flex-wrap items-center gap-2">
+					{#if occurrenceModal.details}
+						<span class="w-fit shrink-0 rounded-full bg-surface-accent-blue px-2.5 py-1 font-['Roboto',sans-serif] text-[0.8rem] font-semibold whitespace-nowrap text-brand-blue-dark">
+							{numberFormatter.format(occurrenceModal.details.count)}
+							{occurrenceModal.details.count === 1 ? 'ocurrencia' : 'ocurrencias'}
+						</span>
 					{/if}
-				</div>
-				<div class="flex flex-wrap items-center gap-2">
 					<span
 						class="inline-flex max-w-full items-center gap-1 overflow-hidden rounded-full px-2.5 py-1 font-['Roboto',sans-serif] text-[0.82rem] font-semibold whitespace-nowrap"
 						style={occurrenceModal.assignment.chipStyle}
@@ -3782,21 +3819,13 @@
 							</span>
 						{/each}
 					</span>
-					{#if occurrenceModal.details}
-						<span class="w-fit shrink-0 rounded-full bg-surface-accent-blue px-2.5 py-1 font-['Roboto',sans-serif] text-[0.8rem] font-semibold whitespace-nowrap text-brand-blue-dark">
-							{numberFormatter.format(occurrenceModal.details.count)}
-							{occurrenceModal.details.count === 1 ? 'ocurrencia' : 'ocurrencias'}
-						</span>
-					{/if}
+				</div>
+				<div>
+					{@render resultMetaDisclosure(occurrenceModal.result.meta, resultMetadataLine(occurrenceModal.result), occurrenceModal.result.docId, occurrenceTextLinks)}
 				</div>
 			</div>
 
-			<div
-				class="min-h-0 overflow-auto overscroll-contain px-4 pt-3 pb-6"
-				onscroll={(event) => {
-					occurrenceModalScrolled = event.currentTarget.scrollTop > 8;
-				}}
-			>
+			<div class="min-h-0 overflow-auto overscroll-contain px-4 pt-3 pb-6">
 				{#if occurrenceLoading}
 					<p class="m-0 text-[0.93rem] text-text-soft">Cargando ocurrencias...</p>
 				{:else if occurrenceError}
@@ -3861,9 +3890,20 @@
 		min-height: 7.25rem;
 	}
 
+	.texoro-result-disclosure > summary::-webkit-details-marker {
+		display: none;
+	}
+
 	@media (max-width: 639px) {
-		.texoro-modal-metadata--hidden-mobile {
-			display: none;
+		.texoro-more-button {
+			flex-wrap: wrap;
+			align-items: flex-start;
+			border-radius: 12px;
+			line-height: 1.2;
+		}
+
+		.texoro-more-button__term {
+			max-width: 100%;
 		}
 	}
 

@@ -10,6 +10,7 @@
 		onclick?: (event: MouseEvent) => void;
 		onfocus?: (event: FocusEvent) => void;
 		onpointerenter?: (event: PointerEvent) => void;
+		ontouchstart?: (event: TouchEvent) => void;
 		title?: string;
 		ariaPressed?: boolean;
 		children?: Snippet;
@@ -24,6 +25,7 @@
 		onclick = () => {},
 		onfocus = () => {},
 		onpointerenter = () => {},
+		ontouchstart = () => {},
 		title = '',
 		ariaPressed = false,
 		children
@@ -54,6 +56,7 @@
 		title={title || undefined}
 		{onfocus}
 		{onpointerenter}
+		{ontouchstart}
 		onclick={(event) => {
 			if (disabled) {
 				event.preventDefault();
@@ -65,7 +68,7 @@
 		{@render children?.()}
 	</a>
 {:else}
-	<button type={type} class={classes} {disabled} {onclick} {onfocus} {onpointerenter} aria-pressed={ariaPressed ? 'true' : undefined} title={title || undefined}>
+	<button type={type} class={classes} {disabled} {onclick} {onfocus} {onpointerenter} {ontouchstart} aria-pressed={ariaPressed ? 'true' : undefined} title={title || undefined}>
 		{@render children?.()}
 	</button>
 {/if}

@@ -208,16 +208,16 @@
 					<div class="rounded-card border border-border-accent-blue bg-white p-1.5">
 						<button
 							type="button"
-							class="flex w-full items-center justify-between rounded-md px-2.5 py-2 text-left text-[0.9rem] font-medium text-brand-blue transition hover:bg-surface-accent-blue focus-visible:outline-2 focus-visible:outline-brand-blue/20"
+							class="flex w-full items-center justify-between rounded-md px-2.5 py-2 text-left text-[0.9rem] font-medium text-brand-blue transition outline-none ring-0 hover:bg-surface-accent-blue focus:outline-none focus:ring-0 focus-visible:bg-surface-accent-blue focus-visible:outline-none focus-visible:ring-0"
 							aria-expanded={mobileMoreInfoOpen ? 'true' : 'false'}
 							aria-controls="mobile-more-info"
 							onclick={() => {
 								mobileMoreInfoOpen = !mobileMoreInfoOpen;
 							}}
 						>
-							<span>Más información</span>
+							<span class="pointer-events-none">Más información</span>
 							<ChevronDown
-								class={`h-4 w-4 transition-transform ${mobileMoreInfoOpen ? 'rotate-180' : ''}`}
+								class={`pointer-events-none h-4 w-4 transition-transform ${mobileMoreInfoOpen ? 'rotate-180' : ''}`}
 								aria-hidden="true"
 							/>
 						</button>

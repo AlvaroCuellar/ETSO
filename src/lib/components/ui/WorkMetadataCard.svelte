@@ -74,27 +74,15 @@
 				.filter((member) => member.authorName.length > 0)
 		);
 		if (set.unresolved || authors.length === 0) {
-			return [{ kind: 'text', value: 'Obra sin atribución tradicional determinada.' }];
+			return [{ kind: 'text', value: 'Sin atribución tradicional determinada' }];
 		}
 		if (authors.length === 1) {
-			return [
-				{ kind: 'text', value: 'Obra atribuida a ' },
-				...formatAuthorListParts(authors, 'y'),
-				{ kind: 'text', value: '.' }
-			];
+			return [...formatAuthorListParts(authors, 'y')];
 		}
 		if (set.connector === 'and') {
-			return [
-				{ kind: 'text', value: 'Obra atribuida a la escritura en colaboración entre ' },
-				...formatAuthorListParts(authors, 'y'),
-				{ kind: 'text', value: '.' }
-			];
+			return [...formatAuthorListParts(authors, 'y')];
 		}
-		return [
-			{ kind: 'text', value: 'Obra atribuida a ' },
-			...formatAuthorListParts(authors, 'o'),
-			{ kind: 'text', value: '.' }
-		];
+		return [...formatAuthorListParts(authors, 'o')];
 	};
 
 	const buildStylemetryAttributionParts = (set: AttributionSet): ResultTextPart[] => {
@@ -183,10 +171,10 @@
 
 	<dl class="m-0 grid gap-x-8 gap-y-4 md:grid-cols-2">
 		<div class="grid content-start gap-1.5">
-			<dt class="m-0 font-ui text-[0.72rem] font-bold uppercase tracking-[0.06em] text-text-accent-purple">
+			<dt class="m-0 font-ui text-[0.72rem] font-bold uppercase tracking-[0.05em] text-text-soft">
 				Atribución tradicional
 			</dt>
-			<dd class="m-0 text-[0.97rem] leading-[1.65] text-text-main">
+			<dd class="m-0 font-ui text-[0.97rem] leading-[1.65] text-text-main">
 				{#each traditionalAttributionParts as part}
 					{#if part.kind === 'author' && part.authorId}
 						<a
@@ -203,14 +191,13 @@
 		</div>
 
 		<div class="grid content-start gap-1.5">
-			<dt class="m-0 font-ui text-[0.72rem] font-bold uppercase tracking-[0.06em] text-text-accent-purple">
+			<dt class="m-0 font-ui text-[0.72rem] font-bold uppercase tracking-[0.05em] text-text-soft">
 				Atribución estilometría
 			</dt>
-			<dd class="m-0 text-[0.97rem] leading-[1.65] text-text-main">
+			<dd class="m-0 font-ui text-[0.97rem] leading-[1.65] text-text-main">
 				{#if work.stylometryAttribution.unresolved || work.stylometryAttribution.groups.length === 0}
-					Sin resultados estilométricos disponibles.
+					Sin resultados estilométricos disponibles
 				{:else}
-					<span class="mr-1">Análisis estilométrico:</span>
 					<span class="inline-flex flex-wrap items-center gap-x-2 gap-y-1 align-baseline">
 						{#each work.stylometryAttribution.groups as group, groupIndex}
 							<span class="inline-flex flex-wrap items-center gap-x-2 gap-y-1">
@@ -244,23 +231,22 @@
 							{/if}
 						{/each}
 					</span>
-					<span>.</span>
 				{/if}
 			</dd>
 		</div>
 
 		<div class="grid content-start gap-1.5">
-			<dt class="m-0 font-ui text-[0.72rem] font-bold uppercase tracking-[0.06em] text-text-accent-purple">
+			<dt class="m-0 font-ui text-[0.72rem] font-bold uppercase tracking-[0.05em] text-text-soft">
 				Género
 			</dt>
-			<dd class="m-0 text-[0.97rem] leading-[1.65] text-text-main">{work.genre}</dd>
+			<dd class="m-0 font-ui text-[0.97rem] leading-[1.65] text-text-main">{work.genre}</dd>
 		</div>
 
 		<div class="grid content-start gap-1.5">
-			<dt class="m-0 font-ui text-[0.72rem] font-bold uppercase tracking-[0.06em] text-text-accent-purple">
+			<dt class="m-0 font-ui text-[0.72rem] font-bold uppercase tracking-[0.05em] text-text-soft">
 				Procedencia
 			</dt>
-			<dd class="m-0 text-[0.97rem] leading-[1.65] text-text-main">
+			<dd class="m-0 font-ui text-[0.97rem] leading-[1.65] text-text-main">
 				{@html renderInlineItalicsHtml(procedeValue)}
 			</dd>
 		</div>

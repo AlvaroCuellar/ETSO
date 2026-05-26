@@ -48,9 +48,9 @@
 	};
 	const attributionBlockClass = 'mb-4 grid gap-3 rounded-[10px] bg-surface-subtle px-[0.85rem] py-[0.85rem] last:mb-0 md:px-4 md:py-4';
 	const attributionHeadingClass =
-		'm-0 font-ui text-[0.8rem] font-bold uppercase tracking-[0.04em] text-text-accent-purple';
+		'm-0 font-ui text-[0.72rem] font-bold uppercase tracking-[0.05em] text-text-soft';
 	const actionLinkClass =
-		'grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-[0.65rem] rounded-lg border-0 bg-white px-[0.85rem] py-3 text-inherit no-underline transition hover:bg-surface-accent-blue hover:no-underline';
+		'group grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3.5 rounded-lg border-0 bg-white px-[0.85rem] py-3 text-inherit no-underline transition hover:no-underline';
 </script>
 
 {#snippet textAccessActions()}
@@ -62,7 +62,7 @@
 				target={link.external ? '_blank' : undefined}
 				rel={link.external ? 'noopener noreferrer' : undefined}
 			>
-				<div class="inline-flex items-center justify-center text-brand-blue" aria-hidden="true">
+				<div class="inline-flex items-center justify-center text-text-soft transition-colors group-hover:text-brand-blue-dark" aria-hidden="true">
 					{#if link.kind === 'bicuve'}
 						<BookOpen class="h-[0.9rem] w-[0.9rem] stroke-2" />
 					{:else}
@@ -71,14 +71,14 @@
 				</div>
 				<div class="min-w-0 justify-self-start text-left">
 					{#if link.kind === 'bicuve'}
-						<div class="text-[0.93rem] font-semibold text-brand-blue-dark">{link.label}</div>
-						<div class="text-[0.78rem] text-text-soft">BICUVE</div>
+						<div class="text-[0.93rem] font-semibold text-text-soft transition-colors group-hover:text-brand-blue-dark">{link.label}</div>
+						<div class="text-[0.78rem] text-text-soft transition-colors group-hover:text-brand-blue-dark">BICUVE</div>
 					{:else}
-						<div class="text-[0.93rem] font-semibold text-brand-blue-dark">Leer texto</div>
-						<div class="text-[0.78rem] text-text-soft">{link.label}</div>
+						<div class="text-[0.93rem] font-semibold text-text-soft transition-colors group-hover:text-brand-blue-dark">Leer texto</div>
+						<div class="text-[0.78rem] text-text-soft transition-colors group-hover:text-brand-blue-dark">{link.label}</div>
 					{/if}
 				</div>
-				<div class="text-text-accent-purple" aria-hidden="true">
+				<div class="text-text-soft transition-colors group-hover:text-brand-blue-dark" aria-hidden="true">
 					<ChevronRight class="h-[0.78rem] w-[0.78rem] stroke-2" />
 				</div>
 			</a>
@@ -130,9 +130,13 @@
 												{#each group.members as member, memberIndex}
 													<a
 														href={`/autores/${member.authorId}`}
-														class="font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline"
-														>{member.authorName}</a
+														class="inline-flex items-baseline gap-1 font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline"
 													>
+														<span>{member.authorName}</span>
+														<span class="hidden flex-none translate-y-[2px] text-text-soft max-md:inline-flex" aria-hidden="true">
+															<ExternalLink class="h-3 w-3" />
+														</span>
+													</a>
 													{#if memberIndex < group.members.length - 1}
 														<span
 															class="inline-flex rounded bg-surface-accent-purple px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-text-accent-purple lowercase"
@@ -175,9 +179,13 @@
 												{#each group.members as member, memberIndex}
 													<a
 														href={`/autores/${member.authorId}`}
-														class="font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline"
-														>{member.authorName}</a
+														class="inline-flex items-baseline gap-1 font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline"
 													>
+														<span>{member.authorName}</span>
+														<span class="hidden flex-none translate-y-[2px] text-text-soft max-md:inline-flex" aria-hidden="true">
+															<ExternalLink class="h-3 w-3" />
+														</span>
+													</a>
 													{#if member.confidence}
 														<span
 															class={`inline-flex rounded-full px-[0.55rem] py-[0.24rem] text-[0.72rem] font-bold tracking-[0.02em] uppercase ${confidenceClass(member.confidence)}`}
@@ -248,9 +256,9 @@
 					<dl class="m-0">
 							<div class="flex flex-col gap-[0.45rem] border-b border-border py-[0.9rem] first:pt-0 last:border-b-0 last:pb-0">
 								<dt
-									class="m-0 flex items-center gap-[0.35rem] text-[0.77rem] font-semibold tracking-[0.03em] text-text-accent-purple uppercase"
+									class="m-0 flex items-center gap-[0.35rem] text-[0.72rem] font-bold tracking-[0.05em] text-text-soft uppercase"
 								>
-									<Drama class="h-[0.82rem] w-[0.82rem] text-text-accent-purple stroke-2" aria-hidden="true" />
+									<Drama class="h-[0.82rem] w-[0.82rem] text-text-soft stroke-2" aria-hidden="true" />
 									Género
 								</dt>
 								<dd class="m-0 text-[0.96rem] text-text-main">{data.work.genre}</dd>
@@ -258,9 +266,9 @@
 
 							<div class="flex flex-col gap-[0.45rem] border-b border-border py-[0.9rem] first:pt-0 last:border-b-0 last:pb-0">
 								<dt
-									class="m-0 flex items-center gap-[0.35rem] text-[0.77rem] font-semibold tracking-[0.03em] text-text-accent-purple uppercase"
+									class="m-0 flex items-center gap-[0.35rem] text-[0.72rem] font-bold tracking-[0.05em] text-text-soft uppercase"
 								>
-									<CircleCheck class="h-[0.82rem] w-[0.82rem] text-text-accent-purple stroke-2" aria-hidden="true" />
+									<CircleCheck class="h-[0.82rem] w-[0.82rem] text-text-soft stroke-2" aria-hidden="true" />
 									Estado del texto
 								</dt>
 								<dd class="m-0 text-[0.96rem] text-text-main">{data.work.textState}</dd>
@@ -268,9 +276,9 @@
 
 							<div class="flex flex-col gap-[0.45rem] border-b border-border py-[0.9rem] first:pt-0 last:border-b-0 last:pb-0">
 								<dt
-									class="m-0 flex items-center gap-[0.35rem] text-[0.77rem] font-semibold tracking-[0.03em] text-text-accent-purple uppercase"
+									class="m-0 flex items-center gap-[0.35rem] text-[0.72rem] font-bold tracking-[0.05em] text-text-soft uppercase"
 								>
-									<Archive class="h-[0.82rem] w-[0.82rem] text-text-accent-purple stroke-2" aria-hidden="true" />
+									<Archive class="h-[0.82rem] w-[0.82rem] text-text-soft stroke-2" aria-hidden="true" />
 									Procedencia
 								</dt>
 								<dd class="m-0 text-[0.96rem] text-text-main">
@@ -280,9 +288,9 @@
 
 							<div class="flex flex-col gap-[0.45rem] border-b border-border py-[0.9rem] first:pt-0 last:border-b-0 last:pb-0">
 								<dt
-									class="m-0 flex items-center gap-[0.35rem] text-[0.77rem] font-semibold tracking-[0.03em] text-text-accent-purple uppercase"
+									class="m-0 flex items-center gap-[0.35rem] text-[0.72rem] font-bold tracking-[0.05em] text-text-soft uppercase"
 								>
-									<Calendar class="h-[0.82rem] w-[0.82rem] text-text-accent-purple stroke-2" aria-hidden="true" />
+									<Calendar class="h-[0.82rem] w-[0.82rem] text-text-soft stroke-2" aria-hidden="true" />
 									Fecha de adición
 								</dt>
 								<dd class="m-0 text-[0.96rem] text-text-main">{data.work.addedOn}</dd>

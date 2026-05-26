@@ -50,7 +50,8 @@
 
 	const isMobileTableView = $derived(mobileView === 'table');
 
-	const resultsShellClass = 'works-table-results min-w-0 w-full max-w-full';
+	const resultsShellClass =
+		'works-table-results min-w-0 w-full max-w-full max-md:mx-[-8px] max-md:w-[calc(100%+16px)] max-md:max-w-[calc(100%+16px)]';
 	const tableClass = $derived.by(() =>
 		`${mode === 'informe' ? 'obra-table-shared--informe' : 'obra-table-shared--standard'} obra-table-shared w-full min-w-[980px] border-collapse text-[13px] ${
 			isMobileTableView ? 'max-md:table max-md:w-[980px]' : 'max-md:block max-md:min-w-0'
@@ -65,7 +66,7 @@
 			}`
 	);
 	const tableHeadClass = $derived.by(() =>
-		`bg-brand-blue-dark text-white ${isMobileTableView ? '' : 'max-md:hidden'}`
+		`bg-brand-blue text-white ${isMobileTableView ? '' : 'max-md:hidden'}`
 	);
 	const tableBodyClass = $derived.by(() => (isMobileTableView ? '' : 'max-md:block'));
 	const detailColspan = $derived.by(() => (mode === 'informe' ? 7 : 5));
@@ -76,7 +77,7 @@
 			}`
 	);
 	const mobileCellLabelClass = $derived.by(() =>
-		`mb-[6px] hidden text-[12px] font-semibold uppercase text-[#5a7a8a] ${
+		`mb-[6px] hidden text-[12px] font-semibold uppercase text-text-soft ${
 			isMobileTableView ? '' : 'max-md:block'
 		}`
 	);
@@ -123,7 +124,7 @@
 		if (isMobileTableView) {
 			return `${base} ${expanded ? 'expanded border-b-border-accent-blue' : ''}`;
 		}
-		return `${base} max-md:block max-md:rounded-[8px] max-md:border max-md:border-border max-md:bg-white max-md:p-2 ${
+		return `${base} max-md:block max-md:rounded-card max-md:border max-md:border-border max-md:bg-white max-md:p-2 ${
 			expanded
 				? 'expanded border-b-border-accent-blue max-md:mb-0 max-md:rounded-b-none max-md:border-b-0'
 				: 'max-md:mb-3'
@@ -140,7 +141,7 @@
 		const displayClass = expanded ? (isMobileTableView ? 'table-row' : 'table-row max-md:block') : 'hidden';
 		const mobileCardClass = isMobileTableView
 			? ''
-			: 'max-md:mb-3 max-md:rounded-b-[8px] max-md:border max-md:border-t-0 max-md:border-border max-md:bg-white';
+			: 'max-md:mb-3 max-md:rounded-b-card max-md:border max-md:border-t-0 max-md:border-border max-md:bg-white';
 		return `${displayClass} detail-row border-b border-border bg-white ${mobileCardClass}`;
 	};
 
@@ -658,7 +659,7 @@
 										</button>
 										{#if openDropdownRowId === row.rowId}
 											<div
-												class="textos-dropdown absolute left-0 top-[calc(100%+4px)] z-10 max-h-[min(300px,calc(100vh-24px))] min-w-full max-w-[320px] overflow-y-auto rounded-[8px] border border-border-accent-blue bg-white p-1.5 font-['Roboto',sans-serif] shadow-[0_10px_28px_rgba(7,36,110,0.16)] max-md:right-0 max-md:max-w-none"
+												class="textos-dropdown absolute left-0 top-[calc(100%+4px)] z-10 max-h-[min(300px,calc(100vh-24px))] min-w-full max-w-[320px] overflow-x-hidden overflow-y-auto rounded-[8px] border border-border-accent-blue bg-white p-1.5 font-['Roboto',sans-serif] shadow-[0_10px_28px_rgba(7,36,110,0.16)] max-md:w-full max-md:min-w-0 max-md:max-w-full"
 											>
 												{#each row.work.textLinks as link}
 													<a
@@ -767,14 +768,14 @@
 							<div class={detailContentClass}>
 								{#if hasShortSummary(row.work)}
 									<div class="detail-section detail-section--resumen mb-5 border-b border-[#dfe5ee] pb-3 last:mb-0">
-										<div class="detail-section-title mb-2.5 text-[12px] font-semibold tracking-[0.5px] text-[#5a7a8a] uppercase">
+										<div class="detail-section-title mb-2.5 text-[12px] font-semibold tracking-[0.5px] text-text-soft uppercase">
 											Resumen breve automático
 										</div>
 										<p class="resumen-text mb-3 text-[14px] leading-[1.7] text-text-soft">{getShortSummaryText(row.work)}</p>
 									</div>
 								{:else if summaryState?.status === 'loading'}
 									<div class="detail-section detail-section--resumen mb-5 border-b border-[#dfe5ee] pb-3 last:mb-0">
-										<div class="detail-section-title mb-2.5 text-[12px] font-semibold tracking-[0.5px] text-[#5a7a8a] uppercase">
+										<div class="detail-section-title mb-2.5 text-[12px] font-semibold tracking-[0.5px] text-text-soft uppercase">
 											Resumen breve automático
 										</div>
 										<p class="resumen-text mb-3 text-[14px] leading-[1.7] text-text-soft italic">Cargando resumen...</p>
@@ -790,7 +791,7 @@
 								<div class="detail-section mb-5 last:mb-0">
 									<div class={detailMetadataGridClass}>
 										<div class="metadata-item flex flex-col gap-1">
-											<span class="metadata-label mb-1 block text-[12px] font-semibold text-[#5a7a8a] uppercase">
+											<span class="metadata-label mb-1 block text-[12px] font-semibold text-text-soft uppercase">
 												Texto empleado
 											</span>
 											{#if row.work.origin}
@@ -803,7 +804,7 @@
 										</div>
 
 										<div class="metadata-item flex flex-col gap-1">
-											<span class="metadata-label mb-1 block text-[12px] font-semibold text-[#5a7a8a] uppercase">
+											<span class="metadata-label mb-1 block text-[12px] font-semibold text-text-soft uppercase">
 												Estado del texto
 											</span>
 											{#if row.work.textState}
@@ -814,7 +815,7 @@
 										</div>
 
 										<div class="metadata-item flex flex-col gap-1">
-											<span class="metadata-label mb-1 block text-[12px] font-semibold text-[#5a7a8a] uppercase">
+											<span class="metadata-label mb-1 block text-[12px] font-semibold text-text-soft uppercase">
 												Fecha de adición o modificación
 											</span>
 											{#if row.work.addedOn}
@@ -877,11 +878,11 @@
 	@media (max-width: 767.98px) {
 		.works-table-results[data-mobile-view='table'] {
 			contain: inline-size;
-			overflow-x: hidden;
-			overflow-x: clip;
-			width: 100%;
-			max-width: 100%;
+			width: calc(100% + 16px);
+			max-width: calc(100% + 16px);
 			min-width: 0;
+			margin-right: -8px;
+			margin-left: -8px;
 		}
 
 		.works-table-results[data-mobile-view='table'] .obra-table-shared-container {

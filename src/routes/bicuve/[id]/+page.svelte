@@ -7,6 +7,8 @@
 	import WorkMetadataCard from '$lib/components/ui/WorkMetadataCard.svelte';
 	import bicuveLogo from '$lib/assets/logos/bicuve.png';
 	import byNcLogo from '$lib/assets/logos/by-nc.svg';
+	import List from 'lucide-svelte/icons/list';
+	import X from 'lucide-svelte/icons/x';
 	import {
 		formatDisplayWorkTitle,
 		formatPrefixedDisplayWorkTitleHtml
@@ -94,6 +96,8 @@
 					: 'text-text-soft hover:bg-surface-soft hover:text-brand-blue-dark'
 		} ${isStart ? 'text-[0.78rem]' : 'text-[0.82rem] leading-[1.3]'}`;
 
+	let isMobileMenuOpen = $state(false);
+
 	onMount(() => {
 		if (typeof window === 'undefined') return;
 
@@ -176,7 +180,7 @@
 
 		<CitationSuggestionCard class="w-full" citation={data.citation} allowHtml />
 
-		<div class="grid place-items-center pt-2">
+		<div id="bicuve-text-start" class="grid place-items-center pt-2 scroll-mt-28">
 			<img src={bicuveLogo} alt="Logo BICUVE" class="h-auto w-[min(24rem,78vw)]" />
 		</div>
 
@@ -216,8 +220,7 @@
 			</nav>
 
 			<div
-				id="bicuve-text-start"
-				class="mx-auto grid w-full max-w-[82ch] scroll-mt-28 gap-4 px-0 font-reading text-base leading-[1.8] text-text-main md:px-[clamp(0.5rem,2.8vw,2.25rem)]"
+				class="mx-auto grid w-full max-w-[82ch] gap-4 px-0 font-reading text-base leading-[1.8] text-text-main md:px-[clamp(0.5rem,2.8vw,2.25rem)]"
 			>
 				{#each textSegments as segment}
 					{#if segment.type === 'jornada'}
@@ -237,3 +240,47 @@
 		</div>
 	</section>
 </div>
+
+{#if isMobileMenuOpen}
+	<!-- Sombra o panel para el menú móvil -->
+	<div
+		class="shadow-strong border-border fixed right-6 bottom-[4.5rem] z-50 grid gap-1 rounded-xl border bg-white p-3 font-ui lg:hidden"
+	>
+		<a
+			href="#bicuve-text-start"
+			class={navLinkClass('bicuve-text-start', true)}
+			onclick={() => {
+				activeTextAnchor = 'bicuve-text-start';
+				isMobileMenuOpen = false;
+			}}
+		>
+			Inicio
+		</a>
+		{#each jornadaMarks as mark}
+			<a
+				href={`#${mark.id}`}
+				class={navLinkClass(mark.id)}
+				onclick={() => {
+					activeTextAnchor = mark.id;
+					isMobileMenuOpen = false;
+				}}
+			>
+				{mark.label}
+			</a>
+		{/each}
+	</div>
+{/if}
+
+<button
+	type="button"
+	class="shadow-strong hover:bg-brand-blue-dark focus-visible:ring-brand-blue-dark fixed right-6 bottom-6 z-50 grid h-12 w-12 place-items-center rounded-full bg-brand-blue text-white transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none lg:hidden"
+	aria-label={isMobileMenuOpen ? 'Cerrar navegación de jornadas' : 'Abrir navegación de jornadas'}
+	aria-expanded={isMobileMenuOpen}
+	onclick={() => (isMobileMenuOpen = !isMobileMenuOpen)}
+>
+	{#if isMobileMenuOpen}
+		<X class="h-[1.4rem] w-[1.4rem] stroke-[2.5px]" />
+	{:else}
+		<List class="h-[1.4rem] w-[1.4rem] stroke-[2.5px]" />
+	{/if}
+</button>

@@ -97,6 +97,8 @@
 	let resultsRequestId = 0;
 	let statsRequest: Promise<void> | null = null;
 	let filterOptionsRequest: Promise<void> | null = null;
+	const worksPayloadCache = new Map<string, ExamenWorksPayload>();
+	const worksPayloadRequests = new Map<string, Promise<ExamenWorksPayload>>();
 
 	const mergeOptions = (base: TokenOption[], next: TokenOption[]): TokenOption[] => {
 		const byId = new Map<string, TokenOption>();
@@ -306,6 +308,41 @@
 		return query ? `/api/examen-autorias/works?${query}` : '/api/examen-autorias/works';
 	};
 
+	const fetchWorksPayload = (params: URLSearchParams): Promise<ExamenWorksPayload> => {
+		const url = buildWorksApiUrl(params);
+		const cached = worksPayloadCache.get(url);
+		if (cached) return Promise.resolve(cached);
+		const existing = worksPayloadRequests.get(url);
+		if (existing) return existing;
+
+		const request = (async () => {
+			const response = await fetch(url);
+			if (!response.ok) throw new Error(`No se pudieron cargar los resultados (${response.status}).`);
+			const payload = (await response.json()) as ExamenWorksPayload;
+			worksPayloadCache.set(url, payload);
+			return payload;
+		})();
+
+		worksPayloadRequests.set(url, request);
+		void request.then(
+			() => {
+				worksPayloadRequests.delete(url);
+			},
+			() => {
+				worksPayloadRequests.delete(url);
+			}
+		);
+		return request;
+	};
+
+	const applyResultsPayload = (payload: ExamenWorksPayload): void => {
+		works = Array.isArray(payload.works) ? payload.works : [];
+		resultsPage = payload.page;
+		pageSize = payload.pageSize;
+		totalPages = payload.totalPages;
+		totalResults = payload.totalResults;
+	};
+
 	const buildPaginationUrl = (page: number): string => {
 		const params = new URLSearchParams();
 		if (data.filters.titulo.trim()) params.set('titulo', data.filters.titulo.trim());
@@ -329,25 +366,23 @@
 		return query ? `/examen-autorias?${query}` : '/examen-autorias';
 	};
 
-	const loadResultsForParams = async (params: URLSearchParams): Promise<void> => {
+	const loadResultsForParams = async (
+		params: URLSearchParams,
+		options: { clearBeforeLoad?: boolean } = {}
+	): Promise<void> => {
+		const { clearBeforeLoad = true } = options;
 		const requestId = ++resultsRequestId;
 		isResultsLoading = true;
 		resultsError = '';
-		works = [];
+		if (clearBeforeLoad) works = [];
 		try {
-			const response = await fetch(buildWorksApiUrl(params));
-			if (!response.ok) throw new Error(`No se pudieron cargar los resultados (${response.status}).`);
-			const payload = (await response.json()) as ExamenWorksPayload;
+			const payload = await fetchWorksPayload(params);
 			if (requestId !== resultsRequestId) return;
-			works = Array.isArray(payload.works) ? payload.works : [];
-			resultsPage = payload.page;
-			pageSize = payload.pageSize;
-			totalPages = payload.totalPages;
-			totalResults = payload.totalResults;
+			applyResultsPayload(payload);
 		} catch (cause) {
 			if (requestId !== resultsRequestId) return;
 			resultsError = cause instanceof Error ? cause.message : 'No se pudieron cargar los resultados.';
-			works = [];
+			if (clearBeforeLoad) works = [];
 			resultsPage = 1;
 			pageSize = data.pageSize;
 			totalPages = 1;
@@ -362,17 +397,21 @@
 		(paginationRegion ?? resultsRegion)?.scrollIntoView({ block: 'start', behavior: 'smooth' });
 	};
 
-	const navigateToUrl = async (url: string, scrollToTable = true): Promise<void> => {
-		isSearching = true;
+	const navigateToUrl = async (
+		url: string,
+		options: { scrollToTable?: boolean; searching?: boolean; clearBeforeLoad?: boolean } = {}
+	): Promise<void> => {
+		const { scrollToTable = true, searching = true, clearBeforeLoad = true } = options;
+		if (searching) isSearching = true;
 		try {
 			await goto(url, { noScroll: true, keepFocus: true });
 			const nextUrl = new URL(url, window.location.origin);
-			await loadResultsForParams(nextUrl.searchParams);
+			await loadResultsForParams(nextUrl.searchParams, { clearBeforeLoad });
 			if (scrollToTable) {
 				await scrollToResults();
 			}
 		} finally {
-			isSearching = false;
+			if (searching) isSearching = false;
 		}
 	};
 
@@ -384,12 +423,25 @@
 
 	const navigateToPage = async (page: number): Promise<void> => {
 		if (page < 1 || page > totalPages || page === resultsPage) return;
-		await navigateToUrl(buildPaginationUrl(page));
+		await navigateToUrl(buildPaginationUrl(page), {
+			scrollToTable: false,
+			searching: false,
+			clearBeforeLoad: false
+		});
+	};
+
+	const prefetchPage = (page: number): void => {
+		if (page < 1 || page > totalPages || page === resultsPage || isResultsLoading) return;
+		const url = buildPaginationUrl(page);
+		const nextUrl = new URL(url, window.location.origin);
+		void fetchWorksPayload(nextUrl.searchParams).catch(() => {
+			// El clic real mostrará el error si sigue ocurriendo.
+		});
 	};
 
 	const clearFilters = async (event: MouseEvent): Promise<void> => {
 		event.preventDefault();
-		await navigateToUrl('/examen-autorias', false);
+		await navigateToUrl('/examen-autorias', { scrollToTable: false });
 	};
 </script>
 
@@ -687,7 +739,7 @@
 													?
 												</span>
 												<span
-													class="invisible absolute top-[calc(100%+8px)] left-0 z-20 w-[min(320px,78vw)] rounded-[6px] border border-border bg-white px-[10px] py-2 text-[12px] leading-[1.35] font-normal text-text-soft opacity-0 shadow-[0_8px_18px_rgba(0,0,0,0.08)] transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
+													class="invisible absolute top-[calc(100%+8px)] left-0 z-20 w-[min(320px,calc(100vw_-_2rem))] max-w-[calc(100vw_-_2rem)] rounded-[6px] border border-border bg-white px-[10px] py-2 text-[12px] leading-[1.35] font-normal text-text-soft opacity-0 shadow-[0_8px_18px_rgba(0,0,0,0.08)] transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
 												>
 													Incluye obras añadidas o modificadas desde esta fecha.
 												</span>
@@ -714,7 +766,7 @@
 													?
 												</span>
 												<span
-													class="invisible absolute top-[calc(100%+8px)] left-0 z-20 w-[min(320px,78vw)] rounded-[6px] border border-border bg-white px-[10px] py-2 text-[12px] leading-[1.35] font-normal text-text-soft opacity-0 shadow-[0_8px_18px_rgba(0,0,0,0.08)] transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
+													class="invisible absolute top-[calc(100%+8px)] left-0 z-20 w-[min(320px,calc(100vw_-_2rem))] max-w-[calc(100vw_-_2rem)] rounded-[6px] border border-border bg-white px-[10px] py-2 text-[12px] leading-[1.35] font-normal text-text-soft opacity-0 shadow-[0_8px_18px_rgba(0,0,0,0.08)] transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
 												>
 													Incluye obras añadidas o modificadas hasta esta fecha.
 												</span>
@@ -738,11 +790,11 @@
 						</div>
 					</div>
 
-					<div class="flex flex-wrap justify-end gap-2">
+					<div class="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:justify-end">
 						<AppButton
 							href="/examen-autorias"
 							variant="secondary"
-							className="!h-[40px] !min-w-[136px] !rounded-[10px] !border-transparent !px-5 !py-2 font-['Roboto',sans-serif] text-[0.9rem] font-semibold tracking-[0.02em] shadow-none"
+							className="!h-[40px] !min-w-0 !w-full !rounded-[10px] !border-transparent !px-3 !py-2 font-['Roboto',sans-serif] text-[0.86rem] font-semibold tracking-[0.02em] shadow-none sm:!min-w-[136px] sm:!w-auto sm:!px-5 sm:text-[0.9rem]"
 							onclick={(event) => {
 								void clearFilters(event);
 							}}
@@ -753,7 +805,7 @@
 							type="submit"
 							variant="primary"
 							disabled={isSearching}
-							className="!h-[40px] !min-w-[136px] gap-2 !rounded-[10px] !px-5 !py-2 font-['Roboto',sans-serif] text-[0.9rem] font-semibold tracking-[0.02em]"
+							className="!h-[40px] !min-w-0 !w-full gap-2 !rounded-[10px] !px-3 !py-2 font-['Roboto',sans-serif] text-[0.86rem] font-semibold tracking-[0.02em] sm:!min-w-[136px] sm:!w-auto sm:!px-5 sm:text-[0.9rem]"
 						>
 							{#if isSearching}
 								<LoaderCircle class="h-4.5 w-4.5 animate-spin" />
@@ -796,6 +848,9 @@
 									disabled={resultsPage <= 1 || isSearching || isResultsLoading}
 									className="!h-9 !w-9 !rounded-full !border-transparent !bg-transparent !p-0 !text-brand-blue-dark shadow-none hover:!bg-surface-soft"
 									title="Página anterior"
+									onfocus={() => prefetchPage(resultsPage - 1)}
+									onpointerenter={() => prefetchPage(resultsPage - 1)}
+									ontouchstart={() => prefetchPage(resultsPage - 1)}
 									onclick={() => {
 										void navigateToPage(resultsPage - 1);
 									}}
@@ -813,6 +868,9 @@
 									disabled={resultsPage >= totalPages || isSearching || isResultsLoading}
 									className="!h-9 !w-9 !rounded-full !border-transparent !bg-transparent !p-0 !text-brand-blue-dark shadow-none hover:!bg-surface-soft"
 									title="Página siguiente"
+									onfocus={() => prefetchPage(resultsPage + 1)}
+									onpointerenter={() => prefetchPage(resultsPage + 1)}
+									ontouchstart={() => prefetchPage(resultsPage + 1)}
 									onclick={() => {
 										void navigateToPage(resultsPage + 1);
 									}}
@@ -824,7 +882,7 @@
 						{/if}
 					</div>
 				{/if}
-				{#if isResultsLoading}
+				{#if isResultsLoading && works.length === 0}
 					<div class="flex items-center gap-3 rounded-[12px] border border-border-accent-blue bg-white px-4 py-5 text-brand-blue-dark shadow-[0_6px_16px_rgba(25,46,80,0.07)]">
 						<LoaderCircle class="h-5 w-5 animate-spin" aria-hidden="true" />
 						<p class="m-0 font-['Roboto',sans-serif] text-[0.95rem] font-semibold">Cargando resultados...</p>
@@ -843,9 +901,12 @@
 						<AppButton
 							type="button"
 							variant="secondary"
-							disabled={resultsPage <= 1 || isSearching}
+							disabled={resultsPage <= 1 || isSearching || isResultsLoading}
 							className="!h-9 !w-9 !rounded-full !border-transparent !bg-transparent !p-0 !text-brand-blue-dark shadow-none hover:!bg-surface-soft"
 							title="Página anterior"
+							onfocus={() => prefetchPage(resultsPage - 1)}
+							onpointerenter={() => prefetchPage(resultsPage - 1)}
+							ontouchstart={() => prefetchPage(resultsPage - 1)}
 							onclick={() => {
 								void navigateToPage(resultsPage - 1);
 							}}
@@ -860,9 +921,12 @@
 						<AppButton
 							type="button"
 							variant="secondary"
-							disabled={resultsPage >= totalPages || isSearching}
+							disabled={resultsPage >= totalPages || isSearching || isResultsLoading}
 							className="!h-9 !w-9 !rounded-full !border-transparent !bg-transparent !p-0 !text-brand-blue-dark shadow-none hover:!bg-surface-soft"
 							title="Página siguiente"
+							onfocus={() => prefetchPage(resultsPage + 1)}
+							onpointerenter={() => prefetchPage(resultsPage + 1)}
+							ontouchstart={() => prefetchPage(resultsPage + 1)}
 							onclick={() => {
 								void navigateToPage(resultsPage + 1);
 							}}

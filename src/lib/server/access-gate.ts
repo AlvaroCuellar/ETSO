@@ -26,7 +26,8 @@ const safeCompare = (left: string, right: string): boolean => {
 
 export const getAccessPassword = (): string => privateEnv.SITE_ACCESS_PASSWORD?.trim() ?? '';
 
-export const isAccessGateEnabled = (): boolean => getAccessPassword().length > 0;
+export const isAccessGateEnabled = (): boolean =>
+	privateEnv.SITE_ACCESS_ENABLED === 'true' && getAccessPassword().length > 0;
 
 export const isAccessPasswordValid = (password: string): boolean => {
 	const expected = getAccessPassword();

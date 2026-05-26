@@ -9,7 +9,7 @@
 	import resumenesHero from '$lib/assets/heros/resumenes.webp';
 	import grafoImage from '$lib/assets/heros/grafo.png';
 	import informesImage from '$lib/assets/heros/informes.png';
-	import ayudaImage from '$lib/assets/heros/ayuda.jpg';
+	import librosHero from '$lib/assets/heros/libros.webp';
 	import fondoEscritura from '$lib/assets/fondos/fondo-escritura.png';
 
 	interface HomeSlide {
@@ -325,25 +325,14 @@
 			<h2 class="font-ui text-[clamp(1.6rem,3.2vw,2.5rem)] leading-[1.15] font-bold">
 				TEXORO: Textos del Siglo de Oro
 			</h2>
-			<p class="mt-3 font-ui text-[clamp(1rem,1.6vw,1.28rem)] font-medium">Búsquedas en el corpus</p>
+			<p class="mt-3 font-ui text-[clamp(1rem,1.6vw,1.28rem)] font-medium">Búsquedas textuales en 3000 obras del Siglo de Oro</p>
 
 			<div class="mt-8 grid gap-5 text-left font-reading text-[1.03rem] leading-[1.72] text-white/95 md:text-center">
 				<p class="m-0">
-					Después de haber recopilado los más de 2800 textos de más de 350 dramaturgos que componen CETSO,
-					queríamos ofrecer a la comunidad la posibilidad de realizar búsquedas internas en ellos. Así surge
-					TEXORO: Textos del Siglo de Oro, donde, a través de la celda "Buscar en TEXORO", se puede consultar
-					en qué obras aparecen las palabras que indiquemos.
+					TEXORO es una plataforma de búsqueda textual que permite consultar de forma unificada un amplio corpus de obras del Siglo de Oro. El recurso reúne cerca de 3000 textos, con más de 38 millones de palabras indexadas y obras de más de 400 autores, y ofrece distintas posibilidades para explorar el patrimonio literario aurisecular desde criterios léxicos, textuales y documentales.
 				</p>
 				<p class="m-0">
-					En estos momentos TEXORO cuenta con los mismos textos que CETSO, pero es nuestra intención que un
-					futuro crezca ofreciendo otros tipos de textos fuera del ámbito teatral. Es por esta razón que le
-					hemos dado una entidad propia dentro del proyecto, alejándonos de los análisis de estilometría del
-					teatro aurisecular.
-				</p>
-				<p class="m-0">
-					Ahora solo es posible realizar búsquedas de palabras en TEXORO, pero estamos trabajando para que se
-					puedan lanzar búsquedas más complejas, como grupos de palabras, y otras opciones de interés, como
-					operadores lógicos o distancias entre las palabras.
+					El buscador permite localizar palabras, frases exactas y patrones con comodines, así como realizar consultas avanzadas mediante la combinación de términos, condiciones de proximidad y filtros por título, género, atribución tradicional, atribución estilométrica o estado del texto. De este modo, TEXORO facilita tanto búsquedas puntuales como exploraciones más complejas sobre la presencia, distribución y relación de palabras o expresiones en el conjunto del corpus.
 				</p>
 			</div>
 
@@ -359,35 +348,69 @@
 	</div>
 </section>
 
-<section class="mx-auto mt-8 w-full max-w-7xl p-5 md:p-6 lg:p-8">
-	<div class="grid items-stretch gap-6 lg:grid-cols-[minmax(16rem,35%)_minmax(0,1fr)] lg:gap-8">
-		<div class="h-full overflow-hidden rounded-card">
-			<img
-				src={ayudaImage}
-				alt="Documentos en un archivo"
-				class="h-full w-full object-cover"
-				loading="lazy"
-			/>
-		</div>
+<section class="mx-auto mt-8 w-full max-w-7xl px-5 md:px-6 lg:px-8">
+	<div class="relative overflow-hidden rounded-card bg-neutral-100 px-5 py-6 text-brand-blue-dark md:px-7 md:py-8 lg:px-10 lg:py-10">
+		<img
+			src={librosHero}
+			alt=""
+			aria-hidden="true"
+			class="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.26]"
+			loading="lazy"
+		/>
+		<div
+			class="pointer-events-none absolute inset-0"
+			style="background-image: linear-gradient(rgba(243, 244, 246, 0.58), rgba(243, 244, 246, 0.58));"
+		></div>
 
-		<div class="grid gap-5 text-[1.02rem] leading-[1.72] text-text-soft">
-			<h2 class="m-0 font-ui text-[clamp(1.4rem,2.6vw,2rem)] leading-[1.2] font-semibold text-brand-blue-dark">
-				¿Cómo te podemos ayudar? ¿Cómo nos puedes ayudar?
-			</h2>
-			<p class="m-0">
-				Podemos ayudarte a explorar los distintos recursos disponibles para el estudio del teatro y la literatura del Siglo de Oro. En Examen de autorías se pueden consultar los informes estilométricos de las obras incorporadas al corpus, con indicios sobre sus posibles relaciones de autoría. TEXORO permite realizar búsquedas textuales sobre cerca de 3000 obras y más de 38 millones de palabras, con opciones para localizar palabras, frases, patrones, combinaciones de términos y relaciones de proximidad. BICUVE ofrece acceso abierto a textos digitales procedentes, en buena medida, de transcripciones automáticas de impresos y manuscritos. Además, los resúmenes automáticos permiten obtener una primera orientación sobre el argumento y el contenido de las obras, siempre como ayuda inicial y no como sustituto de la lectura o del análisis filológico.
-			</p>
-			<p class="m-0">
-				También puedes colaborar con nosotros enviándonos textos del Siglo de Oro que todavía no estén incorporados a nuestros recursos, información bibliográfica, noticias sobre atribuciones, datos sobre testimonios o cualquier material que pueda mejorar el conjunto. La colaboración de investigadores, docentes y especialistas resulta fundamental para seguir ampliando, revisando y corrigiendo la información disponible. Por ello, si encuentras errores, erratas, problemas en los textos, fallos en los resúmenes automáticos o datos que puedan precisarse mejor, te agradeceremos que nos envíes tus sugerencias de corrección. Citar nuestros recursos en publicaciones, trabajos académicos o actividades docentes también nos ayuda a difundir el proyecto y a obtener el apoyo necesario para mantenerlo y ampliarlo.
-			</p>
+		<div class="relative z-10 grid content-start gap-5">
+			<div class="grid gap-2">
+				<h2 class="m-0 font-ui text-[clamp(1.6rem,3.2vw,2.5rem)] leading-[1.15] font-bold">
+					BICUVE
+				</h2>
+				<p class="m-0 font-ui text-[clamp(1rem,1.6vw,1.28rem)] font-medium text-brand-blue">
+					Textos digitales del Siglo de Oro en acceso abierto
+				</p>
+			</div>
+
+			<div class="grid max-w-6xl gap-4 text-[1.03rem] leading-[1.72] text-text-soft">
+				<p class="m-0">
+					BICUVE reúne y pone en acceso abierto una amplia colección de textos digitales del Siglo de Oro. El recurso nace, en buena medida, de las transcripciones automáticas de impresos y manuscritos realizadas para los análisis estilométricos de autoría, así como de materiales revisados, facilitados o contrastados gracias a la colaboración de distintos especialistas. Su objetivo es ofrecer a la comunidad un punto de acceso sencillo a textos que, en muchos casos, permanecían contenidos en documentos antiguos, de difícil manejo o lectura.
+				</p>
+				<p class="m-0">
+					Los textos incorporados a BICUVE no aspiran a sustituir a las ediciones críticas ni presentan siempre la misma calidad ecdótica. Además, en su estado actual no incluyen los nombres de los personajes ni las acotaciones escénicas, sino únicamente los versos limpios de cada obra. Sin embargo, constituyen materiales útiles para la lectura, la consulta, la docencia, la investigación filológica y la exploración computacional del patrimonio literario aurisecular. Con este recurso se quiere favorecer la circulación abierta de estos materiales y facilitar nuevas formas de acceso al teatro y a la literatura del Siglo de Oro.
+				</p>
+			</div>
+
 			<div class="pt-1">
 				<a
-					href="/mas-informacion"
-					class="inline-flex items-center rounded-card border border-brand-blue/25 bg-brand-blue px-5 py-2.5 font-ui text-[0.92rem] font-semibold text-white no-underline transition hover:bg-brand-blue-dark hover:no-underline"
+					href="/bicuve"
+					class="inline-flex items-center rounded-card border border-border bg-white/85 px-6 py-3 font-ui text-[0.95rem] font-semibold tracking-[0.03em] text-text-soft no-underline transition hover:bg-surface-soft hover:text-text-main hover:no-underline"
 				>
-					Contacta con nosotros
+					BICUVE
 				</a>
 			</div>
+		</div>
+	</div>
+</section>
+
+<section class="mx-auto mt-8 w-full max-w-7xl p-5 md:p-6 lg:p-8">
+	<div class="grid gap-5 text-[1.03rem] leading-[1.72] text-center text-text-soft">
+		<h2 class="m-0 font-ui text-[clamp(1.6rem,3.2vw,2.5rem)] leading-[1.15] font-bold text-brand-blue-dark">
+			¿Cómo te podemos ayudar? ¿Cómo nos puedes ayudar?
+		</h2> 
+		<p class="m-0">
+			Podemos ayudarte a explorar los distintos recursos disponibles para el estudio del teatro y la literatura del Siglo de Oro. En Examen de autorías se pueden consultar los informes estilométricos de las obras incorporadas al corpus, con indicios sobre sus posibles relaciones de autoría. TEXORO permite realizar búsquedas textuales sobre cerca de 3000 obras y más de 38 millones de palabras, con opciones para localizar palabras, frases, patrones, combinaciones de términos y relaciones de proximidad. BICUVE ofrece acceso abierto a textos digitales procedentes, en buena medida, de transcripciones automáticas de impresos y manuscritos. Además, los resúmenes automáticos permiten obtener una primera orientación sobre el argumento y el contenido de las obras, siempre como ayuda inicial y no como sustituto de la lectura o del análisis filológico.
+		</p>
+		<p class="m-0">
+			También puedes colaborar con nosotros enviándonos textos del Siglo de Oro que todavía no estén incorporados a nuestros recursos, información bibliográfica, noticias sobre atribuciones, datos sobre testimonios o cualquier material que pueda mejorar el conjunto. La colaboración de investigadores, docentes y especialistas resulta fundamental para seguir ampliando, revisando y corrigiendo la información disponible. Por ello, si encuentras errores, erratas, problemas en los textos, fallos en los resúmenes automáticos o datos que puedan precisarse mejor, te agradeceremos que nos envíes tus sugerencias de corrección. Citar nuestros recursos en publicaciones, trabajos académicos o actividades docentes también nos ayuda a difundir el proyecto y a obtener el apoyo necesario para mantenerlo y ampliarlo.
+		</p>
+		<div class="pt-1">
+			<a
+				href="/mas-informacion"
+				class="inline-flex items-center rounded-card border border-brand-blue/25 bg-brand-blue px-5 py-2.5 font-ui text-[0.92rem] font-semibold text-white no-underline transition hover:bg-brand-blue-dark hover:no-underline"
+			>
+				Contacta con nosotros
+			</a>
 		</div>
 	</div>
 </section>

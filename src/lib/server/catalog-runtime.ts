@@ -502,11 +502,16 @@ const getTitleVariantsSelect = async (): Promise<string> => {
 	return 'NULL AS title_variants';
 };
 
-const getTitleVariantsFilterExpression = async (): Promise<string> => {
+const getTitleSearchFilterExpressions = async (): Promise<string[]> => {
 	const worksTableColumns = await getTableColumnNames('works');
-	if (worksTableColumns.has('otrostitulos')) return 'w.otrostitulos';
-	if (worksTableColumns.has('variaciones_titulo')) return 'w.variaciones_titulo';
-	return "''";
+	const expressions = ['w.titulo'];
+	if (worksTableColumns.has('titulo_busqueda')) expressions.push('w.titulo_busqueda');
+	if (worksTableColumns.has('otrostitulos')) {
+		expressions.push('w.otrostitulos');
+	} else if (worksTableColumns.has('variaciones_titulo')) {
+		expressions.push('w.variaciones_titulo');
+	}
+	return expressions;
 };
 
 const toCatalogAuthors = (rows: AuthorRow[]): CatalogAuthor[] =>
@@ -1559,10 +1564,14 @@ const buildExamenWhereClause = async (filters: ExamenWorksFilters): Promise<SqlW
 	const normalizedTitle = filters.titulo.trim();
 
 	if (normalizedTitle) {
-		const titleVariantsFilterExpression = await getTitleVariantsFilterExpression();
+		const titleFilterExpressions = await getTitleSearchFilterExpressions();
 		const likeValue = `%${normalizedTitle}%`;
-		conditions.push(`(w.titulo LIKE ? COLLATE NOCASE OR COALESCE(${titleVariantsFilterExpression}, '') LIKE ? COLLATE NOCASE)`);
-		args.push(likeValue, likeValue);
+		conditions.push(
+			`(${titleFilterExpressions
+				.map((expression) => `COALESCE(${expression}, '') LIKE ? COLLATE NOCASE`)
+				.join(' OR ')})`
+		);
+		args.push(...titleFilterExpressions.map(() => likeValue));
 	}
 
 	addInFilter(conditions, args, "COALESCE(NULLIF(TRIM(w.genero), ''), 'Sin genero')", filters.genero);

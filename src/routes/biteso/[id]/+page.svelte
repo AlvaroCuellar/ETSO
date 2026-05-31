@@ -1,11 +1,12 @@
-﻿<script lang="ts">
+<script lang="ts">
 	import { onMount } from 'svelte';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import CitationSuggestionCard from '$lib/components/ui/CitationSuggestionCard.svelte';
 	import LegalCard from '$lib/components/ui/LegalCard.svelte';
 	import PageHero from '$lib/components/ui/PageHero.svelte';
 	import WorkMetadataCard from '$lib/components/ui/WorkMetadataCard.svelte';
-	import bicuveLogo from '$lib/assets/logos/bicuve.png';
+	// Importar aquí el futuro logo de BITESO cuando esté disponible.
+	// import bitesoLogo from '$lib/assets/logos/biteso.png';
 	import byNcLogo from '$lib/assets/logos/by-nc.svg';
 	import List from 'lucide-svelte/icons/list';
 	import X from 'lucide-svelte/icons/x';
@@ -18,8 +19,8 @@
 
 	let { data }: { data: PageData } = $props();
 	const displayWorkTitle = $derived.by(() => formatDisplayWorkTitle(data.work.title));
-	const displayBicuveTitle = $derived.by(() => `Texto digital de ${displayWorkTitle}`);
-	const displayBicuveTitleHtml = $derived.by(() =>
+	const displayBitesoTitle = $derived.by(() => `Texto digital de ${displayWorkTitle}`);
+	const displayBitesoTitleHtml = $derived.by(() =>
 		formatPrefixedDisplayWorkTitleHtml('Texto digital de', data.work.title)
 	);
 
@@ -77,7 +78,7 @@
 		return segments;
 	};
 
-	const textSegments = $derived.by(() => buildTextSegments(data.bicuve.text));
+	const textSegments = $derived.by(() => buildTextSegments(data.biteso.text));
 	const jornadaMarks = $derived.by(() =>
 		textSegments.filter(
 			(segment): segment is TextSegment & { id: string; label: string } =>
@@ -85,7 +86,7 @@
 		)
 	);
 
-	let activeTextAnchor = $state('bicuve-text-start');
+	let activeTextAnchor = $state('biteso-text-start');
 
 	const navLinkClass = (id: string, isStart = false): string =>
 		`rounded-[8px] px-2 py-1.5 no-underline transition hover:no-underline ${
@@ -104,14 +105,14 @@
 		let frame = 0;
 
 		const resolveTargets = (): HTMLElement[] =>
-			['bicuve-text-start', ...jornadaMarks.map((mark) => mark.id)]
+			['biteso-text-start', ...jornadaMarks.map((mark) => mark.id)]
 				.map((id) => document.getElementById(id))
 				.filter((element): element is HTMLElement => Boolean(element));
 
 		const updateActiveAnchor = (): void => {
 			frame = 0;
 			const threshold = Math.round(window.innerHeight * 0.34);
-			let current = 'bicuve-text-start';
+			let current = 'biteso-text-start';
 
 			for (const target of resolveTargets()) {
 				if (target.getBoundingClientRect().top <= threshold) {
@@ -143,12 +144,12 @@
 	<Breadcrumbs
 		items={[
 			{ label: 'Inicio', href: '/' },
-			{ label: 'BICUVE', href: '/bicuve' },
+			{ label: 'BITESO', href: '/biteso' },
 			{ label: displayWorkTitle }
 		]}
 	/>
 
-	<PageHero compact eyebrow="Texto digital" title={displayBicuveTitle} titleHtml={displayBicuveTitleHtml} />
+	<PageHero compact eyebrow="Texto digital" title={displayBitesoTitle} titleHtml={displayBitesoTitleHtml} />
 
 	<section class="grid gap-4">
 		<WorkMetadataCard work={data.work} />
@@ -180,8 +181,10 @@
 
 		<CitationSuggestionCard class="w-full" citation={data.citation} allowHtml />
 
-		<div id="bicuve-text-start" class="grid place-items-center pt-2 scroll-mt-28">
-			<img src={bicuveLogo} alt="Logo BICUVE" class="h-auto w-[min(24rem,78vw)]" />
+		<div id="biteso-text-start" class="grid min-h-6 place-items-center pt-2 scroll-mt-28">
+			<!-- Reponer cuando haya un nuevo logo autorizado:
+			<img src={bitesoLogo} alt="Logo BITESO" class="h-auto w-[min(24rem,78vw)]" />
+			-->
 		</div>
 
 		<h2 class="mt-1 text-center font-ui text-[0.95rem] font-bold uppercase tracking-[0.08em] text-brand-blue-dark">
@@ -191,15 +194,15 @@
 		<div class="grid gap-5 lg:grid-cols-[11rem_minmax(0,1fr)_11rem] lg:items-start lg:gap-8">
 			<nav
 				class="hidden font-ui lg:sticky lg:top-[calc(5rem+68px)] lg:block"
-				aria-label="Navegación del texto BICUVE"
+				aria-label="Navegación del texto BITESO"
 			>
 				<div class="grid gap-1 border-l-2 border-border-accent-blue pl-2">
 					<a
-						href="#bicuve-text-start"
-						aria-current={activeTextAnchor === 'bicuve-text-start' ? 'location' : undefined}
-						class={navLinkClass('bicuve-text-start', true)}
+						href="#biteso-text-start"
+						aria-current={activeTextAnchor === 'biteso-text-start' ? 'location' : undefined}
+						class={navLinkClass('biteso-text-start', true)}
 						onclick={() => {
-							activeTextAnchor = 'bicuve-text-start';
+							activeTextAnchor = 'biteso-text-start';
 						}}
 					>
 						Inicio
@@ -247,10 +250,10 @@
 		class="shadow-strong border-border fixed right-6 bottom-[4.5rem] z-50 grid gap-1 rounded-xl border bg-white p-3 font-ui lg:hidden"
 	>
 		<a
-			href="#bicuve-text-start"
-			class={navLinkClass('bicuve-text-start', true)}
+			href="#biteso-text-start"
+			class={navLinkClass('biteso-text-start', true)}
 			onclick={() => {
-				activeTextAnchor = 'bicuve-text-start';
+				activeTextAnchor = 'biteso-text-start';
 				isMobileMenuOpen = false;
 			}}
 		>

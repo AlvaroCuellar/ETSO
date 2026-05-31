@@ -5,7 +5,7 @@
 	import TeamProfileCard from '$lib/components/ui/TeamProfileCard.svelte';
 	import estilometriaHero from '$lib/assets/heros/estilometria.webp';
 	import texoroHero from '$lib/assets/heros/texoro.webp';
-	import bicuveHero from '$lib/assets/heros/biblioteca.webp';
+	import bitesoHero from '$lib/assets/heros/biblioteca.webp';
 	import resumenesHero from '$lib/assets/heros/resumenes.webp';
 	import grafoImage from '$lib/assets/heros/grafo.png';
 	import informesImage from '$lib/assets/heros/informes.png';
@@ -49,11 +49,11 @@
 			link: '/texoro'
 		},
 		{
-			image: bicuveHero,
-			title: 'BICUVE',
+			image: bitesoHero,
+			title: 'BITESO',
 			description: 'Consulta más de 1500 textos digitales del Siglo de Oro en acceso abierto',
-			alt: 'Biblioteca digital BICUVE',
-			link: '/bicuve'
+			alt: 'Biblioteca digital BITESO',
+			link: '/biteso'
 		},
 		{
 			image: resumenesHero,
@@ -395,7 +395,7 @@
 		<div class="relative z-10 grid content-start gap-5">
 			<div class="grid gap-2">
 				<h2 class="m-0 font-ui text-[clamp(1.6rem,3.2vw,2.5rem)] leading-[1.15] font-bold">
-					BICUVE
+					BITESO
 				</h2>
 				<p class="m-0 font-ui text-[clamp(1rem,1.6vw,1.28rem)] font-medium text-brand-blue">
 					Textos digitales del Siglo de Oro en acceso abierto
@@ -404,19 +404,19 @@
 
 			<div class="grid max-w-6xl gap-4 text-[1.03rem] leading-[1.72] text-text-soft">
 				<p class="m-0">
-					BICUVE reúne y pone en acceso abierto una amplia colección de textos digitales del Siglo de Oro. El recurso nace, en buena medida, de las transcripciones automáticas de impresos y manuscritos realizadas para los análisis estilométricos de autoría, así como de materiales revisados, facilitados o contrastados gracias a la colaboración de distintos especialistas. Su objetivo es ofrecer a la comunidad un punto de acceso sencillo a textos que, en muchos casos, permanecían contenidos en documentos antiguos, de difícil manejo o lectura.
+					BITESO reúne y pone en acceso abierto una amplia colección de textos digitales del Siglo de Oro. El recurso nace, en buena medida, de las transcripciones automáticas de impresos y manuscritos realizadas para los análisis estilométricos de autoría, así como de materiales revisados, facilitados o contrastados gracias a la colaboración de distintos especialistas. Su objetivo es ofrecer a la comunidad un punto de acceso sencillo a textos que, en muchos casos, permanecían contenidos en documentos antiguos, de difícil manejo o lectura.
 				</p>
 				<p class="m-0">
-					Los textos incorporados a BICUVE no aspiran a sustituir a las ediciones críticas ni presentan siempre la misma calidad ecdótica. Además, en su estado actual no incluyen los nombres de los personajes ni las acotaciones escénicas, sino únicamente los versos limpios de cada obra. Sin embargo, constituyen materiales útiles para la lectura, la consulta, la docencia, la investigación filológica y la exploración computacional del patrimonio literario aurisecular. Con este recurso se quiere favorecer la circulación abierta de estos materiales y facilitar nuevas formas de acceso al teatro y a la literatura del Siglo de Oro.
+					Los textos incorporados a BITESO no aspiran a sustituir a las ediciones críticas ni presentan siempre la misma calidad ecdótica. Además, en su estado actual no incluyen los nombres de los personajes ni las acotaciones escénicas, sino únicamente los versos limpios de cada obra. Sin embargo, constituyen materiales útiles para la lectura, la consulta, la docencia, la investigación filológica y la exploración computacional del patrimonio literario aurisecular. Con este recurso se quiere favorecer la circulación abierta de estos materiales y facilitar nuevas formas de acceso al teatro y a la literatura del Siglo de Oro.
 				</p>
 			</div>
 
 			<div class="pt-1">
 				<a
-					href="/bicuve"
+					href="/biteso"
 					class="inline-flex items-center rounded-card border border-border bg-white/85 px-6 py-3 font-ui text-[0.95rem] font-semibold tracking-[0.03em] text-text-soft no-underline transition hover:bg-surface-soft hover:text-text-main hover:no-underline"
 				>
-					BICUVE
+					BITESO
 				</a>
 			</div>
 		</div>
@@ -429,7 +429,7 @@
 			¿Cómo te podemos ayudar? ¿Cómo nos puedes ayudar?
 		</h2> 
 		<p class="m-0">
-			Podemos ayudarte a explorar los distintos recursos disponibles para el estudio del teatro y la literatura del Siglo de Oro. En Examen de autorías se pueden consultar los informes estilométricos de las obras incorporadas al corpus, con indicios sobre sus posibles relaciones de autoría. TEXORO permite realizar búsquedas textuales sobre cerca de 3000 obras y más de 38 millones de palabras, con opciones para localizar palabras, frases, patrones, combinaciones de términos y relaciones de proximidad. BICUVE ofrece acceso abierto a textos digitales procedentes, en buena medida, de transcripciones automáticas de impresos y manuscritos. Además, los resúmenes automáticos permiten obtener una primera orientación sobre el argumento y el contenido de las obras, siempre como ayuda inicial y no como sustituto de la lectura o del análisis filológico.
+			Podemos ayudarte a explorar los distintos recursos disponibles para el estudio del teatro y la literatura del Siglo de Oro. En Examen de autorías se pueden consultar los informes estilométricos de las obras incorporadas al corpus, con indicios sobre sus posibles relaciones de autoría. TEXORO permite realizar búsquedas textuales sobre cerca de 3000 obras y más de 38 millones de palabras, con opciones para localizar palabras, frases, patrones, combinaciones de términos y relaciones de proximidad. BITESO ofrece acceso abierto a textos digitales procedentes, en buena medida, de transcripciones automáticas de impresos y manuscritos. Además, los resúmenes automáticos permiten obtener una primera orientación sobre el argumento y el contenido de las obras, siempre como ayuda inicial y no como sustituto de la lectura o del análisis filológico.
 		</p>
 		<p class="m-0">
 			También puedes colaborar con nosotros enviándonos textos del Siglo de Oro que todavía no estén incorporados a nuestros recursos, información bibliográfica, noticias sobre atribuciones, datos sobre testimonios o cualquier material que pueda mejorar el conjunto. La colaboración de investigadores, docentes y especialistas resulta fundamental para seguir ampliando, revisando y corrigiendo la información disponible. Por ello, si encuentras errores, erratas, problemas en los textos, fallos en los resúmenes automáticos o datos que puedan precisarse mejor, te agradeceremos que nos envíes tus sugerencias de corrección. Citar nuestros recursos en publicaciones, trabajos académicos o actividades docentes también nos ayuda a difundir el proyecto y a obtener el apoyo necesario para mantenerlo y ampliarlo.

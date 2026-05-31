@@ -3,14 +3,14 @@ import {
 	type AttributionSet,
 	type CatalogWork
 } from '$lib/domain/catalog';
-import { getBicuveWorks } from '$lib/server/catalog-runtime';
+import { getBitesoWorks } from '$lib/server/catalog-runtime';
 
 import type { PageServerLoad } from './$types';
 
-const getBicuveSlug = (work: CatalogWork): string =>
+const getBitesoSlug = (work: CatalogWork): string =>
 	work.textLinks
-		.find((link) => link.kind === 'bicuve')
-		?.href.replace(/^\/bicuve\//, '') ?? work.slug;
+		.find((link) => link.kind === 'biteso')
+		?.href.replace(/^\/biteso\//, '') ?? work.slug;
 
 const collectAuthorIds = (set: AttributionSet, authorIds: Set<string>): void => {
 	if (set.unresolved) return;
@@ -33,7 +33,7 @@ const countUniqueAuthors = (works: CatalogWork[]): number => {
 };
 
 export const load: PageServerLoad = async () => {
-	const bicuveWorks = (await getBicuveWorks())
+	const bitesoWorks = (await getBitesoWorks())
 		.sort((a, b) => {
 			const titleComparison = a.title.localeCompare(b.title, 'es', { sensitivity: 'base' });
 			if (titleComparison !== 0) return titleComparison;
@@ -41,15 +41,15 @@ export const load: PageServerLoad = async () => {
 		});
 
 	return {
-		works: bicuveWorks.map((work) => ({
+		works: bitesoWorks.map((work) => ({
 			id: work.id,
-			slug: getBicuveSlug(work),
+			slug: getBitesoSlug(work),
 			title: work.title,
 			titleVariants: work.titleVariants
 		})),
 		stats: {
-			bicuveTexts: bicuveWorks.length,
-			authors: countUniqueAuthors(bicuveWorks)
+			bitesoTexts: bitesoWorks.length,
+			authors: countUniqueAuthors(bitesoWorks)
 		}
 	};
 };

@@ -1,4 +1,4 @@
-﻿<script lang="ts">
+<script lang="ts">
 	import { onMount } from 'svelte';
 	import AlignLeft from 'lucide-svelte/icons/align-left';
 	import BookOpen from 'lucide-svelte/icons/book-open';
@@ -485,13 +485,13 @@
 						{#each row.work.textLinks as link}
 							<a
 								href={link.href}
-								data-sveltekit-preload-data={link.kind === 'bicuve' ? 'off' : undefined}
+								data-sveltekit-preload-data={link.kind === 'biteso' ? 'off' : undefined}
 								class="textos-dropdown-item grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-2 rounded-[6px] px-2.5 py-[9px] text-[12px] font-normal text-text-main no-underline transition-all hover:bg-surface-accent-blue hover:text-text-main hover:no-underline focus:bg-surface-accent-blue focus:text-text-main focus:no-underline focus:outline-none focus-visible:bg-surface-accent-blue focus-visible:text-text-main focus-visible:no-underline focus-visible:outline-none"
 								target={link.external ? '_blank' : undefined}
 								rel={link.external ? 'noopener noreferrer' : undefined}
 							>
 								<span class="textos-dropdown-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-brand-blue-dark" aria-hidden="true">
-									{#if link.kind === 'bicuve'}
+									{#if link.kind === 'biteso'}
 										<BookOpen class="h-[14px] w-[14px] stroke-[2.1]" />
 									{:else}
 										<ExternalLink class="h-[14px] w-[14px] stroke-[2.1]" />

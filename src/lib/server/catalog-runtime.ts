@@ -19,7 +19,7 @@ import {
 	type AuthorMetrics,
 	type AuthorWorkRelation,
 	type CatalogAuthor,
-	type CatalogBicuve,
+	type CatalogBiteso,
 	type CatalogInforme,
 	type CatalogStats,
 	type CatalogWork,
@@ -73,9 +73,9 @@ interface Snapshot {
 	workById: Map<string, CatalogWork>;
 	workBySlug: Map<string, CatalogWork>;
 	workByReportSlug: Map<string, CatalogWork>;
-	bicuveWorkBySlug: Map<string, CatalogWork>;
-	bicuveSlugByWorkId: Map<string, string>;
-	bicuveNameByWorkId: Map<string, string>;
+	bitesoWorkBySlug: Map<string, CatalogWork>;
+	bitesoSlugByWorkId: Map<string, string>;
+	bitesoNameByWorkId: Map<string, string>;
 	authors: CatalogAuthor[];
 	authorById: Map<string, CatalogAuthor>;
 }
@@ -194,8 +194,8 @@ interface WorkRow {
 	adicion: string | null;
 	estado_texto: string | null;
 	examen_autorias: number;
-	bicuve: number;
-	bicuve_nombre: string | null;
+	biteso: number;
+	biteso_nombre: string | null;
 	tiene_acceso_externo: number;
 	procede: string | null;
 	has_report: number;
@@ -664,13 +664,13 @@ const buildCatalogWorksFromRows = (
 	textAccessByWork: Map<string, CatalogWork['textLinks']>
 ): {
 	works: CatalogWork[];
-	bicuveSlugByWorkId: Map<string, string>;
-	bicuveNameByWorkId: Map<string, string>;
+	bitesoSlugByWorkId: Map<string, string>;
+	bitesoNameByWorkId: Map<string, string>;
 } => {
 	const seenWorkSlugs = new Map<string, string>();
-	const bicuveSlugCounts = new Map<string, number>();
-	const bicuveSlugByWorkId = new Map<string, string>();
-	const bicuveNameByWorkId = new Map<string, string>();
+	const bitesoSlugCounts = new Map<string, number>();
+	const bitesoSlugByWorkId = new Map<string, string>();
+	const bitesoNameByWorkId = new Map<string, string>();
 
 	const works = workRows.map((row) => {
 		const traditionalAttribution =
@@ -682,24 +682,24 @@ const buildCatalogWorksFromRows = (
 		const hasReport = Number(row.has_report) === 1;
 		const slug = resolveWorkSlug(row, seenWorkSlugs);
 		const reportSlug = hasReport ? `${REPORT_SLUG_PREFIX}${slug}` : undefined;
-		const bicuveNombre = row.bicuve_nombre?.trim() || 'ETSO';
-		bicuveNameByWorkId.set(row.id, bicuveNombre);
+		const bitesoNombre = row.biteso_nombre?.trim() || 'ETSO';
+		bitesoNameByWorkId.set(row.id, bitesoNombre);
 
-		let bicuveSlug = '';
-		if (Number(row.bicuve) === 1) {
-			const bicuveBaseSlug = slugify(row.titulo ?? '') || slugify(row.id ?? '') || 'texto';
-			const bicuveSlugCount = (bicuveSlugCounts.get(bicuveBaseSlug) ?? 0) + 1;
-			bicuveSlugCounts.set(bicuveBaseSlug, bicuveSlugCount);
-			bicuveSlug = bicuveSlugCount === 1 ? bicuveBaseSlug : `${bicuveBaseSlug}-${bicuveSlugCount}`;
-			bicuveSlugByWorkId.set(row.id, bicuveSlug);
+		let bitesoSlug = '';
+		if (Number(row.biteso) === 1) {
+			const bitesoBaseSlug = slugify(row.titulo ?? '') || slugify(row.id ?? '') || 'texto';
+			const bitesoSlugCount = (bitesoSlugCounts.get(bitesoBaseSlug) ?? 0) + 1;
+			bitesoSlugCounts.set(bitesoBaseSlug, bitesoSlugCount);
+			bitesoSlug = bitesoSlugCount === 1 ? bitesoBaseSlug : `${bitesoBaseSlug}-${bitesoSlugCount}`;
+			bitesoSlugByWorkId.set(row.id, bitesoSlug);
 		}
 
 		const links: CatalogWork['textLinks'] = [];
-		if (Number(row.bicuve) === 1) {
+		if (Number(row.biteso) === 1) {
 			links.push({
-				label: 'Texto BICUVE',
-				href: `/bicuve/${bicuveSlug}`,
-				kind: 'bicuve'
+				label: 'Texto BITESO',
+				href: `/biteso/${bitesoSlug}`,
+				kind: 'biteso'
 			});
 		}
 		for (const link of textAccessByWork.get(row.id) ?? []) {
@@ -728,8 +728,8 @@ const buildCatalogWorksFromRows = (
 
 	return {
 		works,
-		bicuveSlugByWorkId,
-		bicuveNameByWorkId
+		bitesoSlugByWorkId,
+		bitesoNameByWorkId
 	};
 };
 
@@ -741,7 +741,7 @@ const loadWorkRowsByIds = async (workIds: string[]): Promise<WorkRow[]> => {
 		`SELECT id, slug, titulo,
 		 ${titleVariantsSelect},
 		 genero, adicion, estado_texto,
-		 examen_autorias, bicuve, bicuve_nombre, tiene_acceso_externo,
+		 examen_autorias, biteso, biteso_nombre, tiene_acceso_externo,
 		 procede,
 		 CASE WHEN resultado1 IS NULL AND resultado2 IS NULL THEN 0 ELSE 1 END AS has_report,
 		 CASE WHEN resumen_breve IS NULL THEN 0 ELSE 1 END AS has_resumen_breve
@@ -944,7 +944,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 		`SELECT id, slug, titulo,
 		 ${titleVariantsSelect},
 		 genero, adicion, estado_texto,
-		 examen_autorias, bicuve, bicuve_nombre, tiene_acceso_externo,
+		 examen_autorias, biteso, biteso_nombre, tiene_acceso_externo,
 		 procede,
 		 CASE WHEN resultado1 IS NULL AND resultado2 IS NULL THEN 0 ELSE 1 END AS has_report,
 		 CASE WHEN resumen_breve IS NULL THEN 0 ELSE 1 END AS has_resumen_breve
@@ -953,9 +953,9 @@ const createSnapshot = async (): Promise<Snapshot> => {
 	);
 
 	const seenWorkSlugs = new Map<string, string>();
-	const bicuveSlugCounts = new Map<string, number>();
-	const bicuveSlugByWorkId = new Map<string, string>();
-	const bicuveNameByWorkId = new Map<string, string>();
+	const bitesoSlugCounts = new Map<string, number>();
+	const bitesoSlugByWorkId = new Map<string, string>();
+	const bitesoNameByWorkId = new Map<string, string>();
 
 	const works: CatalogWork[] = workRows.map((row) => {
 		const traditionalAttribution =
@@ -968,23 +968,23 @@ const createSnapshot = async (): Promise<Snapshot> => {
 
 		const slug = resolveWorkSlug(row, seenWorkSlugs);
 		const reportSlug = hasReport ? `${REPORT_SLUG_PREFIX}${slug}` : undefined;
-		const bicuveNombre = row.bicuve_nombre?.trim() || 'ETSO';
-		bicuveNameByWorkId.set(row.id, bicuveNombre);
-		let bicuveSlug = '';
-		if (Number(row.bicuve) === 1) {
-			const bicuveBaseSlug = slugify(row.titulo ?? '') || slugify(row.id ?? '') || 'texto';
-			const bicuveSlugCount = (bicuveSlugCounts.get(bicuveBaseSlug) ?? 0) + 1;
-			bicuveSlugCounts.set(bicuveBaseSlug, bicuveSlugCount);
-			bicuveSlug = bicuveSlugCount === 1 ? bicuveBaseSlug : `${bicuveBaseSlug}-${bicuveSlugCount}`;
-			bicuveSlugByWorkId.set(row.id, bicuveSlug);
+		const bitesoNombre = row.biteso_nombre?.trim() || 'ETSO';
+		bitesoNameByWorkId.set(row.id, bitesoNombre);
+		let bitesoSlug = '';
+		if (Number(row.biteso) === 1) {
+			const bitesoBaseSlug = slugify(row.titulo ?? '') || slugify(row.id ?? '') || 'texto';
+			const bitesoSlugCount = (bitesoSlugCounts.get(bitesoBaseSlug) ?? 0) + 1;
+			bitesoSlugCounts.set(bitesoBaseSlug, bitesoSlugCount);
+			bitesoSlug = bitesoSlugCount === 1 ? bitesoBaseSlug : `${bitesoBaseSlug}-${bitesoSlugCount}`;
+			bitesoSlugByWorkId.set(row.id, bitesoSlug);
 		}
 
 		const links: CatalogWork['textLinks'] = [];
-		if (Number(row.bicuve) === 1) {
+		if (Number(row.biteso) === 1) {
 			links.push({
-				label: 'Texto BICUVE',
-				href: `/bicuve/${bicuveSlug}`,
-				kind: 'bicuve'
+				label: 'Texto BITESO',
+				href: `/biteso/${bitesoSlug}`,
+				kind: 'biteso'
 			});
 		}
 		for (const link of textAccessByWork.get(row.id) ?? []) {
@@ -1014,11 +1014,11 @@ const createSnapshot = async (): Promise<Snapshot> => {
 	const workById = new Map(works.map((work) => [work.id, work] as const));
 	const workBySlug = new Map(works.map((work) => [work.slug, work] as const));
 	const workByReportSlug = new Map<string, CatalogWork>();
-	const bicuveWorkBySlug = new Map<string, CatalogWork>();
+	const bitesoWorkBySlug = new Map<string, CatalogWork>();
 	for (const work of works) {
 		if (work.reportSlug) workByReportSlug.set(work.reportSlug, work);
-		const bicuveSlug = bicuveSlugByWorkId.get(work.id);
-		if (bicuveSlug) bicuveWorkBySlug.set(bicuveSlug, work);
+		const bitesoSlug = bitesoSlugByWorkId.get(work.id);
+		if (bitesoSlug) bitesoWorkBySlug.set(bitesoSlug, work);
 	}
 
 	return {
@@ -1026,9 +1026,9 @@ const createSnapshot = async (): Promise<Snapshot> => {
 		workById,
 		workBySlug,
 		workByReportSlug,
-		bicuveWorkBySlug,
-		bicuveSlugByWorkId,
-		bicuveNameByWorkId,
+		bitesoWorkBySlug,
+		bitesoSlugByWorkId,
+		bitesoNameByWorkId,
 		authors,
 		authorById
 	};
@@ -1127,11 +1127,11 @@ const getAuthorshipExamWorksFromSnapshot = (snapshot: Snapshot): CatalogWork[] =
 export const getAuthorshipExamWorks = async (): Promise<CatalogWork[]> =>
 	getAuthorshipExamWorksFromSnapshot(await getSnapshot());
 
-const hasBicuveText = (work: CatalogWork): boolean =>
-	work.textLinks.some((link) => link.kind === 'bicuve');
+const hasBitesoText = (work: CatalogWork): boolean =>
+	work.textLinks.some((link) => link.kind === 'biteso');
 
-export const getBicuveWorks = async (): Promise<CatalogWork[]> =>
-	(await getSnapshot()).works.filter(hasBicuveText);
+export const getBitesoWorks = async (): Promise<CatalogWork[]> =>
+	(await getSnapshot()).works.filter(hasBitesoText);
 
 export const getWorkById = async (workId: string): Promise<CatalogWork | undefined> =>
 	(await getSnapshot()).workById.get(workId);
@@ -1678,7 +1678,7 @@ export const getSelectedExamenFilterOptions = async (
 };
 
 export const getExamenCatalogStats = async (): Promise<CatalogStats> => {
-	const [worksRows, authorRows, informeRows, bicuveRows] = await Promise.all([
+	const [worksRows, authorRows, informeRows, bitesoRows] = await Promise.all([
 		getRows<{ total: number }>('SELECT COUNT(*) AS total FROM works WHERE examen_autorias = 1'),
 		getRows<{ total: number }>(
 			`SELECT COUNT(DISTINCT wai.author_id) AS total
@@ -1693,27 +1693,27 @@ export const getExamenCatalogStats = async (): Promise<CatalogStats> => {
 			 FROM works
 			 WHERE resultado1 IS NOT NULL OR resultado2 IS NOT NULL`
 		),
-		getRows<{ total: number }>('SELECT COUNT(*) AS total FROM works WHERE bicuve = 1')
+		getRows<{ total: number }>('SELECT COUNT(*) AS total FROM works WHERE biteso = 1')
 	]);
 
 	return {
 		works: Number(worksRows[0]?.total ?? 0),
 		authors: Number(authorRows[0]?.total ?? 0),
 		informes: Number(informeRows[0]?.total ?? 0),
-		bicuveTexts: Number(bicuveRows[0]?.total ?? 0)
+		bitesoTexts: Number(bitesoRows[0]?.total ?? 0)
 	};
 };
 
 export const getCatalogStats = async (): Promise<CatalogStats> => {
 	const snapshot = await getSnapshot();
-	const bicuveTexts = snapshot.works.filter(hasBicuveText).length;
+	const bitesoTexts = snapshot.works.filter(hasBitesoText).length;
 	const informes = snapshot.works.filter((work) => Boolean(work.reportId)).length;
 
 	return {
 		works: snapshot.works.length,
 		authors: snapshot.authors.filter((author) => author.id !== UNRESOLVED_AUTHOR_ID).length,
 		informes,
-		bicuveTexts
+		bitesoTexts
 	};
 };
 
@@ -1891,36 +1891,36 @@ export const getInformeDistanceRows = async (
 		.filter((row): row is InformeDistanceView => Boolean(row));
 };
 
-const getBicuveForWork = async (
+const getBitesoForWork = async (
 	work: CatalogWork | undefined,
 	snapshot: Snapshot
-): Promise<CatalogBicuve | undefined> => {
+): Promise<CatalogBiteso | undefined> => {
 	if (!work) return undefined;
-	if (!work.textLinks.some((link) => link.kind === 'bicuve')) return undefined;
+	if (!work.textLinks.some((link) => link.kind === 'biteso')) return undefined;
 
 	const text = await readPrivateTextByWorkId(work.id);
 	if (!text) return undefined;
 
 	return {
-		id: snapshot.bicuveSlugByWorkId.get(work.id) || work.slug,
+		id: snapshot.bitesoSlugByWorkId.get(work.id) || work.slug,
 		workId: work.id,
-		bicuveNombre: snapshot.bicuveNameByWorkId.get(work.id) || 'ETSO',
+		bitesoNombre: snapshot.bitesoNameByWorkId.get(work.id) || 'ETSO',
 		title: `Texto digital de ${work.title}`,
 		text
 	};
 };
 
-export const getBicuveBySlug = async (bicuveSlug: string): Promise<CatalogBicuve | undefined> => {
+export const getBitesoBySlug = async (bitesoSlug: string): Promise<CatalogBiteso | undefined> => {
 	const snapshot = await getSnapshot();
-	return getBicuveForWork(snapshot.bicuveWorkBySlug.get(bicuveSlug), snapshot);
+	return getBitesoForWork(snapshot.bitesoWorkBySlug.get(bitesoSlug), snapshot);
 };
 
-export const getBicuveWorkBySlug = async (bicuveSlug: string): Promise<CatalogWork | undefined> =>
-	(await getSnapshot()).bicuveWorkBySlug.get(bicuveSlug);
+export const getBitesoWorkBySlug = async (bitesoSlug: string): Promise<CatalogWork | undefined> =>
+	(await getSnapshot()).bitesoWorkBySlug.get(bitesoSlug);
 
-export const getBicuveById = async (bicuveId: string): Promise<CatalogBicuve | undefined> => {
+export const getBitesoById = async (bitesoId: string): Promise<CatalogBiteso | undefined> => {
 	const snapshot = await getSnapshot();
-	return getBicuveForWork(snapshot.workById.get(bicuveId), snapshot);
+	return getBitesoForWork(snapshot.workById.get(bitesoId), snapshot);
 };
 
 const emptyInformeBibliography = (): InformeBibliographyView => ({
@@ -2613,8 +2613,8 @@ const normalizeNameForComparison = (value: string): string =>
 		.trim()
 		.replace(/\s+/g, ' ');
 
-const resolveBicuveCitationAuthor = (bicuveNombre: string): string => {
-	const raw = bicuveNombre.trim();
+const resolveBitesoCitationAuthor = (bitesoNombre: string): string => {
+	const raw = bitesoNombre.trim();
 	if (!raw) return 'ETSO';
 
 	const normalized = normalizeNameForComparison(raw);
@@ -2628,20 +2628,20 @@ const resolveBicuveCitationAuthor = (bicuveNombre: string): string => {
 	return raw;
 };
 
-interface BicuveCitationInput {
-	bicuveNombre: string;
+interface BitesoCitationInput {
+	bitesoNombre: string;
 	title: string;
 	canonicalUrl: string;
 }
 
-export const buildBicuveCitation = ({
-	bicuveNombre,
+export const buildBitesoCitation = ({
+	bitesoNombre,
 	title,
 	canonicalUrl
-}: BicuveCitationInput): string => {
-	const author = resolveBicuveCitationAuthor(bicuveNombre);
+}: BitesoCitationInput): string => {
+	const author = resolveBitesoCitationAuthor(bitesoNombre);
 	const displayTitle = formatDisplayWorkTitle(title);
-	return `${escapeHtml(author)}. Texto digital de <i>${escapeHtml(displayTitle)}</i>. BICUVE, 2026. URL: ${escapeHtml(canonicalUrl)}.`;
+	return `${escapeHtml(author)}. Texto digital de <i>${escapeHtml(displayTitle)}</i>. BITESO, 2026. URL: ${escapeHtml(canonicalUrl)}.`;
 };
 
 export const getInformeBibliographyByInformeId = (informeId: string): InformeBibliographyView => {

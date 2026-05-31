@@ -5,7 +5,7 @@
 	const primaryNavItems = [
 		{ href: '/examen-autorias', label: 'Examen de autorías' },
 		{ href: '/texoro', label: 'TEXORO' },
-		{ href: '/bicuve', label: 'BICUVE' },
+		{ href: '/biteso', label: 'BITESO' },
 		{ href: '/transcripciones-automaticas', label: 'Transcripciones automáticas' }
 	] as const;
 

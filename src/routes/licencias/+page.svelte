@@ -15,7 +15,7 @@
 		</p>
 
 		<p class="m-0 max-w-[84ch] leading-[1.68] text-text-main">
-			Los textos identificados como procedentes de BICUVE se ofrecen bajo licencia Creative Commons CC BY-NC 4.0 cuando así conste expresamente en su ficha.
+			Los textos identificados como procedentes de BITESO se ofrecen bajo licencia Creative Commons CC BY-NC 4.0 cuando así conste expresamente en su ficha.
 		</p>
 
 		<p class="m-0 max-w-[84ch] leading-[1.68] text-text-main">

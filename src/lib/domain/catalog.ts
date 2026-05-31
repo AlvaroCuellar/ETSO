@@ -1,4 +1,4 @@
-﻿export type Confidence = 'segura' | 'probable' | 'posible' | 'no_concluyente';
+export type Confidence = 'segura' | 'probable' | 'posible' | 'no_concluyente';
 
 export type Ambito =
 	| 'obracompleta'
@@ -28,7 +28,7 @@ export interface AttributionSet {
 export interface WorkResourceLink {
 	label: string;
 	href: string;
-	kind: 'bicuve' | 'texto_externo';
+	kind: 'biteso' | 'texto_externo';
 	external?: boolean;
 }
 
@@ -243,10 +243,10 @@ export interface ImpactPageView {
 	sections: EditorialSection[];
 }
 
-export interface CatalogBicuve {
+export interface CatalogBiteso {
 	id: string;
 	workId: string;
-	bicuveNombre: string;
+	bitesoNombre: string;
 	title: string;
 	text: string;
 }
@@ -306,7 +306,7 @@ export interface CatalogStats {
 	works: number;
 	authors: number;
 	informes: number;
-	bicuveTexts: number;
+	bitesoTexts: number;
 }
 
 export interface InformeDistanceView extends DistanceRow {

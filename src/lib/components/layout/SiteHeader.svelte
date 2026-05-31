@@ -1,4 +1,4 @@
-﻿<script lang="ts">
+<script lang="ts">
 	import { page } from '$app/state';
 	import ChevronDown from 'lucide-svelte/icons/chevron-down';
 	import Menu from 'lucide-svelte/icons/menu';
@@ -9,7 +9,7 @@
 	const navItems = [
 		{ href: '/examen-autorias', label: 'Examen de autorías' },
 		{ href: '/texoro', label: 'TEXORO' },
-		{ href: '/bicuve', label: 'BICUVE' },
+		{ href: '/biteso', label: 'BITESO' },
 		{ href: '/como-citarnos', label: 'Cómo citarnos' }
 	] as const;
 
@@ -35,7 +35,7 @@
 	};
 
 	const preloadDataForHref = (href: string): 'off' | undefined =>
-		href === '/examen-autorias' || href === '/texoro' || href === '/bicuve' ? 'off' : undefined;
+		href === '/examen-autorias' || href === '/texoro' || href === '/biteso' ? 'off' : undefined;
 
 	const preloadForHref = (href: string): void => {
 		if (typeof window === 'undefined') return;

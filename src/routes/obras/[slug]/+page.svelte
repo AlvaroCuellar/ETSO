@@ -63,16 +63,16 @@
 				rel={link.external ? 'noopener noreferrer' : undefined}
 			>
 				<div class="inline-flex items-center justify-center text-text-soft transition-colors group-hover:text-brand-blue-dark" aria-hidden="true">
-					{#if link.kind === 'bicuve'}
+					{#if link.kind === 'biteso'}
 						<BookOpen class="h-[0.9rem] w-[0.9rem] stroke-2" />
 					{:else}
 						<ExternalLink class="h-[0.9rem] w-[0.9rem] stroke-2" />
 					{/if}
 				</div>
 				<div class="min-w-0 justify-self-start text-left">
-					{#if link.kind === 'bicuve'}
+					{#if link.kind === 'biteso'}
 						<div class="text-[0.93rem] font-semibold text-text-soft transition-colors group-hover:text-brand-blue-dark">{link.label}</div>
-						<div class="text-[0.78rem] text-text-soft transition-colors group-hover:text-brand-blue-dark">BICUVE</div>
+						<div class="text-[0.78rem] text-text-soft transition-colors group-hover:text-brand-blue-dark">BITESO</div>
 					{:else}
 						<div class="text-[0.93rem] font-semibold text-text-soft transition-colors group-hover:text-brand-blue-dark">Leer texto</div>
 						<div class="text-[0.78rem] text-text-soft transition-colors group-hover:text-brand-blue-dark">{link.label}</div>

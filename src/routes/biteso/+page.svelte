@@ -32,17 +32,17 @@
 </script>
 
 <div class="grid gap-6">
-	<Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'BICUVE' }]} />
+	<Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'BITESO' }]} />
 
 	<FeatureHeroSection
 		eyebrow=""
-		title="BICUVE"
-		subtitle="Biblioteca Cuéllar Vega"
+		title="BITESO"
+		subtitle="Biblioteca Textual Siglo de Oro"
 		backgroundImage={fondoLogo}
-		statsAriaLabel="Indicadores de BICUVE"
+		statsAriaLabel="Indicadores de BITESO"
 	>
 		<p class="mt-[1.8rem] mb-0 max-w-[64ch] font-reading text-[1.01rem] leading-[1.62] text-text-main">
-			BICUVE ofrece acceso en abierto a textos digitales del Siglo de Oro conseguidos, en su mayoría, a partir de transcripciones automáticas de impresos y manuscritos antiguos. La colección reúne obras producidas para los análisis estilométricos de autoría y materiales incorporados gracias a la colaboración de especialistas, colegas y estudiantes.
+			BITESO ofrece acceso en abierto a textos digitales del Siglo de Oro conseguidos, en su mayoría, a partir de transcripciones automáticas de impresos y manuscritos antiguos. La colección reúne obras producidas para los análisis estilométricos de autoría y materiales incorporados gracias a la colaboración de especialistas, colegas y estudiantes.
 		</p>
 		<p class="mt-[1.25rem] mb-0 max-w-[64ch] font-reading text-[1.01rem] leading-[1.62] text-text-main">
 			Los textos deben entenderse como versiones de trabajo: no sustituyen a las ediciones críticas, pueden contener errores de transcripción y presentan una calidad desigual según la fuente y el estado de revisión. En su estado actual, se ofrecen sin nombres de personajes ni acotaciones escénicas. La colección permanece abierta a correcciones, ampliaciones y mejoras.
@@ -51,7 +51,7 @@
 		{#snippet stats()}
 			<HeroStatCard
 				Icon={BookOpen}
-				value={data.stats.bicuveTexts}
+				value={data.stats.bitesoTexts}
 				label="Textos digitales en acceso abierto"
 				desktopOffset="up"
 			/>
@@ -64,7 +64,7 @@
 			Textos digitales en acceso abierto
 		</h2>
 		<p class="m-0 leading-[1.65] text-text-main">
-			Listado alfabético de las obras con texto digital BICUVE. Usa el buscador para localizar una obra y entrar directamente en su texto.
+			Listado alfabético de las obras con texto digital BITESO. Usa el buscador para localizar una obra y entrar directamente en su texto.
 		</p>
 		<p class="m-0 text-[0.92rem] font-medium text-text-soft">
 			{filteredWorks.length} de {data.works.length} textos visibles
@@ -72,10 +72,10 @@
 	</section>
 
 	<section class="grid gap-4">
-		<label class="grid gap-1 text-[0.86rem] text-text-soft" for="bicuve-textos-query">
+		<label class="grid gap-1 text-[0.86rem] text-text-soft" for="biteso-textos-query">
 			<span class="font-ui font-semibold uppercase tracking-[0.04em]">Buscar obra</span>
 			<input
-				id="bicuve-textos-query"
+				id="biteso-textos-query"
 				type="search"
 				placeholder="Ej: La monja alférez, El castigo sin venganza..."
 				class="w-full rounded-md border border-border bg-white px-3 py-2 text-[0.95rem] text-text-main"
@@ -90,7 +90,7 @@
 				<div class="divide-y divide-[rgba(0,51,167,0.08)]">
 					{#each filteredWorks as work}
 						<a
-							href={`/bicuve/${work.slug}`}
+							href={`/biteso/${work.slug}`}
 							class="grid gap-1 px-4 py-3 text-inherit no-underline transition hover:bg-[rgba(237,242,255,0.7)] hover:no-underline md:px-5"
 						>
 							<p class="m-0 font-ui text-[0.99rem] font-semibold leading-[1.35] text-brand-blue-dark">

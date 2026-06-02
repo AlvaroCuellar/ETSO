@@ -3,7 +3,7 @@ export const SITE_SHORT_NAME = 'ETSO';
 export const SITE_URL = 'https://etso.es';
 
 export const DEFAULT_SEO_DESCRIPTION =
-	'Estilometría aplicada al teatro del Siglo de Oro: examen de autorías, búsquedas textuales, textos digitales y recursos para la investigación filológica.';
+	'ETSO es una infraestructura de investigación dedicada al teatro del Siglo de Oro. Permite consultar informes de análisis estilométrico sobre la autoría de las cerca de 3000 obras conservadas, explorar textos teatrales áureos mediante un buscador léxico y acceder a resúmenes automáticos de todas las obras.';
 
 const DESCRIPTION_MAX_LENGTH = 165;
 

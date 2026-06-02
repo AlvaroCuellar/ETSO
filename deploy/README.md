@@ -97,11 +97,21 @@ Si el nombre de la distro no es `Ubuntu`, ponerlo en `TURSO_WSL_DISTRO` dentro d
 Instalar:
 
 ```bash
-brew install awscli jq sqlite
+brew install node@24 awscli jq sqlite
 ```
 
 ```bash
 brew install tursodatabase/tap/turso
+```
+
+Si Homebrew no deja `node` en el `PATH` tras instalar `node@24`, seguir las
+instrucciones que muestra `brew` al final de la instalaciÃ³n.
+
+Autenticar Turso:
+
+```bash
+turso auth login --headless
+turso auth whoami
 ```
 
 ## Entrada esperada

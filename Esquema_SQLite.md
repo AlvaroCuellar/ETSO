@@ -54,6 +54,7 @@ CREATE TABLE works (
     archivo TEXT NOT NULL,
     titulo TEXT NOT NULL,
     otrostitulos TEXT,
+    titulo_busqueda TEXT,
     genero TEXT,
     adicion TEXT,
     estado_texto TEXT,
@@ -178,6 +179,7 @@ CREATE TABLE work_distances (
 ```sql
 CREATE INDEX idx_works_titulo ON works(titulo);
 CREATE INDEX idx_works_otrostitulos ON works(otrostitulos);
+CREATE INDEX idx_works_titulo_busqueda ON works(titulo_busqueda);
 CREATE INDEX idx_works_genero ON works(genero);
 CREATE INDEX idx_works_citar ON works(citar);
 

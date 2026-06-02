@@ -4,6 +4,7 @@
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import CitationSuggestionCard from '$lib/components/ui/CitationSuggestionCard.svelte';
 	import PageHero from '$lib/components/ui/PageHero.svelte';
+	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import informeBg from '$lib/assets/heros/informes.png';
 	import { ambitoLabels, ambitos, type Ambito, type AttributionSet, type ObraTableRow } from '$lib/domain/catalog';
 	import {
@@ -31,6 +32,11 @@
 	const displayInformeTitleHtml = $derived.by(() =>
 		formatPrefixedDisplayWorkTitleHtml('Análisis estilométrico de', data.work.title)
 	);
+	const seoDescription = $derived.by(() => {
+		const intro = data.informe.intro?.trim();
+		if (intro) return intro;
+		return `Informe estilométrico de ${displayWorkTitle} en ETSO.`;
+	});
 
 	let activeAmbito = $state<Ambito>('obracompleta');
 
@@ -290,6 +296,8 @@
 		}))
 	}));
 </script>
+
+<SeoHead title={displayInformeTitle} description={seoDescription} path={`/informes/${data.informe.slug}`} />
 
 <div class="grid min-w-0 max-w-full gap-6">
 	<Breadcrumbs

@@ -1,10 +1,15 @@
 <script lang="ts">
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
+	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
+	const COMO_CITARNOS_SEO_DESCRIPTION =
+		'Referencias bibliográficas recomendadas para citar ETSO, TEXORO, CETSO y los recursos del proyecto.';
 </script>
+
+<SeoHead title="Cómo citarnos" description={COMO_CITARNOS_SEO_DESCRIPTION} path="/como-citarnos" />
 
 <div class="grid min-w-0 max-w-full gap-6 overflow-x-hidden">
 	<Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'Cómo citarnos' }]} />

@@ -1,6 +1,12 @@
 <script lang="ts">
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
+	import SeoHead from '$lib/components/seo/SeoHead.svelte';
+
+	const LICENCIAS_SEO_DESCRIPTION =
+		'Derechos, licencias y condiciones de reutilización de contenidos, datos, textos y materiales de ETSO.';
 </script>
+
+<SeoHead title="Derechos y licencias" description={LICENCIAS_SEO_DESCRIPTION} path="/licencias" />
 
 <div class="grid gap-6">
 	<Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'Derechos y licencias' }]} />

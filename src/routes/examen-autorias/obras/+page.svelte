@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
+	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import { normalizePlainText } from '$lib/search/normalize';
 	import {
 		buildWorkTitleSearchText,
@@ -9,6 +10,8 @@
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
+	const EXAMEN_OBRAS_SEO_DESCRIPTION =
+		'Listado de obras disponibles en Examen de autorías, con fichas, atribuciones e informes estilométricos.';
 
 	let query = $state('');
 
@@ -25,6 +28,12 @@
 		});
 	});
 </script>
+
+<SeoHead
+	title="Obras de Examen de autorías"
+	description={EXAMEN_OBRAS_SEO_DESCRIPTION}
+	path="/examen-autorias/obras"
+/>
 
 <div class="grid gap-6">
 	<Breadcrumbs

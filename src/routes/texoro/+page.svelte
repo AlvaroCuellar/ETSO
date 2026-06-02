@@ -4,6 +4,7 @@
 	import TokenMultiSelect from '$lib/components/search/TokenMultiSelect.svelte';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import AppButton from '$lib/components/ui/AppButton.svelte';
+	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import FeatureHeroSection from '$lib/components/ui/FeatureHeroSection.svelte';
 	import HeroStatCard from '$lib/components/ui/HeroStatCard.svelte';
 	import ChartModeToggle from '$lib/components/search/ChartModeToggle.svelte';
@@ -55,6 +56,8 @@
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
+	const TEXORO_SEO_DESCRIPTION =
+		'Búsquedas textuales complejas en TEXORO, un corpus del Siglo de Oro con millones de palabras indexadas.';
 
 	const numberFormatter = new Intl.NumberFormat('es-ES');
 	const decimalFormatter = new Intl.NumberFormat('es-ES', { maximumFractionDigits: 1 });
@@ -2639,6 +2642,8 @@
 		}
 	};
 </script>
+
+<SeoHead title="TEXORO" description={TEXORO_SEO_DESCRIPTION} path="/texoro" />
 
 {#snippet resultMetadataBlock(meta: TexoroWorkMeta, metadataTitle: string)}
 	<div

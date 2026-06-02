@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import ChevronLeft from 'lucide-svelte/icons/chevron-left';
 	import ChevronRight from 'lucide-svelte/icons/chevron-right';
+	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import TeamProfileCard from '$lib/components/ui/TeamProfileCard.svelte';
 	import estilometriaHero from '$lib/assets/heros/estilometria.webp';
 	import texoroHero from '$lib/assets/heros/texoro.webp';
@@ -11,6 +12,7 @@
 	import informesImage from '$lib/assets/heros/informes.png';
 	import librosHero from '$lib/assets/heros/libros.webp';
 	import fondoEscritura from '$lib/assets/fondos/fondo-escritura.png';
+	import { createWebPageJsonLd, SITE_NAME } from '$lib/seo';
 
 	interface HomeSlide {
 		image: string;
@@ -95,6 +97,13 @@
 	];
 
 	const AUTOPLAY_MS = 7000;
+	const HOME_DESCRIPTION =
+		'Estilometría aplicada al teatro del Siglo de Oro: examen de autorías, TEXORO, BITESO, resúmenes automáticos y recursos digitales para la investigación.';
+	const homeJsonLd = createWebPageJsonLd({
+		title: SITE_NAME,
+		description: HOME_DESCRIPTION,
+		path: '/'
+	});
 	let activeIndex = $state(0);
 	let autoplayHandle: ReturnType<typeof setInterval> | null = null;
 	let prefersReducedMotion = false;
@@ -181,6 +190,8 @@
 		};
 	});
 </script>
+
+<SeoHead title={SITE_NAME} description={HOME_DESCRIPTION} path="/" jsonLd={homeJsonLd} />
 
 <svelte:window onkeydown={handleCarouselKeydown} />
 

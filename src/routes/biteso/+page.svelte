@@ -2,6 +2,7 @@
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import FeatureHeroSection from '$lib/components/ui/FeatureHeroSection.svelte';
 	import HeroStatCard from '$lib/components/ui/HeroStatCard.svelte';
+	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import fondoLogo from '$lib/assets/fondos/fondo-logo.png';
 	import { normalizePlainText } from '$lib/search/normalize';
 	import {
@@ -14,6 +15,8 @@
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
+	const BITESO_SEO_DESCRIPTION =
+		'Biblioteca Textual Siglo de Oro: textos digitales en acceso abierto para lectura, consulta e investigación.';
 
 	let query = $state('');
 
@@ -30,6 +33,8 @@
 		});
 	});
 </script>
+
+<SeoHead title="BITESO" description={BITESO_SEO_DESCRIPTION} path="/biteso" />
 
 <div class="grid gap-6">
 	<Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'BITESO' }]} />

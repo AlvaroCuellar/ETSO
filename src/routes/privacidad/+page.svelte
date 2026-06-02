@@ -1,6 +1,12 @@
 <script lang="ts">
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
+	import SeoHead from '$lib/components/seo/SeoHead.svelte';
+
+	const PRIVACIDAD_SEO_DESCRIPTION =
+		'Política de privacidad y tratamiento de datos personales en la web de ETSO.';
 </script>
+
+<SeoHead title="Política de privacidad" description={PRIVACIDAD_SEO_DESCRIPTION} path="/privacidad" />
 
 <div class="grid gap-6">
 	<Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'Política de privacidad' }]} />

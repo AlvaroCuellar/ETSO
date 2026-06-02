@@ -1,11 +1,14 @@
 <script lang="ts">
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
+	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import { normalizePlainText } from '$lib/search/normalize';
 
 	import type { EditorialItem, ImpactRelationTag, ImpactReferenceType } from '$lib/domain/catalog';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
+	const REPERCUSION_SEO_DESCRIPTION =
+		'Referencias, colaboraciones, noticias y trabajos académicos relacionados con ETSO y su repercusión investigadora.';
 
 	let sectionFilter = $state('all');
 	let typeFilter = $state('all');
@@ -130,6 +133,8 @@
 		return parts;
 	};
 </script>
+
+<SeoHead title="Repercusión" description={REPERCUSION_SEO_DESCRIPTION} path="/repercusion" />
 
 <div class="grid gap-7">
 	<Breadcrumbs

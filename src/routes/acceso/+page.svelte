@@ -1,16 +1,13 @@
 <script lang="ts">
+	import SeoHead from '$lib/components/seo/SeoHead.svelte';
+
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
+	const ACCESO_SEO_DESCRIPTION = 'Acceso temporal restringido a la web de ETSO.';
 </script>
 
-<svelte:head>
-	<title>Acceso restringido | ETSO</title>
-	<meta
-		name="robots"
-		content="noindex,nofollow"
-	/>
-</svelte:head>
+<SeoHead title="Acceso restringido" description={ACCESO_SEO_DESCRIPTION} path="/acceso" noindex />
 
 <div class="mx-auto w-full max-w-[560px] px-4 py-10 sm:px-6 lg:py-14">
 	<section class="rounded-[16px] border border-border-accent-blue bg-white p-6 shadow-[0_18px_44px_rgba(7,29,66,0.12)] sm:p-7">

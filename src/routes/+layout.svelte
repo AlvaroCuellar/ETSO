@@ -4,23 +4,28 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import SiteFooter from '$lib/components/layout/SiteFooter.svelte';
 	import SiteHeader from '$lib/components/layout/SiteHeader.svelte';
+	import {
+		createOrganizationJsonLd,
+		createWebSiteJsonLd,
+		jsonLdScript,
+		SITE_NAME
+	} from '$lib/seo';
 
 	let { children } = $props();
+	const siteIdentityJsonLd = jsonLdScript([createWebSiteJsonLd(), createOrganizationJsonLd()]);
 </script>
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<meta
-		name="description"
-		content="ETSO - Estilometria aplicada al teatro del Siglo de Oro. Nueva plataforma con SvelteKit."
-	/>
+	<meta name="application-name" content={SITE_NAME} />
+	<meta property="og:site_name" content={SITE_NAME} />
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
 	<link
 		href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&family=Roboto:wght@300;400;500;700&display=swap"
 		rel="stylesheet"
 	/>
+	{@html siteIdentityJsonLd}
 </svelte:head>
 
 <div class="flex min-h-screen min-w-0 flex-col bg-white font-reading text-text-main">

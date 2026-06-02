@@ -4,6 +4,7 @@
 	import CitationSuggestionCard from '$lib/components/ui/CitationSuggestionCard.svelte';
 	import LegalCard from '$lib/components/ui/LegalCard.svelte';
 	import PageHero from '$lib/components/ui/PageHero.svelte';
+	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import WorkMetadataCard from '$lib/components/ui/WorkMetadataCard.svelte';
 	// Importar aquí el futuro logo de BITESO cuando esté disponible.
 	// import bitesoLogo from '$lib/assets/logos/biteso.png';
@@ -20,6 +21,7 @@
 	let { data }: { data: PageData } = $props();
 	const displayWorkTitle = $derived.by(() => formatDisplayWorkTitle(data.work.title));
 	const displayBitesoTitle = $derived.by(() => `Texto digital de ${displayWorkTitle}`);
+	const seoDescription = $derived.by(() => `Texto digital BITESO de ${displayWorkTitle}, disponible en ETSO.`);
 	const displayBitesoTitleHtml = $derived.by(() =>
 		formatPrefixedDisplayWorkTitleHtml('Texto digital de', data.work.title)
 	);
@@ -139,6 +141,12 @@
 		};
 	});
 </script>
+
+<SeoHead
+	title={`${displayBitesoTitle} | BITESO`}
+	description={seoDescription}
+	canonicalUrl={data.canonicalUrl}
+/>
 
 <div class="grid gap-6">
 	<Breadcrumbs

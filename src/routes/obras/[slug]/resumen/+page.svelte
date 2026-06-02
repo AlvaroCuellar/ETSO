@@ -4,6 +4,7 @@
 	import CitationSuggestionCard from '$lib/components/ui/CitationSuggestionCard.svelte';
 	import LegalCard from '$lib/components/ui/LegalCard.svelte';
 	import PageHero from '$lib/components/ui/PageHero.svelte';
+	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import heroBg from '$lib/assets/heros/obra-bg.jpg';
 	import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
 
@@ -11,6 +12,7 @@
 
 	let { data }: { data: PageData } = $props();
 	const displayWorkTitle = $derived.by(() => formatDisplayWorkTitle(data.work.title));
+	const seoDescription = $derived.by(() => `Resumen automático de ${displayWorkTitle}, obra del corpus de ETSO.`);
 	let summary = $state({
 		resumenLargo: [] as string[],
 		personajes: [] as Array<{ nombre: string; descripcion: string }>,
@@ -85,6 +87,12 @@
 		})();
 	});
 </script>
+
+<SeoHead
+	title={`Resumen automático de ${displayWorkTitle}`}
+	description={seoDescription}
+	path={`/obras/${data.work.slug}/resumen`}
+/>
 
 <div class="grid gap-6">
 	<Breadcrumbs

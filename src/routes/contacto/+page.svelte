@@ -1,7 +1,10 @@
 <script lang="ts">
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
+	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 
 	const recipients = ['alvaro.cuellar@uab.cat', 'german.vega@uva.es'] as const;
+	const CONTACTO_SEO_DESCRIPTION =
+		'Formulario y direcciones de contacto para consultas, colaboraciones y solicitudes relacionadas con ETSO.';
 
 	let name = $state('');
 	let email = $state('');
@@ -32,6 +35,8 @@
 		window.location.href = href;
 	}
 </script>
+
+<SeoHead title="Contacto" description={CONTACTO_SEO_DESCRIPTION} path="/contacto" />
 
 <div class="grid gap-7 lg:gap-8">
 	<Breadcrumbs

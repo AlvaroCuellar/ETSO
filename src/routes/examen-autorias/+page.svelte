@@ -4,6 +4,7 @@
 	import HelpBubble from '$lib/components/search/HelpBubble.svelte';
 	import MatchToggle from '$lib/components/search/MatchToggle.svelte';
 	import TokenMultiSelect from '$lib/components/search/TokenMultiSelect.svelte';
+	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import WorksTable from '$lib/components/search/WorksTable.svelte';
 	import AppButton from '$lib/components/ui/AppButton.svelte';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
@@ -41,6 +42,8 @@
 	}
 
 	type ExamenPageFilters = PageData['filters'];
+	const EXAMEN_SEO_DESCRIPTION =
+		'Consulta informes estilométricos y relaciones de autoría en un corpus de obras teatrales del Siglo de Oro.';
 	const EXAMEN_STATS_CACHE_KEY = 'examen-autorias:stats';
 	const EXAMEN_OPTIONS_CACHE_KEY = 'examen-autorias:options';
 
@@ -445,6 +448,8 @@
 		await navigateToUrl('/examen-autorias', { scrollToTable: false });
 	};
 </script>
+
+<SeoHead title="Examen de autorías" description={EXAMEN_SEO_DESCRIPTION} path="/examen-autorias" />
 
 <div class="grid min-w-0 max-w-full gap-6">
 	<Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'Examen de autorías' }]} />

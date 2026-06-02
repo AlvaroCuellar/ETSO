@@ -2,6 +2,7 @@
 	import WorksTable from '$lib/components/search/WorksTable.svelte';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import PageHero from '$lib/components/ui/PageHero.svelte';
+	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import autorBg from '$lib/assets/heros/autor-bg.jpg';
 	import { buildWorkTitleSearchText } from '$lib/utils/format-display-work-title';
 	import type { ObraTableRow } from '$lib/domain/catalog';
@@ -11,6 +12,11 @@
 	type AuthorFilterKey = 'related_any' | 'trad_any' | 'etso_yes' | 'only_trad' | 'only_etso';
 
 	let { data }: { data: PageData } = $props();
+	const seoDescription = $derived.by(() => {
+		const total = data.works.length;
+		const suffix = total === 1 ? 'obra relacionada' : 'obras relacionadas';
+		return `${data.author.name}: ficha de autoría en ETSO con ${total} ${suffix} en Examen de autorías.`;
+	});
 
 	let activeFilter = $state<AuthorFilterKey>('related_any');
 	let titleFilter = $state('');
@@ -81,6 +87,8 @@
 		return `${statCardBase} ${isPrimary ? statCardPrimaryPadding : statCardSecondaryPadding} ${activeFilter === filter ? statCardActive : ''}`.trim();
 	};
 </script>
+
+<SeoHead title={data.author.name} description={seoDescription} path={`/autores/${data.author.id}`} />
 
 <div class="grid min-w-0 max-w-full gap-6">
 	<Breadcrumbs

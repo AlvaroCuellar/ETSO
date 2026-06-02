@@ -1,10 +1,13 @@
 <script lang="ts">
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
+	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import { normalizePlainText } from '$lib/search/normalize';
 
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
+	const DRAMATURGOS_SEO_DESCRIPTION =
+		'Listado de dramaturgos presentes en Examen de autorías, con acceso a sus obras y relaciones estilométricas.';
 
 	let query = $state('');
 
@@ -21,6 +24,12 @@
 		});
 	});
 </script>
+
+<SeoHead
+	title="Dramaturgos de Examen de autorías"
+	description={DRAMATURGOS_SEO_DESCRIPTION}
+	path="/examen-autorias/dramaturgos"
+/>
 
 <div class="grid gap-6">
 	<Breadcrumbs

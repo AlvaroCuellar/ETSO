@@ -1,7 +1,11 @@
 <script lang="ts">
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
+	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import transcripcionAutomatica1 from '$lib/assets/transcripcion/transcripcion-automatica-1.jpg';
 	import transcripcionAutomatica2 from '$lib/assets/transcripcion/transcripcion-automatica-2.jpg';
+
+	const TRANSCRIPCIONES_SEO_DESCRIPTION =
+		'Modelos y procesos de transcripción automática aplicados a impresos y manuscritos teatrales del Siglo de Oro.';
 
 	const milestones = [
 		{ value: '1.000', label: 'impresos transcritos y modernizados automáticamente' },
@@ -25,6 +29,12 @@
 		}
 	];
 </script>
+
+<SeoHead
+	title="Transcripciones automáticas"
+	description={TRANSCRIPCIONES_SEO_DESCRIPTION}
+	path="/transcripciones-automaticas"
+/>
 
 <div class="grid gap-7 lg:gap-8">
 	<Breadcrumbs

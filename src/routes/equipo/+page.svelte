@@ -1,11 +1,14 @@
 <script lang="ts">
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
+	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import TeamProfileCard from '$lib/components/ui/TeamProfileCard.svelte';
 
 	import type { EditorialItem, EditorialSection } from '$lib/domain/catalog';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
+	const EQUIPO_SEO_DESCRIPTION =
+		'Equipo, colaboradores, estudiantes, entidades y recursos vinculados a ETSO.';
 
 	const hasAnyData = (sections: EditorialSection[]): boolean =>
 		sections.some((section) => section.items.length > 0);
@@ -15,6 +18,8 @@
 	const itemMeta = (item: EditorialItem): string =>
 		item.organizations.length > 0 ? item.organizations.join(' | ') : '';
 </script>
+
+<SeoHead title="Equipo" description={EQUIPO_SEO_DESCRIPTION} path="/equipo" />
 
 <div class="grid gap-7">
 	<Breadcrumbs

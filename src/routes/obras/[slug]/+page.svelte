@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { formatConfidence, type AttributionSet, type Confidence } from '$lib/domain/catalog';
+	import { formatAttribution, formatConfidence, type AttributionSet, type Confidence } from '$lib/domain/catalog';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import InfoCard from '$lib/components/ui/InfoCard.svelte';
 	import InlineActionButton from '$lib/components/ui/InlineActionButton.svelte';
 	import PageHero from '$lib/components/ui/PageHero.svelte';
+	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import heroBg from '$lib/assets/heros/obra-bg.jpg';
 	import AlignLeft from 'lucide-svelte/icons/align-left';
 	import Archive from 'lucide-svelte/icons/archive';
@@ -22,6 +23,12 @@
 	let { data }: { data: PageData } = $props();
 	const displayWorkTitle = $derived.by(() => formatDisplayWorkTitle(data.work.title));
 	const displayTitleVariants = $derived.by(() => formatDisplayWorkTitleList(data.work.titleVariants));
+	const seoDescription = $derived.by(() => {
+		const stylometry = formatAttribution(data.work.stylometryAttribution);
+		const summary = data.work.shortSummary?.trim();
+		if (summary && summary !== 'Sin resumen breve disponible.') return summary;
+		return `${displayWorkTitle}. ${data.work.genre}. Atribución estilométrica: ${stylometry}.`;
+	});
 
 	const connectorLabel = (connector: 'and' | 'or'): string => (connector === 'and' ? 'y' : 'o');
 
@@ -52,6 +59,8 @@
 	const actionLinkClass =
 		'group grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3.5 rounded-lg border-0 bg-white px-[0.85rem] py-3 text-inherit no-underline transition hover:no-underline';
 </script>
+
+<SeoHead title={displayWorkTitle} description={seoDescription} path={`/obras/${data.work.slug}`} />
 
 {#snippet textAccessActions()}
 	{#if hasTextAccess()}

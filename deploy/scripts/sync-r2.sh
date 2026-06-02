@@ -30,11 +30,19 @@ if [ -n "${R2_ACCESS_KEY_ID:-}" ] || [ -n "${R2_SECRET_ACCESS_KEY:-}" ]; then
   export AWS_SECRET_ACCESS_KEY="$R2_SECRET_ACCESS_KEY"
   unset AWS_PROFILE
   unset AWS_DEFAULT_PROFILE
-  AWS_AUTH_ARGS=()
+  AWS_PROFILE_FOR_R2=""
 else
   : "${AWS_PROFILE:?Falta AWS_PROFILE o R2_ACCESS_KEY_ID/R2_SECRET_ACCESS_KEY en .env.deploy}"
-  AWS_AUTH_ARGS=(--profile "$AWS_PROFILE")
+  AWS_PROFILE_FOR_R2="$AWS_PROFILE"
 fi
+
+run_aws() {
+  if [ -n "$AWS_PROFILE_FOR_R2" ]; then
+    aws --profile "$AWS_PROFILE_FOR_R2" "$@"
+  else
+    aws "$@"
+  fi
+}
 
 if [ ! -f "$CONFIG_FILE" ]; then
   echo "No existe el archivo de configuración: $CONFIG_FILE"
@@ -44,9 +52,8 @@ fi
 echo "==> Comprobando buckets de R2"
 
 jq -r '.[].bucket' "$CONFIG_FILE" | tr -d '\r' | sort -u | while read -r bucket; do
-  aws s3api head-bucket \
+  run_aws s3api head-bucket \
     --bucket "$bucket" \
-    "${AWS_AUTH_ARGS[@]}" \
     --endpoint-url "$ENDPOINT_URL" >/dev/null
 done
 
@@ -75,8 +82,7 @@ jq -c '.[]' "$CONFIG_FILE" | tr -d '\r' | while read -r item; do
   echo "   - $NAME: $LOCAL_REL -> $REMOTE"
 
   CMD=(
-    aws s3 sync "$LOCAL_ABS" "$REMOTE"
-    "${AWS_AUTH_ARGS[@]}"
+    s3 sync "$LOCAL_ABS" "$REMOTE"
     --endpoint-url "$ENDPOINT_URL"
     --only-show-errors
   )
@@ -89,7 +95,7 @@ jq -c '.[]' "$CONFIG_FILE" | tr -d '\r' | while read -r item; do
     CMD+=(--dryrun)
   fi
 
-  "${CMD[@]}"
+  run_aws "${CMD[@]}"
 done
 
 echo "==> R2 sincronizado"

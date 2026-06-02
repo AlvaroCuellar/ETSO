@@ -465,7 +465,7 @@
 			contraste de hipótesis autorales.
 		</p>
 		<p class="mt-[1.25rem] mb-0 max-w-[64ch] font-['Lora',serif] text-[1.01rem] leading-[1.62] text-text-main">
-			Los textos han sido modernizados y regularizados para hacer posible su comparación, y se han depurado
+			Los textos han sido <b>modernizados y regularizados</b> para hacer posible su comparación, y se han depurado
 			en lo posible para reducir interferencias (por ejemplo, acotaciones y marcas de intervención). A
 			partir de esta base, el sitio permite confrontar atribuciones transmitidas por la tradición con
 			propuestas derivadas del análisis cuantitativo del estilo. El objetivo no es sustituir la lectura
@@ -473,7 +473,7 @@
 			comprobaciones documentales y críticas.
 		</p>
 		<p class="mt-[1.25rem] mb-0 max-w-[64ch] font-['Lora',serif] text-[1.01rem] leading-[1.62] text-text-main">
-			El corpus se nutre de fuentes abiertas y de aportaciones de investigadores y grupos, e integra
+			El corpus se nutre de <b>fuentes abiertas y de aportaciones de investigadores y grupos</b>, e integra
 			también textos procedentes de transcripciones automáticas de impresos y manuscritos antiguos. Se
 			aceptan consultas, colaboraciones y propuestas de ampliación: si dispones de una obra o conoces cómo
 			acceder a ella, escríbenos y nos comprometemos a reconocer la procedencia en la tabla

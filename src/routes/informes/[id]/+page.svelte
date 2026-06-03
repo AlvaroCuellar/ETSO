@@ -447,20 +447,24 @@
 				</div>
 			</article>
 		{/if}
-		{#if result2Parts.length > 0}
-			<p class="m-0 max-w-[78ch] text-base leading-[1.72] text-text-main">
-				{#each result2Parts as part}
-					{#if part.kind === 'author' && part.authorId}
-						<a href={`/autores/${part.authorId}`} class="font-semibold text-brand-blue underline hover:text-brand-blue-dark focus-visible:text-brand-blue-dark">
+	{#if result2Parts.length > 0}
+		<article class="rounded-[8px] bg-surface-accent-blue px-4 py-3.5 max-md:px-[0.9rem] max-md:py-3">
+			<div class="grid gap-2">
+				<p class="m-0 text-base leading-[1.72] text-text-main">
+					{#each result2Parts as part}
+						{#if part.kind === 'author' && part.authorId}
+							<a href={`/autores/${part.authorId}`} class="font-semibold text-brand-blue underline hover:text-brand-blue-dark focus-visible:text-brand-blue-dark">
+								{part.value}
+							</a>
+						{:else}
 							{part.value}
-						</a>
-					{:else}
-						{part.value}
-					{/if}
-				{/each}
-			</p>
-		{/if}
-	</section>
+						{/if}
+					{/each}
+				</p>
+			</div>
+		</article>
+	{/if}
+</section>
 
 	<section class="grid gap-4 font-ui">
 		<div class="flex flex-wrap items-center justify-between gap-4">
@@ -659,5 +663,4 @@
 		transform: rotate(90deg);
 	}
 </style>
-
 

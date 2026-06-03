@@ -11,6 +11,7 @@
 		{ href: '/texoro', label: 'TEXORO' },
 		{ href: '/biteso', label: 'BITESO' },
 		{ href: '/resumenes', label: 'Resúmenes' },
+		{ href: '/red-obras', label: 'Red 3D' },
 		{ href: '/como-citarnos', label: 'Cómo citarnos' }
 	] as const;
 

@@ -1,8 +1,10 @@
 ﻿<script lang="ts">
 	import ChevronRight from 'lucide-svelte/icons/chevron-right';
+	import Download from 'lucide-svelte/icons/download';
 	import WorksTable from '$lib/components/search/WorksTable.svelte';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import CitationSuggestionCard from '$lib/components/ui/CitationSuggestionCard.svelte';
+	import InlineActionButton from '$lib/components/ui/InlineActionButton.svelte';
 	import PageHero from '$lib/components/ui/PageHero.svelte';
 	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import informeBg from '$lib/assets/heros/informes.png';
@@ -357,9 +359,20 @@
 
 	<section class="mt-1 min-w-0 max-w-full">
 		<div class="mb-5 grid min-w-0 max-w-full gap-2">
-			<h2 class="m-0 text-[clamp(1.2rem,2vw,1.45rem)] font-semibold leading-[1.2] text-brand-blue-dark">
-				Obras más cercanas por ámbito
-			</h2>
+			<div class="flex flex-wrap items-center justify-between gap-3">
+				<h2 class="m-0 text-[clamp(1.2rem,2vw,1.45rem)] font-semibold leading-[1.2] text-brand-blue-dark">
+					Obras más cercanas
+				</h2>
+				<InlineActionButton
+					href={`/api/informes/${data.informe.slug}/export.xlsx`}
+					icon={Download}
+					preloadData="off"
+					ariaLabel="Descargar datos del informe en XLSX"
+					title="Descargar XLSX"
+				>
+					Descarga informe
+				</InlineActionButton>
+			</div>
 			<p class="m-0 text-[0.97rem] leading-[1.62] text-text-soft">{methodologyLead}</p>
 		</div>
 
@@ -663,4 +676,3 @@
 		transform: rotate(90deg);
 	}
 </style>
-

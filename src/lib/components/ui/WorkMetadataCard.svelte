@@ -90,7 +90,7 @@
 		const names = members.map((member) => member.authorName.trim());
 
 		if (names.length === 0) {
-			return [{ kind: 'text', value: 'Sin resultados estilométricos disponibles.' }];
+			return [{ kind: 'text', value: 'No apunta hacia ningún autor de forma clara.' }];
 		}
 
 		if (members.length === 1 && members[0].confidence === 'segura') {
@@ -196,7 +196,7 @@
 			</dt>
 			<dd class="m-0 font-ui text-[0.97rem] leading-[1.65] text-text-main">
 				{#if work.stylometryAttribution.unresolved || work.stylometryAttribution.groups.length === 0}
-					Sin resultados estilométricos disponibles
+					No apunta hacia ningún autor de forma clara
 				{:else}
 					<span class="inline-flex flex-wrap items-center gap-x-2 gap-y-1 align-baseline">
 						{#each work.stylometryAttribution.groups as group, groupIndex}

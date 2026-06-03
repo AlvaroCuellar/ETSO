@@ -205,7 +205,7 @@
 									{data.metrics.onlyEtso}
 								</div>
 								<div class="mt-[0.45rem] text-[0.9rem] leading-[1.35] font-medium text-[#5a6c7d]">
-									Obras atribuidas a partir de la estilometría
+									Novedades respaldadas por la estilometría
 								</div>
 							</button>
 						</div>

@@ -304,6 +304,26 @@
 								</dt>
 								<dd class="m-0 text-[0.96rem] text-text-main">{data.work.addedOn}</dd>
 							</div>
+
+							<div class="flex flex-col gap-[0.45rem] border-b border-border py-[0.9rem] first:pt-0 last:border-b-0 last:pb-0">
+								<dt
+									class="m-0 flex items-center gap-[0.35rem] text-[0.72rem] font-bold tracking-[0.05em] text-text-soft uppercase"
+								>
+									<ExternalLink class="h-[0.82rem] w-[0.82rem] text-text-soft stroke-2" aria-hidden="true" />
+									ASODAT
+								</dt>
+								<dd class="m-0 text-[0.96rem] leading-[1.55] text-text-main">
+									Estamos trabajando para vincular esta obra con
+									<a
+										href="https://asodat.uv.es/"
+										target="_blank"
+										rel="noopener noreferrer"
+										class="font-medium text-brand-blue underline hover:text-brand-blue-dark focus-visible:text-brand-blue-dark"
+									>
+										ASODAT
+									</a>.
+								</dd>
+							</div>
 					</dl>
 				</InfoCard>
 			</aside>

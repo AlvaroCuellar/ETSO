@@ -10,6 +10,7 @@
 		{ href: '/examen-autorias', label: 'Examen de autorías' },
 		{ href: '/texoro', label: 'TEXORO' },
 		{ href: '/biteso', label: 'BITESO' },
+		{ href: '/resumenes', label: 'Resúmenes' },
 		{ href: '/como-citarnos', label: 'Cómo citarnos' }
 	] as const;
 

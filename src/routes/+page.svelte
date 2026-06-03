@@ -60,8 +60,9 @@
 		{
 			image: resumenesHero,
 			title: 'Resúmenes automáticos',
-			description: 'Consulta los resúmenes automáticos de todas las obras a través de Examen de autorías o TEXORO',
-			alt: 'Resúmenes automáticos de las obras'
+			description: 'Consulta los resúmenes automáticos de todas las obras de la base de datos',
+			alt: 'Resúmenes automáticos de las obras',
+			link: '/resumenes'
 		}
 	];
 
@@ -532,5 +533,4 @@
 		</div>
 	</div>
 </section>
-
 

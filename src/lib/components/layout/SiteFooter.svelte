@@ -57,24 +57,24 @@
 
 			<div class="order-2 border-t border-white/16"></div>
 
-			<div class="order-1 grid items-start gap-8 md:grid-cols-2 md:gap-10">
-				<div class="grid max-w-[34rem] gap-3 text-[0.9rem] leading-[1.55] text-white/86">
+			<div class="order-1 grid items-start gap-8 lg:grid-cols-[minmax(0,1.18fr)_minmax(20rem,0.82fr)] lg:gap-10">
+				<div class="grid max-w-none gap-2 text-[0.9rem] leading-[1.55] text-white/86">
 					<p class="m-0 text-white/64">Esta página web ha sido desarrollada gracias a la financiación principal de:</p>
 					<a
 						href="https://webs.uab.cat/thal-ia/"
-						class="inline-block w-fit no-underline hover:no-underline"
+						class="-mt-2 mb-3 inline-block w-fit no-underline hover:no-underline"
 						target="_blank"
 						rel="noopener noreferrer"
 					>
 						<img
-							class="h-16 w-auto max-w-[12.5rem] object-contain"
+							class="h-14 w-auto max-w-[12.5rem] object-contain lg:h-15"
 							src={thaliaLogo}
 							alt="Logo de Thal-IA"
 						/>
 					</a>
 					<a
 						href="https://webs.uab.cat/thal-ia/"
-						class="w-fit font-reading text-[1rem] leading-[1.4] text-white no-underline hover:underline"
+						class="w-fit font-reading text-[1rem] leading-[1.4] text-white no-underline hover:underline xl:whitespace-nowrap"
 						target="_blank"
 						rel="noopener noreferrer"
 					>

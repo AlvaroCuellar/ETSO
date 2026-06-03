@@ -1,23 +1,18 @@
 <script lang="ts">
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
-	import FeatureHeroSection from '$lib/components/ui/FeatureHeroSection.svelte';
-	import HeroStatCard from '$lib/components/ui/HeroStatCard.svelte';
 	import SeoHead from '$lib/components/seo/SeoHead.svelte';
-	import fondoLogo from '$lib/assets/fondos/fondo-logo.png';
 	import { normalizePlainText } from '$lib/search/normalize';
 	import {
 		buildWorkTitleSearchText,
 		formatDisplayWorkTitle
 	} from '$lib/utils/format-display-work-title';
-	import BookOpen from 'lucide-svelte/icons/book-open';
-	import Feather from 'lucide-svelte/icons/feather';
 
 	import type { AttributionSet } from '$lib/domain/catalog';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
-	const BITESO_SEO_DESCRIPTION =
-		'Biblioteca Textual Siglo de Oro: textos digitales en acceso abierto para lectura, consulta e investigación.';
+	const TEXORO_OBRAS_SEO_DESCRIPTION =
+		'Listado de obras indexadas en TEXORO, con acceso a sus fichas y metadatos.';
 
 	let query = $state('');
 
@@ -49,73 +44,44 @@
 	};
 
 	const formatGenre = (genre: string): string => genre.trim() || 'Sin género';
-	const formatTextState = (textState: string): string => textState.trim() || 'Sin estado textual';
 
 	const filteredWorks = $derived.by(() => {
 		const normalizedQuery = normalizeFilterText(query);
 		if (!normalizedQuery) return data.works;
 
 		return data.works.filter((work) => {
-			const haystack = normalizeFilterText(
-				[
-					buildWorkTitleSearchText(work.title, work.titleVariants),
-					formatTraditionalAttribution(work.traditionalAttribution),
-					formatGenre(work.genre),
-					formatTextState(work.textState)
-				].join(' ')
-			);
+			const haystack = normalizeFilterText(buildWorkTitleSearchText(work.title, work.titleVariants));
 			return haystack.includes(normalizedQuery);
 		});
 	});
 </script>
 
-<SeoHead title="BITESO" description={BITESO_SEO_DESCRIPTION} path="/biteso" />
+<SeoHead title="Obras de TEXORO" description={TEXORO_OBRAS_SEO_DESCRIPTION} path="/texoro/obras" />
 
 <div class="grid gap-6">
-	<Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'BITESO' }]} />
-
-	<FeatureHeroSection
-		eyebrow=""
-		title="BITESO"
-		subtitle="Biblioteca Textual Siglo de Oro"
-		backgroundImage={fondoLogo}
-		statsAriaLabel="Indicadores de BITESO"
-	>
-		<p class="mt-[1.8rem] mb-0 max-w-[64ch] font-reading text-[1.01rem] leading-[1.62] text-text-main">
-			BITESO ofrece <b>acceso en abierto a textos digitales del Siglo de Oro</b> conseguidos, en su mayoría, a partir de transcripciones automáticas de impresos y manuscritos antiguos. La colección reúne obras producidas para los análisis estilométricos de autoría y materiales incorporados gracias a la colaboración de especialistas, colegas y estudiantes.
-		</p>
-		<p class="mt-[1.25rem] mb-0 max-w-[64ch] font-reading text-[1.01rem] leading-[1.62] text-text-main">
-			Los textos deben <b>entenderse como versiones de trabajo</b>: no sustituyen a las ediciones críticas, pueden contener errores de transcripción y presentan una calidad desigual según la fuente y el estado de revisión. En su estado actual, se ofrecen sin nombres de personajes ni acotaciones escénicas. La colección permanece abierta a correcciones, ampliaciones y mejoras.
-		</p>
-		
-		{#snippet stats()}
-			<HeroStatCard
-				Icon={BookOpen}
-				value={data.stats.bitesoTexts}
-				label="Textos digitales en acceso abierto"
-				desktopOffset="up"
-			/>
-			<HeroStatCard Icon={Feather} value={data.stats.authors} label="Autores" desktopOffset="down" />
-		{/snippet}
-	</FeatureHeroSection>
+	<Breadcrumbs
+		items={[
+			{ label: 'Inicio', href: '/' },
+			{ label: 'TEXORO', href: '/texoro' },
+			{ label: 'Obras' }
+		]}
+	/>
 
 	<section class="grid gap-3">
-		<h2 class="m-0 font-ui text-[clamp(1.6rem,2.6vw,2.1rem)] font-bold leading-[1.12] text-brand-blue-dark">
-			Textos digitales en acceso abierto
-		</h2>
+		<h1 class="m-0 font-ui text-[clamp(1.8rem,3vw,2.35rem)] font-bold leading-[1.12] text-brand-blue-dark">Obras</h1>
 		<p class="m-0 leading-[1.65] text-text-main">
-			Listado alfabético de las obras con texto digital BITESO. Usa el buscador para localizar una obra y entrar directamente en su texto.
+			Listado alfabético de las obras indexadas en TEXORO. Usa el buscador para localizar una obra y entrar directamente en su ficha.
 		</p>
 		<p class="m-0 text-[0.92rem] font-medium text-text-soft">
-			{filteredWorks.length} de {data.works.length} textos visibles
+			{filteredWorks.length} de {data.works.length} obras visibles
 		</p>
 	</section>
 
 	<section class="grid gap-4">
-		<label class="grid gap-1 text-[0.86rem] text-text-soft" for="biteso-textos-query">
+		<label class="grid gap-1 text-[0.86rem] text-text-soft" for="texoro-obras-query">
 			<span class="font-ui font-semibold uppercase tracking-[0.04em]">Buscar obra</span>
 			<input
-				id="biteso-textos-query"
+				id="texoro-obras-query"
 				type="search"
 				placeholder="Ej: La monja alférez, El castigo sin venganza..."
 				class="w-full rounded-md border border-border bg-white px-3 py-2 text-[0.95rem] text-text-main"
@@ -124,13 +90,13 @@
 		</label>
 
 		{#if filteredWorks.length === 0}
-			<p class="m-0 italic text-text-soft">No hay textos que coincidan con la búsqueda.</p>
+			<p class="m-0 italic text-text-soft">No hay obras que coincidan con la búsqueda.</p>
 		{:else}
 			<div class="overflow-hidden bg-[rgba(255,255,255,0.52)]">
 				<div class="divide-y divide-[rgba(0,51,167,0.08)]">
 					{#each filteredWorks as work}
 						<a
-							href={`/biteso/${work.slug}`}
+							href={`/obras/${work.slug}`}
 							class="grid gap-1 px-4 py-3 text-inherit no-underline transition hover:bg-[rgba(237,242,255,0.7)] hover:no-underline md:px-5"
 						>
 							<p class="m-0 font-ui text-[0.99rem] leading-[1.45] text-brand-blue-dark">
@@ -139,8 +105,6 @@
 								<span class="font-normal text-text-main">{formatTraditionalAttribution(work.traditionalAttribution)}</span>
 								<span class="mx-1.5 text-text-soft/70">·</span>
 								<span class="font-normal text-text-soft">{formatGenre(work.genre)}</span>
-								<span class="mx-1.5 text-text-soft/70">·</span>
-								<span class="font-normal text-text-soft">{formatTextState(work.textState)}</span>
 							</p>
 							{#if work.titleVariants.length > 0}
 								<p class="m-0 text-[0.92rem] leading-[1.5] text-text-soft">

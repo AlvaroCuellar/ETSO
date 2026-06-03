@@ -1,9 +1,9 @@
-import { getAuthorshipExamAuthors, getAuthorshipExamWorks } from '$lib/server/catalog-runtime';
+import { getAllAuthors, getAllWorks } from '$lib/server/catalog-runtime';
 
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
-	const [dramaturgos, works] = await Promise.all([getAuthorshipExamAuthors(), getAuthorshipExamWorks()]);
+	const [works, authors] = await Promise.all([getAllWorks(), getAllAuthors()]);
 	const worksByTraditionalAuthorId = new Map<
 		string,
 		Array<{ slug: string; title: string; titleVariants: string[]; genre: string }>
@@ -29,7 +29,7 @@ export const load: PageServerLoad = async () => {
 	}
 
 	return {
-		dramaturgos: dramaturgos
+		authors: authors
 			.filter((author) => worksByTraditionalAuthorId.has(author.id))
 			.map((author) => ({
 				id: author.id,

@@ -1,9 +1,9 @@
-import { getAuthorshipExamWorks } from '$lib/server/catalog-runtime';
+import { getAllWorks } from '$lib/server/catalog-runtime';
 
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => ({
-	works: (await getAuthorshipExamWorks())
+	works: (await getAllWorks())
 		.map((work) => ({
 			slug: work.slug,
 			title: work.title,

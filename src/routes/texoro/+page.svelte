@@ -2805,6 +2805,8 @@
 		{#snippet stats()}
 			<HeroStatCard
 				Icon={BookOpen}
+				href="/texoro/obras"
+				ariaLabel="Ver listado de obras indexadas"
 				value={numberFormatter.format(displayIndexStats?.works ?? 0)}
 				label="Obras indexadas"
 				desktopOffset="up"
@@ -2821,6 +2823,8 @@
 
 			<HeroStatCard
 				Icon={Feather}
+				href="/texoro/autores"
+				ariaLabel="Ver listado de autores"
 				value={numberFormatter.format(statsPayload?.authors ?? 0)}
 				label="Autores"
 				desktopOffset="up"

@@ -45,7 +45,10 @@ export const load: PageServerLoad = async () => {
 			id: work.id,
 			slug: getBitesoSlug(work),
 			title: work.title,
-			titleVariants: work.titleVariants
+			titleVariants: work.titleVariants,
+			traditionalAttribution: work.traditionalAttribution,
+			genre: work.genre,
+			textState: work.textState
 		})),
 		stats: {
 			bitesoTexts: bitesoWorks.length,

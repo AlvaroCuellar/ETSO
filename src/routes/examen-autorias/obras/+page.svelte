@@ -7,6 +7,7 @@
 		formatDisplayWorkTitle
 	} from '$lib/utils/format-display-work-title';
 
+	import type { AttributionSet } from '$lib/domain/catalog';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -17,6 +18,32 @@
 
 	const normalizeFilterText = (value: string): string =>
 		normalizePlainText(value, false).replace(/\s+/g, ' ').trim();
+
+	const formatNameList = (names: string[]): string => {
+		if (names.length === 0) return '';
+		if (names.length === 1) return names[0];
+		if (names.length === 2) return `${names[0]} y ${names[1]}`;
+		return `${names.slice(0, -1).join(', ')} y ${names[names.length - 1]}`;
+	};
+
+	const formatTraditionalAttribution = (set: AttributionSet): string => {
+		if (set.unresolved || set.groups.length === 0) return 'Desconocido';
+
+		const names: string[] = [];
+		const seen = new Set<string>();
+		for (const group of set.groups) {
+			for (const member of group.members) {
+				const authorName = member.authorName.trim();
+				if (!authorName || seen.has(authorName)) continue;
+				seen.add(authorName);
+				names.push(authorName);
+			}
+		}
+
+		return names.length > 0 ? formatNameList(names) : 'Desconocido';
+	};
+
+	const formatGenre = (genre: string): string => genre.trim() || 'Sin género';
 
 	const filteredWorks = $derived.by(() => {
 		const normalizedQuery = normalizeFilterText(query);
@@ -76,7 +103,13 @@
 							href={`/obras/${work.slug}`}
 							class="grid gap-1 px-4 py-3 text-inherit no-underline transition hover:bg-[rgba(237,242,255,0.7)] hover:no-underline md:px-5"
 						>
-							<p class="m-0 font-ui text-[0.99rem] font-semibold leading-[1.35] text-brand-blue-dark">{formatDisplayWorkTitle(work.title)}</p>
+							<p class="m-0 font-ui text-[0.99rem] leading-[1.45] text-brand-blue-dark">
+								<span class="font-semibold">{formatDisplayWorkTitle(work.title)}</span>
+								<span class="mx-1.5 text-text-soft/70">·</span>
+								<span class="font-normal text-text-main">{formatTraditionalAttribution(work.traditionalAttribution)}</span>
+								<span class="mx-1.5 text-text-soft/70">·</span>
+								<span class="font-normal text-text-soft">{formatGenre(work.genre)}</span>
+							</p>
 							{#if work.titleVariants.length > 0}
 								<p class="m-0 text-[0.92rem] leading-[1.5] text-text-soft">
 									{#each work.titleVariants as variante, index}

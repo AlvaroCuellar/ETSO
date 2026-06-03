@@ -24,9 +24,11 @@
 		"@sveltejs/vite-plugin-svelte": "^7.0.0",
 		"@tailwindcss/vite": "^4.2.2",
 		"@types/node": "^25.6.0",
+		"@types/three": "^0.184.1",
 		"svelte": "^5.55.2",
 		"svelte-check": "^4.4.6",
 		"tailwindcss": "^4.2.2",
+		"three": "^0.184.0",
 		"typescript": "^6.0.2",
 		"vite": "^8.0.7"
 	},
@@ -35,6 +37,9 @@
 		"cheerio": "^1.2.0",
 		"echarts": "^6.0.0",
 		"exceljs": "^4.4.0",
+		"graphology": "^0.26.0",
+		"graphology-communities-louvain": "^2.0.2",
+		"graphology-layout-forceatlas2": "^0.10.1",
 		"lucide-svelte": "^1.0.1"
 	}
 }

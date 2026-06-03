@@ -65,6 +65,34 @@ export interface DistanceRow {
 	distancia: number;
 }
 
+export interface WorkNetworkNode {
+	id: string;
+	slug: string;
+	title: string;
+	genre: string;
+	authors: string[];
+	traditionalAuthors: string[];
+	stylometryAuthors: string[];
+	searchText: string;
+	x: number;
+	y: number;
+	z: number;
+	community: number;
+	reportSlug?: string;
+}
+
+export interface WorkNetworkLink {
+	source: string;
+	target: string;
+	distance: number;
+	rank: number;
+}
+
+export interface WorkNetworkGraph {
+	nodes: WorkNetworkNode[];
+	links: WorkNetworkLink[];
+}
+
 export interface CatalogInforme {
 	id: string;
 	workId: string;
@@ -393,4 +421,3 @@ export const inferWorkAuthorshipType = (work: CatalogWork): WorkAuthorshipType =
 	if (traditionalAuthors.size === 0) return 'desconocida';
 	return traditionalAuthors.size > 1 ? 'colaboracion' : 'unica';
 };
-

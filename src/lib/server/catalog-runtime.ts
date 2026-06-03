@@ -1,4 +1,7 @@
 import { createClient } from '@libsql/client';
+import Graph from 'graphology';
+import louvain from 'graphology-communities-louvain';
+import forceAtlas2 from 'graphology-layout-forceatlas2';
 import { dev } from '$app/environment';
 import { env } from '$env/dynamic/private';
 import { existsSync } from 'node:fs';
@@ -43,6 +46,7 @@ import {
 	type InformeBibliographyView,
 	type InformeDistanceView,
 	type WorkAuthorshipType,
+	type WorkNetworkGraph,
 	type WorkSummaryDetail
 } from '$lib/domain/catalog';
 import collaboratorsSource from '../../../data/colaboradores/equipo.json';
@@ -1889,6 +1893,225 @@ export const getInformeDistanceRows = async (
 			};
 		})
 		.filter((row): row is InformeDistanceView => Boolean(row));
+};
+
+const collectAttributionNames = (set: AttributionSet): string[] => {
+	if (set.unresolved) return [];
+	const names: string[] = [];
+	const seen = new Set<string>();
+	for (const group of set.groups) {
+		for (const member of group.members) {
+			const name = member.authorName.trim();
+			if (!name || seen.has(name)) continue;
+			seen.add(name);
+			names.push(name);
+		}
+	}
+	return names;
+};
+
+const hashNumber = (value: string): number => {
+	let hash = 2166136261;
+	for (let index = 0; index < value.length; index += 1) {
+		hash ^= value.charCodeAt(index);
+		hash = Math.imul(hash, 16777619);
+	}
+	return hash >>> 0;
+};
+
+let cachedWorkNetworkGraph: Promise<WorkNetworkGraph> | null = null;
+
+export const getWorkNetworkGraph = (nearestPerWork = 3): Promise<WorkNetworkGraph> => {
+	if (nearestPerWork === 3 && cachedWorkNetworkGraph) return cachedWorkNetworkGraph;
+	const pending = buildWorkNetworkGraph(nearestPerWork).catch((cause) => {
+		if (nearestPerWork === 3) cachedWorkNetworkGraph = null;
+		throw cause;
+	});
+	if (nearestPerWork === 3) cachedWorkNetworkGraph = pending;
+	return pending;
+};
+
+const buildWorkNetworkGraph = async (nearestPerWork = 3): Promise<WorkNetworkGraph> => {
+	const snapshot = await getSnapshot();
+	const works = getAuthorshipExamWorksFromSnapshot(snapshot).filter((work) => work.reportSlug);
+	const workIds = new Set(works.map((work) => work.id));
+	const limit = Math.max(1, Math.min(12, Math.floor(nearestPerWork)));
+
+	const rows = await getRows<DistanceRowRaw>(
+		`SELECT work_id, ambito, rank, related_work_id, distancia
+		 FROM work_distances
+		 WHERE rank <= ?
+		 AND REPLACE(REPLACE(LOWER(ambito), '_', ''), ' ', '') IN ('obracompleta', 'global')
+		 ORDER BY work_id, rank`,
+		[limit]
+	);
+
+	const linkByPair = new Map<string, WorkNetworkGraph['links'][number]>();
+	for (const row of rows) {
+		if (normalizeDistanceAmbito(row.ambito) !== 'obracompleta') continue;
+		if (!workIds.has(row.work_id) || !workIds.has(row.related_work_id)) continue;
+		if (row.work_id === row.related_work_id) continue;
+		const [source, target] = [row.work_id, row.related_work_id].sort((a, b) => a.localeCompare(b));
+		const key = `${source}::${target}`;
+		const current = linkByPair.get(key);
+		if (current && current.distance <= row.distancia) continue;
+		linkByPair.set(key, {
+			source,
+			target,
+			distance: row.distancia,
+			rank: row.rank
+		});
+	}
+
+	const links = Array.from(linkByPair.values()).sort((a, b) => {
+		const sourceComparison = a.source.localeCompare(b.source);
+		if (sourceComparison !== 0) return sourceComparison;
+		return a.target.localeCompare(b.target);
+	});
+
+	const layoutGraph = new Graph({ type: 'undirected', multi: false, allowSelfLoops: false });
+	const nodes = works
+		.map((work, index) => {
+			const traditionalAuthors = collectAttributionNames(work.traditionalAttribution);
+			const stylometryAuthors = collectAttributionNames(work.stylometryAttribution);
+			const hash = hashNumber(work.id);
+			const theta = ((hash % 8192) / 8192) * Math.PI * 2;
+			const phi = Math.acos(2 * (((hash >>> 13) % 8192) / 8192) - 1);
+			const radius = 36 + (index % 31) * 0.35;
+			return {
+				id: work.id,
+				slug: work.slug,
+				title: work.title,
+				genre: work.genre,
+				authors: traditionalAuthors,
+				traditionalAuthors,
+				stylometryAuthors,
+				searchText: [
+					work.title,
+					...work.titleVariants,
+					work.genre,
+					...traditionalAuthors,
+					...stylometryAuthors
+				].join(' '),
+				x: Math.sin(phi) * Math.cos(theta) * radius,
+				y: Math.cos(phi) * radius,
+				z: Math.sin(phi) * Math.sin(theta) * radius,
+				community: 0,
+				reportSlug: work.reportSlug
+			};
+		})
+		.sort((a, b) => a.title.localeCompare(b.title, 'es', { sensitivity: 'base' }));
+
+	for (const node of nodes) {
+		layoutGraph.addNode(node.id, {
+			x: node.x,
+			y: node.y,
+			size: 1
+		});
+	}
+	for (const link of links) {
+		if (!layoutGraph.hasNode(link.source) || !layoutGraph.hasNode(link.target)) continue;
+		const weight = Math.max(0.12, Math.min(8, 1 / Math.max(0.08, link.distance)));
+		layoutGraph.mergeEdge(link.source, link.target, { weight });
+	}
+
+	const rawCommunities = louvain(layoutGraph, {
+		getEdgeWeight: 'weight',
+		resolution: 1.55,
+		fastLocalMoves: true,
+		randomWalk: false
+	});
+
+	const rawCommunityMembers = new Map<number, typeof nodes>();
+	const networkNodeById = new Map(nodes.map((node) => [node.id, node]));
+	for (const node of nodes) {
+		const community = rawCommunities[node.id] ?? 0;
+		const members = rawCommunityMembers.get(community);
+		if (members) members.push(node);
+		else rawCommunityMembers.set(community, [node]);
+	}
+
+	const communities = Array.from(rawCommunityMembers.values()).sort((a, b) => b.length - a.length);
+	for (const [communityIndex, members] of communities.entries()) {
+		for (const node of members) node.community = communityIndex;
+	}
+
+	const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+	const centerRadius = Math.max(180, Math.min(420, Math.sqrt(nodes.length) * 5.2));
+	const communityCenter = (index: number, total: number): { x: number; y: number; z: number } => {
+		if (total <= 1) return { x: 0, y: 0, z: 0 };
+		const y = 1 - (index / (total - 1)) * 2;
+		const radius = Math.sqrt(Math.max(0, 1 - y * y));
+		const theta = index * goldenAngle;
+		return {
+			x: Math.cos(theta) * radius * centerRadius,
+			y: y * centerRadius,
+			z: Math.sin(theta) * radius * centerRadius
+		};
+	};
+
+	for (const [communityIndex, members] of communities.entries()) {
+		const center = communityCenter(communityIndex, communities.length);
+		const localGraph = new Graph({ type: 'undirected', multi: false, allowSelfLoops: false });
+		for (const [memberIndex, node] of members.entries()) {
+			const hash = hashNumber(`${node.id}:local`);
+			const angle = ((hash % 8192) / 8192) * Math.PI * 2;
+			const radius = 4 + Math.sqrt(memberIndex + 1) * 1.15;
+			localGraph.addNode(node.id, {
+				x: Math.cos(angle) * radius,
+				y: Math.sin(angle) * radius,
+				size: 1
+			});
+		}
+
+		for (const link of links) {
+			const source = networkNodeById.get(link.source);
+			const target = networkNodeById.get(link.target);
+			if (!source || !target || source.community !== communityIndex || target.community !== communityIndex) continue;
+			const weight = Math.max(0.12, Math.min(8, 1 / Math.max(0.08, link.distance)));
+			localGraph.mergeEdge(link.source, link.target, { weight });
+		}
+
+		if (members.length > 2 && localGraph.size > 0) {
+			forceAtlas2.assign(localGraph, {
+				iterations: Math.min(280, 90 + members.length),
+				getEdgeWeight: 'weight',
+				settings: {
+					linLogMode: true,
+					outboundAttractionDistribution: true,
+					adjustSizes: false,
+					edgeWeightInfluence: 1.15,
+					scalingRatio: 3.8,
+					strongGravityMode: false,
+					gravity: 0.18,
+					slowDown: 6,
+					barnesHutOptimize: members.length > 80,
+					barnesHutTheta: 0.5
+				}
+			});
+		}
+
+		let localMaxRadius = 0;
+		for (const node of members) {
+			const attributes = localGraph.getNodeAttributes(node.id) as { x?: number; y?: number };
+			const x = Number.isFinite(attributes.x) ? Number(attributes.x) : 0;
+			const y = Number.isFinite(attributes.y) ? Number(attributes.y) : 0;
+			localMaxRadius = Math.max(localMaxRadius, Math.hypot(x, y));
+		}
+		const targetRadius = Math.max(16, Math.min(86, 7 + Math.sqrt(members.length) * 3.6));
+		const localScale = localMaxRadius > 0 ? targetRadius / localMaxRadius : 1;
+		for (const node of members) {
+			const attributes = localGraph.getNodeAttributes(node.id) as { x?: number; y?: number };
+			const x = Number.isFinite(attributes.x) ? Number(attributes.x) : 0;
+			const y = Number.isFinite(attributes.y) ? Number(attributes.y) : 0;
+			const depthHash = hashNumber(`${node.id}:${node.community}`);
+			node.x = center.x + x * localScale;
+			node.y = center.y + y * localScale;
+			node.z = center.z + (((depthHash % 2000) / 2000) - 0.5) * Math.min(42, targetRadius * 0.75);
+		}
+	}
+
+	return { nodes, links };
 };
 
 const getBitesoForWork = async (

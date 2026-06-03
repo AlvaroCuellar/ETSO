@@ -174,7 +174,7 @@
 									<div class="flex flex-col items-start gap-[0.65rem]">
 										{#if data.work.stylometryAttribution.unresolved}
 											<div class="flex flex-wrap items-center gap-3">
-												<span class="font-medium italic text-text-soft">Autoría no determinada</span>
+												<span class="font-medium italic text-text-soft">No apunta hacia ningún autor</span>
 												<span
 													class="inline-flex rounded-full px-[0.55rem] py-[0.24rem] text-[0.72rem] font-bold tracking-[0.02em] uppercase {confidenceClass('no_concluyente')}"
 												>

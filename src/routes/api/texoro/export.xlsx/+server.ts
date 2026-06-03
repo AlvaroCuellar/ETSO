@@ -162,7 +162,7 @@ const formatCompactAttribution = (set: AttributionSet): string => {
 	if (set.unresolved) return UNRESOLVED_ATTRIBUTION_LABEL;
 	const label = formatAttribution(set).trim();
 	if (!label || label === 'Sin datos') return 'Sin datos';
-	if (label === 'Autoria no determinada' || label === 'Autoría no determinada') return UNRESOLVED_ATTRIBUTION_LABEL;
+	if (label === 'No apunta hacia ningún autor' || label === 'No apunta hacia ningún autor') return UNRESOLVED_ATTRIBUTION_LABEL;
 	return label;
 };
 

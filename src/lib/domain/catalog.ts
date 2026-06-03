@@ -352,7 +352,7 @@ export const formatConfidence = (confidence?: Confidence): string => {
 };
 
 export const formatAttribution = (set: AttributionSet): string => {
-	if (set.unresolved) return 'Autoria no determinada';
+	if (set.unresolved) return 'No apunta hacia ningún autor';
 	if (!set.groups.length) return 'Sin datos';
 
 	const connector = set.connector === 'and' ? ' y ' : ' o ';

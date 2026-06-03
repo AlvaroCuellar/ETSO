@@ -824,7 +824,7 @@
 	};
 
 	const formatCompactAttribution = (set: AttributionSet): string => {
-		if (set.unresolved) return 'No determinada';
+		if (set.unresolved) return 'No apunta hacia ningún autor';
 		if (!set.groups.length) return 'Sin datos';
 
 		const names: string[] = [];

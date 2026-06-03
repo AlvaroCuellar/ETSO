@@ -466,7 +466,7 @@
 			Examen de autorías es un espacio dedicado a la <b>atribución computacional</b> de autoría en el teatro
 			del Siglo de Oro a gran escala. La plataforma, desarrollada por Álvaro Cuéllar y Germán Vega
 			García-Luengos, ofrece resultados estilométricos sobre un corpus en expansión de unas 3.000 obras
-			pertenecientes a más de 350 dramaturgos, con el propósito de facilitar la investigación y el
+			pertenecientes a más de 400 dramaturgos, con el propósito de facilitar la investigación y el
 			contraste de hipótesis autorales.
 		</p>
 		<p class="mt-[1.25rem] mb-0 max-w-[64ch] font-['Lora',serif] text-[1.01rem] leading-[1.62] text-text-main">
@@ -481,8 +481,7 @@
 			El corpus se nutre de <b>fuentes abiertas y de aportaciones de investigadores y grupos</b>, e integra
 			también textos procedentes de transcripciones automáticas de impresos y manuscritos antiguos. Se
 			aceptan consultas, colaboraciones y propuestas de ampliación: si dispones de una obra o conoces cómo
-			acceder a ella, escríbenos y nos comprometemos a reconocer la procedencia en la tabla
-			correspondiente y a compartir los resultados del análisis.
+			acceder a ella, escríbenos y nos comprometemos a reconocer tu contribución y a compartir los resultados del análisis.
 		</p>
 
 		{#snippet stats()}

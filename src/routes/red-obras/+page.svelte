@@ -43,7 +43,7 @@
 	const normalizeFilterText = (value: string): string =>
 		normalizePlainText(value, false).replace(/\s+/g, ' ').trim();
 
-	const formatPeople = (people: string[]): string => people.length > 0 ? people.join(', ') : 'No determinada';
+	const formatPeople = (people: string[]): string => people.length > 0 ? people.join(', ') : 'No apunta hacia ningún autor';
 
 	const selectedNode = $derived.by(() => nodeById.get(selectedId));
 	const hoveredNode = $derived.by(() => nodeById.get(hoveredId));
@@ -123,13 +123,13 @@
 			if (disposed || !canvasElement) return;
 
 			const nodeKey = (node: WorkNetworkNode): string =>
-				node.traditionalAuthors[0] || 'No determinada';
+				node.traditionalAuthors[0] || 'No apunta hacia ningún autor';
 
 			const nodeColor = (node: WorkNetworkNode): import('three').Color => {
 				const key = nodeKey(node);
 				const cached = colorByAttribution.get(key);
 				if (cached) return cached;
-				if (key === 'No determinada') {
+				if (key === 'No apunta hacia ningún autor') {
 					const color = new THREE.Color('#8b96a6');
 					colorByAttribution.set(key, color);
 					return color;

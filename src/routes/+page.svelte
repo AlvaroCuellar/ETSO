@@ -502,7 +502,7 @@
 		</p>
 		<div class="pt-1">
 			<a
-				href="/mas-informacion"
+				href="/contacto"
 				class="inline-flex items-center rounded-card border border-brand-blue/25 bg-brand-blue px-5 py-2.5 font-ui text-[0.92rem] font-semibold text-white no-underline transition hover:bg-brand-blue-dark hover:no-underline"
 			>
 				Contacta con nosotros

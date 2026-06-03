@@ -64,6 +64,14 @@
 			alt: 'Resúmenes automáticos de las obras',
 			link: '/resumenes'
 		}
+		,
+		{
+			image: grafoImage,
+			title: 'Red estilométrica',
+			description: 'Visualiza la red de relaciones estilométricas para las 3000 obras del corpus',
+			alt: 'Red estilométrica del proyecto ETSO',
+			link: '/red-obras'
+		}
 	];
 
 	const teamMembers: TeamMember[] = [
@@ -232,6 +240,7 @@
 								<p class="mt-4 max-w-[50rem] font-reading text-[clamp(1rem,1.5vw,1.35rem)] leading-[1.45] text-white/92">
 									{slide.description}
 								</p>
+
 								{#if slide.link}
 									<div class="mt-8">
 										<a

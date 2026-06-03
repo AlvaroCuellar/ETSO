@@ -548,6 +548,18 @@
 			</span>
 		{/if}
 
+		<a href={`/red-obras?obra=${row.work.slug}`} class={actionButtonEnabledClass}>
+			<span class="btn-left col-span-2 flex min-w-0 items-center gap-[7px]">
+				<span class="btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-brand-blue-dark" aria-hidden="true">
+					<ChartLine class="h-[14px] w-[14px] stroke-[2.1]" />
+				</span>
+				<span class={actionLabelClass}>{mode === 'informe' ? 'Red' : 'Red estilométrica'}</span>
+			</span>
+			<span class="btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center text-text-soft" aria-hidden="true">
+				<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
+			</span>
+		</a>
+
 		{#if showToggle}
 			<div class="ver-mas mt-[10px] text-center">
 				<span
@@ -1003,5 +1015,4 @@
 		}
 	}
 </style>
-
 

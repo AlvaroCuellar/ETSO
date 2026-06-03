@@ -14,10 +14,33 @@
 		id: string;
 		left: number;
 		top: number;
+		width: number;
+		height: number;
+		anchorLeft: number;
+		anchorTop: number;
+		lineStartLeft: number;
+		lineStartTop: number;
 		title: string;
 		genre: string;
 		traditional: string;
 		stylometry: string;
+		active: boolean;
+	}
+
+	type AttributionMode = 'traditional' | 'stylometry';
+
+	interface AuthorColorAssignment {
+		mode: AttributionMode;
+		author: string;
+		color: string;
+	}
+
+	interface NetworkAuthorMarker {
+		id: string;
+		left: number;
+		top: number;
+		radius: number;
+		color: string;
 		active: boolean;
 	}
 
@@ -26,38 +49,69 @@
 	let graphLoading = $state(true);
 	let graphError = $state('');
 	let query = $state('');
-	let attributionFilter = $state('');
 	let selectedId = $state('');
 	let hoveredId = $state('');
 	let labels = $state<NetworkLabel[]>([]);
+	let authorMarkers = $state<NetworkAuthorMarker[]>([]);
+	let initialSelectionDone = $state(false);
+	let attributionMode = $state<AttributionMode>('traditional');
+	let authorColorAssignments = $state<AuthorColorAssignment[]>([]);
+	let pendingAuthor = $state('');
+	let pendingColor = $state('#7c3aed');
+
+	const MAX_AUTHOR_COLOR_ASSIGNMENTS = 10;
+	const MAX_DISPLAYED_CONNECTED_WORKS = 3;
+	const authorColorPalette = ['#7c3aed', '#059669', '#ea580c', '#0284c7', '#db2777', '#65a30d', '#9333ea', '#0f766e', '#c2410c', '#2563eb'];
 
 	const nodeById = $derived(new Map(graph.nodes.map((node) => [node.id, node])));
-	const allAttributions = $derived(
-		Array.from(
-			new Set(graph.nodes.flatMap((node) => [...node.traditionalAuthors, ...node.stylometryAuthors]))
-		)
-			.filter(Boolean)
-			.sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }))
-	);
 
 	const normalizeFilterText = (value: string): string =>
 		normalizePlainText(value, false).replace(/\s+/g, ' ').trim();
 
 	const formatPeople = (people: string[]): string => people.length > 0 ? people.join(', ') : 'No apunta hacia ningún autor';
+	const authorsForMode = (node: WorkNetworkNode, mode: AttributionMode): string[] =>
+		mode === 'traditional' ? node.traditionalAuthors : node.stylometryAuthors;
 
 	const selectedNode = $derived.by(() => nodeById.get(selectedId));
 	const hoveredNode = $derived.by(() => nodeById.get(hoveredId));
+	const activeAuthorColorAssignments = $derived.by(() =>
+		authorColorAssignments.filter((assignment) => assignment.mode === attributionMode).slice(0, MAX_AUTHOR_COLOR_ASSIGNMENTS)
+	);
+	const availableAuthors = $derived.by(() => {
+		const names = new Set<string>();
+		for (const node of graph.nodes) {
+			for (const author of authorsForMode(node, attributionMode)) {
+				if (author && author !== 'No apunta hacia ningún autor') names.add(author);
+			}
+		}
+		return Array.from(names).sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
+	});
+	const availableAuthorsForSelection = $derived.by(() => {
+		const active = new Set(activeAuthorColorAssignments.map((assignment) => assignment.author));
+		return availableAuthors.filter((author) => !active.has(author));
+	});
+	const normalizedPendingAuthor = $derived(normalizeFilterText(pendingAuthor));
+	const matchedPendingAuthor = $derived.by(() => {
+		if (!normalizedPendingAuthor) return '';
+		return (
+			availableAuthorsForSelection.find(
+				(author) => normalizeFilterText(author) === normalizedPendingAuthor
+			) ?? ''
+		);
+	});
+	const authorAutocompleteOptions = $derived.by(() => {
+		if (!normalizedPendingAuthor) return availableAuthorsForSelection.slice(0, 80);
+		return availableAuthorsForSelection
+			.filter((author) => normalizeFilterText(author).includes(normalizedPendingAuthor))
+			.slice(0, 80);
+	});
 
 	const visibleNodeIds = $derived.by(() => {
 		const normalizedQuery = normalizeFilterText(query);
 		const ids = new Set<string>();
 		for (const node of graph.nodes) {
 			const matchesQuery = !normalizedQuery || normalizeFilterText(node.searchText).includes(normalizedQuery);
-			const matchesAttribution =
-				!attributionFilter ||
-				node.traditionalAuthors.includes(attributionFilter) ||
-				node.stylometryAuthors.includes(attributionFilter);
-			if (matchesQuery && matchesAttribution) ids.add(node.id);
+			if (matchesQuery) ids.add(node.id);
 		}
 		return ids;
 	});
@@ -80,11 +134,20 @@
 			}))
 			.filter((entry): entry is { link: WorkNetworkLink; node: WorkNetworkNode } => Boolean(entry.node))
 			.sort((a, b) => a.link.distance - b.link.distance)
-			.slice(0, 8);
+			.slice(0, MAX_DISPLAYED_CONNECTED_WORKS);
 	});
 
 	$effect(() => {
-		if (!selectedId && graph.nodes[0]) selectedId = graph.nodes[0].id;
+		if (!initialSelectionDone && !selectedId && graph.nodes[0]) {
+			selectedId = graph.nodes[0].id;
+			initialSelectionDone = true;
+		}
+	});
+
+	$effect(() => {
+		const nextIndex = activeAuthorColorAssignments.length % authorColorPalette.length;
+		if (!activeAuthorColorAssignments.some((assignment) => assignment.color === pendingColor)) return;
+		pendingColor = authorColorPalette[nextIndex] ?? '#7c3aed';
 	});
 
 	onMount(() => {
@@ -97,13 +160,27 @@
 		let renderer: import('three').WebGLRenderer;
 		let controls: import('three/examples/jsm/controls/OrbitControls.js').OrbitControls;
 		let nodesMesh: import('three').InstancedMesh;
+		let adjacentNodesMesh: import('three').InstancedMesh;
+		let selectedNodeMesh: import('three').Mesh;
 		let linksMesh: import('three').LineSegments;
 		let highlightLines: import('three').LineSegments;
 		let resizeObserver: ResizeObserver;
+		let initialCameraPosition: import('three').Vector3;
+		let initialControlTarget: import('three').Vector3;
+		let animationStartCameraPosition: import('three').Vector3 | null = null;
+		let animationStartControlTarget: import('three').Vector3 | null = null;
+		let targetCameraPosition: import('three').Vector3 | null = null;
+		let targetControlTarget: import('three').Vector3 | null = null;
+		let cameraAnimationStartedAt = 0;
+		let cameraAnimationDuration = 0;
+		let initialFocusTimeout: number | null = null;
 
 		const nodePositions = new Map<string, import('three').Vector3>();
 		const selectedNeighbors = new Set<string>();
-		const colorByAttribution = new Map<string, import('three').Color>();
+		const normalizedAuthorsByMode: Record<AttributionMode, Map<string, Set<string>>> = {
+			traditional: new Map(),
+			stylometry: new Map()
+		};
 
 		const init = async () => {
 			graphLoading = true;
@@ -122,32 +199,6 @@
 			const { OrbitControls } = await import('three/examples/jsm/controls/OrbitControls.js');
 			if (disposed || !canvasElement) return;
 
-			const nodeKey = (node: WorkNetworkNode): string =>
-				node.traditionalAuthors[0] || 'No apunta hacia ningún autor';
-
-			const nodeColor = (node: WorkNetworkNode): import('three').Color => {
-				const key = nodeKey(node);
-				const cached = colorByAttribution.get(key);
-				if (cached) return cached;
-				if (key === 'No apunta hacia ningún autor') {
-					const color = new THREE.Color('#8b96a6');
-					colorByAttribution.set(key, color);
-					return color;
-				}
-				let hash = 2166136261;
-				for (let index = 0; index < key.length; index += 1) {
-					hash ^= key.charCodeAt(index);
-					hash = Math.imul(hash, 16777619);
-				}
-				const normalized = hash >>> 0;
-				const hue = ((normalized * 0.618033988749895) % 1 + 1) % 1;
-				const saturation = 0.82 + ((normalized >>> 8) % 12) / 100;
-				const lightness = 0.56 + ((normalized >>> 16) % 12) / 100;
-				const color = new THREE.Color().setHSL(hue, saturation, lightness);
-				colorByAttribution.set(key, color);
-				return color;
-			};
-
 			const degree = new Map<string, number>();
 			for (const link of graph.links) {
 				degree.set(link.source, (degree.get(link.source) ?? 0) + 1);
@@ -156,6 +207,14 @@
 
 			for (const node of graph.nodes) {
 				nodePositions.set(node.id, new THREE.Vector3(node.x, node.y, node.z));
+				normalizedAuthorsByMode.traditional.set(
+					node.id,
+					new Set(node.traditionalAuthors.map((author) => normalizeFilterText(author)))
+				);
+				normalizedAuthorsByMode.stylometry.set(
+					node.id,
+					new Set(node.stylometryAuthors.map((author) => normalizeFilterText(author)))
+				);
 			}
 
 			scene = new THREE.Scene();
@@ -173,10 +232,29 @@
 			controls.maxDistance = 1200;
 
 			const sphere = new THREE.SphereGeometry(1.25, 14, 10);
-			const material = new THREE.MeshBasicMaterial({ vertexColors: true });
-			nodesMesh = new THREE.InstancedMesh(sphere, material, graph.nodes.length);
+			nodesMesh = new THREE.InstancedMesh(
+				sphere,
+				new THREE.MeshBasicMaterial({ color: '#111111' }),
+				graph.nodes.length
+			);
 			nodesMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+			nodesMesh.renderOrder = 1;
 			scene.add(nodesMesh);
+			adjacentNodesMesh = new THREE.InstancedMesh(
+				sphere,
+				new THREE.MeshBasicMaterial({ color: '#1f4ea3', depthTest: false, depthWrite: false }),
+				graph.nodes.length
+			);
+			adjacentNodesMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+			adjacentNodesMesh.renderOrder = 3;
+			scene.add(adjacentNodesMesh);
+			selectedNodeMesh = new THREE.Mesh(
+				sphere.clone(),
+				new THREE.MeshBasicMaterial({ color: '#c62828', depthTest: false, depthWrite: false })
+			);
+			selectedNodeMesh.visible = false;
+			selectedNodeMesh.renderOrder = 5;
+			scene.add(selectedNodeMesh);
 
 			const linePositions: number[] = [];
 			const lineColors: number[] = [];
@@ -190,7 +268,7 @@
 				const strength = Math.max(0, Math.min(1, 1 - link.distance / 3));
 				const color = sameCommunity
 					? new THREE.Color('#a9bbcf').lerp(new THREE.Color('#244f82'), 0.45 + strength * 0.45)
-					: new THREE.Color('#eef2f7').lerp(new THREE.Color('#c7d1df'), strength * 0.25);
+					: new THREE.Color('#dfe7f0').lerp(new THREE.Color('#8095af'), 0.25 + strength * 0.45);
 				linePositions.push(source.x, source.y, source.z, target.x, target.y, target.z);
 				lineColors.push(color.r, color.g, color.b, color.r, color.g, color.b);
 			}
@@ -199,7 +277,7 @@
 			lineGeometry.setAttribute('color', new THREE.Float32BufferAttribute(lineColors, 3));
 			linksMesh = new THREE.LineSegments(
 				lineGeometry,
-				new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.34 })
+				new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.52 })
 			);
 			scene.add(linksMesh);
 
@@ -209,12 +287,32 @@
 			);
 			scene.add(highlightLines);
 
+			type ActiveAssignmentEntry = {
+				assignment: AuthorColorAssignment;
+				authorKey: string;
+			};
+
+			const getActiveAssignmentEntries = (): ActiveAssignmentEntry[] =>
+				activeAuthorColorAssignments.map((assignment) => ({
+					assignment,
+					authorKey: normalizeFilterText(assignment.author)
+				}));
+
+			const getNodeAuthorAssignment = (
+				node: WorkNetworkNode,
+				activeAssignments: ActiveAssignmentEntry[]
+			): AuthorColorAssignment | undefined => {
+				const authorKeys = normalizedAuthorsByMode[attributionMode].get(node.id);
+				if (!authorKeys) return undefined;
+				return activeAssignments.find((entry) => authorKeys.has(entry.authorKey))?.assignment;
+			};
+
 			const updateNodes = () => {
 				const matrix = new THREE.Matrix4();
-				const color = new THREE.Color();
-				const muted = new THREE.Color('#b9c2cf');
-				const selectedColor = new THREE.Color('#b45f06');
+				const hiddenMatrix = new THREE.Matrix4().makeScale(0.0001, 0.0001, 0.0001);
+				hiddenMatrix.setPosition(100000, 100000, 100000);
 				const visible = visibleNodeIds;
+				const activeAssignments = getActiveAssignmentEntries();
 				for (const [index, node] of graph.nodes.entries()) {
 					const position = nodePositions.get(node.id);
 					if (!position) continue;
@@ -224,18 +322,33 @@
 					const isVisible = visible.has(node.id);
 					const nodeDegree = degree.get(node.id) ?? 1;
 					const base = 0.95 + Math.min(1.35, Math.log1p(nodeDegree) * 0.22);
-					const scale = isSelected ? 3.5 : isHovered ? 3.1 : isNeighbor ? 2.35 : isVisible ? base : 0.32;
+					const assignment = getNodeAuthorAssignment(node, activeAssignments);
+					const scale = isSelected ? 2.1 : isHovered ? 2.55 : isNeighbor ? 2.2 : isVisible ? base : 0.32;
 					matrix.makeScale(scale, scale, scale);
 					matrix.setPosition(position);
 					nodesMesh.setMatrixAt(index, matrix);
-					color.copy(nodeColor(node));
-					if (!isVisible) color.copy(muted);
-					if (isNeighbor) color.lerp(selectedColor, 0.32);
-					if (isSelected || isHovered) color.copy(selectedColor);
-					nodesMesh.setColorAt(index, color);
+					if (isNeighbor && !isSelected && !assignment && isVisible) {
+						const adjacentScale = isHovered ? 2.75 : 2.42;
+						matrix.makeScale(adjacentScale, adjacentScale, adjacentScale);
+						matrix.setPosition(position);
+						adjacentNodesMesh.setMatrixAt(index, matrix);
+					} else {
+						adjacentNodesMesh.setMatrixAt(index, hiddenMatrix);
+					}
 				}
 				nodesMesh.instanceMatrix.needsUpdate = true;
-				if (nodesMesh.instanceColor) nodesMesh.instanceColor.needsUpdate = true;
+				adjacentNodesMesh.instanceMatrix.needsUpdate = true;
+			};
+
+			const updateSelectedNode = () => {
+				const position = nodePositions.get(selectedId);
+				if (!position) {
+					selectedNodeMesh.visible = false;
+					return;
+				}
+				selectedNodeMesh.visible = true;
+				selectedNodeMesh.position.copy(position);
+				selectedNodeMesh.scale.setScalar(4.2);
 			};
 
 			const updateHighlight = () => {
@@ -243,10 +356,16 @@
 				const selectedPosition = nodePositions.get(selectedId);
 				const positions: number[] = [];
 				if (selectedPosition) {
-					for (const link of graph.links) {
-						const relatedId =
-							link.source === selectedId ? link.target : link.target === selectedId ? link.source : '';
-						if (!relatedId) continue;
+					const closestLinks = graph.links
+						.map((link) => ({
+							link,
+							relatedId:
+								link.source === selectedId ? link.target : link.target === selectedId ? link.source : ''
+						}))
+						.filter((entry) => entry.relatedId)
+						.sort((a, b) => a.link.distance - b.link.distance)
+						.slice(0, MAX_DISPLAYED_CONNECTED_WORKS);
+					for (const { relatedId } of closestLinks) {
 						selectedNeighbors.add(relatedId);
 						const relatedPosition = nodePositions.get(relatedId);
 						if (!relatedPosition) continue;
@@ -265,6 +384,7 @@
 				geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
 				highlightLines.geometry = geometry;
 				updateNodes();
+				updateSelectedNode();
 			};
 
 			const updateLabels = () => {
@@ -274,37 +394,233 @@
 				if (selectedId) labelIds.add(selectedId);
 				if (hoveredId) labelIds.add(hoveredId);
 				for (const id of selectedNeighbors) labelIds.add(id);
-				if (query || attributionFilter) {
+				if (query) {
 					for (const node of visibleResults.slice(0, 24)) labelIds.add(node.id);
 				}
 
-				const projected: NetworkLabel[] = [];
+				type LabelPlacement = NetworkLabel & {
+					priority: number;
+				};
+				const candidates: LabelPlacement[] = [];
 				for (const id of labelIds) {
 					const node = graph.nodes.find((candidate) => candidate.id === id);
 					const position = nodePositions.get(id);
 					if (!node || !position) continue;
 					const vector = position.clone().project(camera);
 					if (vector.z < -1 || vector.z > 1) continue;
-					projected.push({
+					const anchorLeft = ((vector.x + 1) / 2) * rect.width;
+					const anchorTop = ((1 - vector.y) / 2) * rect.height;
+					const active = id === selectedId || id === hoveredId;
+					const width = active ? 264 : 236;
+					const height = active ? 94 : 86;
+					candidates.push({
 						id,
-						left: ((vector.x + 1) / 2) * rect.width,
-						top: ((1 - vector.y) / 2) * rect.height - 18,
+						left: anchorLeft,
+						top: anchorTop,
+						width,
+						height,
+						anchorLeft,
+						anchorTop,
+						lineStartLeft: anchorLeft,
+						lineStartTop: anchorTop,
 						title: formatDisplayWorkTitle(node.title),
 						genre: node.genre,
 						traditional: formatPeople(node.traditionalAuthors),
 						stylometry: formatPeople(node.stylometryAuthors),
-						active: id === selectedId || id === hoveredId
+						active,
+						priority: id === selectedId ? 0 : id === hoveredId ? 1 : 2
 					});
 				}
-				labels = projected;
+
+				candidates.sort((a, b) => a.priority - b.priority || a.anchorTop - b.anchorTop);
+				const placed: NetworkLabel[] = [];
+				const occupied: Array<{ left: number; top: number; right: number; bottom: number }> = [];
+				const gap = 10;
+				const edgePadding = 12;
+				const nodePadding = 20;
+				const overlaps = (
+					left: number,
+					top: number,
+					width: number,
+					height: number,
+					anchorLeft: number,
+					anchorTop: number
+				): boolean => {
+					const right = left + width;
+					const bottom = top + height;
+					if (
+						anchorLeft >= left - nodePadding &&
+						anchorLeft <= right + nodePadding &&
+						anchorTop >= top - nodePadding &&
+						anchorTop <= bottom + nodePadding
+					) {
+						return true;
+					}
+					return occupied.some(
+						(box) =>
+							left < box.right + gap &&
+							right > box.left - gap &&
+							top < box.bottom + gap &&
+							bottom > box.top - gap
+					);
+				};
+
+				for (const label of candidates) {
+					const offsetX = 26;
+					const offsetY = 22;
+					const placements = [
+						{ left: label.anchorLeft + offsetX, top: label.anchorTop - label.height - offsetY },
+						{ left: label.anchorLeft - label.width - offsetX, top: label.anchorTop - label.height - offsetY },
+						{ left: label.anchorLeft + offsetX, top: label.anchorTop + offsetY },
+						{ left: label.anchorLeft - label.width - offsetX, top: label.anchorTop + offsetY },
+						{ left: label.anchorLeft + offsetX, top: label.anchorTop - label.height / 2 },
+						{ left: label.anchorLeft - label.width - offsetX, top: label.anchorTop - label.height / 2 }
+					].map((placement) => ({
+						left: Math.min(
+							Math.max(edgePadding, placement.left),
+							Math.max(edgePadding, rect.width - label.width - edgePadding)
+						),
+						top: Math.min(
+							Math.max(edgePadding, placement.top),
+							Math.max(edgePadding, rect.height - label.height - edgePadding)
+						)
+					}));
+
+					let chosen = placements.find((placement) =>
+						!overlaps(placement.left, placement.top, label.width, label.height, label.anchorLeft, label.anchorTop)
+					);
+
+					if (!chosen) {
+						let fallbackLeft = Math.min(
+							Math.max(edgePadding, label.anchorLeft + offsetX),
+							Math.max(edgePadding, rect.width - label.width - edgePadding)
+						);
+						let fallbackTop = Math.min(
+							Math.max(edgePadding, label.anchorTop - label.height - offsetY),
+							Math.max(edgePadding, rect.height - label.height - edgePadding)
+						);
+						while (
+							overlaps(
+								fallbackLeft,
+								fallbackTop,
+								label.width,
+								label.height,
+								label.anchorLeft,
+								label.anchorTop
+							) &&
+							fallbackTop < rect.height - label.height - edgePadding
+						) {
+							fallbackTop += label.height + gap;
+						}
+						chosen = { left: fallbackLeft, top: fallbackTop };
+					}
+
+					const centerX = chosen.left + label.width / 2;
+					const centerY = chosen.top + label.height / 2;
+					const dx = label.anchorLeft - centerX;
+					const dy = label.anchorTop - centerY;
+					const absDx = Math.abs(dx);
+					const absDy = Math.abs(dy);
+					let lineStartLeft = centerX;
+					let lineStartTop = centerY;
+					if (absDx > absDy) {
+						lineStartLeft = dx > 0 ? chosen.left + label.width : chosen.left;
+						lineStartTop = Math.min(chosen.top + label.height - 12, Math.max(chosen.top + 12, label.anchorTop));
+					} else {
+						lineStartTop = dy > 0 ? chosen.top + label.height : chosen.top;
+						lineStartLeft = Math.min(chosen.left + label.width - 12, Math.max(chosen.left + 12, label.anchorLeft));
+					}
+
+					placed.push({
+						...label,
+						left: chosen.left,
+						top: chosen.top,
+						lineStartLeft,
+						lineStartTop
+					});
+					occupied.push({
+						left: chosen.left,
+						top: chosen.top,
+						right: chosen.left + label.width,
+						bottom: chosen.top + label.height
+					});
+				}
+
+				labels = placed;
 			};
 
-			const centerSelected = () => {
-				const position = nodePositions.get(selectedId);
+			const updateAuthorMarkers = () => {
+				if (!canvasElement || activeAuthorColorAssignments.length === 0) {
+					authorMarkers = [];
+					return;
+				}
+				const rect = canvasElement.getBoundingClientRect();
+				const visible = visibleNodeIds;
+				const activeAssignments = getActiveAssignmentEntries();
+				const nextMarkers: NetworkAuthorMarker[] = [];
+				for (const node of graph.nodes) {
+					if (node.id === selectedId || !visible.has(node.id)) continue;
+					const assignment = getNodeAuthorAssignment(node, activeAssignments);
+					if (!assignment) continue;
+					const position = nodePositions.get(node.id);
+					if (!position) continue;
+					const vector = position.clone().project(camera);
+					if (vector.z < -1 || vector.z > 1) continue;
+					const left = ((vector.x + 1) / 2) * rect.width;
+					const top = ((1 - vector.y) / 2) * rect.height;
+					const cameraDistance = camera.position.distanceTo(position);
+					const baseRadius = Math.max(5.2, Math.min(18, 2200 / Math.max(85, cameraDistance)));
+					const active = node.id === hoveredId || selectedNeighbors.has(node.id);
+					nextMarkers.push({
+						id: `${node.id}:${assignment.author}`,
+						left,
+						top,
+						radius: active ? baseRadius * 1.32 : baseRadius,
+						color: assignment.color,
+						active
+					});
+				}
+				authorMarkers = nextMarkers;
+			};
+
+			const clearSearchContext = () => {
+				query = '';
+			};
+
+			const easeInOutCubic = (value: number): number =>
+				value < 0.5 ? 4 * value * value * value : 1 - Math.pow(-2 * value + 2, 3) / 2;
+
+			const animateCameraTo = (
+				cameraPosition: import('three').Vector3,
+				controlTarget: import('three').Vector3,
+				duration = 1800
+			) => {
+				animationStartCameraPosition = camera.position.clone();
+				animationStartControlTarget = controls.target.clone();
+				targetCameraPosition = cameraPosition;
+				targetControlTarget = controlTarget;
+				cameraAnimationStartedAt = performance.now();
+				cameraAnimationDuration = duration;
+			};
+
+			const focusNode = (nodeId: string, distance = 120) => {
+				const position = nodePositions.get(nodeId);
 				if (!position) return;
-				controls.target.copy(position);
-				camera.position.copy(position.clone().add(new THREE.Vector3(0, 0, 120)));
-				controls.update();
+				clearSearchContext();
+				selectedId = nodeId;
+				animateCameraTo(position.clone().add(new THREE.Vector3(0, 0, distance)), position.clone());
+			};
+
+			const centerSelected = (nodeId?: string) => {
+				const resolvedNodeId = nodeId || selectedId;
+				if (!resolvedNodeId) return;
+				focusNode(resolvedNodeId);
+			};
+
+			const resetView = () => {
+				selectedId = '';
+				hoveredId = '';
+				animateCameraTo(initialCameraPosition.clone(), initialControlTarget.clone(), 1400);
 			};
 
 			const raycaster = new THREE.Raycaster();
@@ -324,13 +640,13 @@
 
 			const handleClick = () => {
 				if (!hoveredId) return;
+				clearSearchContext();
 				selectedId = hoveredId;
 			};
 
 			const handleDoubleClick = () => {
 				if (!hoveredId) return;
-				selectedId = hoveredId;
-				centerSelected();
+				focusNode(hoveredId);
 			};
 
 			canvasElement.addEventListener('pointermove', handlePointerMove);
@@ -349,13 +665,51 @@
 			resizeObserver = new ResizeObserver(resize);
 			resizeObserver.observe(canvasElement);
 			resize();
+			initialCameraPosition = camera.position.clone();
+			initialControlTarget = controls.target.clone();
+			const requestedSlug = new URL(window.location.href).searchParams.get('obra');
+			if (requestedSlug) {
+				const requestedNode = graph.nodes.find((node) => node.slug === requestedSlug);
+				if (requestedNode) {
+					initialSelectionDone = true;
+					initialFocusTimeout = window.setTimeout(() => {
+						focusNode(requestedNode.id, 110);
+						initialFocusTimeout = null;
+					}, 1800);
+				}
+			}
 			updateHighlight();
 			graphLoading = false;
 
 			const animate = () => {
 				if (disposed) return;
+				if (
+					targetCameraPosition &&
+					targetControlTarget &&
+					animationStartCameraPosition &&
+					animationStartControlTarget
+				) {
+					const elapsed = performance.now() - cameraAnimationStartedAt;
+					const progress = Math.min(1, elapsed / Math.max(1, cameraAnimationDuration));
+					const easedProgress = easeInOutCubic(progress);
+					camera.position.copy(
+						animationStartCameraPosition.clone().lerp(targetCameraPosition, easedProgress)
+					);
+					controls.target.copy(
+						animationStartControlTarget.clone().lerp(targetControlTarget, easedProgress)
+					);
+					if (progress >= 1) {
+						targetCameraPosition = null;
+						targetControlTarget = null;
+						animationStartCameraPosition = null;
+						animationStartControlTarget = null;
+						cameraAnimationStartedAt = 0;
+						cameraAnimationDuration = 0;
+					}
+				}
 				controls.update();
 				updateLabels();
+				updateAuthorMarkers();
 				renderer.render(scene, camera);
 				frameId = requestAnimationFrame(animate);
 			};
@@ -365,6 +719,8 @@
 				$effect(() => {
 					visibleNodeIds;
 					hoveredId;
+					attributionMode;
+					activeAuthorColorAssignments;
 					updateNodes();
 				});
 				$effect(() => {
@@ -373,11 +729,33 @@
 				});
 			});
 
-			(window as Window & { centerSelectedWorkNode?: () => void }).centerSelectedWorkNode = centerSelected;
+			(
+				window as Window & {
+					centerSelectedWorkNode?: (nodeId?: string) => void;
+					resetWorkNetworkView?: () => void;
+				}
+			).centerSelectedWorkNode = centerSelected;
+			(
+				window as Window & {
+					centerSelectedWorkNode?: (nodeId?: string) => void;
+					resetWorkNetworkView?: () => void;
+				}
+			).resetWorkNetworkView = resetView;
 
 			return () => {
 				stopEffects();
-				delete (window as Window & { centerSelectedWorkNode?: () => void }).centerSelectedWorkNode;
+				delete (
+					window as Window & {
+						centerSelectedWorkNode?: (nodeId?: string) => void;
+						resetWorkNetworkView?: () => void;
+					}
+				).centerSelectedWorkNode;
+				delete (
+					window as Window & {
+						centerSelectedWorkNode?: (nodeId?: string) => void;
+						resetWorkNetworkView?: () => void;
+					}
+				).resetWorkNetworkView;
 				canvasElement?.removeEventListener('pointermove', handlePointerMove);
 				canvasElement?.removeEventListener('click', handleClick);
 				canvasElement?.removeEventListener('dblclick', handleDoubleClick);
@@ -392,12 +770,18 @@
 		return () => {
 			disposed = true;
 			labels = [];
+			authorMarkers = [];
 			if (frameId) cancelAnimationFrame(frameId);
+			if (initialFocusTimeout) window.clearTimeout(initialFocusTimeout);
 			cleanupEvents?.();
 			resizeObserver?.disconnect();
 			controls?.dispose();
 			nodesMesh?.geometry.dispose();
 			(nodesMesh?.material as import('three').Material | undefined)?.dispose();
+			adjacentNodesMesh?.geometry.dispose();
+			(adjacentNodesMesh?.material as import('three').Material | undefined)?.dispose();
+			selectedNodeMesh?.geometry.dispose();
+			(selectedNodeMesh?.material as import('three').Material | undefined)?.dispose();
 			linksMesh?.geometry.dispose();
 			(linksMesh?.material as import('three').Material | undefined)?.dispose();
 			highlightLines?.geometry.dispose();
@@ -425,16 +809,298 @@
 		</p>
 	</section>
 
-	<section class="relative left-1/2 right-1/2 min-h-[calc(100dvh-9rem)] w-[100dvw] max-w-[100dvw] -translate-x-1/2 overflow-hidden bg-[#fbfcff]">
+	<div class="mx-auto grid w-full max-w-7xl gap-4">
+		<div class="grid gap-3 md:grid-cols-[minmax(16rem,1fr)_auto] md:items-end">
+			<label class="grid gap-1 text-[0.78rem] font-semibold uppercase tracking-[0.04em] text-text-soft" for="network-query">
+				Buscar en título, género y atribuciones
+				<input
+					id="network-query"
+					type="search"
+					bind:value={query}
+					placeholder="Ej: La dama boba, comedia, Lope..."
+					class="h-10 rounded-md border border-border bg-white px-3 text-[0.92rem] font-normal normal-case tracking-normal text-text-main shadow-soft"
+				/>
+			</label>
+
+			<div class="flex flex-wrap items-center justify-end gap-2">
+				<div class="rounded-md border border-border bg-white px-3 py-2 text-[0.86rem] text-text-soft shadow-soft">
+					<span class="font-semibold text-brand-blue-dark">{filteredCount}</span> de {graph.nodes.length} obras
+				</div>
+				<button
+					type="button"
+					class="h-10 rounded-md border border-border bg-white px-3 text-[0.86rem] font-semibold text-brand-blue shadow-soft disabled:cursor-default disabled:opacity-45"
+					disabled={!selectedId}
+					onclick={() => {
+						selectedId = '';
+						hoveredId = '';
+					}}
+				>
+					Limpiar
+				</button>
+				<button
+					type="button"
+					class="h-10 rounded-md border border-border bg-white px-3 text-[0.86rem] font-semibold text-brand-blue shadow-soft"
+					onclick={() => {
+						(window as Window & { resetWorkNetworkView?: () => void }).resetWorkNetworkView?.();
+					}}
+				>
+					Reset
+				</button>
+			</div>
+		</div>
+
+		<div class="grid gap-3 rounded-md border border-border bg-white p-3 shadow-soft md:grid-cols-[auto_minmax(14rem,1fr)_auto_auto_auto] md:items-end">
+			<label class="grid gap-1 text-[0.74rem] font-semibold uppercase tracking-[0.04em] text-text-soft" for="author-mode">
+				Atribución
+				<select
+					id="author-mode"
+					bind:value={attributionMode}
+					class="h-10 rounded-md border border-border bg-white px-3 text-[0.9rem] font-normal normal-case tracking-normal text-text-main"
+				>
+					<option value="traditional">Tradicional</option>
+					<option value="stylometry">Estilometría</option>
+				</select>
+			</label>
+
+			<label class="grid gap-1 text-[0.74rem] font-semibold uppercase tracking-[0.04em] text-text-soft" for="author-highlight">
+				Autor
+				<input
+					id="author-highlight"
+					type="text"
+					bind:value={pendingAuthor}
+					list="author-highlight-options"
+					placeholder="Escribe y selecciona un autor..."
+					class="h-10 rounded-md border border-border bg-white px-3 text-[0.9rem] font-normal normal-case tracking-normal text-text-main disabled:bg-surface-subtle"
+					disabled={availableAuthorsForSelection.length === 0 || activeAuthorColorAssignments.length >= MAX_AUTHOR_COLOR_ASSIGNMENTS}
+				/>
+				<datalist id="author-highlight-options">
+					{#each authorAutocompleteOptions as author}
+						<option value={author}></option>
+					{/each}
+				</datalist>
+			</label>
+
+			<label class="grid gap-1 text-[0.74rem] font-semibold uppercase tracking-[0.04em] text-text-soft" for="author-color">
+				Color
+				<input
+					id="author-color"
+					type="color"
+					bind:value={pendingColor}
+					class="h-10 w-16 rounded-md border border-border bg-white p-1"
+				/>
+			</label>
+
+			<button
+				type="button"
+				class="h-10 rounded-md border border-border bg-white px-3 text-[0.86rem] font-semibold text-brand-blue shadow-soft disabled:cursor-default disabled:opacity-45"
+				disabled={!matchedPendingAuthor || activeAuthorColorAssignments.length >= MAX_AUTHOR_COLOR_ASSIGNMENTS}
+				onclick={() => {
+					const authorToAdd = matchedPendingAuthor;
+					if (!authorToAdd) return;
+					if (activeAuthorColorAssignments.length >= MAX_AUTHOR_COLOR_ASSIGNMENTS) return;
+					authorColorAssignments = [
+						...authorColorAssignments.filter(
+							(assignment) => !(assignment.mode === attributionMode && assignment.author === authorToAdd)
+						),
+						{
+							mode: attributionMode,
+							author: authorToAdd,
+							color: pendingColor
+						}
+					];
+					const nextIndex =
+						(activeAuthorColorAssignments.length + 1) % authorColorPalette.length;
+					pendingColor = authorColorPalette[nextIndex] ?? '#7c3aed';
+					pendingAuthor = '';
+				}}
+			>
+				Añadir autor
+			</button>
+
+			<div class="text-right text-[0.76rem] text-text-soft">
+				{activeAuthorColorAssignments.length} de {MAX_AUTHOR_COLOR_ASSIGNMENTS} autores
+			</div>
+		</div>
+
+		{#if activeAuthorColorAssignments.length > 0}
+			<div class="flex flex-wrap gap-2">
+				{#each activeAuthorColorAssignments as assignment}
+					<div class="flex items-center gap-2 rounded-md border border-border bg-white px-2.5 py-2 text-[0.8rem] text-text-main shadow-soft">
+						<span class="h-3 w-3 rounded-full border border-black/10" style={`background:${assignment.color};`}></span>
+						<span>{assignment.author}</span>
+						<button
+							type="button"
+							class="border-0 bg-transparent p-0 text-[0.78rem] font-semibold text-brand-blue"
+							onclick={() => {
+								authorColorAssignments = authorColorAssignments.filter(
+									(entry) => !(entry.mode === assignment.mode && entry.author === assignment.author)
+								);
+							}}
+						>
+							Quitar
+						</button>
+					</div>
+				{/each}
+			</div>
+		{/if}
+
+		{#if query && visibleResults.length > 0}
+			<div class="max-h-52 overflow-auto rounded-md border border-border bg-white shadow-soft md:max-w-2xl">
+				{#each visibleResults as node}
+					<button
+						type="button"
+						class="block w-full border-0 border-b border-border bg-transparent px-3 py-2 text-left last:border-b-0 hover:bg-surface-accent-blue"
+						onclick={() => {
+							(window as Window & { centerSelectedWorkNode?: (nodeId?: string) => void }).centerSelectedWorkNode?.(node.id);
+						}}
+					>
+						<span class="block text-[0.92rem] font-semibold leading-[1.35] text-brand-blue-dark">
+							{formatDisplayWorkTitle(node.title)}
+						</span>
+						<span class="block text-[0.78rem] leading-[1.35] text-text-soft">
+							{node.genre} · Trad.: {formatPeople(node.traditionalAuthors)} · Estil.: {formatPeople(node.stylometryAuthors)}
+						</span>
+					</button>
+				{/each}
+			</div>
+		{/if}
+
+		{#if selectedNode}
+			<section class="rounded-md border border-[#b45f06]/22 bg-[#fffdfa] p-4 shadow-soft">
+				<div class="grid gap-3 md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] md:items-start">
+					<div class="grid gap-2">
+						<div>
+							<p class="m-0 font-ui text-[0.72rem] font-bold uppercase tracking-[0.05em] text-[#b45f06]">Obra seleccionada</p>
+							<h2 class="m-0 mt-1 text-[1rem] font-semibold leading-[1.2] text-[#b45f06]">
+								{formatDisplayWorkTitle(selectedNode.title)}
+							</h2>
+						</div>
+						<div class="grid gap-1 text-[0.82rem] leading-[1.35] text-text-main">
+							<p class="m-0"><span class="font-semibold text-text-soft">Género:</span> {selectedNode.genre}</p>
+							<p class="m-0"><span class="font-semibold text-text-soft">Trad.:</span> {formatPeople(selectedNode.traditionalAuthors)}</p>
+							<p class="m-0"><span class="font-semibold text-text-soft">Estil.:</span> {formatPeople(selectedNode.stylometryAuthors)}</p>
+						</div>
+						<div class="flex flex-wrap gap-2">
+							<button
+								type="button"
+								class="rounded-md border border-border bg-white px-3 py-2 text-[0.82rem] font-semibold text-brand-blue"
+								onclick={() => {
+									selectedId = '';
+									hoveredId = '';
+								}}
+							>
+								Limpiar
+							</button>
+							<button
+								type="button"
+								class="rounded-md border border-border bg-white px-3 py-2 text-[0.82rem] font-semibold text-brand-blue"
+								onclick={() => {
+									(window as Window & { resetWorkNetworkView?: () => void }).resetWorkNetworkView?.();
+								}}
+							>
+								Reset
+							</button>
+							<button
+								type="button"
+								class="rounded-md border border-border bg-white px-3 py-2 text-[0.82rem] font-semibold text-brand-blue"
+								onclick={() => {
+									(window as Window & { centerSelectedWorkNode?: (nodeId?: string) => void }).centerSelectedWorkNode?.();
+								}}
+							>
+								Centrar
+							</button>
+							<a
+								href={`/obras/${selectedNode.slug}`}
+								class="rounded-md bg-brand-blue px-3 py-2 text-[0.82rem] font-semibold text-white no-underline hover:bg-brand-blue-dark hover:no-underline"
+							>
+								Ficha
+							</a>
+							{#if selectedNode.reportSlug}
+								<a
+									href={`/informes/${selectedNode.reportSlug}`}
+									class="rounded-md border border-border bg-white px-3 py-2 text-[0.82rem] font-semibold text-brand-blue no-underline hover:bg-surface-accent-blue hover:no-underline"
+								>
+									Informe
+								</a>
+							{/if}
+						</div>
+					</div>
+
+					{#if selectedLinks.length > 0}
+						<div class="border-t border-border pt-3 md:border-l md:border-t-0 md:pl-4 md:pt-0">
+							<p class="m-0 mb-2 text-[0.72rem] font-bold uppercase tracking-[0.05em] text-text-soft">Obras conectadas (se indican las 3 más próximas)</p>
+							<div class="grid max-h-40 gap-2 overflow-auto pr-1">
+								{#each selectedLinks as entry}
+									<button
+										type="button"
+										class="grid rounded-md border border-border/80 bg-white/70 px-3 py-2 text-left text-[0.78rem] leading-[1.25] text-brand-blue hover:bg-surface-accent-blue"
+										onclick={() => {
+											(window as Window & { centerSelectedWorkNode?: (nodeId?: string) => void }).centerSelectedWorkNode?.(entry.node.id);
+										}}
+									>
+										<span class="font-semibold">{formatDisplayWorkTitle(entry.node.title)}</span>
+										<span class="text-text-soft">{entry.node.genre} · distancia {entry.link.distance.toFixed(3)}</span>
+										<span class="text-text-soft">Trad.: {formatPeople(entry.node.traditionalAuthors)}</span>
+										<span class="text-text-soft">Estil.: {formatPeople(entry.node.stylometryAuthors)}</span>
+									</button>
+								{/each}
+							</div>
+						</div>
+					{/if}
+				</div>
+			</section>
+		{/if}
+	</div>
+
+	<section class="relative mx-auto h-[calc(100dvh-24rem)] min-h-[31rem] w-full max-w-7xl overflow-hidden rounded-lg border border-border/70 bg-[#fbfcff] shadow-soft md:h-[calc(100dvh-22rem)] md:min-h-[35rem] md:max-h-[42rem]">
 		<canvas bind:this={canvasElement} class="absolute inset-0 h-full w-full touch-none"></canvas>
 
 		<div class="pointer-events-none absolute inset-0 z-[5]">
+			<svg class="absolute inset-0 h-full w-full overflow-visible" aria-hidden="true">
+				<defs>
+					<marker
+						id="network-label-arrow"
+						viewBox="0 0 10 10"
+						refX="8"
+						refY="5"
+						markerWidth="5"
+						markerHeight="5"
+						orient="auto-start-reverse"
+					>
+						<path d="M 0 0 L 10 5 L 0 10 z" fill="#90a3bd"></path>
+					</marker>
+				</defs>
+				{#each authorMarkers as marker (marker.id)}
+					<circle
+						cx={marker.left}
+						cy={marker.top}
+						r={marker.radius}
+						fill={marker.color}
+						stroke={marker.active ? '#111111' : '#ffffff'}
+						stroke-width={marker.active ? '2.2' : '1.4'}
+						opacity="0.96"
+					/>
+				{/each}
+				{#each labels as label (label.id)}
+					<line
+						x1={label.lineStartLeft}
+						y1={label.lineStartTop}
+						x2={label.anchorLeft}
+						y2={label.anchorTop}
+						stroke={label.id === selectedId ? '#c62828' : '#90a3bd'}
+						stroke-width={label.id === selectedId ? '1.8' : '1.2'}
+						stroke-linecap="round"
+						marker-end="url(#network-label-arrow)"
+						opacity={label.id === selectedId ? '0.92' : '0.76'}
+					/>
+				{/each}
+			</svg>
 			{#each labels as label (label.id)}
 				<div
-					class={`node-label absolute max-w-[18rem] -translate-x-1/2 -translate-y-full rounded-md border px-2.5 py-2 text-left shadow-soft ${label.active ? 'border-brand-blue/35 bg-white/96' : 'border-border bg-white/88'}`}
-					style={`left: ${label.left}px; top: ${label.top}px;`}
+					class={`node-label absolute rounded-md border px-2.5 py-2 text-left shadow-soft ${label.id === selectedId ? 'border-[#c62828]/35 bg-[#fff5f5]' : label.active ? 'border-brand-blue/35 bg-white/96' : 'border-border bg-white/90'}`}
+					style={`left: ${label.left}px; top: ${label.top}px; width: ${label.width}px; min-height: ${label.height}px;`}
 				>
-					<span class="block text-[0.78rem] font-semibold leading-[1.25] text-brand-blue-dark">
+					<span class={`block text-[0.78rem] font-semibold leading-[1.25] ${label.id === selectedId ? 'text-[#c62828]' : 'text-brand-blue-dark'}`}>
 						{label.title}
 					</span>
 					<span class="mt-1 block text-[0.68rem] leading-[1.25] text-text-soft">
@@ -460,129 +1126,5 @@
 			</div>
 		{/if}
 
-		<div class="pointer-events-none absolute inset-x-0 top-0 z-10">
-			<div class="pointer-events-auto mx-auto grid w-full max-w-7xl gap-3 px-4 py-4 md:grid-cols-[minmax(16rem,1fr)_minmax(13rem,20rem)_auto] md:items-end">
-				<label class="grid gap-1 text-[0.78rem] font-semibold uppercase tracking-[0.04em] text-text-soft" for="network-query">
-					Buscar en título, género y atribuciones
-					<input
-						id="network-query"
-						type="search"
-						bind:value={query}
-						placeholder="Ej: La dama boba, comedia, Lope..."
-						class="h-10 rounded-md border border-border bg-white/94 px-3 text-[0.92rem] font-normal normal-case tracking-normal text-text-main shadow-soft"
-					/>
-				</label>
-
-				<label class="grid gap-1 text-[0.78rem] font-semibold uppercase tracking-[0.04em] text-text-soft" for="network-attribution">
-					Atribución
-					<select
-						id="network-attribution"
-						bind:value={attributionFilter}
-						class="h-10 rounded-md border border-border bg-white/94 px-3 text-[0.92rem] font-normal normal-case tracking-normal text-text-main shadow-soft"
-					>
-						<option value="">Todas</option>
-						{#each allAttributions as attribution}
-							<option value={attribution}>{attribution}</option>
-						{/each}
-					</select>
-				</label>
-
-				<div class="rounded-md border border-border bg-white/94 px-3 py-2 text-[0.86rem] text-text-soft shadow-soft">
-					<span class="font-semibold text-brand-blue-dark">{filteredCount}</span> de {graph.nodes.length} obras
-				</div>
-			</div>
-
-			{#if (query || attributionFilter) && visibleResults.length > 0}
-				<div class="pointer-events-auto mx-auto grid w-full max-w-7xl px-4">
-					<div class="max-h-52 overflow-auto rounded-md border border-border bg-white/95 shadow-soft md:max-w-2xl">
-						{#each visibleResults as node}
-							<button
-								type="button"
-								class="block w-full border-0 border-b border-border bg-transparent px-3 py-2 text-left last:border-b-0 hover:bg-surface-accent-blue"
-								onclick={() => {
-									selectedId = node.id;
-								}}
-							>
-								<span class="block text-[0.92rem] font-semibold leading-[1.35] text-brand-blue-dark">
-									{formatDisplayWorkTitle(node.title)}
-								</span>
-								<span class="block text-[0.78rem] leading-[1.35] text-text-soft">
-									{node.genre} · Trad.: {formatPeople(node.traditionalAuthors)} · Estil.: {formatPeople(node.stylometryAuthors)}
-								</span>
-							</button>
-						{/each}
-					</div>
-				</div>
-			{/if}
-		</div>
-
-		{#if hoveredNode && hoveredNode.id !== selectedId}
-			<div class="pointer-events-none absolute left-4 top-[8.5rem] z-10 hidden max-w-md rounded-md border border-border bg-white/96 px-3 py-2 text-[0.84rem] text-text-main shadow-soft md:block">
-				<span class="block font-semibold leading-[1.35] text-brand-blue-dark">{formatDisplayWorkTitle(hoveredNode.title)}</span>
-				<span class="block leading-[1.45] text-text-soft">{hoveredNode.genre}</span>
-				<span class="block leading-[1.45] text-text-soft">Trad.: {formatPeople(hoveredNode.traditionalAuthors)}</span>
-				<span class="block leading-[1.45] text-text-soft">Estil.: {formatPeople(hoveredNode.stylometryAuthors)}</span>
-			</div>
-		{/if}
-
-		{#if selectedNode}
-			<aside class="absolute bottom-4 left-4 right-4 z-10 max-w-2xl rounded-md border border-border bg-white/96 p-4 shadow-soft md:left-auto md:right-6 md:w-[30rem]">
-				<p class="m-0 font-ui text-[0.78rem] font-bold uppercase tracking-[0.05em] text-text-soft">Obra seleccionada</p>
-				<h2 class="m-0 mt-1 text-[1.08rem] font-semibold leading-[1.25] text-brand-blue-dark">
-					{formatDisplayWorkTitle(selectedNode.title)}
-				</h2>
-				<div class="mt-3 grid gap-2 text-[0.9rem] leading-[1.45] text-text-main">
-					<p class="m-0"><span class="font-semibold text-text-soft">Género:</span> {selectedNode.genre}</p>
-					<p class="m-0"><span class="font-semibold text-text-soft">Atribución tradicional:</span> {formatPeople(selectedNode.traditionalAuthors)}</p>
-					<p class="m-0"><span class="font-semibold text-text-soft">Atribución estilometría:</span> {formatPeople(selectedNode.stylometryAuthors)}</p>
-				</div>
-
-				{#if selectedLinks.length > 0}
-					<div class="mt-3 border-t border-border pt-3">
-						<p class="m-0 mb-1 text-[0.78rem] font-bold uppercase tracking-[0.05em] text-text-soft">Obras conectadas</p>
-						<div class="grid gap-1">
-							{#each selectedLinks as entry}
-								<button
-									type="button"
-									class="grid border-0 bg-transparent p-0 text-left text-[0.84rem] leading-[1.35] text-brand-blue hover:underline"
-									onclick={() => {
-										selectedId = entry.node.id;
-									}}
-								>
-									{formatDisplayWorkTitle(entry.node.title)}
-									<span class="text-text-soft">distancia {entry.link.distance.toFixed(3)}</span>
-								</button>
-							{/each}
-						</div>
-					</div>
-				{/if}
-
-				<div class="mt-3 flex flex-wrap gap-2">
-					<button
-						type="button"
-						class="rounded-md border border-border bg-white px-3 py-2 text-[0.86rem] font-semibold text-brand-blue"
-						onclick={() => {
-							(window as Window & { centerSelectedWorkNode?: () => void }).centerSelectedWorkNode?.();
-						}}
-					>
-						Centrar
-					</button>
-					<a
-						href={`/obras/${selectedNode.slug}`}
-						class="rounded-md bg-brand-blue px-3 py-2 text-[0.86rem] font-semibold text-white no-underline hover:bg-brand-blue-dark hover:no-underline"
-					>
-						Ficha
-					</a>
-					{#if selectedNode.reportSlug}
-						<a
-							href={`/informes/${selectedNode.reportSlug}`}
-							class="rounded-md border border-border bg-white px-3 py-2 text-[0.86rem] font-semibold text-brand-blue no-underline hover:bg-surface-accent-blue hover:no-underline"
-						>
-							Informe
-						</a>
-					{/if}
-				</div>
-			</aside>
-		{/if}
 	</section>
 </div>

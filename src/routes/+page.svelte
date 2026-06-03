@@ -295,8 +295,27 @@
 
 		<div class="grid gap-5 text-[1.02rem] leading-[1.72] text-text-soft">
 			<p class="m-0">
-				El proyecto <b>ETSO: Estilometría aplicada al Teatro del Siglo de Oro</b> surge del interés del investigador
-				Álvaro Cuéllar (Universitat Autònoma de Barcelona) y del catedrático Germán Vega García-Luengos
+				El proyecto
+				<a
+					href="https://etso.es/"
+					class="font-bold text-brand-blue-dark no-underline hover:underline"
+				>
+					ETSO: Estilometría aplicada al Teatro del Siglo de Oro
+				</a>
+				surge del interés del investigador
+				<a
+					href="https://www.alvarocuellar.com/"
+					class="font-bold text-brand-blue-dark no-underline hover:underline"
+				>
+					Álvaro Cuéllar
+				</a>
+				(Universitat Autònoma de Barcelona) y del catedrático
+				<a
+					href="https://literaturaespanola.uva.es/german-jose-vega-garcia-luengos/"
+					class="font-bold text-brand-blue-dark no-underline hover:underline"
+				>
+					Germán Vega García-Luengos
+				</a>
 				(Universidad de Valladolid) en aplicar las nuevas herramientas informáticas a los numerosos problemas
 				de autoría que presenta el teatro del Siglo de Oro español. Este portal trata de ofrecer análisis que
 				puedan arrojar luz sobre las atribuciones de la vasta producción teatral del periodo aurisecular.
@@ -309,9 +328,45 @@
 			</p>
 			<p class="m-0">
 				Se pueden consultar aquí ejemplos en los que la estilometría ratifica la atribución tradicional, como
-				en <b><i>La dama boba</i></b>, <b><i>Don Gil de las calzas verdes</i></b> o <b><i>El médico de su honra</i></b>, y también casos en los que la
-				estilometría apunta hacia una autoría inesperada y potencialmente esclarecedora, como en <b><i>La francesa
-				Laura</i></b>, <b><i>La monja alférez</i></b> o <b><i>La puerta Macarena</i></b> (Primera parte). Debemos tener en cuenta que las nuevas
+				en
+				<a
+					href="/informes/analisis-estilometrico-la-dama-boba"
+					class="font-bold italic text-brand-blue-dark no-underline hover:underline"
+				>
+					La dama boba
+				</a>,
+				<a
+					href="/informes/analisis-estilometrico-don-gil-de-las-calzas-verdes"
+					class="font-bold italic text-brand-blue-dark no-underline hover:underline"
+				>
+					Don Gil de las calzas verdes
+				</a>
+				o
+				<a
+					href="/informes/analisis-estilometrico-el-medico-de-su-honra-el-celoso-de-su-honra"
+					class="font-bold italic text-brand-blue-dark no-underline hover:underline"
+				>
+					El médico de su honra
+				</a>, y también casos en los que la estilometría apunta hacia una autoría inesperada y potencialmente esclarecedora, como en
+				<a
+					href="/informes/analisis-estilometrico-la-francesa-laura"
+					class="font-bold italic text-brand-blue-dark no-underline hover:underline"
+				>
+					La francesa Laura
+				</a>,
+				<a
+					href="/informes/analisis-estilometrico-la-monja-alferez"
+					class="font-bold italic text-brand-blue-dark no-underline hover:underline"
+				>
+					La monja alférez
+				</a>
+				o
+				<a
+					href="/informes/analisis-estilometrico-la-puerta-macarena-primera-parte"
+					class="font-bold italic text-brand-blue-dark no-underline hover:underline"
+				>
+					La puerta Macarena (primera parte)
+				</a>. Debemos tener en cuenta que las nuevas
 				atribuciones aquí señaladas son meros indicios de autoría arrojados por el proceso informático de forma
 				automática. Todos los casos deben ser estudiados pormenorizadamente desde la filología atendiendo a sus
 				complejidades particulares.

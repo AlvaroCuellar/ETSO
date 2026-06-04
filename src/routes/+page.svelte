@@ -9,6 +9,7 @@
 	import bitesoHero from '$lib/assets/heros/biblioteca.webp';
 	import resumenesHero from '$lib/assets/heros/resumenes.webp';
 	import grafoImage from '$lib/assets/heros/grafo.png';
+	import redEstilometricaImage from '$lib/assets/heros/red-estilometrica.svg';
 	import informesImage from '$lib/assets/heros/informes.png';
 	import librosHero from '$lib/assets/heros/libros.webp';
 	import fondoEscritura from '$lib/assets/fondos/fondo-escritura.png';
@@ -66,7 +67,7 @@
 		}
 		,
 		{
-			image: grafoImage,
+			image: redEstilometricaImage,
 			title: 'Red estilométrica',
 			description: 'Visualiza la red de relaciones estilométricas para las 3000 obras del corpus',
 			alt: 'Red estilométrica del proyecto ETSO',
@@ -542,4 +543,3 @@
 		</div>
 	</div>
 </section>
-

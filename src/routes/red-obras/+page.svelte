@@ -53,7 +53,6 @@
 	let hoveredId = $state('');
 	let labels = $state<NetworkLabel[]>([]);
 	let authorMarkers = $state<NetworkAuthorMarker[]>([]);
-	let initialSelectionDone = $state(false);
 	let attributionMode = $state<AttributionMode>('traditional');
 	let authorColorAssignments = $state<AuthorColorAssignment[]>([]);
 	let pendingAuthor = $state('');
@@ -135,13 +134,6 @@
 			.filter((entry): entry is { link: WorkNetworkLink; node: WorkNetworkNode } => Boolean(entry.node))
 			.sort((a, b) => a.link.distance - b.link.distance)
 			.slice(0, MAX_DISPLAYED_CONNECTED_WORKS);
-	});
-
-	$effect(() => {
-		if (!initialSelectionDone && !selectedId && graph.nodes[0]) {
-			selectedId = graph.nodes[0].id;
-			initialSelectionDone = true;
-		}
 	});
 
 	$effect(() => {
@@ -671,7 +663,6 @@
 			if (requestedSlug) {
 				const requestedNode = graph.nodes.find((node) => node.slug === requestedSlug);
 				if (requestedNode) {
-					initialSelectionDone = true;
 					initialFocusTimeout = window.setTimeout(() => {
 						focusNode(requestedNode.id, 110);
 						initialFocusTimeout = null;

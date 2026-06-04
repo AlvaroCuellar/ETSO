@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
+	import HelpBubble from '$lib/components/search/HelpBubble.svelte';
+	import TokenMultiSelect from '$lib/components/search/TokenMultiSelect.svelte';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import { normalizePlainText } from '$lib/search/normalize';
@@ -55,8 +57,6 @@
 	let authorMarkers = $state<NetworkAuthorMarker[]>([]);
 	let attributionMode = $state<AttributionMode>('traditional');
 	let authorColorAssignments = $state<AuthorColorAssignment[]>([]);
-	let pendingAuthor = $state('');
-	let pendingColor = $state('#7c3aed');
 
 	const MAX_AUTHOR_COLOR_ASSIGNMENTS = 10;
 	const MAX_DISPLAYED_CONNECTED_WORKS = 3;
@@ -76,6 +76,7 @@
 	const activeAuthorColorAssignments = $derived.by(() =>
 		authorColorAssignments.filter((assignment) => assignment.mode === attributionMode).slice(0, MAX_AUTHOR_COLOR_ASSIGNMENTS)
 	);
+	const selectedAuthorIds = $derived(activeAuthorColorAssignments.map((assignment) => assignment.author));
 	const availableAuthors = $derived.by(() => {
 		const names = new Set<string>();
 		for (const node of graph.nodes) {
@@ -85,25 +86,23 @@
 		}
 		return Array.from(names).sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
 	});
-	const availableAuthorsForSelection = $derived.by(() => {
-		const active = new Set(activeAuthorColorAssignments.map((assignment) => assignment.author));
-		return availableAuthors.filter((author) => !active.has(author));
-	});
-	const normalizedPendingAuthor = $derived(normalizeFilterText(pendingAuthor));
-	const matchedPendingAuthor = $derived.by(() => {
-		if (!normalizedPendingAuthor) return '';
-		return (
-			availableAuthorsForSelection.find(
-				(author) => normalizeFilterText(author) === normalizedPendingAuthor
-			) ?? ''
+	const authorOptions = $derived(availableAuthors.map((author) => ({ id: author, label: author })));
+
+	const updateSelectedAuthors = (nextAuthors: string[]): void => {
+		const cappedAuthors = nextAuthors.slice(0, MAX_AUTHOR_COLOR_ASSIGNMENTS);
+		const previousByAuthor = new Map(
+			activeAuthorColorAssignments.map((assignment) => [assignment.author, assignment] as const)
 		);
-	});
-	const authorAutocompleteOptions = $derived.by(() => {
-		if (!normalizedPendingAuthor) return availableAuthorsForSelection.slice(0, 80);
-		return availableAuthorsForSelection
-			.filter((author) => normalizeFilterText(author).includes(normalizedPendingAuthor))
-			.slice(0, 80);
-	});
+		const nextAssignments = cappedAuthors.map((author, index) => ({
+			mode: attributionMode,
+			author,
+			color: previousByAuthor.get(author)?.color ?? authorColorPalette[index % authorColorPalette.length] ?? '#7c3aed'
+		}));
+		authorColorAssignments = [
+			...authorColorAssignments.filter((assignment) => assignment.mode !== attributionMode),
+			...nextAssignments
+		];
+	};
 
 	const visibleNodeIds = $derived.by(() => {
 		const normalizedQuery = normalizeFilterText(query);
@@ -134,12 +133,6 @@
 			.filter((entry): entry is { link: WorkNetworkLink; node: WorkNetworkNode } => Boolean(entry.node))
 			.sort((a, b) => a.link.distance - b.link.distance)
 			.slice(0, MAX_DISPLAYED_CONNECTED_WORKS);
-	});
-
-	$effect(() => {
-		const nextIndex = activeAuthorColorAssignments.length % authorColorPalette.length;
-		if (!activeAuthorColorAssignments.some((assignment) => assignment.color === pendingColor)) return;
-		pendingColor = authorColorPalette[nextIndex] ?? '#7c3aed';
 	});
 
 	onMount(() => {
@@ -801,155 +794,135 @@
 	</section>
 
 	<div class="mx-auto grid w-full max-w-7xl gap-4">
-		<div class="grid gap-3 md:grid-cols-[minmax(16rem,1fr)_auto] md:items-end">
-			<label class="grid gap-1 text-[0.78rem] font-semibold uppercase tracking-[0.04em] text-text-soft" for="network-query">
-				Buscar en título, género y atribuciones
-				<input
-					id="network-query"
-					type="search"
-					bind:value={query}
-					placeholder="Ej: La dama boba, comedia, Lope..."
-					class="h-10 rounded-md border border-border bg-white px-3 text-[0.92rem] font-normal normal-case tracking-normal text-text-main shadow-soft"
-				/>
-			</label>
-
-			<div class="flex flex-wrap items-center justify-end gap-2">
-				<div class="rounded-md border border-border bg-white px-3 py-2 text-[0.86rem] text-text-soft shadow-soft">
-					<span class="font-semibold text-brand-blue-dark">{filteredCount}</span> de {graph.nodes.length} obras
+		<div class="grid gap-5 rounded-[10px] border border-border/70 bg-[var(--color-surface-subtle)] p-4 shadow-[0_8px_24px_rgba(25,46,80,0.06)]">
+			<div class="grid gap-5 min-[960px]:grid-cols-[minmax(0,1fr)_auto] min-[960px]:items-end">
+				<div class="relative flex flex-col">
+					<div class="relative mb-[6px] inline-flex w-full items-center gap-1 font-['Roboto',sans-serif] text-[14px] font-semibold text-text-soft">
+						<label for="network-query">Título, género y atribuciones</label>
+						<HelpBubble
+							id="help-network-query"
+							label="Título, género y atribuciones"
+							text="Busca por palabras del título, género, atribución tradicional o atribución estilométrica."
+						/>
+					</div>
+					<input
+						id="network-query"
+						type="search"
+						bind:value={query}
+						placeholder="Ej: La dama boba, comedia, Lope..."
+						class="box-border h-[46px] w-full rounded-[10px] border border-border bg-white px-3 text-[15px] text-text-main transition focus:border-brand-blue/35 focus:shadow-[0_0_0_3px_rgba(13,63,145,0.1)] focus:outline-none"
+					/>
 				</div>
-				<button
-					type="button"
-					class="h-10 rounded-md border border-border bg-white px-3 text-[0.86rem] font-semibold text-brand-blue shadow-soft disabled:cursor-default disabled:opacity-45"
-					disabled={!selectedId}
-					onclick={() => {
-						selectedId = '';
-						hoveredId = '';
-					}}
-				>
-					Limpiar
-				</button>
-				<button
-					type="button"
-					class="h-10 rounded-md border border-border bg-white px-3 text-[0.86rem] font-semibold text-brand-blue shadow-soft"
-					onclick={() => {
-						(window as Window & { resetWorkNetworkView?: () => void }).resetWorkNetworkView?.();
-					}}
-				>
-					Reset
-				</button>
+
+				<div class="grid grid-cols-2 gap-2 sm:grid-cols-[auto_auto_auto] min-[960px]:justify-end">
+					<div class="col-span-2 flex h-[46px] items-center justify-center rounded-[10px] border border-border bg-white px-3 text-[0.9rem] text-text-soft sm:col-span-1">
+						<span class="font-semibold text-brand-blue-dark">{filteredCount}</span>&nbsp;de {graph.nodes.length} obras
+					</div>
+					<button
+						type="button"
+						class="h-[46px] rounded-[10px] border border-border bg-white px-4 font-['Roboto',sans-serif] text-[0.9rem] font-semibold text-brand-blue transition hover:bg-surface-accent-blue disabled:cursor-default disabled:opacity-45"
+						disabled={!selectedId}
+						onclick={() => {
+							selectedId = '';
+							hoveredId = '';
+						}}
+					>
+						Limpiar
+					</button>
+					<button
+						type="button"
+						class="h-[46px] rounded-[10px] border border-border bg-white px-4 font-['Roboto',sans-serif] text-[0.9rem] font-semibold text-brand-blue transition hover:bg-surface-accent-blue"
+						onclick={() => {
+							(window as Window & { resetWorkNetworkView?: () => void }).resetWorkNetworkView?.();
+						}}
+					>
+						Reset
+					</button>
+				</div>
 			</div>
-		</div>
 
-		<div class="grid gap-3 rounded-md border border-border bg-white p-3 shadow-soft md:grid-cols-[auto_minmax(14rem,1fr)_auto_auto_auto] md:items-end">
-			<label class="grid gap-1 text-[0.74rem] font-semibold uppercase tracking-[0.04em] text-text-soft" for="author-mode">
-				Atribución
-				<select
-					id="author-mode"
-					bind:value={attributionMode}
-					class="h-10 rounded-md border border-border bg-white px-3 text-[0.9rem] font-normal normal-case tracking-normal text-text-main"
-				>
-					<option value="traditional">Tradicional</option>
-					<option value="stylometry">Estilometría</option>
-				</select>
-			</label>
+			<div class="grid gap-5 min-[760px]:grid-cols-[minmax(12rem,16rem)_minmax(0,1fr)] min-[760px]:items-start">
+				<div class="relative flex flex-col">
+					<div class="relative mb-[6px] inline-flex w-full items-center gap-1 font-['Roboto',sans-serif] text-[14px] font-semibold text-text-soft">
+						<label for="author-mode">Tipo de atribución</label>
+					</div>
+					<select
+						id="author-mode"
+						bind:value={attributionMode}
+						class="box-border h-[46px] w-full rounded-[10px] border border-border bg-white px-3 text-[15px] text-text-main transition focus:border-brand-blue/35 focus:shadow-[0_0_0_3px_rgba(13,63,145,0.1)] focus:outline-none"
+					>
+						<option value="traditional">Tradicional</option>
+						<option value="stylometry">Estilometría</option>
+					</select>
+				</div>
 
-			<label class="grid gap-1 text-[0.74rem] font-semibold uppercase tracking-[0.04em] text-text-soft" for="author-highlight">
-				Autor
-				<input
-					id="author-highlight"
-					type="text"
-					bind:value={pendingAuthor}
-					list="author-highlight-options"
-					placeholder="Escribe y selecciona un autor..."
-					class="h-10 rounded-md border border-border bg-white px-3 text-[0.9rem] font-normal normal-case tracking-normal text-text-main disabled:bg-surface-subtle"
-					disabled={availableAuthorsForSelection.length === 0 || activeAuthorColorAssignments.length >= MAX_AUTHOR_COLOR_ASSIGNMENTS}
-				/>
-				<datalist id="author-highlight-options">
-					{#each authorAutocompleteOptions as author}
-						<option value={author}></option>
-					{/each}
-				</datalist>
-			</label>
-
-			<label class="grid gap-1 text-[0.74rem] font-semibold uppercase tracking-[0.04em] text-text-soft" for="author-color">
-				Color
-				<input
-					id="author-color"
-					type="color"
-					bind:value={pendingColor}
-					class="h-10 w-16 rounded-md border border-border bg-white p-1"
-				/>
-			</label>
-
-			<button
-				type="button"
-				class="h-10 rounded-md border border-border bg-white px-3 text-[0.86rem] font-semibold text-brand-blue shadow-soft disabled:cursor-default disabled:opacity-45"
-				disabled={!matchedPendingAuthor || activeAuthorColorAssignments.length >= MAX_AUTHOR_COLOR_ASSIGNMENTS}
-				onclick={() => {
-					const authorToAdd = matchedPendingAuthor;
-					if (!authorToAdd) return;
-					if (activeAuthorColorAssignments.length >= MAX_AUTHOR_COLOR_ASSIGNMENTS) return;
-					authorColorAssignments = [
-						...authorColorAssignments.filter(
-							(assignment) => !(assignment.mode === attributionMode && assignment.author === authorToAdd)
-						),
-						{
-							mode: attributionMode,
-							author: authorToAdd,
-							color: pendingColor
-						}
-					];
-					const nextIndex =
-						(activeAuthorColorAssignments.length + 1) % authorColorPalette.length;
-					pendingColor = authorColorPalette[nextIndex] ?? '#7c3aed';
-					pendingAuthor = '';
-				}}
-			>
-				Añadir autor
-			</button>
-
-			<div class="text-right text-[0.76rem] text-text-soft">
-				{activeAuthorColorAssignments.length} de {MAX_AUTHOR_COLOR_ASSIGNMENTS} autores
+				<div class="grid gap-2">
+					<TokenMultiSelect
+						name="red_autores"
+						label="Autor"
+						placeholder="Escribe y selecciona autores"
+						options={authorOptions}
+						selectedIds={selectedAuthorIds}
+						helpText={`Permite seleccionar hasta ${MAX_AUTHOR_COLOR_ASSIGNMENTS} autores para colorear sus obras en la red.`}
+						inputClass="js-author-multiselect"
+						onChange={updateSelectedAuthors}
+					/>
+					<p class="m-0 text-right text-[0.76rem] text-text-soft">
+						{activeAuthorColorAssignments.length} de {MAX_AUTHOR_COLOR_ASSIGNMENTS} autores
+					</p>
+				</div>
 			</div>
 		</div>
 
 		{#if activeAuthorColorAssignments.length > 0}
-			<div class="flex flex-wrap gap-2">
-				{#each activeAuthorColorAssignments as assignment}
-					<div class="flex items-center gap-2 rounded-md border border-border bg-white px-2.5 py-2 text-[0.8rem] text-text-main shadow-soft">
-						<span class="h-3 w-3 rounded-full border border-black/10" style={`background:${assignment.color};`}></span>
-						<span>{assignment.author}</span>
-						<button
-							type="button"
-							class="border-0 bg-transparent p-0 text-[0.78rem] font-semibold text-brand-blue"
-							onclick={() => {
-								authorColorAssignments = authorColorAssignments.filter(
-									(entry) => !(entry.mode === assignment.mode && entry.author === assignment.author)
-								);
-							}}
-						>
-							Quitar
-						</button>
+			<div class="grid gap-2 rounded-[10px] border border-border/70 bg-[var(--color-surface-subtle)] p-4 shadow-[0_8px_24px_rgba(25,46,80,0.06)]">
+					<p class="m-0 text-[0.74rem] font-semibold uppercase tracking-[0.04em] text-text-soft">
+						Colores de autores seleccionados
+					</p>
+					<div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+						{#each activeAuthorColorAssignments as assignment}
+							<label class="grid grid-cols-[2.5rem_minmax(0,1fr)] items-center gap-2 rounded-[10px] border border-border bg-white px-2.5 py-2 text-[0.9rem] text-text-main">
+								<input
+									type="color"
+									value={assignment.color}
+									class="h-8 w-10 rounded-md border border-border bg-white p-1"
+									oninput={(event) => {
+										const color = event.currentTarget.value;
+										authorColorAssignments = authorColorAssignments.map((entry) =>
+											entry.mode === assignment.mode && entry.author === assignment.author
+												? { ...entry, color }
+												: entry
+										);
+									}}
+								/>
+								<span class="truncate">{assignment.author}</span>
+							</label>
+						{/each}
 					</div>
-				{/each}
-			</div>
+				</div>
 		{/if}
 
 		{#if query && visibleResults.length > 0}
-			<div class="max-h-52 overflow-auto rounded-md border border-border bg-white shadow-soft md:max-w-2xl">
+			<div class="max-h-64 overflow-auto rounded-[10px] border border-border/70 bg-white shadow-[0_8px_24px_rgba(25,46,80,0.06)]">
 				{#each visibleResults as node}
 					<button
 						type="button"
-						class="block w-full border-0 border-b border-border bg-transparent px-3 py-2 text-left last:border-b-0 hover:bg-surface-accent-blue"
+						class="grid w-full gap-1 border-0 border-b border-border bg-transparent px-4 py-3 text-left transition last:border-b-0 hover:bg-surface-accent-blue focus:bg-surface-accent-blue focus:outline-none"
 						onclick={() => {
 							(window as Window & { centerSelectedWorkNode?: (nodeId?: string) => void }).centerSelectedWorkNode?.(node.id);
 						}}
 					>
-						<span class="block text-[0.92rem] font-semibold leading-[1.35] text-brand-blue-dark">
+						<span class="block text-[0.95rem] font-semibold leading-[1.35] text-brand-blue-dark">
 							{formatDisplayWorkTitle(node.title)}
 						</span>
-						<span class="block text-[0.78rem] leading-[1.35] text-text-soft">
-							{node.genre} · Trad.: {formatPeople(node.traditionalAuthors)} · Estil.: {formatPeople(node.stylometryAuthors)}
+						<span class="block text-[0.8rem] leading-[1.4] text-text-soft">
+							{node.genre}
+						</span>
+						<span class="block text-[0.78rem] leading-[1.4] text-text-soft">
+							Trad.: {formatPeople(node.traditionalAuthors)}
+						</span>
+						<span class="block text-[0.78rem] leading-[1.4] text-text-soft">
+							Estil.: {formatPeople(node.stylometryAuthors)}
 						</span>
 					</button>
 				{/each}

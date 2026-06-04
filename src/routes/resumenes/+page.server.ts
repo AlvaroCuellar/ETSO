@@ -1,9 +1,9 @@
-import { getAllWorks } from '$lib/server/catalog-runtime';
+import { getWorksForSummaryIndex } from '$lib/server/catalog-runtime';
 
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => ({
-	works: (await getAllWorks())
+	works: (await getWorksForSummaryIndex())
 		.map((work) => ({
 			slug: work.slug,
 			title: work.title,

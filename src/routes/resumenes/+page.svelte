@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import { normalizePlainText } from '$lib/search/normalize';
@@ -10,11 +11,42 @@
 	import type { AttributionSet } from '$lib/domain/catalog';
 	import type { PageData } from './$types';
 
+	interface SummarySearchResult {
+		slug: string;
+		title: string;
+		genre: string;
+		traditional: string;
+		snippet: {
+			before: string;
+			match: string;
+			after: string;
+		};
+	}
+
+	interface SummarySearchPayload {
+		query: string;
+		total: number;
+		offset: number;
+		limit: number;
+		hasMore: boolean;
+		results: SummarySearchResult[];
+	}
+
 	let { data }: { data: PageData } = $props();
 	const RESUMENES_SEO_DESCRIPTION =
 		'Resúmenes automáticos de las obras incluidas en la base de datos de ETSO.';
+	const SUMMARY_SEARCH_MIN_LENGTH = 2;
+	const SUMMARY_SEARCH_PAGE_SIZE = 20;
 
 	let query = $state('');
+	let summaryQuery = $state('');
+	let summarySearchResults = $state<SummarySearchResult[]>([]);
+	let summarySearchTotal = $state(0);
+	let summarySearchHasMore = $state(false);
+	let summarySearchLoading = $state(false);
+	let summarySearchLoadingMore = $state(false);
+	let summarySearchError = $state('');
+	let summarySearchRequestId = 0;
 
 	const normalizeFilterText = (value: string): string =>
 		normalizePlainText(value, false).replace(/\s+/g, ' ').trim();
@@ -54,6 +86,88 @@
 			return haystack.includes(normalizedQuery);
 		});
 	});
+
+	const loadSummarySearchResults = async ({
+		cleanQuery,
+		offset,
+		append,
+		requestId
+	}: {
+		cleanQuery: string;
+		offset: number;
+		append: boolean;
+		requestId: number;
+	}): Promise<void> => {
+		if (append) {
+			summarySearchLoadingMore = true;
+		} else {
+			summarySearchLoading = true;
+		}
+		summarySearchError = '';
+
+		try {
+			const params = new URLSearchParams({
+				q: cleanQuery,
+				offset: String(offset),
+				limit: String(SUMMARY_SEARCH_PAGE_SIZE)
+			});
+			const response = await fetch(`/api/resumenes/search?${params.toString()}`);
+			if (!response.ok) throw new Error(`No se pudo buscar en los resúmenes (${response.status}).`);
+			const payload = (await response.json()) as SummarySearchPayload;
+			if (requestId !== summarySearchRequestId) return;
+			summarySearchResults = append ? [...summarySearchResults, ...payload.results] : payload.results;
+			summarySearchTotal = payload.total;
+			summarySearchHasMore = payload.hasMore;
+		} catch (cause) {
+			if (requestId !== summarySearchRequestId) return;
+			if (!append) {
+				summarySearchResults = [];
+				summarySearchTotal = 0;
+			}
+			summarySearchHasMore = false;
+			summarySearchError = cause instanceof Error ? cause.message : 'No se pudo buscar en los resúmenes.';
+		} finally {
+			if (requestId === summarySearchRequestId) {
+				summarySearchLoading = false;
+				summarySearchLoadingMore = false;
+			}
+		}
+	};
+
+	const loadMoreSummaryResults = (): void => {
+		const cleanQuery = summaryQuery.trim();
+		if (!cleanQuery || summarySearchLoading || summarySearchLoadingMore || !summarySearchHasMore) return;
+		void loadSummarySearchResults({
+			cleanQuery,
+			offset: summarySearchResults.length,
+			append: true,
+			requestId: summarySearchRequestId
+		});
+	};
+
+	$effect(() => {
+		if (!browser) return;
+		const cleanQuery = summaryQuery.trim();
+		const requestId = ++summarySearchRequestId;
+
+		if (cleanQuery.length < SUMMARY_SEARCH_MIN_LENGTH) {
+			summarySearchResults = [];
+			summarySearchTotal = 0;
+			summarySearchHasMore = false;
+			summarySearchLoading = false;
+			summarySearchLoadingMore = false;
+			summarySearchError = '';
+			return;
+		}
+
+		const timeout = window.setTimeout(() => {
+			void loadSummarySearchResults({ cleanQuery, offset: 0, append: false, requestId });
+		}, 320);
+
+		return () => {
+			window.clearTimeout(timeout);
+		};
+	});
 </script>
 
 <SeoHead title="Resúmenes" description={RESUMENES_SEO_DESCRIPTION} path="/resumenes" />
@@ -70,13 +184,72 @@
 			Puedes acceder al resumen de cada obra desde este listado o desde la ficha individual de la obra, clicando en el acceso al resumen automático.
 		</p>
 		<p class="m-0 text-[0.92rem] font-medium text-text-soft">
-			{filteredWorks.length} de {data.works.length} obras visibles
+			{#if summaryQuery.trim()}
+				{summarySearchLoading ? 'Buscando en resúmenes breves y amplios...' : `${summarySearchResults.length} de ${summarySearchTotal} resúmenes encontrados`}
+			{:else}
+				{filteredWorks.length} de {data.works.length} obras visibles
+			{/if}
 		</p>
 	</section>
 
 	<section class="grid gap-4">
+		<label class="grid gap-1 text-[0.86rem] text-text-soft" for="resumenes-summary-query">
+			<span class="font-ui font-semibold uppercase tracking-[0.04em]">Buscar en los resúmenes</span>
+			<input
+				id="resumenes-summary-query"
+				type="search"
+				placeholder="Ej: honor, celos, rey, jardín..."
+				class="w-full rounded-md border border-border bg-white px-3 py-2 text-[0.95rem] text-text-main"
+				bind:value={summaryQuery}
+			/>
+		</label>
+
+		{#if summaryQuery.trim()}
+			{#if summaryQuery.trim().length < SUMMARY_SEARCH_MIN_LENGTH}
+				<p class="m-0 italic text-text-soft">Escribe al menos dos caracteres para buscar.</p>
+			{:else if summarySearchLoading}
+				<p class="m-0 italic text-text-soft">Buscando en resúmenes breves y amplios...</p>
+			{:else if summarySearchError}
+				<p class="m-0 rounded-[9px] border border-[#f3c0ca] bg-[#fff5f7] px-3 py-2 text-[#8f1e36]">{summarySearchError}</p>
+			{:else if summarySearchResults.length === 0}
+				<p class="m-0 italic text-text-soft">No hay resúmenes que contengan esas palabras.</p>
+			{:else}
+				<div class="grid gap-3">
+					{#each summarySearchResults as result}
+						<a
+							href={`/obras/${result.slug}/resumen`}
+							class="grid gap-2 rounded-[10px] border border-border bg-white px-4 py-3 text-inherit no-underline shadow-[0_8px_24px_rgba(25,46,80,0.05)] transition hover:border-border-accent-blue hover:bg-[rgba(237,242,255,0.55)] hover:no-underline md:px-5"
+						>
+							<p class="m-0 font-ui text-[1rem] leading-[1.4] text-brand-blue-dark">
+								<span class="font-semibold">{result.title}</span>
+								<span class="mx-1.5 text-text-soft/70">·</span>
+								<span class="font-normal text-text-main">{result.traditional}</span>
+								<span class="mx-1.5 text-text-soft/70">·</span>
+								<span class="font-normal text-text-soft">{result.genre}</span>
+							</p>
+							<p class="m-0 text-[0.95rem] leading-[1.65] text-text-main">
+								{result.snippet.before}<mark class="rounded-[4px] bg-[#ffe49a] px-0.5 text-[#4d3200]">{result.snippet.match}</mark>{result.snippet.after}
+							</p>
+						</a>
+					{/each}
+					{#if summarySearchHasMore}
+						<div class="flex justify-center pt-1">
+							<button
+								type="button"
+								class="inline-flex items-center justify-center rounded-[9px] border border-border-accent-blue bg-white px-5 py-2.5 font-ui text-[0.94rem] font-semibold text-brand-blue-dark shadow-[0_8px_24px_rgba(25,46,80,0.05)] transition hover:bg-surface-accent-blue disabled:cursor-wait disabled:opacity-65"
+								disabled={summarySearchLoadingMore}
+								onclick={loadMoreSummaryResults}
+							>
+								{summarySearchLoadingMore ? 'Cargando...' : `Ver más (${Math.min(SUMMARY_SEARCH_PAGE_SIZE, summarySearchTotal - summarySearchResults.length)} más)`}
+							</button>
+						</div>
+					{/if}
+				</div>
+			{/if}
+		{/if}
+
 		<label class="grid gap-1 text-[0.86rem] text-text-soft" for="resumenes-obras-query">
-			<span class="font-ui font-semibold uppercase tracking-[0.04em]">Buscar obra</span>
+			<span class="font-ui font-semibold uppercase tracking-[0.04em]">Buscar obra por título</span>
 			<input
 				id="resumenes-obras-query"
 				type="search"

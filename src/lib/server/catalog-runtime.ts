@@ -1125,6 +1125,21 @@ const confidenceForAuthor = (set: CatalogWork['stylometryAttribution'], authorId
 
 export const getAllWorks = async (): Promise<CatalogWork[]> => (await getSnapshot()).works;
 
+export const getWorksForSummaryIndex = async (): Promise<CatalogWork[]> => {
+	const snapshot = await getSnapshot();
+	const rows = await getRows<{ id: string; resumen_breve: string | null }>(
+		'SELECT id, resumen_breve FROM works WHERE resumen_breve IS NOT NULL'
+	);
+	const summaryByWorkId = new Map(rows.map((row) => [row.id, normalizeShortSummary(row.resumen_breve)] as const));
+
+	return snapshot.works
+		.filter((work) => work.hasSummaryFile)
+		.map((work) => ({
+			...work,
+			shortSummary: summaryByWorkId.get(work.id) ?? EMPTY_SHORT_SUMMARY
+		}));
+};
+
 const getAuthorshipExamWorksFromSnapshot = (snapshot: Snapshot): CatalogWork[] =>
 	snapshot.works.filter((work) => work.inAuthorshipExam);
 

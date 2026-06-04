@@ -14,6 +14,7 @@
 	const displayWorkTitle = $derived.by(() => formatDisplayWorkTitle(data.work.title));
 	const seoDescription = $derived.by(() => `Resumen automático de ${displayWorkTitle}, obra del corpus de ETSO.`);
 	let summary = $state({
+		resumenBreve: [] as string[],
 		resumenLargo: [] as string[],
 		personajes: [] as Array<{ nombre: string; descripcion: string }>,
 		espacios: [] as Array<{ nombre: string; descripcion: string }>,
@@ -21,6 +22,7 @@
 	});
 	let summaryLoading = $state(true);
 	let summaryError = $state('');
+	const resumenBreveText = $derived(summary.resumenBreve.join(' ').replace(/\s+/g, ' ').trim());
 
 	const summaryCitation =
 		'Cuéllar, Álvaro. "Resúmenes asistidos por modelos de lenguaje para un vasto corpus de obras literarias del Siglo de Oro". En: <i>El teatro del Siglo de Oro en el horizonte de las humanidades digitales</i>. Peter Lang, 2026 (en prensa).';
@@ -70,6 +72,11 @@
 				}
 				const parsed = (await response.json()) as Record<string, unknown>;
 				summary = {
+					resumenBreve: Array.isArray(parsed.resumen_breve)
+						? parsed.resumen_breve
+								.map((paragraph) => (typeof paragraph === 'string' ? paragraph.trim() : ''))
+								.filter(Boolean)
+						: [],
 					resumenLargo: Array.isArray(parsed.resumen_largo)
 						? parsed.resumen_largo
 								.map((paragraph) => (typeof paragraph === 'string' ? paragraph.trim() : ''))
@@ -123,7 +130,20 @@
 
 		<div class="grid gap-8">
 			<section class="grid gap-3">
-				<h2 class="m-0 text-[1.25rem] font-semibold leading-[1.2] text-brand-blue-dark">Resumen automático completo</h2>
+				<h2 class="m-0 text-[1.25rem] font-semibold leading-[1.2] text-brand-blue-dark">Resumen automático breve</h2>
+				{#if summaryLoading}
+					<p class="m-0 italic text-[#546b82]">Cargando resumen...</p>
+				{:else if summaryError}
+					<p class="m-0 rounded-[9px] border border-[#f3c0ca] bg-[#fff5f7] px-3 py-2 text-[#8f1e36]">{summaryError}</p>
+				{:else if summary.resumenBreve.length > 0}
+					<p class="m-0 text-base leading-[1.68] text-[#2f465c]">{resumenBreveText}</p>
+				{:else}
+					<p class="m-0 italic text-[#546b82]">No disponible.</p>
+				{/if}
+			</section>
+
+			<section class="grid gap-3">
+				<h2 class="m-0 text-[1.25rem] font-semibold leading-[1.2] text-brand-blue-dark">Resumen automático amplio</h2>
 				{#if summaryLoading}
 					<p class="m-0 italic text-[#546b82]">Cargando resumen...</p>
 				{:else if summaryError}

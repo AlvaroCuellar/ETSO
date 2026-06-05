@@ -11,6 +11,18 @@ import type { RequestHandler } from './$types';
 interface SummaryJson {
 	resumen_breve?: string[];
 	resumen_largo?: string[];
+	personajes_principales?: Array<{
+		nombre?: string;
+		descripcion?: string;
+	}>;
+	espacios_principales?: Array<{
+		nombre?: string;
+		descripcion?: string;
+	}>;
+	tematicas_principales?: Array<{
+		tema?: string;
+		descripcion?: string;
+	}>;
 }
 
 interface SummarySearchEntry {
@@ -20,10 +32,8 @@ interface SummarySearchEntry {
 	displayTitle: string;
 	genre: string;
 	traditional: string;
-	shortText: string;
-	longText: string;
-	normalizedShortText: string;
-	normalizedLongText: string;
+	summaryText: string;
+	normalizedSummaryText: string;
 }
 
 interface SummarySnippet {
@@ -44,10 +54,10 @@ const normalizeSearchText = (value: string): string =>
 	normalizePlainText(value, false).replace(/\s+/g, ' ').trim();
 
 const splitSearchTerms = (value: string): string[] =>
-	normalizeSearchText(value)
+	[...new Set(normalizeSearchText(value)
 		.split(/\s+/)
 		.map((term) => term.trim())
-		.filter((term) => term.length > 0);
+		.filter((term) => term.length > 0))];
 
 const formatNameList = (names: string[]): string => {
 	if (names.length === 0) return '';
@@ -81,6 +91,41 @@ const joinSummaryParts = (parts: string[] | undefined): string =>
 				.filter((part) => part.length > 0)
 				.join('\n\n')
 		: '';
+
+const joinNamedItems = (
+	label: string,
+	items: Array<{ nombre?: string; descripcion?: string }> | undefined
+): string => {
+	if (!Array.isArray(items)) return '';
+	const rows = items
+		.map((item) => [item.nombre?.trim(), item.descripcion?.trim()].filter(Boolean).join(': '))
+		.filter((item) => item.length > 0);
+	return rows.length > 0 ? `${label}\n${rows.join('\n')}` : '';
+};
+
+const joinThemeItems = (
+	label: string,
+	items: Array<{ tema?: string; descripcion?: string }> | undefined
+): string => {
+	if (!Array.isArray(items)) return '';
+	const rows = items
+		.map((item) => [item.tema?.trim(), item.descripcion?.trim()].filter(Boolean).join(': '))
+		.filter((item) => item.length > 0);
+	return rows.length > 0 ? `${label}\n${rows.join('\n')}` : '';
+};
+
+const buildSummarySearchText = (summary: SummaryJson | null, shortText: string, longText: string): string =>
+	[
+		shortText.trim().length > 0 && shortText.trim() !== EMPTY_SHORT_SUMMARY
+			? `Resumen automático breve\n${shortText}`
+			: '',
+		longText.trim().length > 0 ? `Resumen automático amplio\n${longText}` : '',
+		joinNamedItems('Personajes principales', summary?.personajes_principales),
+		joinNamedItems('Espacios principales', summary?.espacios_principales),
+		joinThemeItems('Temáticas principales', summary?.tematicas_principales)
+	]
+		.filter((text) => text.trim().length > 0)
+		.join('\n\n');
 
 const loadLocalSummary = async (workId: string): Promise<SummaryJson | null> => {
 	try {
@@ -120,25 +165,14 @@ const buildNormalizedIndex = (value: string): { normalized: string; originalInde
 
 const makeSnippet = (
 	rawText: string,
-	normalizedText: string,
-	terms: string[]
+	indexedText: { normalized: string; originalIndexes: number[] },
+	term: string
 ): SummarySnippet | null => {
-	let normalizedMatchIndex = -1;
-	let matchedTerm = '';
+	const normalizedMatchIndex = indexedText.normalized.indexOf(term);
+	if (normalizedMatchIndex < 0) return null;
 
-	for (const term of terms) {
-		const index = normalizedText.indexOf(term);
-		if (index >= 0 && (normalizedMatchIndex < 0 || index < normalizedMatchIndex)) {
-			normalizedMatchIndex = index;
-			matchedTerm = term;
-		}
-	}
-
-	if (normalizedMatchIndex < 0 || !matchedTerm) return null;
-
-	const indexedText = buildNormalizedIndex(rawText);
 	const matchStart = indexedText.originalIndexes[normalizedMatchIndex] ?? 0;
-	const matchEnd = (indexedText.originalIndexes[normalizedMatchIndex + matchedTerm.length - 1] ?? matchStart) + 1;
+	const matchEnd = (indexedText.originalIndexes[normalizedMatchIndex + term.length - 1] ?? matchStart) + 1;
 	const snippetStart = Math.max(0, matchStart - SNIPPET_RADIUS);
 	const snippetEnd = Math.min(rawText.length, matchEnd + SNIPPET_RADIUS);
 
@@ -147,6 +181,19 @@ const makeSnippet = (
 		match: rawText.slice(matchStart, matchEnd),
 		after: `${rawText.slice(matchEnd, snippetEnd)}${snippetEnd < rawText.length ? '...' : ''}`
 	};
+};
+
+const makeSnippets = (rawText: string, terms: string[]): SummarySnippet[] => {
+	const indexedText = buildNormalizedIndex(rawText);
+	const snippets: SummarySnippet[] = [];
+
+	for (const term of terms) {
+		const snippet = makeSnippet(rawText, indexedText, term);
+		if (!snippet) return [];
+		snippets.push(snippet);
+	}
+
+	return snippets;
 };
 
 const buildSummarySearchIndex = async (): Promise<SummarySearchEntry[]> => {
@@ -163,9 +210,8 @@ const buildSummarySearchIndex = async (): Promise<SummarySearchEntry[]> => {
 			const fullSummary = await loadFullSummary(work.id);
 			const shortText = joinSummaryParts(fullSummary?.resumen_breve) || work.shortSummary;
 			const longText = joinSummaryParts(fullSummary?.resumen_largo);
-			const hasShortText = shortText.trim().length > 0 && shortText.trim() !== EMPTY_SHORT_SUMMARY;
-			const hasLongText = longText.trim().length > 0;
-			if (!hasShortText && !hasLongText) continue;
+			const summaryText = buildSummarySearchText(fullSummary, shortText, longText);
+			if (!summaryText) continue;
 
 			entries.push({
 				id: work.id,
@@ -174,10 +220,8 @@ const buildSummarySearchIndex = async (): Promise<SummarySearchEntry[]> => {
 				displayTitle: formatDisplayWorkTitle(work.title),
 				genre: work.genre.trim() || 'Sin género',
 				traditional: formatTraditionalAttribution(work),
-				shortText,
-				longText,
-				normalizedShortText: normalizeSearchText(shortText),
-				normalizedLongText: normalizeSearchText(longText)
+				summaryText,
+				normalizedSummaryText: normalizeSearchText(summaryText)
 			});
 		}
 	});
@@ -192,12 +236,25 @@ const getSummarySearchIndex = (): Promise<SummarySearchEntry[]> => {
 };
 
 export const GET: RequestHandler = async ({ url }) => {
+	const warmup = url.searchParams.get('warmup') === '1';
 	const query = url.searchParams.get('q')?.trim() ?? '';
 	const terms = splitSearchTerms(query);
 	const rawLimit = Number(url.searchParams.get('limit') ?? DEFAULT_LIMIT);
 	const rawOffset = Number(url.searchParams.get('offset') ?? 0);
 	const limit = Number.isFinite(rawLimit) ? Math.max(1, Math.min(MAX_LIMIT, Math.trunc(rawLimit))) : DEFAULT_LIMIT;
 	const offset = Number.isFinite(rawOffset) ? Math.max(0, Math.trunc(rawOffset)) : 0;
+
+	if (warmup) {
+		const index = await getSummarySearchIndex();
+		return json(
+			{ ready: true, indexed: index.length },
+			{
+				headers: {
+					'cache-control': 'no-store'
+				}
+			}
+		);
+	}
 
 	if (terms.length === 0) {
 		return json({ query, total: 0, offset, limit, hasMore: false, results: [] });
@@ -208,14 +265,10 @@ export const GET: RequestHandler = async ({ url }) => {
 	let matchedCount = 0;
 
 	for (const entry of index) {
-		const matchesShort = terms.every((term) => entry.normalizedShortText.includes(term));
-		const matchesLong = terms.every((term) => entry.normalizedLongText.includes(term));
-		if (!matchesShort && !matchesLong) continue;
+		if (!terms.every((term) => entry.normalizedSummaryText.includes(term))) continue;
 
-		const snippet =
-			(matchesShort ? makeSnippet(entry.shortText, entry.normalizedShortText, terms) : null) ??
-			(matchesLong ? makeSnippet(entry.longText, entry.normalizedLongText, terms) : null);
-		if (!snippet) continue;
+		const snippets = makeSnippets(entry.summaryText, terms);
+		if (snippets.length !== terms.length) continue;
 
 		if (matchedCount >= offset && results.length < limit) {
 			results.push({
@@ -223,7 +276,7 @@ export const GET: RequestHandler = async ({ url }) => {
 				title: entry.displayTitle,
 				genre: entry.genre,
 				traditional: entry.traditional,
-				snippet
+				snippets
 			});
 		}
 
@@ -241,7 +294,7 @@ export const GET: RequestHandler = async ({ url }) => {
 		},
 		{
 			headers: {
-				'cache-control': 'public, max-age=120, s-maxage=300, stale-while-revalidate=600'
+				'cache-control': 'no-store'
 			}
 		}
 	);

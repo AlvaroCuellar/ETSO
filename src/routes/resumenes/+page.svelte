@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { onMount } from 'svelte';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import { normalizePlainText } from '$lib/search/normalize';
@@ -16,11 +17,14 @@
 		title: string;
 		genre: string;
 		traditional: string;
-		snippet: {
+		snippet?: SummarySearchSnippet;
+		snippets?: SummarySearchSnippet[];
+	}
+
+	interface SummarySearchSnippet {
 			before: string;
 			match: string;
 			after: string;
-		};
 	}
 
 	interface SummarySearchPayload {
@@ -39,7 +43,8 @@
 	const SUMMARY_SEARCH_PAGE_SIZE = 20;
 
 	let query = $state('');
-	let summaryQuery = $state('');
+	let summaryTermInput = $state('');
+	let summarySearchTerms = $state<string[]>([]);
 	let summarySearchResults = $state<SummarySearchResult[]>([]);
 	let summarySearchTotal = $state(0);
 	let summarySearchHasMore = $state(false);
@@ -50,6 +55,15 @@
 
 	const normalizeFilterText = (value: string): string =>
 		normalizePlainText(value, false).replace(/\s+/g, ' ').trim();
+
+	const summarySearchQuery = $derived(summarySearchTerms.join(' '));
+
+	const getResultSnippets = (result: SummarySearchResult): SummarySearchSnippet[] =>
+		Array.isArray(result.snippets) && result.snippets.length > 0
+			? result.snippets
+			: result.snippet
+				? [result.snippet]
+				: [];
 
 	const formatNameList = (names: string[]): string => {
 		if (names.length === 0) return '';
@@ -109,7 +123,8 @@
 			const params = new URLSearchParams({
 				q: cleanQuery,
 				offset: String(offset),
-				limit: String(SUMMARY_SEARCH_PAGE_SIZE)
+				limit: String(SUMMARY_SEARCH_PAGE_SIZE),
+				shape: 'snippets-v2'
 			});
 			const response = await fetch(`/api/resumenes/search?${params.toString()}`);
 			if (!response.ok) throw new Error(`No se pudo buscar en los resúmenes (${response.status}).`);
@@ -135,7 +150,7 @@
 	};
 
 	const loadMoreSummaryResults = (): void => {
-		const cleanQuery = summaryQuery.trim();
+		const cleanQuery = summarySearchQuery.trim();
 		if (!cleanQuery || summarySearchLoading || summarySearchLoadingMore || !summarySearchHasMore) return;
 		void loadSummarySearchResults({
 			cleanQuery,
@@ -145,9 +160,53 @@
 		});
 	};
 
+	const addSummarySearchTerm = (): void => {
+		const cleanTerm = summaryTermInput.replace(/\s+/g, ' ').trim();
+		if (cleanTerm.length < SUMMARY_SEARCH_MIN_LENGTH) return;
+
+		const normalizedTerm = normalizeFilterText(cleanTerm);
+		if (!normalizedTerm) return;
+		if (summarySearchTerms.some((term) => normalizeFilterText(term) === normalizedTerm)) {
+			summaryTermInput = '';
+			return;
+		}
+
+		summarySearchTerms = [...summarySearchTerms, cleanTerm];
+		summaryTermInput = '';
+	};
+
+	const removeSummarySearchTerm = (termToRemove: string): void => {
+		summarySearchTerms = summarySearchTerms.filter((term) => term !== termToRemove);
+	};
+
+	const handleSummaryTermKeydown = (event: KeyboardEvent): void => {
+		if (event.key !== 'Enter') return;
+		event.preventDefault();
+		addSummarySearchTerm();
+	};
+
+	const warmupSummarySearchIndex = (): void => {
+		void fetch('/api/resumenes/search?warmup=1', {
+			cache: 'no-store',
+			keepalive: true
+		}).catch(() => {
+			// El precalentamiento no debe bloquear ni mostrar error: la búsqueda normal lo reintentará.
+		});
+	};
+
+	onMount(() => {
+		if ('requestIdleCallback' in window) {
+			const idleCallback = window.requestIdleCallback(warmupSummarySearchIndex, { timeout: 1800 });
+			return () => window.cancelIdleCallback(idleCallback);
+		}
+
+		const timeout = globalThis.setTimeout(warmupSummarySearchIndex, 450);
+		return () => globalThis.clearTimeout(timeout);
+	});
+
 	$effect(() => {
 		if (!browser) return;
-		const cleanQuery = summaryQuery.trim();
+		const cleanQuery = summarySearchQuery.trim();
 		const requestId = ++summarySearchRequestId;
 
 		if (cleanQuery.length < SUMMARY_SEARCH_MIN_LENGTH) {
@@ -160,13 +219,7 @@
 			return;
 		}
 
-		const timeout = window.setTimeout(() => {
-			void loadSummarySearchResults({ cleanQuery, offset: 0, append: false, requestId });
-		}, 320);
-
-		return () => {
-			window.clearTimeout(timeout);
-		};
+		void loadSummarySearchResults({ cleanQuery, offset: 0, append: false, requestId });
 	});
 </script>
 
@@ -184,8 +237,12 @@
 			Puedes acceder al resumen de cada obra desde este listado o desde la ficha individual de la obra, clicando en el acceso al resumen automático.
 		</p>
 		<p class="m-0 text-[0.92rem] font-medium text-text-soft">
-			{#if summaryQuery.trim()}
-				{summarySearchLoading ? 'Buscando en resúmenes breves y amplios...' : `${summarySearchResults.length} de ${summarySearchTotal} resúmenes encontrados`}
+			{#if summarySearchQuery.trim()}
+				{#if summarySearchLoading}
+					{summarySearchTerms.length} {summarySearchTerms.length === 1 ? 'término activo' : 'términos activos'}
+				{:else}
+					{summarySearchResults.length} de {summarySearchTotal} resúmenes encontrados
+				{/if}
 			{:else}
 				{filteredWorks.length} de {data.works.length} obras visibles
 			{/if}
@@ -198,17 +255,40 @@
 			<input
 				id="resumenes-summary-query"
 				type="search"
-				placeholder="Ej: honor, celos, rey, jardín..."
+				placeholder="Escribe una palabra y pulsa Enter..."
 				class="w-full rounded-md border border-border bg-white px-3 py-2 text-[0.95rem] text-text-main"
-				bind:value={summaryQuery}
+				bind:value={summaryTermInput}
+				onkeydown={handleSummaryTermKeydown}
 			/>
 		</label>
 
-		{#if summaryQuery.trim()}
-			{#if summaryQuery.trim().length < SUMMARY_SEARCH_MIN_LENGTH}
-				<p class="m-0 italic text-text-soft">Escribe al menos dos caracteres para buscar.</p>
-			{:else if summarySearchLoading}
-				<p class="m-0 italic text-text-soft">Buscando en resúmenes breves y amplios...</p>
+		{#if summarySearchTerms.length > 0}
+			<div class="flex flex-wrap gap-2" aria-label="Palabras de búsqueda activas">
+				{#each summarySearchTerms as term}
+					<button
+						type="button"
+						class="inline-flex items-center gap-2 rounded-full border border-border-accent-blue bg-surface-accent-blue px-3 py-1.5 font-ui text-[0.9rem] font-semibold text-brand-blue-dark transition hover:bg-white"
+						onclick={() => removeSummarySearchTerm(term)}
+						aria-label={`Quitar ${term} de la búsqueda`}
+					>
+						<span>{term}</span>
+						<span aria-hidden="true" class="text-[1.05rem] leading-none text-text-accent-purple">×</span>
+					</button>
+				{/each}
+			</div>
+		{:else if summaryTermInput.trim().length > 0 && summaryTermInput.trim().length < SUMMARY_SEARCH_MIN_LENGTH}
+			<p class="m-0 italic text-text-soft">Escribe al menos dos caracteres y pulsa Enter.</p>
+		{/if}
+
+		{#if summarySearchQuery.trim()}
+			{#if summarySearchLoading}
+				<p class="m-0 inline-flex items-center gap-2 italic text-text-soft">
+					<span
+						class="h-4 w-4 animate-spin rounded-full border-2 border-border-accent-blue border-t-brand-blue-dark"
+						aria-hidden="true"
+					></span>
+					<span>Buscando resúmenes... La primera búsqueda puede tardar un poco.</span>
+				</p>
 			{:else if summarySearchError}
 				<p class="m-0 rounded-[9px] border border-[#f3c0ca] bg-[#fff5f7] px-3 py-2 text-[#8f1e36]">{summarySearchError}</p>
 			{:else if summarySearchResults.length === 0}
@@ -227,9 +307,13 @@
 								<span class="mx-1.5 text-text-soft/70">·</span>
 								<span class="font-normal text-text-soft">{result.genre}</span>
 							</p>
-							<p class="m-0 text-[0.95rem] leading-[1.65] text-text-main">
-								{result.snippet.before}<mark class="rounded-[4px] bg-[#ffe49a] px-0.5 text-[#4d3200]">{result.snippet.match}</mark>{result.snippet.after}
-							</p>
+							<div class="grid gap-1.5">
+								{#each getResultSnippets(result) as snippet}
+									<p class="m-0 text-[0.95rem] leading-[1.65] text-text-main">
+										{snippet.before}<mark class="rounded-[4px] bg-[#ffe49a] px-0.5 text-[#4d3200]">{snippet.match}</mark>{snippet.after}
+									</p>
+								{/each}
+							</div>
 						</a>
 					{/each}
 					{#if summarySearchHasMore}

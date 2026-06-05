@@ -11,6 +11,7 @@
 	import BookOpen from 'lucide-svelte/icons/book-open';
 	import Calendar from 'lucide-svelte/icons/calendar';
 	import ChartLine from 'lucide-svelte/icons/chart-line';
+	import ChartNetwork from 'lucide-svelte/icons/chart-network';
 	import ChevronRight from 'lucide-svelte/icons/chevron-right';
 	import CircleCheck from 'lucide-svelte/icons/circle-check';
 	import Drama from 'lucide-svelte/icons/drama';
@@ -122,11 +123,16 @@
 			<div class="grid min-w-0 max-w-full gap-5">
 				<InfoCard label="Atribución de autoría" bodyClass="gap-0 font-ui leading-[1.5]">
 					{#snippet action()}
-						{#if data.informe}
-							<InlineActionButton href={`/informes/${data.informe.slug}`} icon={ChartLine}>
-								Informe estilométrico
+						<div class="flex flex-wrap items-center justify-end gap-2">
+							{#if data.informe}
+								<InlineActionButton href={`/informes/${data.informe.slug}`} icon={ChartLine}>
+									Informe estilométrico
+								</InlineActionButton>
+							{/if}
+							<InlineActionButton href={`/red-obras?obra=${data.work.slug}`} icon={ChartNetwork}>
+								Red estilométrica
 							</InlineActionButton>
-						{/if}
+						</div>
 					{/snippet}
 
 						{#if hasTraditionalAttribution(data.work.traditionalAttribution)}

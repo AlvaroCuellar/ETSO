@@ -776,17 +776,17 @@
 </script>
 
 <SeoHead
-	title="Red 3D de obras"
+	title="Red de obras (BETA)"
 	description="Visualización experimental de relaciones estilométricas entre obras de Examen de autorías."
 	path="/red-obras"
 />
 
 <div class="grid gap-5">
-	<Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'Red 3D de obras' }]} />
+	<Breadcrumbs items={[{ label: 'Inicio', href: '/' }, { label: 'Red de obras (BETA)' }]} />
 
 	<section class="grid gap-2">
 		<h1 class="m-0 font-ui text-[clamp(1.8rem,3vw,2.35rem)] font-bold leading-[1.12] text-brand-blue-dark">
-			Red 3D de obras
+			Red de obras (BETA)
 		</h1>
 		<p class="m-0 max-w-4xl leading-[1.65] text-text-main">
 			Visualización experimental de relaciones estilométricas. Cada obra se conecta con sus tres obras más cercanas según las distancias de obra completa.
@@ -947,7 +947,7 @@
 						<div class="flex flex-wrap gap-2">
 							<button
 								type="button"
-								class="rounded-md border border-border bg-white px-3 py-2 text-[0.82rem] font-semibold text-brand-blue"
+								class="network-panel-action rounded-md border border-border bg-white px-3 py-2 text-brand-blue"
 								onclick={() => {
 									selectedId = '';
 									hoveredId = '';
@@ -957,7 +957,7 @@
 							</button>
 							<button
 								type="button"
-								class="rounded-md border border-border bg-white px-3 py-2 text-[0.82rem] font-semibold text-brand-blue"
+								class="network-panel-action rounded-md border border-border bg-white px-3 py-2 text-brand-blue"
 								onclick={() => {
 									(window as Window & { resetWorkNetworkView?: () => void }).resetWorkNetworkView?.();
 								}}
@@ -966,7 +966,7 @@
 							</button>
 							<button
 								type="button"
-								class="rounded-md border border-border bg-white px-3 py-2 text-[0.82rem] font-semibold text-brand-blue"
+								class="network-panel-action rounded-md border border-border bg-white px-3 py-2 text-brand-blue"
 								onclick={() => {
 									(window as Window & { centerSelectedWorkNode?: (nodeId?: string) => void }).centerSelectedWorkNode?.();
 								}}
@@ -975,14 +975,14 @@
 							</button>
 							<a
 								href={`/obras/${selectedNode.slug}`}
-								class="rounded-md bg-brand-blue px-3 py-2 text-[0.82rem] font-semibold text-white no-underline hover:bg-brand-blue-dark hover:no-underline"
+								class="network-panel-action rounded-md border border-border bg-white px-3 py-2 text-brand-blue no-underline hover:bg-surface-accent-blue hover:no-underline"
 							>
 								Ficha
 							</a>
 							{#if selectedNode.reportSlug}
 								<a
 									href={`/informes/${selectedNode.reportSlug}`}
-									class="rounded-md border border-border bg-white px-3 py-2 text-[0.82rem] font-semibold text-brand-blue no-underline hover:bg-surface-accent-blue hover:no-underline"
+									class="network-panel-action rounded-md border border-border bg-white px-3 py-2 text-brand-blue no-underline hover:bg-surface-accent-blue hover:no-underline"
 								>
 									Informe
 								</a>
@@ -1092,3 +1092,17 @@
 
 	</section>
 </div>
+
+<style>
+	.network-panel-action {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 2.5rem;
+		font-family: var(--font-ui) !important;
+		font-size: 0.82rem !important;
+		font-weight: 500 !important;
+		line-height: 1.2 !important;
+		letter-spacing: 0 !important;
+	}
+</style>

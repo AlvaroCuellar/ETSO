@@ -3,6 +3,7 @@
 	import AlignLeft from 'lucide-svelte/icons/align-left';
 	import BookOpen from 'lucide-svelte/icons/book-open';
 	import ChartLine from 'lucide-svelte/icons/chart-line';
+	import ChartNetwork from 'lucide-svelte/icons/chart-network';
 	import ChevronDown from 'lucide-svelte/icons/chevron-down';
 	import ChevronRight from 'lucide-svelte/icons/chevron-right';
 	import CornerDownRight from 'lucide-svelte/icons/corner-down-right';
@@ -551,7 +552,7 @@
 		<a href={`/red-obras?obra=${row.work.slug}`} class={actionButtonEnabledClass}>
 			<span class="btn-left col-span-2 flex min-w-0 items-center gap-[7px]">
 				<span class="btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-brand-blue-dark" aria-hidden="true">
-					<ChartLine class="h-[14px] w-[14px] stroke-[2.1]" />
+					<ChartNetwork class="h-[14px] w-[14px] stroke-[2.1]" />
 				</span>
 				<span class={actionLabelClass}>{mode === 'informe' ? 'Red' : 'Red estilométrica'}</span>
 			</span>
@@ -1015,4 +1016,3 @@
 		}
 	}
 </style>
-

@@ -4,7 +4,13 @@
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import { normalizePlainText } from '$lib/search/normalize';
-	import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
+	import {
+		buildWorkTitleSearchText,
+		formatDisplayWorkTitle
+	} from '$lib/utils/format-display-work-title';
+
+	import type { AttributionSet } from '$lib/domain/catalog';
+	import type { PageData } from './$types';
 
 	interface SummarySearchResult {
 		slug: string;
@@ -30,30 +36,13 @@
 		results: SummarySearchResult[];
 	}
 
-	interface SummaryListWork {
-		slug: string;
-		title: string;
-		titleVariants: string[];
-		titleSearchText: string;
-		traditional: string;
-		genre: string;
-	}
-
-	interface SummaryWorksPayload {
-		works: SummaryListWork[];
-	}
-
+	let { data }: { data: PageData } = $props();
 	const RESUMENES_SEO_DESCRIPTION =
 		'Resúmenes automáticos de las obras incluidas en la base de datos de ETSO.';
 	const SUMMARY_SEARCH_MIN_LENGTH = 2;
 	const SUMMARY_SEARCH_PAGE_SIZE = 20;
-	const SUMMARY_LIST_PAGE_SIZE = 80;
 
 	let query = $state('');
-	let works = $state<SummaryListWork[]>([]);
-	let worksLoading = $state(true);
-	let worksError = $state('');
-	let visibleWorkCount = $state(SUMMARY_LIST_PAGE_SIZE);
 	let summaryTermInput = $state('');
 	let summarySearchTerms = $state<string[]>([]);
 	let summarySearchResults = $state<SummarySearchResult[]>([]);
@@ -76,18 +65,41 @@
 				? [result.snippet]
 				: [];
 
+	const formatNameList = (names: string[]): string => {
+		if (names.length === 0) return '';
+		if (names.length === 1) return names[0];
+		if (names.length === 2) return `${names[0]} y ${names[1]}`;
+		return `${names.slice(0, -1).join(', ')} y ${names[names.length - 1]}`;
+	};
+
+	const formatTraditionalAttribution = (set: AttributionSet): string => {
+		if (set.unresolved || set.groups.length === 0) return 'Desconocido';
+
+		const names: string[] = [];
+		const seen = new Set<string>();
+		for (const group of set.groups) {
+			for (const member of group.members) {
+				const authorName = member.authorName.trim();
+				if (!authorName || seen.has(authorName)) continue;
+				seen.add(authorName);
+				names.push(authorName);
+			}
+		}
+
+		return names.length > 0 ? formatNameList(names) : 'Desconocido';
+	};
+
 	const formatGenre = (genre: string): string => genre.trim() || 'Sin género';
 
 	const filteredWorks = $derived.by(() => {
 		const normalizedQuery = normalizeFilterText(query);
-		if (!normalizedQuery) return works;
+		if (!normalizedQuery) return data.works;
 
-		return works.filter((work) => {
-			return work.titleSearchText.includes(normalizedQuery);
+		return data.works.filter((work) => {
+			const haystack = normalizeFilterText(buildWorkTitleSearchText(work.title, work.titleVariants));
+			return haystack.includes(normalizedQuery);
 		});
 	});
-	const visibleWorks = $derived(filteredWorks.slice(0, visibleWorkCount));
-	const hiddenWorkCount = $derived(Math.max(0, filteredWorks.length - visibleWorks.length));
 
 	const loadSummarySearchResults = async ({
 		cleanQuery,
@@ -182,26 +194,7 @@
 		});
 	};
 
-	const loadSummaryWorks = async (): Promise<void> => {
-		worksLoading = true;
-		worksError = '';
-
-		try {
-			const response = await fetch('/api/resumenes/works');
-			if (!response.ok) throw new Error(`No se pudo cargar el listado de resúmenes (${response.status}).`);
-			const payload = (await response.json()) as SummaryWorksPayload;
-			works = payload.works;
-		} catch (cause) {
-			works = [];
-			worksError = cause instanceof Error ? cause.message : 'No se pudo cargar el listado de resúmenes.';
-		} finally {
-			worksLoading = false;
-		}
-	};
-
 	onMount(() => {
-		void loadSummaryWorks();
-
 		if ('requestIdleCallback' in window) {
 			const idleCallback = window.requestIdleCallback(warmupSummarySearchIndex, { timeout: 1800 });
 			return () => window.cancelIdleCallback(idleCallback);
@@ -228,11 +221,6 @@
 
 		void loadSummarySearchResults({ cleanQuery, offset: 0, append: false, requestId });
 	});
-
-	$effect(() => {
-		query;
-		visibleWorkCount = SUMMARY_LIST_PAGE_SIZE;
-	});
 </script>
 
 <SeoHead title="Resúmenes" description={RESUMENES_SEO_DESCRIPTION} path="/resumenes" />
@@ -249,20 +237,14 @@
 			Puedes acceder al resumen de cada obra desde este listado o desde la ficha individual de la obra, clicando en el acceso al resumen automático.
 		</p>
 		<p class="m-0 text-[0.92rem] font-medium text-text-soft">
-				{#if summarySearchQuery.trim()}
-					{#if summarySearchLoading}
-						{summarySearchTerms.length} {summarySearchTerms.length === 1 ? 'término activo' : 'términos activos'}
-					{:else}
-						{summarySearchResults.length} de {summarySearchTotal} resúmenes encontrados
-					{/if}
+			{#if summarySearchQuery.trim()}
+				{#if summarySearchLoading}
+					{summarySearchTerms.length} {summarySearchTerms.length === 1 ? 'término activo' : 'términos activos'}
 				{:else}
-				{#if worksLoading}
-					Cargando listado de resúmenes...
-				{:else if worksError}
-					Listado no disponible
-				{:else}
-					{visibleWorks.length} de {filteredWorks.length} obras visibles
+					{summarySearchResults.length} de {summarySearchTotal} resúmenes encontrados
 				{/if}
+			{:else}
+				{filteredWorks.length} de {data.works.length} obras visibles
 			{/if}
 		</p>
 	</section>
@@ -361,22 +343,12 @@
 			/>
 		</label>
 
-		{#if worksLoading}
-			<p class="m-0 inline-flex items-center gap-2 italic text-text-soft">
-				<span
-					class="h-4 w-4 animate-spin rounded-full border-2 border-border-accent-blue border-t-brand-blue-dark"
-					aria-hidden="true"
-				></span>
-				<span>Cargando listado de obras con resumen...</span>
-			</p>
-		{:else if worksError}
-			<p class="m-0 rounded-[9px] border border-[#f3c0ca] bg-[#fff5f7] px-3 py-2 text-[#8f1e36]">{worksError}</p>
-		{:else if filteredWorks.length === 0}
+		{#if filteredWorks.length === 0}
 			<p class="m-0 italic text-text-soft">No hay obras que coincidan con la búsqueda.</p>
 		{:else}
 			<div class="overflow-hidden bg-[rgba(255,255,255,0.52)]">
 				<div class="divide-y divide-[rgba(0,51,167,0.08)]">
-					{#each visibleWorks as work}
+					{#each filteredWorks as work}
 						<a
 							href={`/obras/${work.slug}/resumen`}
 							class="grid gap-1 px-4 py-3 text-inherit no-underline transition hover:bg-[rgba(237,242,255,0.7)] hover:no-underline md:px-5"
@@ -384,7 +356,7 @@
 							<p class="m-0 font-ui text-[0.99rem] leading-[1.45] text-brand-blue-dark">
 								<span class="font-semibold">{formatDisplayWorkTitle(work.title)}</span>
 								<span class="mx-1.5 text-text-soft/70">·</span>
-								<span class="font-normal text-text-main">{work.traditional}</span>
+								<span class="font-normal text-text-main">{formatTraditionalAttribution(work.traditionalAttribution)}</span>
 								<span class="mx-1.5 text-text-soft/70">·</span>
 								<span class="font-normal text-text-soft">{formatGenre(work.genre)}</span>
 							</p>
@@ -402,19 +374,6 @@
 					{/each}
 				</div>
 			</div>
-			{#if hiddenWorkCount > 0}
-				<div class="flex justify-center pt-1">
-					<button
-						type="button"
-						class="inline-flex items-center justify-center rounded-[9px] border border-border-accent-blue bg-white px-5 py-2.5 font-ui text-[0.94rem] font-semibold text-brand-blue-dark shadow-[0_8px_24px_rgba(25,46,80,0.05)] transition hover:bg-surface-accent-blue"
-						onclick={() => {
-							visibleWorkCount += SUMMARY_LIST_PAGE_SIZE;
-						}}
-					>
-						Ver más ({Math.min(SUMMARY_LIST_PAGE_SIZE, hiddenWorkCount)} más)
-					</button>
-				</div>
-			{/if}
 		{/if}
 	</section>
 </div>

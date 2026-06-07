@@ -1125,57 +1125,20 @@ const confidenceForAuthor = (set: CatalogWork['stylometryAttribution'], authorId
 
 export const getAllWorks = async (): Promise<CatalogWork[]> => (await getSnapshot()).works;
 
-const loadWorksForSummaries = async (includeShortSummary: boolean): Promise<CatalogWork[]> => {
-	const titleVariantsSelect = await getTitleVariantsSelect();
-	const workRows = await getRows<WorkRow & { resumen_breve: string | null }>(
-		`SELECT id, slug, titulo,
-		 ${titleVariantsSelect},
-		 genero, adicion, estado_texto,
-		 examen_autorias, biteso, biteso_nombre, tiene_acceso_externo,
-		 procede,
-		 CASE WHEN resultado1 IS NULL AND resultado2 IS NULL THEN 0 ELSE 1 END AS has_report,
-		 1 AS has_resumen_breve,
-		 ${includeShortSummary ? 'resumen_breve' : 'NULL AS resumen_breve'}
-		 FROM works
-		 WHERE resumen_breve IS NOT NULL
-		 ORDER BY titulo COLLATE NOCASE`
+export const getWorksForSummaryIndex = async (): Promise<CatalogWork[]> => {
+	const snapshot = await getSnapshot();
+	const rows = await getRows<{ id: string; resumen_breve: string | null }>(
+		'SELECT id, resumen_breve FROM works WHERE resumen_breve IS NOT NULL'
 	);
+	const summaryByWorkId = new Map(rows.map((row) => [row.id, normalizeShortSummary(row.resumen_breve)] as const));
 
-	const workIds = workRows.map((row) => row.id);
-	const attributionRows = await loadAttributionRowsByWorkIds(workIds);
-	const authorById = await loadAuthorsByIds(attributionRows.map((row) => row.author_id ?? '').filter(Boolean));
-	const attributionByWorkType = normalizeAttributionRows(attributionRows, authorById);
-	const seenWorkSlugs = new Map<string, string>();
-
-	return workRows.map((row) => {
-		const hasReport = Number(row.has_report) === 1;
-		const slug = resolveWorkSlug(row, seenWorkSlugs);
-		return {
-			id: row.id,
-			slug,
-			title: row.titulo,
-			titleVariants: splitTitleVariants(row.title_variants),
-			genre: row.genero?.trim() || 'Sin genero',
-			origin: row.procede?.trim() || 'Sin procedencia',
-			textState: row.estado_texto?.trim() || 'Sin estado',
-			addedOn: row.adicion?.trim() || 'Sin fecha',
-			shortSummary: normalizeShortSummary(row.resumen_breve),
-			hasSummaryFile: true,
-			inAuthorshipExam: Number(row.examen_autorias) === 1,
-			traditionalAttribution:
-				attributionByWorkType.get(`${row.id}::tradicional`) ?? makeEmptyAttributionSet(),
-			stylometryAttribution:
-				attributionByWorkType.get(`${row.id}::estilometria`) ?? makeEmptyAttributionSet(),
-			textLinks: [],
-			reportId: hasReport ? row.id : undefined,
-			reportSlug: hasReport ? `${REPORT_SLUG_PREFIX}${slug}` : undefined
-		};
-	});
+	return snapshot.works
+		.filter((work) => work.hasSummaryFile)
+		.map((work) => ({
+			...work,
+			shortSummary: summaryByWorkId.get(work.id) ?? EMPTY_SHORT_SUMMARY
+		}));
 };
-
-export const getWorksForSummaryList = async (): Promise<CatalogWork[]> => loadWorksForSummaries(false);
-
-export const getWorksForSummaryIndex = async (): Promise<CatalogWork[]> => loadWorksForSummaries(true);
 
 const getAuthorshipExamWorksFromSnapshot = (snapshot: Snapshot): CatalogWork[] =>
 	snapshot.works.filter((work) => work.inAuthorshipExam);

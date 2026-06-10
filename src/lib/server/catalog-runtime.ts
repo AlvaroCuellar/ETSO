@@ -55,10 +55,44 @@ import impactSource from '../../../data/referencias/repercusion.json';
 
 type SqlArg = string | number | bigint | boolean | null | Uint8Array | Date;
 
+type CatalogQueryLogReason = 'sampled' | 'slow' | 'large_result';
+
+interface CatalogQueryLogPayload {
+	event: 'catalog_query';
+	timestamp: string;
+	durationMs: number;
+	returnedRows: number;
+	sqlPreview: string;
+	argsCount: number;
+	argsTypes: string[];
+	dbClientMode: string;
+	reason: CatalogQueryLogReason[];
+}
+
+const parsePositiveInteger = (value: string | undefined, fallback: number): number => {
+	const parsed = Number.parseInt(value ?? '', 10);
+	return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+};
+
+const parseSampleRate = (value: string | undefined, fallback: number): number => {
+	const parsed = Number.parseFloat(value ?? '');
+	if (!Number.isFinite(parsed)) return fallback;
+	return Math.min(Math.max(parsed, 0), 1);
+};
+
+const parseBooleanFlag = (value: string | undefined): boolean => {
+	const normalized = value?.trim().toLowerCase();
+	return normalized === '1' || normalized === 'true';
+};
+
 const DEFAULT_CACHE_MS = 10 * 60 * 1000;
 const configuredCacheMs = Number.parseInt(env.CATALOG_CACHE_MS ?? '', 10);
 const CACHE_MS = Number.isFinite(configuredCacheMs) && configuredCacheMs > 0 ? configuredCacheMs : DEFAULT_CACHE_MS;
-const SLOW_QUERY_LOG_MS = 450;
+const DEFAULT_SLOW_QUERY_LOG_MS = 450;
+const SLOW_QUERY_LOG_MS = parsePositiveInteger(env.TURSO_QUERY_SLOW_MS, DEFAULT_SLOW_QUERY_LOG_MS);
+const TURSO_QUERY_LOG_ENABLED = parseBooleanFlag(env.TURSO_QUERY_LOG);
+const TURSO_QUERY_SAMPLE_RATE = parseSampleRate(env.TURSO_QUERY_SAMPLE_RATE, 0.1);
+const TURSO_QUERY_LARGE_RESULT_ROWS = parsePositiveInteger(env.TURSO_QUERY_LARGE_RESULT_ROWS, 500);
 const SLOW_SNAPSHOT_LOG_MS = 1200;
 const LOCAL_CATALOG_SQLITE_PATH = 'data/sqlite/etso-prueba.sqlite';
 const EMPTY_SHORT_SUMMARY = 'Sin resumen breve disponible.';
@@ -349,10 +383,47 @@ const tableColumnsByName = new Map<string, Set<string>>();
 const shortSummaryByWorkId = new Map<string, { cachedAt: number; value: string }>();
 const reportResultsByWorkId = new Map<string, { cachedAt: number; result1?: string; result2?: string }>();
 
-const logIfSlow = (label: string, startedAt: number, metadata = ''): void => {
-	const elapsed = Date.now() - startedAt;
-	if (elapsed < SLOW_QUERY_LOG_MS) return;
-	console.warn(`[catalog-runtime] slow ${label}: ${elapsed}ms${metadata ? ` ${metadata}` : ''}`);
+const getSqlArgType = (arg: SqlArg): string => {
+	if (arg === null) return 'null';
+	if (arg instanceof Date) return 'date';
+	if (arg instanceof Uint8Array) return 'uint8array';
+	return typeof arg;
+};
+
+const previewSql = (sql: string): string => sql.replace(/\s+/g, ' ').trim().slice(0, 240);
+
+const logCatalogQuery = (sql: string, args: SqlArg[] | undefined, durationMs: number, returnedRows: number): void => {
+	const reason: CatalogQueryLogReason[] = [];
+	const isSlow = durationMs >= SLOW_QUERY_LOG_MS;
+
+	if (TURSO_QUERY_LOG_ENABLED && Math.random() < TURSO_QUERY_SAMPLE_RATE) {
+		reason.push('sampled');
+	}
+	if (isSlow) {
+		reason.push('slow');
+	}
+	if (TURSO_QUERY_LOG_ENABLED && returnedRows >= TURSO_QUERY_LARGE_RESULT_ROWS) {
+		reason.push('large_result');
+	}
+	if (reason.length === 0) return;
+
+	const payload: CatalogQueryLogPayload = {
+		event: 'catalog_query',
+		timestamp: new Date().toISOString(),
+		durationMs,
+		returnedRows,
+		sqlPreview: previewSql(sql),
+		argsCount: args?.length ?? 0,
+		argsTypes: args?.map(getSqlArgType) ?? [],
+		dbClientMode: dbClientMode ?? 'unknown',
+		reason
+	};
+	const message = JSON.stringify(payload);
+	if (reason.includes('slow') || reason.includes('large_result')) {
+		console.warn(message);
+		return;
+	}
+	console.info(message);
 };
 
 const splitVariants = (value: string | null | undefined): string[] => {
@@ -493,8 +564,9 @@ const getRows = async <T>(sql: string, args?: SqlArg[]): Promise<T[]> => {
 		dbClient = createLocalFallbackDbClient();
 		result = args ? await dbClient.execute(sql, args) : await dbClient.execute(sql);
 	}
-	logIfSlow('query', startedAt, sql.replace(/\s+/g, ' ').trim().slice(0, 120));
-	return result.rows as unknown as T[];
+	const rows = result.rows as unknown as T[];
+	logCatalogQuery(sql, args, Date.now() - startedAt, rows.length);
+	return rows;
 };
 
 const getTableColumnNames = async (tableName: 'authors' | 'works'): Promise<Set<string>> => {

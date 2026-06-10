@@ -1,15 +1,14 @@
 import { json } from '@sveltejs/kit';
-import { getAllWorks } from '$lib/server/catalog-runtime';
-import { toTexoroWorkMeta } from '$lib/server/texoro-runtime';
+import { getTexoroWorkMeta } from '$lib/server/texoro-runtime';
 
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async () => {
-	const worksMeta = (await getAllWorks()).map(toTexoroWorkMeta);
+	const worksMeta = await getTexoroWorkMeta();
 
 	return json(worksMeta, {
 		headers: {
-			'cache-control': 'public, max-age=300, s-maxage=600, stale-while-revalidate=3600'
+			'cache-control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800'
 		}
 	});
 };

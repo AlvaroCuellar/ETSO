@@ -283,6 +283,12 @@ const EXAMEN_RESULTS_CACHE_LIMIT =
 	Number.isFinite(configuredExamenResultsCacheLimit) && configuredExamenResultsCacheLimit > 0
 		? configuredExamenResultsCacheLimit
 		: DEFAULT_EXAMEN_RESULTS_CACHE_LIMIT;
+const DEFAULT_EXAMEN_GLOBAL_CACHE_MS = 10 * 60 * 1000;
+const configuredExamenGlobalCacheMs = Number.parseInt(env.EXAMEN_GLOBAL_CACHE_MS ?? '', 10);
+const EXAMEN_GLOBAL_CACHE_MS =
+	Number.isFinite(configuredExamenGlobalCacheMs) && configuredExamenGlobalCacheMs > 0
+		? configuredExamenGlobalCacheMs
+		: DEFAULT_EXAMEN_GLOBAL_CACHE_MS;
 
 interface TempGroup {
 	order: number;
@@ -1328,6 +1334,8 @@ const examenFilteredRecordsBySnapshot = new WeakMap<
 >();
 const examenWorksPageCache = new Map<string, { cachedAt: number; value: ExamenWorksPage }>();
 const examenWorksCountCache = new Map<string, { cachedAt: number; value: number }>();
+let cachedExamenFilterOptions: { cachedAt: number; value: ExamenFilterOptions } | null = null;
+let cachedExamenCatalogStats: { cachedAt: number; value: CatalogStats } | null = null;
 
 const getExamenSearchRecords = (snapshot: Snapshot): ExamenWorkSearchRecord[] => {
 	const cached = examenSearchRecordsBySnapshot.get(snapshot);
@@ -1730,6 +1738,11 @@ export const getExamenWorksPage = async (
 };
 
 export const getExamenFilterOptions = async (): Promise<ExamenFilterOptions> => {
+	const now = Date.now();
+	if (cachedExamenFilterOptions && now - cachedExamenFilterOptions.cachedAt < EXAMEN_GLOBAL_CACHE_MS) {
+		return cachedExamenFilterOptions.value;
+	}
+
 	const authorVariantsSelect = await getAuthorVariantsSelect();
 	const [authorRows, genreRows, stateRows] = await Promise.all([
 		getRows<AuthorRow>(
@@ -1756,11 +1769,13 @@ export const getExamenFilterOptions = async (): Promise<ExamenFilterOptions> => 
 		)
 	]);
 
-	return {
+	const value = {
 		authors: toCatalogAuthors(authorRows),
 		genres: genreRows.map((row) => row.value).filter(Boolean),
 		states: stateRows.map((row) => row.value).filter(Boolean)
 	};
+	cachedExamenFilterOptions = { cachedAt: Date.now(), value };
+	return value;
 };
 
 export const getSelectedExamenFilterOptions = async (
@@ -1778,6 +1793,11 @@ export const getSelectedExamenFilterOptions = async (
 };
 
 export const getExamenCatalogStats = async (): Promise<CatalogStats> => {
+	const now = Date.now();
+	if (cachedExamenCatalogStats && now - cachedExamenCatalogStats.cachedAt < EXAMEN_GLOBAL_CACHE_MS) {
+		return cachedExamenCatalogStats.value;
+	}
+
 	const [worksRows, authorRows, informeRows, bitesoRows] = await Promise.all([
 		getRows<{ total: number }>('SELECT COUNT(*) AS total FROM works WHERE examen_autorias = 1'),
 		getRows<{ total: number }>(
@@ -1796,12 +1816,14 @@ export const getExamenCatalogStats = async (): Promise<CatalogStats> => {
 		getRows<{ total: number }>('SELECT COUNT(*) AS total FROM works WHERE biteso = 1')
 	]);
 
-	return {
+	const value = {
 		works: Number(worksRows[0]?.total ?? 0),
 		authors: Number(authorRows[0]?.total ?? 0),
 		informes: Number(informeRows[0]?.total ?? 0),
 		bitesoTexts: Number(bitesoRows[0]?.total ?? 0)
 	};
+	cachedExamenCatalogStats = { cachedAt: Date.now(), value };
+	return value;
 };
 
 export const getCatalogStats = async (): Promise<CatalogStats> => {

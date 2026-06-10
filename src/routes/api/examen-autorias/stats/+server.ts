@@ -8,7 +8,7 @@ export const GET: RequestHandler = async () => {
 
 	return json(stats, {
 		headers: {
-			'cache-control': 'public, max-age=120, s-maxage=300, stale-while-revalidate=1800'
+			'cache-control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800'
 		}
 	});
 };

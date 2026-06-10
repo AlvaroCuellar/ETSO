@@ -271,6 +271,18 @@ export interface ExamenFilterOptions {
 }
 
 const EXAMEN_FILTER_CACHE_LIMIT = 50;
+const DEFAULT_EXAMEN_RESULTS_CACHE_MS = 5 * 60 * 1000;
+const configuredExamenResultsCacheMs = Number.parseInt(env.EXAMEN_RESULTS_CACHE_MS ?? '', 10);
+const EXAMEN_RESULTS_CACHE_MS =
+	Number.isFinite(configuredExamenResultsCacheMs) && configuredExamenResultsCacheMs > 0
+		? configuredExamenResultsCacheMs
+		: DEFAULT_EXAMEN_RESULTS_CACHE_MS;
+const DEFAULT_EXAMEN_RESULTS_CACHE_LIMIT = 200;
+const configuredExamenResultsCacheLimit = Number.parseInt(env.EXAMEN_RESULTS_CACHE_LIMIT ?? '', 10);
+const EXAMEN_RESULTS_CACHE_LIMIT =
+	Number.isFinite(configuredExamenResultsCacheLimit) && configuredExamenResultsCacheLimit > 0
+		? configuredExamenResultsCacheLimit
+		: DEFAULT_EXAMEN_RESULTS_CACHE_LIMIT;
 
 interface TempGroup {
 	order: number;
@@ -508,8 +520,8 @@ const getTitleVariantsSelect = async (): Promise<string> => {
 
 const getTitleSearchFilterExpressions = async (): Promise<string[]> => {
 	const worksTableColumns = await getTableColumnNames('works');
+	if (worksTableColumns.has('titulo_busqueda')) return ['w.titulo_busqueda'];
 	const expressions = ['w.titulo'];
-	if (worksTableColumns.has('titulo_busqueda')) expressions.push('w.titulo_busqueda');
 	if (worksTableColumns.has('otrostitulos')) {
 		expressions.push('w.otrostitulos');
 	} else if (worksTableColumns.has('variaciones_titulo')) {
@@ -1314,6 +1326,8 @@ const examenFilteredRecordsBySnapshot = new WeakMap<
 	Snapshot,
 	Map<string, ExamenWorkSearchRecord[]>
 >();
+const examenWorksPageCache = new Map<string, { cachedAt: number; value: ExamenWorksPage }>();
+const examenWorksCountCache = new Map<string, { cachedAt: number; value: number }>();
 
 const getExamenSearchRecords = (snapshot: Snapshot): ExamenWorkSearchRecord[] => {
 	const cached = examenSearchRecordsBySnapshot.get(snapshot);
@@ -1482,11 +1496,10 @@ const addAuthorFilter = (
 	}
 
 	conditions.push(
-		`EXISTS (
-			SELECT 1
+		`w.id IN (
+			SELECT wai.work_id
 			FROM work_author_index wai
-			WHERE wai.work_id = w.id
-				AND wai.author_id IN (${createPlaceholders(ids)})${typeCondition}
+			WHERE wai.author_id IN (${createPlaceholders(ids)})${typeCondition}
 		)`
 	);
 	args.push(...ids, ...typeArgs);
@@ -1609,14 +1622,62 @@ const buildExamenWhereClause = async (filters: ExamenWorksFilters): Promise<SqlW
 	};
 };
 
-export const getExamenWorksPage = async (
-	filters: ExamenWorksFilters,
-	page: number,
-	pageSize: number
-): Promise<ExamenWorksPage> => {
-	const safePageSize = Number.isFinite(pageSize) && pageSize > 0 ? Math.floor(pageSize) : 20;
-	const requestedPage = Number.isFinite(page) && page > 0 ? Math.floor(page) : 1;
-	const where = await buildExamenWhereClause(filters);
+const createExamenWorksPageCacheKey = (filterSignature: string, page: number, pageSize: number): string =>
+	`${filterSignature}::${page}::${pageSize}`;
+
+const getCachedExamenWorksPage = (cacheKey: string): ExamenWorksPage | null => {
+	const cached = examenWorksPageCache.get(cacheKey);
+	if (!cached) return null;
+	const now = Date.now();
+	if (now - cached.cachedAt >= EXAMEN_RESULTS_CACHE_MS) {
+		examenWorksPageCache.delete(cacheKey);
+		return null;
+	}
+
+	examenWorksPageCache.delete(cacheKey);
+	examenWorksPageCache.set(cacheKey, cached);
+	return cached.value;
+};
+
+const cacheExamenWorksPage = (cacheKey: string, value: ExamenWorksPage): void => {
+	if (EXAMEN_RESULTS_CACHE_LIMIT <= 0) return;
+	if (examenWorksPageCache.has(cacheKey)) examenWorksPageCache.delete(cacheKey);
+	while (examenWorksPageCache.size >= EXAMEN_RESULTS_CACHE_LIMIT) {
+		const oldestKey = examenWorksPageCache.keys().next().value;
+		if (!oldestKey) break;
+		examenWorksPageCache.delete(oldestKey);
+	}
+	examenWorksPageCache.set(cacheKey, { cachedAt: Date.now(), value });
+};
+
+const getCachedExamenWorksCount = (cacheKey: string): number | null => {
+	const cached = examenWorksCountCache.get(cacheKey);
+	if (!cached) return null;
+	const now = Date.now();
+	if (now - cached.cachedAt >= EXAMEN_RESULTS_CACHE_MS) {
+		examenWorksCountCache.delete(cacheKey);
+		return null;
+	}
+
+	examenWorksCountCache.delete(cacheKey);
+	examenWorksCountCache.set(cacheKey, cached);
+	return cached.value;
+};
+
+const cacheExamenWorksCount = (cacheKey: string, value: number): void => {
+	if (EXAMEN_RESULTS_CACHE_LIMIT <= 0) return;
+	if (examenWorksCountCache.has(cacheKey)) examenWorksCountCache.delete(cacheKey);
+	while (examenWorksCountCache.size >= EXAMEN_RESULTS_CACHE_LIMIT) {
+		const oldestKey = examenWorksCountCache.keys().next().value;
+		if (!oldestKey) break;
+		examenWorksCountCache.delete(oldestKey);
+	}
+	examenWorksCountCache.set(cacheKey, { cachedAt: Date.now(), value });
+};
+
+const getExamenWorksCount = async (where: SqlWhereClause, cacheKey: string): Promise<number> => {
+	const cached = getCachedExamenWorksCount(cacheKey);
+	if (cached !== null) return cached;
 	const totalRows = await getRows<{ total: number }>(
 		`SELECT COUNT(*) AS total
 		 FROM works w
@@ -1624,6 +1685,24 @@ export const getExamenWorksPage = async (
 		where.args
 	);
 	const totalResults = Number(totalRows[0]?.total ?? 0);
+	cacheExamenWorksCount(cacheKey, totalResults);
+	return totalResults;
+};
+
+export const getExamenWorksPage = async (
+	filters: ExamenWorksFilters,
+	page: number,
+	pageSize: number
+): Promise<ExamenWorksPage> => {
+	const safePageSize = Number.isFinite(pageSize) && pageSize > 0 ? Math.floor(pageSize) : 20;
+	const requestedPage = Number.isFinite(page) && page > 0 ? Math.floor(page) : 1;
+	const filterSignature = createExamenFilterSignature(filters);
+	const cacheKey = createExamenWorksPageCacheKey(filterSignature, requestedPage, safePageSize);
+	const cached = getCachedExamenWorksPage(cacheKey);
+	if (cached) return cached;
+
+	const where = await buildExamenWhereClause(filters);
+	const totalResults = await getExamenWorksCount(where, filterSignature);
 	const totalPages = Math.max(1, Math.ceil(totalResults / safePageSize));
 	const safePage = Math.min(requestedPage, totalPages);
 	const offset = (safePage - 1) * safePageSize;
@@ -1640,12 +1719,14 @@ export const getExamenWorksPage = async (
 				);
 	const ids = idRows.map((row) => row.id);
 
-	return {
+	const value = {
 		works: await hydrateWorksByIds(ids),
 		totalResults,
 		totalPages,
 		page: safePage
 	};
+	cacheExamenWorksPage(cacheKey, value);
+	return value;
 };
 
 export const getExamenFilterOptions = async (): Promise<ExamenFilterOptions> => {

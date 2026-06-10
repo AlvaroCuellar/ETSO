@@ -15,5 +15,9 @@ export const GET: RequestHandler = async ({ url }) => {
 		pageSize: EXAMEN_PAGE_SIZE,
 		totalPages: pageResult.totalPages,
 		totalResults: pageResult.totalResults
+	}, {
+		headers: {
+			'cache-control': 'public, max-age=30, s-maxage=300, stale-while-revalidate=1800'
+		}
 	});
 };

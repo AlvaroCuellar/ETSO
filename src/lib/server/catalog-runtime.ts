@@ -1097,6 +1097,7 @@ const getSnapshot = async (): Promise<Snapshot> => {
 };
 
 const distancesBySnapshot = new WeakMap<Snapshot, Map<string, Promise<Record<Ambito, DistanceRow[]>>>>();
+const summaryIndexWorksBySnapshot = new WeakMap<Snapshot, CatalogWork[]>();
 
 const normalizeSummaryNamedItems = (
 	rows: Array<{ nombre?: string; descripcion?: string }> | undefined
@@ -1145,17 +1146,22 @@ export const getAllWorks = async (): Promise<CatalogWork[]> => (await getSnapsho
 
 export const getWorksForSummaryIndex = async (): Promise<CatalogWork[]> => {
 	const snapshot = await getSnapshot();
+	const cached = summaryIndexWorksBySnapshot.get(snapshot);
+	if (cached) return cached;
+
 	const rows = await getRows<{ id: string; resumen_breve: string | null }>(
 		'SELECT id, resumen_breve FROM works WHERE resumen_breve IS NOT NULL'
 	);
 	const summaryByWorkId = new Map(rows.map((row) => [row.id, normalizeShortSummary(row.resumen_breve)] as const));
 
-	return snapshot.works
+	const works = snapshot.works
 		.filter((work) => work.hasSummaryFile)
 		.map((work) => ({
 			...work,
 			shortSummary: summaryByWorkId.get(work.id) ?? EMPTY_SHORT_SUMMARY
 		}));
+	summaryIndexWorksBySnapshot.set(snapshot, works);
+	return works;
 };
 
 const getAuthorshipExamWorksFromSnapshot = (snapshot: Snapshot): CatalogWork[] =>

@@ -2042,7 +2042,7 @@ const buildWorkNetworkGraph = async (nearestPerWork = 3): Promise<WorkNetworkGra
 		`SELECT work_id, ambito, rank, related_work_id, distancia
 		 FROM work_distances
 		 WHERE rank <= ?
-		 AND REPLACE(REPLACE(LOWER(ambito), '_', ''), ' ', '') IN ('obracompleta', 'global')
+		 AND ambito IN ('global', 'obracompleta')
 		 ORDER BY work_id, rank`,
 		[layoutLimit]
 	);

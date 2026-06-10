@@ -1,9 +1,10 @@
+import { setPublicCatalogCacheHeaders } from '$lib/server/cache-control';
 import { getAuthorshipExamWorks } from '$lib/server/catalog-runtime';
 
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async () => ({
-	works: (await getAuthorshipExamWorks())
+export const load: PageServerLoad = async ({ setHeaders }) => {
+	const works = (await getAuthorshipExamWorks())
 		.map((work) => ({
 			slug: work.slug,
 			title: work.title,
@@ -15,5 +16,8 @@ export const load: PageServerLoad = async () => ({
 			const titleComparison = a.title.localeCompare(b.title, 'es', { sensitivity: 'base' });
 			if (titleComparison !== 0) return titleComparison;
 			return a.slug.localeCompare(b.slug, 'es', { sensitivity: 'base' });
-		})
-});
+		});
+
+	setPublicCatalogCacheHeaders(setHeaders);
+	return { works };
+};

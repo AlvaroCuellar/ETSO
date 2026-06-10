@@ -1,4 +1,5 @@
 import { error, redirect } from '@sveltejs/kit';
+import { setPublicCatalogCacheHeaders } from '$lib/server/cache-control';
 import {
 	buildBitesoCitation,
 	getBitesoBySlug,
@@ -8,7 +9,7 @@ import {
 
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, setHeaders }) => {
 	const biteso = await getBitesoBySlug(params.id);
 	if (!biteso) {
 		const bitesoWork = await getBitesoWorkBySlug(params.id);
@@ -38,6 +39,7 @@ export const load: PageServerLoad = async ({ params }) => {
 		canonicalUrl
 	});
 
+	setPublicCatalogCacheHeaders(setHeaders);
 	return {
 		biteso,
 		work,

@@ -3,6 +3,7 @@ import {
 	type AttributionSet,
 	type CatalogWork
 } from '$lib/domain/catalog';
+import { setPublicCatalogCacheHeaders } from '$lib/server/cache-control';
 import { getBitesoWorks } from '$lib/server/catalog-runtime';
 
 import type { PageServerLoad } from './$types';
@@ -32,7 +33,7 @@ const countUniqueAuthors = (works: CatalogWork[]): number => {
 	return authorIds.size;
 };
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ setHeaders }) => {
 	const bitesoWorks = (await getBitesoWorks())
 		.sort((a, b) => {
 			const titleComparison = a.title.localeCompare(b.title, 'es', { sensitivity: 'base' });
@@ -40,6 +41,7 @@ export const load: PageServerLoad = async () => {
 			return a.id.localeCompare(b.id, 'es', { sensitivity: 'base' });
 		});
 
+	setPublicCatalogCacheHeaders(setHeaders);
 	return {
 		works: bitesoWorks.map((work) => ({
 			id: work.id,

@@ -1,8 +1,9 @@
+import { setPublicCatalogCacheHeaders } from '$lib/server/cache-control';
 import { getAllAuthors, getAllWorks } from '$lib/server/catalog-runtime';
 
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ setHeaders }) => {
 	const [works, authors] = await Promise.all([getAllWorks(), getAllAuthors()]);
 	const worksByTraditionalAuthorId = new Map<
 		string,
@@ -28,6 +29,7 @@ export const load: PageServerLoad = async () => {
 		}
 	}
 
+	setPublicCatalogCacheHeaders(setHeaders);
 	return {
 		authors: authors
 			.filter((author) => worksByTraditionalAuthorId.has(author.id))

@@ -271,6 +271,8 @@
 		const separator = url.includes('?') ? '&' : '?';
 		return `${url}${separator}t=${Date.now()}`;
 	};
+	const manifestRequest = (url: string): { url: string; init?: RequestInit } =>
+		import.meta.env.DEV ? { url: withCacheBuster(url), init: { cache: 'no-store' } } : { url };
 	const texoroIndexBaseUrl = $derived(stripTrailingSlash(data.texoroIndexBaseUrl ?? ''));
 	const initialStatsPayload = getClientMemoryCache<TexoroStatsPayload>(TEXORO_STATS_CACHE_KEY);
 
@@ -1829,9 +1831,8 @@
 		if (!texoroIndexBaseUrl) {
 			throw new Error('Falta PUBLIC_R2_PUBLIC_ASSETS_BASE_URL para inicializar TEXORO.');
 		}
-		const response = await fetch(withCacheBuster(joinUrl(texoroIndexBaseUrl, 'manifest.json')), {
-			cache: 'no-store'
-		});
+		const request = manifestRequest(joinUrl(texoroIndexBaseUrl, 'manifest.json'));
+		const response = await fetch(request.url, request.init);
 		if (!response.ok) {
 			throw new Error(`No se pudo inicializar TEXORO: ${response.status}`);
 		}

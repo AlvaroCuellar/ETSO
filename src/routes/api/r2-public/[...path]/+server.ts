@@ -31,7 +31,7 @@ export const GET: RequestHandler = async ({ params }) => {
 	return new Response(response.body, {
 		headers: {
 			'content-type': response.headers.get('content-type') ?? 'application/json; charset=utf-8',
-			'cache-control': 'public, max-age=300, s-maxage=600, stale-while-revalidate=3600'
+			'cache-control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800'
 		}
 	});
 };

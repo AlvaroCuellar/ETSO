@@ -229,6 +229,8 @@ const withCacheBuster = (url: string): string => {
 };
 const withIndexVersion = (url: string, indexVersion: string | null): string =>
 	indexVersion ? withQueryParam(url, 'v', indexVersion) : url;
+const manifestRequest = (url: string): { url: string; init?: RequestInit } =>
+	import.meta.env.DEV ? { url: withCacheBuster(url), init: { cache: 'no-store' } } : { url };
 
 const readPayloadIndexVersion = (value: unknown): string | null => {
 	if (!value || typeof value !== 'object') return null;
@@ -1833,10 +1835,10 @@ export class TexoroSearchEngine {
 			return (await response.json()) as T;
 		};
 
-		let data = await fetchJsonFromUrl(
-			isManifest ? withCacheBuster(requestUrl) : withIndexVersion(requestUrl, indexVersion),
-			isManifest ? { cache: 'no-store' } : undefined
-		);
+		const request = isManifest
+			? manifestRequest(requestUrl)
+			: { url: withIndexVersion(requestUrl, indexVersion) };
+		let data = await fetchJsonFromUrl(request.url, request.init);
 
 		if (indexVersion && readPayloadIndexVersion(data) !== indexVersion) {
 			data = await fetchJsonFromUrl(withCacheBuster(withIndexVersion(requestUrl, indexVersion)), {

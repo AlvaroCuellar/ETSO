@@ -1,14 +1,14 @@
-# Deploy de datos
+﻿# Deploy de datos
 
-Los scripts son Bash y deben ejecutarse desde la raíz del proyecto.
+Los scripts son Bash y deben ejecutarse desde la raÃ­z del proyecto.
 
 En Windows, el flujo recomendado es ejecutarlos desde Ubuntu/WSL, no desde Git Bash.
-Eso evita problemas de rutas entre Windows y Linux y es lo más parecido al entorno
+Eso evita problemas de rutas entre Windows y Linux y es lo mÃ¡s parecido al entorno
 de macOS/Linux.
 
 Desde PowerShell no uses `bash ...` a secas: en Windows puede resolver al lanzador
-de WSL o a Git Bash según la máquina. Usa el wrapper `deploy-windows.ps1` o abre
-una terminal Ubuntu/WSL y ejecuta los scripts Bash desde ahí.
+de WSL o a Git Bash segÃºn la mÃ¡quina. Usa el wrapper `deploy-windows.ps1` o abre
+una terminal Ubuntu/WSL y ejecuta los scripts Bash desde ahÃ­.
 
 ## Requisitos
 
@@ -47,20 +47,20 @@ El setup instala:
 - sqlite3
 - Turso CLI en WSL
 
-Si Turso no está autenticado:
+Si Turso no estÃ¡ autenticado:
 
 ```bash
 turso auth login --headless
 ```
 
 Cuando Turso devuelva un comando `turso config set token "..."`, pegarlo y ejecutarlo
-dentro de Ubuntu. Verificar después:
+dentro de Ubuntu. Verificar despuÃ©s:
 
 ```bash
 turso auth whoami
 ```
 
-Después, todo el deploy se ejecuta desde Ubuntu:
+DespuÃ©s, todo el deploy se ejecuta desde Ubuntu:
 
 ```bash
 bash deploy/scripts/check-deploy-env.sh
@@ -70,17 +70,17 @@ bash deploy/scripts/deploy-all.sh
 Si se quiere usar Git Bash como fallback, los scripts intentan detectar herramientas
 en rutas habituales de Windows y en `deploy/tools/bin/`, pero no es el flujo preferido.
 
-Esa carpeta está ignorada por Git.
+Esa carpeta estÃ¡ ignorada por Git.
 
-Si Ubuntu no existe todavía:
+Si Ubuntu no existe todavÃ­a:
 
 ```powershell
 wsl --install -d Ubuntu
 ```
 
-Después de instalarla, abrir `Ubuntu` una vez para crear el usuario Linux.
+DespuÃ©s de instalarla, abrir `Ubuntu` una vez para crear el usuario Linux.
 
-También se puede lanzar el flujo desde PowerShell, dejando que el wrapper use WSL
+TambiÃ©n se puede lanzar el flujo desde PowerShell, dejando que el wrapper use WSL
 si la distro existe y Git Bash como fallback:
 
 ```powershell
@@ -105,7 +105,7 @@ brew install tursodatabase/tap/turso
 ```
 
 Si Homebrew no deja `node` en el `PATH` tras instalar `node@24`, seguir las
-instrucciones que muestra `brew` al final de la instalaciÃ³n.
+instrucciones que muestra `brew` al final de la instalaciÃƒÂ³n.
 
 Autenticar Turso:
 
@@ -118,17 +118,23 @@ turso auth whoami
 
 Configurar `deploy/.env.deploy` desde `deploy/.env.deploy.example`.
 
-Poner ahí `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID` y `R2_SECRET_ACCESS_KEY` del token
+Poner ahÃ­ `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID` y `R2_SECRET_ACCESS_KEY` del token
 read&write de R2. No subir `deploy/.env.deploy` al repositorio.
 
 Copiar:
 
-- Resúmenes a `deploy/input/public-assets/resumenes/`
+- ResÃºmenes a `deploy/input/public-assets/resumenes/`
 - TXT a `deploy/input/private-assets/texts/`
 - SQLite a `deploy/input/turso/etso.sqlite`
 
-El índice de búsqueda se genera automáticamente desde los TXT en:
+El Ã­ndice de bÃºsqueda se genera automÃ¡ticamente desde los TXT en:
 `deploy/input/public-assets/search/`.
+
+El indice de busqueda de resumenes se genera automaticamente desde:
+
+- SQLite: `deploy/input/turso/etso.sqlite`
+- JSON de resumenes: `deploy/input/public-assets/resumenes/`
+- salida: `deploy/input/public-assets/resumenes/search-index.json`
 
 Por defecto el builder usa 8 GB de heap de Node. Se puede ajustar con
 `SEARCH_INDEX_NODE_MAX_OLD_SPACE_SIZE` en `deploy/.env.deploy`.
@@ -146,7 +152,7 @@ DRY_RUN=true bash deploy/scripts/sync-r2.sh
 # Probar el flujo completo sin reemplazar Turso ni subir cambios reales a R2
 DRY_RUN=true bash deploy/scripts/deploy-all.sh
 
-# Desplegar todo en un único paso
+# Desplegar todo en un Ãºnico paso
 bash deploy/scripts/deploy-all.sh
 
 # Borrar entrada temporal

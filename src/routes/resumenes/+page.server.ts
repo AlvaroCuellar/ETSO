@@ -1,5 +1,6 @@
 import { setPublicCatalogCacheHeaders } from '$lib/server/cache-control';
 import { getWorksForSummaryIndex } from '$lib/server/catalog-runtime';
+import { getPublicSummaryAssetUrl } from '$lib/server/r2-public';
 
 import type { PageServerLoad } from './$types';
 
@@ -19,5 +20,8 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 		});
 
 	setPublicCatalogCacheHeaders(setHeaders);
-	return { works };
+	return {
+		works,
+		summarySearchIndexUrl: getPublicSummaryAssetUrl('search-index.json')
+	};
 };

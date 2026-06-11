@@ -1,6 +1,5 @@
-<script lang="ts">
+﻿<script lang="ts">
 	import { browser } from '$app/environment';
-	import { onMount } from 'svelte';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import { normalizePlainText } from '$lib/search/normalize';
@@ -27,13 +26,21 @@
 			after: string;
 	}
 
-	interface SummarySearchPayload {
-		query: string;
-		total: number;
-		offset: number;
-		limit: number;
-		hasMore: boolean;
-		results: SummarySearchResult[];
+	interface SummarySearchIndexEntry {
+		id: string;
+		slug: string;
+		title: string;
+		displayTitle: string;
+		genre: string;
+		traditional: string;
+		summaryText: string;
+		normalizedSummaryText: string;
+	}
+
+	interface SummarySearchIndexPayload {
+		schemaVersion: string;
+		generatedAt: string;
+		entries: SummarySearchIndexEntry[];
 	}
 
 	let { data }: { data: PageData } = $props();
@@ -52,6 +59,8 @@
 	let summarySearchLoadingMore = $state(false);
 	let summarySearchError = $state('');
 	let summarySearchRequestId = 0;
+	let summarySearchIndex = $state<SummarySearchIndexEntry[] | null>(null);
+	let summarySearchIndexPromise: Promise<SummarySearchIndexEntry[]> | null = null;
 
 	const normalizeFilterText = (value: string): string =>
 		normalizePlainText(value, false).replace(/\s+/g, ' ').trim();
@@ -64,6 +73,119 @@
 			: result.snippet
 				? [result.snippet]
 				: [];
+
+	const splitSearchTerms = (value: string): string[] =>
+		[...new Set(normalizeFilterText(value)
+			.split(/\s+/)
+			.map((term) => term.trim())
+			.filter((term) => term.length > 0))];
+
+	const buildNormalizedIndex = (value: string): { normalized: string; originalIndexes: number[] } => {
+		let normalized = '';
+		const originalIndexes: number[] = [];
+
+		for (let index = 0; index < value.length; index += 1) {
+			const normalizedChar = normalizePlainText(value[index] ?? '', false);
+			if (!normalizedChar) continue;
+			for (const char of normalizedChar) {
+				normalized += char;
+				originalIndexes.push(index);
+			}
+		}
+
+		return { normalized, originalIndexes };
+	};
+
+	const makeSnippet = (
+		rawText: string,
+		indexedText: { normalized: string; originalIndexes: number[] },
+		term: string
+	): SummarySearchSnippet | null => {
+		const normalizedMatchIndex = indexedText.normalized.indexOf(term);
+		if (normalizedMatchIndex < 0) return null;
+
+		const matchStart = indexedText.originalIndexes[normalizedMatchIndex] ?? 0;
+		const matchEnd = (indexedText.originalIndexes[normalizedMatchIndex + term.length - 1] ?? matchStart) + 1;
+		const snippetStart = Math.max(0, matchStart - 145);
+		const snippetEnd = Math.min(rawText.length, matchEnd + 145);
+
+		return {
+			before: `${snippetStart > 0 ? '...' : ''}${rawText.slice(snippetStart, matchStart)}`,
+			match: rawText.slice(matchStart, matchEnd),
+			after: `${rawText.slice(matchEnd, snippetEnd)}${snippetEnd < rawText.length ? '...' : ''}`
+		};
+	};
+
+	const makeSnippets = (rawText: string, terms: string[]): SummarySearchSnippet[] => {
+		const indexedText = buildNormalizedIndex(rawText);
+		const snippets: SummarySearchSnippet[] = [];
+
+		for (const term of terms) {
+			const snippet = makeSnippet(rawText, indexedText, term);
+			if (!snippet) return [];
+			snippets.push(snippet);
+		}
+
+		return snippets;
+	};
+
+	const loadSummarySearchIndex = async (): Promise<SummarySearchIndexEntry[]> => {
+		if (summarySearchIndex) return summarySearchIndex;
+		if (summarySearchIndexPromise) return summarySearchIndexPromise;
+
+		summarySearchIndexPromise = fetch(data.summarySearchIndexUrl)
+			.then(async (response) => {
+				if (!response.ok) {
+					throw new Error(`No se pudo cargar el índice de resúmenes (${response.status}).`);
+				}
+				const payload = (await response.json()) as SummarySearchIndexPayload;
+				if (!Array.isArray(payload.entries)) {
+					throw new Error('El índice de resúmenes no tiene el formato esperado.');
+				}
+				summarySearchIndex = payload.entries;
+				return payload.entries;
+			})
+			.finally(() => {
+				summarySearchIndexPromise = null;
+			});
+
+		return summarySearchIndexPromise;
+	};
+
+	const searchSummaryIndex = (
+		index: SummarySearchIndexEntry[],
+		terms: string[],
+		offset: number,
+		limit: number
+	): { total: number; hasMore: boolean; results: SummarySearchResult[] } => {
+		const results: SummarySearchResult[] = [];
+		let matchedCount = 0;
+
+		for (const entry of index) {
+			if (!terms.every((term) => entry.normalizedSummaryText.includes(term))) continue;
+
+			const snippets = makeSnippets(entry.summaryText, terms);
+			if (snippets.length !== terms.length) continue;
+
+			if (matchedCount >= offset && results.length < limit) {
+				results.push({
+					slug: entry.slug,
+					title: entry.displayTitle,
+					genre: entry.genre,
+					traditional: entry.traditional,
+					snippets
+				});
+			}
+
+			matchedCount += 1;
+		}
+
+		return {
+			total: matchedCount,
+			hasMore: offset + results.length < matchedCount,
+			results
+		};
+	};
 
 	const formatNameList = (names: string[]): string => {
 		if (names.length === 0) return '';
@@ -120,15 +242,9 @@
 		summarySearchError = '';
 
 		try {
-			const params = new URLSearchParams({
-				q: cleanQuery,
-				offset: String(offset),
-				limit: String(SUMMARY_SEARCH_PAGE_SIZE),
-				shape: 'snippets-v2'
-			});
-			const response = await fetch(`/api/resumenes/search?${params.toString()}`);
-			if (!response.ok) throw new Error(`No se pudo buscar en los resúmenes (${response.status}).`);
-			const payload = (await response.json()) as SummarySearchPayload;
+			const index = await loadSummarySearchIndex();
+			const terms = splitSearchTerms(cleanQuery);
+			const payload = searchSummaryIndex(index, terms, offset, SUMMARY_SEARCH_PAGE_SIZE);
 			if (requestId !== summarySearchRequestId) return;
 			summarySearchResults = append ? [...summarySearchResults, ...payload.results] : payload.results;
 			summarySearchTotal = payload.total;
@@ -184,25 +300,6 @@
 		event.preventDefault();
 		addSummarySearchTerm();
 	};
-
-	const warmupSummarySearchIndex = (): void => {
-		void fetch('/api/resumenes/search?warmup=1', {
-			cache: 'no-store',
-			keepalive: true
-		}).catch(() => {
-			// El precalentamiento no debe bloquear ni mostrar error: la búsqueda normal lo reintentará.
-		});
-	};
-
-	onMount(() => {
-		if ('requestIdleCallback' in window) {
-			const idleCallback = window.requestIdleCallback(warmupSummarySearchIndex, { timeout: 1800 });
-			return () => window.cancelIdleCallback(idleCallback);
-		}
-
-		const timeout = globalThis.setTimeout(warmupSummarySearchIndex, 450);
-		return () => globalThis.clearTimeout(timeout);
-	});
 
 	$effect(() => {
 		if (!browser) return;

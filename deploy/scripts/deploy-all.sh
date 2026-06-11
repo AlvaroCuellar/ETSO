@@ -15,16 +15,19 @@ fi
 
 echo "==> Iniciando despliegue completo"
 
-echo "==> Paso 1/4: comprobación del entorno"
+echo "==> Paso 1/5: comprobacion del entorno"
 bash "$ROOT_DIR/deploy/scripts/check-deploy-env.sh"
 
-echo "==> Paso 2/4: generación del índice de búsqueda"
+echo "==> Paso 2/5: generacion del indice de busqueda"
 bash "$ROOT_DIR/deploy/scripts/build-search-index.sh"
 
-echo "==> Paso 3/4: sincronización R2"
+echo "==> Paso 3/5: generacion del indice de busqueda de resumenes"
+bash "$ROOT_DIR/deploy/scripts/build-summary-search-index.sh"
+
+echo "==> Paso 4/5: sincronizacion R2"
 bash "$ROOT_DIR/deploy/scripts/sync-r2.sh"
 
-echo "==> Paso 4/4: reemplazo Turso"
+echo "==> Paso 5/5: reemplazo Turso"
 if [ "${DRY_RUN:-false}" = "true" ]; then
   echo "==> DRY_RUN=true: no se reemplaza Turso"
 else

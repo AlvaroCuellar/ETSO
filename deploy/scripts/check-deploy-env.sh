@@ -71,7 +71,8 @@ fi
 : "${SQLITE_LOCAL_PATH:?Falta SQLITE_LOCAL_PATH en .env.deploy}"
 
 require_dir "${SEARCH_INDEX_INPUT_PATH:-deploy/input/private-assets/texts}"
-require_dir "deploy/input/public-assets/resumenes"
+require_dir "${SUMMARY_INDEX_INPUT_PATH:-deploy/input/public-assets/resumenes}"
+require_file "${SUMMARY_INDEX_SQLITE_PATH:-${SQLITE_LOCAL_PATH:-deploy/input/turso/etso.sqlite}}"
 if [ "${DRY_RUN:-false}" != "true" ]; then
   require_file "$SQLITE_LOCAL_PATH"
 fi

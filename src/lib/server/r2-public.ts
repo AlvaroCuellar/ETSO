@@ -1,3 +1,4 @@
+import { dev } from '$app/environment';
 import { env as publicEnv } from '$env/dynamic/public';
 
 const stripTrailingSlash = (value: string): string => value.replace(/\/+$/, '');
@@ -23,6 +24,15 @@ export const getTexoroIndexBaseUrl = (): string =>
 
 export const getSummariesBaseUrl = (): string =>
 	stripTrailingSlash(publicEnv.PUBLIC_SUMMARIES_BASE_URL || joinUrl(getPublicR2BaseUrl(), 'resumenes'));
+
+export const getPublicSummaryAssetUrl = (relativePath: string): string => {
+	const cleanPath = trimSlashes(relativePath);
+	if (!cleanPath || cleanPath.includes('..')) {
+		throw new Error('Ruta publica R2 invalida.');
+	}
+	if (dev) return `/api/r2-public/resumenes/${encodePath(cleanPath)}`;
+	return `${getSummariesBaseUrl()}/${encodePath(cleanPath)}`;
+};
 
 export const fetchPublicR2Json = async <T>(baseUrl: string, relativePath: string): Promise<T | null> => {
 	const cleanPath = trimSlashes(relativePath);

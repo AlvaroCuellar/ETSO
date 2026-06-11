@@ -94,7 +94,12 @@ const TURSO_QUERY_LOG_ENABLED = parseBooleanFlag(env.TURSO_QUERY_LOG);
 const TURSO_QUERY_SAMPLE_RATE = parseSampleRate(env.TURSO_QUERY_SAMPLE_RATE, 0.1);
 const TURSO_QUERY_LARGE_RESULT_ROWS = parsePositiveInteger(env.TURSO_QUERY_LARGE_RESULT_ROWS, 500);
 const SLOW_SNAPSHOT_LOG_MS = 1200;
-const LOCAL_CATALOG_SQLITE_PATH = 'data/sqlite/etso-prueba.sqlite';
+const LOCAL_CATALOG_SQLITE_PATHS = [
+	env.LOCAL_CATALOG_SQLITE_PATH?.trim(),
+	env.SQLITE_LOCAL_PATH?.trim(),
+	'deploy/input/turso/etso.sqlite',
+	'data/sqlite/etso-prueba.sqlite'
+].filter((path): path is string => Boolean(path));
 const EMPTY_SHORT_SUMMARY = 'Sin resumen breve disponible.';
 const WORK_SLUG_PATTERN = /^[a-z0-9-]+$/;
 
@@ -507,14 +512,20 @@ const assertTursoConfig = (): { databaseUrl: string; authToken: string } => {
 	};
 };
 
-const canUseLocalCatalogFallback = (): boolean => dev && existsSync(LOCAL_CATALOG_SQLITE_PATH);
+const getLocalCatalogFallbackPath = (): string | null => {
+	if (!dev) return null;
+	return LOCAL_CATALOG_SQLITE_PATHS.find((path) => existsSync(path)) ?? null;
+};
+
+const canUseLocalCatalogFallback = (): boolean => getLocalCatalogFallbackPath() !== null;
 
 const warnLocalCatalogFallback = (cause: unknown): void => {
 	if (warnedLocalCatalogFallback) return;
 	warnedLocalCatalogFallback = true;
 	const message = cause instanceof Error ? cause.message : String(cause);
+	const localPath = getLocalCatalogFallbackPath();
 	console.warn(
-		`No se pudo leer el catalogo desde Turso (${message}). Usando SQLite local de desarrollo: ${LOCAL_CATALOG_SQLITE_PATH}.`
+		`No se pudo leer el catalogo desde Turso (${message}). Usando SQLite local de desarrollo: ${localPath}.`
 	);
 };
 
@@ -528,9 +539,13 @@ const createConfiguredDbClient = (): ReturnType<typeof createClient> => {
 };
 
 const createLocalFallbackDbClient = (): ReturnType<typeof createClient> => {
+	const localPath = getLocalCatalogFallbackPath();
+	if (!localPath) {
+		throw new Error('No hay SQLite local disponible para el fallback de desarrollo.');
+	}
 	dbClientMode = 'local-fallback';
 	return createClient({
-		url: `file:${LOCAL_CATALOG_SQLITE_PATH}`,
+		url: `file:${localPath}`,
 		authToken: 'local'
 	});
 };

@@ -7,7 +7,7 @@
 	import InlineActionButton from '$lib/components/ui/InlineActionButton.svelte';
 	import PageHero from '$lib/components/ui/PageHero.svelte';
 	import SeoHead from '$lib/components/seo/SeoHead.svelte';
-	import informeBg from '$lib/assets/heros/informes.png';
+	import informeBg from '$lib/assets/heros/informes.webp';
 	import { ambitoLabels, ambitos, type Ambito, type AttributionSet, type ObraTableRow } from '$lib/domain/catalog';
 	import {
 		formatDisplayWorkTitle,

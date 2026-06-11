@@ -16,7 +16,7 @@
 	import {
 		type AttributionSet
 	} from '$lib/domain/catalog';
-	import fondoLogo from '$lib/assets/fondos/fondo-logo.png';
+	import fondoLogo from '$lib/assets/fondos/fondo-logo.webp';
 	import BookOpen from 'lucide-svelte/icons/book-open';
 	import ChevronDown from 'lucide-svelte/icons/chevron-down';
 	import ChevronLeft from 'lucide-svelte/icons/chevron-left';

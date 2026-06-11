@@ -8,11 +8,11 @@
 	import texoroHero from '$lib/assets/heros/texoro.webp';
 	import bitesoHero from '$lib/assets/heros/biblioteca.webp';
 	import resumenesHero from '$lib/assets/heros/resumenes.webp';
-	import grafoImage from '$lib/assets/heros/grafo.png';
+	import grafoImage from '$lib/assets/heros/grafo.webp';
 	import redEstilometricaImage from '$lib/assets/heros/red-estilometrica.svg';
-	import informesImage from '$lib/assets/heros/informes.png';
+	import informesImage from '$lib/assets/heros/informes.webp';
 	import librosHero from '$lib/assets/heros/libros.webp';
-	import fondoEscritura from '$lib/assets/fondos/fondo-escritura.png';
+	import fondoEscritura from '$lib/assets/fondos/fondo-escritura.webp';
 	import { createWebPageJsonLd, SITE_NAME } from '$lib/seo';
 
 	interface HomeSlide {
@@ -80,7 +80,7 @@
 			title: 'Álvaro Cuéllar',
 			organizations: ['Universitat Autònoma de Barcelona'],
 			summary: '',
-			image: '/images/colaboradores/FotoAlvaroCuellar.png',
+			image: '/images/colaboradores/FotoAlvaroCuellar.webp',
 			links: [
 				{
 					label: 'Correo de Álvaro Cuéllar',
@@ -96,7 +96,7 @@
 			title: 'Germán Vega García-Luengos',
 			organizations: ['Universidad de Valladolid'],
 			summary: '',
-			image: '/images/colaboradores/FotoGermanVega.jpg',
+			image: '/images/colaboradores/FotoGermanVega.webp',
 			links: [
 				{
 					label: 'Correo de Germán Vega García-Luengos',

@@ -10,7 +10,7 @@
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import FeatureHeroSection from '$lib/components/ui/FeatureHeroSection.svelte';
 	import HeroStatCard from '$lib/components/ui/HeroStatCard.svelte';
-	import fondoLogo from '$lib/assets/fondos/fondo-logo.png';
+	import fondoLogo from '$lib/assets/fondos/fondo-logo.webp';
 	import { getClientMemoryCache, loadClientMemoryCache } from '$lib/utils/client-memory-cache';
 	import BookOpen from 'lucide-svelte/icons/book-open';
 	import ChevronDown from 'lucide-svelte/icons/chevron-down';

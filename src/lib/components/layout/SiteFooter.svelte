@@ -1,6 +1,6 @@
 <script lang="ts">
-	import logoEtso from '$lib/assets/logos/etso-logo-light.png';
-	import thaliaLogo from '$lib/assets/logos/thalia.png';
+	import logoEtso from '$lib/assets/logos/etso-logo-light.svg';
+	import thaliaLogo from '$lib/assets/logos/thalia.webp';
 
 	const primaryNavItems = [
 		{ href: '/examen-autorias', label: 'Examen de autorías' },

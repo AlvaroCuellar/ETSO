@@ -3,7 +3,7 @@
 	import FeatureHeroSection from '$lib/components/ui/FeatureHeroSection.svelte';
 	import HeroStatCard from '$lib/components/ui/HeroStatCard.svelte';
 	import SeoHead from '$lib/components/seo/SeoHead.svelte';
-	import fondoLogo from '$lib/assets/fondos/fondo-logo.png';
+	import fondoLogo from '$lib/assets/fondos/fondo-logo.webp';
 	import { normalizePlainText } from '$lib/search/normalize';
 	import {
 		buildWorkTitleSearchText,

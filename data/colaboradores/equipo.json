@@ -29,7 +29,7 @@
               "href": "https://www.alvarocuellar.com/"
             }
           ],
-          "image": "/images/colaboradores/FotoAlvaroCuellar.png"
+          "image": "/images/colaboradores/FotoAlvaroCuellar.webp"
         },
         {
           "id": "team-german-vega-garcia-luengos",
@@ -49,7 +49,7 @@
               "href": "mailto:german.vega@uva.es"
             }
           ],
-          "image": "/images/colaboradores/FotoGermanVega.jpg"
+          "image": "/images/colaboradores/FotoGermanVega.webp"
         }
       ]
     },
@@ -3718,7 +3718,7 @@
           "organizations": [],
           "tags": [],
           "links": [],
-          "image": "/images/colaboradores/open-corpora/etso-colaboradores-artelope.png"
+          "image": "/images/colaboradores/open-corpora/etso-colaboradores-artelope.webp"
         },
         {
           "id": "resource-association-for-hispanic-classical-theater",
@@ -3731,7 +3731,7 @@
           "organizations": [],
           "tags": [],
           "links": [],
-          "image": "/images/colaboradores/open-corpora/etso-colaboradores-Association-for-Hispanic-Classical-Theater.png"
+          "image": "/images/colaboradores/open-corpora/etso-colaboradores-Association-for-Hispanic-Classical-Theater.webp"
         },
         {
           "id": "resource-aula-biblioteca-mira-de-amescua",
@@ -3744,7 +3744,7 @@
           "organizations": [],
           "tags": [],
           "links": [],
-          "image": "/images/colaboradores/open-corpora/aula-biblioteca-mira-de-amescua.jpeg"
+          "image": "/images/colaboradores/open-corpora/aula-biblioteca-mira-de-amescua.webp"
         },
         {
           "id": "resource-canon-60",
@@ -3757,7 +3757,7 @@
           "organizations": [],
           "tags": [],
           "links": [],
-          "image": "/images/colaboradores/open-corpora/TC-12.png"
+          "image": "/images/colaboradores/open-corpora/TC-12.webp"
         },
         {
           "id": "resource-cervantes-virtual",
@@ -3770,7 +3770,7 @@
           "organizations": [],
           "tags": [],
           "links": [],
-          "image": "/images/colaboradores/open-corpora/etso-colaboradores-Cervantes-Virtual.png"
+          "image": "/images/colaboradores/open-corpora/etso-colaboradores-Cervantes-Virtual.webp"
         },
         {
           "id": "resource-moretianos",
@@ -3783,7 +3783,7 @@
           "organizations": [],
           "tags": [],
           "links": [],
-          "image": "/images/colaboradores/open-corpora/etso-colaboradores-Moretianos.png"
+          "image": "/images/colaboradores/open-corpora/etso-colaboradores-Moretianos.webp"
         },
         {
           "id": "resource-repositorios-universitarios",
@@ -3796,7 +3796,7 @@
           "organizations": [],
           "tags": [],
           "links": [],
-          "image": "/images/colaboradores/open-corpora/repositorios-universitarios.jpeg"
+          "image": "/images/colaboradores/open-corpora/repositorios-universitarios.webp"
         },
         {
           "id": "resource-teseo",
@@ -3809,7 +3809,7 @@
           "organizations": [],
           "tags": [],
           "links": [],
-          "image": "/images/colaboradores/open-corpora/etso-colaboradores-TESEO.png"
+          "image": "/images/colaboradores/open-corpora/etso-colaboradores-TESEO.webp"
         }
       ]
     },
@@ -3830,7 +3830,7 @@
           "organizations": [],
           "tags": [],
           "links": [],
-          "image": "/images/colaboradores/acknowledgments/etso-colaboradores-University-of-Kentucky-Center-for-Computational-Sciences.png"
+          "image": "/images/colaboradores/acknowledgments/etso-colaboradores-University-of-Kentucky-Center-for-Computational-Sciences.webp"
         }
       ]
     }

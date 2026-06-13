@@ -19,7 +19,7 @@
 		type ObraTableFilterFlags,
 		type ObraTableRow
 	} from '$lib/domain/catalog';
-	import { DEFAULT_LOCALE, type Locale } from '$lib/i18n';
+	import { DEFAULT_LOCALE, translateText, type Locale } from '$lib/i18n';
 	import { buildWorkTitleSearchText, formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
 	import { renderInlineItalicsHtml } from '$lib/utils/render-inline-italics-html';
 
@@ -66,6 +66,7 @@
 		ar: { and: 'و', or: 'أو' }
 	};
 	const logicOperators = $derived(logicOperatorLabels[locale] ?? logicOperatorLabels.es);
+	const t = $derived.by(() => (value: string): string => translateText(locale, value));
 	const isMobileTableView = $derived(mobileView === 'table');
 
 	const resultsShellClass = 'works-table-results min-w-0 w-full max-w-full';
@@ -778,7 +779,7 @@
 							</div>
 
 							<div class={mobileCardFieldClass}>
-								<span class={mobileCardLabelClass}>Recursos</span>
+								<span class={mobileCardLabelClass}>{t('Recursos')}</span>
 								{@render resourceActions(row, true)}
 							</div>
 						</div>
@@ -841,7 +842,7 @@
 						}`}
 						scope="col"
 					>
-						Recursos
+						{t('Recursos')}
 					</th>
 				</tr>
 			</thead>
@@ -902,7 +903,7 @@
 							{@render genreValue(row)}
 						</td>
 
-						<td class={dataCellClass} data-label="Recursos">
+						<td class={dataCellClass} data-label={t('Recursos')}>
 							{@render resourceActions(row, false)}
 						</td>
 					</tr>

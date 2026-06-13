@@ -555,6 +555,7 @@ const esToEn: Record<string, string> = {
 	'Resultados': 'Results',
 	'Resultados de búsqueda': 'Search results',
 	'Referencias': 'References',
+	'Recursos': 'Resources',
 	'Referencias bibliográficas recomendadas para citar ETSO, TEXORO, CETSO y los recursos del proyecto.':
 		'Recommended bibliographic references for citing ETSO, TEXORO, CETSO, and the project resources.',
 	'Para poder seguir nuestra labor es importante que el trabajo del proyecto sea citado. Por favor, incluye en la bibliografía alguna de estas referencias si el portal te ha ayudado en tu investigación.':
@@ -948,6 +949,7 @@ const esToFr: Record<string, string> = {
 	'Resultados': 'Résultats',
 	'Resultados de búsqueda': 'Résultats de recherche',
 	'Referencias': 'Références',
+	'Recursos': 'Ressources',
 	'Referencias bibliográficas recomendadas para citar ETSO, TEXORO, CETSO y los recursos del proyecto.':
 		'Références bibliographiques recommandées pour citer ETSO, TEXORO, CETSO et les ressources du projet.',
 	'Para poder seguir nuestra labor es importante que el trabajo del proyecto sea citado. Por favor, incluye en la bibliografía alguna de estas referencias si el portal te ha ayudado en tu investigación.':

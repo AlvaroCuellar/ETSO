@@ -157,6 +157,53 @@
 		}
 	} as const;
 	const labels = $derived(bitesoLabelsByLocale[data.locale] ?? bitesoLabelsByLocale.es);
+	const bitesoIntroByLocale = {
+		es: [
+			'BITESO ofrece acceso en abierto a textos digitales del Siglo de Oro conseguidos, en su mayoría, a partir de transcripciones automáticas de impresos y manuscritos antiguos. La colección reúne obras producidas para los análisis estilométricos de autoría y materiales incorporados gracias a la colaboración de especialistas, colegas y estudiantes.',
+			'Los textos deben entenderse como versiones de trabajo: no sustituyen a las ediciones críticas, pueden contener errores de transcripción y presentan una calidad desigual según la fuente y el estado de revisión. En su estado actual, se ofrecen sin nombres de personajes ni acotaciones escénicas. La colección permanece abierta a correcciones, ampliaciones y mejoras.'
+		],
+		en: [
+			'BITESO provides open access to digital texts from the Spanish Golden Age, mostly obtained from automatic transcriptions of old printed books and manuscripts. The collection brings together works produced for stylometric authorship analyses and materials incorporated thanks to the collaboration of specialists, colleagues and students.',
+			'The texts should be understood as working texts: they do not replace critical editions, may contain transcription errors and have uneven quality depending on the source and the state of review. At present, they are offered without character names or stage directions. The collection remains open to corrections, additions and improvements.'
+		],
+		fr: [
+			'BITESO offre un accès ouvert à des textes numériques du Siècle d’or espagnol, obtenus pour la plupart à partir de transcriptions automatiques d’imprimés anciens et de manuscrits. La collection réunit des œuvres produites pour les analyses stylométriques d’attribution et des matériaux intégrés grâce à la collaboration de spécialistes, collègues et étudiants.',
+			'Ces textes doivent être compris comme des versions de travail : ils ne remplacent pas les éditions critiques, peuvent contenir des erreurs de transcription et présentent une qualité inégale selon la source et l’état de révision. Dans leur état actuel, ils sont proposés sans noms de personnages ni didascalies. La collection reste ouverte aux corrections, aux ajouts et aux améliorations.'
+		],
+		pt: [
+			'BITESO oferece acesso aberto a textos digitais do Século de Ouro espanhol, obtidos em sua maioria a partir de transcrições automáticas de impressos antigos e manuscritos. A coleção reúne obras produzidas para análises estilométricas de atribuição de autoria e materiais incorporados graças à colaboração de especialistas, colegas e estudantes.',
+			'Os textos devem ser entendidos como versões de trabalho: não substituem as edições críticas, podem conter erros de transcrição e apresentam qualidade desigual conforme a fonte e o estado de revisão. No estado atual, são oferecidos sem nomes dos personagens nem didascálias. A coleção permanece aberta a correções, ampliações e melhorias.'
+		],
+		it: [
+			'BITESO offre accesso aperto a testi digitali del Secolo d’Oro spagnolo, ottenuti per lo più da trascrizioni automatiche di antichi testi a stampa e manoscritti. La collezione riunisce opere prodotte per analisi stilometriche di attribuzione d’autore e materiali incorporati grazie alla collaborazione di specialisti, colleghi e studenti.',
+			'I testi devono essere intesi come versioni di lavoro: non sostituiscono le edizioni critiche, possono contenere errori di trascrizione e presentano una qualità diseguale a seconda della fonte e dello stato di revisione. Nello stato attuale sono offerti senza nomi dei personaggi né didascalie. La collezione resta aperta a correzioni, ampliamenti e miglioramenti.'
+		],
+		de: [
+			'BITESO bietet offenen Zugang zu digitalen Texten des spanischen Siglo de Oro, die größtenteils aus automatischen Transkriptionen alter Drucke und Handschriften gewonnen wurden. Die Sammlung vereint Werke, die für stilometrische Autorschaftsanalysen erstellt wurden, sowie Materialien, die dank der Zusammenarbeit von Fachleuten, Kolleginnen und Kollegen und Studierenden aufgenommen wurden.',
+			'Die Texte sind als Arbeitsfassungen zu verstehen: Sie ersetzen keine kritischen Ausgaben, können Transkriptionsfehler enthalten und weisen je nach Quelle und Bearbeitungsstand eine unterschiedliche Qualität auf. Derzeit werden sie ohne Figurennamen und Bühnenanweisungen angeboten. Die Sammlung bleibt offen für Korrekturen, Erweiterungen und Verbesserungen.'
+		],
+		zh: [
+			'BITESO 开放提供西班牙黄金时代数字文本，这些文本大多来自古代印刷本和手稿的自动转录。该合集包括为文体计量作者归属分析制作的作品，也包括在专家、同事和学生协作下纳入的材料。',
+			'这些文本应被视为工作文本：它们不能替代校勘本，可能包含转录错误，并且质量会因来源和校订状态而不同。目前文本不含人物姓名和舞台说明。该合集仍将继续接受修正、扩充和改进。'
+		],
+		ja: [
+			'BITESO は、主に古い印刷本や写本の自動転写から得られたスペイン黄金世紀のデジタルテキストをオープンアクセスで提供します。このコレクションには、文体計量による著者帰属分析のために作成された作品と、専門家、同僚、学生の協力によって取り込まれた資料が含まれます。',
+			'これらのテキストは作業用テキストとして理解する必要があります。校訂版に代わるものではなく、転写誤りを含む可能性があり、資料や確認状況によって品質にも差があります。現時点では、登場人物名やト書きは含まれていません。コレクションは今後も修正、追加、改善に開かれています。'
+		],
+		ko: [
+			'BITESO는 주로 고인쇄본과 필사본의 자동 전사에서 얻은 스페인 황금세기 디지털 텍스트를 오픈 액세스로 제공합니다. 이 컬렉션은 문체계량 저자 귀속 분석을 위해 제작된 작품과 전문가, 동료, 학생의 협력으로 포함된 자료를 모았습니다.',
+			'이 텍스트들은 작업용 텍스트로 이해해야 합니다. 비평판을 대체하지 않으며, 전사 오류가 있을 수 있고 출처와 검토 상태에 따라 품질도 고르지 않습니다. 현재는 등장인물 이름과 무대 지시문 없이 제공됩니다. 컬렉션은 앞으로도 수정, 확장, 개선에 열려 있습니다.'
+		],
+		ru: [
+			'BITESO предоставляет открытый доступ к цифровым текстам испанского Золотого века, в основном полученным из автоматических транскрипций старопечатных изданий и рукописей. Коллекция объединяет произведения, подготовленные для стилометрического анализа авторства, и материалы, включенные благодаря сотрудничеству специалистов, коллег и студентов.',
+			'Эти тексты следует понимать как рабочие версии: они не заменяют критические издания, могут содержать ошибки транскрипции и имеют неодинаковое качество в зависимости от источника и степени проверки. В текущем виде они предлагаются без имен персонажей и сценических ремарок. Коллекция остается открытой для исправлений, расширений и улучшений.'
+		],
+		ar: [
+			'توفّر BITESO وصولًا مفتوحًا إلى نصوص رقمية من العصر الذهبي الإسباني، جرى الحصول على معظمها من النسخ الآلي للمطبوعات القديمة والمخطوطات. وتجمع المجموعة أعمالًا أُنتجت لتحليلات إسناد التأليف بالقياس الأسلوبي ومواد أُدرجت بفضل تعاون المتخصصين والزملاء والطلاب.',
+			'ينبغي فهم هذه النصوص بوصفها نسخ عمل: فهي لا تحل محل الطبعات النقدية، وقد تتضمن أخطاء في النسخ، كما تتفاوت جودتها بحسب المصدر وحالة المراجعة. وفي حالتها الحالية تُقدَّم من دون أسماء الشخصيات أو الإرشادات المسرحية. وتظل المجموعة مفتوحة للتصحيحات والإضافات والتحسينات.'
+		]
+	} as const;
+	const bitesoIntro = $derived(bitesoIntroByLocale[data.locale] ?? bitesoIntroByLocale.es);
 
 	const normalizeFilterText = (value: string): string =>
 		normalizePlainText(value, false).replace(/\s+/g, ' ').trim();
@@ -205,12 +252,11 @@
 		backgroundImage={fondoLogo}
 		statsAriaLabel="Indicadores de BITESO"
 	>
-		<p class="mt-[1.8rem] mb-0 max-w-[64ch] font-reading text-[1.01rem] leading-[1.62] text-text-main">
-			BITESO ofrece <b>acceso en abierto a textos digitales del Siglo de Oro</b> conseguidos, en su mayoría, a partir de transcripciones automáticas de impresos y manuscritos antiguos. La colección reúne obras producidas para los análisis estilométricos de autoría y materiales incorporados gracias a la colaboración de especialistas, colegas y estudiantes.
-		</p>
-		<p class="mt-[1.25rem] mb-0 max-w-[64ch] font-reading text-[1.01rem] leading-[1.62] text-text-main">
-			Los textos deben <b>entenderse como versiones de trabajo</b>: no sustituyen a las ediciones críticas, pueden contener errores de transcripción y presentan una calidad desigual según la fuente y el estado de revisión. En su estado actual, se ofrecen sin nombres de personajes ni acotaciones escénicas. La colección permanece abierta a correcciones, ampliaciones y mejoras.
-		</p>
+			<div data-i18n-skip>
+				{#each bitesoIntro as paragraph, index}
+					<p class={`${index === 0 ? 'mt-[1.8rem]' : 'mt-[1.25rem]'} mb-0 max-w-[64ch] font-reading text-[1.01rem] leading-[1.62] text-text-main`} dir={data.locale === 'ar' ? 'rtl' : undefined}>{paragraph}</p>
+				{/each}
+			</div>
 		
 		{#snippet stats()}
 			<HeroStatCard

@@ -768,7 +768,6 @@ const esToEn: Record<string, string> = {
 	'Biblioteca Textual Siglo de Oro': 'Golden Age Textual Library',
 	'Biblioteca Textual Siglo de Oro: textos digitales en acceso abierto para lectura, consulta e investigación.':
 		'Golden Age Textual Library: open-access digital texts for reading, consultation, and research.',
-	'BITESO ofrece': 'BITESO provides',
 	'acceso en abierto a textos digitales del Siglo de Oro': 'open access to Golden Age digital texts',
 	'conseguidos, en su mayoría, a partir de transcripciones automáticas de impresos y manuscritos antiguos. La colección reúne obras producidas para los análisis estilométricos de autoría y materiales incorporados gracias a la colaboración de especialistas, colegas y estudiantes.':
 		'obtained mostly from automatic transcriptions of old printed books and manuscripts. The collection brings together works produced for stylometric authorship analyses and materials incorporated through collaboration with specialists, colleagues, and students.',
@@ -815,8 +814,6 @@ const esToEn: Record<string, string> = {
 		'authorship problems posed by Spanish Golden Age theatre. This portal aims to offer analyses that',
 	'puedan arrojar luz sobre las atribuciones de la vasta producción teatral del periodo aurisecular.':
 		'can shed light on attributions across the vast theatrical production of the Golden Age.',
-	'Gracias a la estilometría podemos averiguar, en una de sus más útiles funcionalidades, qué obras tienen':
-		'Thanks to stylometry, one of its most useful functions allows us to identify which works have',
 	'frecuencias en léxico más cercanas a las del texto que nos interesa en el corpus del que dispongamos.':
 		'lexical frequencies closest to those of the text under study within the available corpus.',
 	'Cada autor usa las palabras en unas proporciones distintas, por lo que las obras suelen relacionarse en':
@@ -840,13 +837,7 @@ const esToEn: Record<string, string> = {
 	'Humanidades digitales': 'Digital humanities',
 	'Estilometría, Inteligencia Artificial, Transcripción automática (HTR)...':
 		'Stylometry, Artificial Intelligence, automatic transcription (HTR)...',
-	'En ETSO empleamos diferentes técnicas informáticas que nos permiten trabajar los textos como nunca':
-		'At ETSO we use different computational techniques that allow us to work with texts as never',
-	'antes había sido posible.': 'before possible.',
-	'Gracias a': 'Thanks to',
-	' (Maciej Eder, Jan Rybicki y Mike Kestemont) podemos relacionar los textos por sus usos': ' (Maciej Eder, Jan Rybicki, and Mike Kestemont) lets us relate texts through their lexical usage.',
 	'podemos relacionar los textos por sus usos': 'we can relate texts through their',
-	'léxicos.': 'lexical usage.',
 	'nos posibilita transcribir y modernizar': 'allows us to transcribe and modernize',
 	'impresos y manuscritos antiguos automáticamente con un alto grado de acierto.':
 		'old printed books and manuscripts automatically with a high degree of accuracy.',
@@ -866,8 +857,6 @@ const esToEn: Record<string, string> = {
 		'In their current state, they do not include character names or stage directions, but only the clean verse text of each work.',
 	'Sin embargo, constituyen materiales útiles para la lectura, la consulta, la docencia, la investigación filológica y la exploración computacional del patrimonio literario aurisecular.':
 		'Even so, they are useful materials for reading, consultation, teaching, philological research, and computational exploration of Golden Age literary heritage.',
-	'Con este recurso se quiere favorecer la circulación abierta de estos materiales y facilitar nuevas formas de acceso al teatro y a la literatura del Siglo de Oro.':
-		'This resource seeks to encourage open circulation of these materials and enable new forms of access to Golden Age theatre and literature.',
 	'¿Cómo te podemos ayudar? ¿Cómo nos puedes ayudar?': 'How can we help you? How can you help us?',
 	'Podemos ayudarte a explorar los distintos recursos disponibles para el estudio del teatro y la literatura del Siglo de Oro.':
 		'We can help you explore the different resources available for the study of Golden Age theatre and literature.',
@@ -875,8 +864,6 @@ const esToEn: Record<string, string> = {
 		'In Examen de autorías you can consult stylometric reports for the works included in the corpus, with clues about possible authorship relations.',
 	'TEXORO permite realizar búsquedas textuales sobre cerca de 3000 obras y más de 38 millones de palabras, con opciones para localizar palabras, frases, patrones, combinaciones de términos y relaciones de proximidad.':
 		'TEXORO enables text searches across nearly 3,000 works and more than 38 million words, with options for locating words, phrases, patterns, term combinations, and proximity relations.',
-	'BITESO ofrece acceso abierto a textos digitales procedentes, en buena medida, de transcripciones automáticas de impresos y manuscritos.':
-		'BITESO offers open access to digital texts derived largely from automatic transcriptions of printed books and manuscripts.',
 	'Además, los resúmenes automáticos permiten obtener una primera orientación sobre el argumento y el contenido de las obras, siempre como ayuda inicial y no como sustituto de la lectura o del análisis filológico.':
 		'Automatic summaries also provide an initial orientation to the plot and contents of the works, always as a preliminary aid and not as a substitute for reading or philological analysis.',
 	'También puedes colaborar con nosotros enviándonos textos del Siglo de Oro que todavía no estén incorporados a nuestros recursos, información bibliográfica, noticias sobre atribuciones, datos sobre testimonios o cualquier material que pueda mejorar el conjunto.':
@@ -888,16 +875,12 @@ const esToEn: Record<string, string> = {
 	'Citar nuestros recursos en publicaciones, trabajos académicos o actividades docentes también nos ayuda a difundir el proyecto y a obtener el apoyo necesario para mantenerlo y ampliarlo.':
 		'Citing our resources in publications, academic work, or teaching activities also helps us disseminate the project and obtain the support needed to maintain and expand it.',
 	'Contacta con nosotros': 'Contact us',
-	'ETSO es un proyecto de': 'ETSO is a project by',
-	'TEXORO es una plataforma de búsqueda textual que permite':
-		'TEXORO is a textual search platform that allows users to',
 	'consultar de forma unificada un amplio corpus de obras del Siglo de Oro':
 		'search a large corpus of Golden Age works in a unified way',
 	'El recurso reúne cerca de 3000 textos, con más de 38 millones de palabras indexadas y obras de más de 400 autores, y ofrece distintas posibilidades para explorar el patrimonio literario aurisecular desde criterios léxicos, textuales y documentales.':
 		'The resource brings together nearly 3,000 texts, with more than 38 million indexed words and works by more than 400 authors, and offers several ways to explore Golden Age literary heritage through lexical, textual, and documentary criteria.',
 	'El buscador permite localizar palabras, frases exactas y patrones con comodines, así como realizar consultas avanzadas mediante la combinación de términos, condiciones de proximidad y filtros por título, género, atribución tradicional, atribución estilométrica o estado del texto.':
 		'The search engine can locate words, exact phrases, and wildcard patterns, and it also supports advanced queries that combine terms, proximity conditions, and filters by title, genre, traditional attribution, stylometric attribution, or text status.',
-	'De este modo, TEXORO facilita tanto': 'In this way, TEXORO supports both',
 	'búsquedas puntuales como exploraciones más complejas':
 		'targeted searches and more complex explorations',
 	'sobre la presencia, distribución y relación de palabras o expresiones en el conjunto del corpus.':
@@ -1164,7 +1147,6 @@ const esToFr: Record<string, string> = {
 	'Biblioteca Textual Siglo de Oro': "Bibliothèque textuelle du Siècle d'or",
 	'Biblioteca Textual Siglo de Oro: textos digitales en acceso abierto para lectura, consulta e investigación.':
 		"Bibliothèque textuelle du Siècle d'or : textes numériques en accès ouvert pour la lecture, la consultation et la recherche.",
-	'BITESO ofrece': 'BITESO offre',
 	'acceso en abierto a textos digitales del Siglo de Oro': "un accès ouvert à des textes numériques du Siècle d'or",
 	'conseguidos, en su mayoría, a partir de transcripciones automáticas de impresos y manuscritos antiguos. La colección reúne obras producidas para los análisis estilométricos de autoría y materiales incorporados gracias a la colaboración de especialistas, colegas y estudiantes.':
 		"obtenus pour la plupart à partir de transcriptions automatiques d'imprimés et de manuscrits anciens. La collection réunit des œuvres produites pour les analyses stylométriques d'attribution et des matériaux intégrés grâce à la collaboration de spécialistes, collègues et étudiants.",
@@ -1211,8 +1193,6 @@ const esToFr: Record<string, string> = {
 		"d'attribution que présente le théâtre espagnol du Siècle d'or. Ce portail vise à offrir des analyses qui",
 	'puedan arrojar luz sobre las atribuciones de la vasta producción teatral del periodo aurisecular.':
 		"puissent éclairer les attributions de la vaste production théâtrale du Siècle d'or.",
-	'Gracias a la estilometría podemos averiguar, en una de sus más útiles funcionalidades, qué obras tienen':
-		"Grâce à la stylométrie, l'une de ses fonctions les plus utiles permet de déterminer quelles œuvres ont",
 	'frecuencias en léxico más cercanas a las del texto que nos interesa en el corpus del que dispongamos.':
 		"des fréquences lexicales plus proches de celles du texte qui nous intéresse dans le corpus disponible.",
 	'Cada autor usa las palabras en unas proporciones distintas, por lo que las obras suelen relacionarse en':
@@ -1236,13 +1216,7 @@ const esToFr: Record<string, string> = {
 	'Humanidades digitales': 'Humanités numériques',
 	'Estilometría, Inteligencia Artificial, Transcripción automática (HTR)...':
 		'Stylométrie, intelligence artificielle, transcription automatique (HTR)...',
-	'En ETSO empleamos diferentes técnicas informáticas que nos permiten trabajar los textos como nunca':
-		'À ETSO, nous utilisons différentes techniques informatiques qui nous permettent de travailler les textes comme jamais',
-	'antes había sido posible.': 'cela n’avait été possible auparavant.',
-	'Gracias a': 'Grâce à',
-	' (Maciej Eder, Jan Rybicki y Mike Kestemont) podemos relacionar los textos por sus usos': ' (Maciej Eder, Jan Rybicki et Mike Kestemont) permet de rapprocher les textes par leurs usages lexicaux.',
 	'podemos relacionar los textos por sus usos': 'nous pouvons relier les textes par leurs usages',
-	'léxicos.': 'lexicaux.',
 	'nos posibilita transcribir y modernizar': 'nous permet de transcrire et de moderniser',
 	'impresos y manuscritos antiguos automáticamente con un alto grado de acierto.':
 		'des imprimés et manuscrits anciens automatiquement avec un haut degré de précision.',
@@ -1262,8 +1236,6 @@ const esToFr: Record<string, string> = {
 		"En outre, dans leur état actuel, ils n'incluent ni les noms des personnages ni les didascalies, mais uniquement les vers nettoyés de chaque œuvre.",
 	'Sin embargo, constituyen materiales útiles para la lectura, la consulta, la docencia, la investigación filológica y la exploración computacional del patrimonio literario aurisecular.':
 		"Ils constituent néanmoins des matériaux utiles pour la lecture, la consultation, l'enseignement, la recherche philologique et l'exploration computationnelle du patrimoine littéraire auriséculaire.",
-	'Con este recurso se quiere favorecer la circulación abierta de estos materiales y facilitar nuevas formas de acceso al teatro y a la literatura del Siglo de Oro.':
-		"Cette ressource vise à favoriser la circulation ouverte de ces matériaux et à faciliter de nouvelles formes d'accès au théâtre et à la littérature du Siècle d'or.",
 	'¿Cómo te podemos ayudar? ¿Cómo nos puedes ayudar?': 'Comment pouvons-nous vous aider ? Comment pouvez-vous nous aider ?',
 	'Podemos ayudarte a explorar los distintos recursos disponibles para el estudio del teatro y la literatura del Siglo de Oro.':
 		"Nous pouvons vous aider à explorer les différentes ressources disponibles pour l'étude du théâtre et de la littérature du Siècle d'or.",
@@ -1271,8 +1243,6 @@ const esToFr: Record<string, string> = {
 		"Dans Examen de autorías, vous pouvez consulter les rapports stylométriques des œuvres intégrées au corpus, avec des indices sur leurs possibles relations d’attribution.",
 	'TEXORO permite realizar búsquedas textuales sobre cerca de 3000 obras y más de 38 millones de palabras, con opciones para localizar palabras, frases, patrones, combinaciones de términos y relaciones de proximidad.':
 		"TEXORO permet d'effectuer des recherches textuelles sur près de 3 000 œuvres et plus de 38 millions de mots, avec des options pour localiser mots, phrases, motifs, combinaisons de termes et relations de proximité.",
-	'BITESO ofrece acceso abierto a textos digitales procedentes, en buena medida, de transcripciones automáticas de impresos y manuscritos.':
-		"BITESO offre un accès ouvert à des textes numériques issus en grande partie de transcriptions automatiques d'imprimés et de manuscrits.",
 	'Además, los resúmenes automáticos permiten obtener una primera orientación sobre el argumento y el contenido de las obras, siempre como ayuda inicial y no como sustituto de la lectura o del análisis filológico.':
 		"Les résumés automatiques permettent aussi d'obtenir une première orientation sur l'intrigue et le contenu des œuvres, toujours comme aide initiale et non comme substitut à la lecture ou à l'analyse philologique.",
 	'También puedes colaborar con nosotros enviándonos textos del Siglo de Oro que todavía no estén incorporados a nuestros recursos, información bibliográfica, noticias sobre atribuciones, datos sobre testimonios o cualquier material que pueda mejorar el conjunto.':
@@ -1284,16 +1254,12 @@ const esToFr: Record<string, string> = {
 	'Citar nuestros recursos en publicaciones, trabajos académicos o actividades docentes también nos ayuda a difundir el proyecto y a obtener el apoyo necesario para mantenerlo y ampliarlo.':
 		"Citer nos ressources dans des publications, travaux académiques ou activités d'enseignement nous aide aussi à diffuser le projet et à obtenir le soutien nécessaire pour le maintenir et l'élargir.",
 	'Contacta con nosotros': 'Contactez-nous',
-	'ETSO es un proyecto de': 'ETSO est un projet de',
-	'TEXORO es una plataforma de búsqueda textual que permite':
-		'TEXORO est une plateforme de recherche textuelle qui permet de',
 	'consultar de forma unificada un amplio corpus de obras del Siglo de Oro':
 		"consulter de manière unifiée un vaste corpus d'œuvres du Siècle d'or",
 	'El recurso reúne cerca de 3000 textos, con más de 38 millones de palabras indexadas y obras de más de 400 autores, y ofrece distintas posibilidades para explorar el patrimonio literario aurisecular desde criterios léxicos, textuales y documentales.':
 		"La ressource rassemble près de 3 000 textes, plus de 38 millions de mots indexés et des œuvres de plus de 400 auteurs, et offre plusieurs façons d'explorer le patrimoine littéraire auriséculaire selon des critères lexicaux, textuels et documentaires.",
 	'El buscador permite localizar palabras, frases exactas y patrones con comodines, así como realizar consultas avanzadas mediante la combinación de términos, condiciones de proximidad y filtros por título, género, atribución tradicional, atribución estilométrica o estado del texto.':
 		"Le moteur de recherche permet de localiser des mots, des phrases exactes et des motifs avec jokers, ainsi que d'effectuer des requêtes avancées combinant termes, conditions de proximité et filtres par titre, genre, attribution traditionnelle, attribution stylométrique ou état du texte.",
-	'De este modo, TEXORO facilita tanto': 'Ainsi, TEXORO facilite aussi bien',
 	'búsquedas puntuales como exploraciones más complejas':
 		'les recherches ponctuelles que les explorations plus complexes',
 	'sobre la presencia, distribución y relación de palabras o expresiones en el conjunto del corpus.':
@@ -1442,8 +1408,6 @@ Object.assign(esToEn, {
 	'Procesamiento textual': 'Text processing',
 	'Procesos de transcripción automática.': 'Automatic transcription processes.',
 	'Recientemente hemos desarrollado procesos de transcripción automática gracias a la': 'We have recently developed automatic transcription processes thanks to the',
-	'herramienta Transkribus. A través de estos procesos hemos podido transcribir y modernizar':
-		'Transkribus tool. Through these processes we have been able to transcribe and modernize',
 	'automáticamente unos 1000 impresos y 350 manuscritos de teatro del Siglo de Oro, que forman':
 		'automatically around 1,000 printed books and 350 manuscripts of Golden Age theatre, which now form',
 	'ahora parte de CETSO y TEXORO.': 'part of CETSO and TEXORO.',
@@ -1736,8 +1700,6 @@ Object.assign(esToFr, {
 	'Procesos de transcripción automática.': 'Processus de transcription automatique.',
 	'Recientemente hemos desarrollado procesos de transcripción automática gracias a la':
 		'Nous avons récemment développé des processus de transcription automatique grâce à',
-	'herramienta Transkribus. A través de estos procesos hemos podido transcribir y modernizar':
-		"l'outil Transkribus. Grâce à ces processus, nous avons pu transcrire et moderniser",
 	'automáticamente unos 1000 impresos y 350 manuscritos de teatro del Siglo de Oro, que forman':
 		"automatiquement environ 1 000 imprimés et 350 manuscrits de théâtre du Siècle d'or, qui font",
 	'ahora parte de CETSO y TEXORO.': 'désormais partie de CETSO et TEXORO.',

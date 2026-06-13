@@ -116,6 +116,53 @@
 		}
 	} as const;
 	const resultText = $derived(resultTextByLocale[data.locale] ?? resultTextByLocale.es);
+	const texoroIntroByLocale = {
+		es: [
+			'TEXORO es una plataforma de búsqueda textual que permite consultar de forma unificada un amplio corpus de obras del Siglo de Oro. El recurso reúne cerca de 3000 textos, con más de 38 millones de palabras indexadas y obras de más de 400 autores, y ofrece distintas posibilidades para explorar el patrimonio literario aurisecular desde criterios léxicos, textuales y documentales.',
+			'El buscador permite localizar palabras, frases exactas y patrones con comodines, así como realizar consultas avanzadas mediante la combinación de términos, condiciones de proximidad y filtros por título, género, atribución tradicional, atribución estilométrica o estado del texto. De este modo, TEXORO facilita tanto búsquedas puntuales como exploraciones más complejas sobre la presencia, distribución y relación de palabras o expresiones en el conjunto del corpus.'
+		],
+		en: [
+			'TEXORO is a textual search platform that allows users to search a large corpus of Spanish Golden Age works through a unified interface. The resource brings together nearly 3,000 texts, more than 38 million indexed words and works by more than 400 authors, offering several ways to explore this literary heritage through lexical, textual and documentary criteria.',
+			'The search engine can locate words, exact phrases and wildcard patterns, and it also supports advanced queries combining terms, proximity conditions and filters by title, genre, traditional attribution, stylometric attribution or textual condition. In this way, TEXORO supports both targeted searches and more complex explorations of the presence, distribution and relationships of words or expressions across the corpus.'
+		],
+		fr: [
+			'TEXORO est une plateforme de recherche textuelle qui permet d’interroger de manière unifiée un vaste corpus d’œuvres du Siècle d’or espagnol. La ressource réunit près de 3000 textes, plus de 38 millions de mots indexés et des œuvres de plus de 400 auteurs, et offre plusieurs façons d’explorer ce patrimoine littéraire selon des critères lexicaux, textuels et documentaires.',
+			'Le moteur de recherche permet de localiser des mots, des expressions exactes et des motifs avec jokers, ainsi que de lancer des requêtes avancées combinant termes, conditions de proximité et filtres par titre, genre, attribution traditionnelle, attribution stylométrique ou état du texte. TEXORO facilite ainsi aussi bien les recherches ciblées que les explorations plus complexes de la présence, de la distribution et des relations des mots ou expressions dans l’ensemble du corpus.'
+		],
+		pt: [
+			'TEXORO é uma plataforma de pesquisa textual que permite consultar de forma unificada um amplo corpus de obras do Século de Ouro espanhol. O recurso reúne cerca de 3000 textos, mais de 38 milhões de palavras indexadas e obras de mais de 400 autores, oferecendo diferentes possibilidades para explorar esse patrimônio literário por critérios lexicais, textuais e documentais.',
+			'O buscador permite localizar palavras, frases exatas e padrões com curingas, além de realizar consultas avançadas mediante a combinação de termos, condições de proximidade e filtros por título, gênero, atribuição tradicional, atribuição estilométrica ou estado do texto. Desse modo, TEXORO facilita tanto pesquisas específicas quanto explorações mais complexas sobre a presença, a distribuição e a relação de palavras ou expressões no conjunto do corpus.'
+		],
+		it: [
+			'TEXORO è una piattaforma di ricerca testuale che permette di consultare in modo unitario un ampio corpus di opere del Secolo d’Oro spagnolo. La risorsa riunisce circa 3000 testi, più di 38 milioni di parole indicizzate e opere di oltre 400 autori, offrendo diverse possibilità per esplorare questo patrimonio letterario secondo criteri lessicali, testuali e documentari.',
+			'Il motore di ricerca consente di individuare parole, frasi esatte e pattern con caratteri jolly, nonché di effettuare ricerche avanzate combinando termini, condizioni di prossimità e filtri per titolo, genere, attribuzione tradizionale, attribuzione stilometrica o stato del testo. In questo modo, TEXORO facilita sia ricerche specifiche sia esplorazioni più complesse sulla presenza, distribuzione e relazione di parole o espressioni nell’intero corpus.'
+		],
+		de: [
+			'TEXORO ist eine Textsuchplattform, mit der sich ein umfangreiches Korpus von Werken des spanischen Siglo de Oro einheitlich durchsuchen lässt. Die Ressource umfasst rund 3000 Texte mit mehr als 38 Millionen indexierten Wörtern und Werke von über 400 Autorinnen und Autoren; sie bietet verschiedene Möglichkeiten, dieses literarische Erbe nach lexikalischen, textuellen und dokumentarischen Kriterien zu erschließen.',
+			'Die Suche findet Wörter, exakte Phrasen und Muster mit Platzhaltern und ermöglicht erweiterte Abfragen durch die Kombination von Begriffen, Nähebedingungen und Filtern nach Titel, Gattung, traditioneller Zuschreibung, stilometrischer Zuschreibung oder Textzustand. So unterstützt TEXORO sowohl gezielte Suchen als auch komplexere Untersuchungen zur Präsenz, Verteilung und Beziehung von Wörtern oder Ausdrücken im gesamten Korpus.'
+		],
+		zh: [
+			'TEXORO 是一个文本搜索平台，可通过统一界面检索西班牙黄金时代的大型作品语料库。该资源汇集近 3000 篇文本、超过 3800 万个索引词以及 400 多位作者的作品，可从词汇、文本和文献等角度探索这一文学遗产。',
+			'检索器可以查找词语、精确短语和带通配符的模式，也支持通过组合术语、邻近条件以及标题、体裁、传统归属、文体计量归属或文本状态等筛选条件进行高级查询。通过这种方式，TEXORO 既支持有针对性的检索，也支持对整个语料库中词语或表达的出现、分布和关系进行更复杂的探索。'
+		],
+		ja: [
+			'TEXORO は、スペイン黄金世紀作品の大規模コーパスを統一的に検索できるテキスト検索プラットフォームです。このリソースは約 3000 件のテキスト、3800 万語以上の索引語、400 人を超える著者の作品を収録し、語彙・テキスト・文献の観点からこの文学遺産を探索するための複数の方法を提供します。',
+			'検索機能では、単語、完全一致のフレーズ、ワイルドカードを用いたパターンを探せるほか、語、近接条件、タイトル、ジャンル、伝統的帰属、文体計量による帰属、テキストの状態などのフィルターを組み合わせた高度な検索も可能です。これにより TEXORO は、対象を絞った検索と、コーパス全体における語句の出現、分布、関係についてのより複雑な探索の両方を支援します。'
+		],
+		ko: [
+			'TEXORO는 스페인 황금세기 작품의 대규모 말뭉치를 통합적으로 검색할 수 있는 텍스트 검색 플랫폼입니다. 이 리소스는 약 3000편의 텍스트, 3800만 개가 넘는 색인어, 400명 이상의 저자 작품을 모아 어휘, 텍스트, 문헌 기준으로 이 문학 유산을 탐색할 수 있게 합니다.',
+			'검색기는 단어, 정확한 구, 와일드카드 패턴을 찾을 수 있으며, 용어 조합, 근접 조건, 제목, 장르, 전통적 귀속, 문체계량 귀속 또는 텍스트 상태 필터를 결합한 고급 검색도 지원합니다. 이를 통해 TEXORO는 특정 검색뿐 아니라 전체 말뭉치에서 단어나 표현의 출현, 분포, 관계를 살피는 더 복합적인 탐색도 가능하게 합니다.'
+		],
+		ru: [
+			'TEXORO — это платформа текстового поиска, которая позволяет единообразно обращаться к большому корпусу произведений испанского Золотого века. Ресурс объединяет около 3000 текстов, более 38 миллионов проиндексированных слов и произведения более чем 400 авторов, предлагая разные способы изучать это литературное наследие по лексическим, текстовым и документальным критериям.',
+			'Поиск позволяет находить слова, точные фразы и шаблоны с подстановочными знаками, а также выполнять расширенные запросы с сочетанием терминов, условий близости и фильтров по названию, жанру, традиционной атрибуции, стилометрической атрибуции или состоянию текста. Так TEXORO поддерживает как точечный поиск, так и более сложные исследования присутствия, распределения и связей слов или выражений во всем корпусе.'
+		],
+		ar: [
+			'TEXORO منصة للبحث النصي تتيح البحث عبر واجهة موحّدة في مجموعة واسعة من أعمال العصر الذهبي الإسباني. يجمع المورد قرابة 3000 نص، تضم أكثر من 38 مليون كلمة مفهرسة وأعمالًا لأكثر من 400 مؤلف، ويوفر إمكانات متعددة لاستكشاف هذا التراث الأدبي وفق معايير معجمية ونصية ووثائقية.',
+			'يتيح محرك البحث العثور على الكلمات والعبارات الدقيقة والأنماط ذات العلامات البديلة، كما يتيح إجراء عمليات بحث متقدمة تجمع بين المصطلحات وشروط التقارب ومرشحات العنوان والنوع والإسناد التقليدي والإسناد الأسلوبي وحالة النص. وبهذا يدعم TEXORO البحث الموجّه والاستكشافات الأكثر تعقيدًا لحضور الكلمات أو العبارات وتوزيعها وعلاقاتها داخل corpus كامل.'
+		]
+	} as const;
+	const texoroIntro = $derived(texoroIntroByLocale[data.locale] ?? texoroIntroByLocale.es);
 	const wildcardConnectorByLocale = {
 		es: 'y',
 		en: 'and',
@@ -2856,12 +2903,11 @@
 		statsAriaLabel="Indicadores de TEXORO"
 		statsLayout="three"
 	>
-		<p class="mt-[1.8rem] mb-0 max-w-[64ch] font-['Lora',serif] text-[1.01rem] leading-[1.62] text-text-main">
-			TEXORO es una plataforma de búsqueda textual que permite <b>consultar de forma unificada un amplio corpus de obras del Siglo de Oro</b>. El recurso reúne cerca de 3000 textos, con más de 38 millones de palabras indexadas y obras de más de 400 autores, y ofrece distintas posibilidades para explorar el patrimonio literario aurisecular desde criterios léxicos, textuales y documentales.
-		</p>
-		<p class="mt-[1.25rem] mb-0 max-w-[64ch] font-['Lora',serif] text-[1.01rem] leading-[1.62] text-text-main">
-			El buscador permite localizar palabras, frases exactas y patrones con comodines, así como realizar consultas avanzadas mediante la combinación de términos, condiciones de proximidad y filtros por título, género, atribución tradicional, atribución estilométrica o estado del texto. De este modo, TEXORO facilita tanto <b>búsquedas puntuales como exploraciones más complejas</b> sobre la presencia, distribución y relación de palabras o expresiones en el conjunto del corpus.
-		</p>
+			<div data-i18n-skip>
+				{#each texoroIntro as paragraph, index}
+					<p class={`${index === 0 ? 'mt-[1.8rem]' : 'mt-[1.25rem]'} mb-0 max-w-[64ch] font-['Lora',serif] text-[1.01rem] leading-[1.62] text-text-main`} dir={data.locale === 'ar' ? 'rtl' : undefined}>{paragraph}</p>
+				{/each}
+			</div>
 		<div class="mt-[1.25rem]">
 			<AppButton
 				type="button"

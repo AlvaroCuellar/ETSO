@@ -15,6 +15,8 @@
 	import fondoEscritura from '$lib/assets/fondos/fondo-escritura.webp';
 	import { createWebPageJsonLd, SITE_NAME } from '$lib/seo';
 
+	import type { PageData } from './$types';
+
 	interface HomeSlide {
 		image: string;
 		title: string;
@@ -35,6 +37,8 @@
 		label: string;
 		href: string;
 	}
+
+	let { data }: { data: PageData } = $props();
 
 	const slides: HomeSlide[] = [
 		{
@@ -306,83 +310,148 @@
 		</div>
 
 		<div class="grid gap-5 text-[1.02rem] leading-[1.72] text-text-soft">
-			<p class="m-0">
-				El proyecto
-				<a
-					href="https://etso.es/"
-					class="font-bold text-brand-blue-dark no-underline hover:underline"
-				>
-					ETSO: Estilometría aplicada al Teatro del Siglo de Oro
-				</a>
-				surge del interés del investigador
-				<a
-					href="https://www.alvarocuellar.com/"
-					class="font-bold text-brand-blue-dark no-underline hover:underline"
-				>
-					Álvaro Cuéllar
-				</a>
-				(Universitat Autònoma de Barcelona) y del catedrático
-				<a
-					href="https://literaturaespanola.uva.es/german-jose-vega-garcia-luengos/"
-					class="font-bold text-brand-blue-dark no-underline hover:underline"
-				>
-					Germán Vega García-Luengos
-				</a>
-				(Universidad de Valladolid) en aplicar las nuevas herramientas informáticas a los numerosos problemas
-				de autoría que presenta el teatro del Siglo de Oro español. Este portal trata de ofrecer análisis que
-				puedan arrojar luz sobre las atribuciones de la vasta producción teatral del periodo aurisecular.
-				Gracias a la estilometría podemos averiguar, en una de sus más útiles funcionalidades, qué obras tienen
-				frecuencias en léxico más cercanas a las del texto que nos interesa en el corpus del que dispongamos.
-				Cada autor usa las palabras en unas proporciones distintas, por lo que las obras suelen relacionarse en
-				función de su autoría. Bien es cierto que debemos ser siempre precavidos por otras relaciones que pueden
-				estarse produciendo por razón del género literario, la temática, la datación, la procedencia, el estado
-				del texto, etc.
-			</p>
-			<p class="m-0">
-				Se pueden consultar aquí ejemplos en los que la estilometría ratifica la atribución tradicional, como
-				en
-				<a
-					href="/informes/analisis-estilometrico-la-dama-boba"
-					class="font-bold italic text-brand-blue-dark no-underline hover:underline"
-				>
-					La dama boba
-				</a>,
-				<a
-					href="/informes/analisis-estilometrico-don-gil-de-las-calzas-verdes"
-					class="font-bold italic text-brand-blue-dark no-underline hover:underline"
-				>
-					Don Gil de las calzas verdes
-				</a>
-				o
-				<a
-					href="/informes/analisis-estilometrico-el-medico-de-su-honra-el-celoso-de-su-honra"
-					class="font-bold italic text-brand-blue-dark no-underline hover:underline"
-				>
-					El médico de su honra
-				</a>, y también casos en los que la estilometría apunta hacia una autoría inesperada y potencialmente esclarecedora, como en
-				<a
-					href="/informes/analisis-estilometrico-la-francesa-laura"
-					class="font-bold italic text-brand-blue-dark no-underline hover:underline"
-				>
-					La francesa Laura
-				</a>,
-				<a
-					href="/informes/analisis-estilometrico-la-monja-alferez"
-					class="font-bold italic text-brand-blue-dark no-underline hover:underline"
-				>
-					La monja alférez
-				</a>
-				o
-				<a
-					href="/informes/analisis-estilometrico-la-puerta-macarena-primera-parte"
-					class="font-bold italic text-brand-blue-dark no-underline hover:underline"
-				>
-					La puerta Macarena (primera parte)
-				</a>. Debemos tener en cuenta que las nuevas
-				atribuciones aquí señaladas son meros indicios de autoría arrojados por el proceso informático de forma
-				automática. Todos los casos deben ser estudiados pormenorizadamente desde la filología atendiendo a sus
-				complejidades particulares.
-			</p>
+			{#if data.locale === 'ar'}
+				<p class="m-0">
+					نشأ مشروع
+					<a
+						href="https://etso.es/"
+						class="font-bold text-brand-blue-dark no-underline hover:underline"
+					>
+						ETSO، «القياس الأسلوبي المطبّق على مسرح العصر الذهبي الإسباني»
+					</a>، من اهتمام الباحث
+					<a
+						href="https://www.alvarocuellar.com/"
+						class="font-bold text-brand-blue-dark no-underline hover:underline"
+					>
+						Álvaro Cuéllar
+					</a>
+					(Universitat Autònoma de Barcelona) والأستاذ
+					<a
+						href="https://literaturaespanola.uva.es/german-jose-vega-garcia-luengos/"
+						class="font-bold text-brand-blue-dark no-underline hover:underline"
+					>
+						Germán Vega García-Luengos
+					</a>
+					(Universidad de Valladolid) بتطبيق أدوات حاسوبية جديدة على مشكلات إسناد التأليف الكثيرة التي يطرحها مسرح العصر الذهبي الإسباني. وتهدف هذه البوابة إلى تقديم تحليلات تساعد على إلقاء الضوء على مسائل النسبة في الإنتاج المسرحي الواسع لتلك الحقبة. فمن خلال القياس الأسلوبي يمكن، في أحد أهم استخداماته، تحديد الأعمال التي تُظهر تواترات معجمية أقرب إلى تواترات النص موضع الدراسة ضمن المجموعة النصية المتاحة. وبما أن كل مؤلف يستخدم الكلمات بنسب مختلفة، فإن الأعمال تميل غالبًا إلى التقارب فيما بينها بحسب مؤلفيها. ومع ذلك ينبغي توخي الحذر دائمًا، لأن أوجه تشابه أخرى قد تنشأ بسبب النوع الأدبي أو الموضوع أو التأريخ أو المنشأ أو حالة النص أو غير ذلك من العوامل.
+				</p>
+				<p class="m-0">
+					يمكن الاطلاع هنا على أمثلة يؤيد فيها القياس الأسلوبي النسبة التقليدية، مثل
+					<a
+						href="/informes/analisis-estilometrico-la-dama-boba"
+						class="font-bold italic text-brand-blue-dark no-underline hover:underline"
+					>
+						La dama boba
+					</a>
+					و<a
+						href="/informes/analisis-estilometrico-don-gil-de-las-calzas-verdes"
+						class="font-bold italic text-brand-blue-dark no-underline hover:underline"
+					>
+						Don Gil de las calzas verdes
+					</a>
+					و<a
+						href="/informes/analisis-estilometrico-el-medico-de-su-honra-el-celoso-de-su-honra"
+						class="font-bold italic text-brand-blue-dark no-underline hover:underline"
+					>
+						El médico de su honra
+					</a>، وكذلك على حالات يشير فيها القياس الأسلوبي إلى نسبة غير متوقعة قد تكون كاشفة، مثل
+					<a
+						href="/informes/analisis-estilometrico-la-francesa-laura"
+						class="font-bold italic text-brand-blue-dark no-underline hover:underline"
+					>
+						La francesa Laura
+					</a>
+					و<a
+						href="/informes/analisis-estilometrico-la-monja-alferez"
+						class="font-bold italic text-brand-blue-dark no-underline hover:underline"
+					>
+						La monja alférez
+					</a>
+					و<a
+						href="/informes/analisis-estilometrico-la-puerta-macarena-primera-parte"
+						class="font-bold italic text-brand-blue-dark no-underline hover:underline"
+					>
+						La puerta Macarena (primera parte)
+					</a>. وينبغي التذكير بأن النِّسب الجديدة المشار إليها هنا ليست سوى مؤشرات أولية على التأليف نتجت عن معالجة حاسوبية آلية. لذلك يجب دراسة كل حالة دراسة فيلولوجية مفصلة، مع مراعاة تعقيداتها الخاصة.
+				</p>
+			{:else}
+				<p class="m-0">
+					El proyecto
+					<a
+						href="https://etso.es/"
+						class="font-bold text-brand-blue-dark no-underline hover:underline"
+					>
+						ETSO: Estilometría aplicada al Teatro del Siglo de Oro
+					</a>
+					surge del interés del investigador
+					<a
+						href="https://www.alvarocuellar.com/"
+						class="font-bold text-brand-blue-dark no-underline hover:underline"
+					>
+						Álvaro Cuéllar
+					</a>
+					(Universitat Autònoma de Barcelona) y del catedrático
+					<a
+						href="https://literaturaespanola.uva.es/german-jose-vega-garcia-luengos/"
+						class="font-bold text-brand-blue-dark no-underline hover:underline"
+					>
+						Germán Vega García-Luengos
+					</a>
+					(Universidad de Valladolid) en aplicar las nuevas herramientas informáticas a los numerosos problemas
+					de autoría que presenta el teatro del Siglo de Oro español. Este portal trata de ofrecer análisis que
+					puedan arrojar luz sobre las atribuciones de la vasta producción teatral del periodo aurisecular.
+					Gracias a la estilometría podemos averiguar, en una de sus más útiles funcionalidades, qué obras tienen
+					frecuencias en léxico más cercanas a las del texto que nos interesa en el corpus del que dispongamos.
+					Cada autor usa las palabras en unas proporciones distintas, por lo que las obras suelen relacionarse en
+					función de su autoría. Bien es cierto que debemos ser siempre precavidos por otras relaciones que pueden
+					estarse produciendo por razón del género literario, la temática, la datación, la procedencia, el estado
+					del texto, etc.
+				</p>
+				<p class="m-0">
+					Se pueden consultar aquí ejemplos en los que la estilometría ratifica la atribución tradicional, como
+					en
+					<a
+						href="/informes/analisis-estilometrico-la-dama-boba"
+						class="font-bold italic text-brand-blue-dark no-underline hover:underline"
+					>
+						La dama boba
+					</a>,
+					<a
+						href="/informes/analisis-estilometrico-don-gil-de-las-calzas-verdes"
+						class="font-bold italic text-brand-blue-dark no-underline hover:underline"
+					>
+						Don Gil de las calzas verdes
+					</a>
+					o
+					<a
+						href="/informes/analisis-estilometrico-el-medico-de-su-honra-el-celoso-de-su-honra"
+						class="font-bold italic text-brand-blue-dark no-underline hover:underline"
+					>
+						El médico de su honra
+					</a>, y también casos en los que la estilometría apunta hacia una autoría inesperada y potencialmente esclarecedora, como en
+					<a
+						href="/informes/analisis-estilometrico-la-francesa-laura"
+						class="font-bold italic text-brand-blue-dark no-underline hover:underline"
+					>
+						La francesa Laura
+					</a>,
+					<a
+						href="/informes/analisis-estilometrico-la-monja-alferez"
+						class="font-bold italic text-brand-blue-dark no-underline hover:underline"
+					>
+						La monja alférez
+					</a>
+					o
+					<a
+						href="/informes/analisis-estilometrico-la-puerta-macarena-primera-parte"
+						class="font-bold italic text-brand-blue-dark no-underline hover:underline"
+					>
+						La puerta Macarena (primera parte)
+					</a>. Debemos tener en cuenta que las nuevas
+					atribuciones aquí señaladas son meros indicios de autoría arrojados por el proceso informático de forma
+					automática. Todos los casos deben ser estudiados pormenorizadamente desde la filología atendiendo a sus
+					complejidades particulares.
+				</p>
+			{/if}
 		</div>
 	</div>
 </section>
@@ -401,12 +470,20 @@
 				antes había sido posible.
 			</p>
 			<p class="m-0 text-[1.01rem] leading-[1.7] text-white/95">
-				Gracias a <b>Stylo</b> (Maciej Eder, Jan Rybicki y Mike Kestemont) podemos relacionar los textos por sus usos
-				léxicos.
+				{#if data.locale === 'ar'}
+					بفضل <b>Stylo</b> (Maciej Eder وJan Rybicki وMike Kestemont) يمكننا الربط بين النصوص بحسب استعمالاتها المعجمية.
+				{:else}
+					Gracias a <b>Stylo</b> (Maciej Eder, Jan Rybicki y Mike Kestemont) podemos relacionar los textos por sus usos
+					léxicos.
+				{/if}
 			</p>
 			<p class="m-0 text-[1.01rem] leading-[1.7] text-white/95">
-				<b>Transkribus</b> (P. Kahle, S. Colutto, G. Hackl y G. Mühlberger) nos posibilita transcribir y modernizar
-				impresos y manuscritos antiguos automáticamente con un alto grado de acierto.
+				{#if data.locale === 'ar'}
+					<b>Transkribus</b> (P. Kahle، S. Colutto، G. Hackl وG. Mühlberger) يتيح لنا نسخ المطبوعات القديمة والمخطوطات وتحديثها إملائيًا بصورة آلية وبدرجة عالية من الدقة.
+				{:else}
+					<b>Transkribus</b> (P. Kahle, S. Colutto, G. Hackl y G. Mühlberger) nos posibilita transcribir y modernizar
+					impresos y manuscritos antiguos automáticamente con un alto grado de acierto.
+				{/if}
 			</p>
 			<p class="m-0 text-[1.01rem] leading-[1.7] text-white/95">
 				Además, empleamos otras técnicas estilométricas o de Inteligencia Artificial para tratar los textos.

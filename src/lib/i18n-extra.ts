@@ -4103,7 +4103,6 @@ export const esToAr: Record<string, string> = {
 	"En ETSO empleamos diferentes técnicas informáticas que nos permiten trabajar los textos como nunca": "في ETSO نستخدم تقنيات حاسوبية متعددة تتيح لنا معالجة النصوص على نحو لم يكن",
 	"antes había sido posible.": "ممكنًا من قبل.",
 	"Gracias a": "بفضل",
-	" (Maciej Eder, Jan Rybicki y Mike Kestemont) podemos relacionar los textos por sus usos": " (Maciej Eder وJan Rybicki وMike Kestemont) يمكننا الربط بين النصوص بحسب استعمالاتها المعجمية.",
 	"podemos relacionar los textos por sus usos": "نستطيع الربط بين النصوص بحسب استعمالاتها",
 	"léxicos.": "المعجمية.",
 	"nos posibilita transcribir y modernizar": "يتيح لنا نسخ",

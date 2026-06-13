@@ -273,12 +273,12 @@
 		};
 		const ar: Record<string, string> = {
 			'Lectura preliminar para': 'قراءة أولية لـ',
-			'con perfil': 'بملف',
+			'con perfil': 'وفق ملف',
 			'y nivel': 'ومستوى',
-			'sin autoria determinada': 'دون نسبة تأليف محددة',
-			'sin confianza explicita': 'دون ثقة صريحة',
-			desconocida: 'غير معروف',
-			colaboracion: 'تعاون',
+			'sin autoria determinada': 'دون إسناد تأليف محدد',
+			'sin confianza explicita': 'دون مستوى ثقة محدد',
+			desconocida: 'غير معروفة',
+			colaboracion: 'تأليف مشترك',
 			unica: 'تأليف منفرد'
 		};
 		if (data.locale === 'en') return en[source] ?? source;

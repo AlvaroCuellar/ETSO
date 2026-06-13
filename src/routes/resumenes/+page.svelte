@@ -131,8 +131,8 @@
 			activeTerms: 'مصطلحات نشطة',
 			of: 'من',
 			more: 'إضافية',
-			summariesFound: 'ملخصات موجودة',
-			visibleWorks: 'أعمال ظاهرة'
+			summariesFound: 'ملخصات مطابقة',
+			visibleWorks: 'أعمال معروضة'
 		}
 	} as const;
 	const summaryCountLabels = $derived(summaryCountLabelsByLocale[data.locale] ?? summaryCountLabelsByLocale.es);

@@ -480,23 +480,23 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			languageSelector: 'اختيار اللغة',
 			switchToLanguage: 'التبديل إلى',
 			items: [
-				{ href: navHrefs.authorshipExam, label: 'فحص نسبة التأليف' },
+				{ href: navHrefs.authorshipExam, label: 'فحص إسناد التأليف' },
 				{ href: navHrefs.texoro, label: 'TEXORO' },
 				{ href: navHrefs.biteso, label: 'BITESO' },
 				{ href: navHrefs.summaries, label: 'الملخصات' },
-				{ href: navHrefs.network, label: 'شبكة ثلاثية الأبعاد' },
+				{ href: navHrefs.network, label: 'الشبكة ثلاثية الأبعاد' },
 				{ href: navHrefs.citation, label: 'كيفية الاستشهاد بنا' }
 			],
 			infoItems: [
-				{ href: navHrefs.transcriptions, label: 'النصوص الآلية' },
+				{ href: navHrefs.transcriptions, label: 'النسخ الآلي' },
 				{ href: navHrefs.team, label: 'الفريق' },
-				{ href: navHrefs.contact, label: 'اتصال' }
+				{ href: navHrefs.contact, label: 'التواصل' }
 			]
 		},
 		footer: {
 			navigation: 'التنقل',
 			information: 'معلومات',
-			mainFunding: 'تم تطوير هذا الموقع بفضل التمويل الرئيسي من:',
+			mainFunding: 'طُوّر هذا الموقع بفضل التمويل الرئيسي من:',
 			complementarySupport: 'وبدعم تكميلي من:',
 			direction: 'الإدارة:',
 			contentLicenses: 'تراخيص المحتوى',
@@ -505,9 +505,9 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			webDevelopment: 'تطوير الويب:'
 		},
 		seo: {
-			siteName: 'ETSO: القياس الأسلوبي مطبق على مسرح العصر الذهبي الإسباني',
+			siteName: 'ETSO: القياس الأسلوبي المطبّق على مسرح العصر الذهبي الإسباني',
 			defaultDescription:
-				'ETSO بنية بحثية مخصصة لمسرح العصر الذهبي الإسباني. تتيح الاطلاع على تقارير القياس الأسلوبي حول نسبة تأليف نحو 3000 عمل محفوظ، واستكشاف النصوص المسرحية عبر محرك بحث معجمي، والوصول إلى الملخصات الآلية للمجموعة.'
+				'ETSO بنية بحثية مخصصة لمسرح العصر الذهبي الإسباني. تتيح الاطلاع على التقارير الأسلوبية الخاصة بإسناد تأليف نحو 3000 عمل محفوظ، واستكشاف النصوص المسرحية عبر محرك بحث نصي، والاطلاع على الملخصات الآلية للمجموعة النصية.'
 		}
 	}
 };

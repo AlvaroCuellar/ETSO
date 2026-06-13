@@ -69,7 +69,7 @@
 		ja: { showing: '表示中', of: '/', results: '件の結果' },
 		ko: { showing: '표시 중', of: '/', results: '개 결과' },
 		ru: { showing: 'Показано', of: 'из', results: 'результатов' },
-		ar: { showing: 'يعرض', of: 'من', results: 'نتائج' }
+		ar: { showing: 'عرض', of: 'من', results: 'نتائج' }
 	} as const;
 	const resultsCountLabel = $derived(resultsCountLabelsByLocale[data.locale] ?? resultsCountLabelsByLocale.es);
 	const paginationLabelsByLocale = {

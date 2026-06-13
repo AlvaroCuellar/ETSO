@@ -34,7 +34,7 @@
 		ja: { of: '/', more: 'さらに', seeMore: 'もっと見る', visibleTexts: '件の表示中のテキスト' },
 		ko: { of: '/', more: '더', seeMore: '더 보기', visibleTexts: '개의 표시된 텍스트' },
 		ru: { of: 'из', more: 'еще', seeMore: 'Показать еще', visibleTexts: 'видимых текстов' },
-		ar: { of: 'من', more: 'إضافية', seeMore: 'عرض المزيد', visibleTexts: 'نصوص ظاهرة' }
+		ar: { of: 'من', more: 'إضافية', seeMore: 'عرض المزيد', visibleTexts: 'نصوص معروضة' }
 	} as const;
 	const countLabels = $derived(countLabelsByLocale[data.locale] ?? countLabelsByLocale.es);
 

@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { dev } from '$app/environment';
+	import { injectAnalytics } from '@vercel/analytics/sveltekit';
+
 	import '../app.css';
 
 	import favicon from '$lib/assets/favicon.svg';
@@ -21,6 +24,8 @@
 	const siteIdentityJsonLd = $derived(
 		jsonLdScript([createWebSiteJsonLd(ui.seo.siteName, locale), createOrganizationJsonLd(ui.seo.siteName)])
 	);
+
+	injectAnalytics({ mode: dev ? 'development' : 'production' });
 </script>
 
 <svelte:head>

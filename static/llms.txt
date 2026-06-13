@@ -20,7 +20,7 @@ Primary domain: https://etso.es/
 
 ## Core Pages
 
-- Authorship exam: https://etso.es/examen-autorias
+- Examen de autorías: https://etso.es/examen-autorias
 - TEXORO textual search: https://etso.es/texoro
 - BITESO digital texts: https://etso.es/biteso
 - Automatic summaries: https://etso.es/resumenes
@@ -32,43 +32,43 @@ Primary domain: https://etso.es/
 
 ## Multilingual Core Pages
 
-- English authorship exam: https://etso.es/en/examen-autorias
+- English Examen de autorías: https://etso.es/en/examen-autorias
 - English TEXORO: https://etso.es/en/texoro
 - English BITESO: https://etso.es/en/biteso
 - English summaries: https://etso.es/en/resumenes
-- French authorship exam: https://etso.es/fr/examen-autorias
+- French Examen de autorías: https://etso.es/fr/examen-autorias
 - French TEXORO: https://etso.es/fr/texoro
 - French BITESO: https://etso.es/fr/biteso
 - French summaries: https://etso.es/fr/resumenes
-- Portuguese authorship exam: https://etso.es/pt/examen-autorias
+- Portuguese Examen de autorías: https://etso.es/pt/examen-autorias
 - Portuguese TEXORO: https://etso.es/pt/texoro
 - Portuguese BITESO: https://etso.es/pt/biteso
 - Portuguese summaries: https://etso.es/pt/resumenes
-- Italian authorship exam: https://etso.es/it/examen-autorias
+- Italian Examen de autorías: https://etso.es/it/examen-autorias
 - Italian TEXORO: https://etso.es/it/texoro
 - Italian BITESO: https://etso.es/it/biteso
 - Italian summaries: https://etso.es/it/resumenes
-- German authorship exam: https://etso.es/de/examen-autorias
+- German Examen de autorías: https://etso.es/de/examen-autorias
 - German TEXORO: https://etso.es/de/texoro
 - German BITESO: https://etso.es/de/biteso
 - German summaries: https://etso.es/de/resumenes
-- Chinese authorship exam: https://etso.es/zh/examen-autorias
+- Chinese Examen de autorías: https://etso.es/zh/examen-autorias
 - Chinese TEXORO: https://etso.es/zh/texoro
 - Chinese BITESO: https://etso.es/zh/biteso
 - Chinese summaries: https://etso.es/zh/resumenes
-- Japanese authorship exam: https://etso.es/ja/examen-autorias
+- Japanese Examen de autorías: https://etso.es/ja/examen-autorias
 - Japanese TEXORO: https://etso.es/ja/texoro
 - Japanese BITESO: https://etso.es/ja/biteso
 - Japanese summaries: https://etso.es/ja/resumenes
-- Korean authorship exam: https://etso.es/ko/examen-autorias
+- Korean Examen de autorías: https://etso.es/ko/examen-autorias
 - Korean TEXORO: https://etso.es/ko/texoro
 - Korean BITESO: https://etso.es/ko/biteso
 - Korean summaries: https://etso.es/ko/resumenes
-- Russian authorship exam: https://etso.es/ru/examen-autorias
+- Russian Examen de autorías: https://etso.es/ru/examen-autorias
 - Russian TEXORO: https://etso.es/ru/texoro
 - Russian BITESO: https://etso.es/ru/biteso
 - Russian summaries: https://etso.es/ru/resumenes
-- Arabic authorship exam: https://etso.es/ar/examen-autorias
+- Arabic Examen de autorías: https://etso.es/ar/examen-autorias
 - Arabic TEXORO: https://etso.es/ar/texoro
 - Arabic BITESO: https://etso.es/ar/biteso
 - Arabic summaries: https://etso.es/ar/resumenes

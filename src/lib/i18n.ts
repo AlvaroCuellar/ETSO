@@ -111,7 +111,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			languageSelector: 'Language selector',
 			switchToLanguage: 'Switch to',
 			items: [
-				{ href: navHrefs.authorshipExam, label: 'Authorship exam' },
+				{ href: navHrefs.authorshipExam, label: 'Examen de autorías' },
 				{ href: navHrefs.texoro, label: 'TEXORO' },
 				{ href: navHrefs.biteso, label: 'BITESO' },
 				{ href: navHrefs.summaries, label: 'Summaries' },
@@ -152,7 +152,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			languageSelector: 'Sélecteur de langue',
 			switchToLanguage: 'Passer en',
 			items: [
-				{ href: navHrefs.authorshipExam, label: 'Examen des attributions' },
+				{ href: navHrefs.authorshipExam, label: 'Examen de autorías' },
 				{ href: navHrefs.texoro, label: 'TEXORO' },
 				{ href: navHrefs.biteso, label: 'BITESO' },
 				{ href: navHrefs.summaries, label: 'Résumés' },
@@ -193,7 +193,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			languageSelector: 'Seletor de idioma',
 			switchToLanguage: 'Mudar para',
 			items: [
-				{ href: navHrefs.authorshipExam, label: 'Exame de autoria' },
+				{ href: navHrefs.authorshipExam, label: 'Examen de autorías' },
 				{ href: navHrefs.texoro, label: 'TEXORO' },
 				{ href: navHrefs.biteso, label: 'BITESO' },
 				{ href: navHrefs.summaries, label: 'Resumos' },
@@ -218,9 +218,9 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			webDevelopment: 'Desenvolvimento web:'
 		},
 		seo: {
-			siteName: 'ETSO: Estilometria aplicada ao teatro do Século de Ouro',
+			siteName: 'ETSO: Estilometria aplicada ao teatro do Século de Ouro espanhol',
 			defaultDescription:
-				'ETSO é uma infraestrutura de pesquisa dedicada ao teatro do Século de Ouro. Permite consultar relatórios estilométricos sobre a autoria de cerca de 3000 obras conservadas, explorar textos dramáticos por meio de um buscador lexical e acessar resumos automáticos do corpus.'
+				'ETSO é uma infraestrutura de pesquisa dedicada ao teatro do Século de Ouro espanhol. Permite consultar relatórios estilométricos sobre a autoria de cerca de 3000 obras conservadas, fazer pesquisa textual em textos dramáticos e acessar resumos automáticos do corpus.'
 		}
 	},
 	it: {
@@ -234,7 +234,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			languageSelector: 'Selettore della lingua',
 			switchToLanguage: 'Passa a',
 			items: [
-				{ href: navHrefs.authorshipExam, label: 'Esame di attribuzione' },
+				{ href: navHrefs.authorshipExam, label: 'Examen de autorías' },
 				{ href: navHrefs.texoro, label: 'TEXORO' },
 				{ href: navHrefs.biteso, label: 'BITESO' },
 				{ href: navHrefs.summaries, label: 'Riassunti' },
@@ -259,9 +259,9 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			webDevelopment: 'Sviluppo web:'
 		},
 		seo: {
-			siteName: 'ETSO: Stilometria applicata al teatro del Siglo de Oro',
+			siteName: 'ETSO: stilometria applicata al teatro del Secolo d’Oro spagnolo',
 			defaultDescription:
-				'ETSO è un’infrastruttura di ricerca dedicata al teatro del Siglo de Oro. Consente di consultare relazioni stilometriche sull’attribuzione di circa 3000 opere conservate, esplorare testi drammatici tramite un motore lessicale e accedere ai riassunti automatici del corpus.'
+				'ETSO è un’infrastruttura di ricerca dedicata al teatro del Secolo d’Oro spagnolo. Consente di consultare rapporti stilometrici sull’attribuzione d’autore di circa 3000 opere conservate, effettuare ricerche testuali nei testi drammatici e accedere ai riassunti automatici del corpus.'
 		}
 	},
 	de: {
@@ -275,7 +275,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			languageSelector: 'Sprachauswahl',
 			switchToLanguage: 'Wechseln zu',
 			items: [
-				{ href: navHrefs.authorshipExam, label: 'Autorschaftsprüfung' },
+				{ href: navHrefs.authorshipExam, label: 'Examen de autorías' },
 				{ href: navHrefs.texoro, label: 'TEXORO' },
 				{ href: navHrefs.biteso, label: 'BITESO' },
 				{ href: navHrefs.summaries, label: 'Zusammenfassungen' },
@@ -300,9 +300,9 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			webDevelopment: 'Webentwicklung:'
 		},
 		seo: {
-			siteName: 'ETSO: Stilometrie angewandt auf das Theater des Siglo de Oro',
+			siteName: 'ETSO: Stilometrie angewandt auf das Theater des spanischen Siglo de Oro',
 			defaultDescription:
-				'ETSO ist eine Forschungsinfrastruktur zum Theater des Siglo de Oro. Sie bietet stilometrische Autorschaftsberichte zu fast 3000 erhaltenen Stücken, lexikalische Suche in dramatischen Texten und automatische Zusammenfassungen des Korpus.'
+				'ETSO ist eine Forschungsinfrastruktur zum Theater des spanischen Siglo de Oro. Sie bietet stilometrische Berichte zur Autorschaftszuschreibung von fast 3000 erhaltenen Stücken, Textsuche in dramatischen Texten und automatische Zusammenfassungen des Korpus.'
 		}
 	},
 	zh: {
@@ -316,7 +316,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			languageSelector: '语言选择器',
 			switchToLanguage: '切换到',
 			items: [
-				{ href: navHrefs.authorshipExam, label: '作者归属检验' },
+				{ href: navHrefs.authorshipExam, label: 'Examen de autorías' },
 				{ href: navHrefs.texoro, label: 'TEXORO' },
 				{ href: navHrefs.biteso, label: 'BITESO' },
 				{ href: navHrefs.summaries, label: '摘要' },
@@ -341,9 +341,9 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			webDevelopment: '网站开发：'
 		},
 		seo: {
-			siteName: 'ETSO：应用于黄金世纪戏剧的文体计量学',
+			siteName: 'ETSO：应用于西班牙黄金时代戏剧的文体计量学',
 			defaultDescription:
-				'ETSO是一个致力于西班牙黄金世纪戏剧的研究基础设施。它提供近3000部存世剧作的文体计量作者归属报告、戏剧文本的词汇检索，以及语料库的自动摘要。'
+				'ETSO 是面向西班牙黄金时代戏剧的研究基础设施。它提供近 3000 部存世剧作的文体计量报告、文本检索和语料库自动摘要。'
 		}
 	},
 	ja: {
@@ -357,7 +357,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			languageSelector: '言語セレクター',
 			switchToLanguage: '切り替え先',
 			items: [
-				{ href: navHrefs.authorshipExam, label: '著者帰属判定' },
+				{ href: navHrefs.authorshipExam, label: 'Examen de autorías' },
 				{ href: navHrefs.texoro, label: 'TEXORO' },
 				{ href: navHrefs.biteso, label: 'BITESO' },
 				{ href: navHrefs.summaries, label: '要約' },
@@ -376,8 +376,8 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			mainFunding: 'このウェブサイトは主に以下の資金により開発されました：',
 			complementarySupport: '以下の追加支援を受けています：',
 			direction: '代表：',
-			contentLicenses: 'コンテンツライセンス',
-			privacy: 'プライバシー',
+			contentLicenses: 'コンテンツのライセンス',
+			privacy: '個人情報保護',
 			and: 'と',
 			webDevelopment: 'ウェブ開発：'
 		},
@@ -398,7 +398,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			languageSelector: '언어 선택기',
 			switchToLanguage: '전환',
 			items: [
-				{ href: navHrefs.authorshipExam, label: '저자 귀속 검사' },
+				{ href: navHrefs.authorshipExam, label: 'Examen de autorías' },
 				{ href: navHrefs.texoro, label: 'TEXORO' },
 				{ href: navHrefs.biteso, label: 'BITESO' },
 				{ href: navHrefs.summaries, label: '요약' },
@@ -423,9 +423,9 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			webDevelopment: '웹 개발:'
 		},
 		seo: {
-			siteName: 'ETSO: 스페인 황금세기 연극에 적용한 스타일로메트리',
+			siteName: 'ETSO: 스페인 황금세기 연극에 적용한 문체계량학',
 			defaultDescription:
-				'ETSO는 스페인 황금세기 연극을 위한 연구 인프라입니다. 보존된 약 3000편의 작품에 대한 저자 귀속 스타일로메트리 보고서, 극문학 텍스트의 어휘 검색, 코퍼스 자동 요약을 제공합니다.'
+				'ETSO는 스페인 황금세기 연극을 위한 연구 인프라입니다. 보존된 약 3000편의 작품에 대한 문체계량 보고서, 텍스트 검색, 말뭉치 자동 요약을 제공합니다.'
 		}
 	},
 	ru: {
@@ -439,7 +439,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			languageSelector: 'Выбор языка',
 			switchToLanguage: 'Перейти на',
 			items: [
-				{ href: navHrefs.authorshipExam, label: 'Проверка авторства' },
+				{ href: navHrefs.authorshipExam, label: 'Examen de autorías' },
 				{ href: navHrefs.texoro, label: 'TEXORO' },
 				{ href: navHrefs.biteso, label: 'BITESO' },
 				{ href: navHrefs.summaries, label: 'Аннотации' },
@@ -464,9 +464,9 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			webDevelopment: 'Веб-разработка:'
 		},
 		seo: {
-			siteName: 'ETSO: стилометрия в применении к театру испанского Золотого века',
+			siteName: 'ETSO: стилометрия применительно к театру испанского Золотого века',
 			defaultDescription:
-				'ETSO — исследовательская инфраструктура, посвященная театру испанского Золотого века. Она позволяет изучать стилометрические отчеты об авторстве почти 3000 сохранившихся пьес, искать по драматическим текстам и обращаться к автоматическим аннотациям корпуса.'
+				'ETSO — исследовательская инфраструктура, посвященная театру испанского Золотого века. Она позволяет изучать стилометрические отчеты по авторской атрибуции почти 3000 сохранившихся пьес, выполнять текстовый поиск по драматическим текстам и обращаться к автоматическим аннотациям корпуса.'
 		}
 	},
 	ar: {
@@ -480,7 +480,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			languageSelector: 'اختيار اللغة',
 			switchToLanguage: 'التبديل إلى',
 			items: [
-				{ href: navHrefs.authorshipExam, label: 'فحص إسناد التأليف' },
+				{ href: navHrefs.authorshipExam, label: 'Examen de autorías' },
 				{ href: navHrefs.texoro, label: 'TEXORO' },
 				{ href: navHrefs.biteso, label: 'BITESO' },
 				{ href: navHrefs.summaries, label: 'الملخصات' },
@@ -516,7 +516,7 @@ const esToEn: Record<string, string> = {
 	'ETSO: Estilometría aplicada al Teatro del Siglo de Oro': 'ETSO: Stylometry Applied to Golden Age Theatre',
 	'Inicio': 'Home',
 	'Más información': 'More information',
-	'Examen de autorías': 'Authorship exam',
+	'Examen de autorías': 'Examen de autorías',
 	'Análisis estilométrico de obras teatrales del Siglo de Oro': 'Stylometric analysis of Golden Age plays',
 	'Obras': 'Works',
 	'Autores': 'Authors',
@@ -587,7 +587,7 @@ const esToEn: Record<string, string> = {
 	'Carrusel de secciones destacadas': 'Featured sections carousel',
 	'Buscando': 'Searching',
 	'Preparando resultados': 'Preparing results',
-	'Buscar en Examen de autorías': "Search in Authorship exam",
+	'Buscar en Examen de autorías': "Search in Examen de autorías",
 	'Filtra las obras del corpus por título, género, atribuciones, estado textual y fecha de incorporación.':
 		'Filter the works in the corpus by title, genre, attributions, textual status, and date added.',
 	'Para combinar varios términos o buscar cercanías, abre la búsqueda avanzada.':
@@ -599,7 +599,7 @@ const esToEn: Record<string, string> = {
 	'TEXORO busca palabras, frases exactas y patrones en el corpus. Primero localiza obras candidatas con índices de búsqueda y, cuando hace falta, verifica los textos para confirmar coincidencias y preparar contextos de lectura.':
 		'TEXORO searches for words, exact phrases, and patterns in the corpus. It first locates candidate works with search indexes and, when needed, checks the texts to confirm matches and prepare reading contexts.',
 	'Hemos generado resúmenes automáticos de las obras incluidas en la base de datos de ETSO. Estos textos ofrecen una primera orientación sobre el argumento y el contenido de cada obra, aunque deben entenderse como una ayuda inicial y no como sustituto de la lectura ni del análisis filológico.':
-		'We have generated automatic summaries of the works included in the ETSO database. These texts offer an initial orientation to the plot and contents of each work, although they should be understood as a first aid and not as a substitute for reading or philological analysis.',
+		'We have generated automatic summaries of the works included in the ETSO database. These texts offer an initial orientation to the plot and contents of each work, although they should be understood as a preliminary aid and not as a substitute for reading or philological analysis.',
 	'Puedes acceder al resumen de cada obra desde este listado o desde la ficha individual de la obra, clicando en el acceso al resumen automático.':
 		'You can access each work summary from this list or from the individual work record by clicking the automatic summary link.',
 	'Buscar en los resúmenes': 'Search the summaries',
@@ -630,7 +630,7 @@ const esToEn: Record<string, string> = {
 	'Probable': 'Probable',
 	'Posible': 'Possible',
 	'Sin datos': 'No data',
-	'Desconocido': 'Unknown',
+	'Desconocido': 'Unknown author',
 	'No disponible': 'Not available',
 	'No disponible.': 'Not available.',
 	'Cargando resumen...': 'Loading summary...',
@@ -763,8 +763,8 @@ const esToEn: Record<string, string> = {
 	'Ej: cada paso peligro, verdades amor...': 'E.g.: cada paso peligro, verdades amor...',
 	'Ej: La monja alférez, El castigo sin venganza...': 'E.g.: La monja alférez, El castigo sin venganza...',
 	'Sin acceso al texto': 'No text access',
-	'Obras de Examen de autorías': 'Authorship exam works',
-	'Dramaturgos de Examen de autorías': 'Authorship exam playwrights',
+	'Obras de Examen de autorías': 'Examen de autorías works',
+	'Dramaturgos de Examen de autorías': 'Examen de autorías playwrights',
 	'Biblioteca Textual Siglo de Oro': 'Golden Age Textual Library',
 	'Biblioteca Textual Siglo de Oro: textos digitales en acceso abierto para lectura, consulta e investigación.':
 		'Golden Age Textual Library: open-access digital texts for reading, consultation, and research.',
@@ -787,7 +787,7 @@ const esToEn: Record<string, string> = {
 	'Búsquedas textuales complejas en TEXORO, un corpus del Siglo de Oro con millones de palabras indexadas.':
 		'Complex textual searches in TEXORO, a Golden Age corpus with millions of indexed words.',
 	'Estilometría aplicada al teatro del Siglo de Oro: examen de autorías, TEXORO, BITESO, resúmenes automáticos y recursos digitales para la investigación.':
-		"Stylometry applied to Golden Age theatre: Authorship exam, TEXORO, BITESO, automatic summaries, and digital research resources.",
+		"Stylometry applied to Golden Age theatre: Examen de autorías, TEXORO, BITESO, automatic summaries, and digital research resources.",
 	'Consulta los informes estilométricos de 3000 obras teatrales del Siglo de Oro':
 		'Search the stylometric reports for 3,000 Golden Age plays',
 	'Realiza búsquedas textuales complejas en un corpus del Siglo de Oro de 38 millones de palabras':
@@ -824,7 +824,7 @@ const esToEn: Record<string, string> = {
 	'función de su autoría. Bien es cierto que debemos ser siempre precavidos por otras relaciones que pueden':
 		'their authorship. Nevertheless, we must always be cautious about other relationships that may',
 	'estarse produciendo por razón del género literario, la temática, la datación, la procedencia, el estado':
-		'arise because of literary genre, subject matter, dating, source, textual state,',
+		'arise because of literary genre, subject matter, dating, source, textual condition,',
 	'del texto, etc.': 'and other factors.',
 	'Se pueden consultar aquí ejemplos en los que la estilometría ratifica la atribución tradicional, como':
 		'Here you can consult examples in which stylometry confirms the traditional attribution, such as',
@@ -844,6 +844,7 @@ const esToEn: Record<string, string> = {
 		'At ETSO we use different computational techniques that allow us to work with texts as never',
 	'antes había sido posible.': 'before possible.',
 	'Gracias a': 'Thanks to',
+	' (Maciej Eder, Jan Rybicki y Mike Kestemont) podemos relacionar los textos por sus usos': ' (Maciej Eder, Jan Rybicki, and Mike Kestemont) lets us relate texts through their lexical usage.',
 	'podemos relacionar los textos por sus usos': 'we can relate texts through their',
 	'léxicos.': 'lexical usage.',
 	'nos posibilita transcribir y modernizar': 'allows us to transcribe and modernize',
@@ -871,15 +872,15 @@ const esToEn: Record<string, string> = {
 	'Podemos ayudarte a explorar los distintos recursos disponibles para el estudio del teatro y la literatura del Siglo de Oro.':
 		'We can help you explore the different resources available for the study of Golden Age theatre and literature.',
 	'En Examen de autorías se pueden consultar los informes estilométricos de las obras incorporadas al corpus, con indicios sobre sus posibles relaciones de autoría.':
-		'In the Authorship exam you can consult stylometric reports for the works included in the corpus, with clues about possible authorship relations.',
+		'In Examen de autorías you can consult stylometric reports for the works included in the corpus, with clues about possible authorship relations.',
 	'TEXORO permite realizar búsquedas textuales sobre cerca de 3000 obras y más de 38 millones de palabras, con opciones para localizar palabras, frases, patrones, combinaciones de términos y relaciones de proximidad.':
 		'TEXORO enables text searches across nearly 3,000 works and more than 38 million words, with options for locating words, phrases, patterns, term combinations, and proximity relations.',
 	'BITESO ofrece acceso abierto a textos digitales procedentes, en buena medida, de transcripciones automáticas de impresos y manuscritos.':
 		'BITESO offers open access to digital texts derived largely from automatic transcriptions of printed books and manuscripts.',
 	'Además, los resúmenes automáticos permiten obtener una primera orientación sobre el argumento y el contenido de las obras, siempre como ayuda inicial y no como sustituto de la lectura o del análisis filológico.':
-		'Automatic summaries also provide an initial orientation to the plot and contents of the works, always as a first aid and not as a substitute for reading or philological analysis.',
+		'Automatic summaries also provide an initial orientation to the plot and contents of the works, always as a preliminary aid and not as a substitute for reading or philological analysis.',
 	'También puedes colaborar con nosotros enviándonos textos del Siglo de Oro que todavía no estén incorporados a nuestros recursos, información bibliográfica, noticias sobre atribuciones, datos sobre testimonios o cualquier material que pueda mejorar el conjunto.':
-		'You can also collaborate with us by sending Golden Age texts that are not yet included in our resources, bibliographic information, attribution news, data on witnesses, or any material that can improve the whole.',
+		'You can also collaborate with us by sending Golden Age texts that are not yet included in our resources, bibliographic information, news about attributions, data on textual witnesses, or any material that can improve the collection.',
 	'La colaboración de investigadores, docentes y especialistas resulta fundamental para seguir ampliando, revisando y corrigiendo la información disponible.':
 		'The collaboration of researchers, teachers, and specialists is essential for continuing to expand, review, and correct the available information.',
 	'Por ello, si encuentras errores, erratas, problemas en los textos, fallos en los resúmenes automáticos o datos que puedan precisarse mejor, te agradeceremos que nos envíes tus sugerencias de corrección.':
@@ -903,16 +904,17 @@ const esToEn: Record<string, string> = {
 		'of the presence, distribution, and relationship of words or expressions across the corpus.',
 	'Esta página web ha sido desarrollada gracias a la financiación principal de:':
 		'This website has been developed thanks to the main funding provided by:',
-	'Con el apoyo complementario de:': 'With complementary support from:'
+	'Con el apoyo complementario de:': 'With complementary support from:',
+	'Logo de Thal-IA': 'Thal-IA logo'
 };
 
 const esToFr: Record<string, string> = {
 	'ETSO: Estilometría aplicada al Teatro del Siglo de Oro': 'ETSO : Stylométrie appliquée au théâtre du Siècle d’or',
 	'Inicio': 'Accueil',
 	'Más información': "Plus d'information",
-	'Examen de autorías': 'Examen des attributions',
+	'Examen de autorías': 'Examen de autorías',
 	'Análisis estilométrico de obras teatrales del Siglo de Oro': "Analyse stylométrique de pièces du Siècle d'or",
-	'Obras': 'Oeuvres',
+	'Obras': 'Œuvres',
 	'Autores': 'Auteurs',
 	'Dramaturgos': 'Dramaturges',
 	'Resúmenes': 'Résumés',
@@ -922,7 +924,7 @@ const esToFr: Record<string, string> = {
 	'Resumen automático amplio': 'Résumé automatique étendu',
 	'Resúmenes automáticos': 'Résumés automatiques',
 	'Red estilométrica': 'Réseau stylométrique',
-	'Red de obras (BETA)': "Réseau d'oeuvres (BETA)",
+	'Red de obras (BETA)': "Réseau d'œuvres (BETA)",
 	'Red 3D': 'Réseau 3D',
 	'Cómo citarnos': 'Comment nous citer',
 	'Transcripciones automáticas': 'Transcriptions automatiques',
@@ -931,7 +933,7 @@ const esToFr: Record<string, string> = {
 	'Derechos y licencias': 'Droits et licences',
 	'Política de privacidad': 'Politique de confidentialité',
 	'Acceso restringido': 'Accès restreint',
-	'Ficha de obra': "Fiche d'oeuvre",
+	'Ficha de obra': "Fiche d'œuvre",
 	'Ficha de autor': "Fiche d'auteur",
 	'Texto digital': 'Texte numérique',
 	'Informe': 'Rapport',
@@ -945,7 +947,7 @@ const esToFr: Record<string, string> = {
 	'Atribución estilométrica': 'Attribution stylométrique',
 	'Género': 'Genre',
 	'Procedencia': 'Source',
-	'Obras más cercanas': 'Oeuvres les plus proches',
+	'Obras más cercanas': 'Œuvres les plus proches',
 	'Resultados': 'Résultats',
 	'Resultados de búsqueda': 'Résultats de recherche',
 	'Referencias': 'Références',
@@ -981,9 +983,9 @@ const esToFr: Record<string, string> = {
 	'Carrusel de secciones destacadas': 'Carrousel des sections mises en avant',
 	'Buscando': 'Recherche en cours',
 	'Preparando resultados': 'Préparation des résultats',
-	'Buscar en Examen de autorías': "Rechercher dans Examen des attributions",
+	'Buscar en Examen de autorías': "Rechercher dans Examen de autorías",
 	'Filtra las obras del corpus por título, género, atribuciones, estado textual y fecha de incorporación.':
-		"Filtrez les oeuvres du corpus par titre, genre, attributions, état textuel et date d'incorporation.",
+		"Filtrez les œuvres du corpus par titre, genre, attributions, état textuel et date d'incorporation.",
 	'Para combinar varios términos o buscar cercanías, abre la búsqueda avanzada.':
 		'Pour combiner plusieurs termes ou rechercher des proximités, ouvrez la recherche avancée.',
 	'Búsqueda avanzada': 'Recherche avancée',
@@ -991,18 +993,18 @@ const esToFr: Record<string, string> = {
 	'Uso del buscador textual y de sus opciones avanzadas.': 'Utilisation du moteur de recherche textuelle et de ses options avancées.',
 	'Qué hace el buscador': 'Ce que fait le moteur de recherche',
 	'TEXORO busca palabras, frases exactas y patrones en el corpus. Primero localiza obras candidatas con índices de búsqueda y, cuando hace falta, verifica los textos para confirmar coincidencias y preparar contextos de lectura.':
-		'TEXORO recherche des mots, des phrases exactes et des motifs dans le corpus. Il repère d’abord les oeuvres candidates au moyen des index de recherche puis, si nécessaire, vérifie les textes pour confirmer les occurrences et préparer les contextes de lecture.',
+		'TEXORO recherche des mots, des phrases exactes et des motifs dans le corpus. Il repère d’abord les œuvres candidates au moyen des index de recherche puis, si nécessaire, vérifie les textes pour confirmer les occurrences et préparer les contextes de lecture.',
 	'Hemos generado resúmenes automáticos de las obras incluidas en la base de datos de ETSO. Estos textos ofrecen una primera orientación sobre el argumento y el contenido de cada obra, aunque deben entenderse como una ayuda inicial y no como sustituto de la lectura ni del análisis filológico.':
-		"Nous avons généré des résumés automatiques des oeuvres incluses dans la base de données d'ETSO. Ces textes offrent une première orientation sur l'intrigue et le contenu de chaque oeuvre, mais doivent être compris comme une aide initiale et non comme un substitut à la lecture ou à l'analyse philologique.",
+		"Nous avons généré des résumés automatiques des œuvres incluses dans la base de données d'ETSO. Ces textes offrent une première orientation sur l'intrigue et le contenu de chaque œuvre, mais doivent être compris comme une aide initiale et non comme un substitut à la lecture ou à l'analyse philologique.",
 	'Puedes acceder al resumen de cada obra desde este listado o desde la ficha individual de la obra, clicando en el acceso al resumen automático.':
-		"Vous pouvez accéder au résumé de chaque oeuvre depuis cette liste ou depuis la fiche individuelle de l'oeuvre, en cliquant sur l'accès au résumé automatique.",
+		"Vous pouvez accéder au résumé de chaque œuvre depuis cette liste ou depuis la fiche individuelle de l'œuvre, en cliquant sur l'accès au résumé automatique.",
 	'Buscar en los resúmenes': 'Rechercher dans les résumés',
 	'Escribe al menos dos caracteres y pulsa Enter.': 'Saisissez au moins deux caractères et appuyez sur Entrée.',
 	'Buscando resúmenes... La primera búsqueda puede tardar un poco.':
 		'Recherche dans les résumés... La première recherche peut prendre un moment.',
 	'No hay resúmenes que contengan esas palabras.': 'Aucun résumé ne contient ces mots.',
-	'Buscar obra por título': 'Rechercher une oeuvre par titre',
-	'No hay obras que coincidan con la búsqueda.': 'Aucune oeuvre ne correspond à la recherche.',
+	'Buscar obra por título': 'Rechercher une œuvre par titre',
+	'No hay obras que coincidan con la búsqueda.': 'Aucune œuvre ne correspond à la recherche.',
 	'Buscar por título': 'Rechercher par titre',
 	'Filtrar por género': 'Filtrer par genre',
 	'Todos los géneros': 'Tous les genres',
@@ -1015,7 +1017,7 @@ const esToFr: Record<string, string> = {
 	'Texto': 'Texte',
 	'Acceso al texto': 'Accès au texte',
 	'Leer texto': 'Lire le texte',
-	'No hay acceso al texto disponible para esta obra.': "Aucun accès au texte n'est disponible pour cette oeuvre.",
+	'No hay acceso al texto disponible para esta obra.': "Aucun accès au texte n'est disponible pour cette œuvre.",
 	'No hay información de autoría disponible.': "Aucune information d'attribution n'est disponible.",
 	'No apunta hacia ningún autor': 'Ne pointe vers aucun auteur',
 	'El análisis no apunta hacia ningún autor': "L'analyse ne pointe vers aucun auteur",
@@ -1024,17 +1026,17 @@ const esToFr: Record<string, string> = {
 	'Probable': 'Probable',
 	'Posible': 'Possible',
 	'Sin datos': 'Sans données',
-	'Desconocido': 'Inconnu',
+	'Desconocido': 'Auteur inconnu',
 	'No disponible': 'Non disponible',
 	'No disponible.': 'Non disponible.',
 	'Cargando resumen...': 'Chargement du résumé...',
 	'No se pudo cargar el resumen breve.': "Le résumé bref n'a pas pu être chargé.",
-	'No se encontraron obras que coincidan con los criterios de búsqueda.': 'Aucune oeuvre ne correspond aux critères de recherche.',
-	'No hay obras que coincidan con el filtro actual.': 'Aucune oeuvre ne correspond au filtre actuel.',
+	'No se encontraron obras que coincidan con los criterios de búsqueda.': 'Aucune œuvre ne correspond aux critères de recherche.',
+	'No hay obras que coincidan con el filtro actual.': 'Aucune œuvre ne correspond au filtre actuel.',
 	'No hay distancias disponibles para este informe.': 'Aucune distance disponible pour ce rapport.',
-	'No hay obras cercanas disponibles en este ámbito.': 'Aucune oeuvre proche disponible pour ce périmètre.',
+	'No hay obras cercanas disponibles en este ámbito.': 'Aucune œuvre proche disponible pour ce périmètre.',
 	'No hay referencias disponibles para este informe.': 'Aucune référence disponible pour ce rapport.',
-	'Obra completa': 'Oeuvre complète',
+	'Obra completa': 'Œuvre complète',
 	'Jornada 1': 'Journée 1',
 	'Jornada 2': 'Journée 2',
 	'Jornada 3': 'Journée 3',
@@ -1042,7 +1044,7 @@ const esToFr: Record<string, string> = {
 	'Jornada 5': 'Journée 5',
 	'Página anterior': 'Page précédente',
 	'Página siguiente': 'Page suivante',
-	'Paginación de obras': 'Pagination des oeuvres',
+	'Paginación de obras': 'Pagination des œuvres',
 	'Vista de resultados': 'Vue des résultats',
 	'Tarjetas': 'Cartes',
 	'Tabla': 'Tableau',
@@ -1055,10 +1057,10 @@ const esToFr: Record<string, string> = {
 	'Espacios principales': 'Espaces principaux',
 	'Temáticas principales': 'Thèmes principaux',
 	'Aviso y cita': 'Avis et citation',
-	'Obras relacionadas con el autor': "Oeuvres liées à l'auteur",
-	'Obras respaldadas por la tradición': 'Oeuvres appuyées par la tradition',
-	'Obras respaldadas por la estilometría': 'Oeuvres appuyées par la stylométrie',
-	'Obras respaldadas solo por la tradición': 'Oeuvres appuyées uniquement par la tradition',
+	'Obras relacionadas con el autor': "Œuvres liées à l'auteur",
+	'Obras respaldadas por la tradición': 'Œuvres appuyées par la tradition',
+	'Obras respaldadas por la estilometría': 'Œuvres appuyées par la stylométrie',
+	'Obras respaldadas solo por la tradición': 'Œuvres appuyées uniquement par la tradition',
 	'Novedades respaldadas por la estilometría': 'Nouvelles attributions appuyées par la stylométrie',
 	'Escribe y selecciona géneros': 'Saisissez et sélectionnez des genres',
 	'Escribe y selecciona autores': 'Saisissez et sélectionnez des auteurs',
@@ -1073,13 +1075,13 @@ const esToFr: Record<string, string> = {
 	'Cerrar modal': 'Fermer la fenêtre',
 	'Cerrar guía': 'Fermer le guide',
 	'Guía de búsqueda en TEXORO': 'Guide de recherche dans TEXORO',
-	'Obras de TEXORO': 'Oeuvres de TEXORO',
+	'Obras de TEXORO': 'Œuvres de TEXORO',
 	'Autores de TEXORO': 'Auteurs de TEXORO',
 	'Guía de búsqueda': 'Guide de recherche',
 	'Indicadores de TEXORO': 'Indicateurs de TEXORO',
-	'Obras indexadas': 'Oeuvres indexées',
+	'Obras indexadas': 'Œuvres indexées',
 	'Palabras indexadas': 'Mots indexés',
-	'Ver listado de obras indexadas': 'Voir la liste des oeuvres indexées',
+	'Ver listado de obras indexadas': 'Voir la liste des œuvres indexées',
 	'Ver listado de autores': 'Voir la liste des auteurs',
 	'Buscar en TEXORO': 'Rechercher dans TEXORO',
 	'Busca por palabras del título.': 'Recherche par mots du titre.',
@@ -1106,7 +1108,7 @@ const esToFr: Record<string, string> = {
 	'Todos': 'Tous',
 	'Ayuda sobre': 'Aide sur',
 	'Selecciona una o varias obras para limitar la búsqueda textual a esos títulos.':
-		'Sélectionnez une ou plusieurs oeuvres pour limiter la recherche textuelle à ces titres.',
+		'Sélectionnez une ou plusieurs œuvres pour limiter la recherche textuelle à ces titres.',
 	'Selecciona uno o varios géneros para limitar los resultados.':
 		'Sélectionnez un ou plusieurs genres pour limiter les résultats.',
 	'Selecciona uno o varios géneros. Puedes escribir para filtrar opciones.':
@@ -1122,13 +1124,13 @@ const esToFr: Record<string, string> = {
 	'Filtra por el grado de certeza de la atribución resultante del análisis estilométrico.':
 		"Filtre selon le degré de certitude de l'attribution issue de l'analyse stylométrique.",
 	'Deja este campo en Cualquiera para mostrar obras de cualquier tipo de autoría. Puedes filtrar por obras de un solo autor (Única) o de varios autores (Colaboración).':
-		"Laissez ce champ sur N'importe lequel pour afficher les oeuvres de tout type d'attribution. Vous pouvez filtrer les oeuvres d'un seul auteur (Unique) ou de plusieurs auteurs (Collaboration).",
+		"Laissez ce champ sur N'importe lequel pour afficher les œuvres de tout type d'attribution. Vous pouvez filtrer les œuvres d'un seul auteur (Unique) ou de plusieurs auteurs (Collaboration).",
 	'Selecciona uno o varios estados del texto utilizado para el análisis estilométrico.':
 		"Sélectionnez un ou plusieurs états du texte utilisé pour l'analyse stylométrique.",
 	'Incluye obras añadidas o modificadas desde esta fecha.':
-		'Inclut les oeuvres ajoutées ou modifiées depuis cette date.',
+		'Inclut les œuvres ajoutées ou modifiées depuis cette date.',
 	'Incluye obras añadidas o modificadas hasta esta fecha.':
-		"Inclut les oeuvres ajoutées ou modifiées jusqu'à cette date.",
+		"Inclut les œuvres ajoutées ou modifiées jusqu'à cette date.",
 	'Limita los resultados al estado del texto utilizado en TEXORO.':
 		"Limite les résultats à l'état du texte utilisé dans TEXORO.",
 	'Busca una palabra, frase exacta o patrón con comodines':
@@ -1142,7 +1144,7 @@ const esToFr: Record<string, string> = {
 	'Modo de combinación de términos adicionales': 'Mode de combinaison des termes additionnels',
 	'Modo de combinación de condiciones de proximidad': 'Mode de combinaison des conditions de proximité',
 	'OR muestra obras con cualquiera de los autores seleccionados. AND exige que estén todos.':
-		'OR affiche les oeuvres avec l’un des auteurs sélectionnés. AND exige qu’ils soient tous présents.',
+		'OR affiche les œuvres avec l’un des auteurs sélectionnés. AND exige qu’ils soient tous présents.',
 	'Búsqueda textual': 'Recherche textuelle',
 	'Consulta': 'Requête',
 	'Frecuencia': 'Fréquence',
@@ -1157,22 +1159,22 @@ const esToFr: Record<string, string> = {
 	'Ej: cada paso peligro, verdades amor...': 'Ex. : cada paso peligro, verdades amor...',
 	'Ej: La monja alférez, El castigo sin venganza...': 'Ex. : La monja alférez, El castigo sin venganza...',
 	'Sin acceso al texto': 'Pas d’accès au texte',
-	'Obras de Examen de autorías': "Oeuvres d’Examen des attributions",
-	'Dramaturgos de Examen de autorías': "Dramaturges d’Examen des attributions",
+	'Obras de Examen de autorías': "Œuvres d’Examen de autorías",
+	'Dramaturgos de Examen de autorías': "Dramaturges d’Examen de autorías",
 	'Biblioteca Textual Siglo de Oro': "Bibliothèque textuelle du Siècle d'or",
 	'Biblioteca Textual Siglo de Oro: textos digitales en acceso abierto para lectura, consulta e investigación.':
 		"Bibliothèque textuelle du Siècle d'or : textes numériques en accès ouvert pour la lecture, la consultation et la recherche.",
 	'BITESO ofrece': 'BITESO offre',
 	'acceso en abierto a textos digitales del Siglo de Oro': "un accès ouvert à des textes numériques du Siècle d'or",
 	'conseguidos, en su mayoría, a partir de transcripciones automáticas de impresos y manuscritos antiguos. La colección reúne obras producidas para los análisis estilométricos de autoría y materiales incorporados gracias a la colaboración de especialistas, colegas y estudiantes.':
-		"obtenus pour la plupart à partir de transcriptions automatiques d'imprimés et de manuscrits anciens. La collection réunit des oeuvres produites pour les analyses stylométriques d'attribution et des matériaux intégrés grâce à la collaboration de spécialistes, collègues et étudiants.",
+		"obtenus pour la plupart à partir de transcriptions automatiques d'imprimés et de manuscrits anciens. La collection réunit des œuvres produites pour les analyses stylométriques d'attribution et des matériaux intégrés grâce à la collaboration de spécialistes, collègues et étudiants.",
 	'Los textos deben': 'Les textes doivent',
 	'entenderse como versiones de trabajo': 'être compris comme des versions de travail',
 	': no sustituyen a las ediciones críticas, pueden contener errores de transcripción y presentan una calidad desigual según la fuente y el estado de revisión. En su estado actual, se ofrecen sin nombres de personajes ni acotaciones escénicas. La colección permanece abierta a correcciones, ampliaciones y mejoras.':
 		" : ils ne remplacent pas les éditions critiques, peuvent contenir des erreurs de transcription et présentent une qualité variable selon la source et l'état de révision. Dans leur état actuel, ils sont proposés sans noms de personnages ni didascalies. La collection reste ouverte aux corrections, extensions et améliorations.",
 	'Listado alfabético de las obras con texto digital BITESO. Usa el buscador para localizar una obra y entrar directamente en su texto.':
-		"Liste alphabétique des oeuvres disposant d'un texte numérique BITESO. Utilisez le moteur de recherche pour trouver une oeuvre et accéder directement à son texte.",
-	'Buscar obra': 'Rechercher une oeuvre',
+		"Liste alphabétique des œuvres disposant d'un texte numérique BITESO. Utilisez le moteur de recherche pour trouver une œuvre et accéder directement à son texte.",
+	'Buscar obra': 'Rechercher une œuvre',
 	'No hay textos que coincidan con la búsqueda.': 'Aucun texte ne correspond à la recherche.',
 	'textos visibles': 'textes visibles',
 	'Búsquedas textuales en 3000 obras del Siglo de Oro': "Recherches textuelles dans 3000 pièces du Siècle d'or",
@@ -1181,7 +1183,7 @@ const esToFr: Record<string, string> = {
 	'Búsquedas textuales complejas en TEXORO, un corpus del Siglo de Oro con millones de palabras indexadas.':
 		"Recherches textuelles complexes dans TEXORO, un corpus du Siècle d'or contenant des millions de mots indexés.",
 	'Estilometría aplicada al teatro del Siglo de Oro: examen de autorías, TEXORO, BITESO, resúmenes automáticos y recursos digitales para la investigación.':
-		"Stylométrie appliquée au théâtre du Siècle d’or : Examen des attributions, TEXORO, BITESO, résumés automatiques et ressources numériques pour la recherche.",
+		"Stylométrie appliquée au théâtre du Siècle d’or : Examen de autorías, TEXORO, BITESO, résumés automatiques et ressources numériques pour la recherche.",
 	'Consulta los informes estilométricos de 3000 obras teatrales del Siglo de Oro':
 		"Consultez les rapports stylométriques de 3 000 pièces du Siècle d'or",
 	'Realiza búsquedas textuales complejas en un corpus del Siglo de Oro de 38 millones de palabras':
@@ -1189,13 +1191,13 @@ const esToFr: Record<string, string> = {
 	'Consulta más de 1500 textos digitales del Siglo de Oro en acceso abierto':
 		"Consultez plus de 1 500 textes numériques du Siècle d'or en accès ouvert",
 	'Consulta los resúmenes automáticos de todas las obras de la base de datos':
-		'Consultez les résumés automatiques de toutes les oeuvres de la base de données',
+		'Consultez les résumés automatiques de toutes les œuvres de la base de données',
 	'Visualiza la red de relaciones estilométricas para las 3000 obras del corpus':
-		'Visualisez le réseau de relations stylométriques des 3 000 oeuvres du corpus',
+		'Visualisez le réseau de relations stylométriques des 3 000 œuvres du corpus',
 	'Visualización de análisis estilométrico del proyecto ETSO': 'Visualisation de l’analyse stylométrique du projet ETSO',
 	'Interfaz de búsqueda textual de TEXORO': 'Interface de recherche textuelle de TEXORO',
 	'Biblioteca digital BITESO': 'Bibliothèque numérique BITESO',
-	'Resúmenes automáticos de las obras': 'Résumés automatiques des oeuvres',
+	'Resúmenes automáticos de las obras': 'Résumés automatiques des œuvres',
 	'Red estilométrica del proyecto ETSO': 'Réseau stylométrique du projet ETSO',
 	'Grafo de relaciones estilométricas del proyecto ETSO': 'Graphe des relations stylométriques du projet ETSO',
 	'Panel de informes estilométricos de ETSO': 'Panneau des rapports stylométriques d’ETSO',
@@ -1210,11 +1212,11 @@ const esToFr: Record<string, string> = {
 	'puedan arrojar luz sobre las atribuciones de la vasta producción teatral del periodo aurisecular.':
 		"puissent éclairer les attributions de la vaste production théâtrale du Siècle d'or.",
 	'Gracias a la estilometría podemos averiguar, en una de sus más útiles funcionalidades, qué obras tienen':
-		"Grâce à la stylométrie, l'une de ses fonctions les plus utiles permet de déterminer quelles oeuvres ont",
+		"Grâce à la stylométrie, l'une de ses fonctions les plus utiles permet de déterminer quelles œuvres ont",
 	'frecuencias en léxico más cercanas a las del texto que nos interesa en el corpus del que dispongamos.':
 		"des fréquences lexicales plus proches de celles du texte qui nous intéresse dans le corpus disponible.",
 	'Cada autor usa las palabras en unas proporciones distintas, por lo que las obras suelen relacionarse en':
-		'Chaque auteur utilise les mots dans des proportions différentes, de sorte que les oeuvres se rapprochent souvent en',
+		'Chaque auteur utilise les mots dans des proportions différentes, de sorte que les œuvres se rapprochent souvent en',
 	'función de su autoría. Bien es cierto que debemos ser siempre precavidos por otras relaciones que pueden':
 		"fonction de leur attribution. Il faut toutefois rester prudent face à d'autres relations qui peuvent",
 	'estarse produciendo por razón del género literario, la temática, la datación, la procedencia, el estado':
@@ -1238,6 +1240,7 @@ const esToFr: Record<string, string> = {
 		'À ETSO, nous utilisons différentes techniques informatiques qui nous permettent de travailler les textes comme jamais',
 	'antes había sido posible.': 'cela n’avait été possible auparavant.',
 	'Gracias a': 'Grâce à',
+	' (Maciej Eder, Jan Rybicki y Mike Kestemont) podemos relacionar los textos por sus usos': ' (Maciej Eder, Jan Rybicki et Mike Kestemont) permet de rapprocher les textes par leurs usages lexicaux.',
 	'podemos relacionar los textos por sus usos': 'nous pouvons relier les textes par leurs usages',
 	'léxicos.': 'lexicaux.',
 	'nos posibilita transcribir y modernizar': 'nous permet de transcrire et de moderniser',
@@ -1256,7 +1259,7 @@ const esToFr: Record<string, string> = {
 	'Los textos incorporados a BITESO no aspiran a sustituir a las ediciones críticas ni presentan siempre la misma calidad ecdótica.':
 		"Les textes intégrés à BITESO ne prétendent pas remplacer les éditions critiques et ne présentent pas toujours la même qualité éditoriale.",
 	'Además, en su estado actual no incluyen los nombres de los personajes ni las acotaciones escénicas, sino únicamente los versos limpios de cada obra.':
-		"En outre, dans leur état actuel, ils n'incluent ni les noms des personnages ni les didascalies, mais uniquement les vers nettoyés de chaque oeuvre.",
+		"En outre, dans leur état actuel, ils n'incluent ni les noms des personnages ni les didascalies, mais uniquement les vers nettoyés de chaque œuvre.",
 	'Sin embargo, constituyen materiales útiles para la lectura, la consulta, la docencia, la investigación filológica y la exploración computacional del patrimonio literario aurisecular.':
 		"Ils constituent néanmoins des matériaux utiles pour la lecture, la consultation, l'enseignement, la recherche philologique et l'exploration computationnelle du patrimoine littéraire auriséculaire.",
 	'Con este recurso se quiere favorecer la circulación abierta de estos materiales y facilitar nuevas formas de acceso al teatro y a la literatura del Siglo de Oro.':
@@ -1265,13 +1268,13 @@ const esToFr: Record<string, string> = {
 	'Podemos ayudarte a explorar los distintos recursos disponibles para el estudio del teatro y la literatura del Siglo de Oro.':
 		"Nous pouvons vous aider à explorer les différentes ressources disponibles pour l'étude du théâtre et de la littérature du Siècle d'or.",
 	'En Examen de autorías se pueden consultar los informes estilométricos de las obras incorporadas al corpus, con indicios sobre sus posibles relaciones de autoría.':
-		"Dans Examen des attributions, vous pouvez consulter les rapports stylométriques des oeuvres intégrées au corpus, avec des indices sur leurs possibles relations d’attribution.",
+		"Dans Examen de autorías, vous pouvez consulter les rapports stylométriques des œuvres intégrées au corpus, avec des indices sur leurs possibles relations d’attribution.",
 	'TEXORO permite realizar búsquedas textuales sobre cerca de 3000 obras y más de 38 millones de palabras, con opciones para localizar palabras, frases, patrones, combinaciones de términos y relaciones de proximidad.':
-		"TEXORO permet d'effectuer des recherches textuelles sur près de 3 000 oeuvres et plus de 38 millions de mots, avec des options pour localiser mots, phrases, motifs, combinaisons de termes et relations de proximité.",
+		"TEXORO permet d'effectuer des recherches textuelles sur près de 3 000 œuvres et plus de 38 millions de mots, avec des options pour localiser mots, phrases, motifs, combinaisons de termes et relations de proximité.",
 	'BITESO ofrece acceso abierto a textos digitales procedentes, en buena medida, de transcripciones automáticas de impresos y manuscritos.':
 		"BITESO offre un accès ouvert à des textes numériques issus en grande partie de transcriptions automatiques d'imprimés et de manuscrits.",
 	'Además, los resúmenes automáticos permiten obtener una primera orientación sobre el argumento y el contenido de las obras, siempre como ayuda inicial y no como sustituto de la lectura o del análisis filológico.':
-		"Les résumés automatiques permettent aussi d'obtenir une première orientation sur l'intrigue et le contenu des oeuvres, toujours comme aide initiale et non comme substitut à la lecture ou à l'analyse philologique.",
+		"Les résumés automatiques permettent aussi d'obtenir une première orientation sur l'intrigue et le contenu des œuvres, toujours comme aide initiale et non comme substitut à la lecture ou à l'analyse philologique.",
 	'También puedes colaborar con nosotros enviándonos textos del Siglo de Oro que todavía no estén incorporados a nuestros recursos, información bibliográfica, noticias sobre atribuciones, datos sobre testimonios o cualquier material que pueda mejorar el conjunto.':
 		"Vous pouvez également collaborer avec nous en nous envoyant des textes du Siècle d'or non encore intégrés à nos ressources, des informations bibliographiques, des nouvelles d'attribution, des données sur les témoins ou tout matériau susceptible d'améliorer l'ensemble.",
 	'La colaboración de investigadores, docentes y especialistas resulta fundamental para seguir ampliando, revisando y corrigiendo la información disponible.':
@@ -1285,9 +1288,9 @@ const esToFr: Record<string, string> = {
 	'TEXORO es una plataforma de búsqueda textual que permite':
 		'TEXORO est une plateforme de recherche textuelle qui permet de',
 	'consultar de forma unificada un amplio corpus de obras del Siglo de Oro':
-		"consulter de manière unifiée un vaste corpus d'oeuvres du Siècle d'or",
+		"consulter de manière unifiée un vaste corpus d'œuvres du Siècle d'or",
 	'El recurso reúne cerca de 3000 textos, con más de 38 millones de palabras indexadas y obras de más de 400 autores, y ofrece distintas posibilidades para explorar el patrimonio literario aurisecular desde criterios léxicos, textuales y documentales.':
-		"La ressource rassemble près de 3 000 textes, plus de 38 millions de mots indexés et des oeuvres de plus de 400 auteurs, et offre plusieurs façons d'explorer le patrimoine littéraire auriséculaire selon des critères lexicaux, textuels et documentaires.",
+		"La ressource rassemble près de 3 000 textes, plus de 38 millions de mots indexés et des œuvres de plus de 400 auteurs, et offre plusieurs façons d'explorer le patrimoine littéraire auriséculaire selon des critères lexicaux, textuels et documentaires.",
 	'El buscador permite localizar palabras, frases exactas y patrones con comodines, así como realizar consultas avanzadas mediante la combinación de términos, condiciones de proximidad y filtros por título, género, atribución tradicional, atribución estilométrica o estado del texto.':
 		"Le moteur de recherche permet de localiser des mots, des phrases exactes et des motifs avec jokers, ainsi que d'effectuer des requêtes avancées combinant termes, conditions de proximité et filtres par titre, genre, attribution traditionnelle, attribution stylométrique ou état du texte.",
 	'De este modo, TEXORO facilita tanto': 'Ainsi, TEXORO facilite aussi bien',
@@ -1297,14 +1300,17 @@ const esToFr: Record<string, string> = {
 		'sur la présence, la distribution et les relations de mots ou expressions dans l’ensemble du corpus.',
 	'Esta página web ha sido desarrollada gracias a la financiación principal de:':
 		'Ce site a été développé grâce au financement principal de :',
-	'Con el apoyo complementario de:': 'Avec le soutien complémentaire de :'
+	'Con el apoyo complementario de:': 'Avec le soutien complémentaire de :',
+	"Logo ETSO": "Logo ETSO",
+	"Logo de Thal-IA": "Logo Thal-IA",
+	"Logo BITESO": "Logo BITESO"
 };
 
 Object.assign(esToEn, {
 	'Indicadores del catálogo': 'Catalogue indicators',
 	'Ver listado de obras': 'View the works list',
 	'Ver listado de dramaturgos': 'View the playwrights list',
-	'Examen de autorías es un espacio dedicado a la': 'The Authorship exam is a space devoted to',
+	'Examen de autorías es un espacio dedicado a la': 'Examen de autorías is a space devoted to',
 	'atribución computacional': 'computational attribution',
 	'de autoría en el teatro': 'of authorship in',
 	'del Siglo de Oro a gran escala. La plataforma, desarrollada por Álvaro Cuéllar y Germán Vega':
@@ -1382,7 +1388,7 @@ Object.assign(esToEn, {
 	'El corpus de TEXORO se ofrece únicamente como herramienta de búsqueda textual. Los fragmentos mostrados son contextos breves de consulta y no permiten ni autorizan la reconstrucción, descarga, copia o reutilización de los textos completos. Algunos textos integrados en TEXORO proceden de investigadores, proyectos o instituciones que conservan sus derechos sobre los materiales aportados.':
 		'The TEXORO corpus is offered only as a text-search tool. The fragments shown are brief consultation contexts and do not permit or authorize reconstruction, download, copying, or reuse of the complete texts. Some texts included in TEXORO come from researchers, projects, or institutions that retain rights over the contributed materials.',
 	'Los datos del Examen de autorías, los resúmenes y los metadatos pueden citarse de forma puntual. La extracción masiva, reproducción íntegra o reutilización sustancial de la base de datos de ETSO requiere autorización expresa.':
-		'Data from the Authorship exam, summaries, and metadata may be cited selectively. Massive extraction, full reproduction, or substantial reuse of the ETSO database requires express authorization.',
+		'Data from Examen de autorías, summaries, and metadata may be cited selectively. Massive extraction, full reproduction, or substantial reuse of the ETSO database requires express authorization.',
 	'Las imágenes, documentos, logotipos y materiales procedentes de terceros se rigen por las condiciones indicadas por sus respectivas fuentes o titulares.':
 		'Images, documents, logos, and materials from third parties are governed by the conditions indicated by their respective sources or rights holders.',
 	'La identidad visual y diseño de ETSO queda protegida por los derechos de autor. El código fuente y componentes técnicos están disponibles en abierto en':
@@ -1509,7 +1515,7 @@ Object.assign(esToEn, {
 	'Fecha de adición': 'Date added',
 	'Estamos trabajando para vincular esta obra con': 'We are working to link this work with',
 	'Visualización experimental de relaciones estilométricas entre obras de Examen de autorías.':
-		'Experimental visualization of stylometric relationships between works in the Authorship exam.',
+		'Experimental visualization of stylometric relationships between works in Examen de autorías.',
 	'Visualización experimental de relaciones estilométricas. Cada obra se conecta con sus tres obras más cercanas según las distancias de obra completa.':
 		'Experimental visualization of stylometric relationships. Each work is connected to its three closest works according to complete-work distances.',
 	'Título, género y atribuciones': 'Title, genre, and attributions',
@@ -1542,13 +1548,13 @@ Object.assign(esToEn, {
 	'No hay autores que coincidan con la búsqueda.': 'No authors match the search.',
 	'autores visibles': 'visible authors',
 	'Listado de obras disponibles en Examen de autorías, con fichas, atribuciones e informes estilométricos.':
-		'List of works available in the Authorship exam, with records, attributions, and stylometric reports.',
+		'List of works available in Examen de autorías, with records, attributions, and stylometric reports.',
 	'Listado alfabético de las obras disponibles en Examen de autorías. Usa el buscador para localizar una obra y entrar directamente en su ficha.':
-		'Alphabetical list of works available in the Authorship exam. Use the search field to find a work and go directly to its record.',
+		'Alphabetical list of works available in Examen de autorías. Use the search field to find a work and go directly to its record.',
 	'Listado de dramaturgos presentes en Examen de autorías, con acceso a sus obras y relaciones estilométricas.':
-		'List of playwrights present in the Authorship exam, with access to their works and stylometric relationships.',
+		'List of playwrights present in Examen de autorías, with access to their works and stylometric relationships.',
 	'Listado alfabético de los dramaturgos presentes en Examen de autorías según la atribución tradicional. Usa el buscador para localizar un nombre o una obra.':
-		'Alphabetical list of playwrights present in the Authorship exam according to traditional attribution. Use the search field to find a name or a work.',
+		'Alphabetical list of playwrights present in Examen de autorías according to traditional attribution. Use the search field to find a name or a work.',
 	'Buscar dramaturgo': 'Search playwright',
 	'No hay dramaturgos que coincidan con la búsqueda.': 'No playwrights match the search.',
 	'dramaturgos visibles': 'visible playwrights',
@@ -1594,9 +1600,9 @@ Object.assign(esToEn, {
 
 Object.assign(esToFr, {
 	'Indicadores del catálogo': 'Indicateurs du catalogue',
-	'Ver listado de obras': 'Voir la liste des oeuvres',
+	'Ver listado de obras': 'Voir la liste des œuvres',
 	'Ver listado de dramaturgos': 'Voir la liste des dramaturges',
-	'Examen de autorías es un espacio dedicado a la': "L'examen des attributions est un espace consacré à",
+	'Examen de autorías es un espacio dedicado a la': "Examen de autorías est un espace consacré à",
 	'atribución computacional': "l'attribution computationnelle",
 	'de autoría en el teatro': "d'auteur dans le théâtre",
 	'del Siglo de Oro a gran escala. La plataforma, desarrollada por Álvaro Cuéllar y Germán Vega':
@@ -1624,7 +1630,7 @@ Object.assign(esToFr, {
 	'también textos procedentes de transcripciones automáticas de impresos y manuscritos antiguos. Se':
 		"également des textes issus de transcriptions automatiques d'imprimés et de manuscrits anciens. Les",
 	'aceptan consultas, colaboraciones y propuestas de ampliación: si dispones de una obra o conoces cómo':
-		"demandes, collaborations et propositions d'élargissement sont bienvenues : si vous disposez d'une oeuvre ou savez comment",
+		"demandes, collaborations et propositions d'élargissement sont bienvenues : si vous disposez d'une œuvre ou savez comment",
 	'acceder a ella, escríbenos y nos comprometemos a reconocer tu contribución y a compartir los resultados del análisis.':
 		"y accéder, écrivez-nous ; nous nous engageons à reconnaître votre contribution et à partager les résultats de l'analyse.",
 	'La fecha "hasta" debe ser mayor o igual que la fecha "desde".':
@@ -1646,7 +1652,7 @@ Object.assign(esToFr, {
 		"Il n'y a pas assez de données d'attribution pour comparer les termes.",
 	'No hay datos suficientes de género para comparar términos.':
 		"Il n'y a pas assez de données de genre pour comparer les termes.",
-	'Caracteres permitidos:': 'Caractères autorisés :',
+	'Caracteres permitidos:': 'Tipoctères autorisés :',
 	'letras, números, espacios y los comodines': 'lettres, chiffres, espaces et jokers',
 	'Términos adicionales:': 'Termes additionnels :',
 	'puedes exigir que aparezcan todos, al menos uno, o buscar cualquiera de los términos.':
@@ -1661,9 +1667,9 @@ Object.assign(esToFr, {
 	'Los resultados se ordenan por relevancia y número de ocurrencias.':
 		'Les résultats sont classés par pertinence et nombre d’occurrences.',
 	'En cada obra se cargan contextos breves de las primeras ocurrencias visibles.':
-		'Dans chaque oeuvre, de courts contextes des premières occurrences visibles sont chargés.',
+		'Dans chaque œuvre, de courts contextes des premières occurrences visibles sont chargés.',
 	'El detalle de ocurrencias muestra fragmentos localizados y posición aproximada en la obra.':
-		'Le détail des occurrences affiche les fragments localisés et leur position approximative dans l’oeuvre.',
+		'Le détail des occurrences affiche les fragments localisés et leur position approximative dans l’œuvre.',
 	'La exportación XLSX guarda consulta, filtros, resultados y ocurrencias disponibles.':
 		"L'export XLSX conserve la requête, les filtres, les résultats et les occurrences disponibles.",
 	'Derechos, licencias y condiciones de reutilización de contenidos, datos, textos y materiales de ETSO.':
@@ -1675,7 +1681,7 @@ Object.assign(esToFr, {
 	'El corpus de TEXORO se ofrece únicamente como herramienta de búsqueda textual. Los fragmentos mostrados son contextos breves de consulta y no permiten ni autorizan la reconstrucción, descarga, copia o reutilización de los textos completos. Algunos textos integrados en TEXORO proceden de investigadores, proyectos o instituciones que conservan sus derechos sobre los materiales aportados.':
 		"Le corpus TEXORO est proposé uniquement comme outil de recherche textuelle. Les fragments affichés sont de courts contextes de consultation et ne permettent ni n'autorisent la reconstruction, le téléchargement, la copie ou la réutilisation des textes complets. Certains textes intégrés à TEXORO proviennent de chercheurs, projets ou institutions qui conservent leurs droits sur les matériaux fournis.",
 	'Los datos del Examen de autorías, los resúmenes y los metadatos pueden citarse de forma puntual. La extracción masiva, reproducción íntegra o reutilización sustancial de la base de datos de ETSO requiere autorización expresa.':
-		"Les données de l'examen des attributions, les résumés et les métadonnées peuvent être cités ponctuellement. L’extraction massive, la reproduction intégrale ou la réutilisation substantielle de la base de données ETSO requiert une autorisation expresse.",
+		"Les données d’Examen de autorías, les résumés et les métadonnées peuvent être cités ponctuellement. L’extraction massive, la reproduction intégrale ou la réutilisation substantielle de la base de données ETSO requiert une autorisation expresse.",
 	'Las imágenes, documentos, logotipos y materiales procedentes de terceros se rigen por las condiciones indicadas por sus respectivas fuentes o titulares.':
 		'Les images, documents, logos et matériaux provenant de tiers sont régis par les conditions indiquées par leurs sources ou titulaires respectifs.',
 	'La identidad visual y diseño de ETSO queda protegida por los derechos de autor. El código fuente y componentes técnicos están disponibles en abierto en':
@@ -1781,31 +1787,31 @@ Object.assign(esToFr, {
 	'Cerrar navegación de jornadas': 'Fermer la navigation des journées',
 	'Abrir navegación de jornadas': 'Ouvrir la navigation des journées',
 	'Resumen automático de': 'Résumé automatique de',
-	'obra del corpus de ETSO.': 'oeuvre du corpus ETSO.',
+	'obra del corpus de ETSO.': 'œuvre du corpus ETSO.',
 	'A continuación se ofrece un resumen automático no revisado de la obra, generado con ChatGPT':
-		'Voici un résumé automatique non révisé de l’oeuvre, généré avec ChatGPT',
+		'Voici un résumé automatique non révisé de l’œuvre, généré avec ChatGPT',
 	'(modelo 5.4) a partir del texto disponible. Puede incluir errores y omisiones. Si detectas':
 		'(modèle 5.4) à partir du texte disponible. Il peut contenir des erreurs et omissions. Si vous détectez',
 	'problemas o incoherencias, te agradecemos que contactes con nosotros para incorporar':
 		'des problèmes ou incohérences, nous vous remercions de nous contacter afin d’intégrer des',
 	'actualizaciones.': 'mises à jour.',
-	'Resumen automático de la obra': "Résumé automatique de l'oeuvre",
+	'Resumen automático de la obra': "Résumé automatique de l'œuvre",
 	'Resumen completo': 'Résumé complet',
 	'No hay resumen breve disponible. Puedes consultar el resumen automático completo.':
 		"Aucun résumé bref n'est disponible. Vous pouvez consulter le résumé automatique complet.",
-	'No hay resumen disponible para esta obra.': "Aucun résumé n'est disponible pour cette oeuvre.",
-	'Metadatos de la obra': "Métadonnées de l'oeuvre",
-	'Ficha obra': "Fiche d'oeuvre",
+	'No hay resumen disponible para esta obra.': "Aucun résumé n'est disponible pour cette œuvre.",
+	'Metadatos de la obra': "Métadonnées de l'œuvre",
+	'Ficha obra': "Fiche d'œuvre",
 	'Sin atribución tradicional determinada': 'Aucune attribution traditionnelle déterminée',
 	'No apunta hacia ningún autor de forma clara': 'Ne pointe clairement vers aucun auteur',
 	'Análisis estilométrico:': 'Analyse stylométrique :',
 	'(posible colaboración).': '(collaboration possible).',
 	'Fecha de adición': "Date d'ajout",
-	'Estamos trabajando para vincular esta obra con': 'Nous travaillons à relier cette oeuvre à',
+	'Estamos trabajando para vincular esta obra con': 'Nous travaillons à relier cette œuvre à',
 	'Visualización experimental de relaciones estilométricas entre obras de Examen de autorías.':
-		"Visualisation expérimentale des relations stylométriques entre les oeuvres de l'examen des attributions.",
+		"Visualisation expérimentale des relations stylométriques entre les œuvres d’Examen de autorías.",
 	'Visualización experimental de relaciones estilométricas. Cada obra se conecta con sus tres obras más cercanas según las distancias de obra completa.':
-		"Visualisation expérimentale des relations stylométriques. Chaque oeuvre est reliée à ses trois oeuvres les plus proches selon les distances d'oeuvre complète.",
+		"Visualisation expérimentale des relations stylométriques. Chaque œuvre est reliée à ses trois œuvres les plus proches selon les distances d'œuvre complète.",
 	'Título, género y atribuciones': 'Titre, genre et attributions',
 	'Busca por palabras del título, género, atribución tradicional o atribución estilométrica.':
 		"Recherche par mots du titre, genre, attribution traditionnelle ou attribution stylométrique.",
@@ -1814,35 +1820,35 @@ Object.assign(esToFr, {
 	'Tradicional': 'Traditionnelle',
 	'Autor': 'Auteur',
 	'Permite seleccionar hasta': 'Permet de sélectionner jusqu’à',
-	'autores para colorear sus obras en la red.': 'auteurs pour colorer leurs oeuvres dans le réseau.',
+	'autores para colorear sus obras en la red.': 'auteurs pour colorer leurs œuvres dans le réseau.',
 	'Colores de autores seleccionados': 'Couleurs des auteurs sélectionnés',
-	'Obra seleccionada': 'Oeuvre sélectionnée',
+	'Obra seleccionada': 'Œuvre sélectionnée',
 	'Centrar': 'Centrer',
 	'Ficha': 'Fiche',
-	'Obras conectadas (se indican las 3 más próximas)': 'Oeuvres connectées (les 3 plus proches sont indiquées)',
+	'Obras conectadas (se indican las 3 más próximas)': 'Œuvres connectées (les 3 plus proches sont indiquées)',
 	'Calculando red de fuerzas...': 'Calcul du réseau de forces...',
 	'No se pudo cargar el grafo': "Le graphe n'a pas pu être chargé",
 	'Listado de obras indexadas en TEXORO, con acceso a sus fichas y metadatos.':
-		'Liste des oeuvres indexées dans TEXORO, avec accès à leurs fiches et métadonnées.',
+		'Liste des œuvres indexées dans TEXORO, avec accès à leurs fiches et métadonnées.',
 	'Listado alfabético de las obras indexadas en TEXORO. Usa el buscador para localizar una obra y entrar directamente en su ficha.':
-		"Liste alphabétique des oeuvres indexées dans TEXORO. Utilisez le moteur de recherche pour trouver une oeuvre et accéder directement à sa fiche.",
-	'obras visibles': 'oeuvres visibles',
+		"Liste alphabétique des œuvres indexées dans TEXORO. Utilisez le moteur de recherche pour trouver une œuvre et accéder directement à sa fiche.",
+	'obras visibles': 'œuvres visibles',
 	'Listado de autores presentes en TEXORO, con sus obras asociadas por atribución tradicional.':
-		'Liste des auteurs présents dans TEXORO, avec leurs oeuvres associées par attribution traditionnelle.',
+		'Liste des auteurs présents dans TEXORO, avec leurs œuvres associées par attribution traditionnelle.',
 	'Listado alfabético de los autores presentes en TEXORO según la atribución tradicional. Usa el buscador para localizar un nombre o una obra.':
-		"Liste alphabétique des auteurs présents dans TEXORO selon l'attribution traditionnelle. Utilisez le moteur de recherche pour trouver un nom ou une oeuvre.",
+		"Liste alphabétique des auteurs présents dans TEXORO selon l'attribution traditionnelle. Utilisez le moteur de recherche pour trouver un nom ou une œuvre.",
 	'Buscar autor': 'Rechercher un auteur',
 	'Ej: Lope de Vega, Moreto, Ruiz de Alarcón...': 'Ex. : Lope de Vega, Moreto, Ruiz de Alarcón...',
 	'No hay autores que coincidan con la búsqueda.': 'Aucun auteur ne correspond à la recherche.',
 	'autores visibles': 'auteurs visibles',
 	'Listado de obras disponibles en Examen de autorías, con fichas, atribuciones e informes estilométricos.':
-		"Liste des oeuvres disponibles dans l'examen des attributions, avec fiches, attributions et rapports stylométriques.",
+		"Liste des œuvres disponibles dans Examen de autorías, avec fiches, attributions et rapports stylométriques.",
 	'Listado alfabético de las obras disponibles en Examen de autorías. Usa el buscador para localizar una obra y entrar directamente en su ficha.':
-		"Liste alphabétique des oeuvres disponibles dans l'examen des attributions. Utilisez le moteur de recherche pour trouver une oeuvre et accéder directement à sa fiche.",
+		"Liste alphabétique des œuvres disponibles dans Examen de autorías. Utilisez le moteur de recherche pour trouver une œuvre et accéder directement à sa fiche.",
 	'Listado de dramaturgos presentes en Examen de autorías, con acceso a sus obras y relaciones estilométricas.':
-		"Liste des dramaturges présents dans l'examen des attributions, avec accès à leurs oeuvres et relations stylométriques.",
+		"Liste des dramaturges présents dans Examen de autorías, avec accès à leurs œuvres et relations stylométriques.",
 	'Listado alfabético de los dramaturgos presentes en Examen de autorías según la atribución tradicional. Usa el buscador para localizar un nombre o una obra.':
-		"Liste alphabétique des dramaturges présents dans l'examen des attributions selon l'attribution traditionnelle. Utilisez le moteur de recherche pour trouver un nom ou une oeuvre.",
+		"Liste alphabétique des dramaturges présents dans Examen de autorías selon l'attribution traditionnelle. Utilisez le moteur de recherche pour trouver un nom ou une œuvre.",
 	'Buscar dramaturgo': 'Rechercher un dramaturge',
 	'No hay dramaturgos que coincidan con la búsqueda.': 'Aucun dramaturge ne correspond à la recherche.',
 	'dramaturgos visibles': 'dramaturges visibles',
@@ -1896,7 +1902,7 @@ Object.assign(esToEn, {
 	'Los análisis de estilometría no permiten asociar esta obra de forma clara con ningún perfil autorial del corpus.':
 		'The stylometric analyses do not allow this work to be clearly associated with any authorial profile in the corpus.',
 	'Los análisis de estilometría no permiten evaluar la asociación de esta obra con el perfil autorial del autor tradicional, debido a lo reducido de su corpus de comparación. Tampoco identifican de forma clara una alternativa autorial.':
-		'The stylometric analyses do not allow the association of this work with the authorial profile of the traditional author to be evaluated, because the comparison corpus is too small. Nor do they clearly identify an alternative authorial profile.',
+		'The stylometric analyses do not allow the association of this work with the authorial profile of the traditional author to be evaluated, because the comparison corpus is too small. Nor do they clearly identify an alternative authorial proscheda.',
 	'Esta obra no ha sido analizada estilométricamente, por lo que no es posible valorar su asociación con ningún perfil autorial del corpus.':
 		'This work has not been analyzed stylometrically, so it is not possible to assess its association with any authorial profile in the corpus.',
 	'Los resultados estilométricos disponibles requieren una revisión en profundidad antes de formular una conclusión autorial.':
@@ -1923,29 +1929,29 @@ Object.assign(esToFr, {
 	'Análisis estilométrico de': 'Analyse stylométrique de',
 	'Informe estilométrico de': 'Rapport stylométrique de',
 	'en ETSO.': 'dans ETSO.',
-	'Obra sin atribución tradicional determinada.': 'Oeuvre sans attribution traditionnelle déterminée.',
-	'Obra atribuida a': 'Oeuvre attribuée à',
-	'Obra atribuida a la escritura en colaboración entre': 'Oeuvre attribuée à une écriture collaborative entre',
+	'Obra sin atribución tradicional determinada.': 'Œuvre sans attribution traditionnelle déterminée.',
+	'Obra atribuida a': 'Œuvre attribuée à',
+	'Obra atribuida a la escritura en colaboración entre': 'Œuvre attribuée à une écriture collaborative entre',
 	'Los análisis de estilometría no permiten asociar esta obra de forma clara con ningún perfil autorial del corpus.':
-		"Les analyses stylométriques ne permettent pas d'associer clairement cette oeuvre à un profil d'auteur du corpus.",
+		"Les analyses stylométriques ne permettent pas d'associer clairement cette œuvre à un profil d'auteur du corpus.",
 	'Los análisis de estilometría no permiten evaluar la asociación de esta obra con el perfil autorial del autor tradicional, debido a lo reducido de su corpus de comparación. Tampoco identifican de forma clara una alternativa autorial.':
-		"Les analyses stylométriques ne permettent pas d'évaluer l'association de cette oeuvre avec le profil de l'auteur traditionnel, en raison de la taille réduite de son corpus de comparaison. Elles n'identifient pas non plus clairement une autre attribution.",
+		"Les analyses stylométriques ne permettent pas d'évaluer l'association de cette œuvre avec le profil de l'auteur traditionnel, en raison de la taille réduite de son corpus de comparaison. Elles n'identifient pas non plus clairement une autre attribution.",
 	'Esta obra no ha sido analizada estilométricamente, por lo que no es posible valorar su asociación con ningún perfil autorial del corpus.':
-		"Cette oeuvre n'a pas été analysée stylométriquement ; il n'est donc pas possible d'évaluer son association avec un profil d'auteur du corpus.",
+		"Cette œuvre n'a pas été analysée stylométriquement ; il n'est donc pas possible d'évaluer son association avec un profil d'auteur du corpus.",
 	'Los resultados estilométricos disponibles requieren una revisión en profundidad antes de formular una conclusión autorial.':
 		"Les résultats stylométriques disponibles nécessitent une révision approfondie avant de formuler une conclusion d'attribution.",
 	'Los análisis de estilometría permiten asociar esta obra de forma clara con el perfil autorial de':
-		"Les analyses stylométriques permettent d'associer clairement cette oeuvre au profil d'auteur de",
+		"Les analyses stylométriques permettent d'associer clairement cette œuvre au profil d'auteur de",
 	'Los análisis de estilometría permiten asociar esta obra con el perfil autorial de':
-		"Les analyses stylométriques permettent d'associer cette oeuvre au profil d'auteur de",
+		"Les analyses stylométriques permettent d'associer cette œuvre au profil d'auteur de",
 	'Los análisis de estilometría permiten asociar esta obra con los perfiles autoriales de':
-		"Les analyses stylométriques permettent d'associer cette oeuvre aux profils d'auteur de",
+		"Les analyses stylométriques permettent d'associer cette œuvre aux profils d'auteur de",
 	'por cuanto algunas de sus obras aparecen en las primeras posiciones, aunque no de forma concluyente.':
-		"car certaines de leurs oeuvres apparaissent dans les premières positions, bien que de manière non concluante.",
+		"car certaines de leurs œuvres apparaissent dans les premières positions, bien que de manière non concluante.",
 	'Los resultados estilométricos disponibles requieren revisión antes de formular una conclusión autorial.':
 		"Les résultats stylométriques disponibles nécessitent une révision avant de formuler une conclusion d'attribution.",
 	'Se ofrecen a continuación las 20 obras con usos léxicos más cercanos, tanto a la obra completa como, cuando es posible, a cada una de sus jornadas, empleando un corpus constituido por 3000 obras de 400 autores diferentes. Las distancias han sido calculadas usando las frecuencias de las 500 palabras más usuales con el método Delta de Burrows. Cuanto mayor cercanía hay a 0,0 es mayor la afinidad.':
-		"Les 20 oeuvres aux usages lexicaux les plus proches sont présentées ci-dessous, à la fois pour l'oeuvre complète et, lorsque c'est possible, pour chacune de ses journées, à partir d'un corpus de 3 000 oeuvres de 400 auteurs différents. Les distances ont été calculées avec les fréquences des 500 mots les plus usuels selon la méthode Delta de Burrows. Plus la valeur est proche de 0,0, plus l'affinité est grande.",
+		"Les 20 œuvres aux usages lexicaux les plus proches sont présentées ci-dessous, à la fois pour l'œuvre complète et, lorsque c'est possible, pour chacune de ses journées, à partir d'un corpus de 3 000 œuvres de 400 auteurs différents. Les distances ont été calculées avec les fréquences des 500 mots les plus usuels selon la méthode Delta de Burrows. Plus la valeur est proche de 0,0, plus l'affinité est grande.",
 	'Informe generado desde Turso para validar visualización y flujo de consulta.':
 		'Rapport généré depuis Turso pour valider la visualisation et le flux de consultation.',
 	'Se muestran las distancias cargadas en work_distances desde Turso. En la versión final, esta sección podrá enriquecerse con servicios de cálculo oficiales del proyecto.':

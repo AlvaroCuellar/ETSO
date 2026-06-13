@@ -101,7 +101,7 @@
 							</a>
 							<p class="m-0">
 								<span class="font-semibold text-border-accent-blue">{translations.footer.direction}</span>
-								<span class="ml-1 text-white/78">Sònia Boadas y Gonzalo Pontón</span>
+								<span class="ml-1 text-white/78">Sònia Boadas {translations.footer.and} Gonzalo Pontón</span>
 							</p>
 						</div>
 

@@ -68,7 +68,7 @@
 			of: 'sur',
 			more: 'de plus',
 			summariesFound: 'résumés trouvés',
-			visibleWorks: 'oeuvres visibles'
+			visibleWorks: 'œuvres visibles'
 		},
 		pt: {
 			activeTerm: 'termo ativo',

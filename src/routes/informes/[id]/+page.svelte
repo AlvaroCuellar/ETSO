@@ -13,6 +13,7 @@
 		formatDisplayWorkTitle,
 		formatPrefixedDisplayWorkTitleHtml
 	} from '$lib/utils/format-display-work-title';
+	import { translateText } from '$lib/i18n';
 	import { renderInlineItalicsHtml } from '$lib/utils/render-inline-italics-html';
 
 	import type { PageData } from './$types';
@@ -29,16 +30,12 @@
 	}
 
 	let { data }: { data: PageData } = $props();
+	const t = (value: string): string => translateText(data.locale, value);
 	const displayWorkTitle = $derived.by(() => formatDisplayWorkTitle(data.work.title));
-	const displayInformeTitle = $derived.by(() => `Análisis estilométrico de ${displayWorkTitle}`);
+	const displayInformeTitle = $derived.by(() => `${t('Análisis estilométrico de')} ${displayWorkTitle}`);
 	const displayInformeTitleHtml = $derived.by(() =>
-		formatPrefixedDisplayWorkTitleHtml('Análisis estilométrico de', data.work.title)
+		formatPrefixedDisplayWorkTitleHtml(t('Análisis estilométrico de'), data.work.title)
 	);
-	const seoDescription = $derived.by(() => {
-		const intro = data.informe.intro?.trim();
-		if (intro) return intro;
-		return `Informe estilométrico de ${displayWorkTitle} en ETSO.`;
-	});
 
 	let activeAmbito = $state<Ambito>('obracompleta');
 
@@ -68,13 +65,13 @@
 			.toLowerCase()
 			.trim();
 
-	const formatNameList = (names: string[], connector: 'y' | 'o'): string => {
+	const formatNameList = (names: string[], connector: string): string => {
 		if (names.length <= 1) return names[0] ?? '';
 		if (names.length === 2) return `${names[0]} ${connector} ${names[1]}`;
 		return `${names.slice(0, -1).join(', ')} ${connector} ${names[names.length - 1]}`;
 	};
 
-	const formatAuthorListParts = (authors: AuthorReference[], connector: 'y' | 'o'): ResultTextPart[] => {
+	const formatAuthorListParts = (authors: AuthorReference[], connector: string): ResultTextPart[] => {
 		const parts: ResultTextPart[] = [];
 		for (const [index, author] of authors.entries()) {
 			if (index > 0) {
@@ -92,6 +89,23 @@
 		return parts;
 	};
 
+	const localizedListConnector = (connector: 'and' | 'or'): string => {
+		const connectors = {
+			es: { and: 'y', or: 'o' },
+			en: { and: 'and', or: 'or' },
+			fr: { and: 'et', or: 'ou' },
+			pt: { and: 'e', or: 'ou' },
+			it: { and: 'e', or: 'o' },
+			de: { and: 'und', or: 'oder' },
+			zh: { and: '和', or: '或' },
+			ja: { and: 'および', or: 'または' },
+			ko: { and: '및', or: '또는' },
+			ru: { and: 'и', or: 'или' },
+			ar: { and: 'و', or: 'أو' }
+		} as const;
+		return (connectors[data.locale] ?? connectors.es)[connector];
+	};
+
 	const buildTraditionalAttributionParts = (set: AttributionSet): ResultTextPart[] => {
 		const authors = set.groups.flatMap((group) =>
 			group.members
@@ -102,25 +116,25 @@
 				.filter((member) => member.authorName.length > 0)
 		);
 		if (set.unresolved || authors.length === 0) {
-			return [{ kind: 'text', value: 'Obra sin atribución tradicional determinada.' }];
+			return [{ kind: 'text', value: t('Obra sin atribución tradicional determinada.') }];
 		}
 		if (authors.length === 1) {
 			return [
-				{ kind: 'text', value: 'Obra atribuida a ' },
-				...formatAuthorListParts(authors, 'y'),
+				{ kind: 'text', value: `${t('Obra atribuida a')} ` },
+				...formatAuthorListParts(authors, localizedListConnector('and')),
 				{ kind: 'text', value: '.' }
 			];
 		}
 		if (set.connector === 'and') {
 			return [
-				{ kind: 'text', value: 'Obra atribuida a la escritura en colaboración entre ' },
-				...formatAuthorListParts(authors, 'y'),
+				{ kind: 'text', value: `${t('Obra atribuida a la escritura en colaboración entre')} ` },
+				...formatAuthorListParts(authors, localizedListConnector('and')),
 				{ kind: 'text', value: '.' }
 			];
 		}
 		return [
-			{ kind: 'text', value: 'Obra atribuida a ' },
-			...formatAuthorListParts(authors, 'o'),
+			{ kind: 'text', value: `${t('Obra atribuida a')} ` },
+			...formatAuthorListParts(authors, localizedListConnector('or')),
 			{ kind: 'text', value: '.' }
 		];
 	};
@@ -137,16 +151,16 @@
 	const stylometryResultSentence = (set: AttributionSet): string => {
 		const rawExpression = normalizeText(set.rawExpression ?? '');
 		if (rawExpression.includes('no_apunta_a_ningun_autor')) {
-			return 'Los análisis de estilometría no permiten asociar esta obra de forma clara con ningún perfil autorial del corpus.';
+			return t('Los análisis de estilometría no permiten asociar esta obra de forma clara con ningún perfil autorial del corpus.');
 		}
 		if (rawExpression.includes('no_es_posible')) {
-			return 'Los análisis de estilometría no permiten evaluar la asociación de esta obra con el perfil autorial del autor tradicional, debido a lo reducido de su corpus de comparación. Tampoco identifican de forma clara una alternativa autorial.';
+			return t('Los análisis de estilometría no permiten evaluar la asociación de esta obra con el perfil autorial del autor tradicional, debido a lo reducido de su corpus de comparación. Tampoco identifican de forma clara una alternativa autorial.');
 		}
 		if (rawExpression.includes('no_analizada')) {
-			return 'Esta obra no ha sido analizada estilométricamente, por lo que no es posible valorar su asociación con ningún perfil autorial del corpus.';
+			return t('Esta obra no ha sido analizada estilométricamente, por lo que no es posible valorar su asociación con ningún perfil autorial del corpus.');
 		}
 		if (rawExpression.includes('pendiente_profundidad')) {
-			return 'Los resultados estilométricos disponibles requieren una revisión en profundidad antes de formular una conclusión autorial.';
+			return t('Los resultados estilométricos disponibles requieren una revisión en profundidad antes de formular una conclusión autorial.');
 		}
 
 		const members = set.groups.flatMap((group) => group.members).filter((member) => member.authorName.trim());
@@ -154,22 +168,166 @@
 		const allProbable = members.length > 0 && members.every((member) => member.confidence === 'probable');
 
 		if (members.length === 1 && members[0].confidence === 'segura') {
-			return `Los análisis de estilometría permiten asociar esta obra de forma clara con el perfil autorial de ${names[0]}.`;
+			return `${t('Los análisis de estilometría permiten asociar esta obra de forma clara con el perfil autorial de')} ${names[0]}.`;
 		}
 		if (members.length === 1 && members[0].confidence === 'probable') {
-			return `Los análisis de estilometría permiten asociar esta obra con el perfil autorial de ${names[0]}, por cuanto algunas de sus obras aparecen en las primeras posiciones, aunque no de forma concluyente.`;
+			return `${t('Los análisis de estilometría permiten asociar esta obra con el perfil autorial de')} ${names[0]}, ${t('por cuanto algunas de sus obras aparecen en las primeras posiciones, aunque no de forma concluyente.')}`;
 		}
 		if (members.length > 1 && set.connector === 'and' && allProbable) {
-			return `Los análisis de estilometría permiten asociar esta obra con los perfiles autoriales de ${formatNameList(names, 'y')}, por cuanto algunas de sus obras aparecen en las primeras posiciones, aunque no de forma concluyente.`;
+			return `${t('Los análisis de estilometría permiten asociar esta obra con los perfiles autoriales de')} ${formatNameList(names, localizedListConnector('and'))}, ${t('por cuanto algunas de sus obras aparecen en las primeras posiciones, aunque no de forma concluyente.')}`;
 		}
 
-		return 'Los resultados estilométricos disponibles requieren revisión antes de formular una conclusión autorial.';
+		return t('Los resultados estilométricos disponibles requieren revisión antes de formular una conclusión autorial.');
 	};
+
+	const reportFallbackReplacement = (source: string): string => {
+		const en: Record<string, string> = {
+			'Lectura preliminar para': 'Preliminary reading for',
+			'con perfil': 'with profile',
+			'y nivel': 'and level',
+			'sin autoria determinada': 'without determined authorship',
+			'sin confianza explicita': 'without explicit confidence',
+			desconocida: 'unknown',
+			colaboracion: 'collaboration',
+			unica: 'single-author'
+		};
+		const fr: Record<string, string> = {
+			'Lectura preliminar para': 'Lecture préliminaire pour',
+			'con perfil': 'avec profil',
+			'y nivel': 'et niveau',
+			'sin autoria determinada': 'sans attribution déterminée',
+			'sin confianza explicita': 'sans confiance explicite',
+			desconocida: 'inconnue',
+			colaboracion: 'collaboration',
+			unica: 'unique'
+		};
+		const pt: Record<string, string> = {
+			'Lectura preliminar para': 'Leitura preliminar para',
+			'con perfil': 'com perfil',
+			'y nivel': 'e nível',
+			'sin autoria determinada': 'sem autoria determinada',
+			'sin confianza explicita': 'sem confiança explícita',
+			desconocida: 'desconhecida',
+			colaboracion: 'colaboração',
+			unica: 'única'
+		};
+		const it: Record<string, string> = {
+			'Lectura preliminar para': 'Lettura preliminare per',
+			'con perfil': 'con profilo',
+			'y nivel': 'e livello',
+			'sin autoria determinada': 'senza attribuzione determinata',
+			'sin confianza explicita': 'senza fiducia esplicita',
+			desconocida: 'sconosciuta',
+			colaboracion: 'collaborazione',
+			unica: 'unica'
+		};
+		const de: Record<string, string> = {
+			'Lectura preliminar para': 'Vorläufige Lektüre zu',
+			'con perfil': 'mit Profil',
+			'y nivel': 'und Niveau',
+			'sin autoria determinada': 'ohne bestimmte Autorschaft',
+			'sin confianza explicita': 'ohne ausdrückliche Sicherheit',
+			desconocida: 'unbekannt',
+			colaboracion: 'Zusammenarbeit',
+			unica: 'einzeln'
+		};
+		const zh: Record<string, string> = {
+			'Lectura preliminar para': '初步解读：',
+			'con perfil': '作者类型',
+			'y nivel': '置信度',
+			'sin autoria determinada': '未确定作者',
+			'sin confianza explicita': '无明确置信度',
+			desconocida: '未知',
+			colaboracion: '合作',
+			unica: '单一作者'
+		};
+		const ja: Record<string, string> = {
+			'Lectura preliminar para': '予備的読解：',
+			'con perfil': '著者プロファイル',
+			'y nivel': '信頼度',
+			'sin autoria determinada': '著者未確定',
+			'sin confianza explicita': '明示的な信頼度なし',
+			desconocida: '不明',
+			colaboracion: '共同執筆',
+			unica: '単独著者'
+		};
+		const ko: Record<string, string> = {
+			'Lectura preliminar para': '예비 판독:',
+			'con perfil': '저자 프로필',
+			'y nivel': '신뢰 수준',
+			'sin autoria determinada': '저자 미확정',
+			'sin confianza explicita': '명시적 신뢰도 없음',
+			desconocida: '알 수 없음',
+			colaboracion: '공동 집필',
+			unica: '단독 저자'
+		};
+		const ru: Record<string, string> = {
+			'Lectura preliminar para': 'Предварительное прочтение для',
+			'con perfil': 'с профилем',
+			'y nivel': 'и уровнем',
+			'sin autoria determinada': 'без установленного авторства',
+			'sin confianza explicita': 'без явной уверенности',
+			desconocida: 'неизвестно',
+			colaboracion: 'соавторство',
+			unica: 'единоличное авторство'
+		};
+		const ar: Record<string, string> = {
+			'Lectura preliminar para': 'قراءة أولية لـ',
+			'con perfil': 'بملف',
+			'y nivel': 'ومستوى',
+			'sin autoria determinada': 'دون نسبة تأليف محددة',
+			'sin confianza explicita': 'دون ثقة صريحة',
+			desconocida: 'غير معروف',
+			colaboracion: 'تعاون',
+			unica: 'تأليف منفرد'
+		};
+		if (data.locale === 'en') return en[source] ?? source;
+		if (data.locale === 'fr') return fr[source] ?? source;
+		if (data.locale === 'pt') return pt[source] ?? source;
+		if (data.locale === 'it') return it[source] ?? source;
+		if (data.locale === 'de') return de[source] ?? source;
+		if (data.locale === 'zh') return zh[source] ?? source;
+		if (data.locale === 'ja') return ja[source] ?? source;
+		if (data.locale === 'ko') return ko[source] ?? source;
+		if (data.locale === 'ru') return ru[source] ?? source;
+		if (data.locale === 'ar') return ar[source] ?? source;
+		return source;
+	};
+
+	const localizeStoredReportText = (value: string): string => {
+		if (data.locale === 'es') return value;
+		let next = translateText(data.locale, value);
+		if (next !== value) return next;
+
+		const replacements: Array<[string, string]> = [
+			['Lectura preliminar para', reportFallbackReplacement('Lectura preliminar para')],
+			['con perfil', reportFallbackReplacement('con perfil')],
+			['y nivel', reportFallbackReplacement('y nivel')],
+			['sin autoria determinada', reportFallbackReplacement('sin autoria determinada')],
+			['sin confianza explicita', reportFallbackReplacement('sin confianza explicita')],
+			['desconocida', reportFallbackReplacement('desconocida')],
+			['colaboracion', reportFallbackReplacement('colaboracion')],
+			['unica', reportFallbackReplacement('unica')]
+		];
+
+		for (const [source, target] of replacements) {
+			next = next.replaceAll(source, target);
+		}
+		return next;
+	};
+
+	const seoDescription = $derived.by(() => {
+		const intro = data.informe.intro?.trim();
+		if (intro) return localizeStoredReportText(intro);
+		return `${t('Informe estilométrico de')} ${displayWorkTitle} ${t('en ETSO.')}`;
+	});
 
 	const resolveResult1Text = (): string => {
 		const result = data.work.result1?.trim() ?? '';
 		if (!result) return '';
-		return hasAutomaticMarker(result) ? stylometryResultSentence(data.work.stylometryAttribution) : result;
+		return hasAutomaticMarker(result)
+			? stylometryResultSentence(data.work.stylometryAttribution)
+			: localizeStoredReportText(result);
 	};
 
 	const tokenizeResultText = (value: string): ResultTextPart[] => {
@@ -214,7 +372,7 @@
 	};
 
 	const result1Parts = $derived.by(() => tokenizeResultText(resolveResult1Text()));
-	const result2Parts = $derived.by(() => tokenizeResultText(data.work.result2?.trim() ?? ''));
+	const result2Parts = $derived.by(() => tokenizeResultText(localizeStoredReportText(data.work.result2?.trim() ?? '')));
 
 	const procedeValue = $derived.by(() => {
 		const origin = data.work.origin?.trim();
@@ -228,7 +386,7 @@
 	});
 
 	const methodologyLead =
-		'Se ofrecen a continuación las 20 obras con usos léxicos más cercanos, tanto a la obra completa como, cuando es posible, a cada una de sus jornadas, empleando un corpus constituido por 3000 obras de 400 autores diferentes. Las distancias han sido calculadas usando las frecuencias de las 500 palabras más usuales con el método Delta de Burrows. Cuanto mayor cercanía hay a 0,0 es mayor la afinidad.';
+		t('Se ofrecen a continuación las 20 obras con usos léxicos más cercanos, tanto a la obra completa como, cuando es posible, a cada una de sus jornadas, empleando un corpus constituido por 3000 obras de 400 autores diferentes. Las distancias han sido calculadas usando las frecuencias de las 500 palabras más usuales con el método Delta de Burrows. Cuanto mayor cercanía hay a 0,0 es mayor la afinidad.');
 
 	const regularSections = $derived.by(() => data.bibliography.sections.filter((section) => !section.collapsible));
 	const collapsibleSections = $derived.by(() =>
@@ -533,7 +691,7 @@
 						<ol class="m-0 grid gap-[0.55rem] pl-[1.2rem]">
 							{#each citationSectionEntries as entry}
 								<li class="m-0">
-									<p class="m-0 text-[0.95rem] leading-[1.52] text-text-main">
+									<p class="m-0 text-[0.95rem] leading-[1.52] text-text-main" data-i18n-skip>
 										{#each entry.parts as part}
 											{#if part.kind === 'link'}
 												<a
@@ -568,7 +726,7 @@
 						<ol class="m-0 grid gap-[0.55rem] pl-[1.2rem]">
 							{#each section.entries as entry}
 								<li class="m-0">
-									<p class="m-0 text-[0.95rem] leading-[1.52] text-text-main">
+									<p class="m-0 text-[0.95rem] leading-[1.52] text-text-main" data-i18n-skip>
 										{#each entry.parts as part}
 											{#if part.kind === 'link'}
 												<a
@@ -618,7 +776,7 @@
 							<ol class="m-0 grid gap-[0.55rem] pl-[1.2rem]">
 								{#each section.entries as entry}
 									<li class="m-0">
-										<p class="m-0 text-[0.95rem] leading-[1.52] text-text-main">
+										<p class="m-0 text-[0.95rem] leading-[1.52] text-text-main" data-i18n-skip>
 											{#each entry.parts as part}
 												{#if part.kind === 'link'}
 													<a

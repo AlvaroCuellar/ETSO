@@ -1,4 +1,5 @@
 import { redirect } from '@sveltejs/kit';
+import { localizePath } from '$lib/i18n';
 
 import {
 	isAccessGateEnabled,
@@ -9,12 +10,12 @@ import {
 
 import type { RequestHandler } from './$types';
 
-const buildInvalidRedirect = (next: string): string =>
-	`/acceso?next=${encodeURIComponent(next)}&error=invalid`;
+const buildInvalidRedirect = (next: string, locale: App.Locals['locale']): string =>
+	`${localizePath('/acceso', locale)}?next=${encodeURIComponent(next)}&error=invalid`;
 
-export const POST: RequestHandler = async ({ request, cookies }) => {
+export const POST: RequestHandler = async ({ request, cookies, locals }) => {
 	if (!isAccessGateEnabled()) {
-		throw redirect(303, '/');
+		throw redirect(303, localizePath('/', locals.locale));
 	}
 
 	const body = new URLSearchParams(await request.text());
@@ -22,9 +23,9 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 	const next = normalizeAccessRedirectTarget(body.get('next'));
 
 	if (!isAccessPasswordValid(password)) {
-		throw redirect(303, buildInvalidRedirect(next));
+		throw redirect(303, buildInvalidRedirect(next, locals.locale));
 	}
 
 	setAccessCookie(cookies);
-	throw redirect(303, next);
+	throw redirect(303, localizePath(next, locals.locale));
 };

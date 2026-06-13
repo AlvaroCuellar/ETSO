@@ -206,7 +206,7 @@
 <svelte:window onkeydown={handleCarouselKeydown} />
 
 <section
-	class="group relative left-1/2 right-1/2 w-[100dvw] max-w-[100dvw] -translate-x-1/2 overflow-hidden"
+	class="home-bleed group relative w-[100dvw] max-w-[100dvw] overflow-hidden"
 	aria-label="Secciones destacadas de ETSO"
 >
 	<div
@@ -218,10 +218,11 @@
 	>
 		<div
 			class="absolute inset-0 flex transition-transform duration-700 ease-out"
+			dir="ltr"
 			style={`transform: translateX(-${activeIndex * 100}%);`}
 		>
 			{#each slides as slide, index}
-				<article class="relative h-full min-w-full">
+				<article class="relative h-full min-w-full" dir="auto">
 					<img
 						src={slide.image}
 						alt={slide.alt}
@@ -386,7 +387,7 @@
 	</div>
 </section>
 
-<section class="relative left-1/2 right-1/2 mt-6 w-[100dvw] max-w-[100dvw] -translate-x-1/2 md:left-auto md:right-auto md:mx-auto md:w-full md:max-w-7xl md:translate-x-0 md:p-6 lg:p-8">
+<section class="home-bleed home-bleed-contained-md relative mt-6 w-[100dvw] max-w-[100dvw] md:mx-auto md:w-full md:max-w-7xl md:p-6 lg:p-8">
 	<div class="grid items-stretch gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,35%)] lg:gap-8">
 		<div class="grid gap-4 rounded-card bg-brand-blue px-5 py-6 text-white shadow-soft md:px-7 md:py-7 lg:px-8 lg:py-8">
 			<p class="m-0 font-ui text-[0.78rem] font-semibold uppercase tracking-[0.05em] text-white/85">
@@ -424,7 +425,7 @@
 </section>
 
 <section
-	class="relative left-1/2 right-1/2 mt-8 w-[100dvw] max-w-[100dvw] -translate-x-1/2 overflow-hidden bg-cover bg-center bg-no-repeat"
+	class="home-bleed relative mt-8 w-[100dvw] max-w-[100dvw] overflow-hidden bg-cover bg-center bg-no-repeat"
 	style={`background-image: linear-gradient(rgba(0, 38, 129, 0.52), rgba(0, 38, 129, 0.52)), url('${fondoEscritura}')`}
 >
 	<div class="mx-auto w-full max-w-7xl px-4 py-14 text-left text-white sm:px-5 md:py-16 md:text-center lg:px-6 lg:py-20">
@@ -454,6 +455,20 @@
 		</div>
 	</div>
 </section>
+
+<style>
+	.home-bleed {
+		margin-left: calc(50% - 50dvw);
+		margin-right: calc(50% - 50dvw);
+	}
+
+	@media (min-width: 768px) {
+		.home-bleed-contained-md {
+			margin-left: auto;
+			margin-right: auto;
+		}
+	}
+</style>
 
 <section class="mx-auto mt-8 w-full max-w-7xl px-2 md:px-6 lg:px-8">
 	<div class="relative overflow-hidden rounded-card bg-neutral-100 px-5 py-6 text-brand-blue-dark md:px-7 md:py-8 lg:px-10 lg:py-10">

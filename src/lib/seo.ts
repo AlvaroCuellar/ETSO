@@ -13,6 +13,8 @@ export interface WebPageJsonLdInput {
 	path?: string;
 	canonicalUrl?: string;
 	type?: string;
+	locale?: string;
+	siteName?: string;
 }
 
 export const buildCanonicalUrl = (path = '/'): string => {
@@ -21,9 +23,9 @@ export const buildCanonicalUrl = (path = '/'): string => {
 	return `${SITE_URL}${normalizedPath}`;
 };
 
-export const buildSeoTitle = (title: string): string => {
+export const buildSeoTitle = (title: string, siteName = SITE_NAME): string => {
 	const normalized = title.trim();
-	if (!normalized || normalized === SITE_NAME) return SITE_NAME;
+	if (!normalized || normalized === SITE_NAME || normalized === siteName) return siteName;
 	if (normalized.includes('|')) return normalized;
 	return `${normalized} | ${SITE_SHORT_NAME}`;
 };
@@ -44,19 +46,19 @@ export const buildSeoDescription = (value: string, fallback = DEFAULT_SEO_DESCRI
 	return `${result.replace(/[.,;:!?]$/, '')}…`;
 };
 
-export const createWebSiteJsonLd = () => ({
+export const createWebSiteJsonLd = (name = SITE_NAME, locale = 'es') => ({
 	'@context': 'https://schema.org',
 	'@type': 'WebSite',
-	name: SITE_NAME,
+	name,
 	alternateName: SITE_SHORT_NAME,
 	url: SITE_URL,
-	inLanguage: 'es'
+	inLanguage: locale
 });
 
-export const createOrganizationJsonLd = () => ({
+export const createOrganizationJsonLd = (name = SITE_NAME) => ({
 	'@context': 'https://schema.org',
 	'@type': ['Organization', 'ResearchProject'],
-	name: SITE_NAME,
+	name,
 	alternateName: SITE_SHORT_NAME,
 	url: SITE_URL
 });
@@ -66,19 +68,21 @@ export const createWebPageJsonLd = ({
 	description,
 	path = '/',
 	canonicalUrl,
-	type = 'WebPage'
+	type = 'WebPage',
+	locale = 'es',
+	siteName = SITE_NAME
 }: WebPageJsonLdInput) => ({
 	'@context': 'https://schema.org',
 	'@type': type,
-	name: buildSeoTitle(title),
+	name: buildSeoTitle(title, siteName),
 	description: buildSeoDescription(description),
 	url: canonicalUrl ?? buildCanonicalUrl(path),
 	isPartOf: {
 		'@type': 'WebSite',
-		name: SITE_NAME,
+		name: siteName,
 		url: SITE_URL
 	},
-	inLanguage: 'es'
+	inLanguage: locale
 });
 
 export const jsonLdScript = (jsonLd: unknown): string =>

@@ -16,6 +16,7 @@
 	import {
 		type AttributionSet
 	} from '$lib/domain/catalog';
+	import { translateText } from '$lib/i18n';
 	import fondoLogo from '$lib/assets/fondos/fondo-logo.webp';
 	import BookOpen from 'lucide-svelte/icons/book-open';
 	import ChevronDown from 'lucide-svelte/icons/chevron-down';
@@ -56,10 +57,54 @@
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
+	const t = (value: string): string => translateText(data.locale, value);
+	const resultsCountLabelsByLocale = {
+		es: { showing: 'Mostrando', of: 'de', results: 'resultados' },
+		en: { showing: 'Showing', of: 'of', results: 'results' },
+		fr: { showing: 'Affichage de', of: 'sur', results: 'résultats' },
+		pt: { showing: 'Mostrando', of: 'de', results: 'resultados' },
+		it: { showing: 'Mostrando', of: 'di', results: 'risultati' },
+		de: { showing: 'Angezeigt', of: 'von', results: 'Ergebnisse' },
+		zh: { showing: '显示', of: '/', results: '个结果' },
+		ja: { showing: '表示中', of: '/', results: '件の結果' },
+		ko: { showing: '표시 중', of: '/', results: '개 결과' },
+		ru: { showing: 'Показано', of: 'из', results: 'результатов' },
+		ar: { showing: 'يعرض', of: 'من', results: 'نتائج' }
+	} as const;
+	const resultsCountLabel = $derived(resultsCountLabelsByLocale[data.locale] ?? resultsCountLabelsByLocale.es);
+	const paginationLabelsByLocale = {
+		es: { prefix: 'Página ', between: ' de ', suffix: '' },
+		en: { prefix: 'Page ', between: ' of ', suffix: '' },
+		fr: { prefix: 'Page ', between: ' sur ', suffix: '' },
+		pt: { prefix: 'Página ', between: ' de ', suffix: '' },
+		it: { prefix: 'Pagina ', between: ' di ', suffix: '' },
+		de: { prefix: 'Seite ', between: ' von ', suffix: '' },
+		zh: { prefix: '第 ', between: ' / ', suffix: ' 页' },
+		ja: { prefix: '', between: ' / ', suffix: 'ページ' },
+		ko: { prefix: '', between: ' / ', suffix: '페이지' },
+		ru: { prefix: 'Страница ', between: ' из ', suffix: '' },
+		ar: { prefix: 'الصفحة ', between: ' من ', suffix: '' }
+	} as const;
+	const paginationLabel = $derived(paginationLabelsByLocale[data.locale] ?? paginationLabelsByLocale.es);
+	const wildcardConnectorByLocale = {
+		es: 'y',
+		en: 'and',
+		fr: 'et',
+		pt: 'e',
+		it: 'e',
+		de: 'und',
+		zh: '和',
+		ja: 'と',
+		ko: '및',
+		ru: 'и',
+		ar: 'و'
+	} as const;
+	const wildcardConnector = $derived(wildcardConnectorByLocale[data.locale] ?? wildcardConnectorByLocale.es);
 	const TEXORO_SEO_DESCRIPTION =
 		'Búsquedas textuales complejas en TEXORO, un corpus del Siglo de Oro con millones de palabras indexadas.';
 
-	const numberFormatter = new Intl.NumberFormat('es-ES');
+	const numberLocale = $derived(data.locale === 'es' ? 'es-ES' : data.locale);
+	const numberFormatter = $derived(new Intl.NumberFormat(numberLocale));
 	const decimalFormatter = new Intl.NumberFormat('es-ES', { maximumFractionDigits: 1 });
 	const highlightPalette = [
 		{
@@ -2835,10 +2880,9 @@
 	</FeatureHeroSection>
 
 	<section class="rounded-[14px] px-0 py-5 font-['Roboto',sans-serif] md:p-5">
-		<h2 class="m-0 font-['Roboto',sans-serif] text-[1.45rem] font-bold text-brand-blue-dark">Buscar en TEXORO</h2>
+		<h2 class="m-0 font-['Roboto',sans-serif] text-[1.45rem] font-bold text-brand-blue-dark">{t('Buscar en TEXORO')}</h2>
 		<p class="mt-2 mb-0 text-[0.98rem] text-text-soft">
-			Busca una palabra, frase exacta o patrón con comodines <code>*</code> y <code>?</code>. Si escribes varias
-			palabras, se buscan como frase exacta.
+			{t('Busca una palabra, frase exacta o patrón con comodines')} <code>*</code> {wildcardConnector} <code>?</code>. {t('Si escribes varias palabras, se buscan como frase exacta.')}
 		</p>
 
 		<form class="mt-5 grid gap-4" onsubmit={submitSearch}>
@@ -2870,7 +2914,7 @@
 			</div>
 
 			<p class="m-0 text-[0.84rem] text-text-soft">
-				Para combinar varios términos o buscar cercanías, abre la búsqueda avanzada.
+				{t('Para combinar varios términos o buscar cercanías, abre la búsqueda avanzada.')}
 			</p>
 
 			<div
@@ -2886,7 +2930,7 @@
 						advancedSearchOpen = !advancedSearchOpen;
 					}}
 				>
-					<span>Búsqueda avanzada</span>
+					<span>{t('Búsqueda avanzada')}</span>
 					<span class={`inline-flex items-center justify-center transition-transform duration-200 ${advancedSearchOpen ? 'rotate-180' : ''}`} aria-hidden="true">
 						<ChevronDown class="h-[15px] w-[15px] stroke-[2.2]" />
 					</span>
@@ -2900,8 +2944,8 @@
 					}`}
 				>
 					<p class="m-0 text-[0.86rem] leading-[1.5] text-text-soft">
-						Añade términos y condiciones de cercanía sin escribir operadores. El límite total es de {MAX_QUERY_TERMS}
-						condiciones contando la búsqueda principal.
+						{t('Añade términos y condiciones de cercanía sin escribir operadores. El límite total es de')} {MAX_QUERY_TERMS}
+						{t('condiciones contando la búsqueda principal.')}
 					</p>
 
 					<div class="mt-5 grid gap-6">
@@ -3567,11 +3611,11 @@
 						class="flex scroll-mt-24 flex-wrap items-center justify-between gap-3 max-md:flex-col max-md:justify-center max-md:gap-2 max-md:text-center"
 					>
 						<p class="m-0 font-['Roboto',sans-serif] text-[0.88rem] font-normal text-text-main max-md:w-full">
-							Mostrando
+							{resultsCountLabel.showing}
 							<span class="font-semibold text-brand-blue">
 								{numberFormatter.format(resultPageStart)}-{numberFormatter.format(resultPageEnd)}
 							</span>
-							de <span class="font-semibold text-brand-blue">{numberFormatter.format(filteredResults.length)}</span> resultados
+							{resultsCountLabel.of} <span class="font-semibold text-brand-blue">{numberFormatter.format(filteredResults.length)}</span> {resultsCountLabel.results}
 						</p>
 						{#if resultPageCount > 1}
 							<div class="flex items-center justify-center gap-2 max-md:w-full">
@@ -3591,8 +3635,7 @@
 									<span class="sr-only">Anterior</span>
 								</AppButton>
 								<span class="font-['Roboto',sans-serif] text-[0.86rem] font-normal text-text-main">
-									Página <span class="font-semibold text-brand-blue">{numberFormatter.format(resultsPage)}</span> de
-									<span class="font-semibold text-brand-blue">{numberFormatter.format(resultPageCount)}</span>
+									{paginationLabel.prefix}<span class="font-semibold text-brand-blue">{numberFormatter.format(resultsPage)}</span>{paginationLabel.between}<span class="font-semibold text-brand-blue">{numberFormatter.format(resultPageCount)}</span>{paginationLabel.suffix}
 								</span>
 								<AppButton
 									type="button"
@@ -3750,8 +3793,7 @@
 								<span class="sr-only">Anterior</span>
 							</AppButton>
 							<span class="font-['Roboto',sans-serif] text-[0.86rem] font-normal text-text-main">
-								Página <span class="font-semibold text-brand-blue">{numberFormatter.format(resultsPage)}</span> de
-								<span class="font-semibold text-brand-blue">{numberFormatter.format(resultPageCount)}</span>
+								{paginationLabel.prefix}<span class="font-semibold text-brand-blue">{numberFormatter.format(resultsPage)}</span>{paginationLabel.between}<span class="font-semibold text-brand-blue">{numberFormatter.format(resultPageCount)}</span>{paginationLabel.suffix}
 							</span>
 							<AppButton
 								type="button"
@@ -4049,10 +4091,10 @@
 			<div class="relative bg-surface-soft px-4 py-3">
 				<div class="min-w-0 pr-11">
 					<h3 class="m-0 font-['Roboto',sans-serif] text-[1.08rem] leading-[1.25] font-semibold text-brand-blue-dark">
-						Guía de búsqueda en TEXORO
+						{t('Guía de búsqueda en TEXORO')}
 					</h3>
 					<p class="mt-1 mb-0 text-[0.9rem] text-text-soft">
-						Uso del buscador textual y de sus opciones avanzadas.
+						{t('Uso del buscador textual y de sus opciones avanzadas.')}
 					</p>
 				</div>
 				<button
@@ -4067,19 +4109,19 @@
 
 			<div class="grid min-h-0 gap-4 overflow-auto overscroll-contain bg-surface-soft px-4 pt-4 pb-6">
 				<section class="rounded-[12px] bg-white px-4 py-3 shadow-[0_6px_16px_rgba(25,46,80,0.06)]">
-					<h4 class="m-0 font-['Roboto',sans-serif] text-[0.95rem] font-semibold text-brand-blue-dark">Qué hace el buscador</h4>
+					<h4 class="m-0 font-['Roboto',sans-serif] text-[0.95rem] font-semibold text-brand-blue-dark">{t('Qué hace el buscador')}</h4>
 					<p class="mt-2 mb-0 text-[0.94rem] leading-[1.55] text-text-main">
-						TEXORO busca palabras, frases exactas y patrones en el corpus. Primero localiza obras candidatas con índices de búsqueda y, cuando hace falta, verifica los textos para confirmar coincidencias y preparar contextos de lectura.
+						{t('TEXORO busca palabras, frases exactas y patrones en el corpus. Primero localiza obras candidatas con índices de búsqueda y, cuando hace falta, verifica los textos para confirmar coincidencias y preparar contextos de lectura.')}
 					</p>
 				</section>
 
 				<div class="grid gap-4 lg:grid-cols-2">
 					<section class="rounded-[12px] bg-white px-4 py-3 shadow-[0_6px_16px_rgba(25,46,80,0.05)]">
-						<h4 class="m-0 font-['Roboto',sans-serif] text-[0.94rem] font-semibold text-text-accent-purple">Búsqueda básica</h4>
+						<h4 class="m-0 font-['Roboto',sans-serif] text-[0.94rem] font-semibold text-text-accent-purple">{t('Búsqueda básica')}</h4>
 						<ul class="mb-0 mt-2 grid gap-2 pl-5 text-[0.92rem] leading-[1.52] text-text-main">
 							<li><b>Palabra exacta:</b> <code>amor</code>.</li>
 							<li><b>Frase exacta:</b> si escribes varias palabras, por ejemplo <code>amor constante</code>, se buscan juntas y en ese orden.</li>
-							<li><b>Caracteres permitidos:</b> letras, números, espacios y los comodines <code>*</code> y <code>?</code>.</li>
+							<li><b>Caracteres permitidos:</b> letras, números, espacios y los comodines <code>*</code> {wildcardConnector} <code>?</code>.</li>
 						</ul>
 					</section>
 
@@ -4104,7 +4146,7 @@
 					</section>
 
 					<section class="rounded-[12px] bg-white px-4 py-3 shadow-[0_6px_16px_rgba(25,46,80,0.05)]">
-						<h4 class="m-0 font-['Roboto',sans-serif] text-[0.94rem] font-semibold text-text-accent-purple">Búsqueda avanzada</h4>
+						<h4 class="m-0 font-['Roboto',sans-serif] text-[0.94rem] font-semibold text-text-accent-purple">{t('Búsqueda avanzada')}</h4>
 						<ul class="mb-0 mt-2 grid gap-2 pl-5 text-[0.92rem] leading-[1.52] text-text-main">
 							<li><b>Términos adicionales:</b> puedes exigir que aparezcan todos, al menos uno, o buscar cualquiera de los términos.</li>
 							<li><b>Proximidad:</b> añade términos que deban aparecer cerca de la búsqueda principal, con distancia máxima y orden.</li>

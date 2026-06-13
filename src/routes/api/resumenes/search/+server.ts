@@ -2,7 +2,6 @@ import { json } from '@sveltejs/kit';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { getWorksForSummaryIndex } from '$lib/server/catalog-runtime';
-import { fetchPublicR2Json, getSummariesBaseUrl } from '$lib/server/r2-public';
 import { normalizePlainText } from '$lib/search/normalize';
 import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
 
@@ -136,17 +135,6 @@ const loadLocalSummary = async (workId: string): Promise<SummaryJson | null> => 
 	}
 };
 
-const loadRemoteSummary = async (workId: string): Promise<SummaryJson | null> => {
-	try {
-		return await fetchPublicR2Json<SummaryJson>(getSummariesBaseUrl(), `${workId}.json`);
-	} catch {
-		return null;
-	}
-};
-
-const loadFullSummary = async (workId: string): Promise<SummaryJson | null> =>
-	(await loadLocalSummary(workId)) ?? (await loadRemoteSummary(workId));
-
 const buildNormalizedIndex = (value: string): { normalized: string; originalIndexes: number[] } => {
 	let normalized = '';
 	const originalIndexes: number[] = [];
@@ -207,7 +195,7 @@ const buildSummarySearchIndex = async (): Promise<SummarySearchEntry[]> => {
 			nextIndex += 1;
 			if (!work) continue;
 
-			const fullSummary = await loadFullSummary(work.id);
+			const fullSummary = await loadLocalSummary(work.id);
 			const shortText = joinSummaryParts(fullSummary?.resumen_breve) || work.shortSummary;
 			const longText = joinSummaryParts(fullSummary?.resumen_largo);
 			const summaryText = buildSummarySearchText(fullSummary, shortText, longText);

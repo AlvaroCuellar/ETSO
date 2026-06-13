@@ -121,11 +121,13 @@
 	{/snippet}
 
 	{#if children}
-		{@render children()}
+		<div data-i18n-skip>
+			{@render children()}
+		</div>
 	{:else if allowHtml}
-		<p class="m-0">{@html citation}</p>
+		<p class="m-0" data-i18n-skip>{@html citation}</p>
 	{:else}
-		<p class="m-0">{citation}</p>
+		<p class="m-0" data-i18n-skip>{citation}</p>
 	{/if}
 </InfoCard>
 

@@ -42,7 +42,7 @@
 				<ol class="m-0 grid min-w-0 max-w-full gap-1.5 pl-5">
 					{#each section.entries as entry}
 						<li class="min-w-0 max-w-full">
-							<p class="m-0 min-w-0 max-w-full break-words leading-[1.6] text-text-main [overflow-wrap:anywhere]">
+							<p class="m-0 min-w-0 max-w-full break-words leading-[1.6] text-text-main [overflow-wrap:anywhere]" data-i18n-skip>
 								{#each entry.parts as part}
 									{#if part.kind === 'link'}
 										<a

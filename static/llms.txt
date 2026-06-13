@@ -1,0 +1,81 @@
+# ETSO
+
+ETSO is a research infrastructure for computational authorship attribution and textual exploration of Spanish Golden Age theatre. It provides stylometric authorship reports, TEXORO full-corpus textual search, BITESO digital texts, automatic plot summaries, author and work records, and research documentation.
+
+Primary domain: https://etso.es/
+
+## Main Language Entry Points
+
+- Spanish: https://etso.es/
+- English: https://etso.es/en
+- French: https://etso.es/fr
+- Portuguese: https://etso.es/pt
+- Italian: https://etso.es/it
+- German: https://etso.es/de
+- Chinese: https://etso.es/zh
+- Japanese: https://etso.es/ja
+- Korean: https://etso.es/ko
+- Russian: https://etso.es/ru
+- Arabic: https://etso.es/ar
+
+## Core Pages
+
+- Authorship exam: https://etso.es/examen-autorias
+- TEXORO textual search: https://etso.es/texoro
+- BITESO digital texts: https://etso.es/biteso
+- Automatic summaries: https://etso.es/resumenes
+- 3D work network: https://etso.es/red-obras
+- How to cite ETSO: https://etso.es/como-citarnos
+- Automatic transcriptions: https://etso.es/transcripciones-automaticas
+- Team: https://etso.es/equipo
+- Contact: https://etso.es/contacto
+
+## Multilingual Core Pages
+
+- English authorship exam: https://etso.es/en/examen-autorias
+- English TEXORO: https://etso.es/en/texoro
+- English BITESO: https://etso.es/en/biteso
+- English summaries: https://etso.es/en/resumenes
+- French authorship exam: https://etso.es/fr/examen-autorias
+- French TEXORO: https://etso.es/fr/texoro
+- French BITESO: https://etso.es/fr/biteso
+- French summaries: https://etso.es/fr/resumenes
+- Portuguese authorship exam: https://etso.es/pt/examen-autorias
+- Portuguese TEXORO: https://etso.es/pt/texoro
+- Portuguese BITESO: https://etso.es/pt/biteso
+- Portuguese summaries: https://etso.es/pt/resumenes
+- Italian authorship exam: https://etso.es/it/examen-autorias
+- Italian TEXORO: https://etso.es/it/texoro
+- Italian BITESO: https://etso.es/it/biteso
+- Italian summaries: https://etso.es/it/resumenes
+- German authorship exam: https://etso.es/de/examen-autorias
+- German TEXORO: https://etso.es/de/texoro
+- German BITESO: https://etso.es/de/biteso
+- German summaries: https://etso.es/de/resumenes
+- Chinese authorship exam: https://etso.es/zh/examen-autorias
+- Chinese TEXORO: https://etso.es/zh/texoro
+- Chinese BITESO: https://etso.es/zh/biteso
+- Chinese summaries: https://etso.es/zh/resumenes
+- Japanese authorship exam: https://etso.es/ja/examen-autorias
+- Japanese TEXORO: https://etso.es/ja/texoro
+- Japanese BITESO: https://etso.es/ja/biteso
+- Japanese summaries: https://etso.es/ja/resumenes
+- Korean authorship exam: https://etso.es/ko/examen-autorias
+- Korean TEXORO: https://etso.es/ko/texoro
+- Korean BITESO: https://etso.es/ko/biteso
+- Korean summaries: https://etso.es/ko/resumenes
+- Russian authorship exam: https://etso.es/ru/examen-autorias
+- Russian TEXORO: https://etso.es/ru/texoro
+- Russian BITESO: https://etso.es/ru/biteso
+- Russian summaries: https://etso.es/ru/resumenes
+- Arabic authorship exam: https://etso.es/ar/examen-autorias
+- Arabic TEXORO: https://etso.es/ar/texoro
+- Arabic BITESO: https://etso.es/ar/biteso
+- Arabic summaries: https://etso.es/ar/resumenes
+
+## Crawl And Indexing Notes
+
+- The canonical sitemap index is https://etso.es/sitemap.xml.
+- Localized versions are exposed with hreflang in page HTML and XML sitemaps.
+- Page framework text is translated; quotations, work titles, author names, and source data may remain in Spanish when they are corpus data rather than interface text.
+- Primary citation page: https://etso.es/como-citarnos.

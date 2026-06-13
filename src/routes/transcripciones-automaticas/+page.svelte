@@ -55,7 +55,7 @@
 	</section>
 
 	<section class="grid gap-6 lg:gap-7">
-		<blockquote class="m-0 border-l-4 border-border-accent-purple pl-5 text-[1.02rem] leading-[1.75] text-text-main lg:pl-6">
+		<blockquote class="m-0 border-l-4 border-border-accent-purple pl-5 text-[1.02rem] leading-[1.75] text-text-main lg:pl-6" data-i18n-skip>
 			<p class="m-0">
 				<a
 					href="https://doi.org/10.13035/H.2023.11.01.08"

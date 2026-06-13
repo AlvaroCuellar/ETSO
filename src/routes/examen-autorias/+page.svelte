@@ -12,6 +12,7 @@
 	import HeroStatCard from '$lib/components/ui/HeroStatCard.svelte';
 	import fondoLogo from '$lib/assets/fondos/fondo-logo.webp';
 	import { getClientMemoryCache, loadClientMemoryCache } from '$lib/utils/client-memory-cache';
+	import { localizePath, translateText } from '$lib/i18n';
 	import BookOpen from 'lucide-svelte/icons/book-open';
 	import ChevronDown from 'lucide-svelte/icons/chevron-down';
 	import ChevronLeft from 'lucide-svelte/icons/chevron-left';
@@ -48,6 +49,37 @@
 	const EXAMEN_OPTIONS_CACHE_KEY = 'examen-autorias:options';
 
 	let { data }: { data: PageData } = $props();
+	const t = (value: string): string => translateText(data.locale, value);
+	const resultsCountLabelsByLocale = {
+		es: { results: 'resultados', showing: 'Mostrando' },
+		en: { results: 'results', showing: 'Showing' },
+		fr: { results: 'résultats', showing: 'Affichage de' },
+		pt: { results: 'resultados', showing: 'Mostrando' },
+		it: { results: 'risultati', showing: 'Mostrando' },
+		de: { results: 'Ergebnisse', showing: 'Angezeigt' },
+		zh: { results: '个结果', showing: '显示' },
+		ja: { results: '件の結果', showing: '表示中' },
+		ko: { results: '개 결과', showing: '표시 중' },
+		ru: { results: 'результатов', showing: 'Показано' },
+		ar: { results: 'نتائج', showing: 'يعرض' }
+	} as const;
+	const resultsCountLabel = $derived(resultsCountLabelsByLocale[data.locale] ?? resultsCountLabelsByLocale.es);
+	const paginationLabelsByLocale = {
+		es: { prefix: 'Página ', between: ' de ', suffix: '' },
+		en: { prefix: 'Page ', between: ' of ', suffix: '' },
+		fr: { prefix: 'Page ', between: ' sur ', suffix: '' },
+		pt: { prefix: 'Página ', between: ' de ', suffix: '' },
+		it: { prefix: 'Pagina ', between: ' di ', suffix: '' },
+		de: { prefix: 'Seite ', between: ' von ', suffix: '' },
+		zh: { prefix: '第 ', between: ' / ', suffix: ' 页' },
+		ja: { prefix: '', between: ' / ', suffix: 'ページ' },
+		ko: { prefix: '', between: ' / ', suffix: '페이지' },
+		ru: { prefix: 'Страница ', between: ' из ', suffix: '' },
+		ar: { prefix: 'الصفحة ', between: ' من ', suffix: '' }
+	} as const;
+	const paginationLabel = $derived(paginationLabelsByLocale[data.locale] ?? paginationLabelsByLocale.es);
+	const pageNumberLocale = $derived(data.locale === 'es' ? 'es-ES' : data.locale);
+	const pageNumberFormatter = $derived(new Intl.NumberFormat(pageNumberLocale));
 	const getInitialFilters = () => data.filters;
 	const getInitialPage = () => data.page;
 	const getInitialPageSize = () => data.pageSize;
@@ -304,7 +336,8 @@
 	const buildSearchUrl = (page = 1): string => {
 		const params = buildSearchParams(page);
 		const query = params.toString();
-		return query ? `/examen-autorias?${query}` : '/examen-autorias';
+		const path = query ? `/examen-autorias?${query}` : '/examen-autorias';
+		return localizePath(path, data.locale);
 	};
 
 	const buildWorksApiUrl = (params: URLSearchParams): string => {
@@ -367,7 +400,8 @@
 		if (data.filters.hasta) params.set('hasta', data.filters.hasta);
 		if (page > 1) params.set('page', String(page));
 		const query = params.toString();
-		return query ? `/examen-autorias?${query}` : '/examen-autorias';
+		const path = query ? `/examen-autorias?${query}` : '/examen-autorias';
+		return localizePath(path, data.locale);
 	};
 
 	const loadResultsForParams = async (
@@ -509,9 +543,9 @@
 
 	<section class="min-w-0 max-w-full rounded-[14px] px-0 py-5 font-['Roboto',sans-serif] leading-[1.6] text-text-main md:p-5">
 		<div class="min-w-0">
-			<h2 class="m-0 font-['Roboto',sans-serif] text-[1.45rem] font-bold text-brand-blue-dark">Buscar en Examen de autorías</h2>
+			<h2 class="m-0 font-['Roboto',sans-serif] text-[1.45rem] font-bold text-brand-blue-dark">{t('Buscar en Examen de autorías')}</h2>
 			<p class="mt-2 mb-0 text-[0.98rem] text-text-soft">
-				Filtra las obras del corpus por título, género, atribuciones, estado textual y fecha de incorporación.
+				{t('Filtra las obras del corpus por título, género, atribuciones, estado textual y fecha de incorporación.')}
 			</p>
 
 			<form class="mt-5 grid min-w-0 max-w-full gap-6" method="GET" action="/examen-autorias" onsubmit={applySearch}>
@@ -812,8 +846,8 @@
 						class="mb-5 flex scroll-mt-24 flex-wrap items-center justify-between gap-3 border-b-2 border-border pb-[15px] max-md:flex-col max-md:justify-center max-md:gap-2 max-md:text-center"
 					>
 						<p class="m-0 text-[0.88rem] font-normal text-text-main max-md:w-full">
-							<span class="font-semibold text-brand-blue">{totalResults}</span> resultados ·
-							Mostrando
+							<span class="font-semibold text-brand-blue">{totalResults}</span> {resultsCountLabel.results} ·
+							{resultsCountLabel.showing}
 							<span class="font-semibold text-brand-blue">
 								{(resultsPage - 1) * pageSize + 1}-{(resultsPage - 1) * pageSize + works.length}
 							</span>
@@ -837,8 +871,7 @@
 									<span class="sr-only">Anterior</span>
 								</AppButton>
 								<span class="font-['Roboto',sans-serif] text-[0.86rem] font-normal text-text-main">
-									Página <span class="font-semibold text-brand-blue">{resultsPage}</span> de
-									<span class="font-semibold text-brand-blue">{totalPages}</span>
+									{paginationLabel.prefix}<span class="font-semibold text-brand-blue">{pageNumberFormatter.format(resultsPage)}</span>{paginationLabel.between}<span class="font-semibold text-brand-blue">{pageNumberFormatter.format(totalPages)}</span>{paginationLabel.suffix}
 								</span>
 								<AppButton
 									type="button"
@@ -895,8 +928,7 @@
 							<span class="sr-only">Anterior</span>
 						</AppButton>
 						<span class="font-['Roboto',sans-serif] text-[0.86rem] font-normal text-text-main">
-							Página <span class="font-semibold text-brand-blue">{resultsPage}</span> de
-							<span class="font-semibold text-brand-blue">{totalPages}</span>
+							{paginationLabel.prefix}<span class="font-semibold text-brand-blue">{pageNumberFormatter.format(resultsPage)}</span>{paginationLabel.between}<span class="font-semibold text-brand-blue">{pageNumberFormatter.format(totalPages)}</span>{paginationLabel.suffix}
 						</span>
 						<AppButton
 							type="button"

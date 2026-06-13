@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import { onMount } from 'svelte';
 	import AlignLeft from 'lucide-svelte/icons/align-left';
 	import BookOpen from 'lucide-svelte/icons/book-open';
@@ -18,6 +19,7 @@
 		type ObraTableFilterFlags,
 		type ObraTableRow
 	} from '$lib/domain/catalog';
+	import { DEFAULT_LOCALE, type Locale } from '$lib/i18n';
 	import { buildWorkTitleSearchText, formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
 	import { renderInlineItalicsHtml } from '$lib/utils/render-inline-italics-html';
 
@@ -49,6 +51,21 @@
 	const shortSummaryPromises = new Map<string, Promise<void>>();
 	let mobileView = $state<MobileWorksView>('cards');
 
+	const locale = $derived((page.data.locale ?? DEFAULT_LOCALE) as Locale);
+	const logicOperatorLabels: Record<Locale, { and: string; or: string }> = {
+		es: { and: 'Y', or: 'O' },
+		en: { and: 'AND', or: 'OR' },
+		fr: { and: 'ET', or: 'OU' },
+		pt: { and: 'E', or: 'OU' },
+		it: { and: 'E', or: 'O' },
+		de: { and: 'UND', or: 'ODER' },
+		zh: { and: '和', or: '或' },
+		ja: { and: 'と', or: 'または' },
+		ko: { and: '및', or: '또는' },
+		ru: { and: 'И', or: 'ИЛИ' },
+		ar: { and: 'و', or: 'أو' }
+	};
+	const logicOperators = $derived(logicOperatorLabels[locale] ?? logicOperatorLabels.es);
 	const isMobileTableView = $derived(mobileView === 'table');
 
 	const resultsShellClass = 'works-table-results min-w-0 w-full max-w-full';
@@ -256,7 +273,7 @@
 
 	const hasAuthorLinks = (set: AttributionSet): boolean => !set.unresolved && set.groups.length > 0;
 
-	const connectorLabel = (set: AttributionSet): string => (set.connector === 'and' ? 'Y' : 'O');
+	const connectorLabel = (set: AttributionSet): string => (set.connector === 'and' ? logicOperators.and : logicOperators.or);
 
 	const canLinkAuthor = (authorId: string): boolean => authorId.length > 0 && authorId !== UNRESOLVED_AUTHOR_ID;
 
@@ -346,9 +363,9 @@
 						{#if canLinkAuthor(member.authorId)}
 							<a
 								href={`/autores/${member.authorId}`}
-								class="autor-name inline-flex min-w-0 items-baseline gap-1 font-normal text-text-main visited:text-text-main no-underline hover:underline focus:underline focus-visible:underline"
+								class="autor-name inline font-normal text-text-main visited:text-text-main no-underline hover:underline focus:underline focus-visible:underline"
 							>
-								<span class="min-w-0 overflow-wrap-anywhere">{member.authorName}</span>
+								<span class="overflow-wrap-anywhere">{member.authorName}</span>
 								<span class="hidden flex-none translate-y-[2px] text-text-soft max-md:inline-flex" aria-hidden="true">
 									<ExternalLink class="h-3 w-3" />
 								</span>
@@ -358,7 +375,7 @@
 						{/if}
 						{#if memberIndex < group.members.length - 1}
 							<span class="logic-operator mx-1 inline-block rounded-[3px] bg-surface-accent-purple px-1.5 py-[1px] align-middle text-[10px] font-semibold text-text-accent-purple uppercase">
-								Y
+								{logicOperators.and}
 							</span>
 						{/if}
 					{/each}
@@ -386,9 +403,9 @@
 						{#if canLinkAuthor(member.authorId)}
 							<a
 								href={`/autores/${member.authorId}`}
-								class="autor-name inline-flex min-w-0 items-baseline gap-1 font-normal text-text-main visited:text-text-main no-underline hover:underline focus:underline focus-visible:underline"
+								class="autor-name inline font-normal text-text-main visited:text-text-main no-underline hover:underline focus:underline focus-visible:underline"
 							>
-								<span class="min-w-0 overflow-wrap-anywhere">{member.authorName}</span>
+								<span class="overflow-wrap-anywhere">{member.authorName}</span>
 								<span class="hidden flex-none translate-y-[2px] text-text-soft max-md:inline-flex" aria-hidden="true">
 									<ExternalLink class="h-3 w-3" />
 								</span>
@@ -403,7 +420,7 @@
 						{/if}
 						{#if memberIndex < group.members.length - 1}
 							<span class="logic-operator mx-1 inline-block rounded-[3px] bg-surface-accent-purple px-1.5 py-[1px] align-middle text-[10px] font-semibold text-text-accent-purple uppercase">
-								Y
+								{logicOperators.and}
 							</span>
 						{/if}
 					{/each}

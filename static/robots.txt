@@ -1,2 +1,25 @@
+# Allow crawling public pages by default.
 User-agent: *
 Disallow: /api/
+
+# AI search and assistant crawlers. These explicit groups keep access open even
+# if a crawler gives precedence to its own user-agent group over the wildcard.
+User-agent: OAI-SearchBot
+Disallow: /api/
+
+User-agent: ChatGPT-User
+Disallow: /api/
+
+User-agent: GPTBot
+Disallow: /api/
+
+User-agent: ClaudeBot
+Disallow: /api/
+
+User-agent: PerplexityBot
+Disallow: /api/
+
+User-agent: Google-Extended
+Disallow: /api/
+
+Sitemap: https://etso.es/sitemap.xml

@@ -1,19 +1,20 @@
 <script lang="ts">
 	import logoEtso from '$lib/assets/logos/etso-logo-light.svg';
 	import thaliaLogo from '$lib/assets/logos/thalia.webp';
+	import { getUiTranslations, localizePath, type Locale } from '$lib/i18n';
 
-	const primaryNavItems = [
-		{ href: '/examen-autorias', label: 'Examen de autorías' },
-		{ href: '/texoro', label: 'TEXORO' },
-		{ href: '/biteso', label: 'BITESO' },
-		{ href: '/transcripciones-automaticas', label: 'Transcripciones automáticas' }
-	] as const;
+	interface Props {
+		locale?: Locale;
+	}
 
-	const secondaryNavItems = [
-		{ href: '/equipo', label: 'Equipo' },
-		{ href: '/como-citarnos', label: 'Cómo citarnos' },
-		{ href: '/contacto', label: 'Contacto' }
-	] as const;
+	let { locale = 'es' }: Props = $props();
+	const translations = $derived(getUiTranslations(locale));
+	const primaryNavItems = $derived(translations.nav.items.slice(0, 3).concat(translations.nav.infoItems.slice(0, 1)));
+	const secondaryNavItems = $derived([
+		translations.nav.infoItems[1],
+		translations.nav.items[5],
+		translations.nav.infoItems[2]
+	].filter(Boolean));
 </script>
 
 <footer class="mt-12 border-t border-brand-purple/20 bg-brand-blue font-ui text-white">
@@ -23,12 +24,12 @@
 				<div class="grid w-full gap-8 sm:grid-cols-2">
 					<div class="grid content-start gap-3">
 						<p class="m-0 text-[0.8rem] font-ui font-semibold tracking-[0.04em] text-white/72 uppercase">
-							Navegación
+							{translations.footer.navigation}
 						</p>
 						{#each primaryNavItems as item}
 							<a
 								class="text-[0.94rem] text-white/90 no-underline transition hover:text-white hover:no-underline"
-								href={item.href}
+								href={localizePath(item.href, locale)}
 							>
 								{item.label}
 							</a>
@@ -37,12 +38,12 @@
 
 					<div class="grid content-start gap-3">
 						<p class="m-0 text-[0.8rem] font-ui font-semibold tracking-[0.04em] text-white/72 uppercase">
-							Información
+							{translations.footer.information}
 						</p>
 						{#each secondaryNavItems as item}
 							<a
 								class="text-[0.94rem] text-white/90 no-underline transition hover:text-white hover:no-underline"
-								href={item.href}
+								href={localizePath(item.href, locale)}
 							>
 								{item.label}
 							</a>
@@ -59,7 +60,7 @@
 
 			<div class="order-1 grid items-start gap-8 lg:grid-cols-[minmax(0,1.18fr)_minmax(20rem,0.82fr)] lg:gap-10">
 				<div class="grid max-w-none gap-2 text-[0.9rem] leading-[1.55] text-white/86">
-					<p class="m-0 text-white/64">Esta página web ha sido desarrollada gracias a la financiación principal de:</p>
+					<p class="m-0 text-white/64">{translations.footer.mainFunding}</p>
 					<a
 						href="https://webs.uab.cat/thal-ia/"
 						class="-mt-2 mb-3 inline-block w-fit no-underline hover:no-underline"
@@ -81,13 +82,13 @@
 						Thal-IA · Patrimonio teatral áureo: Inteligencia Artificial y Fotografía Espectral
 					</a>
 					<p class="m-0">
-						<span class="font-semibold text-border-accent-blue">Dirección:</span>
+						<span class="font-semibold text-border-accent-blue">{translations.footer.direction}</span>
 						<span class="ml-1 text-white/78">Sònia Boadas</span>
 					</p>
 				</div>
 
 				<div class="grid max-w-[34rem] gap-4 text-[0.9rem] leading-[1.55] text-white/86">
-					<p class="m-0 text-white/64">Con el apoyo complementario de:</p>
+					<p class="m-0 text-white/64">{translations.footer.complementarySupport}</p>
 					<div class="grid gap-4">
 						<div class="grid gap-1">
 							<a
@@ -99,7 +100,7 @@
 								Prolope · Grupo de investigación sobre Lope de Vega
 							</a>
 							<p class="m-0">
-								<span class="font-semibold text-border-accent-blue">Dirección:</span>
+								<span class="font-semibold text-border-accent-blue">{translations.footer.direction}</span>
 								<span class="ml-1 text-white/78">Sònia Boadas y Gonzalo Pontón</span>
 							</p>
 						</div>
@@ -114,7 +115,7 @@
 								Istae · Impresos sueltos del teatro antiguo español
 							</a>
 							<p class="m-0">
-								<span class="font-semibold text-border-accent-blue">Dirección:</span>
+								<span class="font-semibold text-border-accent-blue">{translations.footer.direction}</span>
 								<span class="ml-1 text-white/78">Alejandra Ulla Lorenzo</span>
 							</p>
 						</div>
@@ -125,10 +126,10 @@
 
 		<div class="mt-8 border-t border-white/16 pt-6 text-center text-[0.84rem] text-white/80">
 			&copy; 2026 ETSO |
-			<a class="text-white/90 underline transition hover:text-white" href="/licencias">Licencias de contenido</a>
-			y
-			<a class="text-white/90 underline transition hover:text-white" href="/privacidad">privacidad</a> |
-			Desarrollo web:
+			<a class="text-white/90 underline transition hover:text-white" href={localizePath('/licencias', locale)}>{translations.footer.contentLicenses}</a>
+			{translations.footer.and}
+			<a class="text-white/90 underline transition hover:text-white" href={localizePath('/privacidad', locale)}>{translations.footer.privacy}</a> |
+			{translations.footer.webDevelopment}
 			<a
 				class="text-white/90 underline transition hover:text-white"
 				href="https://dxvidmr.github.io"

@@ -1,5 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 
+import { getLocaleFromPath, localizePath, stripLocaleFromPath } from '$lib/i18n';
 import {
 	hasValidAccessCookie,
 	isAccessGateEnabled,
@@ -9,19 +10,22 @@ import {
 import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async ({ cookies, url }) => {
+	const locale = getLocaleFromPath(url.pathname);
+
 	if (!isAccessGateEnabled()) {
-		return {};
+		return { locale };
 	}
 
 	const { pathname, search } = url;
-	if (pathname === '/acceso' || pathname.startsWith('/acceso/')) {
-		return {};
+	const internalPathname = stripLocaleFromPath(pathname);
+	if (internalPathname === '/acceso' || internalPathname.startsWith('/acceso/')) {
+		return { locale };
 	}
 
 	if (hasValidAccessCookie(cookies)) {
-		return {};
+		return { locale };
 	}
 
 	const next = normalizeAccessRedirectTarget(`${pathname}${search}`);
-	throw redirect(303, `/acceso?next=${encodeURIComponent(next)}`);
+	throw redirect(303, `${localizePath('/acceso', locale)}?next=${encodeURIComponent(next)}`);
 };

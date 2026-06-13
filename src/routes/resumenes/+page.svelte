@@ -2,13 +2,13 @@
 	import { browser } from '$app/environment';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import SeoHead from '$lib/components/seo/SeoHead.svelte';
+	import { translateText } from '$lib/i18n';
 	import { normalizePlainText } from '$lib/search/normalize';
 	import {
 		buildWorkTitleSearchText,
 		formatDisplayWorkTitle
 	} from '$lib/utils/format-display-work-title';
 
-	import type { AttributionSet } from '$lib/domain/catalog';
 	import type { PageData } from './$types';
 
 	interface SummarySearchResult {
@@ -44,12 +44,106 @@
 	}
 
 	let { data }: { data: PageData } = $props();
+	const t = (value: string): string => translateText(data.locale, value);
+	const summaryCountLabelsByLocale = {
+		es: {
+			activeTerm: 'término activo',
+			activeTerms: 'términos activos',
+			of: 'de',
+			more: 'más',
+			summariesFound: 'resúmenes encontrados',
+			visibleWorks: 'obras visibles'
+		},
+		en: {
+			activeTerm: 'active term',
+			activeTerms: 'active terms',
+			of: 'of',
+			more: 'more',
+			summariesFound: 'summaries found',
+			visibleWorks: 'visible works'
+		},
+		fr: {
+			activeTerm: 'terme actif',
+			activeTerms: 'termes actifs',
+			of: 'sur',
+			more: 'de plus',
+			summariesFound: 'résumés trouvés',
+			visibleWorks: 'oeuvres visibles'
+		},
+		pt: {
+			activeTerm: 'termo ativo',
+			activeTerms: 'termos ativos',
+			of: 'de',
+			more: 'mais',
+			summariesFound: 'resumos encontrados',
+			visibleWorks: 'obras visíveis'
+		},
+		it: {
+			activeTerm: 'termine attivo',
+			activeTerms: 'termini attivi',
+			of: 'di',
+			more: 'altri',
+			summariesFound: 'riassunti trovati',
+			visibleWorks: 'opere visibili'
+		},
+		de: {
+			activeTerm: 'aktiver Begriff',
+			activeTerms: 'aktive Begriffe',
+			of: 'von',
+			more: 'mehr',
+			summariesFound: 'Zusammenfassungen gefunden',
+			visibleWorks: 'sichtbare Werke'
+		},
+		zh: {
+			activeTerm: '个活跃词',
+			activeTerms: '个活跃词',
+			of: '/',
+			more: '更多',
+			summariesFound: '个摘要',
+			visibleWorks: '部可见作品'
+		},
+		ja: {
+			activeTerm: '有効な語',
+			activeTerms: '有効な語',
+			of: '/',
+			more: 'さらに',
+			summariesFound: '件の要約',
+			visibleWorks: '件の表示中の作品'
+		},
+		ko: {
+			activeTerm: '활성 검색어',
+			activeTerms: '활성 검색어',
+			of: '/',
+			more: '더',
+			summariesFound: '개 요약',
+			visibleWorks: '개의 표시된 작품'
+		},
+		ru: {
+			activeTerm: 'активный термин',
+			activeTerms: 'активных терминов',
+			of: 'из',
+			more: 'еще',
+			summariesFound: 'найденных аннотаций',
+			visibleWorks: 'видимых произведений'
+		},
+		ar: {
+			activeTerm: 'مصطلح نشط',
+			activeTerms: 'مصطلحات نشطة',
+			of: 'من',
+			more: 'إضافية',
+			summariesFound: 'ملخصات موجودة',
+			visibleWorks: 'أعمال ظاهرة'
+		}
+	} as const;
+	const summaryCountLabels = $derived(summaryCountLabelsByLocale[data.locale] ?? summaryCountLabelsByLocale.es);
 	const RESUMENES_SEO_DESCRIPTION =
 		'Resúmenes automáticos de las obras incluidas en la base de datos de ETSO.';
 	const SUMMARY_SEARCH_MIN_LENGTH = 2;
 	const SUMMARY_SEARCH_PAGE_SIZE = 20;
+	const WORKS_PAGE_SIZE = 80;
 
 	let query = $state('');
+	let visibleWorkCount = $state(WORKS_PAGE_SIZE);
 	let summaryTermInput = $state('');
 	let summarySearchTerms = $state<string[]>([]);
 	let summarySearchResults = $state<SummarySearchResult[]>([]);
@@ -187,30 +281,6 @@
 		};
 	};
 
-	const formatNameList = (names: string[]): string => {
-		if (names.length === 0) return '';
-		if (names.length === 1) return names[0];
-		if (names.length === 2) return `${names[0]} y ${names[1]}`;
-		return `${names.slice(0, -1).join(', ')} y ${names[names.length - 1]}`;
-	};
-
-	const formatTraditionalAttribution = (set: AttributionSet): string => {
-		if (set.unresolved || set.groups.length === 0) return 'Desconocido';
-
-		const names: string[] = [];
-		const seen = new Set<string>();
-		for (const group of set.groups) {
-			for (const member of group.members) {
-				const authorName = member.authorName.trim();
-				if (!authorName || seen.has(authorName)) continue;
-				seen.add(authorName);
-				names.push(authorName);
-			}
-		}
-
-		return names.length > 0 ? formatNameList(names) : 'Desconocido';
-	};
-
 	const formatGenre = (genre: string): string => genre.trim() || 'Sin género';
 
 	const filteredWorks = $derived.by(() => {
@@ -222,6 +292,12 @@
 			return haystack.includes(normalizedQuery);
 		});
 	});
+	const visibleWorks = $derived(filteredWorks.slice(0, visibleWorkCount));
+	const hiddenWorksCount = $derived(Math.max(0, filteredWorks.length - visibleWorks.length));
+
+	const showMoreWorks = (): void => {
+		visibleWorkCount = Math.min(filteredWorks.length, visibleWorkCount + WORKS_PAGE_SIZE);
+	};
 
 	const loadSummarySearchResults = async ({
 		cleanQuery,
@@ -318,6 +394,11 @@
 
 		void loadSummarySearchResults({ cleanQuery, offset: 0, append: false, requestId });
 	});
+
+	$effect(() => {
+		query;
+		visibleWorkCount = WORKS_PAGE_SIZE;
+	});
 </script>
 
 <SeoHead title="Resúmenes" description={RESUMENES_SEO_DESCRIPTION} path="/resumenes" />
@@ -328,27 +409,27 @@
 	<section class="grid gap-3">
 		<h1 class="m-0 font-ui text-[clamp(1.8rem,3vw,2.35rem)] font-bold leading-[1.12] text-brand-blue-dark">Resúmenes</h1>
 		<p class="m-0 leading-[1.65] text-text-main">
-			Hemos generado resúmenes automáticos de las obras incluidas en la base de datos de ETSO. Estos textos ofrecen una primera orientación sobre el argumento y el contenido de cada obra, aunque deben entenderse como una ayuda inicial y no como sustituto de la lectura ni del análisis filológico.
+			{t('Hemos generado resúmenes automáticos de las obras incluidas en la base de datos de ETSO. Estos textos ofrecen una primera orientación sobre el argumento y el contenido de cada obra, aunque deben entenderse como una ayuda inicial y no como sustituto de la lectura ni del análisis filológico.')}
 		</p>
 		<p class="m-0 leading-[1.65] text-text-main">
-			Puedes acceder al resumen de cada obra desde este listado o desde la ficha individual de la obra, clicando en el acceso al resumen automático.
+			{t('Puedes acceder al resumen de cada obra desde este listado o desde la ficha individual de la obra, clicando en el acceso al resumen automático.')}
 		</p>
 		<p class="m-0 text-[0.92rem] font-medium text-text-soft">
 			{#if summarySearchQuery.trim()}
 				{#if summarySearchLoading}
-					{summarySearchTerms.length} {summarySearchTerms.length === 1 ? 'término activo' : 'términos activos'}
+					{summarySearchTerms.length} {summarySearchTerms.length === 1 ? summaryCountLabels.activeTerm : summaryCountLabels.activeTerms}
 				{:else}
-					{summarySearchResults.length} de {summarySearchTotal} resúmenes encontrados
+					{summarySearchResults.length} {summaryCountLabels.of} {summarySearchTotal} {summaryCountLabels.summariesFound}
 				{/if}
 			{:else}
-				{filteredWorks.length} de {data.works.length} obras visibles
+				{visibleWorks.length} {summaryCountLabels.of} {filteredWorks.length} {summaryCountLabels.visibleWorks}
 			{/if}
 		</p>
 	</section>
 
 	<section class="grid gap-4">
 		<label class="grid gap-1 text-[0.86rem] text-text-soft" for="resumenes-summary-query">
-			<span class="font-ui font-semibold uppercase tracking-[0.04em]">Buscar en los resúmenes</span>
+			<span class="font-ui font-semibold uppercase tracking-[0.04em]">{t('Buscar en los resúmenes')}</span>
 			<input
 				id="resumenes-summary-query"
 				type="search"
@@ -374,7 +455,7 @@
 				{/each}
 			</div>
 		{:else if summaryTermInput.trim().length > 0 && summaryTermInput.trim().length < SUMMARY_SEARCH_MIN_LENGTH}
-			<p class="m-0 italic text-text-soft">Escribe al menos dos caracteres y pulsa Enter.</p>
+			<p class="m-0 italic text-text-soft">{t('Escribe al menos dos caracteres y pulsa Enter.')}</p>
 		{/if}
 
 		{#if summarySearchQuery.trim()}
@@ -384,12 +465,12 @@
 						class="h-4 w-4 animate-spin rounded-full border-2 border-border-accent-blue border-t-brand-blue-dark"
 						aria-hidden="true"
 					></span>
-					<span>Buscando resúmenes... La primera búsqueda puede tardar un poco.</span>
+					<span>{t('Buscando resúmenes... La primera búsqueda puede tardar un poco.')}</span>
 				</p>
 			{:else if summarySearchError}
 				<p class="m-0 rounded-[9px] border border-[#f3c0ca] bg-[#fff5f7] px-3 py-2 text-[#8f1e36]">{summarySearchError}</p>
 			{:else if summarySearchResults.length === 0}
-				<p class="m-0 italic text-text-soft">No hay resúmenes que contengan esas palabras.</p>
+				<p class="m-0 italic text-text-soft">{t('No hay resúmenes que contengan esas palabras.')}</p>
 			{:else}
 				<div class="grid gap-3">
 					{#each summarySearchResults as result}
@@ -421,7 +502,7 @@
 								disabled={summarySearchLoadingMore}
 								onclick={loadMoreSummaryResults}
 							>
-								{summarySearchLoadingMore ? 'Cargando...' : `Ver más (${Math.min(SUMMARY_SEARCH_PAGE_SIZE, summarySearchTotal - summarySearchResults.length)} más)`}
+								{summarySearchLoadingMore ? t('Cargando...') : `${t('Ver más')} (${Math.min(SUMMARY_SEARCH_PAGE_SIZE, summarySearchTotal - summarySearchResults.length)} ${summaryCountLabels.more})`}
 							</button>
 						</div>
 					{/if}
@@ -430,7 +511,7 @@
 		{/if}
 
 		<label class="grid gap-1 text-[0.86rem] text-text-soft" for="resumenes-obras-query">
-			<span class="font-ui font-semibold uppercase tracking-[0.04em]">Buscar obra por título</span>
+			<span class="font-ui font-semibold uppercase tracking-[0.04em]">{t('Buscar obra por título')}</span>
 			<input
 				id="resumenes-obras-query"
 				type="search"
@@ -441,11 +522,11 @@
 		</label>
 
 		{#if filteredWorks.length === 0}
-			<p class="m-0 italic text-text-soft">No hay obras que coincidan con la búsqueda.</p>
+			<p class="m-0 italic text-text-soft">{t('No hay obras que coincidan con la búsqueda.')}</p>
 		{:else}
 			<div class="overflow-hidden bg-[rgba(255,255,255,0.52)]">
 				<div class="divide-y divide-[rgba(0,51,167,0.08)]">
-					{#each filteredWorks as work}
+					{#each visibleWorks as work}
 						<a
 							href={`/obras/${work.slug}/resumen`}
 							class="grid gap-1 px-4 py-3 text-inherit no-underline transition hover:bg-[rgba(237,242,255,0.7)] hover:no-underline md:px-5"
@@ -453,7 +534,7 @@
 							<p class="m-0 font-ui text-[0.99rem] leading-[1.45] text-brand-blue-dark">
 								<span class="font-semibold">{formatDisplayWorkTitle(work.title)}</span>
 								<span class="mx-1.5 text-text-soft/70">·</span>
-								<span class="font-normal text-text-main">{formatTraditionalAttribution(work.traditionalAttribution)}</span>
+								<span class="font-normal text-text-main">{work.traditional}</span>
 								<span class="mx-1.5 text-text-soft/70">·</span>
 								<span class="font-normal text-text-soft">{formatGenre(work.genre)}</span>
 							</p>
@@ -471,6 +552,17 @@
 					{/each}
 				</div>
 			</div>
+			{#if hiddenWorksCount > 0}
+				<div class="flex justify-center pt-1">
+					<button
+						type="button"
+						class="inline-flex items-center justify-center rounded-[9px] border border-border-accent-blue bg-white px-5 py-2.5 font-ui text-[0.94rem] font-semibold text-brand-blue-dark shadow-[0_8px_24px_rgba(25,46,80,0.05)] transition hover:bg-surface-accent-blue"
+						onclick={showMoreWorks}
+					>
+						{t('Ver más')} ({Math.min(WORKS_PAGE_SIZE, hiddenWorksCount)} {summaryCountLabels.more})
+					</button>
+				</div>
+			{/if}
 		{/if}
 	</section>
 </div>

@@ -196,7 +196,7 @@
 		</div>
 
 		<h2 class="mt-1 text-center font-ui text-[0.95rem] font-bold uppercase tracking-[0.08em] text-brand-blue-dark">
-			{displayWorkTitle.toLocaleUpperCase('es-ES')}
+			<span data-i18n-skip>{displayWorkTitle.toLocaleUpperCase('es-ES')}</span>
 		</h2>
 
 		<div class="grid gap-5 lg:grid-cols-[11rem_minmax(0,1fr)_11rem] lg:items-start lg:gap-8">
@@ -224,7 +224,7 @@
 								activeTextAnchor = mark.id;
 							}}
 						>
-							{mark.label}
+							<span data-i18n-skip>{mark.label}</span>
 						</a>
 					{/each}
 				</div>
@@ -238,11 +238,12 @@
 						<h3
 							id={segment.id}
 							class="mt-10 mb-4 scroll-mt-28 text-center font-ui text-[0.88rem] font-bold uppercase tracking-[0.09em] text-text-accent-purple"
+							data-i18n-skip
 						>
 							{segment.label}
 						</h3>
 					{:else}
-						<p class="m-0 whitespace-pre-wrap">{segment.text}</p>
+						<p class="m-0 whitespace-pre-wrap" data-i18n-skip>{segment.text}</p>
 					{/if}
 				{/each}
 			</div>
@@ -276,7 +277,7 @@
 					isMobileMenuOpen = false;
 				}}
 			>
-				{mark.label}
+				<span data-i18n-skip>{mark.label}</span>
 			</a>
 		{/each}
 	</div>

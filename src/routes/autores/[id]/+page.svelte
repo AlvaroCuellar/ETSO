@@ -14,8 +14,20 @@
 	let { data }: { data: PageData } = $props();
 	const seoDescription = $derived.by(() => {
 		const total = data.works.length;
-		const suffix = total === 1 ? 'obra relacionada' : 'obras relacionadas';
-		return `${data.author.name}: ficha de autoría en ETSO con ${total} ${suffix} en Examen de autorías.`;
+		const descriptions = {
+			es: `${data.author.name}: ficha de autoría en ETSO con ${total} ${total === 1 ? 'obra relacionada' : 'obras relacionadas'} en Examen de autorías.`,
+			en: `${data.author.name}: authorship record in ETSO with ${total} related ${total === 1 ? 'work' : 'works'} in Examen de autorías.`,
+			fr: `${data.author.name} : fiche d’auteur dans ETSO avec ${total} ${total === 1 ? 'œuvre liée' : 'œuvres liées'} dans Examen de autorías.`,
+			pt: `${data.author.name}: ficha de autoria no ETSO com ${total} ${total === 1 ? 'obra relacionada' : 'obras relacionadas'} em Examen de autorías.`,
+			it: `${data.author.name}: scheda d’autore in ETSO con ${total} ${total === 1 ? 'opera collegata' : 'opere collegate'} in Examen de autorías.`,
+			de: `${data.author.name}: Autorschaftsdatensatz in ETSO mit ${total} ${total === 1 ? 'zugehörigem Werk' : 'zugehörigen Werken'} in Examen de autorías.`,
+			zh: `${data.author.name}：ETSO 作者记录，在 Examen de autorías 中包含 ${total} 部相关作品。`,
+			ja: `${data.author.name}：ETSO の著者情報。Examen de autorías に ${total} 件の関連作品があります。`,
+			ko: `${data.author.name}: ETSO 저자 기록. Examen de autorías에 관련 작품 ${total}건이 있습니다.`,
+			ru: `${data.author.name}: авторская карточка в ETSO с ${total} ${total === 1 ? 'связанным произведением' : 'связанными произведениями'} в Examen de autorías.`,
+			ar: `${data.author.name}: بطاقة مؤلف في ETSO تتضمن ${total} من الأعمال المرتبطة في Examen de autorías.`
+		} as const;
+		return descriptions[data.locale] ?? descriptions.es;
 	});
 
 	let activeFilter = $state<AuthorFilterKey>('related_any');

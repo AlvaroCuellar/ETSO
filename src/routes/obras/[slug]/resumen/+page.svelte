@@ -12,7 +12,22 @@
 
 	let { data }: { data: PageData } = $props();
 	const displayWorkTitle = $derived.by(() => formatDisplayWorkTitle(data.work.title));
-	const seoDescription = $derived.by(() => `Resumen automático de ${displayWorkTitle}, obra del corpus de ETSO.`);
+	const seoDescription = $derived.by(() => {
+		const descriptions = {
+			es: `Resumen automático de ${displayWorkTitle}, obra del corpus de ETSO, como ayuda inicial para conocer su argumento y contenido.`,
+			en: `Automatic summary of ${displayWorkTitle}, a work in the ETSO corpus, offered as a preliminary aid to understand its plot and content.`,
+			fr: `Résumé automatique de ${displayWorkTitle}, œuvre du corpus ETSO, proposé comme aide préliminaire pour connaître son intrigue et son contenu.`,
+			pt: `Resumo automático de ${displayWorkTitle}, obra do corpus do ETSO, oferecido como auxílio inicial para conhecer seu enredo e conteúdo.`,
+			it: `Riassunto automatico di ${displayWorkTitle}, opera del corpus ETSO, offerto come aiuto preliminare per conoscerne trama e contenuto.`,
+			de: `Automatische Zusammenfassung von ${displayWorkTitle}, einem Werk des ETSO-Korpus, als erste Orientierung zum Verständnis von Handlung und Inhalt.`,
+			zh: `${displayWorkTitle} 的自动摘要，属于 ETSO 语料库作品，可作为了解情节和内容的初步辅助。`,
+			ja: `${displayWorkTitle} の自動要約。ETSO コーパスの作品で、筋と内容を把握するための初期的な補助として提供されます。`,
+			ko: `${displayWorkTitle}의 자동 요약입니다. ETSO 말뭉치 작품의 줄거리와 내용을 파악하기 위한 예비적 도움으로 제공됩니다.`,
+			ru: `Автоматическое краткое содержание ${displayWorkTitle}, произведения корпуса ETSO, как предварительная помощь для понимания сюжета и содержания.`,
+			ar: `ملخص آلي لعمل ${displayWorkTitle} من corpus ETSO، يقدَّم بوصفه مساعدة أولية لفهم الحبكة والمحتوى.`
+		} as const;
+		return descriptions[data.locale] ?? descriptions.es;
+	});
 	let summary = $state({
 		resumenBreve: [] as string[],
 		resumenLargo: [] as string[],

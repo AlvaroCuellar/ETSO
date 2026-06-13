@@ -25,10 +25,22 @@
 	const displayWorkTitle = $derived.by(() => formatDisplayWorkTitle(data.work.title));
 	const displayTitleVariants = $derived.by(() => formatDisplayWorkTitleList(data.work.titleVariants));
 	const seoDescription = $derived.by(() => {
-		const stylometry = formatAttribution(data.work.stylometryAttribution);
 		const summary = data.work.shortSummary?.trim();
-		if (summary && summary !== 'Sin resumen breve disponible.') return summary;
-		return `${displayWorkTitle}. ${data.work.genre}. Atribución estilométrica: ${stylometry}.`;
+		if (data.locale === 'es' && summary && summary !== 'Sin resumen breve disponible.') return summary;
+		const descriptions = {
+			es: `${displayWorkTitle}. ${data.work.genre}. Ficha de obra en ETSO con atribución tradicional, atribución estilométrica, acceso al texto y recursos asociados.`,
+			en: `${displayWorkTitle}. Work record in ETSO with traditional attribution, stylometric attribution, text access and related research resources.`,
+			fr: `${displayWorkTitle}. Fiche d’œuvre dans ETSO avec attribution traditionnelle, attribution stylométrique, accès au texte et ressources associées.`,
+			pt: `${displayWorkTitle}. Ficha da obra no ETSO com atribuição tradicional, atribuição estilométrica, acesso ao texto e recursos associados.`,
+			it: `${displayWorkTitle}. Scheda dell’opera in ETSO con attribuzione tradizionale, attribuzione stilometrica, accesso al testo e risorse collegate.`,
+			de: `${displayWorkTitle}. Werkdatensatz in ETSO mit traditioneller Zuschreibung, stilometrischer Zuschreibung, Textzugang und zugehörigen Forschungsressourcen.`,
+			zh: `${displayWorkTitle}。ETSO 作品记录，包含传统归属、文体计量归属、文本访问和相关研究资源。`,
+			ja: `${displayWorkTitle}。ETSO の作品情報。伝統的帰属、文体計量による帰属、本文アクセス、関連研究リソースを含みます。`,
+			ko: `${displayWorkTitle}. ETSO 작품 기록으로 전통적 귀속, 문체계량 귀속, 텍스트 접근 및 관련 연구 자료를 제공합니다.`,
+			ru: `${displayWorkTitle}. Карточка произведения в ETSO с традиционной атрибуцией, стилометрической атрибуцией, доступом к тексту и связанными исследовательскими ресурсами.`,
+			ar: `${displayWorkTitle}. بطاقة عمل في ETSO تتضمن الإسناد التقليدي والإسناد الأسلوبي والوصول إلى النص والموارد البحثية المرتبطة.`
+		} as const;
+		return descriptions[data.locale] ?? descriptions.es;
 	});
 
 	const connectorLabel = (connector: 'and' | 'or'): string => (connector === 'and' ? 'y' : 'o');

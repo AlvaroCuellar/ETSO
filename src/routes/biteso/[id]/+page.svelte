@@ -21,7 +21,22 @@
 	let { data }: { data: PageData } = $props();
 	const displayWorkTitle = $derived.by(() => formatDisplayWorkTitle(data.work.title));
 	const displayBitesoTitle = $derived.by(() => `Texto digital de ${displayWorkTitle}`);
-	const seoDescription = $derived.by(() => `Texto digital BITESO de ${displayWorkTitle}, disponible en ETSO.`);
+	const seoDescription = $derived.by(() => {
+		const descriptions = {
+			es: `Texto digital BITESO de ${displayWorkTitle}, disponible en ETSO para lectura, consulta e investigación filológica.`,
+			en: `BITESO digital text of ${displayWorkTitle}, available in ETSO for reading, consultation and philological research.`,
+			fr: `Texte numérique BITESO de ${displayWorkTitle}, disponible dans ETSO pour la lecture, la consultation et la recherche philologique.`,
+			pt: `Texto digital BITESO de ${displayWorkTitle}, disponível no ETSO para leitura, consulta e pesquisa filológica.`,
+			it: `Testo digitale BITESO di ${displayWorkTitle}, disponibile in ETSO per lettura, consultazione e ricerca filologica.`,
+			de: `Digitaler BITESO-Text von ${displayWorkTitle}, in ETSO für Lektüre, Konsultation und philologische Forschung verfügbar.`,
+			zh: `${displayWorkTitle} 的 BITESO 数字文本，可在 ETSO 中用于阅读、查阅和文献学研究。`,
+			ja: `${displayWorkTitle} の BITESO デジタルテキスト。ETSO で閲覧、参照、文献学研究に利用できます。`,
+			ko: `${displayWorkTitle}의 BITESO 디지털 텍스트입니다. ETSO에서 읽기, 참조 및 문헌학 연구에 이용할 수 있습니다.`,
+			ru: `Цифровой текст BITESO произведения ${displayWorkTitle}, доступный в ETSO для чтения, справки и филологического исследования.`,
+			ar: `نص BITESO الرقمي لعمل ${displayWorkTitle}، متاح في ETSO للقراءة والاستشارة والبحث الفيلولوجي.`
+		} as const;
+		return descriptions[data.locale] ?? descriptions.es;
+	});
 	const displayBitesoTitleHtml = $derived.by(() =>
 		formatPrefixedDisplayWorkTitleHtml('Texto digital de', data.work.title)
 	);

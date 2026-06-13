@@ -318,8 +318,22 @@
 
 	const seoDescription = $derived.by(() => {
 		const intro = data.informe.intro?.trim();
-		if (intro) return localizeStoredReportText(intro);
-		return `${t('Informe estilométrico de')} ${displayWorkTitle} ${t('en ETSO.')}`;
+		const localizedIntro = intro ? localizeStoredReportText(intro) : '';
+		if (localizedIntro.length >= 50 && localizedIntro.split(/\s+/).length >= 6) return localizedIntro;
+		const descriptions = {
+			es: `Informe estilométrico de ${displayWorkTitle} en ETSO, con distancias léxicas, obras cercanas e indicios de atribución para el estudio de la autoría teatral del Siglo de Oro.`,
+			en: `Stylometric report for ${displayWorkTitle} in ETSO, with lexical distances, closest works and authorship clues for the study of Golden Age theatre.`,
+			fr: `Rapport stylométrique de ${displayWorkTitle} dans ETSO, avec distances lexicales, œuvres les plus proches et indices d’attribution pour l’étude du théâtre du Siècle d’or.`,
+			pt: `Relatório estilométrico de ${displayWorkTitle} no ETSO, com distâncias lexicais, obras mais próximas e indícios de atribuição para o estudo do teatro do Século de Ouro espanhol.`,
+			it: `Rapporto stilometrico di ${displayWorkTitle} in ETSO, con distanze lessicali, opere più vicine e indizi di attribuzione per lo studio del teatro del Secolo d’Oro spagnolo.`,
+			de: `Stilometrischer Bericht zu ${displayWorkTitle} in ETSO, mit lexikalischen Distanzen, nächstliegenden Werken und Hinweisen zur Autorschaft des Theaters des spanischen Siglo de Oro.`,
+			zh: `ETSO 中 ${displayWorkTitle} 的文体计量报告，包含词汇距离、相近作品和作者归属线索，用于研究西班牙黄金时代戏剧。`,
+			ja: `ETSO における ${displayWorkTitle} の文体計量レポート。語彙距離、近接作品、著者帰属の手がかりを通じてスペイン黄金世紀演劇を研究します。`,
+			ko: `ETSO의 ${displayWorkTitle} 문체계량 보고서입니다. 어휘 거리, 가까운 작품, 저자 귀속 단서를 통해 스페인 황금세기 연극을 연구합니다.`,
+			ru: `Стилометрический отчет о ${displayWorkTitle} в ETSO: лексические расстояния, ближайшие произведения и признаки авторской атрибуции для изучения театра испанского Золотого века.`,
+			ar: `تقرير قياس أسلوبي عن ${displayWorkTitle} في ETSO، يتضمن المسافات المعجمية والأعمال الأقرب ومؤشرات إسناد التأليف لدراسة مسرح العصر الذهبي الإسباني.`
+		} as const;
+		return descriptions[data.locale] ?? descriptions.es;
 	});
 
 	const resolveResult1Text = (): string => {

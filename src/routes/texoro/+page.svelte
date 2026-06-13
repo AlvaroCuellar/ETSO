@@ -58,34 +58,64 @@
 
 	let { data }: { data: PageData } = $props();
 	const t = (value: string): string => translateText(data.locale, value);
-	const resultsCountLabelsByLocale = {
-		es: { showing: 'Mostrando', of: 'de', results: 'resultados' },
-		en: { showing: 'Showing', of: 'of', results: 'results' },
-		fr: { showing: 'Affichage de', of: 'sur', results: 'résultats' },
-		pt: { showing: 'Mostrando', of: 'de', results: 'resultados' },
-		it: { showing: 'Mostrando', of: 'di', results: 'risultati' },
-		de: { showing: 'Angezeigt', of: 'von', results: 'Ergebnisse' },
-		zh: { showing: '显示', of: '/', results: '个结果' },
-		ja: { showing: '表示中', of: '/', results: '件の結果' },
-		ko: { showing: '표시 중', of: '/', results: '개 결과' },
-		ru: { showing: 'Показано', of: 'из', results: 'результатов' },
-		ar: { showing: 'عرض', of: 'من', results: 'نتائج' }
+	const resultTextByLocale = {
+		es: {
+			count: (range: string, total: string) => `Mostrando ${range} de ${total} resultados`,
+			page: (page: string, total: string) => `Página ${page} de ${total}`,
+			occurrencePosition: (range: string, total: string) => `palabra ${range} de ${total}`
+		},
+		en: {
+			count: (range: string, total: string) => `Showing ${range} of ${total} results`,
+			page: (page: string, total: string) => `Page ${page} of ${total}`,
+			occurrencePosition: (range: string, total: string) => `word ${range} of ${total}`
+		},
+		fr: {
+			count: (range: string, total: string) => `Affichage de ${range} sur ${total} résultats`,
+			page: (page: string, total: string) => `Page ${page} sur ${total}`,
+			occurrencePosition: (range: string, total: string) => `mot ${range} sur ${total}`
+		},
+		pt: {
+			count: (range: string, total: string) => `Mostrando ${range} de ${total} resultados`,
+			page: (page: string, total: string) => `Página ${page} de ${total}`,
+			occurrencePosition: (range: string, total: string) => `palavra ${range} de ${total}`
+		},
+		it: {
+			count: (range: string, total: string) => `${range} risultati visualizzati su ${total}`,
+			page: (page: string, total: string) => `Pagina ${page} di ${total}`,
+			occurrencePosition: (range: string, total: string) => `parola ${range} di ${total}`
+		},
+		de: {
+			count: (range: string, total: string) => `${range} von ${total} Ergebnissen angezeigt`,
+			page: (page: string, total: string) => `Seite ${page} von ${total}`,
+			occurrencePosition: (range: string, total: string) => `Wort ${range} von ${total}`
+		},
+		zh: {
+			count: (range: string, total: string) => `显示 ${total} 个结果中的 ${range}`,
+			page: (page: string, total: string) => `第 ${page} / ${total} 页`,
+			occurrencePosition: (range: string, total: string) => `第 ${range} / ${total} 个词`
+		},
+		ja: {
+			count: (range: string, total: string) => `${total} 件中 ${range} 件を表示`,
+			page: (page: string, total: string) => `${page} / ${total}ページ`,
+			occurrencePosition: (range: string, total: string) => `${total} 語中 ${range} 語目`
+		},
+		ko: {
+			count: (range: string, total: string) => `전체 ${total}개 결과 중 ${range} 표시`,
+			page: (page: string, total: string) => `${page} / ${total}페이지`,
+			occurrencePosition: (range: string, total: string) => `전체 ${total}개 단어 중 ${range}번째`
+		},
+		ru: {
+			count: (range: string, total: string) => `Показано ${range} из ${total} результатов`,
+			page: (page: string, total: string) => `Страница ${page} из ${total}`,
+			occurrencePosition: (range: string, total: string) => `слово ${range} из ${total}`
+		},
+		ar: {
+			count: (range: string, total: string) => `تُعرض ${range} من أصل ${total} نتائج`,
+			page: (page: string, total: string) => `الصفحة ${page} من ${total}`,
+			occurrencePosition: (range: string, total: string) => `الكلمة ${range} من أصل ${total}`
+		}
 	} as const;
-	const resultsCountLabel = $derived(resultsCountLabelsByLocale[data.locale] ?? resultsCountLabelsByLocale.es);
-	const paginationLabelsByLocale = {
-		es: { prefix: 'Página ', between: ' de ', suffix: '' },
-		en: { prefix: 'Page ', between: ' of ', suffix: '' },
-		fr: { prefix: 'Page ', between: ' sur ', suffix: '' },
-		pt: { prefix: 'Página ', between: ' de ', suffix: '' },
-		it: { prefix: 'Pagina ', between: ' di ', suffix: '' },
-		de: { prefix: 'Seite ', between: ' von ', suffix: '' },
-		zh: { prefix: '第 ', between: ' / ', suffix: ' 页' },
-		ja: { prefix: '', between: ' / ', suffix: 'ページ' },
-		ko: { prefix: '', between: ' / ', suffix: '페이지' },
-		ru: { prefix: 'Страница ', between: ' из ', suffix: '' },
-		ar: { prefix: 'الصفحة ', between: ' من ', suffix: '' }
-	} as const;
-	const paginationLabel = $derived(paginationLabelsByLocale[data.locale] ?? paginationLabelsByLocale.es);
+	const resultText = $derived(resultTextByLocale[data.locale] ?? resultTextByLocale.es);
 	const wildcardConnectorByLocale = {
 		es: 'y',
 		en: 'and',
@@ -2271,18 +2301,13 @@
 		return ranges.length > 0 ? renderHighlightedRanges(snippet, ranges) : escapeHtml(snippet);
 	};
 
-	const occurrencePositionParts = (
-		occurrence: SearchMatchOccurrence
-	): { prefix: string; value: string; suffix: string } => {
+	const occurrencePositionLabel = (occurrence: SearchMatchOccurrence): string => {
 		const highlightIndexes = occurrence.highlights?.map((highlight) => highlight.tokenIndex) ?? [];
 		const start = Math.min(occurrence.tokenIndex, ...highlightIndexes);
 		const end = Math.max(occurrence.tokenEndIndex ?? occurrence.tokenIndex, ...highlightIndexes);
 		const total = numberFormatter.format(occurrence.tokenCount);
-		return {
-			prefix: start === end ? 'palabra ' : 'palabras ',
-			value: start === end ? numberFormatter.format(start) : `${numberFormatter.format(start)}-${numberFormatter.format(end)}`,
-			suffix: ` de ${total}`
-		};
+		const range = start === end ? numberFormatter.format(start) : `${numberFormatter.format(start)}-${numberFormatter.format(end)}`;
+		return resultText.occurrencePosition(range, total);
 	};
 
 	const closeOccurrenceModal = (): void => {
@@ -3611,11 +3636,10 @@
 						class="flex scroll-mt-24 flex-wrap items-center justify-between gap-3 max-md:flex-col max-md:justify-center max-md:gap-2 max-md:text-center"
 					>
 						<p class="m-0 font-['Roboto',sans-serif] text-[0.88rem] font-normal text-text-main max-md:w-full">
-							{resultsCountLabel.showing}
-							<span class="font-semibold text-brand-blue">
-								{numberFormatter.format(resultPageStart)}-{numberFormatter.format(resultPageEnd)}
-							</span>
-							{resultsCountLabel.of} <span class="font-semibold text-brand-blue">{numberFormatter.format(filteredResults.length)}</span> {resultsCountLabel.results}
+							{resultText.count(
+								`${numberFormatter.format(resultPageStart)}-${numberFormatter.format(resultPageEnd)}`,
+								numberFormatter.format(filteredResults.length)
+							)}
 						</p>
 						{#if resultPageCount > 1}
 							<div class="flex items-center justify-center gap-2 max-md:w-full">
@@ -3635,7 +3659,7 @@
 									<span class="sr-only">Anterior</span>
 								</AppButton>
 								<span class="font-['Roboto',sans-serif] text-[0.86rem] font-normal text-text-main">
-									{paginationLabel.prefix}<span class="font-semibold text-brand-blue">{numberFormatter.format(resultsPage)}</span>{paginationLabel.between}<span class="font-semibold text-brand-blue">{numberFormatter.format(resultPageCount)}</span>{paginationLabel.suffix}
+									{resultText.page(numberFormatter.format(resultsPage), numberFormatter.format(resultPageCount))}
 								</span>
 								<AppButton
 									type="button"
@@ -3713,7 +3737,7 @@
 										<ol class="mt-3 m-0 list-none p-0 text-[0.95rem] leading-[1.55] text-text-main">
 											{#each preview.items as item, index}
 												{@const itemAssignment = assignments.find((assignment) => assignment.key === item.assignmentKey)}
-												{@const itemPosition = occurrencePositionParts(item)}
+												{@const itemPosition = occurrencePositionLabel(item)}
 												<li class="grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-1 border-t border-brand-blue/15 py-3 first:border-t-0 first:pt-0 last:pb-0">
 													<span class="font-['Roboto',sans-serif] text-[0.82rem] font-bold text-text-accent-purple">
 														#{index + 1}
@@ -3723,7 +3747,7 @@
 															{@html highlightExactOccurrenceSnippet(item.centeredSnippet, itemAssignment, item)}
 														</span>
 														<span class="font-['Roboto',sans-serif] text-[0.76rem] font-medium whitespace-nowrap text-text-accent-purple sm:text-right">
-															{itemPosition.prefix}<span class="font-bold">{itemPosition.value}</span>{itemPosition.suffix}
+															{itemPosition}
 														</span>
 													</div>
 												</li>
@@ -3793,7 +3817,7 @@
 								<span class="sr-only">Anterior</span>
 							</AppButton>
 							<span class="font-['Roboto',sans-serif] text-[0.86rem] font-normal text-text-main">
-								{paginationLabel.prefix}<span class="font-semibold text-brand-blue">{numberFormatter.format(resultsPage)}</span>{paginationLabel.between}<span class="font-semibold text-brand-blue">{numberFormatter.format(resultPageCount)}</span>{paginationLabel.suffix}
+								{resultText.page(numberFormatter.format(resultsPage), numberFormatter.format(resultPageCount))}
 							</span>
 							<AppButton
 								type="button"
@@ -3914,12 +3938,12 @@
 				{:else if occurrenceModal.details && occurrenceModal.details.items.length > 0}
 					<ul class="m-0 grid list-none gap-2 p-0">
 						{#each occurrenceModal.details.items as item, index}
-							{@const itemPosition = occurrencePositionParts(item)}
+							{@const itemPosition = occurrencePositionLabel(item)}
 							<li class="overflow-hidden rounded-[9px] bg-white shadow-[0_4px_12px_rgba(25,46,80,0.06)]">
 								<div class="flex min-w-0 flex-nowrap items-center justify-between gap-2 bg-surface-soft px-3 py-2">
 									<p class="m-0 shrink-0 font-['Roboto',sans-serif] text-[0.79rem] font-semibold text-text-accent-purple">#{index + 1}</p>
 									<p class="m-0 min-w-0 shrink whitespace-nowrap text-right font-['Roboto',sans-serif] text-[0.75rem] font-medium text-text-accent-purple">
-										{itemPosition.prefix}{itemPosition.value}{itemPosition.suffix}
+										{itemPosition}
 									</p>
 								</div>
 								<div class="px-3 py-2">

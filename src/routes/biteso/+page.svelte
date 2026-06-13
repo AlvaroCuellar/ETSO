@@ -23,20 +23,140 @@
 	let query = $state('');
 	let visibleWorkCount = $state(WORKS_PAGE_SIZE);
 
-	const countLabelsByLocale = {
-		es: { of: 'de', more: 'más', seeMore: 'Ver más', visibleTexts: 'textos visibles' },
-		en: { of: 'of', more: 'more', seeMore: 'View more', visibleTexts: 'visible texts' },
-		fr: { of: 'sur', more: 'de plus', seeMore: 'Voir plus', visibleTexts: 'textes visibles' },
-		pt: { of: 'de', more: 'mais', seeMore: 'Ver mais', visibleTexts: 'textos visíveis' },
-		it: { of: 'di', more: 'altri', seeMore: 'Vedi altro', visibleTexts: 'testi visibili' },
-		de: { of: 'von', more: 'mehr', seeMore: 'Mehr anzeigen', visibleTexts: 'sichtbare Texte' },
-		zh: { of: '/', more: '更多', seeMore: '查看更多', visibleTexts: '个可见文本' },
-		ja: { of: '/', more: 'さらに', seeMore: 'もっと見る', visibleTexts: '件の表示中のテキスト' },
-		ko: { of: '/', more: '더', seeMore: '더 보기', visibleTexts: '개의 표시된 텍스트' },
-		ru: { of: 'из', more: 'еще', seeMore: 'Показать еще', visibleTexts: 'видимых текстов' },
-		ar: { of: 'من', more: 'إضافية', seeMore: 'عرض المزيد', visibleTexts: 'نصوص معروضة' }
+	const bitesoLabelsByLocale = {
+		es: {
+			openAccessTexts: 'Textos digitales en acceso abierto',
+			authors: 'Autores',
+			listHeading: 'Textos digitales en acceso abierto',
+			listDescription:
+				'Lista alfabética de las obras que tienen texto digital en BITESO. Usa el buscador para encontrar una obra y acceder directamente a su texto.',
+			listCount: (shown: number, total: number) => `Mostrando ${shown} de ${total} textos`,
+			searchLabel: 'Buscar obra',
+			searchPlaceholder: 'Buscar obra',
+			empty: 'No hay textos que coincidan con la búsqueda.',
+			showMore: (count: number) => `Ver más (${count} más)`
+		},
+		en: {
+			openAccessTexts: 'Open-access digital texts',
+			authors: 'Authors',
+			listHeading: 'Open-access digital texts',
+			listDescription:
+				'Alphabetical list of works for which a digital text is available in BITESO. Use the search box to find a work and open its text directly.',
+			listCount: (shown: number, total: number) => `Showing ${shown} of ${total} texts`,
+			searchLabel: 'Search for a work',
+			searchPlaceholder: 'Search for a work',
+			empty: 'No texts match the search.',
+			showMore: (count: number) => `View more (${count} more)`
+		},
+		fr: {
+			openAccessTexts: 'Textes numériques en accès ouvert',
+			authors: 'Auteurs',
+			listHeading: 'Textes numériques en accès ouvert',
+			listDescription:
+				'Liste alphabétique des œuvres pour lesquelles un texte numérique est disponible dans BITESO. Utilisez le champ de recherche pour trouver une œuvre et accéder directement à son texte.',
+			listCount: (shown: number, total: number) => `${shown} textes affichés sur ${total}`,
+			searchLabel: 'Rechercher une œuvre',
+			searchPlaceholder: 'Rechercher une œuvre',
+			empty: 'Aucun texte ne correspond à la recherche.',
+			showMore: (count: number) => `Voir plus (${count} de plus)`
+		},
+		pt: {
+			openAccessTexts: 'Textos digitais em acesso aberto',
+			authors: 'Autores',
+			listHeading: 'Textos digitais em acesso aberto',
+			listDescription:
+				'Lista alfabética das obras que têm texto digital disponível no BITESO. Use o campo de pesquisa para encontrar uma obra e acessar diretamente seu texto.',
+			listCount: (shown: number, total: number) => `Exibindo ${shown} de ${total} textos`,
+			searchLabel: 'Pesquisar obra',
+			searchPlaceholder: 'Pesquisar obra',
+			empty: 'Não há textos que correspondam à pesquisa.',
+			showMore: (count: number) => `Ver mais (${count} mais)`
+		},
+		it: {
+			openAccessTexts: 'Testi digitali ad accesso aperto',
+			authors: 'Autori',
+			listHeading: 'Testi digitali ad accesso aperto',
+			listDescription:
+				'Elenco alfabetico delle opere per le quali è disponibile un testo digitale in BITESO. Usa il campo di ricerca per trovare un’opera e accedere direttamente al suo testo.',
+			listCount: (shown: number, total: number) => `${shown} testi visualizzati su ${total}`,
+			searchLabel: 'Cerca un’opera',
+			searchPlaceholder: 'Cerca un’opera',
+			empty: 'Non ci sono testi che corrispondono alla ricerca.',
+			showMore: (count: number) => `Vedi altro (${count} altri)`
+		},
+		de: {
+			openAccessTexts: 'Digitale Texte im Open Access',
+			authors: 'Autorinnen und Autoren',
+			listHeading: 'Digitale Texte im Open Access',
+			listDescription:
+				'Alphabetische Liste der Werke, für die in BITESO ein digitaler Text verfügbar ist. Verwenden Sie das Suchfeld, um ein Werk zu finden und direkt auf seinen Text zuzugreifen.',
+			listCount: (shown: number, total: number) => `${shown} von ${total} Texten angezeigt`,
+			searchLabel: 'Werk suchen',
+			searchPlaceholder: 'Werk suchen',
+			empty: 'Es sind keine Texte vorhanden, die zur Suche passen.',
+			showMore: (count: number) => `Mehr anzeigen (${count} mehr)`
+		},
+		zh: {
+			openAccessTexts: '开放获取数字文本',
+			authors: '作者',
+			listHeading: '开放获取数字文本',
+			listDescription: '按字母顺序列出 BITESO 中已有数字文本的作品。请使用搜索框查找作品并直接打开其文本。',
+			listCount: (shown: number, total: number) => `显示 ${total} 部文本中的 ${shown} 部`,
+			searchLabel: '搜索作品',
+			searchPlaceholder: '搜索作品',
+			empty: '没有与搜索匹配的文本。',
+			showMore: (count: number) => `查看更多（${count} 部）`
+		},
+		ja: {
+			openAccessTexts: 'オープンアクセスのデジタルテキスト',
+			authors: '著者',
+			listHeading: 'オープンアクセスのデジタルテキスト',
+			listDescription:
+				'BITESO でデジタルテキストを利用できる作品のアルファベット順一覧です。検索欄を使って作品を探し、その本文に直接アクセスできます。',
+			listCount: (shown: number, total: number) => `${total} 件中 ${shown} 件を表示`,
+			searchLabel: '作品を検索',
+			searchPlaceholder: '作品を検索',
+			empty: '検索に一致するテキストはありません。',
+			showMore: (count: number) => `もっと見る（${count} 件）`
+		},
+		ko: {
+			openAccessTexts: '오픈 액세스 디지털 텍스트',
+			authors: '저자',
+			listHeading: '오픈 액세스 디지털 텍스트',
+			listDescription:
+				'BITESO에서 디지털 텍스트를 이용할 수 있는 작품의 알파벳순 목록입니다. 검색창을 사용해 작품을 찾고 해당 텍스트로 바로 이동할 수 있습니다.',
+			listCount: (shown: number, total: number) => `전체 ${total}건 중 ${shown}건 표시`,
+			searchLabel: '작품 검색',
+			searchPlaceholder: '작품 검색',
+			empty: '검색어와 일치하는 텍스트가 없습니다.',
+			showMore: (count: number) => `더 보기 (${count}건)`
+		},
+		ru: {
+			openAccessTexts: 'Цифровые тексты в открытом доступе',
+			authors: 'Авторы',
+			listHeading: 'Цифровые тексты в открытом доступе',
+			listDescription:
+				'Алфавитный список произведений, для которых в BITESO доступен цифровой текст. Используйте поле поиска, чтобы найти произведение и перейти непосредственно к его тексту.',
+			listCount: (shown: number, total: number) => `Показано ${shown} из ${total} текстов`,
+			searchLabel: 'Найти произведение',
+			searchPlaceholder: 'Найти произведение',
+			empty: 'Текстов, соответствующих запросу, нет.',
+			showMore: (count: number) => `Показать еще (${count})`
+		},
+		ar: {
+			openAccessTexts: 'النصوص الرقمية المتاحة بالوصول المفتوح',
+			authors: 'المؤلفون',
+			listHeading: 'النصوص الرقمية المتاحة بالوصول المفتوح',
+			listDescription:
+				'قائمة أبجدية بالأعمال التي يتوفر لها نص رقمي في BITESO. استخدم حقل البحث للعثور على العمل والدخول مباشرةً إلى نصه.',
+			listCount: (shown: number, total: number) => `تُعرض ${shown} من أصل ${total} نصًا`,
+			searchLabel: 'ابحث عن عمل',
+			searchPlaceholder: 'ابحث عن عمل',
+			empty: 'لا توجد نصوص تطابق البحث.',
+			showMore: (count: number) => `عرض المزيد (${count} نصًا)`
+		}
 	} as const;
-	const countLabels = $derived(countLabelsByLocale[data.locale] ?? countLabelsByLocale.es);
+	const labels = $derived(bitesoLabelsByLocale[data.locale] ?? bitesoLabelsByLocale.es);
 
 	const normalizeFilterText = (value: string): string =>
 		normalizePlainText(value, false).replace(/\s+/g, ' ').trim();
@@ -96,39 +216,39 @@
 			<HeroStatCard
 				Icon={BookOpen}
 				value={data.stats.bitesoTexts}
-				label="Textos digitales en acceso abierto"
+				label={labels.openAccessTexts}
 				desktopOffset="up"
 			/>
-			<HeroStatCard Icon={Feather} value={data.stats.authors} label="Autores" desktopOffset="down" />
+			<HeroStatCard Icon={Feather} value={data.stats.authors} label={labels.authors} desktopOffset="down" />
 		{/snippet}
 	</FeatureHeroSection>
 
 	<section class="grid gap-3">
 		<h2 class="m-0 font-ui text-[clamp(1.6rem,2.6vw,2.1rem)] font-bold leading-[1.12] text-brand-blue-dark">
-			Textos digitales en acceso abierto
+			{labels.listHeading}
 		</h2>
 		<p class="m-0 leading-[1.65] text-text-main">
-			Listado alfabético de las obras con texto digital BITESO. Usa el buscador para localizar una obra y entrar directamente en su texto.
+			{labels.listDescription}
 		</p>
 		<p class="m-0 text-[0.92rem] font-medium text-text-soft">
-			{visibleWorks.length} {countLabels.of} {filteredWorks.length} {countLabels.visibleTexts}
+			{labels.listCount(visibleWorks.length, filteredWorks.length)}
 		</p>
 	</section>
 
 	<section class="grid gap-4">
 		<label class="grid gap-1 text-[0.86rem] text-text-soft" for="biteso-textos-query">
-			<span class="font-ui font-semibold uppercase tracking-[0.04em]">Buscar obra</span>
+			<span class="font-ui font-semibold uppercase tracking-[0.04em]">{labels.searchLabel}</span>
 			<input
 				id="biteso-textos-query"
 				type="search"
-				placeholder="Ej: La monja alférez, El castigo sin venganza..."
+				placeholder={labels.searchPlaceholder}
 				class="w-full rounded-md border border-border bg-white px-3 py-2 text-[0.95rem] text-text-main"
 				bind:value={query}
 			/>
 		</label>
 
 		{#if filteredWorks.length === 0}
-			<p class="m-0 italic text-text-soft">No hay textos que coincidan con la búsqueda.</p>
+			<p class="m-0 italic text-text-soft">{labels.empty}</p>
 		{:else}
 			<div class="overflow-hidden bg-[rgba(255,255,255,0.52)]">
 				<div class="divide-y divide-[rgba(0,51,167,0.08)]">
@@ -167,7 +287,7 @@
 						class="inline-flex items-center justify-center rounded-[9px] border border-border-accent-blue bg-white px-5 py-2.5 font-ui text-[0.94rem] font-semibold text-brand-blue-dark shadow-[0_8px_24px_rgba(25,46,80,0.05)] transition hover:bg-surface-accent-blue"
 						onclick={showMoreWorks}
 					>
-						{countLabels.seeMore} ({Math.min(WORKS_PAGE_SIZE, hiddenWorksCount)} {countLabels.more})
+						{labels.showMore(Math.min(WORKS_PAGE_SIZE, hiddenWorksCount))}
 					</button>
 				</div>
 			{/if}

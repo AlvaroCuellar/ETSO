@@ -50,34 +50,53 @@
 
 	let { data }: { data: PageData } = $props();
 	const t = (value: string): string => translateText(data.locale, value);
-	const resultsCountLabelsByLocale = {
-		es: { results: 'resultados', showing: 'Mostrando' },
-		en: { results: 'results', showing: 'Showing' },
-		fr: { results: 'résultats', showing: 'Affichage de' },
-		pt: { results: 'resultados', showing: 'Mostrando' },
-		it: { results: 'risultati', showing: 'Mostrando' },
-		de: { results: 'Ergebnisse', showing: 'Angezeigt' },
-		zh: { results: '个结果', showing: '显示' },
-		ja: { results: '件の結果', showing: '表示中' },
-		ko: { results: '개 결과', showing: '표시 중' },
-		ru: { results: 'результатов', showing: 'Показано' },
-		ar: { results: 'نتائج', showing: 'عرض' }
+	const resultTextByLocale = {
+		es: {
+			count: (total: string, range: string) => `${total} resultados · Mostrando ${range}`,
+			page: (page: string, total: string) => `Página ${page} de ${total}`
+		},
+		en: {
+			count: (total: string, range: string) => `${total} results · Showing ${range}`,
+			page: (page: string, total: string) => `Page ${page} of ${total}`
+		},
+		fr: {
+			count: (total: string, range: string) => `${total} résultats · Affichage de ${range}`,
+			page: (page: string, total: string) => `Page ${page} sur ${total}`
+		},
+		pt: {
+			count: (total: string, range: string) => `${total} resultados · Mostrando ${range}`,
+			page: (page: string, total: string) => `Página ${page} de ${total}`
+		},
+		it: {
+			count: (total: string, range: string) => `${total} risultati · Mostrando ${range}`,
+			page: (page: string, total: string) => `Pagina ${page} di ${total}`
+		},
+		de: {
+			count: (total: string, range: string) => `${total} Ergebnisse · ${range} angezeigt`,
+			page: (page: string, total: string) => `Seite ${page} von ${total}`
+		},
+		zh: {
+			count: (total: string, range: string) => `共 ${total} 个结果，显示 ${range}`,
+			page: (page: string, total: string) => `第 ${page} / ${total} 页`
+		},
+		ja: {
+			count: (total: string, range: string) => `${total} 件の結果、${range} を表示中`,
+			page: (page: string, total: string) => `${page} / ${total}ページ`
+		},
+		ko: {
+			count: (total: string, range: string) => `결과 ${total}개 중 ${range} 표시`,
+			page: (page: string, total: string) => `${page} / ${total}페이지`
+		},
+		ru: {
+			count: (total: string, range: string) => `${total} результатов · Показано ${range}`,
+			page: (page: string, total: string) => `Страница ${page} из ${total}`
+		},
+		ar: {
+			count: (total: string, range: string) => `${total} نتائج · يُعرض ${range}`,
+			page: (page: string, total: string) => `الصفحة ${page} من ${total}`
+		}
 	} as const;
-	const resultsCountLabel = $derived(resultsCountLabelsByLocale[data.locale] ?? resultsCountLabelsByLocale.es);
-	const paginationLabelsByLocale = {
-		es: { prefix: 'Página ', between: ' de ', suffix: '' },
-		en: { prefix: 'Page ', between: ' of ', suffix: '' },
-		fr: { prefix: 'Page ', between: ' sur ', suffix: '' },
-		pt: { prefix: 'Página ', between: ' de ', suffix: '' },
-		it: { prefix: 'Pagina ', between: ' di ', suffix: '' },
-		de: { prefix: 'Seite ', between: ' von ', suffix: '' },
-		zh: { prefix: '第 ', between: ' / ', suffix: ' 页' },
-		ja: { prefix: '', between: ' / ', suffix: 'ページ' },
-		ko: { prefix: '', between: ' / ', suffix: '페이지' },
-		ru: { prefix: 'Страница ', between: ' из ', suffix: '' },
-		ar: { prefix: 'الصفحة ', between: ' من ', suffix: '' }
-	} as const;
-	const paginationLabel = $derived(paginationLabelsByLocale[data.locale] ?? paginationLabelsByLocale.es);
+	const resultText = $derived(resultTextByLocale[data.locale] ?? resultTextByLocale.es);
 	const pageNumberLocale = $derived(data.locale === 'es' ? 'es-ES' : data.locale);
 	const pageNumberFormatter = $derived(new Intl.NumberFormat(pageNumberLocale));
 	const getInitialFilters = () => data.filters;
@@ -846,11 +865,10 @@
 						class="mb-5 flex scroll-mt-24 flex-wrap items-center justify-between gap-3 border-b-2 border-border pb-[15px] max-md:flex-col max-md:justify-center max-md:gap-2 max-md:text-center"
 					>
 						<p class="m-0 text-[0.88rem] font-normal text-text-main max-md:w-full">
-							<span class="font-semibold text-brand-blue">{totalResults}</span> {resultsCountLabel.results} ·
-							{resultsCountLabel.showing}
-							<span class="font-semibold text-brand-blue">
-								{(resultsPage - 1) * pageSize + 1}-{(resultsPage - 1) * pageSize + works.length}
-							</span>
+							{resultText.count(
+								pageNumberFormatter.format(totalResults),
+								`${pageNumberFormatter.format((resultsPage - 1) * pageSize + 1)}-${pageNumberFormatter.format((resultsPage - 1) * pageSize + works.length)}`
+							)}
 						</p>
 						{#if totalPages > 1}
 							<div class="flex items-center justify-center gap-2 max-md:w-full">
@@ -871,7 +889,7 @@
 									<span class="sr-only">Anterior</span>
 								</AppButton>
 								<span class="font-['Roboto',sans-serif] text-[0.86rem] font-normal text-text-main">
-									{paginationLabel.prefix}<span class="font-semibold text-brand-blue">{pageNumberFormatter.format(resultsPage)}</span>{paginationLabel.between}<span class="font-semibold text-brand-blue">{pageNumberFormatter.format(totalPages)}</span>{paginationLabel.suffix}
+									{resultText.page(pageNumberFormatter.format(resultsPage), pageNumberFormatter.format(totalPages))}
 								</span>
 								<AppButton
 									type="button"
@@ -928,7 +946,7 @@
 							<span class="sr-only">Anterior</span>
 						</AppButton>
 						<span class="font-['Roboto',sans-serif] text-[0.86rem] font-normal text-text-main">
-							{paginationLabel.prefix}<span class="font-semibold text-brand-blue">{pageNumberFormatter.format(resultsPage)}</span>{paginationLabel.between}<span class="font-semibold text-brand-blue">{pageNumberFormatter.format(totalPages)}</span>{paginationLabel.suffix}
+							{resultText.page(pageNumberFormatter.format(resultsPage), pageNumberFormatter.format(totalPages))}
 						</span>
 						<AppButton
 							type="button"

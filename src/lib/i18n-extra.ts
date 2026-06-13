@@ -2961,7 +2961,7 @@ export const esToKo: Record<string, string> = {
 	"Obras de Examen de autorías": "Examen de autorías 작품",
 	"Dramaturgos de Examen de autorías": "Examen de autorías 극작가",
 	"Biblioteca Textual Siglo de Oro": "스페인 황금세기 문헌 도서관",
-	"Biblioteca Textual Siglo de Oro: textos digitales en acceso abierto para lectura, consulta e investigación.": "Siglo de Oro Textual Library: 읽기, 상담 및 연구를 위해 공개적으로 액세스할 수 있는 디지털 텍스트입니다.",
+	"Biblioteca Textual Siglo de Oro: textos digitales en acceso abierto para lectura, consulta e investigación.": "스페인 황금세기 텍스트 라이브러리: 읽기, 참조 및 연구를 위한 오픈 액세스 디지털 텍스트입니다.",
 	"BITESO ofrece": "BITESO 제공 내용",
 	"acceso en abierto a textos digitales del Siglo de Oro": "스페인 황금세기의 디지털 텍스트에 대한 개방형 접근",
 	"conseguidos, en su mayoría, a partir de transcripciones automáticas de impresos y manuscritos antiguos. La colección reúne obras producidas para los análisis estilométricos de autoría y materiales incorporados gracias a la colaboración de especialistas, colegas y estudiantes.": "대부분 고인쇄본과 필사본의 자동 전사를 통해 얻은 것입니다. 이 컬렉션은 저자 귀속 문체계량 분석을 위해 제작된 작품과 전문가, 동료, 학생의 협력으로 편입된 자료를 함께 모았습니다.",

@@ -45,97 +45,75 @@
 
 	let { data }: { data: PageData } = $props();
 	const t = (value: string): string => translateText(data.locale, value);
-	const summaryCountLabelsByLocale = {
+	const summaryTextByLocale = {
 		es: {
-			activeTerm: 'término activo',
-			activeTerms: 'términos activos',
-			of: 'de',
-			more: 'más',
-			summariesFound: 'resúmenes encontrados',
-			visibleWorks: 'obras visibles'
+			activeTerms: (count: number) => `${count} ${count === 1 ? 'término activo' : 'términos activos'}`,
+			summariesFound: (shown: number, total: number) => `${shown} de ${total} resúmenes encontrados`,
+			visibleWorks: (shown: number, total: number) => `${shown} de ${total} obras visibles`,
+			showMore: (count: number) => `Ver más (${count} más)`
 		},
 		en: {
-			activeTerm: 'active term',
-			activeTerms: 'active terms',
-			of: 'of',
-			more: 'more',
-			summariesFound: 'summaries found',
-			visibleWorks: 'visible works'
+			activeTerms: (count: number) => `${count} ${count === 1 ? 'active term' : 'active terms'}`,
+			summariesFound: (shown: number, total: number) => `${shown} of ${total} summaries found`,
+			visibleWorks: (shown: number, total: number) => `Showing ${shown} of ${total} works`,
+			showMore: (count: number) => `Show more (${count} more)`
 		},
 		fr: {
-			activeTerm: 'terme actif',
-			activeTerms: 'termes actifs',
-			of: 'sur',
-			more: 'de plus',
-			summariesFound: 'résumés trouvés',
-			visibleWorks: 'œuvres visibles'
+			activeTerms: (count: number) => `${count} ${count === 1 ? 'terme actif' : 'termes actifs'}`,
+			summariesFound: (shown: number, total: number) => `${shown} résumés trouvés sur ${total}`,
+			visibleWorks: (shown: number, total: number) => `${shown} œuvres affichées sur ${total}`,
+			showMore: (count: number) => `Voir plus (${count} de plus)`
 		},
 		pt: {
-			activeTerm: 'termo ativo',
-			activeTerms: 'termos ativos',
-			of: 'de',
-			more: 'mais',
-			summariesFound: 'resumos encontrados',
-			visibleWorks: 'obras visíveis'
+			activeTerms: (count: number) => `${count} ${count === 1 ? 'termo ativo' : 'termos ativos'}`,
+			summariesFound: (shown: number, total: number) => `${shown} de ${total} resumos encontrados`,
+			visibleWorks: (shown: number, total: number) => `Exibindo ${shown} de ${total} obras`,
+			showMore: (count: number) => `Ver mais (${count} mais)`
 		},
 		it: {
-			activeTerm: 'termine attivo',
-			activeTerms: 'termini attivi',
-			of: 'di',
-			more: 'altri',
-			summariesFound: 'riassunti trovati',
-			visibleWorks: 'opere visibili'
+			activeTerms: (count: number) => `${count} ${count === 1 ? 'termine attivo' : 'termini attivi'}`,
+			summariesFound: (shown: number, total: number) => `${shown} riassunti trovati su ${total}`,
+			visibleWorks: (shown: number, total: number) => `${shown} opere visualizzate su ${total}`,
+			showMore: (count: number) => `Vedi altro (${count} altri)`
 		},
 		de: {
-			activeTerm: 'aktiver Begriff',
-			activeTerms: 'aktive Begriffe',
-			of: 'von',
-			more: 'mehr',
-			summariesFound: 'Zusammenfassungen gefunden',
-			visibleWorks: 'sichtbare Werke'
+			activeTerms: (count: number) => `${count} ${count === 1 ? 'aktiver Begriff' : 'aktive Begriffe'}`,
+			summariesFound: (shown: number, total: number) => `${shown} von ${total} Zusammenfassungen gefunden`,
+			visibleWorks: (shown: number, total: number) => `${shown} von ${total} Werken angezeigt`,
+			showMore: (count: number) => `Mehr anzeigen (${count} mehr)`
 		},
 		zh: {
-			activeTerm: '个活跃词',
-			activeTerms: '个活跃词',
-			of: '/',
-			more: '更多',
-			summariesFound: '个摘要',
-			visibleWorks: '部可见作品'
+			activeTerms: (count: number) => `${count} 个活跃词`,
+			summariesFound: (shown: number, total: number) => `找到 ${total} 个摘要中的 ${shown} 个`,
+			visibleWorks: (shown: number, total: number) => `显示 ${total} 部作品中的 ${shown} 部`,
+			showMore: (count: number) => `查看更多（${count} 个）`
 		},
 		ja: {
-			activeTerm: '有効な語',
-			activeTerms: '有効な語',
-			of: '/',
-			more: 'さらに',
-			summariesFound: '件の要約',
-			visibleWorks: '件の表示中の作品'
+			activeTerms: (count: number) => `${count} 件の有効な語`,
+			summariesFound: (shown: number, total: number) => `${total} 件の要約中 ${shown} 件を表示`,
+			visibleWorks: (shown: number, total: number) => `${total} 件中 ${shown} 件の作品を表示`,
+			showMore: (count: number) => `もっと見る（${count} 件）`
 		},
 		ko: {
-			activeTerm: '활성 검색어',
-			activeTerms: '활성 검색어',
-			of: '/',
-			more: '더',
-			summariesFound: '개 요약',
-			visibleWorks: '개의 표시된 작품'
+			activeTerms: (count: number) => `활성 검색어 ${count}개`,
+			summariesFound: (shown: number, total: number) => `전체 ${total}개 요약 중 ${shown}개 표시`,
+			visibleWorks: (shown: number, total: number) => `전체 ${total}개 작품 중 ${shown}개 표시`,
+			showMore: (count: number) => `더 보기 (${count}건)`
 		},
 		ru: {
-			activeTerm: 'активный термин',
-			activeTerms: 'активных терминов',
-			of: 'из',
-			more: 'еще',
-			summariesFound: 'найденных аннотаций',
-			visibleWorks: 'видимых произведений'
+			activeTerms: (count: number) => `${count} активных терминов`,
+			summariesFound: (shown: number, total: number) => `Показано ${shown} из ${total} найденных аннотаций`,
+			visibleWorks: (shown: number, total: number) => `Показано ${shown} из ${total} произведений`,
+			showMore: (count: number) => `Показать еще (${count})`
 		},
 		ar: {
-			activeTerm: 'مصطلح نشط',
-			activeTerms: 'مصطلحات نشطة',
-			of: 'من',
-			more: 'إضافية',
-			summariesFound: 'ملخصات مطابقة',
-			visibleWorks: 'أعمال معروضة'
+			activeTerms: (count: number) => `${count} مصطلحات نشطة`,
+			summariesFound: (shown: number, total: number) => `تُعرض ${shown} من أصل ${total} ملخصات مطابقة`,
+			visibleWorks: (shown: number, total: number) => `تُعرض ${shown} من أصل ${total} أعمال`,
+			showMore: (count: number) => `عرض المزيد (${count})`
 		}
 	} as const;
-	const summaryCountLabels = $derived(summaryCountLabelsByLocale[data.locale] ?? summaryCountLabelsByLocale.es);
+	const summaryText = $derived(summaryTextByLocale[data.locale] ?? summaryTextByLocale.es);
 	const RESUMENES_SEO_DESCRIPTION =
 		'Resúmenes automáticos de las obras incluidas en la base de datos de ETSO.';
 	const SUMMARY_SEARCH_MIN_LENGTH = 2;
@@ -417,12 +395,12 @@
 		<p class="m-0 text-[0.92rem] font-medium text-text-soft">
 			{#if summarySearchQuery.trim()}
 				{#if summarySearchLoading}
-					{summarySearchTerms.length} {summarySearchTerms.length === 1 ? summaryCountLabels.activeTerm : summaryCountLabels.activeTerms}
+					{summaryText.activeTerms(summarySearchTerms.length)}
 				{:else}
-					{summarySearchResults.length} {summaryCountLabels.of} {summarySearchTotal} {summaryCountLabels.summariesFound}
+					{summaryText.summariesFound(summarySearchResults.length, summarySearchTotal)}
 				{/if}
 			{:else}
-				{visibleWorks.length} {summaryCountLabels.of} {filteredWorks.length} {summaryCountLabels.visibleWorks}
+				{summaryText.visibleWorks(visibleWorks.length, filteredWorks.length)}
 			{/if}
 		</p>
 	</section>
@@ -502,7 +480,9 @@
 								disabled={summarySearchLoadingMore}
 								onclick={loadMoreSummaryResults}
 							>
-								{summarySearchLoadingMore ? t('Cargando...') : `${t('Ver más')} (${Math.min(SUMMARY_SEARCH_PAGE_SIZE, summarySearchTotal - summarySearchResults.length)} ${summaryCountLabels.more})`}
+								{summarySearchLoadingMore
+									? t('Cargando...')
+									: summaryText.showMore(Math.min(SUMMARY_SEARCH_PAGE_SIZE, summarySearchTotal - summarySearchResults.length))}
 							</button>
 						</div>
 					{/if}
@@ -559,7 +539,7 @@
 						class="inline-flex items-center justify-center rounded-[9px] border border-border-accent-blue bg-white px-5 py-2.5 font-ui text-[0.94rem] font-semibold text-brand-blue-dark shadow-[0_8px_24px_rgba(25,46,80,0.05)] transition hover:bg-surface-accent-blue"
 						onclick={showMoreWorks}
 					>
-						{t('Ver más')} ({Math.min(WORKS_PAGE_SIZE, hiddenWorksCount)} {summaryCountLabels.more})
+						{summaryText.showMore(Math.min(WORKS_PAGE_SIZE, hiddenWorksCount))}
 					</button>
 				</div>
 			{/if}

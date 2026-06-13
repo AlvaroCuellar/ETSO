@@ -697,10 +697,10 @@
 				{#if citationSection && citationSectionEntries.length > 0}
 					<section
 						class="rounded-[10px] bg-white px-[0.9rem] py-[0.8rem] max-md:px-[0.8rem] max-md:py-[0.75rem]"
-						aria-label={citationSection.lead}
+						aria-label={t(citationSection.lead)}
 					>
 						<p class="mb-[0.65rem] mt-0 text-[0.95rem] font-medium leading-[1.45] text-brand-blue-dark">
-							{citationSection.lead}
+							{t(citationSection.lead)}
 						</p>
 						<ol class="m-0 grid gap-[0.55rem] pl-[1.2rem]">
 							{#each citationSectionEntries as entry}
@@ -732,10 +732,10 @@
 				{#each extraRegularSections as section}
 					<section
 						class="rounded-[10px] bg-white px-[0.9rem] py-[0.8rem] max-md:px-[0.8rem] max-md:py-[0.75rem]"
-						aria-label={section.lead}
+						aria-label={t(section.lead)}
 					>
 						<p class="mb-[0.65rem] mt-0 text-[0.95rem] font-medium leading-[1.45] text-brand-blue-dark">
-							{section.lead}
+							{t(section.lead)}
 						</p>
 						<ol class="m-0 grid gap-[0.55rem] pl-[1.2rem]">
 							{#each section.entries as entry}
@@ -777,15 +777,15 @@
 								>
 									<ChevronRight size={13} strokeWidth={2.2} />
 								</span>
-								<span>{section.collapsibleLabel || 'Más información'}</span>
+								<span>{t(section.collapsibleLabel || 'Más información')}</span>
 							</span>
 						</summary>
 						<div
 							class="px-[0.9rem] pb-[0.8rem] pt-0 max-md:px-[0.8rem] max-md:pb-[0.75rem]"
-							aria-label={section.lead}
+							aria-label={t(section.lead)}
 						>
 							<p class="mb-[0.65rem] mt-0 text-[0.95rem] font-medium leading-[1.45] text-brand-blue-dark">
-								{section.lead}
+								{t(section.lead)}
 							</p>
 							<ol class="m-0 grid gap-[0.55rem] pl-[1.2rem]">
 								{#each section.entries as entry}

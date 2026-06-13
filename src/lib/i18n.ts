@@ -560,6 +560,10 @@ const esToEn: Record<string, string> = {
 		'Recommended bibliographic references for citing ETSO, TEXORO, CETSO, and the project resources.',
 	'Para poder seguir nuestra labor es importante que el trabajo del proyecto sea citado. Por favor, incluye en la bibliografía alguna de estas referencias si el portal te ha ayudado en tu investigación.':
 		'To help us continue our work, it is important that the project be cited. Please include one of these references in your bibliography if the portal has helped you in your research.',
+	'Para entender los procesos aquí seguidos, puedes consultar:':
+		'To understand the processes followed here, you can consult:',
+	'Se puede obtener más información sobre cómo trabaja ETSO en las tareas de atribución de obras dramáticas del Siglo de Oro en:':
+		'More information on how ETSO works on authorship attribution for Golden Age plays is available in:',
 	'Proyecto': 'Project',
 	'Algunos trabajos': 'Selected publications',
 	'Modelos para la transcripción automática': 'Automatic transcription models',
@@ -939,6 +943,10 @@ const esToFr: Record<string, string> = {
 		'Références bibliographiques recommandées pour citer ETSO, TEXORO, CETSO et les ressources du projet.',
 	'Para poder seguir nuestra labor es importante que el trabajo del proyecto sea citado. Por favor, incluye en la bibliografía alguna de estas referencias si el portal te ha ayudado en tu investigación.':
 		'Pour nous permettre de poursuivre notre travail, il est important que le projet soit cité. Veuillez inclure l’une de ces références dans votre bibliographie si le portail vous a aidé dans vos recherches.',
+	'Para entender los procesos aquí seguidos, puedes consultar:':
+		'Pour comprendre les procédures suivies ici, vous pouvez consulter :',
+	'Se puede obtener más información sobre cómo trabaja ETSO en las tareas de atribución de obras dramáticas del Siglo de Oro en:':
+		'On trouvera davantage d’informations sur la manière dont ETSO travaille sur l’attribution des œuvres dramatiques du Siècle d’or dans :',
 	'Proyecto': 'Projet',
 	'Algunos trabajos': 'Quelques travaux',
 	'Modelos para la transcripción automática': 'Modèles pour la transcription automatique',

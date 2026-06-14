@@ -788,7 +788,8 @@ const buildCatalogWorksFromRows = (
 			attributionByWorkType.get(`${row.id}::estilometria`) ?? makeEmptyAttributionSet();
 
 		const hasSummary = Number(row.has_resumen_breve) === 1;
-		const hasReport = Number(row.has_report) === 1;
+		const inAuthorshipExam = Number(row.examen_autorias) === 1;
+		const hasReport = inAuthorshipExam && Number(row.has_report) === 1;
 		const slug = resolveWorkSlug(row, seenWorkSlugs);
 		const reportSlug = hasReport ? `${REPORT_SLUG_PREFIX}${slug}` : undefined;
 		const bitesoNombre = row.biteso_nombre?.trim() || 'ETSO';
@@ -826,7 +827,7 @@ const buildCatalogWorksFromRows = (
 			addedOn: row.adicion?.trim() || 'Sin fecha',
 			shortSummary: EMPTY_SHORT_SUMMARY,
 			hasSummaryFile: hasSummary,
-			inAuthorshipExam: Number(row.examen_autorias) === 1,
+			inAuthorshipExam,
 			traditionalAttribution,
 			stylometryAttribution,
 			textLinks: links,
@@ -1073,7 +1074,8 @@ const createSnapshot = async (): Promise<Snapshot> => {
 			attributionByWorkType.get(`${row.id}::estilometria`) ?? makeEmptyAttributionSet();
 
 		const hasSummary = Number(row.has_resumen_breve) === 1;
-		const hasReport = Number(row.has_report) === 1;
+		const inAuthorshipExam = Number(row.examen_autorias) === 1;
+		const hasReport = inAuthorshipExam && Number(row.has_report) === 1;
 
 		const slug = resolveWorkSlug(row, seenWorkSlugs);
 		const reportSlug = hasReport ? `${REPORT_SLUG_PREFIX}${slug}` : undefined;
@@ -1111,7 +1113,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 			addedOn: row.adicion?.trim() || 'Sin fecha',
 			shortSummary: EMPTY_SHORT_SUMMARY,
 			hasSummaryFile: hasSummary,
-			inAuthorshipExam: Number(row.examen_autorias) === 1,
+			inAuthorshipExam,
 			traditionalAttribution,
 			stylometryAttribution,
 			textLinks: links,
@@ -2041,6 +2043,7 @@ export const getInformeById = async (informeId: string): Promise<CatalogInforme 
 	const snapshot = await getSnapshot();
 	const work = snapshot.workById.get(informeId);
 	if (!work) return undefined;
+	if (!work.inAuthorshipExam) return undefined;
 	if (!work.reportSlug) return undefined;
 
 	const distances = await getDistancesForWork(snapshot, work.id);

@@ -141,9 +141,11 @@
 									Informe estilométrico
 								</InlineActionButton>
 							{/if}
-							<InlineActionButton href={`/red-obras?obra=${data.work.slug}`} icon={ChartNetwork}>
-								Red estilométrica
-							</InlineActionButton>
+							{#if data.work.inAuthorshipExam}
+								<InlineActionButton href={`/red-obras?obra=${data.work.slug}`} icon={ChartNetwork}>
+									Red estilométrica
+								</InlineActionButton>
+							{/if}
 						</div>
 					{/snippet}
 

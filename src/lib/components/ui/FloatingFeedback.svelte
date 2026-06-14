@@ -417,10 +417,10 @@
 	};
 </script>
 
-<div class="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-3 sm:bottom-6 sm:right-6">
+<div class="fixed inset-x-3 bottom-3 z-50 flex flex-col items-end gap-2 sm:inset-x-auto sm:right-6 sm:bottom-6 sm:gap-3">
 	{#if isOpen}
 		<section
-			class="w-[calc(100vw-2rem)] max-w-[390px] rounded-lg border border-border bg-white p-4 text-left shadow-[0_18px_45px_rgba(15,23,42,0.18)]"
+			class="max-h-[calc(100dvh-5.5rem)] w-full overflow-y-auto overscroll-contain rounded-lg border border-border bg-white p-4 text-left shadow-[0_18px_45px_rgba(15,23,42,0.18)] sm:w-[390px] sm:max-w-[390px] sm:max-h-[calc(100dvh-7rem)]"
 			aria-label={t.panelLabel}
 		>
 			<div class="mb-3 flex items-start justify-between gap-3">
@@ -442,7 +442,7 @@
 				</button>
 			</div>
 
-			<form class="space-y-3" onsubmit={submitFeedback}>
+			<form class="space-y-2.5 sm:space-y-3" onsubmit={submitFeedback}>
 				<input type="text" name="website" bind:value={website} class="hidden" tabindex="-1" autocomplete="off" />
 				<input type="hidden" name="pageUrl" value={pageUrl} />
 
@@ -470,11 +470,11 @@
 					id="feedback-message"
 					name="message"
 					bind:value={message}
-					rows="5"
+					rows="4"
 					required
 					minlength="8"
 					placeholder={t.messagePlaceholder}
-					class="min-h-28 w-full resize-y rounded-md border border-border bg-white px-3 py-2 font-ui text-[14px] leading-relaxed text-text-main outline-none transition placeholder:text-text-muted focus:border-border-accent-blue focus:ring-2 focus:ring-brand-blue/20"
+					class="min-h-24 w-full resize-y rounded-md border border-border bg-white px-3 py-2 font-ui text-[14px] leading-relaxed text-text-main outline-none transition placeholder:text-text-muted focus:border-border-accent-blue focus:ring-2 focus:ring-brand-blue/20 sm:min-h-28"
 				></textarea>
 
 				<label class="block font-ui text-[12px] font-semibold uppercase tracking-[0.04em] text-text-muted" for="feedback-name">
@@ -501,7 +501,7 @@
 					class="h-10 w-full rounded-md border border-border bg-white px-3 font-ui text-[14px] text-text-main outline-none transition placeholder:text-text-muted focus:border-border-accent-blue focus:ring-2 focus:ring-brand-blue/20"
 				/>
 
-				<div class="flex items-center justify-between gap-3 pt-1">
+				<div class="flex flex-col gap-3 pt-1 min-[380px]:flex-row min-[380px]:items-center min-[380px]:justify-between">
 					{#if statusMessage}
 						<p
 							class="flex min-w-0 items-center gap-2 font-ui text-[13px] leading-snug"
@@ -522,7 +522,7 @@
 					<button
 						type="submit"
 						disabled={submissionState === 'sending'}
-						class="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-md bg-brand-blue px-4 font-ui text-[14px] font-semibold text-white transition hover:bg-brand-blue-dark focus:outline-none focus:ring-2 focus:ring-brand-blue/30 disabled:cursor-not-allowed disabled:opacity-70"
+						class="inline-flex h-10 w-full shrink-0 items-center justify-center gap-2 rounded-md bg-brand-blue px-4 font-ui text-[14px] font-semibold text-white transition hover:bg-brand-blue-dark focus:outline-none focus:ring-2 focus:ring-brand-blue/30 disabled:cursor-not-allowed disabled:opacity-70 min-[380px]:w-auto"
 					>
 						<Send size={16} aria-hidden="true" />
 						{submissionState === 'sending' ? t.sending : t.submit}
@@ -534,7 +534,7 @@
 
 	<button
 		type="button"
-		class="inline-flex h-14 w-14 items-center justify-center rounded-full bg-brand-blue text-white shadow-[0_12px_28px_rgba(0,45,140,0.28)] transition hover:bg-brand-blue-dark focus:outline-none focus:ring-4 focus:ring-brand-blue/25"
+		class="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand-blue text-white shadow-[0_12px_28px_rgba(0,45,140,0.28)] transition hover:bg-brand-blue-dark focus:outline-none focus:ring-4 focus:ring-brand-blue/25"
 		aria-label={t.open}
 		aria-expanded={isOpen}
 		onclick={isOpen ? closePanel : openPanel}

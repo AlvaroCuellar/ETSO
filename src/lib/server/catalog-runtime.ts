@@ -2714,38 +2714,162 @@ const trimTrailingPunctuation = (url: string): { href: string; trailing: string 
 	return { href, trailing };
 };
 
+interface PlainBibliographyTextSpan {
+	start: number;
+	end: number;
+	kind: InformeBibliographyEntryPart['kind'];
+	href?: string;
+}
+
+const BIBLIO_DETAIL_MARKER_PATTERN =
+	/,\s*(?:vol\.|núm\.|n[uú]m\.|no\.|n\.º|nº|n\.|pp\.|págs?\.|[12][0-9]{3}\b|Routledge\b|Springer\b|Peter Lang\b|Tirant\b|Kassel\b|Madrid\b|Cham\b|Berlin\b|Berlín\b|Alicante\b|Valladolid\b|Cuenca\b|Valencia\b|Bogotá\b|Roma\b|Firenze\b|Ediciones\b|Editorial\b|Universidad\b|ISSN\b|ISBN\b|DOI\b)/i;
+const BIBLIO_TITLE_METADATA_PATTERN =
+	/\.\s+(?:Tesis doctoral|PhD dissertation|Dir\.|Ed\.|Edición crítica|Edición de|Estudio preliminar|Alicante:|Kassel:|Madrid:|Valladolid:|Cuenca:|Cham:|Bogotá:|Banská Bystrica:|Pontificia Universidad|Universidad|Universidade|ISBN\b|DOI\b)/i;
+const BIBLIO_CONTAINER_END_PATTERN =
+	/(?:\.\s+(?:[12][0-9]{3}\b|[A-ZÁÉÍÓÚÜÑ][^,.]{1,42}:|ISBN\b|DOI\b)|,\s*(?:[12][0-9]{3}\b|pp\.|págs?\.|Routledge(?=[:,\s]|$)|Springer(?=[:,\s]|$)|Peter Lang(?=[:,\s]|$)|Tirant(?=[:,\s]|$)|Kassel(?=[:,\s]|$)|Firenze(?=[:,\s]|$)|Madrid(?=[:,\s]|$)|Bogotá(?=[:,\s]|$)|Cham(?=[:,\s]|$)|Berlin(?=[:,\s]|$)|Berlín(?=[:,\s]|$)|Valencia(?=[:,\s]|$)|Valladolid(?=[:,\s]|$)|Ediciones(?=[:,\s]|$)|Editorial(?=[:,\s]|$)|Universidad(?=[:,\s]|$)))/i;
+
+const addPlainBibliographyItalicSpan = (
+	spans: PlainBibliographyTextSpan[],
+	text: string,
+	start: number,
+	end: number
+): void => {
+	while (start < end && /\s/.test(text[start])) start += 1;
+	while (end > start && /[\s.,;:]$/.test(text.slice(start, end))) end -= 1;
+
+	const value = text.slice(start, end);
+	if (value.length < 3 || !/[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]/.test(value)) return;
+	if (/^(?:En|en|Vol\.|Núm\.|No\.|DOI|ISBN|ISSN|Edición|Ed\.|Estudio preliminar|editado por)\b/.test(value)) {
+		return;
+	}
+	if (spans.some((span) => start < span.end && end > span.start)) return;
+
+	spans.push({
+		start,
+		end,
+		kind: 'italic'
+	});
+};
+
+const addPlainBibliographyEnContainerSpan = (
+	spans: PlainBibliographyTextSpan[],
+	text: string,
+	enStart: number
+): void => {
+	const enMatch = text.slice(enStart).match(/^(?:[Ee]n|[Ee]n:)\s+/);
+	if (!enMatch) return;
+
+	const afterEnStart = enStart + enMatch[0].length;
+	const afterEn = text.slice(afterEnStart);
+	const editedByMatch = afterEn.match(/\b(?:eds?\.?|coords?\.?|coord\.?|editado por)\)\s*,\s*/i);
+	const titleStart = editedByMatch
+		? afterEnStart + editedByMatch.index! + editedByMatch[0].length
+		: afterEnStart;
+	const endMatch = text.slice(titleStart).match(BIBLIO_CONTAINER_END_PATTERN);
+	if (!endMatch || endMatch.index === undefined || endMatch.index < 4) return;
+
+	addPlainBibliographyItalicSpan(spans, text, titleStart, titleStart + endMatch.index);
+};
+
+const findPlainBibliographyItalicSpans = (text: string): PlainBibliographyTextSpan[] => {
+	const spans: PlainBibliographyTextSpan[] = [];
+
+	for (const quoteMatch of text.matchAll(/[”»"]/g)) {
+		const quoteEnd = quoteMatch.index ?? -1;
+		if (quoteEnd < 0) continue;
+
+		const afterQuote = text.slice(quoteEnd + 1);
+		const separatorMatch = afterQuote.match(/^[.,]?\s+/);
+		if (!separatorMatch) continue;
+
+		const nextStart = quoteEnd + 1 + separatorMatch[0].length;
+		const nextText = text.slice(nextStart);
+		const enMatch = nextText.match(/^(?:[Ee]n|[Ee]n:)\s+/);
+		if (enMatch) {
+			addPlainBibliographyEnContainerSpan(spans, text, nextStart);
+			continue;
+		}
+
+		if (/^(?:PhD dissertation|Tesis doctoral)\b/i.test(nextText)) continue;
+
+		const markerMatch = nextText.match(BIBLIO_DETAIL_MARKER_PATTERN);
+		if (!markerMatch || markerMatch.index === undefined || markerMatch.index < 4) continue;
+		addPlainBibliographyItalicSpan(spans, text, nextStart, nextStart + markerMatch.index);
+	}
+
+	for (const enMatch of text.matchAll(/(?:^|[.,]\s+)([Ee]n|[Ee]n:)\s+/g)) {
+		const enStart = (enMatch.index ?? 0) + enMatch[0].indexOf(enMatch[1]);
+		addPlainBibliographyEnContainerSpan(spans, text, enStart);
+	}
+
+	for (const markerMatch of text.matchAll(new RegExp(BIBLIO_DETAIL_MARKER_PATTERN.source, 'gi'))) {
+		const markerStart = markerMatch.index ?? -1;
+		if (markerStart < 0) continue;
+
+		const sentenceStart = text.lastIndexOf('. ', markerStart) + 2;
+		if (sentenceStart <= 1 || sentenceStart >= markerStart) continue;
+		addPlainBibliographyItalicSpan(spans, text, sentenceStart, markerStart);
+	}
+
+	const firstSentenceEnd = text.indexOf('. ');
+	if (firstSentenceEnd >= 0) {
+		const titleStart = firstSentenceEnd + 2;
+		const afterAuthor = text.slice(titleStart);
+		const metadataMatch = afterAuthor.match(BIBLIO_TITLE_METADATA_PATTERN);
+		if (metadataMatch?.index !== undefined && metadataMatch.index > 4) {
+			addPlainBibliographyItalicSpan(spans, text, titleStart, titleStart + metadataMatch.index);
+		}
+	}
+
+	return spans.sort((a, b) => a.start - b.start || a.end - b.end);
+};
+
 const tokenizePlainBibliographyText = (text: string): InformeBibliographyEntryPart[] => {
 	const parts: InformeBibliographyEntryPart[] = [];
-	let lastIndex = 0;
+	const spans = findPlainBibliographyItalicSpans(text);
 
 	for (const match of text.matchAll(BIBLIO_URL_PATTERN)) {
 		const start = match.index ?? -1;
 		if (start < 0) continue;
+		const token = match[0];
+		const { href } = trimTrailingPunctuation(token);
+		if (!href) continue;
+		spans.push({
+			start,
+			end: start + href.length,
+			kind: 'link',
+			href
+		});
+	}
 
-		if (start > lastIndex) {
+	spans.sort((a, b) => a.start - b.start || a.end - b.end);
+	let lastIndex = 0;
+
+	for (const span of spans) {
+		if (span.start < lastIndex) continue;
+
+		if (span.start > lastIndex) {
 			parts.push({
 				kind: 'text',
-				value: text.slice(lastIndex, start)
+				value: text.slice(lastIndex, span.start)
 			});
 		}
 
-		const token = match[0];
-		const { href, trailing } = trimTrailingPunctuation(token);
-		if (href) {
+		const value = text.slice(span.start, span.end);
+		if (span.kind === 'link') {
 			parts.push({
 				kind: 'link',
-				value: href,
-				href
+				value,
+				href: span.href ?? value
 			});
-		}
-		if (trailing) {
+		} else {
 			parts.push({
-				kind: 'text',
-				value: trailing
+				kind: span.kind,
+				value
 			});
 		}
 
-		lastIndex = start + token.length;
+		lastIndex = span.end;
 	}
 
 	if (lastIndex < text.length) {

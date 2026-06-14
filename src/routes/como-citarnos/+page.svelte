@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Download from 'lucide-svelte/icons/download';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
+	import BibliographyEntryList from '$lib/components/ui/BibliographyEntryList.svelte';
 	import InlineActionButton from '$lib/components/ui/InlineActionButton.svelte';
 	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 
@@ -11,6 +12,7 @@
 	const COMO_CITARNOS_SEO_DESCRIPTION =
 		'Referencias bibliográficas recomendadas para citar ETSO, TEXORO, CETSO y los recursos del proyecto.';
 	const BIBTEX_FILENAME = 'etso-referencias.bib';
+	const RELATED_PROJECT_WORKS_TITLE_PATTERN = /^Trabajos relacionados con el proyecto\s*\((\d{4})\)$/;
 
 	const normalizeBibtexKey = (value: string): string => {
 		const normalized = value
@@ -31,9 +33,13 @@
 	const buildFallbackBibtex = (entry: InformeBibliographyEntry): string =>
 		`@misc{${normalizeBibtexKey(entry.id)},\n  note = {${escapeBibtexValue(entry.text)}}\n}`;
 
+	const citationSections = $derived(
+		data.bibliography.sections.filter((section) => !RELATED_PROJECT_WORKS_TITLE_PATTERN.test(section.title))
+	);
+
 	const downloadableEntries = $derived.by(() => {
 		const seen = new Set<string>();
-		return data.bibliography.sections
+		return citationSections
 			.flatMap((section) => section.entries)
 			.filter((entry) => {
 				if (seen.has(entry.id)) return false;
@@ -83,7 +89,7 @@
 			</p>
 		{/if}
 
-		{#if data.bibliography.sections.length === 0}
+		{#if citationSections.length === 0}
 			<p class="m-0 italic text-text-soft">No hay referencias disponibles.</p>
 		{:else}
 			<div class="mt-2 flex min-w-0 max-w-full justify-end">
@@ -100,7 +106,7 @@
 			</div>
 
 			<div class="mt-2 grid min-w-0 max-w-full gap-7 overflow-x-hidden">
-				{#each data.bibliography.sections as section}
+				{#each citationSections as section}
 					<section
 						class="grid min-w-0 max-w-full gap-3 overflow-x-hidden border-t border-border/70 pt-5 first:border-t-0 first:pt-0"
 						aria-label={section.title}
@@ -119,34 +125,7 @@
 							</p>
 						{/if}
 
-						<ul class="m-0 grid min-w-0 max-w-full list-none gap-2 p-0">
-							{#each section.entries as entry}
-								<li class="min-w-0 max-w-full">
-									<p
-										class="m-0 min-w-0 max-w-full break-words pl-10 leading-[1.6] text-text-main [-webkit-hyphens:auto] [hyphens:auto] [overflow-wrap:anywhere] [text-indent:-2.5rem]"
-										data-i18n-skip
-									>
-										<span class="font-ui font-semibold text-text-soft" aria-hidden="true">- </span>
-										{#each entry.parts as part}
-											{#if part.kind === 'link'}
-												<a
-													href={part.href ?? part.value}
-													target="_blank"
-													rel="noopener noreferrer"
-													class="break-words underline [overflow-wrap:anywhere]"
-												>
-													{part.value}
-												</a>
-											{:else if part.kind === 'italic'}
-												<em>{part.value}</em>
-											{:else}
-												{part.value}
-											{/if}
-										{/each}
-									</p>
-								</li>
-							{/each}
-						</ul>
+						<BibliographyEntryList entries={section.entries} />
 					</section>
 				{/each}
 			</div>

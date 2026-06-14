@@ -53,6 +53,7 @@ const navHrefs = {
 	summaries: '/resumenes',
 	network: '/red-obras',
 	citation: '/como-citarnos',
+	impact: '/repercusion',
 	transcriptions: '/transcripciones-automaticas',
 	team: '/equipo',
 	contact: '/contacto'
@@ -78,6 +79,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.citation, label: 'Cómo citarnos' }
 			],
 			infoItems: [
+				{ href: navHrefs.impact, label: 'Repercusión' },
 				{ href: navHrefs.transcriptions, label: 'Transcripciones automáticas' },
 				{ href: navHrefs.team, label: 'Equipo' },
 				{ href: navHrefs.contact, label: 'Contacto' }
@@ -119,6 +121,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.citation, label: 'How to cite us' }
 			],
 			infoItems: [
+				{ href: navHrefs.impact, label: 'Impact' },
 				{ href: navHrefs.transcriptions, label: 'Automatic transcriptions' },
 				{ href: navHrefs.team, label: 'Team' },
 				{ href: navHrefs.contact, label: 'Contact' }
@@ -160,6 +163,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.citation, label: 'Comment nous citer' }
 			],
 			infoItems: [
+				{ href: navHrefs.impact, label: 'Retombées' },
 				{ href: navHrefs.transcriptions, label: 'Transcriptions automatiques' },
 				{ href: navHrefs.team, label: 'Équipe' },
 				{ href: navHrefs.contact, label: 'Contact' }
@@ -201,6 +205,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.citation, label: 'Como nos citar' }
 			],
 			infoItems: [
+				{ href: navHrefs.impact, label: 'Repercussão' },
 				{ href: navHrefs.transcriptions, label: 'Transcrições automáticas' },
 				{ href: navHrefs.team, label: 'Equipe' },
 				{ href: navHrefs.contact, label: 'Contato' }
@@ -242,6 +247,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.citation, label: 'Come citarci' }
 			],
 			infoItems: [
+				{ href: navHrefs.impact, label: 'Ripercussione' },
 				{ href: navHrefs.transcriptions, label: 'Trascrizioni automatiche' },
 				{ href: navHrefs.team, label: 'Team' },
 				{ href: navHrefs.contact, label: 'Contatto' }
@@ -283,6 +289,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.citation, label: 'Zitierweise' }
 			],
 			infoItems: [
+				{ href: navHrefs.impact, label: 'Auswirkung' },
 				{ href: navHrefs.transcriptions, label: 'Automatische Transkriptionen' },
 				{ href: navHrefs.team, label: 'Team' },
 				{ href: navHrefs.contact, label: 'Kontakt' }
@@ -324,6 +331,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.citation, label: '引用方式' }
 			],
 			infoItems: [
+				{ href: navHrefs.impact, label: '影响' },
 				{ href: navHrefs.transcriptions, label: '自动转录' },
 				{ href: navHrefs.team, label: '团队' },
 				{ href: navHrefs.contact, label: '联系' }
@@ -365,6 +373,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.citation, label: '引用方法' }
 			],
 			infoItems: [
+				{ href: navHrefs.impact, label: '反響' },
 				{ href: navHrefs.transcriptions, label: '自動転写' },
 				{ href: navHrefs.team, label: 'チーム' },
 				{ href: navHrefs.contact, label: 'お問い合わせ' }
@@ -406,6 +415,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.citation, label: '인용 방법' }
 			],
 			infoItems: [
+				{ href: navHrefs.impact, label: '반향' },
 				{ href: navHrefs.transcriptions, label: '자동 전사' },
 				{ href: navHrefs.team, label: '팀' },
 				{ href: navHrefs.contact, label: '문의' }
@@ -447,6 +457,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.citation, label: 'Как цитировать' }
 			],
 			infoItems: [
+				{ href: navHrefs.impact, label: 'Последствия' },
 				{ href: navHrefs.transcriptions, label: 'Автоматические транскрипции' },
 				{ href: navHrefs.team, label: 'Команда' },
 				{ href: navHrefs.contact, label: 'Контакты' }
@@ -488,6 +499,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.citation, label: 'كيفية الاستشهاد بنا' }
 			],
 			infoItems: [
+				{ href: navHrefs.impact, label: 'الأثر' },
 				{ href: navHrefs.transcriptions, label: 'النسخ الآلي' },
 				{ href: navHrefs.team, label: 'الفريق' },
 				{ href: navHrefs.contact, label: 'التواصل' }
@@ -565,6 +577,9 @@ const esToEn: Record<string, string> = {
 		'Recommended bibliographic references for citing ETSO, TEXORO, CETSO, and the project resources.',
 	'Para poder seguir nuestra labor es importante que el trabajo del proyecto sea citado. Por favor, incluye en la bibliografía alguna de estas referencias si el portal te ha ayudado en tu investigación.':
 		'To help us continue our work, it is important that the project be cited. Please include one of these references in your bibliography if the portal has helped you in your research.',
+	'Esta página recoge una selección de trabajos que hacen uso de los resultados, recursos y materiales del proyecto ETSO. Incluye referencias vinculadas con la estilometría, la atribución de autoría, la transcripción automática, TEXORO y otros desarrollos derivados o relacionados con el proyecto.':
+		'This page brings together a selection of works that make use of the results, resources, and materials of the ETSO project. It includes references related to stylometry, authorship attribution, automatic transcription, TEXORO, and other developments derived from or connected with the project.',
+	'referencias seleccionadas': 'selected references',
 	'Para entender los procesos aquí seguidos, puedes consultar:':
 		'To understand the processes followed here, you can consult:',
 	'Se puede obtener más información sobre cómo trabaja ETSO en las tareas de atribución de obras dramáticas del Siglo de Oro en:':
@@ -957,6 +972,9 @@ const esToFr: Record<string, string> = {
 		'Références bibliographiques recommandées pour citer ETSO, TEXORO, CETSO et les ressources du projet.',
 	'Para poder seguir nuestra labor es importante que el trabajo del proyecto sea citado. Por favor, incluye en la bibliografía alguna de estas referencias si el portal te ha ayudado en tu investigación.':
 		'Pour nous permettre de poursuivre notre travail, il est important que le projet soit cité. Veuillez inclure l’une de ces références dans votre bibliographie si le portail vous a aidé dans vos recherches.',
+	'Esta página recoge una selección de trabajos que hacen uso de los resultados, recursos y materiales del proyecto ETSO. Incluye referencias vinculadas con la estilometría, la atribución de autoría, la transcripción automática, TEXORO y otros desarrollos derivados o relacionados con el proyecto.':
+		'Cette page rassemble une sélection de travaux qui utilisent les résultats, les ressources et les matériaux du projet ETSO. Elle comprend des références liées à la stylométrie, à l’attribution d’auteur, à la transcription automatique, à TEXORO et à d’autres développements dérivés du projet ou en lien avec lui.',
+	'referencias seleccionadas': 'références sélectionnées',
 	'Para entender los procesos aquí seguidos, puedes consultar:':
 		'Pour comprendre les procédures suivies ici, vous pouvez consulter :',
 	'Se puede obtener más información sobre cómo trabaja ETSO en las tareas de atribución de obras dramáticas del Siglo de Oro en:':

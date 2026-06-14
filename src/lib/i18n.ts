@@ -571,6 +571,10 @@ const esToEn: Record<string, string> = {
 		'More information on how ETSO works on authorship attribution for Golden Age plays is available in:',
 	'Proyecto': 'Project',
 	'Algunos trabajos': 'Selected publications',
+	'Nuestros trabajos': 'Our publications',
+	'Trabajos relacionados con el proyecto': 'Project-related works',
+	'Selección de trabajos de otros investigadores relacionados con ETSO, TEXORO, la estilometría, la transcripción automática y el teatro del Siglo de Oro.':
+		'Selection of works by other researchers related to ETSO, TEXORO, stylometry, automatic transcription, and Spanish Golden Age theatre.',
 	'Modelos para la transcripción automática': 'Automatic transcription models',
 	'Cita sugerida': 'Suggested citation',
 	'Copiar cita': 'Copy citation',
@@ -959,6 +963,10 @@ const esToFr: Record<string, string> = {
 		'On trouvera davantage d’informations sur la manière dont ETSO travaille sur l’attribution des œuvres dramatiques du Siècle d’or dans :',
 	'Proyecto': 'Projet',
 	'Algunos trabajos': 'Quelques travaux',
+	'Nuestros trabajos': 'Nos travaux',
+	'Trabajos relacionados con el proyecto': 'Travaux liés au projet',
+	'Selección de trabajos de otros investigadores relacionados con ETSO, TEXORO, la estilometría, la transcripción automática y el teatro del Siglo de Oro.':
+		'Sélection de travaux d’autres chercheurs liés à ETSO, TEXORO, à la stylométrie, à la transcription automatique et au théâtre du Siècle d’or.',
 	'Modelos para la transcripción automática': 'Modèles pour la transcription automatique',
 	'Cita sugerida': 'Citation suggérée',
 	'Copiar cita': 'Copier la citation',

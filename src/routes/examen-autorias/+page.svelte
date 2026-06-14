@@ -50,6 +50,114 @@
 
 	let { data }: { data: PageData } = $props();
 	const t = (value: string): string => translateText(data.locale, value);
+	type IntroPartKind = 'text' | 'bold' | 'alvaro' | 'german';
+	interface IntroPart {
+		kind: IntroPartKind;
+		value?: string;
+	}
+
+	const introParagraphByLocale: Record<string, IntroPart[]> = {
+		es: [
+			{ kind: 'text', value: 'Examen de autorías es un espacio dedicado a la ' },
+			{ kind: 'bold', value: 'atribución computacional' },
+			{ kind: 'text', value: ' de autoría en el teatro del Siglo de Oro a gran escala. La plataforma, desarrollada por ' },
+			{ kind: 'alvaro' },
+			{ kind: 'text', value: ' y ' },
+			{ kind: 'german' },
+			{ kind: 'text', value: ', ofrece resultados estilométricos sobre un corpus en expansión de unas 3.000 obras pertenecientes a más de 400 dramaturgos, con el propósito de facilitar la investigación y el contraste de hipótesis autorales.' }
+		],
+		en: [
+			{ kind: 'text', value: 'Examen de autorías is a space devoted to ' },
+			{ kind: 'bold', value: 'computational attribution' },
+			{ kind: 'text', value: ' of authorship in Golden Age theatre at scale. The platform, developed by ' },
+			{ kind: 'alvaro' },
+			{ kind: 'text', value: ' and ' },
+			{ kind: 'german' },
+			{ kind: 'text', value: ', offers stylometric results for an expanding corpus of around 3,000 plays by more than 400 playwrights, with the aim of supporting research and the testing of authorship hypotheses.' }
+		],
+		fr: [
+			{ kind: 'text', value: 'Examen de autorías est un espace consacré à ' },
+			{ kind: 'bold', value: 'l’attribution computationnelle' },
+			{ kind: 'text', value: ' d’auteur dans le théâtre du Siècle d’or à grande échelle. La plateforme, développée par ' },
+			{ kind: 'alvaro' },
+			{ kind: 'text', value: ' et ' },
+			{ kind: 'german' },
+			{ kind: 'text', value: ', offre des résultats stylométriques sur un corpus en expansion d’environ 3 000 pièces appartenant à plus de 400 dramaturges, afin de faciliter la recherche et le contrôle des hypothèses d’attribution.' }
+		],
+		pt: [
+			{ kind: 'text', value: 'Examen de autorías é um espaço dedicado à ' },
+			{ kind: 'bold', value: 'atribuição computacional' },
+			{ kind: 'text', value: ' de autoria no teatro do Século de Ouro espanhol em grande escala. A plataforma, desenvolvida por ' },
+			{ kind: 'alvaro' },
+			{ kind: 'text', value: ' e ' },
+			{ kind: 'german' },
+			{ kind: 'text', value: ', oferece resultados estilométricos sobre um corpus em expansão de cerca de 3.000 obras pertencentes a mais de 400 dramaturgos, com o objetivo de facilitar a pesquisa e o contraste de hipóteses autorais.' }
+		],
+		it: [
+			{ kind: 'text', value: 'Examen de autorías è uno spazio dedicato alla ' },
+			{ kind: 'bold', value: 'attribuzione computazionale' },
+			{ kind: 'text', value: ' d’autore nel teatro del Secolo d’Oro spagnolo su larga scala. La piattaforma, sviluppata da ' },
+			{ kind: 'alvaro' },
+			{ kind: 'text', value: ' e ' },
+			{ kind: 'german' },
+			{ kind: 'text', value: ', offre risultati stilometrici su un corpus in espansione di circa 3.000 opere appartenenti a più di 400 drammaturghi, con lo scopo di facilitare la ricerca e il confronto delle ipotesi autoriali.' }
+		],
+		de: [
+			{ kind: 'text', value: 'Examen de autorías ist ein Bereich für die ' },
+			{ kind: 'bold', value: 'computergestützte Zuschreibung' },
+			{ kind: 'text', value: ' von Autorschaft im Theater des spanischen Siglo de Oro in großem Maßstab. Die Plattform, entwickelt von ' },
+			{ kind: 'alvaro' },
+			{ kind: 'text', value: ' und ' },
+			{ kind: 'german' },
+			{ kind: 'text', value: ', bietet stilometrische Ergebnisse zu einem wachsenden Korpus von rund 3.000 Werken von mehr als 400 Dramatikern, um die Forschung und die Prüfung von Autorschaftshypothesen zu erleichtern.' }
+		],
+		zh: [
+			{ kind: 'text', value: 'Examen de autorías 是一个面向大规模西班牙黄金时代戏剧' },
+			{ kind: 'bold', value: '计算作者归属' },
+			{ kind: 'text', value: '研究的空间。该平台由 ' },
+			{ kind: 'alvaro' },
+			{ kind: 'text', value: ' 和 ' },
+			{ kind: 'german' },
+			{ kind: 'text', value: ' 开发，基于一个不断扩展、约含 3,000 部作品和 400 多位剧作家的语料库提供文体计量结果，旨在促进研究并检验作者归属假设。' }
+		],
+		ja: [
+			{ kind: 'text', value: 'Examen de autorías は、スペイン黄金世紀演劇を大規模に対象とする' },
+			{ kind: 'bold', value: '計算による著者帰属' },
+			{ kind: 'text', value: 'のための場です。このプラットフォームは ' },
+			{ kind: 'alvaro' },
+			{ kind: 'text', value: ' と ' },
+			{ kind: 'german' },
+			{ kind: 'text', value: ' によって開発され、400人を超える劇作家による約3,000作品へと拡大しつつあるコーパスについて文体計量の結果を提供し、研究と著者帰属仮説の検証を支援することを目的としています。' }
+		],
+		ko: [
+			{ kind: 'text', value: 'Examen de autorías는 스페인 황금세기 연극을 대규모로 다루는 ' },
+			{ kind: 'bold', value: '계산적 저자 귀속' },
+			{ kind: 'text', value: '을 위한 공간입니다. 이 플랫폼은 ' },
+			{ kind: 'alvaro' },
+			{ kind: 'text', value: '와 ' },
+			{ kind: 'german' },
+			{ kind: 'text', value: '가 개발했으며, 400명이 넘는 극작가의 약 3,000개 작품으로 확장 중인 말뭉치에 대한 문체계량 결과를 제공하여 연구와 저자 귀속 가설의 검증을 돕는 것을 목적으로 합니다.' }
+		],
+		ru: [
+			{ kind: 'text', value: 'Examen de autorías — это раздел, посвященный ' },
+			{ kind: 'bold', value: 'вычислительной атрибуции' },
+			{ kind: 'text', value: ' авторства в театре испанского Золотого века в больших масштабах. Платформа, разработанная ' },
+			{ kind: 'alvaro' },
+			{ kind: 'text', value: ' и ' },
+			{ kind: 'german' },
+			{ kind: 'text', value: ', предлагает стилометрические результаты по расширяющемуся корпусу примерно из 3 000 произведений более чем 400 драматургов, чтобы облегчить исследование и проверку гипотез об авторстве.' }
+		],
+		ar: [
+			{ kind: 'text', value: 'Examen de autorías فضاء مخصص لـ' },
+			{ kind: 'bold', value: 'الإسناد الحاسوبي' },
+			{ kind: 'text', value: ' للتأليف في مسرح العصر الذهبي الإسباني على نطاق واسع. وتقدم المنصة، التي طوّرها ' },
+			{ kind: 'alvaro' },
+			{ kind: 'text', value: ' و' },
+			{ kind: 'german' },
+			{ kind: 'text', value: '، نتائج أسلوبية على مجموعة نصية آخذة في الاتساع تضم نحو 3.000 عمل لأكثر من 400 كاتب مسرحي، بهدف تيسير البحث ومقارنة فرضيات إسناد التأليف.' }
+		]
+	};
+	const introParagraph = $derived(introParagraphByLocale[data.locale] ?? introParagraphByLocale.es);
 	const resultTextByLocale = {
 		es: {
 			count: (total: string, range: string) => `${total} resultados · Mostrando ${range}`,
@@ -500,6 +608,8 @@
 		event.preventDefault();
 		await navigateToUrl('/examen-autorias', { scrollToTable: false });
 	};
+
+	const introAuthorLinkClass = 'font-semibold text-brand-blue-dark no-underline hover:underline';
 </script>
 
 <SeoHead title="Examen de autorías" description={EXAMEN_SEO_DESCRIPTION} path="/examen-autorias" />
@@ -515,12 +625,39 @@
 		backgroundImage={fondoLogo}
 		statsAriaLabel="Indicadores del catálogo"
 	>
-		<p class="mt-[1.8rem] mb-0 max-w-[64ch] font-['Lora',serif] text-[1.01rem] leading-[1.62] text-text-main">
-			Examen de autorías es un espacio dedicado a la <b>atribución computacional</b> de autoría en el teatro
-			del Siglo de Oro a gran escala. La plataforma, desarrollada por Álvaro Cuéllar y Germán Vega
-			García-Luengos, ofrece resultados estilométricos sobre un corpus en expansión de unas 3.000 obras
-			pertenecientes a más de 400 dramaturgos, con el propósito de facilitar la investigación y el
-			contraste de hipótesis autorales.
+		<p
+			class="mt-[1.8rem] mb-0 max-w-[64ch] font-['Lora',serif] text-[1.01rem] leading-[1.62] text-text-main"
+			data-i18n-skip
+		>
+			{#each introParagraph as part}
+				{#if part.kind === 'bold'}
+					<b>{part.value}</b>
+				{:else if part.kind === 'alvaro'}
+					<a
+						class={introAuthorLinkClass}
+						href="https://www.alvarocuellar.com/"
+						target="_blank"
+						rel="noopener noreferrer"
+						dir="ltr"
+						style="unicode-bidi: isolate;"
+					>
+						Álvaro Cuéllar
+					</a>
+				{:else if part.kind === 'german'}
+					<a
+						class={introAuthorLinkClass}
+						href="https://literaturaespanola.uva.es/german-jose-vega-garcia-luengos/"
+						target="_blank"
+						rel="noopener noreferrer"
+						dir="ltr"
+						style="unicode-bidi: isolate;"
+					>
+						Germán Vega García-Luengos
+					</a>
+				{:else}
+					{part.value}
+				{/if}
+			{/each}
 		</p>
 		<p class="mt-[1.25rem] mb-0 max-w-[64ch] font-['Lora',serif] text-[1.01rem] leading-[1.62] text-text-main">
 			Los textos han sido <b>modernizados y regularizados</b> para hacer posible su comparación, y se han depurado

@@ -69,12 +69,6 @@
 			class="grid min-w-0 max-w-full gap-5 overflow-x-hidden border-t border-border/70 pt-5"
 			aria-label="Trabajos relacionados con el proyecto"
 		>
-			<h2
-				class="m-0 min-w-0 max-w-full break-words text-[1.25rem] font-semibold leading-[1.2] text-brand-blue-dark [overflow-wrap:anywhere]"
-			>
-				Trabajos relacionados con el proyecto
-			</h2>
-
 			<div class="grid gap-9">
 				{#each relatedSections as section}
 					<section class="grid min-w-0 max-w-full gap-4 overflow-x-hidden" aria-label={section.year}>

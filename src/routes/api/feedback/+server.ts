@@ -4,7 +4,7 @@ import { json } from '@sveltejs/kit';
 
 import type { RequestHandler } from './$types';
 
-const FEEDBACK_RECIPIENT = 'alvaro.cuellar@uab.cat';
+const DEFAULT_FEEDBACK_RECIPIENT = 'alvaro.cuellar@uab.cat';
 const MAX_FIELD_LENGTH = 4000;
 
 const cleanField = (value: FormDataEntryValue | null): string =>
@@ -30,6 +30,7 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 	const category = cleanField(formData.get('category')) || 'Sugerencia o error';
 	const name = cleanField(formData.get('name'));
 	const email = cleanField(formData.get('email'));
+	const recipient = env.FEEDBACK_RECIPIENT_EMAIL || DEFAULT_FEEDBACK_RECIPIENT;
 
 	if (message.length < 8) {
 		return json({ ok: false, error: 'El mensaje es demasiado breve.' }, { status: 400 });
@@ -80,7 +81,7 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 		},
 		body: JSON.stringify({
 			from: env.FEEDBACK_FROM_EMAIL || 'ETSO <onboarding@resend.dev>',
-			to: [FEEDBACK_RECIPIENT],
+			to: [recipient],
 			reply_to: email || undefined,
 			subject,
 			text,
@@ -91,7 +92,18 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 	if (!response.ok) {
 		const detail = await response.text().catch(() => '');
 		console.error('No se pudo enviar feedback ETSO', response.status, detail);
-		return json({ ok: false, error: 'No se pudo enviar el mensaje.' }, { status: 502 });
+		const isResendDevRecipientError =
+			response.status === 403 &&
+			/detail|resend\.dev|own email address|testing emails/i.test(detail);
+		return json(
+			{
+				ok: false,
+				error: isResendDevRecipientError
+					? 'Resend solo permite usar onboarding@resend.dev con el correo de la cuenta. Verifica un dominio o cambia el destinatario de prueba.'
+					: 'No se pudo enviar el mensaje.'
+			},
+			{ status: 502 }
+		);
 	}
 
 	return json({ ok: true, delivered: true });

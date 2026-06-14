@@ -8,6 +8,7 @@
 	import LocalizationRuntime from '$lib/components/i18n/LocalizationRuntime.svelte';
 	import SiteFooter from '$lib/components/layout/SiteFooter.svelte';
 	import SiteHeader from '$lib/components/layout/SiteHeader.svelte';
+	import CopyCitationReminder from '$lib/components/ui/CopyCitationReminder.svelte';
 	import FloatingFeedback from '$lib/components/ui/FloatingFeedback.svelte';
 	import { DEFAULT_LOCALE, getLocaleTextDirection, getUiTranslations, literalTranslations, type Locale } from '$lib/i18n';
 	import {
@@ -65,6 +66,7 @@
 			</div>
 		</main>
 		<SiteFooter {locale} />
+		<CopyCitationReminder {locale} />
 		<FloatingFeedback {locale} />
 	{/key}
 </div>

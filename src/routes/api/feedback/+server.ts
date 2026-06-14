@@ -4,7 +4,7 @@ import { json } from '@sveltejs/kit';
 
 import type { RequestHandler } from './$types';
 
-const DEFAULT_FEEDBACK_RECIPIENT = 'alvaro.cuellar@uab.cat';
+const DEFAULT_FEEDBACK_RECIPIENT = 'alvarocuellar1995@hotmail.com';
 const MAX_FIELD_LENGTH = 4000;
 
 const cleanField = (value: FormDataEntryValue | null): string =>

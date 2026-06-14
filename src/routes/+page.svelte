@@ -440,7 +440,7 @@
 				'También puedes colaborar con nosotros enviándonos textos del Siglo de Oro que todavía no estén incorporados a nuestros recursos, información bibliográfica, noticias sobre atribuciones, datos sobre testimonios o cualquier material que pueda mejorar el conjunto. Citar nuestros recursos en publicaciones, trabajos académicos o actividades docentes también nos ayuda a difundir el proyecto y a obtener el apoyo necesario para mantenerlo y ampliarlo.'
 			],
 			button: 'Contacta con nosotros',
-			projectHeading: 'ETSO es un proyecto de'
+			projectHeading: 'ETSO es un proyecto dirigido por:'
 		},
 		en: {
 			title: 'How can we help you? How can you help us?',
@@ -449,7 +449,7 @@
 				'You can also collaborate with us by sending Golden Age texts that are not yet included in our resources, bibliographic information, news about attributions, data on textual witnesses or any material that may improve the collection. Citing our resources in publications, academic work or teaching also helps us disseminate the project and obtain the support needed to maintain and expand it.'
 			],
 			button: 'Contact us',
-			projectHeading: 'ETSO is a digital humanities project'
+			projectHeading: 'ETSO is a project directed by:'
 		},
 		fr: {
 			title: 'Comment pouvons-nous vous aider ? Comment pouvez-vous nous aider ?',
@@ -458,7 +458,7 @@
 				'Vous pouvez aussi collaborer avec nous en envoyant des textes du Siècle d’or qui ne figurent pas encore dans nos ressources, des informations bibliographiques, des informations sur les attributions, des données sur les témoins textuels ou tout matériau susceptible d’améliorer l’ensemble. Citer nos ressources dans des publications, travaux académiques ou activités d’enseignement nous aide également à diffuser le projet et à obtenir le soutien nécessaire pour le maintenir et l’élargir.'
 			],
 			button: 'Nous contacter',
-			projectHeading: 'ETSO est un projet en humanités numériques'
+			projectHeading: 'ETSO est un projet dirigé par :'
 		},
 		pt: {
 			title: 'Como podemos ajudar? Como você pode nos ajudar?',
@@ -467,7 +467,7 @@
 				'Você também pode colaborar conosco enviando textos do Século de Ouro espanhol que ainda não estejam incorporados aos nossos recursos, informações bibliográficas, notícias sobre atribuições, dados sobre testemunhos textuais ou qualquer material que possa melhorar a coleção. Citar nossos recursos em publicações, trabalhos acadêmicos ou atividades docentes também nos ajuda a divulgar o projeto e obter o apoio necessário para mantê-lo e ampliá-lo.'
 			],
 			button: 'Entrar em contato',
-			projectHeading: 'ETSO é um projeto de humanidades digitais'
+			projectHeading: 'ETSO é um projeto dirigido por:'
 		},
 		it: {
 			title: 'Come possiamo aiutarti? Come puoi aiutarci?',
@@ -476,7 +476,7 @@
 				'Puoi anche collaborare con noi inviando testi del Secolo d’Oro spagnolo non ancora inclusi nelle nostre risorse, informazioni bibliografiche, notizie sulle attribuzioni, dati sui testimoni testuali o qualunque materiale possa migliorare la collezione. Citare le nostre risorse in pubblicazioni, lavori accademici o attività didattiche ci aiuta inoltre a diffondere il progetto e a ottenere il sostegno necessario per mantenerlo e ampliarlo.'
 			],
 			button: 'Contattaci',
-			projectHeading: 'ETSO è un progetto di umanistica digitale'
+			projectHeading: 'ETSO è un progetto diretto da:'
 		},
 		de: {
 			title: 'Wie können wir Ihnen helfen? Wie können Sie uns helfen?',
@@ -485,7 +485,7 @@
 				'Sie können auch mit uns zusammenarbeiten, indem Sie uns Texte des spanischen Siglo de Oro senden, die noch nicht in unseren Ressourcen enthalten sind, bibliografische Informationen, Hinweise zu Zuschreibungen, Daten zu Textzeugen oder anderes Material, das die Sammlung verbessern kann. Die Zitierung unserer Ressourcen in Publikationen, wissenschaftlichen Arbeiten oder Lehrveranstaltungen hilft uns ebenfalls, das Projekt bekannt zu machen und die nötige Unterstützung für seine Pflege und Erweiterung zu erhalten.'
 			],
 			button: 'Kontakt aufnehmen',
-			projectHeading: 'ETSO ist ein Projekt der digitalen Geisteswissenschaften'
+			projectHeading: 'ETSO ist ein Projekt unter der Leitung von:'
 		},
 		zh: {
 			title: '我们可以怎样帮助您？您可以怎样帮助我们？',
@@ -494,7 +494,7 @@
 				'您也可以向我们提供尚未纳入资源的西班牙黄金时代文本、书目信息、归属研究动态、文本见证资料，或任何有助于改进合集的材料。在出版物、学术研究或教学活动中引用我们的资源，也有助于传播项目并获得维护和扩展所需的支持。'
 			],
 			button: '联系我们',
-			projectHeading: 'ETSO 是一个数字人文项目'
+			projectHeading: 'ETSO 项目由以下人员主持：'
 		},
 		ja: {
 			title: 'どのようにお手伝いできますか。どのようにご協力いただけますか。',
@@ -503,7 +503,7 @@
 				'また、まだリソースに含まれていないスペイン黄金世紀のテキスト、書誌情報、帰属に関する情報、本文証言に関するデータ、またはコレクションの改善に役立つ資料をお送りいただくことでもご協力いただけます。出版物、学術研究、教育活動で私たちのリソースを引用することも、プロジェクトの周知と維持・拡充に必要な支援につながります。'
 			],
 			button: 'お問い合わせ',
-			projectHeading: 'ETSO はデジタル人文学のプロジェクトです'
+			projectHeading: 'ETSO は以下の者が主導するプロジェクトです：'
 		},
 		ko: {
 			title: '어떻게 도와드릴까요? 어떻게 함께할 수 있을까요?',
@@ -512,7 +512,7 @@
 				'아직 리소스에 포함되지 않은 스페인 황금세기 텍스트, 서지 정보, 귀속 관련 소식, 텍스트 증언 자료 또는 컬렉션 개선에 도움이 되는 자료를 보내 주셔도 협력할 수 있습니다. 출판물, 학술 연구 또는 교육 활동에서 우리의 리소스를 인용하는 것도 프로젝트를 알리고 유지·확장하는 데 필요한 지원을 얻는 데 도움이 됩니다.'
 			],
 			button: '문의하기',
-			projectHeading: 'ETSO는 디지털 인문학 프로젝트입니다'
+			projectHeading: 'ETSO는 다음 연구자가 이끄는 프로젝트입니다:'
 		},
 		ru: {
 			title: 'Как мы можем вам помочь? Как вы можете помочь нам?',
@@ -521,7 +521,7 @@
 				'Вы также можете сотрудничать с нами, присылая тексты испанского Золотого века, еще не включенные в наши ресурсы, библиографическую информацию, сведения об атрибуциях, данные о текстовых свидетелях или любые материалы, способные улучшить коллекцию. Ссылки на наши ресурсы в публикациях, научных работах или преподавании также помогают распространять проект и получать поддержку, необходимую для его поддержания и расширения.'
 			],
 			button: 'Связаться с нами',
-			projectHeading: 'ETSO — это проект в области цифровых гуманитарных наук'
+			projectHeading: 'ETSO — проект под руководством:'
 		},
 		ar: {
 			title: 'كيف يمكننا مساعدتك؟ وكيف يمكنك مساعدتنا؟',
@@ -530,7 +530,7 @@
 				'يمكنك أيضًا التعاون معنا بإرسال نصوص من العصر الذهبي الإسباني لم تُدرج بعد في مواردنا، أو معلومات ببليوغرافية، أو أخبار عن الإسنادات، أو بيانات عن الشواهد النصية، أو أي مادة يمكن أن تحسّن المجموعة. كما أن الاستشهاد بمواردنا في المنشورات والأعمال الأكاديمية والأنشطة التعليمية يساعدنا على نشر المشروع والحصول على الدعم اللازم لصيانته وتوسيعه.'
 			],
 			button: 'تواصل معنا',
-			projectHeading: 'ETSO مشروع في مجال العلوم الإنسانية الرقمية'
+			projectHeading: 'ETSO مشروع بإدارة:'
 		}
 	};
 

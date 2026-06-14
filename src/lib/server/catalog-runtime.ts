@@ -2835,6 +2835,9 @@ const normalizeDoiUrl = (doiOrUrl: string): string => {
 	return `https://doi.org/${doiOrUrl.replace(/^doi:\s*/i, '')}`;
 };
 
+const normalizeDoiValue = (doiOrUrl: string): string =>
+	doiOrUrl.replace(/^https?:\/\/(?:dx\.)?doi\.org\//i, '').replace(/^doi:\s*/i, '').trim();
+
 const hasBibLikeFields = (raw: InformeBibliographyEntryRaw): boolean => {
 	return Boolean(
 		asFieldString(raw.author) ||
@@ -2856,6 +2859,74 @@ const hasBibLikeFields = (raw: InformeBibliographyEntryRaw): boolean => {
 			asFieldString(raw.entryType) ||
 			asFieldString(raw.type)
 	);
+};
+
+const normalizeBibtexKey = (value: string): string => {
+	const normalized = value
+		.normalize('NFD')
+		.replace(/[\u0300-\u036f]/g, '')
+		.replace(/[^A-Za-z0-9_-]+/g, '-')
+		.replace(/^-+|-+$/g, '');
+	return normalized || 'referencia';
+};
+
+const escapeBibtexValue = (value: string): string =>
+	value
+		.replace(/\\/g, '\\textbackslash{}')
+		.replace(/[{}]/g, (match) => `\\${match}`)
+		.replace(/\s+/g, ' ')
+		.trim();
+
+const resolveBibtexType = (rawType: string): string => {
+	switch (rawType.toLowerCase()) {
+		case 'article':
+			return 'article';
+		case 'book':
+			return 'book';
+		case 'chapter':
+		case 'incollection':
+			return 'incollection';
+		case 'thesis':
+		case 'phdthesis':
+			return 'phdthesis';
+		default:
+			return 'misc';
+	}
+};
+
+const buildBibtexFromBibLikeEntry = (raw: InformeBibliographyEntryRaw, id: string): string | undefined => {
+	if (!hasBibLikeFields(raw)) return undefined;
+
+	const type = resolveBibtexType(asFieldString(raw.type) || asFieldString(raw.entryType));
+	const fields = new Map<string, string>();
+	const addField = (name: string, value: string) => {
+		const trimmed = value.trim();
+		if (trimmed) fields.set(name, trimmed);
+	};
+
+	addField('author', asFieldString(raw.author) || asFieldString(raw.authors));
+	addField('year', asFieldString(raw.year));
+	addField('title', asFieldString(raw.title));
+	addField('journal', asFieldString(raw.journal));
+	addField('booktitle', asFieldString(raw.booktitle) || asFieldString(raw.containerTitle));
+	addField('publisher', asFieldString(raw.publisher));
+	addField('volume', asFieldString(raw.volume));
+	addField('number', asFieldString(raw.number) || asFieldString(raw.issue));
+	addField('pages', asFieldString(raw.pages));
+	addField('doi', normalizeDoiValue(asFieldString(raw.doi)));
+	addField('url', asFieldString(raw.url));
+
+	const details = asFieldString(raw.details);
+	const note = asFieldString(raw.note);
+	if (details || note) addField('note', [details, note].filter(Boolean).join('. '));
+
+	if (fields.size === 0) return undefined;
+
+	const renderedFields = Array.from(fields.entries())
+		.map(([name, value]) => `  ${name} = {${escapeBibtexValue(value)}}`)
+		.join(',\n');
+
+	return `@${type}{${normalizeBibtexKey(id)},\n${renderedFields}\n}`;
 };
 
 const buildPartsFromBibLikeEntry = (raw: InformeBibliographyEntryRaw): InformeBibliographyEntryPart[] => {
@@ -2952,7 +3023,8 @@ const normalizeBibliographyEntry = (
 	return {
 		id,
 		text: plainText,
-		parts
+		parts,
+		bibtex: buildBibtexFromBibLikeEntry(raw, id)
 	};
 };
 

@@ -2,11 +2,13 @@
 	import { onMount } from 'svelte';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import CitationSuggestionCard from '$lib/components/ui/CitationSuggestionCard.svelte';
+	import InlineActionButton from '$lib/components/ui/InlineActionButton.svelte';
 	import LegalCard from '$lib/components/ui/LegalCard.svelte';
 	import PageHero from '$lib/components/ui/PageHero.svelte';
 	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import heroBg from '$lib/assets/heros/obra-bg.jpg';
 	import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
+	import Download from 'lucide-svelte/icons/download';
 
 	import type { PageData } from './$types';
 
@@ -41,6 +43,86 @@
 
 	const summaryCitation =
 		'Cuéllar, Álvaro. "Resúmenes asistidos por modelos de lenguaje para un vasto corpus de obras literarias del Siglo de Oro". En: <i>El teatro del Siglo de Oro en el horizonte de las humanidades digitales</i>. Peter Lang, 2026 (en prensa).';
+	const summaryCitationPlainText = $derived(
+		summaryCitation
+			.replace(/<[^>]+>/g, '')
+			.replace(/&nbsp;/g, ' ')
+			.replace(/\s+/g, ' ')
+			.trim()
+	);
+	const downloadFilename = $derived(`${data.work.slug || 'resumen-automatico'}-resumen.txt`);
+	const hasDownloadableSummary = $derived(
+		summary.resumenBreve.length > 0 ||
+			summary.resumenLargo.length > 0 ||
+			summary.personajes.length > 0 ||
+			summary.espacios.length > 0 ||
+			summary.tematicas.length > 0
+	);
+
+	const buildDownloadedSummaryText = (): string => {
+		const lines: string[] = [
+			'Gracias por descargar este resumen automático de ETSO.',
+			'Si utilizas este resumen en una publicación, trabajo académico o material docente, por favor cita la siguiente referencia:',
+			'',
+			summaryCitationPlainText,
+			'',
+			`Obra resumida: ${displayWorkTitle}`,
+			`Texto descargado desde ETSO: https://etso.es/obras/${data.work.slug}/resumen`,
+			'',
+			'----------------------------------------',
+			''
+		];
+
+		if (summary.resumenBreve.length > 0) {
+			lines.push('RESUMEN AUTOMÁTICO BREVE', '');
+			lines.push(resumenBreveText, '');
+		}
+
+		if (summary.resumenLargo.length > 0) {
+			lines.push('RESUMEN AUTOMÁTICO AMPLIO', '');
+			lines.push(...summary.resumenLargo.flatMap((paragraph) => [paragraph, '']));
+		}
+
+		if (summary.personajes.length > 0) {
+			lines.push('PERSONAJES PRINCIPALES', '');
+			for (const item of summary.personajes) {
+				lines.push([item.nombre, item.descripcion].filter(Boolean).join(': '));
+			}
+			lines.push('');
+		}
+
+		if (summary.espacios.length > 0) {
+			lines.push('ESPACIOS PRINCIPALES', '');
+			for (const item of summary.espacios) {
+				lines.push([item.nombre, item.descripcion].filter(Boolean).join(': '));
+			}
+			lines.push('');
+		}
+
+		if (summary.tematicas.length > 0) {
+			lines.push('TEMÁTICAS PRINCIPALES', '');
+			for (const item of summary.tematicas) {
+				lines.push([item.tema, item.descripcion].filter(Boolean).join(': '));
+			}
+			lines.push('');
+		}
+
+		return lines.join('\n').replace(/\n{4,}/g, '\n\n\n').trimEnd() + '\n';
+	};
+
+	const downloadSummary = () => {
+		const blob = new Blob([buildDownloadedSummaryText()], {
+			type: 'text/plain;charset=utf-8'
+		});
+		const url = URL.createObjectURL(blob);
+		const link = document.createElement('a');
+		link.href = url;
+		link.download = downloadFilename;
+		document.body.append(link);
+		link.click();
+		link.remove();
+		URL.revokeObjectURL(url);
+	};
 
 	const normalizeNamedItems = (rows: unknown): Array<{ nombre: string; descripcion: string }> =>
 		Array.isArray(rows)
@@ -141,6 +223,19 @@
 			</LegalCard>
 
 			<CitationSuggestionCard class="w-full" citation={summaryCitation} allowHtml />
+
+			<div class="flex min-w-0 max-w-full justify-end">
+				<InlineActionButton
+					type="button"
+					icon={Download}
+					disabled={summaryLoading || !hasDownloadableSummary}
+					ariaLabel="Descargar resumen en TXT"
+					title="Descargar TXT"
+					onclick={downloadSummary}
+				>
+					Descargar TXT
+				</InlineActionButton>
+			</div>
 		</section>
 
 		<div class="grid gap-8">

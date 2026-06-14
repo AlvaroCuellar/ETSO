@@ -5,10 +5,12 @@
 	import LegalCard from '$lib/components/ui/LegalCard.svelte';
 	import PageHero from '$lib/components/ui/PageHero.svelte';
 	import SeoHead from '$lib/components/seo/SeoHead.svelte';
+	import InlineActionButton from '$lib/components/ui/InlineActionButton.svelte';
 	import WorkMetadataCard from '$lib/components/ui/WorkMetadataCard.svelte';
 	// Importar aquí el futuro logo de BITESO cuando esté disponible.
 	// import bitesoLogo from '$lib/assets/logos/biteso.png';
 	import byNcLogo from '$lib/assets/logos/by-nc.svg';
+	import Download from 'lucide-svelte/icons/download';
 	import List from 'lucide-svelte/icons/list';
 	import X from 'lucide-svelte/icons/x';
 	import {
@@ -40,6 +42,43 @@
 	const displayBitesoTitleHtml = $derived.by(() =>
 		formatPrefixedDisplayWorkTitleHtml('Texto digital de', data.work.title)
 	);
+	const downloadFilename = $derived(`${data.biteso.id || data.work.slug || 'texto-biteso'}.txt`);
+	const citationPlainText = $derived(
+		data.citation
+			.replace(/<[^>]+>/g, '')
+			.replace(/&nbsp;/g, ' ')
+			.replace(/\s+/g, ' ')
+			.trim()
+	);
+	const downloadedText = $derived.by(() =>
+		[
+			'Gracias por descargar este texto de BITESO.',
+			'Si utilizas este texto en una publicación, trabajo académico o material docente, por favor cita la siguiente referencia:',
+			'',
+			citationPlainText,
+			'',
+			'Texto descargado desde ETSO / BITESO.',
+			data.canonicalUrl,
+			'',
+			'----------------------------------------',
+			'',
+			data.biteso.text
+		].join('\n')
+	);
+
+	const downloadText = () => {
+		const blob = new Blob([downloadedText], {
+			type: 'text/plain;charset=utf-8'
+		});
+		const url = URL.createObjectURL(blob);
+		const link = document.createElement('a');
+		link.href = url;
+		link.download = downloadFilename;
+		document.body.append(link);
+		link.click();
+		link.remove();
+		URL.revokeObjectURL(url);
+	};
 
 	interface TextSegment {
 		id?: string;
@@ -213,6 +252,18 @@
 		<h2 class="mt-1 text-center font-ui text-[0.95rem] font-bold uppercase tracking-[0.08em] text-brand-blue-dark">
 			<span data-i18n-skip>{displayWorkTitle.toLocaleUpperCase('es-ES')}</span>
 		</h2>
+
+		<div class="flex min-w-0 max-w-full justify-end">
+			<InlineActionButton
+				type="button"
+				icon={Download}
+				ariaLabel="Descargar texto en TXT"
+				title="Descargar TXT"
+				onclick={downloadText}
+			>
+				Descargar TXT
+			</InlineActionButton>
+		</div>
 
 		<div class="grid gap-5 lg:grid-cols-[11rem_minmax(0,1fr)_11rem] lg:items-start lg:gap-8">
 			<nav

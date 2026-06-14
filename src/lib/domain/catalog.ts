@@ -109,6 +109,7 @@ export interface InformeBibliographyEntry {
 	id: string;
 	text: string;
 	parts: InformeBibliographyEntryPart[];
+	bibtex?: string;
 }
 
 export interface InformeBibliographyEntryPart {

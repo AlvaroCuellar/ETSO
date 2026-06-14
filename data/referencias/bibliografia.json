@@ -16,6 +16,68 @@
 			"publisher": "Recurso web",
 			"url": "http://etso.es/texoro"
 		},
+		"biteso-web": {
+			"entryType": "webpage",
+			"author": "Cuéllar, Álvaro y Germán Vega García-Luengos",
+			"title": "BITESO: Biblioteca digital del Teatro del Siglo de Oro",
+			"details": "2026",
+			"publisher": "Recurso web",
+			"url": "http://etso.es/biteso"
+		},
+		"red-3d-web": {
+			"entryType": "webpage",
+			"author": "Cuéllar, Álvaro y Germán Vega García-Luengos",
+			"title": "Red 3D: red estilométrica de obras del Teatro del Siglo de Oro",
+			"details": "2026",
+			"publisher": "Recurso web",
+			"url": "http://etso.es/red-obras"
+		},
+		"vega-2026-menendez-pelayo-libros": {
+			"entryType": "incollection",
+			"author": "Vega García-Luengos, Germán",
+			"year": "2026",
+			"title": "«Menéndez Pelayo y los libros»",
+			"containerTitle": "Ilimitada voz, desvelada pasión. Homenaje al profesor José María Balcells",
+			"details": "En García Fernández, Óscar y Sergio Rodríguez Nicolás (coords.), pp. 649-682",
+			"url": "https://dialnet.unirioja.es/servlet/articulo?codigo=10689866"
+		},
+		"rucio-vega-2025-ia-bne": {
+			"entryType": "incollection",
+			"author": "Rucio Zamorano, María José y Germán Vega García-Luengos",
+			"year": "2025",
+			"title": "«La IA en la Biblioteca Nacional de España: el proyecto ETSO y el fondo de manuscritos teatrales del Siglo de Oro»",
+			"containerTitle": "La Ciencia y el Arte X. Ciencias y tecnologías aplicadas a la conservación del patrimonio",
+			"details": "pp. 69-83",
+			"url": "https://dialnet.unirioja.es/servlet/articulo?codigo=10485459"
+		},
+		"vega-2025-solo-piadoso": {
+			"entryType": "article",
+			"author": "Vega García-Luengos, Germán",
+			"year": "2025",
+			"title": "«La autoría de Solo el piadoso es mi hijo. Detectores digitales y analógicos para no dejarse confundir por los propios dramaturgos»",
+			"journal": "eHumanista. Journal of Iberian Studies",
+			"details": "61, pp. 549-560",
+			"url": "https://dialnet.unirioja.es/servlet/articulo?codigo=9919840"
+		},
+		"vega-2025-mas-evidencias-tirso": {
+			"entryType": "incollection",
+			"author": "Vega García-Luengos, Germán",
+			"year": "2025",
+			"title": "«Más evidencias y consideraciones sobre la controvertida Segunda parte de comedias de Tirso de Molina»",
+			"containerTitle": "No importa. Homenaje a Francisco Rico",
+			"details": "En Serés Guillén, Guillermo; Bienvenido Morros Mestres y Laura Fernández García (coords.), pp. 1037-1055",
+			"url": "https://www.academia.edu/144634338/M%C3%A1s_evidencias_y_consideraciones_sobre_la_controvertida_Segunda_parte_de_comedias_de_Tirso_de_Molina"
+		},
+		"vega-2025-restitucion-tirso": {
+			"entryType": "incollection",
+			"author": "Vega García-Luengos, Germán",
+			"year": "2025",
+			"title": "«Para la restitución a Tirso de Molina de Los terceros de San Francisco, comedia atribuida a Lope de Vega y Pérez de Montalbán»",
+			"containerTitle": "«Claro espejo donde la ilusión se mira». Homenaje a Pilar Celma Valero y Javier Blasco Pascual",
+			"details": "En Gómez Trueba, Teresa; Patricia Marín Cepeda; María Martínez Deyros; Carmen Morán Rodríguez y Cristina Ruiz Urbón (coords.), pp. 695-716",
+			"publisher": "Ediciones Universidad de Valladolid",
+			"url": "https://www.academia.edu/144634284/Para_la_restituci%C3%B3n_a_Tirso_de_Molina_de_Los_terceros_de_San_Francisco_comedia_atribuida_a_Lope_de_Vega_y_P%C3%A9rez_de_Montalb%C3%A1n"
+		},
 		"cetso-web": {
 			"entryType": "webpage",
 			"author": "Cuéllar, Álvaro y Germán Vega García-Luengos",
@@ -23,6 +85,152 @@
 			"details": "2017-2023",
 			"publisher": "Recurso web",
 			"url": "http://etso.es/cetso/"
+		},
+		"cuellar-2026-indignity-text": {
+			"entryType": "article",
+			"author": "Cuéllar, Álvaro",
+			"year": "2026",
+			"title": "For the Indignity of the Text: Measuring Stylometric Robustness in Authorship Attribution under Textual Corruption",
+			"journal": "Arte Nuevo. Revista de Estudios Áureos",
+			"details": "13, pp. 123-144",
+			"doi": "10.14603/13E2026"
+		},
+		"cuellar-2026-size-does-matter": {
+			"entryType": "article",
+			"author": "Cuéllar, Álvaro",
+			"year": "2026",
+			"title": "Size Does Matter, But Asymmetrically: Training and Test Length Effects on Stylometric Authorship Attribution",
+			"journal": "Studia Aurea",
+			"note": "En prensa"
+		},
+		"cuellar-2026-estilometria-ritmica-examen": {
+			"entryType": "article",
+			"author": "Cuéllar, Álvaro",
+			"year": "2026",
+			"title": "«La estilometría rítmica a examen en un corpus de comedias seguras de Lope de Vega»",
+			"journal": "Castilla. Estudios de Literatura",
+			"note": "En prensa"
+		},
+		"cuellar-2026-te-noto-distante": {
+			"entryType": "incollection",
+			"author": "Cuéllar, Álvaro",
+			"year": "2026",
+			"title": "«Te noto distante». La consolidación de las Humanidades Digitales para el estudio del Siglo de Oro (2023-2026)",
+			"containerTitle": "Actas del XIV Congreso de la Asociación Internacional Siglo de Oro",
+			"note": "En prensa"
+		},
+		"cuellar-2026-resumenes-asistidos": {
+			"entryType": "incollection",
+			"author": "Cuéllar, Álvaro",
+			"year": "2026",
+			"title": "«Resúmenes asistidos por modelos de lenguaje para un vasto corpus de obras literarias del Siglo de Oro»",
+			"containerTitle": "El teatro del Siglo de Oro en el horizonte de las humanidades digitales",
+			"publisher": "Peter Lang",
+			"details": "Berlín",
+			"note": "En prensa"
+		},
+		"cuellar-gonzalez-vega-2026-velez": {
+			"entryType": "article",
+			"author": "Cuéllar, Álvaro; Javier J. González Martínez y Germán Vega García-Luengos",
+			"year": "2026",
+			"title": "«Propuestas novedosas para incrementar y depurar el repertorio dramático de Luis Vélez de Guevara»",
+			"journal": "Revista de Literatura",
+			"note": "En prensa"
+		},
+		"toselli-cuellar-boadas-vidal-sanchez-2026-writer-identification": {
+			"entryType": "article",
+			"author": "Toselli, Alejandro H.; Álvaro Cuéllar; Sònia Boadas; Enrique Vidal y Joan Andreu Sánchez",
+			"year": "2026",
+			"title": "Simple Handwritten Text Recognition Techniques for Highly Accurate Writer Identification",
+			"journal": "Pattern Analysis and Applications",
+			"note": "En prensa"
+		},
+		"cuellar-2026-rhythmic-scansion-dataset": {
+			"entryType": "dataset",
+			"author": "Cuéllar, Álvaro",
+			"year": "2026",
+			"title": "Rhythmic Scansion Dataset of 326 Spanish Golden Age Plays for Authorship Attribution",
+			"publisher": "Zenodo",
+			"doi": "10.5281/zenodo.19418278"
+		},
+		"cuellar-2025-atoms-waves": {
+			"entryType": "article",
+			"author": "Cuéllar, Álvaro",
+			"year": "2025",
+			"title": "From Atoms to Waves: Rhythmic Stylometry for Authorship Studies of Early Modern Spanish Theatre",
+			"journal": "Janus. Estudios sobre el Siglo de Oro",
+			"details": "14",
+			"doi": "10.17979/janus.2025.14.12653"
+		},
+		"cuellar-2025-redes-neuronales": {
+			"entryType": "incollection",
+			"author": "Cuéllar, Álvaro",
+			"year": "2025",
+			"title": "«Redes neuronales convolucionales al servicio del teatro áureo»",
+			"details": "En Romera Castillo, José (ed.), Literatura, teatro e inteligencia artificial, pp. 78-82",
+			"publisher": "Editorial Verbum",
+			"url": "https://www.academia.edu/144758174/Redes_neuronales_convolucionales_al_servicio_del_teatro_%C3%A1ureo"
+		},
+		"cuellar-boadas-2025-calligraphic": {
+			"entryType": "article",
+			"author": "Cuéllar, Álvaro y Sònia Boadas",
+			"year": "2025",
+			"title": "Artificial Intelligence for Calligraphic Writer Identification: The Case of Lope de Vega’s Autographs",
+			"journal": "Hipogrifo. Revista de Literatura y Cultura del Siglo de Oro",
+			"details": "vol. 13, núm. 1, pp. 517-532",
+			"doi": "10.13035/H.2025.13.01.36"
+		},
+		"toselli-cuellar-boadas-vidal-sanchez-2025-simplified-htr": {
+			"entryType": "incollection",
+			"author": "Toselli, Alejandro H.; Álvaro Cuéllar; Sònia Boadas; Enrique Vidal y Joan Andreu Sánchez",
+			"year": "2025",
+			"title": "Writer Identification Using Simplified Handwritten Text Recognition Models",
+			"containerTitle": "Pattern Recognition and Image Analysis. IbPRIA",
+			"details": "vol. 15937, pp. 254-267",
+			"doi": "10.1007/978-3-031-99565-1_20"
+		},
+		"cuellar-vega-2025-bandolero-solposto": {
+			"entryType": "article",
+			"author": "Cuéllar, Álvaro y Germán Vega García-Luengos",
+			"year": "2025",
+			"title": "«Crece el repertorio de Calderón con El bandolero Solposto, una nueva comedia en colaboración»",
+			"journal": "Anuario Calderoniano",
+			"details": "18, pp. 59-83",
+			"url": "https://recyt.fecyt.es/index.php/acal/article/view/115157"
+		},
+		"cuellar-2025-rhythmic-corpus": {
+			"entryType": "dataset",
+			"author": "Cuéllar, Álvaro",
+			"year": "2025",
+			"title": "Rhythmic Corpus of 100 Spanish Golden Age Plays",
+			"publisher": "Zenodo",
+			"doi": "10.5281/zenodo.17537309"
+		},
+		"de-la-rosa-cuellar-lehmann-2024-modernisa": {
+			"entryType": "article",
+			"author": "De la Rosa, Javier; Álvaro Cuéllar y Jörg Lehmann",
+			"year": "2024",
+			"title": "The Moderniſa Project: orthographic modernization of Spanish golden age dramas with language models",
+			"journal": "Anuario Lope de Vega. Texto, literatura, cultura",
+			"details": "XXX, pp. 410-425",
+			"doi": "10.5565/rev/anuariolopedevega.530"
+		},
+		"cuellar-2024-querido-german": {
+			"entryType": "incollection",
+			"author": "Cuéllar, Álvaro",
+			"year": "2024",
+			"title": "«Querido Germán: un experimento estilométrico sobre el tamaño de los textos en un corpus de correspondencia digital»",
+			"details": "En Cienfuegos Antelo, Gema; Javier J. González Martínez et al. (eds.), Un caballero para Olmedo. Homenaje al profesor Germán Vega García-Luengos, pp. 277-286",
+			"publisher": "Ediciones de la Universidad de Valladolid",
+			"url": "https://dialnet.unirioja.es/servlet/articulo?codigo=9727338"
+		},
+		"cuellar-2023-coloso-espanol": {
+			"entryType": "article",
+			"author": "Cuéllar, Álvaro (coord.); Stefano Bazzaco; Alba Comino; Andrés Echavarría Peláez; José Manuel Fradejas Rueda; Francisco Gago Jover; Ana García Serrano; Raquel Liceras-Garrido; Patricia Murrieta-Flores; Humberto Olea Montero; Rocío Ortuño Casanova; Fernando J. Pancorbo; Milena Peralta Friedburg; Eva Sánchez-Salido; Rodrigo Vega Sánchez; Juan Carlos Vallejo Velásquez y Ezequiel Villani",
+			"year": "2023",
+			"title": "«Coloso Español - Modelo general de transcripción con 11 millones de palabras»",
+			"publisher": "Transkribus",
+			"url": "https://www.transkribus.org/models/coloso-espaol"
 		},
 		"vega-2023-confirmaciones-ii": {
 			"entryType": "article",
@@ -139,21 +347,24 @@
 			"author": "Cuéllar, Álvaro",
 			"year": "2021",
 			"title": "«Spanish Golden Age Prints 1.0»",
-			"publisher": "Transkribus"
+			"publisher": "Transkribus",
+			"url": "https://www.transkribus.org/models/spanish-golden-age-prints-1-0"
 		},
 		"cuellar-2021-transkribus-prints-modernization": {
 			"entryType": "article",
 			"author": "Cuéllar, Álvaro",
 			"year": "2021",
 			"title": "«Spanish Golden Age Prints (Spelling Modernization) 1.0»",
-			"publisher": "Transkribus"
+			"publisher": "Transkribus",
+			"url": "https://www.transkribus.org/models/spanish-golden-age-theatre-prints-spelling-modernization-1-0"
 		},
 		"cuellar-2021-transkribus-manuscripts-modernization": {
 			"entryType": "article",
 			"author": "Cuéllar, Álvaro",
 			"year": "2021",
 			"title": "«Spanish Golden Age Manuscripts (Spelling Modernization) 1.0»",
-			"publisher": "Transkribus"
+			"publisher": "Transkribus",
+			"url": "https://www.transkribus.org/models/spanish-golden-age-theatre-prints-1-0"
 		}
 	},
 	"views": {
@@ -205,15 +416,48 @@
 					"entryKeys": ["texoro-web"]
 				},
 				{
+					"id": "biteso",
+					"title": "BITESO",
+					"entryKeys": ["biteso-web"]
+				},
+				{
+					"id": "resumenes",
+					"title": "Resúmenes",
+					"entryKeys": ["cuellar-2026-resumenes-asistidos"]
+				},
+				{
+					"id": "red-3d",
+					"title": "Red 3D",
+					"entryKeys": ["red-3d-web"]
+				},
+				{
 					"id": "algunos-trabajos",
 					"title": "Algunos trabajos",
 					"entryKeys": [
+						"cuellar-2026-indignity-text",
+						"vega-2026-menendez-pelayo-libros",
+						"cuellar-2026-size-does-matter",
+						"cuellar-gonzalez-vega-2026-velez",
+						"cuellar-2026-estilometria-ritmica-examen",
+						"toselli-cuellar-boadas-vidal-sanchez-2026-writer-identification",
+						"cuellar-2026-te-noto-distante",
+						"cuellar-2025-atoms-waves",
+						"rucio-vega-2025-ia-bne",
+						"cuellar-2025-redes-neuronales",
+						"vega-2025-solo-piadoso",
+						"cuellar-boadas-2025-calligraphic",
+						"vega-2025-mas-evidencias-tirso",
+						"toselli-cuellar-boadas-vidal-sanchez-2025-simplified-htr",
+						"vega-2025-restitucion-tirso",
+						"cuellar-vega-2025-bandolero-solposto",
+						"de-la-rosa-cuellar-lehmann-2024-modernisa",
+						"cuellar-2024-querido-german",
+						"cuellar-2024-stylometry",
 						"cuellar-vega-2023-francesa-laura-articulo",
 						"vega-2023-confirmaciones-ii",
 						"cuellar-2023-cronologia-estilometria",
 						"cuellar-vega-2023-claramonte",
 						"cuellar-2023-ia-rescate",
-						"cuellar-2024-stylometry",
 						"cuellar-vega-2023-francesa-laura-libro",
 						"martinez-carro-cuellar-2023-moretiana",
 						"cuellar-2022-tesis",
@@ -226,6 +470,7 @@
 					"id": "modelos-transcripcion-automatica",
 					"title": "Modelos para la transcripción automática",
 					"entryKeys": [
+						"cuellar-2023-coloso-espanol",
 						"cuellar-2021-transkribus-prints",
 						"cuellar-2021-transkribus-prints-modernization",
 						"cuellar-2021-transkribus-manuscripts-modernization"
@@ -234,7 +479,11 @@
 				{
 					"id": "corpus",
 					"title": "Corpus",
-					"entryKeys": ["cetso-web"]
+					"entryKeys": [
+						"cuellar-2026-rhythmic-scansion-dataset",
+						"cuellar-2025-rhythmic-corpus",
+						"cetso-web"
+					]
 				}
 			]
 		}

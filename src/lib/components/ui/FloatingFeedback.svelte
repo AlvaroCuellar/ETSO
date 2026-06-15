@@ -417,10 +417,10 @@
 	};
 </script>
 
-<div class="fixed inset-x-3 bottom-3 z-50 flex flex-col items-start gap-2 sm:inset-x-auto sm:right-6 sm:bottom-6 sm:items-end sm:gap-3">
+<div class="pointer-events-none fixed inset-x-3 bottom-3 z-50 flex flex-col items-start gap-2 sm:inset-x-auto sm:right-6 sm:bottom-6 sm:items-end sm:gap-3">
 	{#if isOpen}
 		<section
-			class="max-h-[calc(100dvh-5.5rem)] w-full overflow-y-auto overscroll-contain rounded-lg border border-border bg-white p-4 text-left shadow-[0_18px_45px_rgba(15,23,42,0.18)] sm:w-[390px] sm:max-w-[390px] sm:max-h-[calc(100dvh-7rem)]"
+			class="pointer-events-auto max-h-[calc(100dvh-5.5rem)] w-full overflow-y-auto overscroll-contain rounded-lg border border-border bg-white p-4 text-left shadow-[0_18px_45px_rgba(15,23,42,0.18)] sm:w-[390px] sm:max-w-[390px] sm:max-h-[calc(100dvh-7rem)]"
 			aria-label={t.panelLabel}
 		>
 			<div class="mb-3 flex items-start justify-between gap-3">
@@ -534,7 +534,7 @@
 
 	<button
 		type="button"
-		class="inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand-blue text-white shadow-[0_12px_28px_rgba(0,45,140,0.28)] transition hover:bg-brand-blue-dark focus:outline-none focus:ring-4 focus:ring-brand-blue/25"
+		class="pointer-events-auto inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand-blue text-white shadow-[0_12px_28px_rgba(0,45,140,0.28)] transition hover:bg-brand-blue-dark focus:outline-none focus:ring-4 focus:ring-brand-blue/25"
 		aria-label={t.open}
 		aria-expanded={isOpen}
 		onclick={isOpen ? closePanel : openPanel}

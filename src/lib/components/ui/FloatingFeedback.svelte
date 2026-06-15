@@ -534,7 +534,21 @@
 
 	<button
 		type="button"
-		class="pointer-events-auto inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand-blue text-white shadow-[0_12px_28px_rgba(0,45,140,0.28)] transition hover:bg-brand-blue-dark focus:outline-none focus:ring-4 focus:ring-brand-blue/25"
+		class="pointer-events-auto -ml-3 inline-flex h-10 w-8 shrink-0 items-center justify-center rounded-r-full bg-brand-blue text-white shadow-[0_10px_22px_rgba(0,45,140,0.22)] transition hover:bg-brand-blue-dark focus:outline-none focus:ring-4 focus:ring-brand-blue/25 sm:hidden"
+		aria-label={t.open}
+		aria-expanded={isOpen}
+		onclick={isOpen ? closePanel : openPanel}
+	>
+		{#if isOpen}
+			<X size={17} aria-hidden="true" />
+		{:else}
+			<MessageCircle size={17} aria-hidden="true" />
+		{/if}
+	</button>
+
+	<button
+		type="button"
+		class="pointer-events-auto hidden h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand-blue text-white shadow-[0_12px_28px_rgba(0,45,140,0.28)] transition hover:bg-brand-blue-dark focus:outline-none focus:ring-4 focus:ring-brand-blue/25 sm:inline-flex"
 		aria-label={t.open}
 		aria-expanded={isOpen}
 		onclick={isOpen ? closePanel : openPanel}

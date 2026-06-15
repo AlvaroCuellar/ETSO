@@ -417,7 +417,7 @@
 	};
 </script>
 
-<div class="fixed inset-x-3 bottom-3 z-50 flex flex-col items-end gap-2 sm:inset-x-auto sm:right-6 sm:bottom-6 sm:gap-3">
+<div class="fixed inset-x-3 bottom-3 z-50 flex flex-col items-start gap-2 sm:inset-x-auto sm:right-6 sm:bottom-6 sm:items-end sm:gap-3">
 	{#if isOpen}
 		<section
 			class="max-h-[calc(100dvh-5.5rem)] w-full overflow-y-auto overscroll-contain rounded-lg border border-border bg-white p-4 text-left shadow-[0_18px_45px_rgba(15,23,42,0.18)] sm:w-[390px] sm:max-w-[390px] sm:max-h-[calc(100dvh-7rem)]"

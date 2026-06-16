@@ -23,6 +23,7 @@ export interface PublicWorkMetadata {
 	origin: string;
 	textState: string;
 	addedOn: string;
+	resultado1: string | null;
 	flags: PublicWorkMetadataFlags;
 	traditionalAttribution: AttributionSet;
 	stylometryAttribution: AttributionSet;
@@ -42,6 +43,62 @@ const cloneTextAccessLink = (link: WorkResourceLink): WorkResourceLink => ({
 	...(link.external === undefined ? {} : { external: link.external })
 });
 
+const normalizeText = (value: string): string =>
+	value
+		.normalize('NFD')
+		.replace(/[\u0300-\u036f]/g, '')
+		.toLowerCase()
+		.trim();
+
+const hasAutomaticMarker = (value: string): boolean => {
+	const normalized = normalizeText(value);
+	return normalized.includes('automatico') || /\bauto\b/.test(normalized);
+};
+
+const formatNameList = (names: string[], connector: string): string => {
+	if (names.length <= 1) return names[0] ?? '';
+	if (names.length === 2) return `${names[0]} ${connector} ${names[1]}`;
+	return `${names.slice(0, -1).join(', ')} ${connector} ${names[names.length - 1]}`;
+};
+
+const stylometryResultSentence = (set: AttributionSet): string => {
+	const rawExpression = normalizeText(set.rawExpression ?? '');
+	if (rawExpression.includes('no_apunta_a_ningun_autor')) {
+		return 'Los analisis de estilometria no permiten asociar esta obra de forma clara con ningun perfil autorial del corpus.';
+	}
+	if (rawExpression.includes('no_es_posible')) {
+		return 'Los analisis de estilometria no permiten evaluar la asociacion de esta obra con el perfil autorial del autor tradicional, debido a lo reducido de su corpus de comparacion. Tampoco identifican de forma clara una alternativa autorial.';
+	}
+	if (rawExpression.includes('no_analizada')) {
+		return 'Esta obra no ha sido analizada estilometricamente, por lo que no es posible valorar su asociacion con ningun perfil autorial del corpus.';
+	}
+	if (rawExpression.includes('pendiente_profundidad')) {
+		return 'Los resultados estilometricos disponibles requieren una revision en profundidad antes de formular una conclusion autorial.';
+	}
+
+	const members = set.groups.flatMap((group) => group.members).filter((member) => member.authorName.trim());
+	const names = members.map((member) => member.authorName.trim());
+	const allProbable = members.length > 0 && members.every((member) => member.confidence === 'probable');
+
+	if (members.length === 1 && members[0].confidence === 'segura') {
+		return `Los analisis de estilometria permiten asociar esta obra de forma clara con el perfil autorial de ${names[0]}.`;
+	}
+	if (members.length === 1 && members[0].confidence === 'probable') {
+		return `Los analisis de estilometria permiten asociar esta obra con el perfil autorial de ${names[0]}, por cuanto algunas de sus obras aparecen en las primeras posiciones, aunque no de forma concluyente.`;
+	}
+	if (members.length > 1 && set.connector === 'and' && allProbable) {
+		return `Los analisis de estilometria permiten asociar esta obra con los perfiles autoriales de ${formatNameList(names, 'y')}, por cuanto algunas de sus obras aparecen en las primeras posiciones, aunque no de forma concluyente.`;
+	}
+
+	return 'Los resultados estilometricos disponibles requieren revision antes de formular una conclusion autorial.';
+};
+
+const resolveGeneratedResult = (work: CatalogWork): string | null => {
+	const result = work.result1?.trim();
+	if (!result) return null;
+	return hasAutomaticMarker(result) ? stylometryResultSentence(work.stylometryAttribution) : result;
+};
+
 export const toPublicWorkMetadata = (work: CatalogWork): PublicWorkMetadata => {
 	const hasReport = Boolean(work.reportId && work.reportSlug);
 	const textAccess = work.textLinks.map(cloneTextAccessLink);
@@ -55,6 +112,7 @@ export const toPublicWorkMetadata = (work: CatalogWork): PublicWorkMetadata => {
 		origin: work.origin,
 		textState: work.textState,
 		addedOn: work.addedOn,
+		resultado1: resolveGeneratedResult(work),
 		flags: {
 			inAuthorshipExam: work.inAuthorshipExam,
 			hasSummary: work.hasSummaryFile,

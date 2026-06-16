@@ -236,6 +236,7 @@ interface WorkRow {
 	genero: string | null;
 	adicion: string | null;
 	estado_texto: string | null;
+	resultado1: string | null;
 	examen_autorias: number;
 	biteso: number;
 	biteso_nombre: string | null;
@@ -825,6 +826,7 @@ const buildCatalogWorksFromRows = (
 			origin: row.procede?.trim() || 'Sin procedencia',
 			textState: row.estado_texto?.trim() || 'Sin estado',
 			addedOn: row.adicion?.trim() || 'Sin fecha',
+			result1: row.resultado1?.trim() || undefined,
 			shortSummary: EMPTY_SHORT_SUMMARY,
 			hasSummaryFile: hasSummary,
 			inAuthorshipExam,
@@ -850,7 +852,7 @@ const loadWorkRowsByIds = async (workIds: string[]): Promise<WorkRow[]> => {
 	return getRows<WorkRow>(
 		`SELECT id, slug, titulo,
 		 ${titleVariantsSelect},
-		 genero, adicion, estado_texto,
+		 genero, adicion, estado_texto, resultado1,
 		 examen_autorias, biteso, biteso_nombre, tiene_acceso_externo,
 		 procede,
 		 CASE WHEN resultado1 IS NULL AND resultado2 IS NULL THEN 0 ELSE 1 END AS has_report,
@@ -1053,7 +1055,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 	const workRows = await getRows<WorkRow>(
 		`SELECT id, slug, titulo,
 		 ${titleVariantsSelect},
-		 genero, adicion, estado_texto,
+		 genero, adicion, estado_texto, resultado1,
 		 examen_autorias, biteso, biteso_nombre, tiene_acceso_externo,
 		 procede,
 		 CASE WHEN resultado1 IS NULL AND resultado2 IS NULL THEN 0 ELSE 1 END AS has_report,
@@ -1111,6 +1113,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 			origin: row.procede?.trim() || 'Sin procedencia',
 			textState: row.estado_texto?.trim() || 'Sin estado',
 			addedOn: row.adicion?.trim() || 'Sin fecha',
+			result1: row.resultado1?.trim() || undefined,
 			shortSummary: EMPTY_SHORT_SUMMARY,
 			hasSummaryFile: hasSummary,
 			inAuthorshipExam,

@@ -29,6 +29,13 @@ npm run dev
 npm run dev -- --open
 ```
 
+## API publica de metadatos
+
+- `GET /api/obras`: devuelve el catalogo completo de metadatos de obras.
+- `GET /api/obras/{id-o-slug}`: devuelve los metadatos de una obra por identificador interno o slug publico.
+
+Estos endpoints exponen solo campos de catalogo serializados por lista blanca: titulo, variantes, genero, procedencia, estado, fecha de adicion, atribuciones y enlaces de recursos. No devuelven textos integros ni resumenes automaticos.
+
 ## Building
 
 To create a production version of your app:

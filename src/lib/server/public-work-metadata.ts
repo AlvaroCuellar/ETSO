@@ -1,4 +1,5 @@
 import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
+import { formatAttribution } from '$lib/domain/catalog';
 
 import type { AttributionSet, CatalogWork, WorkResourceLink } from '$lib/domain/catalog';
 
@@ -29,6 +30,8 @@ export interface PublicWorkMetadata {
 	addedOn: string;
 	resultado1: string | null;
 	flags: PublicWorkMetadataFlags;
+	traditionalAttributionText: string;
+	stylometryAttributionText: string;
 	traditionalAttribution: AttributionSet;
 	stylometryAttribution: AttributionSet;
 	resources: PublicWorkMetadataResources;
@@ -125,6 +128,8 @@ export const toPublicWorkMetadata = (work: CatalogWork): PublicWorkMetadata => {
 			hasReport,
 			hasTextAccess: textAccess.length > 0
 		},
+		traditionalAttributionText: formatAttribution(work.traditionalAttribution),
+		stylometryAttributionText: formatAttribution(work.stylometryAttribution),
 		traditionalAttribution: work.traditionalAttribution,
 		stylometryAttribution: work.stylometryAttribution,
 		resources: {

@@ -54,6 +54,7 @@ const navHrefs = {
 	network: '/red-obras',
 	citation: '/como-citarnos',
 	impact: '/repercusion',
+	api: '/api',
 	transcriptions: '/transcripciones-automaticas',
 	team: '/equipo',
 	contact: '/contacto'
@@ -80,6 +81,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			],
 			infoItems: [
 				{ href: navHrefs.impact, label: 'Repercusión' },
+				{ href: navHrefs.api, label: 'API' },
 				{ href: navHrefs.transcriptions, label: 'Transcripciones automáticas' },
 				{ href: navHrefs.team, label: 'Equipo' },
 				{ href: navHrefs.contact, label: 'Contacto' }
@@ -122,6 +124,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			],
 			infoItems: [
 				{ href: navHrefs.impact, label: 'Impact' },
+				{ href: navHrefs.api, label: 'API' },
 				{ href: navHrefs.transcriptions, label: 'Automatic transcriptions' },
 				{ href: navHrefs.team, label: 'Team' },
 				{ href: navHrefs.contact, label: 'Contact' }
@@ -164,6 +167,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			],
 			infoItems: [
 				{ href: navHrefs.impact, label: 'Retombées' },
+				{ href: navHrefs.api, label: 'API' },
 				{ href: navHrefs.transcriptions, label: 'Transcriptions automatiques' },
 				{ href: navHrefs.team, label: 'Équipe' },
 				{ href: navHrefs.contact, label: 'Contact' }
@@ -206,6 +210,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			],
 			infoItems: [
 				{ href: navHrefs.impact, label: 'Repercussão' },
+				{ href: navHrefs.api, label: 'API' },
 				{ href: navHrefs.transcriptions, label: 'Transcrições automáticas' },
 				{ href: navHrefs.team, label: 'Equipe' },
 				{ href: navHrefs.contact, label: 'Contato' }
@@ -248,6 +253,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			],
 			infoItems: [
 				{ href: navHrefs.impact, label: 'Ripercussione' },
+				{ href: navHrefs.api, label: 'API' },
 				{ href: navHrefs.transcriptions, label: 'Trascrizioni automatiche' },
 				{ href: navHrefs.team, label: 'Team' },
 				{ href: navHrefs.contact, label: 'Contatto' }
@@ -290,6 +296,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			],
 			infoItems: [
 				{ href: navHrefs.impact, label: 'Auswirkung' },
+				{ href: navHrefs.api, label: 'API' },
 				{ href: navHrefs.transcriptions, label: 'Automatische Transkriptionen' },
 				{ href: navHrefs.team, label: 'Team' },
 				{ href: navHrefs.contact, label: 'Kontakt' }
@@ -332,6 +339,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			],
 			infoItems: [
 				{ href: navHrefs.impact, label: '影响' },
+				{ href: navHrefs.api, label: 'API' },
 				{ href: navHrefs.transcriptions, label: '自动转录' },
 				{ href: navHrefs.team, label: '团队' },
 				{ href: navHrefs.contact, label: '联系' }
@@ -374,6 +382,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			],
 			infoItems: [
 				{ href: navHrefs.impact, label: '反響' },
+				{ href: navHrefs.api, label: 'API' },
 				{ href: navHrefs.transcriptions, label: '自動転写' },
 				{ href: navHrefs.team, label: 'チーム' },
 				{ href: navHrefs.contact, label: 'お問い合わせ' }
@@ -416,6 +425,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			],
 			infoItems: [
 				{ href: navHrefs.impact, label: '반향' },
+				{ href: navHrefs.api, label: 'API' },
 				{ href: navHrefs.transcriptions, label: '자동 전사' },
 				{ href: navHrefs.team, label: '팀' },
 				{ href: navHrefs.contact, label: '문의' }
@@ -458,6 +468,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			],
 			infoItems: [
 				{ href: navHrefs.impact, label: 'Последствия' },
+				{ href: navHrefs.api, label: 'API' },
 				{ href: navHrefs.transcriptions, label: 'Автоматические транскрипции' },
 				{ href: navHrefs.team, label: 'Команда' },
 				{ href: navHrefs.contact, label: 'Контакты' }
@@ -500,6 +511,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			],
 			infoItems: [
 				{ href: navHrefs.impact, label: 'الأثر' },
+				{ href: navHrefs.api, label: 'API' },
 				{ href: navHrefs.transcriptions, label: 'النسخ الآلي' },
 				{ href: navHrefs.team, label: 'الفريق' },
 				{ href: navHrefs.contact, label: 'التواصل' }
@@ -1446,6 +1458,8 @@ Object.assign(esToEn, {
 		'If you prefer, you can also write directly to either of these addresses:',
 	'Acceso a información complementaria sobre transcripciones automáticas, equipo y contacto de ETSO.':
 		'Access to complementary information about automatic transcriptions, team, and contact for ETSO.',
+	'Acceso a información complementaria sobre la API, transcripciones automáticas, equipo y contacto de ETSO.':
+		'Access to complementary information about the API, automatic transcriptions, team, and contact for ETSO.',
 	'Selecciona una sección:': 'Select a section:',
 	'Modelos y procesos de transcripción automática aplicados a impresos y manuscritos teatrales del Siglo de Oro.':
 		'Automatic transcription models and processes applied to printed and manuscript Golden Age plays.',
@@ -1737,6 +1751,8 @@ Object.assign(esToFr, {
 		'Si vous préférez, vous pouvez aussi écrire directement à l’une de ces adresses :',
 	'Acceso a información complementaria sobre transcripciones automáticas, equipo y contacto de ETSO.':
 		'Accès aux informations complémentaires sur les transcriptions automatiques, l’équipe et le contact d’ETSO.',
+	'Acceso a información complementaria sobre la API, transcripciones automáticas, equipo y contacto de ETSO.':
+		'Accès aux informations complémentaires sur l’API, les transcriptions automatiques, l’équipe et le contact d’ETSO.',
 	'Selecciona una sección:': 'Sélectionnez une section :',
 	'Modelos y procesos de transcripción automática aplicados a impresos y manuscritos teatrales del Siglo de Oro.':
 		"Modèles et processus de transcription automatique appliqués aux imprimés et manuscrits théâtraux du Siècle d'or.",

@@ -35,7 +35,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		limit: asPositiveNumber(rawOptions.limit, 35, 100),
 		maxPhraseVerificationDocs: asPositiveNumber(rawOptions.maxPhraseVerificationDocs, 220, 500),
 		snippetRadius: asPositiveNumber(rawOptions.snippetRadius, 115, 220),
-		includeSnippets: rawOptions.includeSnippets === true,
+		includeSnippets: false,
 		workIds: normalizeStringList(rawOptions.workIds),
 		genres: normalizeStringList(rawOptions.genres),
 		states: normalizeStringList(rawOptions.states),

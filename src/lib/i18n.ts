@@ -2097,7 +2097,8 @@ export const isAssetLikePath = (pathname: string): boolean => {
 	const normalized = pathname.startsWith('/') ? pathname.slice(1) : pathname;
 	if (!normalized) return false;
 	const [firstSegment] = normalized.split('/');
-	if (firstSegment === '_app' || firstSegment === 'api' || firstSegment === 'images') return true;
+	if (firstSegment === '_app' || firstSegment === 'images') return true;
+	if (firstSegment === 'api') return normalized !== 'api';
 	if (firstSegment === 'favicon.svg' || firstSegment === 'robots.txt' || firstSegment === 'sitemap.xml') return true;
 	return /\.[a-z0-9]{2,5}$/i.test(normalized);
 };

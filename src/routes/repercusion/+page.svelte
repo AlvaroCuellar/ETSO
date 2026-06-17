@@ -1,9 +1,12 @@
 <script lang="ts">
+	import Download from 'lucide-svelte/icons/download';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import BibliographyEntryList from '$lib/components/ui/BibliographyEntryList.svelte';
+	import InlineActionButton from '$lib/components/ui/InlineActionButton.svelte';
 	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 
 	import type { ComoCitarnosBibliographySection } from '$lib/domain/catalog';
+	import type { InformeBibliographyEntry } from '$lib/domain/catalog';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -11,9 +14,29 @@
 		'Selección de trabajos académicos que hacen uso de los resultados, recursos y materiales del proyecto ETSO.';
 	const REPERCUSION_INTRO =
 		'Esta página recoge una selección de trabajos que hacen uso de los resultados, recursos y materiales del proyecto ETSO. Incluye referencias vinculadas con la estilometría, la atribución de autoría, la transcripción automática, TEXORO y otros desarrollos derivados o relacionados con el proyecto.';
+	const BIBTEX_FILENAME = 'etso-repercusion.bib';
 	const RELATED_PROJECT_WORKS_TITLE_PATTERN = /^Trabajos relacionados con el proyecto\s*\((\d{4})\)$/;
 
 	type YearSection = ComoCitarnosBibliographySection & { year: string };
+
+	const normalizeBibtexKey = (value: string): string => {
+		const normalized = value
+			.normalize('NFD')
+			.replace(/[\u0300-\u036f]/g, '')
+			.replace(/[^A-Za-z0-9_-]+/g, '-')
+			.replace(/^-+|-+$/g, '');
+		return normalized || 'referencia';
+	};
+
+	const escapeBibtexValue = (value: string): string =>
+		value
+			.replace(/\\/g, '\\textbackslash{}')
+			.replace(/[{}]/g, (match) => `\\${match}`)
+			.replace(/\s+/g, ' ')
+			.trim();
+
+	const buildFallbackBibtex = (entry: InformeBibliographyEntry): string =>
+		`@misc{${normalizeBibtexKey(entry.id)},\n  note = {${escapeBibtexValue(entry.text)}}\n}`;
 
 	const relatedSections = $derived.by(() =>
 		data.bibliography.sections
@@ -32,6 +55,37 @@
 	const totalReferences = $derived(
 		relatedSections.reduce((count, section) => count + section.entries.length, 0)
 	);
+
+	const downloadableEntries = $derived.by(() => {
+		const seen = new Set<string>();
+		return relatedSections
+			.flatMap((section) => section.entries)
+			.filter((entry) => {
+				if (seen.has(entry.id)) return false;
+				seen.add(entry.id);
+				return true;
+			});
+	});
+
+	const bibtexContent = $derived(
+		downloadableEntries.map((entry) => entry.bibtex ?? buildFallbackBibtex(entry)).join('\n\n')
+	);
+
+	const downloadBibtex = () => {
+		if (!bibtexContent) return;
+
+		const blob = new Blob([`${bibtexContent}\n`], {
+			type: 'application/x-bibtex;charset=utf-8'
+		});
+		const url = URL.createObjectURL(blob);
+		const link = document.createElement('a');
+		link.href = url;
+		link.download = BIBTEX_FILENAME;
+		document.body.append(link);
+		link.click();
+		link.remove();
+		URL.revokeObjectURL(url);
+	};
 </script>
 
 <SeoHead title="Repercusión" description={REPERCUSION_SEO_DESCRIPTION} path="/repercusion" />
@@ -59,6 +113,18 @@
 			<p class="m-0 pt-1 text-center text-[0.92rem] font-medium text-text-soft">
 				{totalReferences} referencias seleccionadas
 			</p>
+			<div class="mt-2 flex min-w-0 max-w-full justify-center">
+				<InlineActionButton
+					type="button"
+					disabled={downloadableEntries.length === 0}
+					icon={Download}
+					ariaLabel="Descargar todas las referencias en BibTeX"
+					title="Descargar BibTeX"
+					onclick={downloadBibtex}
+				>
+					Descargar BibTeX
+				</InlineActionButton>
+			</div>
 		{/if}
 	</section>
 

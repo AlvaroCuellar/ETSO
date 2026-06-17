@@ -34,7 +34,7 @@ npm run dev -- --open
 - `GET /api/obras`: devuelve el catalogo completo de metadatos de obras.
 - `GET /api/obras/{id-o-slug}`: devuelve los metadatos de una obra por identificador interno o slug publico.
 
-Estos endpoints exponen solo campos de catalogo serializados por lista blanca: titulo, variantes, genero, procedencia, estado, fecha de adicion, `resultado1` como frase publica de resultado, atribuciones y enlaces de recursos. No devuelven textos integros ni resumenes automaticos.
+Estos endpoints exponen solo campos de catalogo serializados por lista blanca: `title` como titulo crudo de base, `displayTitle` como titulo transformado con el mismo proceso de la web, variantes, genero, procedencia, estado, fecha de adicion, `resultado1` como frase publica de resultado, atribuciones y enlaces de recursos. No devuelven textos integros ni resumenes automaticos.
 
 ## Building
 

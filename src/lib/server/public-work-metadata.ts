@@ -1,3 +1,5 @@
+import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
+
 import type { AttributionSet, CatalogWork, WorkResourceLink } from '$lib/domain/catalog';
 
 interface PublicWorkMetadataResources {
@@ -18,6 +20,7 @@ export interface PublicWorkMetadata {
 	id: string;
 	slug: string;
 	title: string;
+	displayTitle: string;
 	titleVariants: string[];
 	genre: string;
 	origin: string;
@@ -107,6 +110,7 @@ export const toPublicWorkMetadata = (work: CatalogWork): PublicWorkMetadata => {
 		id: work.id,
 		slug: work.slug,
 		title: work.title,
+		displayTitle: formatDisplayWorkTitle(work.title),
 		titleVariants: [...work.titleVariants],
 		genre: work.genre,
 		origin: work.origin,

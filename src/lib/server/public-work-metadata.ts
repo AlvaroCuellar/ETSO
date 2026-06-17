@@ -22,6 +22,7 @@ export interface PublicWorkMetadata {
 	title: string;
 	displayTitle: string;
 	titleVariants: string[];
+	displayTitleVariants: string[];
 	genre: string;
 	origin: string;
 	textState: string;
@@ -112,6 +113,7 @@ export const toPublicWorkMetadata = (work: CatalogWork): PublicWorkMetadata => {
 		title: work.title,
 		displayTitle: formatDisplayWorkTitle(work.title),
 		titleVariants: [...work.titleVariants],
+		displayTitleVariants: work.titleVariants.map(formatDisplayWorkTitle),
 		genre: work.genre,
 		origin: work.origin,
 		textState: work.textState,

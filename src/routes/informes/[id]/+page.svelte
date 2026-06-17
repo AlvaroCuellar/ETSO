@@ -15,19 +15,14 @@
 	} from '$lib/utils/format-display-work-title';
 	import { translateText } from '$lib/i18n';
 	import { renderInlineItalicsHtml } from '$lib/utils/render-inline-italics-html';
+	import {
+		buildTraditionalAttributionParts,
+		type AttributionPhrasePart
+	} from '$lib/utils/traditional-attribution-phrase';
 
 	import type { PageData } from './$types';
 
-	interface ResultTextPart {
-		kind: 'text' | 'author';
-		value: string;
-		authorId?: string;
-	}
-
-	interface AuthorReference {
-		authorId: string;
-		authorName: string;
-	}
+	type ResultTextPart = AttributionPhrasePart;
 
 	let { data }: { data: PageData } = $props();
 	const t = (value: string): string => translateText(data.locale, value);
@@ -71,24 +66,6 @@
 		return `${names.slice(0, -1).join(', ')} ${connector} ${names[names.length - 1]}`;
 	};
 
-	const formatAuthorListParts = (authors: AuthorReference[], connector: string): ResultTextPart[] => {
-		const parts: ResultTextPart[] = [];
-		for (const [index, author] of authors.entries()) {
-			if (index > 0) {
-				parts.push({
-					kind: 'text',
-					value: index === authors.length - 1 ? ` ${connector} ` : ', '
-				});
-			}
-			parts.push({
-				kind: 'author',
-				value: author.authorName,
-				authorId: author.authorId
-			});
-		}
-		return parts;
-	};
-
 	const localizedListConnector = (connector: 'and' | 'or'): string => {
 		const connectors = {
 			es: { and: 'y', or: 'o' },
@@ -106,41 +83,14 @@
 		return (connectors[data.locale] ?? connectors.es)[connector];
 	};
 
-	const buildTraditionalAttributionParts = (set: AttributionSet): ResultTextPart[] => {
-		const authors = set.groups.flatMap((group) =>
-			group.members
-				.map((member) => ({
-					authorId: member.authorId,
-					authorName: member.authorName.trim()
-				}))
-				.filter((member) => member.authorName.length > 0)
-		);
-		if (set.unresolved || authors.length === 0) {
-			return [{ kind: 'text', value: t('Obra sin atribución tradicional determinada.') }];
-		}
-		if (authors.length === 1) {
-			return [
-				{ kind: 'text', value: `${t('Obra atribuida a')} ` },
-				...formatAuthorListParts(authors, localizedListConnector('and')),
-				{ kind: 'text', value: '.' }
-			];
-		}
-		if (set.connector === 'and') {
-			return [
-				{ kind: 'text', value: `${t('Obra atribuida a la escritura en colaboración entre')} ` },
-				...formatAuthorListParts(authors, localizedListConnector('and')),
-				{ kind: 'text', value: '.' }
-			];
-		}
-		return [
-			{ kind: 'text', value: `${t('Obra atribuida a')} ` },
-			...formatAuthorListParts(authors, localizedListConnector('or')),
-			{ kind: 'text', value: '.' }
-		];
-	};
-
 	const traditionalAttributionParts = $derived.by(() =>
-		buildTraditionalAttributionParts(data.work.traditionalAttribution)
+		buildTraditionalAttributionParts(data.work.traditionalAttribution, {
+			translate: t,
+			connectorLabels: {
+				and: localizedListConnector('and'),
+				or: localizedListConnector('or')
+			}
+		})
 	);
 
 	const hasAutomaticMarker = (value: string): boolean => {

@@ -4,6 +4,10 @@
 	import InlineActionButton from '$lib/components/ui/InlineActionButton.svelte';
 	import { formatConfidence, type CatalogWork, type AttributionSet, type Confidence } from '$lib/domain/catalog';
 	import { renderInlineItalicsHtml } from '$lib/utils/render-inline-italics-html';
+	import {
+		buildTraditionalAttributionParts,
+		type AttributionPhrasePart
+	} from '$lib/utils/traditional-attribution-phrase';
 
 	interface Props {
 		work: CatalogWork;
@@ -12,11 +16,7 @@
 
 	let { work, showLink = true }: Props = $props();
 
-	interface ResultTextPart {
-		kind: 'text' | 'author';
-		value: string;
-		authorId?: string;
-	}
+	type ResultTextPart = AttributionPhrasePart;
 
 	interface AuthorReference {
 		authorId: string;
@@ -62,27 +62,6 @@
 		if (confidence === 'posible') return 'bg-surface-accent-purple text-text-accent-purple';
 		if (confidence === 'no_concluyente') return 'bg-[#fff3cd] text-[#856404]';
 		return 'bg-surface-accent-purple text-text-accent-purple';
-	};
-
-	const buildTraditionalAttributionParts = (set: AttributionSet): ResultTextPart[] => {
-		const authors = set.groups.flatMap((group) =>
-			group.members
-				.map((member) => ({
-					authorId: member.authorId,
-					authorName: member.authorName.trim()
-				}))
-				.filter((member) => member.authorName.length > 0)
-		);
-		if (set.unresolved || authors.length === 0) {
-			return [{ kind: 'text', value: 'Sin atribución tradicional determinada' }];
-		}
-		if (authors.length === 1) {
-			return [...formatAuthorListParts(authors, 'y')];
-		}
-		if (set.connector === 'and') {
-			return [...formatAuthorListParts(authors, 'y')];
-		}
-		return [...formatAuthorListParts(authors, 'o')];
 	};
 
 	const buildStylemetryAttributionParts = (set: AttributionSet): ResultTextPart[] => {
@@ -145,7 +124,7 @@
 	};
 
 	const traditionalAttributionParts = $derived.by(() =>
-		buildTraditionalAttributionParts(work.traditionalAttribution)
+		buildTraditionalAttributionParts(work.traditionalAttribution, { includePhrasePrefix: false })
 	);
 
 	const procedeValue = $derived.by(() => {

@@ -1,5 +1,10 @@
 import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
 import { formatAttribution } from '$lib/domain/catalog';
+import { SITE_URL } from '$lib/seo';
+import {
+	buildTraditionalAttributionParts,
+	type AttributionPhrasePart
+} from '$lib/utils/traditional-attribution-phrase';
 
 import type { AttributionSet, CatalogWork, WorkResourceLink } from '$lib/domain/catalog';
 
@@ -17,6 +22,19 @@ interface PublicWorkMetadataFlags {
 	hasTextAccess: boolean;
 }
 
+interface PublicAttributionPhrasePart extends AttributionPhrasePart {
+	authorId?: string;
+	href?: string;
+	url?: string;
+}
+
+interface PublicAttributionPhrase {
+	text: string;
+	markdown: string;
+	html: string;
+	parts: PublicAttributionPhrasePart[];
+}
+
 export interface PublicWorkMetadata {
 	id: string;
 	slug: string;
@@ -31,6 +49,7 @@ export interface PublicWorkMetadata {
 	resultado1: string | null;
 	flags: PublicWorkMetadataFlags;
 	traditionalAttributionText: string;
+	traditionalAttributionPhrase: PublicAttributionPhrase;
 	stylometryAttributionText: string;
 	traditionalAttribution: AttributionSet;
 	stylometryAttribution: AttributionSet;
@@ -66,6 +85,47 @@ const formatNameList = (names: string[], connector: string): string => {
 	if (names.length <= 1) return names[0] ?? '';
 	if (names.length === 2) return `${names[0]} ${connector} ${names[1]}`;
 	return `${names.slice(0, -1).join(', ')} ${connector} ${names[names.length - 1]}`;
+};
+
+const escapeHtml = (value: string): string =>
+	value
+		.replaceAll('&', '&amp;')
+		.replaceAll('<', '&lt;')
+		.replaceAll('>', '&gt;')
+		.replaceAll('"', '&quot;');
+
+const escapeMarkdown = (value: string): string => value.replace(/([\\[\]])/g, '\\$1');
+
+const authorHref = (authorId: string): string => `/autores/${authorId}`;
+const authorUrl = (authorId: string): string => `${SITE_URL}${authorHref(authorId)}`;
+
+const serializeAttributionPhrase = (parts: AttributionPhrasePart[]): PublicAttributionPhrase => {
+	const publicParts: PublicAttributionPhrasePart[] = parts.map((part) =>
+		part.kind === 'author' && part.authorId
+			? {
+					...part,
+					href: authorHref(part.authorId),
+					url: authorUrl(part.authorId)
+				}
+			: part
+	);
+	const text = publicParts.map((part) => part.value).join('');
+	const markdown = publicParts
+		.map((part) =>
+			part.kind === 'author' && part.url
+				? `[${escapeMarkdown(part.value)}](${part.url})`
+				: escapeMarkdown(part.value)
+		)
+		.join('');
+	const html = publicParts
+		.map((part) =>
+			part.kind === 'author' && part.href
+				? `<a href="${escapeHtml(part.href)}">${escapeHtml(part.value)}</a>`
+				: escapeHtml(part.value)
+		)
+		.join('');
+
+	return { text, markdown, html, parts: publicParts };
 };
 
 const stylometryResultSentence = (set: AttributionSet): string => {
@@ -129,6 +189,9 @@ export const toPublicWorkMetadata = (work: CatalogWork): PublicWorkMetadata => {
 			hasTextAccess: textAccess.length > 0
 		},
 		traditionalAttributionText: formatAttribution(work.traditionalAttribution),
+		traditionalAttributionPhrase: serializeAttributionPhrase(
+			buildTraditionalAttributionParts(work.traditionalAttribution)
+		),
 		stylometryAttributionText: formatAttribution(work.stylometryAttribution),
 		traditionalAttribution: work.traditionalAttribution,
 		stylometryAttribution: work.stylometryAttribution,

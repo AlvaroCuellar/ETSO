@@ -32,6 +32,7 @@
 		['resultado1', 'Resultado estilométrico de la obra en forma de frase.'],
 		['flags', 'Indicadores booleanos sobre informe, resumen, examen de autorías y acceso textual.'],
 		['traditionalAttributionText', 'Atribución tradicional lista para mostrar.'],
+		['traditionalAttributionPhrase', 'Frase de atribución tradicional con texto, Markdown, HTML y partes enlazables.'],
 		['stylometryAttributionText', 'Atribución estilométrica lista para mostrar.'],
 		['traditionalAttribution', 'Atribución tradicional normalizada.'],
 		['stylometryAttribution', 'Atribución estilométrica normalizada.'],
@@ -73,6 +74,28 @@
       "hasTextAccess": true
     },
     "traditionalAttributionText": "Desconocido",
+    "traditionalAttributionPhrase": {
+      "text": "Obra de atribución desconocida.",
+      "markdown": "Obra de atribución [desconocida](https://etso.es/autores/desconocido).",
+      "html": "Obra de atribución <a href=\\"/autores/desconocido\\">desconocida</a>.",
+      "parts": [
+        {
+          "kind": "text",
+          "value": "Obra de atribución "
+        },
+        {
+          "kind": "author",
+          "value": "desconocida",
+          "authorId": "desconocido",
+          "href": "/autores/desconocido",
+          "url": "https://etso.es/autores/desconocido"
+        },
+        {
+          "kind": "text",
+          "value": "."
+        }
+      ]
+    },
     "stylometryAttributionText": "Lope de Vega Carpio [Segura]",
     "traditionalAttribution": {
       "groups": [

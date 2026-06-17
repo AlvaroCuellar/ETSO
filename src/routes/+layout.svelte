@@ -34,6 +34,9 @@
 	{#if locale !== DEFAULT_LOCALE}
 		<script>
 			document.documentElement.setAttribute('data-i18n-hydrating', 'true');
+			window.setTimeout(function () {
+				document.documentElement.removeAttribute('data-i18n-hydrating');
+			}, 2500);
 		</script>
 		<style>
 			html[data-i18n-hydrating='true'] body {

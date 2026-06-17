@@ -186,6 +186,10 @@
 		if (localized !== value) element.setAttribute(attr, localized);
 	};
 
+	const revealDocument = (): void => {
+		document.documentElement.removeAttribute('data-i18n-hydrating');
+	};
+
 	const translateNode = (
 		node: Node,
 		activeLocale: Locale = locale,
@@ -207,42 +211,44 @@
 		activeTranslations: Record<string, string>
 	): Promise<void> => {
 		const run = ++translationRun;
-		await tick();
-		if (run !== translationRun) return;
+		try {
+			await tick();
+			if (run !== translationRun) return;
 
-		document.documentElement.lang = activeLocale;
-		document.documentElement.dir = getLocaleTextDirection(activeLocale);
+			document.documentElement.lang = activeLocale;
+			document.documentElement.dir = getLocaleTextDirection(activeLocale);
 
-		const walker = document.createTreeWalker(
-			document.body,
-			NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT,
-			{
-				acceptNode(node) {
-					return shouldSkipNode(node) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
+			const walker = document.createTreeWalker(
+				document.body,
+				NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT,
+				{
+					acceptNode(node) {
+						return shouldSkipNode(node) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
+					}
 				}
-			}
-		);
+			);
 
-		let count = 0;
-		let node: Node | null = walker.currentNode;
-		while (node) {
-			if (node.nodeType === Node.TEXT_NODE) {
-				translateTextNode(node as Text, activeLocale, activeTranslations);
-			} else if (node instanceof Element) {
-				translateElementAttributes(node, activeLocale, activeTranslations);
-				localizeUrlAttributes(node);
-			}
+			let count = 0;
+			let node: Node | null = walker.currentNode;
+			while (node) {
+				if (node.nodeType === Node.TEXT_NODE) {
+					translateTextNode(node as Text, activeLocale, activeTranslations);
+				} else if (node instanceof Element) {
+					translateElementAttributes(node, activeLocale, activeTranslations);
+					localizeUrlAttributes(node);
+				}
 
-			count += 1;
-			if (count % 700 === 0) {
-				await new Promise<void>((resolve) => window.setTimeout(resolve, 0));
-				if (run !== translationRun) return;
-			}
+				count += 1;
+				if (count % 700 === 0) {
+					await new Promise<void>((resolve) => window.setTimeout(resolve, 0));
+					if (run !== translationRun) return;
+				}
 
-			node = walker.nextNode();
+				node = walker.nextNode();
+			}
+		} finally {
+			revealDocument();
 		}
-
-		document.documentElement.removeAttribute('data-i18n-hydrating');
 	};
 
 	onMount(() => {

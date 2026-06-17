@@ -49,7 +49,7 @@ Supported public locales found: `es`, `en`, `fr`, `pt`, `it`, `de`, `zh`, `ja`, 
 
 - `ETSO`, `TEXORO`, and `BITESO` should remain unchanged in every locale.
 - `Examen de autorías` is a resource name and must remain exactly `Examen de autorías` in navigation, cards, headings, breadcrumbs, links, and resource-name contexts.
-- No `BICUVE` spelling was found in the searched source; `BITESO` is the resource name currently present.
+- `BITESO` is the resource name currently present in source and UI strings.
 
 ## East Asian Cleanup Status
 

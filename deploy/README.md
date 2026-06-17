@@ -121,6 +121,27 @@ Configurar `deploy/.env.deploy` desde `deploy/.env.deploy.example`.
 Poner ahÃ­ `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID` y `R2_SECRET_ACCESS_KEY` del token
 read&write de R2. No subir `deploy/.env.deploy` al repositorio.
 
+Poner tambien el Deploy Hook de Vercel para que, despues de reemplazar Turso,
+la web se redeploye y recargue la base actualizada:
+
+```bash
+DEPLOY_HOOK_URL="https://api.vercel.com/v1/integrations/deploy/..."
+REQUIRE_DEPLOY_HOOK="true"
+```
+
+El hook se crea en Vercel desde el proyecto de produccion: `Settings` -> `Git` ->
+`Deploy Hooks`. Crear un hook para la rama `main` y copiar la URL.
+
+Si se quiere hacer el redeploy de Vercel manualmente, ejecutar:
+
+```bash
+REQUIRE_DEPLOY_HOOK=false bash deploy/scripts/deploy-all.sh
+```
+
+Sin `DEPLOY_HOOK_URL`, y salvo que `REQUIRE_DEPLOY_HOOK=false`, el deploy falla
+al principio para evitar terminar con R2/Turso actualizados pero Vercel sirviendo
+datos antiguos.
+
 Copiar:
 
 - ResÃºmenes a `deploy/input/public-assets/resumenes/`

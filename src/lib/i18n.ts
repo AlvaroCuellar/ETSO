@@ -1907,8 +1907,8 @@ Object.assign(esToEn, {
 	'Obra atribuida a la escritura en colaboración entre': 'Work attributed to collaborative writing by',
 	'Los análisis de estilometría no permiten asociar esta obra de forma clara con ningún perfil autorial del corpus.':
 		'The stylometric analyses do not allow this work to be clearly associated with any authorial profile in the corpus.',
-	'Los análisis de estilometría no permiten evaluar la asociación de esta obra con el perfil autorial del autor tradicional, debido a lo reducido de su corpus de comparación. Tampoco identifican de forma clara una alternativa autorial.':
-		'The stylometric analyses do not allow the association of this work with the authorial profile of the traditional author to be evaluated, because the comparison corpus is too small. Nor do they clearly identify an alternative authorial proscheda.',
+	'Los análisis no pueden asociar esta obra con el perfil estilístico del autor tradicional, debido a lo reducido de su corpus. Tampoco identifican de forma clara una alternativa autorial.':
+		'The analyses cannot associate this work with the stylistic profile of the traditional author because the corpus is too small. Nor do they clearly identify an alternative authorship.',
 	'Esta obra no ha sido analizada estilométricamente, por lo que no es posible valorar su asociación con ningún perfil autorial del corpus.':
 		'This work has not been analyzed stylometrically, so it is not possible to assess its association with any authorial profile in the corpus.',
 	'Los resultados estilométricos disponibles requieren una revisión en profundidad antes de formular una conclusión autorial.':
@@ -1940,8 +1940,8 @@ Object.assign(esToFr, {
 	'Obra atribuida a la escritura en colaboración entre': 'Œuvre attribuée à une écriture collaborative entre',
 	'Los análisis de estilometría no permiten asociar esta obra de forma clara con ningún perfil autorial del corpus.':
 		"Les analyses stylométriques ne permettent pas d'associer clairement cette œuvre à un profil d'auteur du corpus.",
-	'Los análisis de estilometría no permiten evaluar la asociación de esta obra con el perfil autorial del autor tradicional, debido a lo reducido de su corpus de comparación. Tampoco identifican de forma clara una alternativa autorial.':
-		"Les analyses stylométriques ne permettent pas d'évaluer l'association de cette œuvre avec le profil de l'auteur traditionnel, en raison de la taille réduite de son corpus de comparaison. Elles n'identifient pas non plus clairement une autre attribution.",
+	'Los análisis no pueden asociar esta obra con el perfil estilístico del autor tradicional, debido a lo reducido de su corpus. Tampoco identifican de forma clara una alternativa autorial.':
+		"Les analyses ne peuvent pas associer cette œuvre au profil stylistique de l'auteur traditionnel, en raison de la taille réduite de son corpus. Elles n'identifient pas non plus clairement une autre attribution.",
 	'Esta obra no ha sido analizada estilométricamente, por lo que no es posible valorar su asociación con ningún perfil autorial del corpus.':
 		"Cette œuvre n'a pas été analysée stylométriquement ; il n'est donc pas possible d'évaluer son association avec un profil d'auteur du corpus.",
 	'Los resultados estilométricos disponibles requieren una revisión en profundidad antes de formular una conclusión autorial.':

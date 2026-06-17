@@ -70,7 +70,7 @@ const stylometryResultSentence = (set: AttributionSet): string => {
 		return 'Los analisis de estilometria no permiten asociar esta obra de forma clara con ningun perfil autorial del corpus.';
 	}
 	if (rawExpression.includes('no_es_posible')) {
-		return 'Los analisis de estilometria no permiten evaluar la asociacion de esta obra con el perfil autorial del autor tradicional, debido a lo reducido de su corpus de comparacion. Tampoco identifican de forma clara una alternativa autorial.';
+		return 'Los análisis no pueden asociar esta obra con el perfil estilístico del autor tradicional, debido a lo reducido de su corpus. Tampoco identifican de forma clara una alternativa autorial.';
 	}
 	if (rawExpression.includes('no_analizada')) {
 		return 'Esta obra no ha sido analizada estilometricamente, por lo que no es posible valorar su asociacion con ningun perfil autorial del corpus.';

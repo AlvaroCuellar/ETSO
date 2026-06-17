@@ -154,7 +154,7 @@
 			return t('Los análisis de estilometría no permiten asociar esta obra de forma clara con ningún perfil autorial del corpus.');
 		}
 		if (rawExpression.includes('no_es_posible')) {
-			return t('Los análisis de estilometría no permiten evaluar la asociación de esta obra con el perfil autorial del autor tradicional, debido a lo reducido de su corpus de comparación. Tampoco identifican de forma clara una alternativa autorial.');
+			return t('Los análisis no pueden asociar esta obra con el perfil estilístico del autor tradicional, debido a lo reducido de su corpus. Tampoco identifican de forma clara una alternativa autorial.');
 		}
 		if (rawExpression.includes('no_analizada')) {
 			return t('Esta obra no ha sido analizada estilométricamente, por lo que no es posible valorar su asociación con ningún perfil autorial del corpus.');

@@ -408,7 +408,7 @@ UPDATE works SET titulo_busqueda = 'Tres afectos de amor, piedad, desmayo y valo
 UPDATE works SET titulo_busqueda = 'Tres justicias en una, Las Las tres justicias en una Tres justicias en una Tres justicias en una Las' WHERE id = 'CALDERON_TresJusticias';
 UPDATE works SET titulo_busqueda = 'Tres mayores prodigios, Los Los tres mayores prodigios Tres mayores prodigios Tres mayores prodigios Los' WHERE id = 'CALDERON_TresMayoresProdigios';
 UPDATE works SET titulo_busqueda = 'Tres mayores prodigios, Los Los tres mayores prodigios Tres mayores prodigios Tres mayores prodigios Los' WHERE id = 'CALDERON_TresMayoresProdigios(Loa)';
-UPDATE works SET titulo_busqueda = 'Tu prójimo como a ti (primera versión)' WHERE id = 'CALDERON_TuProjimo(PimeraVersion)(Auto)';
+UPDATE works SET titulo_busqueda = 'Tu prójimo como a ti (primera versión)' WHERE id = 'CALDERON_TuProjimo(PrimeraVersion)(Auto)';
 UPDATE works SET titulo_busqueda = 'Vacante general, La La vacante general Vacante general Vacante general La' WHERE id = 'CALDERON_VacanteGeneral(Auto)';
 UPDATE works SET titulo_busqueda = 'Valle de la Zarzuela, El El valle de la Zarzuela Valle de la Zarzuela Valle de la Zarzuela El' WHERE id = 'CALDERON_ValleDelaZarzuela(Auto)';
 UPDATE works SET titulo_busqueda = 'Veneno y la triaca, El El veneno y la triaca Veneno y la triaca Veneno y la triaca El' WHERE id = 'CALDERON_VenenoYLaTriaca(Auto)';

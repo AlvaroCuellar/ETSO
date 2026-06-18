@@ -1,0 +1,48 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "ETSOdatos: probar actualizacion web completa",
+			"type": "shell",
+			"command": "npm run actualizar:probar",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "dedicated",
+				"clear": false
+			}
+		},
+		{
+			"label": "ETSOdatos: actualizar web completa",
+			"type": "shell",
+			"command": "npm run actualizar",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "dedicated",
+				"clear": false
+			}
+		},
+		{
+			"label": "ETSOdatos: actualizar web completa sin hook Vercel",
+			"type": "shell",
+			"command": "npm run actualizar:sin-hook",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "dedicated",
+				"clear": false
+			}
+		}
+	]
+}

@@ -7,15 +7,31 @@
 
 		<script>
 			if (['etso.es', 'www.etso.es'].includes(window.location.hostname)) {
-				const script = document.createElement('script');
-				script.async = true;
-				script.src = 'https://www.googletagmanager.com/gtag/js?id=G-45NQN8Q5LD';
-				document.head.appendChild(script);
+				let analyticsLoaded = false;
+				const loadAnalytics = () => {
+					if (analyticsLoaded) return;
+					analyticsLoaded = true;
 
-				window.dataLayer = window.dataLayer || [];
-				function gtag(){dataLayer.push(arguments);}
-				gtag('js', new Date());
-				gtag('config', 'G-45NQN8Q5LD');
+					const script = document.createElement('script');
+					script.async = true;
+					script.src = 'https://www.googletagmanager.com/gtag/js?id=G-45NQN8Q5LD';
+					document.head.appendChild(script);
+
+					window.dataLayer = window.dataLayer || [];
+					window.gtag = function(){window.dataLayer.push(arguments);}
+					window.gtag('js', new Date());
+					window.gtag('config', 'G-45NQN8Q5LD');
+				};
+
+				const interactionOptions = { once: true, passive: true };
+				window.addEventListener('pointerdown', loadAnalytics, interactionOptions);
+				window.addEventListener('keydown', loadAnalytics, { once: true });
+				window.addEventListener('scroll', loadAnalytics, interactionOptions);
+				window.addEventListener('touchstart', loadAnalytics, interactionOptions);
+
+				window.setTimeout(() => {
+					if (document.visibilityState === 'visible') loadAnalytics();
+				}, 15000);
 			}
 		</script>
 

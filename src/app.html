@@ -5,14 +5,18 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="text-scale" content="scale" />
 
-		<!-- Google tag (gtag.js) -->
-		<script async src="https://www.googletagmanager.com/gtag/js?id=G-KSW70ZK6B7"></script>
 		<script>
-			window.dataLayer = window.dataLayer || [];
-			function gtag(){dataLayer.push(arguments);}
-			gtag('js', new Date());
+			if (['etso.es', 'www.etso.es'].includes(window.location.hostname)) {
+				const script = document.createElement('script');
+				script.async = true;
+				script.src = 'https://www.googletagmanager.com/gtag/js?id=G-4B0P36VBW8';
+				document.head.appendChild(script);
 
-			gtag('config', 'G-KSW70ZK6B7');
+				window.dataLayer = window.dataLayer || [];
+				function gtag(){dataLayer.push(arguments);}
+				gtag('js', new Date());
+				gtag('config', 'G-4B0P36VBW8');
+			}
 		</script>
 
 		%sveltekit.head%

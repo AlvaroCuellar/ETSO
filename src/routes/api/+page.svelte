@@ -45,17 +45,17 @@
 	];
 
 	const publicIdDescriptionByLocale: Record<Locale, string> = {
-		es: 'Identificador público numérico estable, procedente de la columna id del TSV.',
-		en: 'Stable numeric public identifier, taken from the TSV id column.',
-		fr: 'Identifiant public numérique stable, issu de la colonne id du TSV.',
-		pt: 'Identificador público numérico estável, proveniente da coluna id do TSV.',
-		it: 'Identificatore pubblico numerico stabile, proveniente dalla colonna id del TSV.',
-		de: 'Stabile numerische öffentliche Kennung aus der TSV-Spalte id.',
-		zh: '稳定的数字公共标识符，来自 TSV 的 id 列。',
-		ja: 'TSV の id 列に由来する安定した数値公開識別子。',
-		ko: 'TSV id 열에서 가져온 안정적인 숫자 공개 식별자입니다.',
-		ru: 'Стабильный числовой публичный идентификатор из столбца id в TSV.',
-		ar: 'معرّف عام رقمي ثابت مأخوذ من عمود id في ملف TSV.'
+		es: 'Identificador público numérico estable de la obra.',
+		en: 'Stable numeric public identifier for the work.',
+		fr: 'Identifiant public numérique stable de l’œuvre.',
+		pt: 'Identificador público numérico estável da obra.',
+		it: 'Identificatore pubblico numerico stabile dell’opera.',
+		de: 'Stabile numerische öffentliche Kennung des Werkes.',
+		zh: '作品的稳定数字公共标识符。',
+		ja: '作品の安定した数値公開識別子。',
+		ko: '작품의 안정적인 숫자 공개 식별자입니다.',
+		ru: 'Стабильный числовой публичный идентификатор произведения.',
+		ar: 'معرّف عام رقمي ثابت للعمل.'
 	};
 
 	const esFields: Array<[string, string]> = [

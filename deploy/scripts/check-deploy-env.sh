@@ -46,6 +46,7 @@ require_file() {
 }
 
 require_command node
+require_command python3
 require_command aws
 require_command jq
 if [ "${DRY_RUN:-false}" != "true" ]; then

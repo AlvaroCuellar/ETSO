@@ -223,6 +223,7 @@
 	const formatGenre = (genre: string): string => genre.trim() || 'Sin género';
 	const formatTextState = (textState: string): string => textState.trim() || 'Sin estado textual';
 	const formatBitesoPublicationDate = (date: string): string => formatPublicationDate(date, data.locale);
+	const hasBitesoPublicationDate = (date: string): boolean => date.trim().length > 0;
 
 	const filteredWorks = $derived.by(() => {
 		const normalizedQuery = normalizeFilterText(query);
@@ -324,10 +325,12 @@
 								<span class="font-normal text-text-soft">{formatGenre(work.genre)}</span>
 								<span class="mx-1.5 text-text-soft/70">·</span>
 								<span class="font-normal text-text-soft">{formatTextState(work.textState)}</span>
-								<span class="mx-1.5 text-text-soft/70">·</span>
-								<span class="font-normal text-text-soft"
-									>{labels.publicationDate}: {formatBitesoPublicationDate(work.publishedOn)}</span
-								>
+								{#if hasBitesoPublicationDate(work.publishedOn)}
+									<span class="mx-1.5 text-text-soft/70">·</span>
+									<span class="font-normal text-text-soft"
+										>{labels.publicationDate}: {formatBitesoPublicationDate(work.publishedOn)}</span
+									>
+								{/if}
 							</p>
 							{#if work.titleVariants.length > 0}
 								<p class="m-0 text-[0.92rem] leading-[1.5] text-text-soft" data-i18n-skip>

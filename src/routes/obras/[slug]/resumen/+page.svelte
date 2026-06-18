@@ -31,6 +31,7 @@
 		} as const;
 		return labels[data.locale] ?? labels.es;
 	});
+	const hasPublishedOn = $derived(data.publishedOn.trim().length > 0);
 	const formattedPublishedOn = $derived.by(() => formatPublicationDate(data.publishedOn, data.locale));
 	const seoDescription = $derived.by(() => {
 		const descriptions = {
@@ -84,13 +85,17 @@
 			'',
 			summaryCitationPlainText,
 			'',
-			`Obra resumida: ${displayWorkTitle}`,
-			`Fecha de publicación del resumen: ${formattedPublishedOn}`,
+			`Obra resumida: ${displayWorkTitle}`
+		];
+		if (hasPublishedOn) {
+			lines.push(`Fecha de publicación del resumen: ${formattedPublishedOn}`);
+		}
+		lines.push(
 			`Texto descargado desde ETSO: https://etso.es/obras/${data.work.slug}/resumen`,
 			'',
 			'----------------------------------------',
 			''
-		];
+		);
 
 		if (summary.resumenBreve.length > 0) {
 			lines.push('RESUMEN AUTOMÁTICO BREVE', '');
@@ -232,9 +237,11 @@
 		<PageHero compact eyebrow="Resumen automático" title={displayWorkTitle} backgroundImage={heroBg} />
 
 		<section class="grid gap-3" aria-label="Aviso y cita">
-			<p class="m-0 font-ui text-[0.92rem] font-semibold text-text-soft" data-i18n-skip>
-				{summaryPublicationDateLabel}: {formattedPublishedOn}
-			</p>
+			{#if hasPublishedOn}
+				<p class="m-0 font-ui text-[0.92rem] font-semibold text-text-soft" data-i18n-skip>
+					{summaryPublicationDateLabel}: {formattedPublishedOn}
+				</p>
+			{/if}
 
 			<LegalCard label="Aviso" class="w-full">
 				<p>

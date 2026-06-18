@@ -40,6 +40,7 @@
 		} as const;
 		return labels[data.locale] ?? labels.es;
 	});
+	const hasPublishedOn = $derived(data.publishedOn.trim().length > 0);
 	const formattedPublishedOn = $derived.by(() => formatPublicationDate(data.publishedOn, data.locale));
 	const seoDescription = $derived.by(() => {
 		const descriptions = {
@@ -68,23 +69,27 @@
 			.replace(/\s+/g, ' ')
 			.trim()
 	);
-	const downloadedText = $derived.by(() =>
-		[
+	const downloadedText = $derived.by(() => {
+		const lines = [
 			'Gracias por descargar este texto de BITESO.',
 			'Si utilizas este texto en una publicación, trabajo académico o material docente, por favor cita la siguiente referencia:',
 			'',
 			citationPlainText,
-			'',
-			`Fecha de publicación: ${formattedPublishedOn}`,
-			'',
+			''
+		];
+		if (hasPublishedOn) {
+			lines.push(`Fecha de publicación: ${formattedPublishedOn}`, '');
+		}
+		lines.push(
 			'Texto descargado desde ETSO / BITESO.',
 			data.canonicalUrl,
 			'',
 			'----------------------------------------',
 			'',
 			data.biteso.text
-		].join('\n')
-	);
+		);
+		return lines.join('\n');
+	});
 
 	const downloadText = () => {
 		const blob = new Blob([downloadedText], {
@@ -234,9 +239,11 @@
 	<PageHero compact eyebrow="Texto digital" title={displayBitesoTitle} titleHtml={displayBitesoTitleHtml} />
 
 	<section class="grid gap-4">
-		<p class="m-0 font-ui text-[0.92rem] font-semibold text-text-soft" data-i18n-skip>
-			{publicationDateLabel}: {formattedPublishedOn}
-		</p>
+		{#if hasPublishedOn}
+			<p class="m-0 font-ui text-[0.92rem] font-semibold text-text-soft" data-i18n-skip>
+				{publicationDateLabel}: {formattedPublishedOn}
+			</p>
+		{/if}
 
 		<WorkMetadataCard work={data.work} />
 

@@ -74,7 +74,8 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 			titleVariants: work.titleVariants,
 			traditional: formatTraditionalAttribution(work.traditionalAttribution),
 			genre: work.genre,
-			textState: work.textState
+			textState: work.textState,
+			publishedOn: work.bitesoPublishedOn ?? ''
 		})),
 		stats: {
 			bitesoTexts: bitesoWorks.length,

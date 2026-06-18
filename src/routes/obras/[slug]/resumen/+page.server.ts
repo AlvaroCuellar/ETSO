@@ -12,6 +12,7 @@ export const load: PageServerLoad = async ({ params, setHeaders }) => {
 	setPublicCatalogCacheHeaders(setHeaders);
 	return {
 		work,
-		summaryUrl: getPublicSummaryAssetUrl(`${work.id}.json`)
+		summaryUrl: getPublicSummaryAssetUrl(`${work.id}.json`),
+		publishedOn: work.summaryPublishedOn ?? ''
 	};
 };

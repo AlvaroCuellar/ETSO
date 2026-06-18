@@ -7,6 +7,7 @@
 	import PageHero from '$lib/components/ui/PageHero.svelte';
 	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import heroBg from '$lib/assets/heros/obra-bg.jpg';
+	import { formatPublicationDate } from '$lib/resource-publication-dates';
 	import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
 	import Download from 'lucide-svelte/icons/download';
 
@@ -14,6 +15,23 @@
 
 	let { data }: { data: PageData } = $props();
 	const displayWorkTitle = $derived.by(() => formatDisplayWorkTitle(data.work.title));
+	const summaryPublicationDateLabel = $derived.by(() => {
+		const labels = {
+			es: 'Fecha de publicación del resumen',
+			en: 'Summary publication date',
+			fr: 'Date de publication du résumé',
+			pt: 'Data de publicação do resumo',
+			it: 'Data di pubblicazione del riassunto',
+			de: 'Veröffentlichungsdatum der Zusammenfassung',
+			zh: '摘要发布日期',
+			ja: '要約の公開日',
+			ko: '요약 공개일',
+			ru: 'Дата публикации краткого содержания',
+			ar: 'تاريخ نشر الملخص'
+		} as const;
+		return labels[data.locale] ?? labels.es;
+	});
+	const formattedPublishedOn = $derived.by(() => formatPublicationDate(data.publishedOn, data.locale));
 	const seoDescription = $derived.by(() => {
 		const descriptions = {
 			es: `Resumen automático de ${displayWorkTitle}, obra del corpus de ETSO, como ayuda inicial para conocer su argumento y contenido.`,
@@ -67,6 +85,7 @@
 			summaryCitationPlainText,
 			'',
 			`Obra resumida: ${displayWorkTitle}`,
+			`Fecha de publicación del resumen: ${formattedPublishedOn}`,
 			`Texto descargado desde ETSO: https://etso.es/obras/${data.work.slug}/resumen`,
 			'',
 			'----------------------------------------',
@@ -213,6 +232,10 @@
 		<PageHero compact eyebrow="Resumen automático" title={displayWorkTitle} backgroundImage={heroBg} />
 
 		<section class="grid gap-3" aria-label="Aviso y cita">
+			<p class="m-0 font-ui text-[0.92rem] font-semibold text-text-soft" data-i18n-skip>
+				{summaryPublicationDateLabel}: {formattedPublishedOn}
+			</p>
+
 			<LegalCard label="Aviso" class="w-full">
 				<p>
 					A continuación se ofrece un resumen automático no revisado de la obra, generado con ChatGPT

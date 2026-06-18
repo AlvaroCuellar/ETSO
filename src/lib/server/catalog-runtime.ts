@@ -236,6 +236,8 @@ interface WorkRow {
 	genero: string | null;
 	adicion: string | null;
 	estado_texto: string | null;
+	fecha_biteso: string | null;
+	fecha_resumen: string | null;
 	resultado1: string | null;
 	examen_autorias: number;
 	biteso: number;
@@ -826,6 +828,8 @@ const buildCatalogWorksFromRows = (
 			origin: row.procede?.trim() || 'Sin procedencia',
 			textState: row.estado_texto?.trim() || 'Sin estado',
 			addedOn: row.adicion?.trim() || 'Sin fecha',
+			bitesoPublishedOn: row.fecha_biteso?.trim() || undefined,
+			summaryPublishedOn: row.fecha_resumen?.trim() || undefined,
 			result1: row.resultado1?.trim() || undefined,
 			shortSummary: EMPTY_SHORT_SUMMARY,
 			hasSummaryFile: hasSummary,
@@ -848,11 +852,21 @@ const buildCatalogWorksFromRows = (
 const loadWorkRowsByIds = async (workIds: string[]): Promise<WorkRow[]> => {
 	if (workIds.length === 0) return [];
 	const titleVariantsSelect = await getTitleVariantsSelect();
+	const worksTableColumns = await getTableColumnNames('works');
+	const bitesoPublicationDateSelect = worksTableColumns.has('fecha_biteso')
+		? 'fecha_biteso'
+		: 'NULL AS fecha_biteso';
+	const summaryPublicationDateSelect = worksTableColumns.has('fecha_resumen')
+		? 'fecha_resumen'
+		: 'NULL AS fecha_resumen';
 	const orderCases = workIds.map((_, index) => `WHEN ? THEN ${index}`).join(' ');
 	return getRows<WorkRow>(
 		`SELECT id, slug, titulo,
 		 ${titleVariantsSelect},
-		 genero, adicion, estado_texto, resultado1,
+		 genero, adicion, estado_texto,
+		 ${bitesoPublicationDateSelect},
+		 ${summaryPublicationDateSelect},
+		 resultado1,
 		 examen_autorias, biteso, biteso_nombre, tiene_acceso_externo,
 		 procede,
 		 CASE WHEN resultado1 IS NULL AND resultado2 IS NULL THEN 0 ELSE 1 END AS has_report,
@@ -1051,11 +1065,20 @@ const createSnapshot = async (): Promise<Snapshot> => {
 		: hasWorkLegacyTitleVariantsColumn
 			? 'variaciones_titulo AS title_variants'
 			: 'NULL AS title_variants';
+	const bitesoPublicationDateSelect = worksTableColumns.has('fecha_biteso')
+		? 'fecha_biteso'
+		: 'NULL AS fecha_biteso';
+	const summaryPublicationDateSelect = worksTableColumns.has('fecha_resumen')
+		? 'fecha_resumen'
+		: 'NULL AS fecha_resumen';
 
 	const workRows = await getRows<WorkRow>(
 		`SELECT id, slug, titulo,
 		 ${titleVariantsSelect},
-		 genero, adicion, estado_texto, resultado1,
+		 genero, adicion, estado_texto,
+		 ${bitesoPublicationDateSelect},
+		 ${summaryPublicationDateSelect},
+		 resultado1,
 		 examen_autorias, biteso, biteso_nombre, tiene_acceso_externo,
 		 procede,
 		 CASE WHEN resultado1 IS NULL AND resultado2 IS NULL THEN 0 ELSE 1 END AS has_report,
@@ -1113,6 +1136,8 @@ const createSnapshot = async (): Promise<Snapshot> => {
 			origin: row.procede?.trim() || 'Sin procedencia',
 			textState: row.estado_texto?.trim() || 'Sin estado',
 			addedOn: row.adicion?.trim() || 'Sin fecha',
+			bitesoPublishedOn: row.fecha_biteso?.trim() || undefined,
+			summaryPublishedOn: row.fecha_resumen?.trim() || undefined,
 			result1: row.resultado1?.trim() || undefined,
 			shortSummary: EMPTY_SHORT_SUMMARY,
 			hasSummaryFile: hasSummary,

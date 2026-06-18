@@ -7,6 +7,7 @@
 	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import InlineActionButton from '$lib/components/ui/InlineActionButton.svelte';
 	import WorkMetadataCard from '$lib/components/ui/WorkMetadataCard.svelte';
+	import { formatPublicationDate } from '$lib/resource-publication-dates';
 	// Importar aquí el futuro logo de BITESO cuando esté disponible.
 	// import bitesoLogo from '$lib/assets/logos/biteso.png';
 	import byNcLogo from '$lib/assets/logos/by-nc.svg';
@@ -23,6 +24,23 @@
 	let { data }: { data: PageData } = $props();
 	const displayWorkTitle = $derived.by(() => formatDisplayWorkTitle(data.work.title));
 	const displayBitesoTitle = $derived.by(() => `Texto digital de ${displayWorkTitle}`);
+	const publicationDateLabel = $derived.by(() => {
+		const labels = {
+			es: 'Fecha de publicación',
+			en: 'Publication date',
+			fr: 'Date de publication',
+			pt: 'Data de publicação',
+			it: 'Data di pubblicazione',
+			de: 'Veröffentlichungsdatum',
+			zh: '发布日期',
+			ja: '公開日',
+			ko: '공개일',
+			ru: 'Дата публикации',
+			ar: 'تاريخ النشر'
+		} as const;
+		return labels[data.locale] ?? labels.es;
+	});
+	const formattedPublishedOn = $derived.by(() => formatPublicationDate(data.publishedOn, data.locale));
 	const seoDescription = $derived.by(() => {
 		const descriptions = {
 			es: `Texto digital BITESO de ${displayWorkTitle}, disponible en ETSO para lectura, consulta e investigación filológica.`,
@@ -56,6 +74,8 @@
 			'Si utilizas este texto en una publicación, trabajo académico o material docente, por favor cita la siguiente referencia:',
 			'',
 			citationPlainText,
+			'',
+			`Fecha de publicación: ${formattedPublishedOn}`,
 			'',
 			'Texto descargado desde ETSO / BITESO.',
 			data.canonicalUrl,
@@ -214,6 +234,10 @@
 	<PageHero compact eyebrow="Texto digital" title={displayBitesoTitle} titleHtml={displayBitesoTitleHtml} />
 
 	<section class="grid gap-4">
+		<p class="m-0 font-ui text-[0.92rem] font-semibold text-text-soft" data-i18n-skip>
+			{publicationDateLabel}: {formattedPublishedOn}
+		</p>
+
 		<WorkMetadataCard work={data.work} />
 
 		<div class="grid w-full grid-cols-1 items-stretch gap-4 min-[980px]:grid-cols-2">

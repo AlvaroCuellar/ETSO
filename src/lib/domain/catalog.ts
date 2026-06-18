@@ -41,6 +41,8 @@ export interface CatalogWork {
 	origin: string;
 	textState: string;
 	addedOn: string;
+	bitesoPublishedOn?: string;
+	summaryPublishedOn?: string;
 	shortSummary: string;
 	hasSummaryFile: boolean;
 	inAuthorshipExam: boolean;

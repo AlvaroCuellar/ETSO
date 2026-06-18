@@ -45,6 +45,7 @@ export const load: PageServerLoad = async ({ locals, params, setHeaders }) => {
 		biteso,
 		work,
 		citation,
-		canonicalUrl
+		canonicalUrl,
+		publishedOn: work.bitesoPublishedOn ?? ''
 	};
 };

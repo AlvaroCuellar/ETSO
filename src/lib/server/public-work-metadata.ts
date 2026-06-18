@@ -46,6 +46,8 @@ export interface PublicWorkMetadata {
 	origin: string;
 	textState: string;
 	addedOn: string;
+	bitesoPublishedOn: string | null;
+	summaryPublishedOn: string | null;
 	resultado1: string | null;
 	flags: PublicWorkMetadataFlags;
 	traditionalAttributionText: string;
@@ -181,6 +183,8 @@ export const toPublicWorkMetadata = (work: CatalogWork): PublicWorkMetadata => {
 		origin: work.origin,
 		textState: work.textState,
 		addedOn: work.addedOn,
+		bitesoPublishedOn: work.bitesoPublishedOn ?? null,
+		summaryPublishedOn: work.summaryPublishedOn ?? null,
 		resultado1: resolveGeneratedResult(work),
 		flags: {
 			inAuthorshipExam: work.inAuthorshipExam,

@@ -34,6 +34,7 @@ export interface WorkResourceLink {
 
 export interface CatalogWork {
 	id: string;
+	publicId?: number;
 	slug: string;
 	title: string;
 	titleVariants: string[];

@@ -39,10 +39,24 @@
 		},
 		{
 			method: 'GET',
-			path: '/api/obras/{id-o-slug}',
+			path: '/api/obras/{id-publicId-o-slug}',
 			description: one
 		}
 	];
+
+	const publicIdDescriptionByLocale: Record<Locale, string> = {
+		es: 'Identificador público numérico estable, procedente de la columna id del TSV.',
+		en: 'Stable numeric public identifier, taken from the TSV id column.',
+		fr: 'Identifiant public numérique stable, issu de la colonne id du TSV.',
+		pt: 'Identificador público numérico estável, proveniente da coluna id do TSV.',
+		it: 'Identificatore pubblico numerico stabile, proveniente dalla colonna id del TSV.',
+		de: 'Stabile numerische öffentliche Kennung aus der TSV-Spalte id.',
+		zh: '稳定的数字公共标识符，来自 TSV 的 id 列。',
+		ja: 'TSV の id 列に由来する安定した数値公開識別子。',
+		ko: 'TSV id 열에서 가져온 안정적인 숫자 공개 식별자입니다.',
+		ru: 'Стабильный числовой публичный идентификатор из столбца id в TSV.',
+		ar: 'معرّف عام رقمي ثابت مأخوذ من عمود id في ملف TSV.'
+	};
 
 	const esFields: Array<[string, string]> = [
 		['id', 'Identificador estable de la obra.'],
@@ -519,8 +533,11 @@
 	};
 
 	const text = $derived(pageTextByLocale[data.locale] ?? pageTextByLocale.es);
+	const publicIdDescription = $derived(
+		publicIdDescriptionByLocale[data.locale] ?? publicIdDescriptionByLocale.es
+	);
 
-	const exampleRequest = 'https://etso.es/api/obras/la-francesa-laura';
+	const exampleRequest = 'https://etso.es/api/obras/690677';
 	const exampleResponse = `{
   "meta": {
     "contentPolicy": {
@@ -538,6 +555,7 @@
   },
   "work": {
     "id": "DESCONOCIDO_FrancesaLaura",
+    "publicId": 690677,
     "slug": "la-francesa-laura",
     "title": "Francesa Laura, La",
     "displayTitle": "La francesa Laura",
@@ -668,6 +686,12 @@
 							<td class="px-4 py-3 align-top"><code>{name}</code></td>
 							<td class="px-4 py-3 leading-[1.58] text-text-main">{description}</td>
 						</tr>
+						{#if name === 'id'}
+							<tr class="border-b border-border last:border-b-0">
+								<td class="px-4 py-3 align-top"><code>publicId</code></td>
+								<td class="px-4 py-3 leading-[1.58] text-text-main">{publicIdDescription}</td>
+							</tr>
+						{/if}
 					{/each}
 				</tbody>
 			</table>

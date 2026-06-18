@@ -114,6 +114,7 @@ const escapeHtml = (value: string): string =>
 interface Snapshot {
 	works: CatalogWork[];
 	workById: Map<string, CatalogWork>;
+	workByPublicId: Map<number, CatalogWork>;
 	workBySlug: Map<string, CatalogWork>;
 	workByReportSlug: Map<string, CatalogWork>;
 	bitesoWorkBySlug: Map<string, CatalogWork>;
@@ -230,6 +231,7 @@ interface BibliographyViewConfigNormalized {
 
 interface WorkRow {
 	id: string;
+	public_id: number | null;
 	slug: string | null;
 	titulo: string;
 	title_variants: string | null;
@@ -821,6 +823,7 @@ const buildCatalogWorksFromRows = (
 
 		return {
 			id: row.id,
+			publicId: typeof row.public_id === 'number' ? row.public_id : undefined,
 			slug,
 			title: row.titulo,
 			titleVariants: splitTitleVariants(row.title_variants),
@@ -853,6 +856,7 @@ const loadWorkRowsByIds = async (workIds: string[]): Promise<WorkRow[]> => {
 	if (workIds.length === 0) return [];
 	const titleVariantsSelect = await getTitleVariantsSelect();
 	const worksTableColumns = await getTableColumnNames('works');
+	const publicIdSelect = worksTableColumns.has('public_id') ? 'public_id' : 'NULL AS public_id';
 	const bitesoPublicationDateSelect = worksTableColumns.has('fecha_biteso')
 		? 'fecha_biteso'
 		: 'NULL AS fecha_biteso';
@@ -862,6 +866,7 @@ const loadWorkRowsByIds = async (workIds: string[]): Promise<WorkRow[]> => {
 	const orderCases = workIds.map((_, index) => `WHEN ? THEN ${index}`).join(' ');
 	return getRows<WorkRow>(
 		`SELECT id, slug, titulo,
+		 ${publicIdSelect},
 		 ${titleVariantsSelect},
 		 genero, adicion, estado_texto,
 		 ${bitesoPublicationDateSelect},
@@ -1060,6 +1065,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 	}
 	const hasWorkOtherTitlesColumn = worksTableColumns.has('otrostitulos');
 	const hasWorkLegacyTitleVariantsColumn = worksTableColumns.has('variaciones_titulo');
+	const publicIdSelect = worksTableColumns.has('public_id') ? 'public_id' : 'NULL AS public_id';
 	const titleVariantsSelect = hasWorkOtherTitlesColumn
 		? 'otrostitulos AS title_variants'
 		: hasWorkLegacyTitleVariantsColumn
@@ -1074,6 +1080,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 
 	const workRows = await getRows<WorkRow>(
 		`SELECT id, slug, titulo,
+		 ${publicIdSelect},
 		 ${titleVariantsSelect},
 		 genero, adicion, estado_texto,
 		 ${bitesoPublicationDateSelect},
@@ -1129,6 +1136,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 
 		return {
 			id: row.id,
+			publicId: typeof row.public_id === 'number' ? row.public_id : undefined,
 			slug,
 			title: row.titulo,
 			titleVariants: splitTitleVariants(row.title_variants),
@@ -1151,6 +1159,11 @@ const createSnapshot = async (): Promise<Snapshot> => {
 	});
 
 	const workById = new Map(works.map((work) => [work.id, work] as const));
+	const workByPublicId = new Map(
+		works
+			.filter((work): work is CatalogWork & { publicId: number } => typeof work.publicId === 'number')
+			.map((work) => [work.publicId, work] as const)
+	);
 	const workBySlug = new Map(works.map((work) => [work.slug, work] as const));
 	const workByReportSlug = new Map<string, CatalogWork>();
 	const bitesoWorkBySlug = new Map<string, CatalogWork>();
@@ -1163,6 +1176,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 	return {
 		works,
 		workById,
+		workByPublicId,
 		workBySlug,
 		workByReportSlug,
 		bitesoWorkBySlug,
@@ -1295,6 +1309,9 @@ export const getBitesoWorks = async (): Promise<CatalogWork[]> =>
 
 export const getWorkById = async (workId: string): Promise<CatalogWork | undefined> =>
 	(await getSnapshot()).workById.get(workId);
+
+export const getWorkByPublicId = async (publicId: number): Promise<CatalogWork | undefined> =>
+	(await getSnapshot()).workByPublicId.get(publicId);
 
 export const getWorkBySlug = async (slug: string): Promise<CatalogWork | undefined> =>
 	(await getSnapshot()).workBySlug.get(slug);

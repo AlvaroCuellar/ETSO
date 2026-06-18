@@ -37,6 +37,7 @@ interface PublicAttributionPhrase {
 
 export interface PublicWorkMetadata {
 	id: string;
+	publicId: number | null;
 	slug: string;
 	title: string;
 	displayTitle: string;
@@ -174,6 +175,7 @@ export const toPublicWorkMetadata = (work: CatalogWork): PublicWorkMetadata => {
 
 	return {
 		id: work.id,
+		publicId: work.publicId ?? null,
 		slug: work.slug,
 		title: work.title,
 		displayTitle: formatDisplayWorkTitle(work.title),

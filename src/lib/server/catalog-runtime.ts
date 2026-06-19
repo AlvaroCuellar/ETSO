@@ -252,6 +252,7 @@ interface WorkRow {
 
 interface AuthorRow {
 	id: string;
+	public_id: number | null;
 	nombre: string;
 	variaciones_nombre: string | null;
 }
@@ -606,6 +607,12 @@ const getAuthorVariantsSelect = async (): Promise<string> => {
 	return authorsTableColumns.has('variaciones_nombre') ? 'variaciones_nombre' : 'NULL AS variaciones_nombre';
 };
 
+const getAuthorPublicIdSelect = async (tableAlias = ''): Promise<string> => {
+	const authorsTableColumns = await getTableColumnNames('authors');
+	const prefix = tableAlias ? `${tableAlias}.` : '';
+	return authorsTableColumns.has('public_id') ? `${prefix}public_id` : 'NULL AS public_id';
+};
+
 const getTitleVariantsSelect = async (): Promise<string> => {
 	const worksTableColumns = await getTableColumnNames('works');
 	if (!worksTableColumns.has('slug')) {
@@ -631,6 +638,7 @@ const getTitleSearchFilterExpressions = async (): Promise<string[]> => {
 const toCatalogAuthors = (rows: AuthorRow[]): CatalogAuthor[] =>
 	rows.map((row) => ({
 		id: row.id,
+		publicId: row.public_id === null || row.public_id === undefined ? null : Number(row.public_id),
 		name: row.nombre,
 		nameVariants: splitVariants(row.variaciones_nombre)
 	}));
@@ -638,9 +646,10 @@ const toCatalogAuthors = (rows: AuthorRow[]): CatalogAuthor[] =>
 const loadAuthorsByIds = async (authorIds: Iterable<string>): Promise<Map<string, CatalogAuthor>> => {
 	const ids = Array.from(new Set(Array.from(authorIds).filter((id) => id && id !== UNRESOLVED_AUTHOR_ID)));
 	if (ids.length === 0) return new Map();
+	const publicIdSelect = await getAuthorPublicIdSelect();
 	const variantsSelect = await getAuthorVariantsSelect();
 	const rows = await getRows<AuthorRow>(
-		`SELECT id, nombre, ${variantsSelect}
+		`SELECT id, ${publicIdSelect}, nombre, ${variantsSelect}
 		 FROM authors
 		 WHERE id IN (${createPlaceholders(ids)})`,
 		ids
@@ -691,6 +700,7 @@ const normalizeAttributionRows = (
 					.sort((a, b) => a.memberOrder - b.memberOrder)
 					.map((member): AttributionMember => ({
 						authorId: member.authorId,
+						authorPublicId: memberPublicIdFromId(member.authorId, authorById),
 						authorName: memberNameFromId(member.authorId, authorById),
 						confidence: normalizeConfidence(member.confidence)
 					}));
@@ -917,6 +927,9 @@ const memberNameFromId = (authorId: string, authorMap: Map<string, CatalogAuthor
 		.join(' ');
 };
 
+const memberPublicIdFromId = (authorId: string, authorMap: Map<string, CatalogAuthor>): number | null =>
+	authorMap.get(authorId)?.publicId ?? null;
+
 const resolveWorkSlug = (row: WorkRow, seenSlugs: Map<string, string>): string => {
 	const slug = row.slug?.trim();
 	if (!slug) {
@@ -941,15 +954,17 @@ const fetchSummaryFile = async (workId: string): Promise<SummaryFile | null> =>
 
 const createSnapshot = async (): Promise<Snapshot> => {
 	const authorsTableColumns = await getTableColumnNames('authors');
+	const hasAuthorPublicIdColumn = authorsTableColumns.has('public_id');
 	const hasAuthorVariantsColumn = authorsTableColumns.has('variaciones_nombre');
 	const authorRows = await getRows<AuthorRow>(
-		`SELECT id, nombre, ${hasAuthorVariantsColumn ? 'variaciones_nombre' : 'NULL AS variaciones_nombre'}
+		`SELECT id, ${hasAuthorPublicIdColumn ? 'public_id' : 'NULL AS public_id'}, nombre, ${hasAuthorVariantsColumn ? 'variaciones_nombre' : 'NULL AS variaciones_nombre'}
 		 FROM authors
 		 ORDER BY nombre COLLATE NOCASE`
 	);
 
 	const authors: CatalogAuthor[] = authorRows.map((row) => ({
 		id: row.id,
+		publicId: row.public_id === null || row.public_id === undefined ? null : Number(row.public_id),
 		name: row.nombre,
 		nameVariants: splitVariants(row.variaciones_nombre)
 	}));
@@ -1011,6 +1026,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 					.sort((a, b) => a.memberOrder - b.memberOrder)
 					.map((member): AttributionMember => ({
 						authorId: member.authorId,
+						authorPublicId: memberPublicIdFromId(member.authorId, authorById),
 						authorName: memberNameFromId(member.authorId, authorById),
 						confidence: normalizeConfidence(member.confidence)
 					}));
@@ -1883,10 +1899,11 @@ export const getExamenFilterOptions = async (): Promise<ExamenFilterOptions> => 
 		return cachedExamenFilterOptions.value;
 	}
 
+	const authorPublicIdSelect = await getAuthorPublicIdSelect('a');
 	const authorVariantsSelect = await getAuthorVariantsSelect();
 	const [authorRows, genreRows, stateRows] = await Promise.all([
 		getRows<AuthorRow>(
-			`SELECT DISTINCT a.id, a.nombre, ${authorVariantsSelect}
+			`SELECT DISTINCT a.id, ${authorPublicIdSelect}, a.nombre, ${authorVariantsSelect}
 			 FROM authors a
 			 JOIN work_author_index wai ON wai.author_id = a.id
 			 JOIN works w ON w.id = wai.work_id

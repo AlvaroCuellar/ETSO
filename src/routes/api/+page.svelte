@@ -31,7 +31,11 @@
 
 	let { data }: { data: PageData } = $props();
 
-	const baseEndpoints = (one: string, all: string): ApiEndpointText[] => [
+	const baseEndpoints = (
+		one: string,
+		all: string,
+		authors = 'Devuelve el listado completo de autores con id numérico, clave textual y nombre.'
+	): ApiEndpointText[] => [
 		{
 			method: 'GET',
 			path: '/api/obras',
@@ -41,6 +45,11 @@
 			method: 'GET',
 			path: '/api/obras/{id-publicId-o-slug}',
 			description: one
+		},
+		{
+			method: 'GET',
+			path: '/api/autores',
+			description: authors
 		}
 	];
 
@@ -76,6 +85,7 @@
 		['stylometryAttributionText', 'Atribución estilométrica lista para mostrar.'],
 		['traditionalAttribution', 'Atribución tradicional normalizada.'],
 		['stylometryAttribution', 'Atribución estilométrica normalizada.'],
+		['authorId / authorKey', 'Dentro de las autorías, authorId es el identificador público numérico del autor y authorKey conserva la clave textual usada por las URLs de ETSO.'],
 		['resources', 'Enlaces públicos relacionados dentro de ETSO.']
 	];
 
@@ -585,7 +595,8 @@
         {
           "kind": "author",
           "value": "desconocida",
-          "authorId": "desconocido",
+          "authorId": 104,
+          "authorKey": "desconocido",
           "href": "/autores/desconocido",
           "url": "https://etso.es/autores/desconocido"
         },
@@ -601,7 +612,8 @@
         {
           "members": [
             {
-              "authorId": "desconocido",
+              "authorId": 104,
+              "authorKey": "desconocido",
               "authorName": "Desconocido"
             }
           ]
@@ -615,7 +627,8 @@
         {
           "members": [
             {
-              "authorId": "vega_carpio_lope_de",
+              "authorId": 364,
+              "authorKey": "vega_carpio_lope_de",
               "authorName": "Lope de Vega Carpio",
               "confidence": "segura"
             }

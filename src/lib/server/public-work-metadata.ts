@@ -22,8 +22,11 @@ interface PublicWorkMetadataFlags {
 	hasTextAccess: boolean;
 }
 
-interface PublicAttributionPhrasePart extends AttributionPhrasePart {
-	authorId?: string;
+interface PublicAttributionPhrasePart {
+	kind: AttributionPhrasePart['kind'];
+	value: string;
+	authorId?: number | null;
+	authorKey?: string;
 	href?: string;
 	url?: string;
 }
@@ -33,6 +36,24 @@ interface PublicAttributionPhrase {
 	markdown: string;
 	html: string;
 	parts: PublicAttributionPhrasePart[];
+}
+
+interface PublicAttributionMember {
+	authorId: number | null;
+	authorKey: string;
+	authorName: string;
+	confidence?: AttributionSet['groups'][number]['members'][number]['confidence'];
+}
+
+interface PublicAttributionGroup {
+	members: PublicAttributionMember[];
+}
+
+interface PublicAttributionSet {
+	groups: PublicAttributionGroup[];
+	connector: AttributionSet['connector'];
+	unresolved?: boolean;
+	rawExpression?: string;
 }
 
 export interface PublicWorkMetadata {
@@ -54,8 +75,8 @@ export interface PublicWorkMetadata {
 	traditionalAttributionText: string;
 	traditionalAttributionPhrase: PublicAttributionPhrase;
 	stylometryAttributionText: string;
-	traditionalAttribution: AttributionSet;
-	stylometryAttribution: AttributionSet;
+	traditionalAttribution: PublicAttributionSet;
+	stylometryAttribution: PublicAttributionSet;
 	resources: PublicWorkMetadataResources;
 }
 
@@ -99,18 +120,37 @@ const escapeHtml = (value: string): string =>
 
 const escapeMarkdown = (value: string): string => value.replace(/([\\[\]])/g, '\\$1');
 
-const authorHref = (authorId: string): string => `/autores/${authorId}`;
-const authorUrl = (authorId: string): string => `${SITE_URL}${authorHref(authorId)}`;
+const authorHref = (authorKey: string): string => `/autores/${authorKey}`;
+const authorUrl = (authorKey: string): string => `${SITE_URL}${authorHref(authorKey)}`;
 
-const serializeAttributionPhrase = (parts: AttributionPhrasePart[]): PublicAttributionPhrase => {
+const authorPublicIdByKey = (set: AttributionSet): Map<string, number | null> => {
+	const byKey = new Map<string, number | null>();
+	for (const group of set.groups) {
+		for (const member of group.members) {
+			byKey.set(member.authorId, member.authorPublicId ?? null);
+		}
+	}
+	return byKey;
+};
+
+const serializeAttributionPhrase = (
+	parts: AttributionPhrasePart[],
+	publicIdByAuthorKey: Map<string, number | null>
+): PublicAttributionPhrase => {
 	const publicParts: PublicAttributionPhrasePart[] = parts.map((part) =>
 		part.kind === 'author' && part.authorId
 			? {
-					...part,
+					kind: part.kind,
+					value: part.value,
+					authorId: publicIdByAuthorKey.get(part.authorId) ?? null,
+					authorKey: part.authorId,
 					href: authorHref(part.authorId),
 					url: authorUrl(part.authorId)
 				}
-			: part
+			: {
+					kind: part.kind,
+					value: part.value
+				}
 	);
 	const text = publicParts.map((part) => part.value).join('');
 	const markdown = publicParts
@@ -130,6 +170,20 @@ const serializeAttributionPhrase = (parts: AttributionPhrasePart[]): PublicAttri
 
 	return { text, markdown, html, parts: publicParts };
 };
+
+const toPublicAttributionSet = (set: AttributionSet): PublicAttributionSet => ({
+	groups: set.groups.map((group) => ({
+		members: group.members.map((member) => ({
+			authorId: member.authorPublicId ?? null,
+			authorKey: member.authorId,
+			authorName: member.authorName,
+			...(member.confidence ? { confidence: member.confidence } : {})
+		}))
+	})),
+	connector: set.connector,
+	...(set.unresolved === undefined ? {} : { unresolved: set.unresolved }),
+	...(set.rawExpression === undefined ? {} : { rawExpression: set.rawExpression })
+});
 
 const stylometryResultSentence = (set: AttributionSet): string => {
 	const rawExpression = normalizeText(set.rawExpression ?? '');
@@ -172,6 +226,7 @@ const resolveGeneratedResult = (work: CatalogWork): string | null => {
 export const toPublicWorkMetadata = (work: CatalogWork): PublicWorkMetadata => {
 	const hasReport = Boolean(work.reportId && work.reportSlug);
 	const textAccess = work.textLinks.map(cloneTextAccessLink);
+	const traditionalAuthorPublicIdByKey = authorPublicIdByKey(work.traditionalAttribution);
 
 	return {
 		id: work.id,
@@ -196,11 +251,12 @@ export const toPublicWorkMetadata = (work: CatalogWork): PublicWorkMetadata => {
 		},
 		traditionalAttributionText: formatAttribution(work.traditionalAttribution),
 		traditionalAttributionPhrase: serializeAttributionPhrase(
-			buildTraditionalAttributionParts(work.traditionalAttribution)
+			buildTraditionalAttributionParts(work.traditionalAttribution),
+			traditionalAuthorPublicIdByKey
 		),
 		stylometryAttributionText: formatAttribution(work.stylometryAttribution),
-		traditionalAttribution: work.traditionalAttribution,
-		stylometryAttribution: work.stylometryAttribution,
+		traditionalAttribution: toPublicAttributionSet(work.traditionalAttribution),
+		stylometryAttribution: toPublicAttributionSet(work.stylometryAttribution),
 		resources: {
 			work: `/obras/${work.slug}`,
 			summary: work.hasSummaryFile ? `/obras/${work.slug}/resumen` : null,

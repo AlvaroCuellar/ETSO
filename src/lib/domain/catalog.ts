@@ -10,6 +10,7 @@ export type Ambito =
 
 export interface AttributionMember {
 	authorId: string;
+	authorPublicId?: number | null;
 	authorName: string;
 	confidence?: Confidence;
 }
@@ -58,6 +59,7 @@ export interface CatalogWork {
 
 export interface CatalogAuthor {
 	id: string;
+	publicId: number | null;
 	name: string;
 	nameVariants: string[];
 }

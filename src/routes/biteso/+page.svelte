@@ -5,7 +5,6 @@
 	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import fondoLogo from '$lib/assets/fondos/fondo-logo.webp';
 	import { localizePath } from '$lib/i18n';
-	import { formatPublicationDate } from '$lib/resource-publication-dates';
 	import { normalizePlainText } from '$lib/search/normalize';
 	import {
 		buildWorkTitleSearchText,
@@ -34,7 +33,6 @@
 			listCount: (shown: number, total: number) => `Mostrando ${shown} de ${total} textos`,
 			searchLabel: 'Buscar obra',
 			searchPlaceholder: 'Buscar obra',
-			publicationDate: 'Fecha de publicación',
 			empty: 'No hay textos que coincidan con la búsqueda.',
 			showMore: (count: number) => `Ver más (${count} más)`
 		},
@@ -47,7 +45,6 @@
 			listCount: (shown: number, total: number) => `Showing ${shown} of ${total} texts`,
 			searchLabel: 'Search for a work',
 			searchPlaceholder: 'Search for a work',
-			publicationDate: 'Publication date',
 			empty: 'No texts match the search.',
 			showMore: (count: number) => `View more (${count} more)`
 		},
@@ -60,7 +57,6 @@
 			listCount: (shown: number, total: number) => `${shown} textes affichés sur ${total}`,
 			searchLabel: 'Rechercher une œuvre',
 			searchPlaceholder: 'Rechercher une œuvre',
-			publicationDate: 'Date de publication',
 			empty: 'Aucun texte ne correspond à la recherche.',
 			showMore: (count: number) => `Voir plus (${count} de plus)`
 		},
@@ -73,7 +69,6 @@
 			listCount: (shown: number, total: number) => `Exibindo ${shown} de ${total} textos`,
 			searchLabel: 'Pesquisar obra',
 			searchPlaceholder: 'Pesquisar obra',
-			publicationDate: 'Data de publicação',
 			empty: 'Não há textos que correspondam à pesquisa.',
 			showMore: (count: number) => `Ver mais (${count} mais)`
 		},
@@ -86,7 +81,6 @@
 			listCount: (shown: number, total: number) => `${shown} testi visualizzati su ${total}`,
 			searchLabel: 'Cerca un’opera',
 			searchPlaceholder: 'Cerca un’opera',
-			publicationDate: 'Data di pubblicazione',
 			empty: 'Non ci sono testi che corrispondono alla ricerca.',
 			showMore: (count: number) => `Vedi altro (${count} altri)`
 		},
@@ -99,7 +93,6 @@
 			listCount: (shown: number, total: number) => `${shown} von ${total} Texten angezeigt`,
 			searchLabel: 'Werk suchen',
 			searchPlaceholder: 'Werk suchen',
-			publicationDate: 'Veröffentlichungsdatum',
 			empty: 'Es sind keine Texte vorhanden, die zur Suche passen.',
 			showMore: (count: number) => `Mehr anzeigen (${count} mehr)`
 		},
@@ -111,7 +104,6 @@
 			listCount: (shown: number, total: number) => `显示 ${total} 部文本中的 ${shown} 部`,
 			searchLabel: '搜索作品',
 			searchPlaceholder: '搜索作品',
-			publicationDate: '发布日期',
 			empty: '没有与搜索匹配的文本。',
 			showMore: (count: number) => `查看更多（${count} 部）`
 		},
@@ -124,7 +116,6 @@
 			listCount: (shown: number, total: number) => `${total} 件中 ${shown} 件を表示`,
 			searchLabel: '作品を検索',
 			searchPlaceholder: '作品を検索',
-			publicationDate: '公開日',
 			empty: '検索に一致するテキストはありません。',
 			showMore: (count: number) => `もっと見る（${count} 件）`
 		},
@@ -137,7 +128,6 @@
 			listCount: (shown: number, total: number) => `전체 ${total}건 중 ${shown}건 표시`,
 			searchLabel: '작품 검색',
 			searchPlaceholder: '작품 검색',
-			publicationDate: '공개일',
 			empty: '검색어와 일치하는 텍스트가 없습니다.',
 			showMore: (count: number) => `더 보기 (${count}건)`
 		},
@@ -150,7 +140,6 @@
 			listCount: (shown: number, total: number) => `Показано ${shown} из ${total} текстов`,
 			searchLabel: 'Найти произведение',
 			searchPlaceholder: 'Найти произведение',
-			publicationDate: 'Дата публикации',
 			empty: 'Текстов, соответствующих запросу, нет.',
 			showMore: (count: number) => `Показать еще (${count})`
 		},
@@ -163,7 +152,6 @@
 			listCount: (shown: number, total: number) => `تُعرض ${shown} من أصل ${total} نصًا`,
 			searchLabel: 'ابحث عن عمل',
 			searchPlaceholder: 'ابحث عن عمل',
-			publicationDate: 'تاريخ النشر',
 			empty: 'لا توجد نصوص تطابق البحث.',
 			showMore: (count: number) => `عرض المزيد (${count} نصًا)`
 		}
@@ -222,8 +210,6 @@
 
 	const formatGenre = (genre: string): string => genre.trim() || 'Sin género';
 	const formatTextState = (textState: string): string => textState.trim() || 'Sin estado textual';
-	const formatBitesoPublicationDate = (date: string): string => formatPublicationDate(date, data.locale);
-	const hasBitesoPublicationDate = (date: string): boolean => date.trim().length > 0;
 
 	const filteredWorks = $derived.by(() => {
 		const normalizedQuery = normalizeFilterText(query);
@@ -325,12 +311,6 @@
 								<span class="font-normal text-text-soft">{formatGenre(work.genre)}</span>
 								<span class="mx-1.5 text-text-soft/70">·</span>
 								<span class="font-normal text-text-soft">{formatTextState(work.textState)}</span>
-								{#if hasBitesoPublicationDate(work.publishedOn)}
-									<span class="mx-1.5 text-text-soft/70">·</span>
-									<span class="font-normal text-text-soft"
-										>{labels.publicationDate}: {formatBitesoPublicationDate(work.publishedOn)}</span
-									>
-								{/if}
 							</p>
 							{#if work.titleVariants.length > 0}
 								<p class="m-0 text-[0.92rem] leading-[1.5] text-text-soft" data-i18n-skip>

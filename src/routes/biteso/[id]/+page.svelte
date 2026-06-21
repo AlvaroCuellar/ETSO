@@ -22,8 +22,69 @@
 	} from '$lib/utils/format-display-work-title';
 
 	import type { ActionData, PageData } from './$types';
+	import type { Locale } from '$lib/i18n';
 
 	let { data, form }: { data: PageData; form?: ActionData } = $props();
+	const facsimileLabelsByLocale: Record<
+		Locale,
+		{ first: string; last: string; section: string }
+	> = {
+		es: {
+			first: 'Primera página de la obra',
+			last: 'Última página de la obra',
+			section: 'Páginas de la obra'
+		},
+		en: {
+			first: 'First page of the work',
+			last: 'Last page of the work',
+			section: 'Pages of the work'
+		},
+		fr: {
+			first: "Première page de l'œuvre",
+			last: "Dernière page de l'œuvre",
+			section: "Pages de l'œuvre"
+		},
+		pt: {
+			first: 'Primeira página da obra',
+			last: 'Última página da obra',
+			section: 'Páginas da obra'
+		},
+		it: {
+			first: "Prima pagina dell'opera",
+			last: "Ultima pagina dell'opera",
+			section: "Pagine dell'opera"
+		},
+		de: {
+			first: 'Erste Seite des Werks',
+			last: 'Letzte Seite des Werks',
+			section: 'Seiten des Werks'
+		},
+		zh: {
+			first: '作品第一页',
+			last: '作品最后一页',
+			section: '作品页面'
+		},
+		ja: {
+			first: '作品の最初のページ',
+			last: '作品の最後のページ',
+			section: '作品のページ'
+		},
+		ko: {
+			first: '작품의 첫 페이지',
+			last: '작품의 마지막 페이지',
+			section: '작품 페이지'
+		},
+		ru: {
+			first: 'Первая страница произведения',
+			last: 'Последняя страница произведения',
+			section: 'Страницы произведения'
+		},
+		ar: {
+			first: 'الصفحة الأولى من العمل',
+			last: 'الصفحة الأخيرة من العمل',
+			section: 'صفحات العمل'
+		}
+	};
 	const displayWorkTitle = $derived.by(() => formatDisplayWorkTitle(data.work.title));
 	const displayBitesoTitle = $derived.by(() => `Texto digital de ${displayWorkTitle}`);
 	const publicationDateLabel = $derived.by(() => {
@@ -176,12 +237,13 @@
 			})) ?? []
 	);
 	const textNavigationMarks = $derived.by(() => (data.biteso.tei ? teiPageMarks : jornadaMarks));
+	const facsimileLabels = $derived(facsimileLabelsByLocale[data.locale] ?? facsimileLabelsByLocale.es);
 	const facsimileImages = $derived.by(() =>
 		[
 			data.work.facsimileFirstUrl
-				? { src: data.work.facsimileFirstUrl, label: 'Primera página con texto' }
+				? { src: data.work.facsimileFirstUrl, label: facsimileLabels.first }
 				: undefined,
-			data.work.facsimileLastUrl ? { src: data.work.facsimileLastUrl, label: 'Última página con texto' } : undefined
+			data.work.facsimileLastUrl ? { src: data.work.facsimileLastUrl, label: facsimileLabels.last } : undefined
 		].filter((item): item is { src: string; label: string } => Boolean(item))
 	);
 
@@ -320,14 +382,14 @@
 		<CitationSuggestionCard class="w-full" citation={data.citation} allowHtml />
 
 		{#if facsimileImages.length > 0}
-			<section class="grid gap-3" aria-label="Páginas del manuscrito">
+			<section class="mx-auto grid w-full max-w-4xl gap-3" aria-label={facsimileLabels.section}>
 				<div class="grid gap-3 md:grid-cols-2">
 					{#each facsimileImages as image}
 						<figure class="m-0 grid gap-2">
 							<img
 								src={image.src}
 								alt={image.label}
-								class="h-auto max-h-[36rem] w-full rounded-[8px] border border-border bg-white object-contain"
+								class="h-auto max-h-[28rem] w-full rounded-[8px] border border-border bg-white object-contain"
 								loading="lazy"
 							/>
 							<figcaption class="font-ui text-[0.78rem] font-semibold uppercase tracking-[0.06em] text-text-soft">

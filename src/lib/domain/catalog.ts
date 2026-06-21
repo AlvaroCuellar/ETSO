@@ -337,6 +337,11 @@ export interface BitesoTeiViewer {
 	workId: string;
 	archivo: string;
 	pages: BitesoTeiPage[];
+	downloads?: {
+		teiXml?: string;
+		textWithDidascalias?: string;
+		verseText?: string;
+	};
 	stats?: {
 		pages?: number;
 		lines?: number;

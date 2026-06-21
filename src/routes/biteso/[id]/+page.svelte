@@ -124,7 +124,7 @@
 	const displayBitesoTitleHtml = $derived.by(() =>
 		formatPrefixedDisplayWorkTitleHtml('Texto digital de', data.work.title)
 	);
-	const downloadFilename = $derived(`${data.biteso.id || data.work.slug || 'texto-biteso'}.txt`);
+	const downloadBaseFilename = $derived(data.biteso.id || data.work.slug || 'texto-biteso');
 	const citationPlainText = $derived(
 		data.citation
 			.replace(/<[^>]+>/g, '')
@@ -132,7 +132,7 @@
 			.replace(/\s+/g, ' ')
 			.trim()
 	);
-	const downloadedText = $derived.by(() => {
+	const buildDownloadedTxt = (text: string): string => {
 		const lines = [
 			'Gracias por descargar este texto de BITESO.',
 			'Si utilizas este texto en una publicación, trabajo académico o material docente, por favor cita la siguiente referencia:',
@@ -149,23 +149,48 @@
 			'',
 			'----------------------------------------',
 			'',
-			data.biteso.text
+			text
 		);
 		return lines.join('\n');
-	});
+	};
 
-	const downloadText = () => {
-		const blob = new Blob([downloadedText], {
-			type: 'text/plain;charset=utf-8'
-		});
+	const downloadBlob = (content: string, filename: string, type: string) => {
+		const blob = new Blob([content], { type });
 		const url = URL.createObjectURL(blob);
 		const link = document.createElement('a');
 		link.href = url;
-		link.download = downloadFilename;
+		link.download = filename;
 		document.body.append(link);
 		link.click();
 		link.remove();
 		URL.revokeObjectURL(url);
+	};
+
+	type DownloadKind = 'tei' | 'txt-didascalias' | 'txt-verses';
+
+	const downloadText = (kind: DownloadKind = 'txt-verses') => {
+		if (kind === 'tei') {
+			if (!data.biteso.tei?.downloads?.teiXml) return;
+			downloadBlob(
+				data.biteso.tei.downloads.teiXml,
+				`${downloadBaseFilename}.tei.xml`,
+				'application/xml;charset=utf-8'
+			);
+			isDownloadMenuOpen = false;
+			return;
+		}
+
+		const text =
+			kind === 'txt-didascalias'
+				? data.biteso.tei?.downloads?.textWithDidascalias || data.biteso.text
+				: data.biteso.tei?.downloads?.verseText || data.biteso.text;
+		const suffix = kind === 'txt-didascalias' ? 'con-didascalias' : 'solo-versos';
+		downloadBlob(
+			buildDownloadedTxt(text),
+			data.biteso.tei ? `${downloadBaseFilename}_${suffix}.txt` : `${downloadBaseFilename}.txt`,
+			'text/plain;charset=utf-8'
+		);
+		isDownloadMenuOpen = false;
 	};
 
 	interface TextSegment {
@@ -316,6 +341,7 @@
 
 	let activeTextAnchor = $state('biteso-text-start');
 	let isCorrectionFormOpen = $state(false);
+	let isDownloadMenuOpen = $state(false);
 	let correctionTextarea = $state<HTMLTextAreaElement | null>(null);
 	let lastCorrectionAlertMessage = '';
 	const correctionFeedback = $derived(form?.correctionProposal);
@@ -491,15 +517,57 @@
 			>
 				Proponer corrección
 			</InlineActionButton>
-			<InlineActionButton
-				type="button"
-				icon={Download}
-				ariaLabel="Descargar texto en TXT"
-				title="Descargar TXT"
-				onclick={downloadText}
-			>
-				Descargar TXT
-			</InlineActionButton>
+			{#if data.biteso.tei}
+				<div class="relative">
+					<InlineActionButton
+						type="button"
+						icon={Download}
+						ariaLabel="Opciones de descarga"
+						title="Opciones de descarga"
+						onclick={() => (isDownloadMenuOpen = !isDownloadMenuOpen)}
+					>
+						Descargar
+					</InlineActionButton>
+					{#if isDownloadMenuOpen}
+						<div
+							class="absolute right-0 z-20 mt-2 grid min-w-56 gap-1 rounded-[8px] border border-border bg-white p-1.5 font-ui text-[0.82rem] shadow-lg"
+						>
+							<button
+								type="button"
+								disabled={!data.biteso.tei.downloads?.teiXml}
+								class="rounded-[6px] px-3 py-2 text-left text-text-main transition hover:bg-surface-soft hover:text-brand-blue-dark disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue"
+								onclick={() => downloadText('tei')}
+							>
+								TEI completo
+							</button>
+							<button
+								type="button"
+								class="rounded-[6px] px-3 py-2 text-left text-text-main transition hover:bg-surface-soft hover:text-brand-blue-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue"
+								onclick={() => downloadText('txt-didascalias')}
+							>
+								TXT con didascalias
+							</button>
+							<button
+								type="button"
+								class="rounded-[6px] px-3 py-2 text-left text-text-main transition hover:bg-surface-soft hover:text-brand-blue-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue"
+								onclick={() => downloadText('txt-verses')}
+							>
+								TXT solo con versos
+							</button>
+						</div>
+					{/if}
+				</div>
+			{:else}
+				<InlineActionButton
+					type="button"
+					icon={Download}
+					ariaLabel="Descargar texto en TXT"
+					title="Descargar TXT"
+					onclick={() => downloadText('txt-verses')}
+				>
+					Descargar TXT
+				</InlineActionButton>
+			{/if}
 		</div>
 
 		{#if isCorrectionFormOpen}

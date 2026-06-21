@@ -454,12 +454,14 @@
 			? openTeiNavigationGroups.filter((groupId) => groupId !== id)
 			: [...openTeiNavigationGroups, id];
 	};
-
-	$effect(() => {
-		if (!data.biteso.tei || openTeiNavigationGroups.length > 0) return;
-		const firstGroup = teiNavigationGroups[0];
-		if (firstGroup) openTeiNavigationGroups = [firstGroup.id];
-	});
+	const navGroupButtonClass = (id: string): string =>
+		`grid w-full grid-cols-[1rem_minmax(0,1fr)] items-center gap-2 rounded-[8px] px-2 py-2 text-left font-ui text-[0.78rem] font-bold uppercase tracking-[0.04em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue ${
+			isTeiNavigationGroupOpen(id)
+				? 'bg-surface-accent-blue text-brand-blue-dark'
+				: 'text-text-accent-purple hover:bg-surface-soft hover:text-brand-blue-dark'
+		}`;
+	const navGroupPanelClass =
+		'ml-[0.95rem] grid gap-0.5 border-l border-border-accent-blue/70 pl-2 py-1';
 
 	let isMobileMenuOpen = $state(false);
 
@@ -788,39 +790,29 @@
 					</a>
 					{#if data.biteso.tei}
 						{#each teiNavigationGroups as group}
-							<div class="mt-2 grid gap-1">
-								<div class="grid grid-cols-[minmax(0,1fr)_1.75rem] items-center gap-1">
-									<a
-										href={`#${group.anchorId}`}
-										aria-current={activeTextAnchor === group.anchorId ? 'location' : undefined}
-										class={navLinkClass(group.anchorId) + ' font-bold uppercase tracking-[0.04em] text-text-accent-purple'}
-										onclick={() => {
-											activeTextAnchor = group.anchorId;
-										}}
-									>
-										<span data-i18n-skip>{group.label}</span>
-									</a>
-									<button
-										type="button"
-										class="grid h-7 w-7 place-items-center rounded-[6px] text-text-soft transition hover:bg-surface-soft hover:text-brand-blue-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue"
-										aria-label={isTeiNavigationGroupOpen(group.id) ? 'Plegar folios' : 'Desplegar folios'}
-										aria-expanded={isTeiNavigationGroupOpen(group.id)}
-										onclick={() => toggleTeiNavigationGroup(group.id)}
-									>
-										{#if isTeiNavigationGroupOpen(group.id)}
-											<ChevronDown class="h-4 w-4" aria-hidden="true" />
-										{:else}
-											<ChevronRight class="h-4 w-4" aria-hidden="true" />
-										{/if}
-									</button>
-								</div>
+							<div class="mt-1.5 grid gap-1">
+								<button
+									type="button"
+									class={navGroupButtonClass(group.id)}
+									aria-label={isTeiNavigationGroupOpen(group.id) ? 'Plegar folios' : 'Desplegar folios'}
+									aria-expanded={isTeiNavigationGroupOpen(group.id)}
+									aria-controls={`tei-nav-group-${group.id}`}
+									onclick={() => toggleTeiNavigationGroup(group.id)}
+								>
+									{#if isTeiNavigationGroupOpen(group.id)}
+										<ChevronDown class="h-4 w-4" aria-hidden="true" />
+									{:else}
+										<ChevronRight class="h-4 w-4" aria-hidden="true" />
+									{/if}
+									<span data-i18n-skip>{group.label}</span>
+								</button>
 								{#if isTeiNavigationGroupOpen(group.id)}
-									<div class="grid gap-0.5">
+									<div id={`tei-nav-group-${group.id}`} class={navGroupPanelClass}>
 										{#each group.pages as mark}
 											<a
 												href={`#${mark.id}`}
 												aria-current={activeTextAnchor === mark.id ? 'location' : undefined}
-												class={navMarkClass(mark)}
+												class={navLinkClass(mark.id)}
 												onclick={() => {
 													activeTextAnchor = mark.id;
 												}}
@@ -937,33 +929,23 @@
 		{#if data.biteso.tei}
 			{#each teiNavigationGroups as group}
 				<div class="grid gap-1">
-					<div class="grid grid-cols-[minmax(0,1fr)_1.75rem] items-center gap-1">
-						<a
-							href={`#${group.anchorId}`}
-							class={navLinkClass(group.anchorId)}
-							onclick={() => {
-								activeTextAnchor = group.anchorId;
-								isMobileMenuOpen = false;
-							}}
-						>
-							<span data-i18n-skip>{group.label}</span>
-						</a>
-						<button
-							type="button"
-							class="grid h-7 w-7 place-items-center rounded-[6px] text-text-soft transition hover:bg-surface-soft hover:text-brand-blue-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue"
-							aria-label={isTeiNavigationGroupOpen(group.id) ? 'Plegar folios' : 'Desplegar folios'}
-							aria-expanded={isTeiNavigationGroupOpen(group.id)}
-							onclick={() => toggleTeiNavigationGroup(group.id)}
-						>
-							{#if isTeiNavigationGroupOpen(group.id)}
-								<ChevronDown class="h-4 w-4" aria-hidden="true" />
-							{:else}
-								<ChevronRight class="h-4 w-4" aria-hidden="true" />
-							{/if}
-						</button>
-					</div>
+					<button
+						type="button"
+						class={navGroupButtonClass(group.id)}
+						aria-label={isTeiNavigationGroupOpen(group.id) ? 'Plegar folios' : 'Desplegar folios'}
+						aria-expanded={isTeiNavigationGroupOpen(group.id)}
+						aria-controls={`tei-mobile-nav-group-${group.id}`}
+						onclick={() => toggleTeiNavigationGroup(group.id)}
+					>
+						{#if isTeiNavigationGroupOpen(group.id)}
+							<ChevronDown class="h-4 w-4" aria-hidden="true" />
+						{:else}
+							<ChevronRight class="h-4 w-4" aria-hidden="true" />
+						{/if}
+						<span data-i18n-skip>{group.label}</span>
+					</button>
 					{#if isTeiNavigationGroupOpen(group.id)}
-						<div class="grid gap-0.5">
+						<div id={`tei-mobile-nav-group-${group.id}`} class={navGroupPanelClass}>
 							{#each group.pages as mark}
 								<a
 									href={`#${mark.id}`}

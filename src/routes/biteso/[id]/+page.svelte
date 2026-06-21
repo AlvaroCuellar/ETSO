@@ -288,26 +288,12 @@
 		page: {
 			n?: string;
 			folio?: string;
-			pdfPage?: string;
-			side?: string;
-			numberings?: { type?: string; value?: string; cert?: string }[];
 		},
 		index: number,
 		compact = false
 	): string => {
-		const parts: string[] = [];
-		if (page.pdfPage) parts.push(`PDF p. ${page.pdfPage}`);
-		if (page.folio) parts.push(`${compact ? 'Fol.' : 'Folio'} ${page.folio}`);
-		const visibleNumberings = (page.numberings ?? [])
-			.filter((numbering) => numbering.type === 'folio-secondary' && numbering.value)
-			.map((numbering) => `${numbering.value}${numbering.cert === 'low' || numbering.cert === 'medium' ? '?' : ''}`);
-		if (visibleNumberings.length > 0) {
-			parts.push(
-				`${compact ? 'Núm. visibles' : 'Numeraciones visibles'} ${visibleNumberings.join(', ')}`
-			);
-		}
-		if (page.side) parts.push(page.side === 'left' ? 'izquierda' : page.side === 'right' ? 'derecha' : page.side);
-		return parts.length > 0 ? parts.join(' · ') : `Página ${index + 1}`;
+		if (page.folio) return `${compact ? 'Fol.' : 'Folio'} ${page.folio}`;
+		return `Página ${index + 1}`;
 	};
 	const formatJornadaAnchorId = (page: { jornada?: { id?: string; n?: string } }, index: number): string =>
 		`tei-jornada-${page.jornada?.id || page.jornada?.n || index + 1}`;

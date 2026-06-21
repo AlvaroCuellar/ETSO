@@ -7,6 +7,7 @@
 	import PageHero from '$lib/components/ui/PageHero.svelte';
 	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import heroBg from '$lib/assets/heros/obra-bg.jpg';
+	import { DEFAULT_LOCALE, literalTranslations } from '$lib/i18n';
 	import { formatPublicationDate } from '$lib/resource-publication-dates';
 	import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
 	import { buildSummaryCorrectionText } from '$lib/utils/summary-correction-text';
@@ -64,8 +65,11 @@
 	let summaryCorrectionTextarea = $state<HTMLTextAreaElement | null>(null);
 	let summaryCorrectionText = $state('');
 	let hasInitializedSummaryCorrectionText = $state(false);
+	let lastSummaryCorrectionAlertMessage = '';
 	const summaryCorrectionFeedback = $derived(form?.summaryCorrectionProposal);
 	const resumenBreveText = $derived(summary.resumenBreve.join(' ').replace(/\s+/g, ' ').trim());
+	const localizeLiteral = (value: string): string =>
+		data.locale === DEFAULT_LOCALE ? value : (literalTranslations[data.locale]?.[value] ?? value);
 
 	const summaryCitation =
 		'Cuéllar, Álvaro. "Resúmenes asistidos por modelos de lenguaje para un vasto corpus de obras literarias del Siglo de Oro". En: <i>El teatro del Siglo de Oro en el horizonte de las humanidades digitales</i>. Peter Lang, 2026 (en prensa).';
@@ -94,6 +98,7 @@
 		});
 
 	const openSummaryCorrectionForm = async (): Promise<void> => {
+		lastSummaryCorrectionAlertMessage = '';
 		if (!summaryCorrectionText) summaryCorrectionText = buildEditableSummaryText();
 		isSummaryCorrectionFormOpen = true;
 		await tick();
@@ -101,7 +106,17 @@
 	};
 
 	$effect(() => {
-		if (summaryCorrectionFeedback) isSummaryCorrectionFormOpen = true;
+		if (!summaryCorrectionFeedback) return;
+		if (!summaryCorrectionFeedback.ok) {
+			isSummaryCorrectionFormOpen = true;
+			return;
+		}
+
+		isSummaryCorrectionFormOpen = false;
+		if (typeof window === 'undefined') return;
+		if (lastSummaryCorrectionAlertMessage === summaryCorrectionFeedback.message) return;
+		lastSummaryCorrectionAlertMessage = summaryCorrectionFeedback.message;
+		window.alert(localizeLiteral(summaryCorrectionFeedback.message));
 	});
 
 	$effect(() => {

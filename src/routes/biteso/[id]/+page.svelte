@@ -7,6 +7,7 @@
 	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import InlineActionButton from '$lib/components/ui/InlineActionButton.svelte';
 	import WorkMetadataCard from '$lib/components/ui/WorkMetadataCard.svelte';
+	import { DEFAULT_LOCALE, literalTranslations } from '$lib/i18n';
 	import { formatPublicationDate } from '$lib/resource-publication-dates';
 	// Importar aquí el futuro logo de BITESO cuando esté disponible.
 	// import bitesoLogo from '$lib/assets/logos/biteso.png';
@@ -171,16 +172,30 @@
 	let activeTextAnchor = $state('biteso-text-start');
 	let isCorrectionFormOpen = $state(false);
 	let correctionTextarea = $state<HTMLTextAreaElement | null>(null);
+	let lastCorrectionAlertMessage = '';
 	const correctionFeedback = $derived(form?.correctionProposal);
+	const localizeLiteral = (value: string): string =>
+		data.locale === DEFAULT_LOCALE ? value : (literalTranslations[data.locale]?.[value] ?? value);
 
 	const openCorrectionForm = async (): Promise<void> => {
+		lastCorrectionAlertMessage = '';
 		isCorrectionFormOpen = true;
 		await tick();
 		correctionTextarea?.focus();
 	};
 
 	$effect(() => {
-		if (correctionFeedback) isCorrectionFormOpen = true;
+		if (!correctionFeedback) return;
+		if (!correctionFeedback.ok) {
+			isCorrectionFormOpen = true;
+			return;
+		}
+
+		isCorrectionFormOpen = false;
+		if (typeof window === 'undefined') return;
+		if (lastCorrectionAlertMessage === correctionFeedback.message) return;
+		lastCorrectionAlertMessage = correctionFeedback.message;
+		window.alert(localizeLiteral(correctionFeedback.message));
 	});
 
 	const navLinkClass = (id: string, isStart = false): string =>

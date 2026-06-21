@@ -8,6 +8,12 @@ const joinUrl = (base: string, path: string): string =>
 	`${stripTrailingSlash(base)}/${path.replace(/^\/+/, '')}`;
 
 const encodePath = (value: string): string => value.split('/').map(encodeURIComponent).join('/');
+const STATIC_ASSET_PREFIXES = new Set(['facsimiles']);
+
+const isStaticAssetPath = (value: string): boolean => {
+	const [prefix] = value.split('/');
+	return STATIC_ASSET_PREFIXES.has(prefix);
+};
 
 export const getPublicR2BaseUrl = (): string => {
 	const baseUrl = stripTrailingSlash(
@@ -30,6 +36,7 @@ export const getPublicAssetUrl = (relativePath: string): string => {
 	if (!cleanPath || cleanPath.includes('..')) {
 		throw new Error('Ruta publica R2 invalida.');
 	}
+	if (isStaticAssetPath(cleanPath)) return `/${encodePath(cleanPath)}`;
 	if (dev) return `/api/r2-public/${encodePath(cleanPath)}`;
 	return `${getPublicR2BaseUrl()}/${encodePath(cleanPath)}`;
 };

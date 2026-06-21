@@ -168,6 +168,37 @@
 
 	type DownloadKind = 'tei' | 'txt-didascalias' | 'txt-verses';
 
+	const buildVerseTextFromTei = (): string => {
+		const lines: string[] = [];
+		for (const page of data.biteso.tei?.pages ?? []) {
+			for (const block of page.blocks) {
+				if (block.type !== 'speech') continue;
+				for (const line of block.lines ?? []) {
+					if (line.text) lines.push(line.text);
+				}
+			}
+		}
+		return lines.length > 0 ? `${lines.join('\n')}\n` : data.biteso.text;
+	};
+
+	const buildTextWithDidascaliasFromTei = (): string => {
+		const lines: string[] = [];
+		for (const page of data.biteso.tei?.pages ?? []) {
+			for (const block of page.blocks) {
+				if (block.type === 'stage' && block.text) {
+					lines.push(`[${block.text}]`);
+					continue;
+				}
+				if (block.type !== 'speech') continue;
+				if (block.speaker) lines.push(`${block.speaker}:`);
+				for (const line of block.lines ?? []) {
+					if (line.text) lines.push(line.text);
+				}
+			}
+		}
+		return lines.length > 0 ? `${lines.join('\n')}\n` : data.biteso.text;
+	};
+
 	const downloadText = (kind: DownloadKind = 'txt-verses') => {
 		if (kind === 'tei') {
 			if (!data.biteso.tei?.downloads?.teiXml) return;
@@ -182,8 +213,8 @@
 
 		const text =
 			kind === 'txt-didascalias'
-				? data.biteso.tei?.downloads?.textWithDidascalias || data.biteso.text
-				: data.biteso.tei?.downloads?.verseText || data.biteso.text;
+				? data.biteso.tei?.downloads?.textWithDidascalias || buildTextWithDidascaliasFromTei()
+				: data.biteso.tei?.downloads?.verseText || buildVerseTextFromTei();
 		const suffix = kind === 'txt-didascalias' ? 'con-didascalias' : 'solo-versos';
 		downloadBlob(
 			buildDownloadedTxt(text),

@@ -228,9 +228,8 @@
 		compact = false
 	): string => {
 		const parts: string[] = [];
-		if (page.folio) parts.push(`${compact ? 'Fol.' : 'Folio'} ${page.folio}`);
 		if (page.pdfPage) parts.push(`PDF p. ${page.pdfPage}`);
-		if (page.n) parts.push(`TEI ${page.n}`);
+		if (page.folio) parts.push(`${compact ? 'Fol.' : 'Folio'} ${page.folio}`);
 		if (page.side) parts.push(page.side === 'left' ? 'izquierda' : page.side === 'right' ? 'derecha' : page.side);
 		return parts.length > 0 ? parts.join(' · ') : `Página ${index + 1}`;
 	};

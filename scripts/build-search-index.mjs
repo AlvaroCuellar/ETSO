@@ -1,10 +1,22 @@
-﻿#!/usr/bin/env node
+#!/usr/bin/env node
 
 import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
+import { availableParallelism } from 'node:os';
 import { basename, extname, join, resolve } from 'node:path';
 import process from 'node:process';
+import { isMainThread, parentPort, Worker } from 'node:worker_threads';
 
 const TOKEN_REGEX = /[\p{L}\p{N}]+/gu;
+const parseOptionalPositiveInt = (raw) => {
+	const value = Number.parseInt(raw, 10);
+	return Number.isFinite(value) && value > 0 ? value : null;
+};
+
+const detectDefaultWorkers = () => {
+	const fromEnv = parseOptionalPositiveInt(process.env.SEARCH_INDEX_WORKERS ?? '');
+	return fromEnv ?? Math.max(1, availableParallelism());
+};
+
 const DEFAULTS = {
 	input: 'data/texts',
 	output: 'data/search-index',
@@ -15,13 +27,14 @@ const DEFAULTS = {
 	positionsShardTargetBytes: 1_000_000,
 	kgramShardTargetBytes: 256_000,
 	preserveEnie: true,
-	pretty: true
+	pretty: true,
+	workers: detectDefaultWorkers()
 };
 
 const DEFAULT_SCHEMA_VERSION = 'etso-search-index-v1';
 
 const usage = () => {
-	console.log(`Usage: node scripts/build-search-index.mjs [options]\n\nOptions:\n  --input <dir>                         Input TXT directory (default: ${DEFAULTS.input})\n  --output <dir>                        Output index directory (default: ${DEFAULTS.output})\n  --encoding <name>                     Text encoding for TXT files (default: ${DEFAULTS.encoding})\n  --kgram <n>                           K value for wildcard index (default: ${DEFAULTS.kgram})\n  --vocab-shard-target-bytes <n>        Approximate target size per vocab shard\n  --postings-shard-target-bytes <n>     Approximate target size per postings shard\n  --positions-shard-target-bytes <n>    Approximate target size per positions shard\n  --kgram-shard-target-bytes <n>        Approximate target size per kgram shard\n  --preserve-enie                       Preserve ñ when removing diacritics (default)\n  --no-preserve-enie                    Fold ñ into n\n  --pretty                              Pretty JSON output (default)\n  --compact                             Compact JSON output\n  --help                                Show this help\n`);
+	console.log(`Usage: node scripts/build-search-index.mjs [options]\n\nOptions:\n  --input <dir>                         Input TXT directory (default: ${DEFAULTS.input})\n  --output <dir>                        Output index directory (default: ${DEFAULTS.output})\n  --encoding <name>                     Text encoding for TXT files (default: ${DEFAULTS.encoding})\n  --kgram <n>                           K value for wildcard index (default: ${DEFAULTS.kgram})\n  --vocab-shard-target-bytes <n>        Approximate target size per vocab shard\n  --postings-shard-target-bytes <n>     Approximate target size per postings shard\n  --positions-shard-target-bytes <n>    Approximate target size per positions shard\n  --kgram-shard-target-bytes <n>        Approximate target size per kgram shard\n  --preserve-enie                       Preserve ñ when removing diacritics (default)\n  --no-preserve-enie                    Fold ñ into n\n  --pretty                              Pretty JSON output (default)\n  --compact                             Compact JSON output\n  --workers <n>                         Number of text-processing workers (default: ${DEFAULTS.workers})\n  --help                                Show this help\n`);
 };
 
 const parsePositiveInt = (raw, name) => {
@@ -100,6 +113,11 @@ const parseArgs = (argv) => {
 		}
 		if (arg === '--kgram-shard-target-bytes') {
 			options.kgramShardTargetBytes = parsePositiveInt(next, '--kgram-shard-target-bytes');
+			i += 1;
+			continue;
+		}
+		if (arg === '--workers') {
+			options.workers = parsePositiveInt(next, '--workers');
 			i += 1;
 			continue;
 		}
@@ -220,46 +238,148 @@ const writeJson = async (filePath, value, pretty) => {
 	await writeFile(filePath, text, 'utf8');
 };
 
+const analyzeDocument = async ({ docId, fileName, input, encoding, preserveEnie }) => {
+	const workId = basename(fileName, '.txt');
+	const filePath = join(input, fileName);
+	const rawText = await readFile(filePath, encoding);
+	const tokens = tokenizeWithOffsets(rawText, preserveEnie);
+	const localTf = new Map();
+
+	for (const token of tokens) {
+		if (!localTf.has(token.norm)) localTf.set(token.norm, []);
+		localTf.get(token.norm).push([token.tokenIndex, token.byteStart, token.byteEnd]);
+	}
+
+	return {
+		docId,
+		work: [docId, workId, fileName, `${workId}.txt`, tokens.length, rawText.length],
+		charCount: rawText.length,
+		tokenCount: tokens.length,
+		terms: Array.from(localTf.entries())
+	};
+};
+
+const mergeDocument = (result, state) => {
+	state.works[result.docId] = result.work;
+	state.totalChars += result.charCount;
+	state.totalTokens += result.tokenCount;
+
+	for (const [term, occurrences] of result.terms) {
+		let current = state.termStats.get(term);
+		if (!current) {
+			current = { cf: 0, df: 0, docTf: new Map(), docPositions: new Map() };
+			state.termStats.set(term, current);
+		}
+		current.cf += occurrences.length;
+		current.df += 1;
+		current.docTf.set(result.docId, occurrences.length);
+		current.docPositions.set(result.docId, occurrences);
+	}
+};
+
+const buildDocumentJob = (docId, fileNames, options) => ({
+	docId,
+	fileName: fileNames[docId],
+	input: options.input,
+	encoding: options.encoding,
+	preserveEnie: options.preserveEnie
+});
+
+const processDocumentsSerial = async (fileNames, options, state) => {
+	for (let docId = 0; docId < fileNames.length; docId += 1) {
+		mergeDocument(await analyzeDocument(buildDocumentJob(docId, fileNames, options)), state);
+	}
+};
+
+const processDocumentsParallel = async (fileNames, options, state) => {
+	const workerCount = Math.min(options.workers, fileNames.length);
+	let nextDocId = 0;
+	let completed = 0;
+	const workers = [];
+
+	await new Promise((resolvePromise, rejectPromise) => {
+		let settled = false;
+
+		const rejectOnce = (error) => {
+			if (settled) return;
+			settled = true;
+			for (const worker of workers) {
+				void worker.terminate();
+			}
+			rejectPromise(error);
+		};
+
+		const resolveOnce = () => {
+			if (settled) return;
+			settled = true;
+			for (const worker of workers) {
+				void worker.terminate();
+			}
+			resolvePromise();
+		};
+
+		const dispatch = (worker) => {
+			if (settled) return;
+			if (nextDocId >= fileNames.length) {
+				worker.postMessage(null);
+				return;
+			}
+			const docId = nextDocId;
+			nextDocId += 1;
+			worker.postMessage(buildDocumentJob(docId, fileNames, options));
+		};
+
+		for (let i = 0; i < workerCount; i += 1) {
+			const worker = new Worker(new URL(import.meta.url));
+			workers.push(worker);
+
+			worker.on('message', (message) => {
+				if (message?.error) {
+					rejectOnce(new Error(message.error));
+					return;
+				}
+				mergeDocument(message.result, state);
+				completed += 1;
+				if (completed === fileNames.length) {
+					resolveOnce();
+					return;
+				}
+				dispatch(worker);
+			});
+			worker.on('error', rejectOnce);
+			worker.on('exit', (code) => {
+				if (!settled && code !== 0) {
+					rejectOnce(new Error(`Search index worker exited with code ${code}`));
+				}
+			});
+			dispatch(worker);
+		}
+	});
+};
+
+const processDocuments = async (fileNames, options, state) => {
+	if (options.workers <= 1 || fileNames.length <= 1) {
+		await processDocumentsSerial(fileNames, options, state);
+		return;
+	}
+
+	await processDocumentsParallel(fileNames, options, state);
+};
+
 const buildIndex = async (options) => {
 	const fileNames = await collectFiles(options.input);
 	if (fileNames.length === 0) {
 		throw new Error(`No .txt files found in ${options.input}`);
 	}
 
-	const works = [];
-	const termStats = new Map();
-	let totalChars = 0;
-	let totalTokens = 0;
-
-	for (let docId = 0; docId < fileNames.length; docId += 1) {
-		const fileName = fileNames[docId];
-		const workId = basename(fileName, '.txt');
-		const filePath = join(options.input, fileName);
-		const rawText = await readFile(filePath, options.encoding);
-		const tokens = tokenizeWithOffsets(rawText, options.preserveEnie);
-		const localTf = new Map();
-
-		for (const token of tokens) {
-			if (!localTf.has(token.norm)) localTf.set(token.norm, []);
-			localTf.get(token.norm).push([token.tokenIndex, token.byteStart, token.byteEnd]);
-		}
-
-		for (const [term, occurrences] of localTf) {
-			let current = termStats.get(term);
-			if (!current) {
-				current = { cf: 0, df: 0, docTf: new Map(), docPositions: new Map() };
-				termStats.set(term, current);
-			}
-			current.cf += occurrences.length;
-			current.df += 1;
-			current.docTf.set(docId, occurrences.length);
-			current.docPositions.set(docId, occurrences);
-		}
-
-		works.push([docId, workId, fileName, `${workId}.txt`, tokens.length, rawText.length]);
-		totalChars += rawText.length;
-		totalTokens += tokens.length;
-	}
+	const state = {
+		works: new Array(fileNames.length),
+		termStats: new Map(),
+		totalChars: 0,
+		totalTokens: 0
+	};
+	await processDocuments(fileNames, options, state);
+	const { works, termStats, totalChars, totalTokens } = state;
 
 	const sortedTerms = Array.from(termStats.entries()).sort((a, b) => stableCompare(a[0], b[0]));
 	const termEntries = sortedTerms.map(([term, stats], termId) => {
@@ -645,6 +765,7 @@ const buildIndex = async (options) => {
 const main = async () => {
 	try {
 		const options = parseArgs(process.argv.slice(2));
+		console.log(`[build-search-index] workers=${options.workers}`);
 		const result = await buildIndex(options);
 		console.log(`[build-search-index] Done. works=${result.works} tokens=${result.tokens} vocab=${result.vocab}`);
 		console.log(
@@ -657,4 +778,26 @@ const main = async () => {
 	}
 };
 
-await main();
+const runWorker = () => {
+	if (!parentPort) {
+		throw new Error('Search index worker started without a parent port');
+	}
+
+	parentPort.on('message', async (job) => {
+		if (job === null) {
+			parentPort.close();
+			return;
+		}
+		try {
+			parentPort.postMessage({ result: await analyzeDocument(job) });
+		} catch (error) {
+			parentPort.postMessage({ error: error instanceof Error ? error.message : String(error) });
+		}
+	});
+};
+
+if (isMainThread) {
+	await main();
+} else {
+	runWorker();
+}

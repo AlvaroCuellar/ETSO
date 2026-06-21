@@ -37,6 +37,7 @@ fi
 echo "==> Generando índice de búsqueda"
 echo "   - entrada: $SEARCH_INDEX_INPUT_PATH"
 echo "   - salida:  $SEARCH_INDEX_OUTPUT_PATH"
+echo "   - workers: ${SEARCH_INDEX_WORKERS:-auto}"
 
 ARGS=(
   "$ROOT_DIR/scripts/build-search-index.mjs"

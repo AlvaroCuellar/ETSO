@@ -12,6 +12,8 @@
 	// Importar aquí el futuro logo de BITESO cuando esté disponible.
 	// import bitesoLogo from '$lib/assets/logos/biteso.png';
 	import byNcLogo from '$lib/assets/logos/by-nc.svg';
+	import ChevronDown from 'lucide-svelte/icons/chevron-down';
+	import ChevronRight from 'lucide-svelte/icons/chevron-right';
 	import Download from 'lucide-svelte/icons/download';
 	import PencilLine from 'lucide-svelte/icons/pencil-line';
 	import List from 'lucide-svelte/icons/list';
@@ -237,6 +239,13 @@
 		type?: 'jornada' | 'page';
 	}
 
+	interface TeiNavigationGroup {
+		id: string;
+		anchorId: string;
+		label: string;
+		pages: NavigationMark[];
+	}
+
 	const jornadaPattern = /^\s*--(?<label>[^-].*?)--\s*$/;
 
 	const normalizeJornadaLabel = (value: string): string => value.replace(/\s+/g, ' ').trim();
@@ -345,6 +354,46 @@
 			return marks;
 		}
 	);
+	const teiNavigationGroups = $derived.by((): TeiNavigationGroup[] => {
+		const groups: TeiNavigationGroup[] = [];
+		let currentGroup: TeiNavigationGroup | undefined;
+
+		for (const [index, page] of data.biteso.tei?.pages.entries() ?? []) {
+			const pageMark: NavigationMark = {
+				id: `tei-page-${page.n || index + 1}`,
+				label: formatTeiPageLabel(page, index, true),
+				type: 'page'
+			};
+			const jornadaId = page.jornada?.id || page.jornada?.n || '';
+
+			if (!jornadaId) {
+				if (!currentGroup || currentGroup.id !== 'tei-pages-without-jornada') {
+					currentGroup = {
+						id: 'tei-pages-without-jornada',
+						anchorId: pageMark.id,
+						label: 'Folios',
+						pages: []
+					};
+					groups.push(currentGroup);
+				}
+				currentGroup.pages.push(pageMark);
+				continue;
+			}
+
+			if (!currentGroup || currentGroup.id !== jornadaId) {
+				currentGroup = {
+					id: jornadaId,
+					anchorId: formatJornadaAnchorId(page, index),
+					label: page.jornada?.label || `Jornada ${page.jornada?.n ?? ''}`.trim(),
+					pages: []
+				};
+				groups.push(currentGroup);
+			}
+			currentGroup.pages.push(pageMark);
+		}
+
+		return groups;
+	});
 	const textNavigationMarks = $derived.by(() => (data.biteso.tei ? teiPageMarks : jornadaMarks));
 	const facsimileLabels = $derived(facsimileLabelsByLocale[data.locale] ?? facsimileLabelsByLocale.es);
 	const facsimileImages = $derived.by(() =>
@@ -359,6 +408,7 @@
 	let activeTextAnchor = $state('biteso-text-start');
 	let isCorrectionFormOpen = $state(false);
 	let isDownloadMenuOpen = $state(false);
+	let openTeiNavigationGroups = $state<string[]>([]);
 	let correctionTextarea = $state<HTMLTextAreaElement | null>(null);
 	let lastCorrectionAlertMessage = '';
 	const correctionFeedback = $derived(form?.correctionProposal);
@@ -397,6 +447,19 @@
 
 	const navMarkClass = (mark: NavigationMark): string =>
 		`${navLinkClass(mark.id)} ${mark.type === 'jornada' ? 'mt-2 font-bold uppercase tracking-[0.04em] text-text-accent-purple' : 'ml-2'}`;
+
+	const isTeiNavigationGroupOpen = (id: string): boolean => openTeiNavigationGroups.includes(id);
+	const toggleTeiNavigationGroup = (id: string): void => {
+		openTeiNavigationGroups = isTeiNavigationGroupOpen(id)
+			? openTeiNavigationGroups.filter((groupId) => groupId !== id)
+			: [...openTeiNavigationGroups, id];
+	};
+
+	$effect(() => {
+		if (!data.biteso.tei || openTeiNavigationGroups.length > 0) return;
+		const firstGroup = teiNavigationGroups[0];
+		if (firstGroup) openTeiNavigationGroups = [firstGroup.id];
+	});
 
 	let isMobileMenuOpen = $state(false);
 
@@ -723,18 +786,66 @@
 					>
 						Inicio
 					</a>
-					{#each textNavigationMarks as mark}
-						<a
-							href={`#${mark.id}`}
-							aria-current={activeTextAnchor === mark.id ? 'location' : undefined}
-							class={navMarkClass(mark)}
-							onclick={() => {
-								activeTextAnchor = mark.id;
-							}}
-						>
-							<span data-i18n-skip>{mark.label}</span>
-						</a>
-					{/each}
+					{#if data.biteso.tei}
+						{#each teiNavigationGroups as group}
+							<div class="mt-2 grid gap-1">
+								<div class="grid grid-cols-[minmax(0,1fr)_1.75rem] items-center gap-1">
+									<a
+										href={`#${group.anchorId}`}
+										aria-current={activeTextAnchor === group.anchorId ? 'location' : undefined}
+										class={navLinkClass(group.anchorId) + ' font-bold uppercase tracking-[0.04em] text-text-accent-purple'}
+										onclick={() => {
+											activeTextAnchor = group.anchorId;
+										}}
+									>
+										<span data-i18n-skip>{group.label}</span>
+									</a>
+									<button
+										type="button"
+										class="grid h-7 w-7 place-items-center rounded-[6px] text-text-soft transition hover:bg-surface-soft hover:text-brand-blue-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue"
+										aria-label={isTeiNavigationGroupOpen(group.id) ? 'Plegar folios' : 'Desplegar folios'}
+										aria-expanded={isTeiNavigationGroupOpen(group.id)}
+										onclick={() => toggleTeiNavigationGroup(group.id)}
+									>
+										{#if isTeiNavigationGroupOpen(group.id)}
+											<ChevronDown class="h-4 w-4" aria-hidden="true" />
+										{:else}
+											<ChevronRight class="h-4 w-4" aria-hidden="true" />
+										{/if}
+									</button>
+								</div>
+								{#if isTeiNavigationGroupOpen(group.id)}
+									<div class="grid gap-0.5">
+										{#each group.pages as mark}
+											<a
+												href={`#${mark.id}`}
+												aria-current={activeTextAnchor === mark.id ? 'location' : undefined}
+												class={navMarkClass(mark)}
+												onclick={() => {
+													activeTextAnchor = mark.id;
+												}}
+											>
+												<span data-i18n-skip>{mark.label}</span>
+											</a>
+										{/each}
+									</div>
+								{/if}
+							</div>
+						{/each}
+					{:else}
+						{#each textNavigationMarks as mark}
+							<a
+								href={`#${mark.id}`}
+								aria-current={activeTextAnchor === mark.id ? 'location' : undefined}
+								class={navMarkClass(mark)}
+								onclick={() => {
+									activeTextAnchor = mark.id;
+								}}
+							>
+								<span data-i18n-skip>{mark.label}</span>
+							</a>
+						{/each}
+					{/if}
 				</div>
 			</nav>
 
@@ -823,18 +934,66 @@
 		>
 			Inicio
 		</a>
-		{#each textNavigationMarks as mark}
-			<a
-				href={`#${mark.id}`}
-				class={navLinkClass(mark.id)}
-				onclick={() => {
-					activeTextAnchor = mark.id;
-					isMobileMenuOpen = false;
-				}}
-			>
-				<span data-i18n-skip>{mark.label}</span>
-			</a>
-		{/each}
+		{#if data.biteso.tei}
+			{#each teiNavigationGroups as group}
+				<div class="grid gap-1">
+					<div class="grid grid-cols-[minmax(0,1fr)_1.75rem] items-center gap-1">
+						<a
+							href={`#${group.anchorId}`}
+							class={navLinkClass(group.anchorId)}
+							onclick={() => {
+								activeTextAnchor = group.anchorId;
+								isMobileMenuOpen = false;
+							}}
+						>
+							<span data-i18n-skip>{group.label}</span>
+						</a>
+						<button
+							type="button"
+							class="grid h-7 w-7 place-items-center rounded-[6px] text-text-soft transition hover:bg-surface-soft hover:text-brand-blue-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue"
+							aria-label={isTeiNavigationGroupOpen(group.id) ? 'Plegar folios' : 'Desplegar folios'}
+							aria-expanded={isTeiNavigationGroupOpen(group.id)}
+							onclick={() => toggleTeiNavigationGroup(group.id)}
+						>
+							{#if isTeiNavigationGroupOpen(group.id)}
+								<ChevronDown class="h-4 w-4" aria-hidden="true" />
+							{:else}
+								<ChevronRight class="h-4 w-4" aria-hidden="true" />
+							{/if}
+						</button>
+					</div>
+					{#if isTeiNavigationGroupOpen(group.id)}
+						<div class="grid gap-0.5">
+							{#each group.pages as mark}
+								<a
+									href={`#${mark.id}`}
+									class={navLinkClass(mark.id)}
+									onclick={() => {
+										activeTextAnchor = mark.id;
+										isMobileMenuOpen = false;
+									}}
+								>
+									<span data-i18n-skip>{mark.label}</span>
+								</a>
+							{/each}
+						</div>
+					{/if}
+				</div>
+			{/each}
+		{:else}
+			{#each textNavigationMarks as mark}
+				<a
+					href={`#${mark.id}`}
+					class={navLinkClass(mark.id)}
+					onclick={() => {
+						activeTextAnchor = mark.id;
+						isMobileMenuOpen = false;
+					}}
+				>
+					<span data-i18n-skip>{mark.label}</span>
+				</a>
+			{/each}
+		{/if}
 	</div>
 {/if}
 

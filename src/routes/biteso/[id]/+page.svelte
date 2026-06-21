@@ -242,9 +242,13 @@
 		const parts: string[] = [];
 		if (page.pdfPage) parts.push(`PDF p. ${page.pdfPage}`);
 		if (page.folio) parts.push(`${compact ? 'Fol.' : 'Folio'} ${page.folio}`);
-		for (const numbering of page.numberings ?? []) {
-			if (numbering.type !== 'folio-secondary' || !numbering.value) continue;
-			parts.push(`${compact ? 'Núm. sec.' : 'Numeración secundaria'} ${numbering.value}${numbering.cert === 'low' ? '?' : ''}`);
+		const visibleNumberings = (page.numberings ?? [])
+			.filter((numbering) => numbering.type === 'folio-secondary' && numbering.value)
+			.map((numbering) => `${numbering.value}${numbering.cert === 'low' || numbering.cert === 'medium' ? '?' : ''}`);
+		if (visibleNumberings.length > 0) {
+			parts.push(
+				`${compact ? 'Núm. visibles' : 'Numeraciones visibles'} ${visibleNumberings.join(', ')}`
+			);
 		}
 		if (page.side) parts.push(page.side === 'left' ? 'izquierda' : page.side === 'right' ? 'derecha' : page.side);
 		return parts.length > 0 ? parts.join(' · ') : `Página ${index + 1}`;

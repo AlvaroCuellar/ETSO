@@ -447,6 +447,12 @@
 
 	const navMarkClass = (mark: NavigationMark): string =>
 		`${navLinkClass(mark.id)} ${mark.type === 'jornada' ? 'mt-2 font-bold uppercase tracking-[0.04em] text-text-accent-purple' : 'ml-2'}`;
+	const navFolioClass = (id: string): string =>
+		`block rounded-[6px] px-2 py-1 text-[0.74rem] leading-[1.22] no-underline transition hover:no-underline ${
+			activeTextAnchor === id
+				? 'font-semibold text-brand-blue-dark'
+				: 'text-text-soft hover:text-brand-blue-dark'
+		}`;
 
 	const isTeiNavigationGroupOpen = (id: string): boolean => openTeiNavigationGroups.includes(id);
 	const toggleTeiNavigationGroup = (id: string): void => {
@@ -455,13 +461,13 @@
 			: [...openTeiNavigationGroups, id];
 	};
 	const navGroupButtonClass = (id: string): string =>
-		`grid w-full grid-cols-[1rem_minmax(0,1fr)] items-center gap-2 rounded-[8px] px-2 py-2 text-left font-ui text-[0.78rem] font-bold uppercase tracking-[0.04em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue ${
+		`grid w-full appearance-none grid-cols-[0.85rem_minmax(0,1fr)] items-center gap-2 border-0 border-b bg-transparent px-0.5 py-[0.42rem] text-left font-ui text-[0.72rem] font-bold uppercase tracking-[0.04em] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue ${
 			isTeiNavigationGroupOpen(id)
-				? 'bg-surface-accent-blue text-brand-blue-dark'
-				: 'text-text-accent-purple hover:bg-surface-soft hover:text-brand-blue-dark'
+				? 'border-border-accent-blue/70 text-brand-blue-dark'
+				: 'border-border/40 text-text-accent-purple hover:border-border-accent-blue/50 hover:text-brand-blue-dark'
 		}`;
 	const navGroupPanelClass =
-		'ml-[0.95rem] grid gap-0.5 border-l border-border-accent-blue/70 pl-2 py-1';
+		'ml-[0.43rem] grid gap-0.5 border-l border-border-accent-blue/70 py-2 pl-2.5';
 
 	let isMobileMenuOpen = $state(false);
 
@@ -774,10 +780,10 @@
 
 		<div class="grid gap-5 lg:grid-cols-[11rem_minmax(0,1fr)_11rem] lg:items-start lg:gap-8">
 			<nav
-				class="hidden font-ui lg:sticky lg:top-[calc(5rem+68px)] lg:block"
+				class="hidden font-ui lg:sticky lg:top-32 lg:block lg:max-h-[calc(100vh-10rem)] lg:overflow-y-auto lg:overscroll-contain lg:py-3 lg:pr-1 [scrollbar-width:thin]"
 				aria-label="Navegación del texto BITESO"
 			>
-				<div class="grid gap-1 border-l-2 border-border-accent-blue pl-2">
+				<div class="grid gap-1 border-l-2 border-border-accent-blue pt-1 pb-8 pl-2">
 					<a
 						href="#biteso-text-start"
 						aria-current={activeTextAnchor === 'biteso-text-start' ? 'location' : undefined}
@@ -812,7 +818,7 @@
 											<a
 												href={`#${mark.id}`}
 												aria-current={activeTextAnchor === mark.id ? 'location' : undefined}
-												class={navLinkClass(mark.id)}
+												class={navFolioClass(mark.id)}
 												onclick={() => {
 													activeTextAnchor = mark.id;
 												}}
@@ -914,7 +920,7 @@
 {#if isMobileMenuOpen}
 	<!-- Sombra o panel para el menú móvil -->
 	<div
-		class="shadow-strong border-border fixed right-6 bottom-[4.5rem] z-50 grid gap-1 rounded-xl border bg-white p-3 font-ui lg:hidden"
+		class="shadow-strong border-border fixed right-6 bottom-20 z-50 grid max-h-[calc(100vh-7rem)] w-[min(20rem,calc(100vw-3rem))] gap-1 overflow-y-auto overscroll-contain rounded-xl border bg-white pt-3 pr-3 pb-8 pl-3 font-ui [scrollbar-width:thin] lg:hidden"
 	>
 		<a
 			href="#biteso-text-start"
@@ -949,7 +955,7 @@
 							{#each group.pages as mark}
 								<a
 									href={`#${mark.id}`}
-									class={navLinkClass(mark.id)}
+									class={navFolioClass(mark.id)}
 									onclick={() => {
 										activeTextAnchor = mark.id;
 										isMobileMenuOpen = false;

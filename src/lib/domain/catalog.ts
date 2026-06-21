@@ -311,6 +311,10 @@ export interface BitesoTeiBlock {
 export interface BitesoTeiPage {
 	n?: string;
 	folio?: string;
+	pdfPage?: string;
+	image?: string;
+	side?: string;
+	surfaceNotes?: string[];
 	facs?: string;
 	source?: string;
 	blocks: BitesoTeiBlock[];

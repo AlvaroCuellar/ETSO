@@ -222,6 +222,19 @@
 		return segments;
 	};
 
+	const formatTeiPageLabel = (
+		page: { n?: string; folio?: string; pdfPage?: string; side?: string },
+		index: number,
+		compact = false
+	): string => {
+		const parts: string[] = [];
+		if (page.folio) parts.push(`${compact ? 'Fol.' : 'Folio'} ${page.folio}`);
+		if (page.pdfPage) parts.push(`PDF p. ${page.pdfPage}`);
+		if (page.n) parts.push(`TEI ${page.n}`);
+		if (page.side) parts.push(page.side === 'left' ? 'izquierda' : page.side === 'right' ? 'derecha' : page.side);
+		return parts.length > 0 ? parts.join(' · ') : `Página ${index + 1}`;
+	};
+
 	const textSegments = $derived.by(() => buildTextSegments(data.biteso.text));
 	const jornadaMarks = $derived.by(() =>
 		textSegments.filter(
@@ -233,7 +246,7 @@
 		() =>
 			data.biteso.tei?.pages.map((page, index) => ({
 				id: `tei-page-${page.n || index + 1}`,
-				label: page.folio ? `Fol. ${page.folio}` : `Página ${page.n || index + 1}`
+				label: formatTeiPageLabel(page, index, true)
 			})) ?? []
 	);
 	const textNavigationMarks = $derived.by(() => (data.biteso.tei ? teiPageMarks : jornadaMarks));
@@ -590,7 +603,7 @@
 					{#each data.biteso.tei.pages as page, pageIndex}
 						<section id={`tei-page-${page.n || pageIndex + 1}`} class="grid scroll-mt-28 gap-3">
 							<h3 class="mt-8 mb-1 font-ui text-[0.82rem] font-bold uppercase tracking-[0.08em] text-text-accent-purple">
-								{page.folio ? `Folio ${page.folio}` : `Página ${page.n || pageIndex + 1}`}
+								{formatTeiPageLabel(page, pageIndex)}
 							</h3>
 							{#each page.blocks as block}
 								{#if block.type === 'stage'}

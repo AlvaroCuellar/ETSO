@@ -14,13 +14,6 @@
     "delete": true
   },
   {
-    "name": "facsimiles",
-    "local": "deploy/input/public-assets/facsimiles",
-    "bucket": "etso-public-assets",
-    "prefix": "facsimiles",
-    "delete": true
-  },
-  {
     "name": "textos",
     "local": "deploy/input/private-assets/texts",
     "bucket": "etso-textos",

@@ -4,10 +4,6 @@
 	import InlineActionButton from '$lib/components/ui/InlineActionButton.svelte';
 	import { formatConfidence, type CatalogWork, type AttributionSet, type Confidence } from '$lib/domain/catalog';
 	import { renderInlineItalicsHtml } from '$lib/utils/render-inline-italics-html';
-	import {
-		buildTraditionalAttributionParts,
-		type AttributionPhrasePart
-	} from '$lib/utils/traditional-attribution-phrase';
 
 	interface Props {
 		work: CatalogWork;
@@ -16,43 +12,12 @@
 
 	let { work, showLink = true }: Props = $props();
 
-	type ResultTextPart = AttributionPhrasePart;
-
-	interface AuthorReference {
-		authorId: string;
-		authorName: string;
-	}
-
 	const normalizeText = (value: string): string =>
 		value
 			.normalize('NFD')
 			.replace(/[\u0300-\u036f]/g, '')
 			.toLowerCase()
 			.trim();
-
-	const formatNameList = (names: string[], connector: 'y' | 'o'): string => {
-		if (names.length <= 1) return names[0] ?? '';
-		if (names.length === 2) return `${names[0]} ${connector} ${names[1]}`;
-		return `${names.slice(0, -1).join(', ')} ${connector} ${names[names.length - 1]}`;
-	};
-
-	const formatAuthorListParts = (authors: AuthorReference[], connector: 'y' | 'o'): ResultTextPart[] => {
-		const parts: ResultTextPart[] = [];
-		for (const [index, author] of authors.entries()) {
-			if (index > 0) {
-				parts.push({
-					kind: 'text',
-					value: index === authors.length - 1 ? ` ${connector} ` : ', '
-				});
-			}
-			parts.push({
-				kind: 'author',
-				value: author.authorName,
-				authorId: author.authorId
-			});
-		}
-		return parts;
-	};
 
 	const connectorLabel = (connector: 'and' | 'or'): string => (connector === 'and' ? 'y' : 'o');
 
@@ -64,68 +29,9 @@
 		return 'bg-surface-accent-purple text-text-accent-purple';
 	};
 
-	const buildStylemetryAttributionParts = (set: AttributionSet): ResultTextPart[] => {
-		const members = set.groups.flatMap((group) => group.members).filter((member) => member.authorName.trim());
-		const names = members.map((member) => member.authorName.trim());
-
-		if (names.length === 0) {
-			return [{ kind: 'text', value: 'No apunta hacia ningún autor de forma clara.' }];
-		}
-
-		if (members.length === 1 && members[0].confidence === 'segura') {
-			return [
-				{ kind: 'text', value: 'Análisis estilométrico: ' },
-				{
-					kind: 'author',
-					value: names[0],
-					authorId: members[0].authorId
-				},
-				{ kind: 'text', value: ' (segura).' }
-			];
-		}
-
-		if (members.length === 1 && members[0].confidence === 'probable') {
-			return [
-				{ kind: 'text', value: 'Análisis estilométrico: ' },
-				{
-					kind: 'author',
-					value: names[0],
-					authorId: members[0].authorId
-				},
-				{ kind: 'text', value: ' (probable).' }
-			];
-		}
-
-		if (members.length > 1 && set.connector === 'and') {
-			return [
-				{ kind: 'text', value: 'Análisis estilométrico: ' },
-				...formatAuthorListParts(
-					members.map((m) => ({
-						authorId: m.authorId,
-						authorName: m.authorName.trim()
-					})),
-					'y'
-				),
-				{ kind: 'text', value: ' (posible colaboración).' }
-			];
-		}
-
-		return [
-			{ kind: 'text', value: 'Análisis estilométrico: ' },
-			...formatAuthorListParts(
-				members.map((m) => ({
-					authorId: m.authorId,
-					authorName: m.authorName.trim()
-				})),
-				'o'
-			),
-			{ kind: 'text', value: '.' }
-		];
-	};
-
-	const traditionalAttributionParts = $derived.by(() =>
-		buildTraditionalAttributionParts(work.traditionalAttribution, { includePhrasePrefix: false })
-	);
+	const hasTraditionalAttribution = (set: AttributionSet): boolean => !set.unresolved && set.groups.length > 0;
+	const hasStylometryAttribution = (set: AttributionSet): boolean =>
+		Boolean(set.unresolved || set.groups.length > 0);
 
 	const procedeValue = $derived.by(() => {
 		const origin = work.origin?.trim();
@@ -149,48 +55,70 @@
 	{/snippet}
 
 	<dl class="m-0 grid gap-x-8 gap-y-4 md:grid-cols-2">
-		<div class="grid content-start gap-1.5">
-			<dt class="m-0 font-ui text-[0.72rem] font-bold uppercase tracking-[0.05em] text-text-soft">
-				Atribución tradicional
-			</dt>
-			<dd class="m-0 font-ui text-[0.97rem] leading-[1.65] text-text-main">
-				{#each traditionalAttributionParts as part}
-					{#if part.kind === 'author' && part.authorId}
-						<a
-							href={`/autores/${part.authorId}`}
-							class="font-semibold text-brand-blue underline hover:text-brand-blue-dark focus-visible:text-brand-blue-dark"
-						>
-							{part.value}
-						</a>
-					{:else}
-						{part.value}
-					{/if}
-				{/each}
-			</dd>
-		</div>
-
-		<div class="grid content-start gap-1.5">
-			<dt class="m-0 font-ui text-[0.72rem] font-bold uppercase tracking-[0.05em] text-text-soft">
-				Atribución estilometría
-			</dt>
-			<dd class="m-0 font-ui text-[0.97rem] leading-[1.65] text-text-main">
-				{#if work.stylometryAttribution.unresolved || work.stylometryAttribution.groups.length === 0}
-					No apunta hacia ningún autor de forma clara
-				{:else}
-					<span class="inline-flex flex-wrap items-center gap-x-2 gap-y-1 align-baseline">
-						{#each work.stylometryAttribution.groups as group, groupIndex}
-							<span class="inline-flex flex-wrap items-center gap-x-2 gap-y-1">
+		{#if hasTraditionalAttribution(work.traditionalAttribution)}
+			<div class="grid content-start gap-1.5">
+				<dt class="m-0 font-ui text-[0.72rem] font-bold uppercase tracking-[0.05em] text-text-soft">
+					Atribución tradicional
+				</dt>
+				<dd class="m-0 font-ui text-[0.97rem] leading-[1.65] text-text-main">
+					<div class="flex flex-col items-start gap-[0.65rem]">
+						{#each work.traditionalAttribution.groups as group, groupIndex}
+							<div class="flex flex-wrap items-center gap-3">
 								{#each group.members as member, memberIndex}
-									{#if member.authorId}
-										<a
-											href={`/autores/${member.authorId}`}
-											class="font-semibold text-brand-blue underline hover:text-brand-blue-dark focus-visible:text-brand-blue-dark"
-										>
-											{member.authorName}
-										</a>
-									{:else}
+									<a
+										href={`/autores/${member.authorId}`}
+										class="inline-flex items-baseline gap-1 font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline"
+									>
 										<span>{member.authorName}</span>
+									</a>
+									{#if memberIndex < group.members.length - 1}
+										<span
+											class="inline-flex rounded bg-surface-accent-purple px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-text-accent-purple lowercase"
+											>y</span
+										>
 									{/if}
+								{/each}
+							</div>
+							{#if groupIndex < work.traditionalAttribution.groups.length - 1}
+								<span
+									class="inline-flex rounded bg-surface-accent-purple px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-text-accent-purple lowercase"
+								>
+									{connectorLabel(work.traditionalAttribution.connector)}
+								</span>
+							{/if}
+						{/each}
+					</div>
+				</dd>
+			</div>
+		{/if}
+
+		{#if hasStylometryAttribution(work.stylometryAttribution)}
+			<div class="grid content-start gap-1.5">
+				<dt class="m-0 font-ui text-[0.72rem] font-bold uppercase tracking-[0.05em] text-text-soft">
+					Atribución estilometría
+				</dt>
+				<dd class="m-0 font-ui text-[0.97rem] leading-[1.65] text-text-main">
+					<div class="flex flex-col items-start gap-[0.65rem]">
+						{#if work.stylometryAttribution.unresolved}
+							<div class="flex flex-wrap items-center gap-3">
+								<span class="font-medium italic text-text-soft">No apunta hacia ningún autor</span>
+								<span
+									class={`inline-flex rounded-full px-[0.55rem] py-[0.24rem] font-ui text-[0.72rem] font-bold leading-none tracking-[0.02em] uppercase ${confidenceClass('no_concluyente')}`}
+								>
+									No concluyente
+								</span>
+							</div>
+						{/if}
+
+						{#each work.stylometryAttribution.groups as group, groupIndex}
+							<div class="flex flex-wrap items-center gap-3">
+								{#each group.members as member, memberIndex}
+									<a
+										href={`/autores/${member.authorId}`}
+										class="inline-flex items-baseline gap-1 font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline"
+									>
+										<span>{member.authorName}</span>
+									</a>
 									{#if member.confidence}
 										<span
 											class={`inline-flex rounded-full px-[0.55rem] py-[0.24rem] font-ui text-[0.72rem] font-bold leading-none tracking-[0.02em] uppercase ${confidenceClass(member.confidence)}`}
@@ -199,20 +127,25 @@
 										</span>
 									{/if}
 									{#if memberIndex < group.members.length - 1}
-										<span class="font-ui text-[0.72rem] font-bold text-text-accent-purple lowercase">y</span>
+										<span
+											class="inline-flex rounded bg-surface-accent-purple px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-text-accent-purple lowercase"
+											>y</span
+										>
 									{/if}
 								{/each}
-							</span>
+							</div>
 							{#if groupIndex < work.stylometryAttribution.groups.length - 1}
-								<span class="font-ui text-[0.72rem] font-bold text-text-accent-purple lowercase">
+								<span
+									class="inline-flex rounded bg-surface-accent-purple px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-text-accent-purple lowercase"
+								>
 									{connectorLabel(work.stylometryAttribution.connector)}
 								</span>
 							{/if}
 						{/each}
-					</span>
-				{/if}
-			</dd>
-		</div>
+					</div>
+				</dd>
+			</div>
+		{/if}
 
 		<div class="grid content-start gap-1.5">
 			<dt class="m-0 font-ui text-[0.72rem] font-bold uppercase tracking-[0.05em] text-text-soft">
@@ -221,16 +154,14 @@
 			<dd class="m-0 font-ui text-[0.97rem] leading-[1.65] text-text-main">{work.genre}</dd>
 		</div>
 
-		{#if work.transcriptionType}
-			<div class="grid content-start gap-1.5">
-				<dt class="m-0 font-ui text-[0.72rem] font-bold uppercase tracking-[0.05em] text-text-soft">
-					Tipo de transcripción
-				</dt>
-				<dd class="m-0 font-ui text-[0.97rem] leading-[1.65] text-text-main">
-					{work.transcriptionType}
-				</dd>
-			</div>
-		{/if}
+		<div class="grid content-start gap-1.5">
+			<dt class="m-0 font-ui text-[0.72rem] font-bold uppercase tracking-[0.05em] text-text-soft">
+				Estado del texto
+			</dt>
+			<dd class="m-0 font-ui text-[0.97rem] leading-[1.65] text-text-main">
+				{work.textState}
+			</dd>
+		</div>
 
 		<div class="grid content-start gap-1.5">
 			<dt class="m-0 font-ui text-[0.72rem] font-bold uppercase tracking-[0.05em] text-text-soft">

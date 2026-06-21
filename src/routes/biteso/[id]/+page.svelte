@@ -175,6 +175,12 @@
 		type: 'text' | 'jornada';
 	}
 
+	interface NavigationMark {
+		id: string;
+		label: string;
+		type?: 'jornada' | 'page';
+	}
+
 	const jornadaPattern = /^\s*--(?<label>[^-].*?)--\s*$/;
 
 	const normalizeJornadaLabel = (value: string): string => value.replace(/\s+/g, ' ').trim();
@@ -223,30 +229,75 @@
 	};
 
 	const formatTeiPageLabel = (
-		page: { n?: string; folio?: string; pdfPage?: string; side?: string },
+		page: {
+			n?: string;
+			folio?: string;
+			pdfPage?: string;
+			side?: string;
+			numberings?: { type?: string; value?: string; cert?: string }[];
+		},
 		index: number,
 		compact = false
 	): string => {
 		const parts: string[] = [];
 		if (page.pdfPage) parts.push(`PDF p. ${page.pdfPage}`);
 		if (page.folio) parts.push(`${compact ? 'Fol.' : 'Folio'} ${page.folio}`);
+		for (const numbering of page.numberings ?? []) {
+			if (numbering.type !== 'folio-secondary' || !numbering.value) continue;
+			parts.push(`${compact ? 'Núm. sec.' : 'Numeración secundaria'} ${numbering.value}${numbering.cert === 'low' ? '?' : ''}`);
+		}
 		if (page.side) parts.push(page.side === 'left' ? 'izquierda' : page.side === 'right' ? 'derecha' : page.side);
 		return parts.length > 0 ? parts.join(' · ') : `Página ${index + 1}`;
 	};
+	const formatJornadaAnchorId = (page: { jornada?: { id?: string; n?: string } }, index: number): string =>
+		`tei-jornada-${page.jornada?.id || page.jornada?.n || index + 1}`;
+	const isFirstTeiPageOfJornada = (index: number): boolean => {
+		const current = data.biteso.tei?.pages[index]?.jornada?.id || data.biteso.tei?.pages[index]?.jornada?.n || '';
+		const previous =
+			index > 0
+				? data.biteso.tei?.pages[index - 1]?.jornada?.id || data.biteso.tei?.pages[index - 1]?.jornada?.n || ''
+				: '';
+		return Boolean(current) && current !== previous;
+	};
 
 	const textSegments = $derived.by(() => buildTextSegments(data.biteso.text));
-	const jornadaMarks = $derived.by(() =>
-		textSegments.filter(
-			(segment): segment is TextSegment & { id: string; label: string } =>
-				segment.type === 'jornada' && Boolean(segment.id) && Boolean(segment.label)
-		)
+	const jornadaMarks = $derived.by((): NavigationMark[] =>
+		textSegments
+			.filter(
+				(segment): segment is TextSegment & { id: string; label: string } =>
+					segment.type === 'jornada' && Boolean(segment.id) && Boolean(segment.label)
+			)
+			.map((segment) => ({
+				id: segment.id,
+				label: segment.label,
+				type: 'jornada'
+			}))
 	);
 	const teiPageMarks = $derived.by(
-		() =>
-			data.biteso.tei?.pages.map((page, index) => ({
-				id: `tei-page-${page.n || index + 1}`,
-				label: formatTeiPageLabel(page, index, true)
-			})) ?? []
+		() => {
+			const marks: NavigationMark[] = [];
+			let lastJornadaId = '';
+
+			for (const [index, page] of data.biteso.tei?.pages.entries() ?? []) {
+				const pageId = `tei-page-${page.n || index + 1}`;
+				const jornadaId = page.jornada?.id || page.jornada?.n || '';
+				if (jornadaId && jornadaId !== lastJornadaId) {
+					marks.push({
+						id: formatJornadaAnchorId(page, index),
+						label: page.jornada?.label || `Jornada ${page.jornada?.n ?? ''}`.trim(),
+						type: 'jornada'
+					});
+					lastJornadaId = jornadaId;
+				}
+				marks.push({
+					id: pageId,
+					label: formatTeiPageLabel(page, index, true),
+					type: 'page'
+				});
+			}
+
+			return marks;
+		}
 	);
 	const textNavigationMarks = $derived.by(() => (data.biteso.tei ? teiPageMarks : jornadaMarks));
 	const facsimileLabels = $derived(facsimileLabelsByLocale[data.locale] ?? facsimileLabelsByLocale.es);
@@ -296,6 +347,9 @@
 					? 'font-bold uppercase tracking-[0.04em] text-brand-blue-dark hover:bg-surface-soft'
 					: 'text-text-soft hover:bg-surface-soft hover:text-brand-blue-dark'
 		} ${isStart ? 'text-[0.78rem]' : 'text-[0.82rem] leading-[1.3]'}`;
+
+	const navMarkClass = (mark: NavigationMark): string =>
+		`${navLinkClass(mark.id)} ${mark.type === 'jornada' ? 'mt-2 font-bold uppercase tracking-[0.04em] text-text-accent-purple' : 'ml-2'}`;
 
 	let isMobileMenuOpen = $state(false);
 
@@ -584,7 +638,7 @@
 						<a
 							href={`#${mark.id}`}
 							aria-current={activeTextAnchor === mark.id ? 'location' : undefined}
-							class={navLinkClass(mark.id)}
+							class={navMarkClass(mark)}
 							onclick={() => {
 								activeTextAnchor = mark.id;
 							}}
@@ -600,6 +654,15 @@
 			>
 				{#if data.biteso.tei}
 					{#each data.biteso.tei.pages as page, pageIndex}
+						{#if isFirstTeiPageOfJornada(pageIndex)}
+							<h2
+								id={formatJornadaAnchorId(page, pageIndex)}
+								class="mt-10 mb-1 scroll-mt-28 text-center font-ui text-[0.95rem] font-bold uppercase tracking-[0.08em] text-brand-blue-dark"
+								data-i18n-skip
+							>
+								{page.jornada?.label}
+							</h2>
+						{/if}
 						<section id={`tei-page-${page.n || pageIndex + 1}`} class="grid scroll-mt-28 gap-3">
 							<h3 class="mt-8 mb-1 font-ui text-[0.82rem] font-bold uppercase tracking-[0.08em] text-text-accent-purple">
 								{formatTeiPageLabel(page, pageIndex)}

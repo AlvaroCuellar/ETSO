@@ -315,6 +315,17 @@ export interface BitesoTeiPage {
 	image?: string;
 	side?: string;
 	surfaceNotes?: string[];
+	numberings?: {
+		type?: string;
+		value?: string;
+		cert?: string;
+		label?: string;
+	}[];
+	jornada?: {
+		n?: string;
+		id?: string;
+		label?: string;
+	};
 	facs?: string;
 	source?: string;
 	blocks: BitesoTeiBlock[];

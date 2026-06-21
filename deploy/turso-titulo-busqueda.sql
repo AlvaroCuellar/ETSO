@@ -190,7 +190,7 @@ UPDATE works SET titulo_busqueda = 'Ciencias impiden traiciones' WHERE id = 'BOL
 UPDATE works SET titulo_busqueda = 'Tetis y Peleo' WHERE id = 'BOLEA_TetisYPeleo(Transk-IMPR)';
 UPDATE works SET titulo_busqueda = 'Con amor no siempre la verdad es lo mejor' WHERE id = 'BOTELLO_ConAmorNoSiempreLaVerdad(Transk-IMPR)';
 UPDATE works SET titulo_busqueda = 'Marido asegurado, El El marido asegurado Marido asegurado Marido asegurado El' WHERE id = 'BOYL_MaridoAsegurado';
-UPDATE works SET titulo_busqueda = 'A más amor más desdén' WHERE id = 'BRAVO-SOTOMAYOR_AMasAmorMasDesden(Transk-MSS)';
+UPDATE works SET titulo_busqueda = 'A más desdén más amor' WHERE id = 'BRAVO-SOTOMAYOR_AMasDesdenMasAmor(Transk-MSS)';
 UPDATE works SET titulo_busqueda = 'En el engaño el remedio' WHERE id = 'BRAVO_EnElEnganoElRemedio(Transk-IMPR)';
 UPDATE works SET titulo_busqueda = 'Ingenio es lo mejor, El El ingenio es lo mejor Ingenio es lo mejor Ingenio es lo mejor El' WHERE id = 'BRAVO_IngenioEsLoMejor(Transk-IMPR)';
 UPDATE works SET titulo_busqueda = 'También Zaragoza es cielo y el martirio de Santa Engracia' WHERE id = 'BUENO_TambienZaragozaEsCielo(Transk-IMPR)';

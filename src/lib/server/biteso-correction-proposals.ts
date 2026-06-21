@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 
 import { dev } from '$app/environment';
 import { env } from '$env/dynamic/private';
+import { getFeedbackRecipientEmail } from '$lib/server/feedback-email';
 import { checkRateLimit } from '$lib/server/rate-limit';
 
 const MAX_TEXT_LENGTH = 2_500_000;
@@ -157,10 +158,7 @@ export const submitCorrectionEmail = async ({
 	}
 
 	const diffText = buildChangeSummary(normalizedOriginalText, proposedText);
-	const recipient =
-		kind === 'summary'
-			? env.SUMMARY_CORRECTIONS_EMAIL?.trim() || env.BITESO_CORRECTIONS_EMAIL?.trim()
-			: env.BITESO_CORRECTIONS_EMAIL?.trim();
+	const recipient = getFeedbackRecipientEmail();
 	const label = kind === 'biteso' ? 'BITESO' : 'Resumen ETSO';
 	const subject = `[${label}] Propuesta de corrección: ${workTitle}`;
 	const text = [
@@ -194,11 +192,11 @@ export const submitCorrectionEmail = async ({
 		<pre style="white-space:pre-wrap">${escapeHtml(diffText)}</pre>
 	`;
 
-	if (!recipient || !env.RESEND_API_KEY) {
+	if (!env.RESEND_API_KEY) {
 		if (dev) {
 			console.info('[ETSO correction proposal local preview]', text);
 		} else {
-			console.warn('No se envio aviso de propuesta: faltan destinatario o RESEND_API_KEY.');
+			console.warn('No se envió aviso de propuesta: falta RESEND_API_KEY.');
 		}
 		return { ok: true, emailDelivered: false };
 	}

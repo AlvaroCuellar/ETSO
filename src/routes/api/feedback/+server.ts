@@ -1,10 +1,10 @@
 import { dev } from '$app/environment';
 import { env } from '$env/dynamic/private';
+import { getFeedbackRecipientEmail } from '$lib/server/feedback-email';
 import { json } from '@sveltejs/kit';
 
 import type { RequestHandler } from './$types';
 
-const DEFAULT_FEEDBACK_RECIPIENT = 'alvarocuellar1995@hotmail.com';
 const MAX_FIELD_LENGTH = 4000;
 
 const cleanField = (value: FormDataEntryValue | null): string =>
@@ -30,7 +30,7 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 	const category = cleanField(formData.get('category')) || 'Sugerencia o error';
 	const name = cleanField(formData.get('name'));
 	const email = cleanField(formData.get('email'));
-	const recipient = env.FEEDBACK_RECIPIENT_EMAIL || DEFAULT_FEEDBACK_RECIPIENT;
+	const recipient = getFeedbackRecipientEmail();
 
 	if (message.length < 8) {
 		return json({ ok: false, error: 'El mensaje es demasiado breve.' }, { status: 400 });

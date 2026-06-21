@@ -382,17 +382,17 @@
 		<CitationSuggestionCard class="w-full" citation={data.citation} allowHtml />
 
 		{#if facsimileImages.length > 0}
-			<section class="mx-auto grid w-full max-w-4xl gap-3" aria-label={facsimileLabels.section}>
-				<div class="grid gap-3 md:grid-cols-2">
+			<section class="mx-auto grid w-full max-w-4xl gap-5" aria-label={facsimileLabels.section}>
+				<div class="grid gap-6 md:grid-cols-2 md:gap-8">
 					{#each facsimileImages as image}
-						<figure class="m-0 grid gap-2">
+						<figure class="m-0 grid justify-items-center gap-2">
 							<img
 								src={image.src}
 								alt={image.label}
 								class="h-auto max-h-[28rem] w-full rounded-[8px] border border-border bg-white object-contain"
 								loading="lazy"
 							/>
-							<figcaption class="font-ui text-[0.78rem] font-semibold uppercase tracking-[0.06em] text-text-soft">
+							<figcaption class="text-center font-ui text-[0.78rem] font-semibold uppercase tracking-[0.06em] text-text-soft">
 								{image.label}
 							</figcaption>
 						</figure>

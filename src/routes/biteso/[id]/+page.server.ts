@@ -1,4 +1,4 @@
-import { error, redirect } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
 import { setPublicCatalogCacheHeaders } from '$lib/server/cache-control';
 import { localizePath } from '$lib/i18n';
 import {
@@ -7,8 +7,9 @@ import {
 	getBitesoWorkBySlug,
 	getWorkById
 } from '$lib/server/catalog-runtime';
+import { submitCorrectionEmail } from '$lib/server/biteso-correction-proposals';
 
-import type { PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals, params, setHeaders }) => {
 	const biteso = await getBitesoBySlug(params.id);
@@ -48,4 +49,59 @@ export const load: PageServerLoad = async ({ locals, params, setHeaders }) => {
 		canonicalUrl,
 		publishedOn: work.bitesoPublishedOn ?? ''
 	};
+};
+
+export const actions: Actions = {
+	default: async ({ request, params, url, getClientAddress }) => {
+		const biteso = await getBitesoBySlug(params.id);
+		if (!biteso) {
+			return fail(404, {
+				correctionProposal: {
+					ok: false,
+					message: 'Texto BITESO no encontrado.'
+				}
+			});
+		}
+
+		const work = await getWorkById(biteso.workId);
+		if (!work) {
+			return fail(500, {
+				correctionProposal: {
+					ok: false,
+					message: 'Obra vinculada no disponible.'
+				}
+			});
+		}
+
+		const formData = await request.formData();
+		try {
+			const result = await submitCorrectionEmail({
+				formData,
+				kind: 'biteso',
+				workId: biteso.workId,
+				workSlug: biteso.id,
+				workTitle: work.title,
+				originalText: biteso.text,
+				sourceUrl: url.toString(),
+				clientAddress: getClientAddress()
+			});
+
+			return {
+				correctionProposal: {
+					ok: true,
+					message:
+						'Gracias. Tu propuesta de corrección se ha enviado correctamente y será revisada antes de incorporarse a BITESO.',
+					emailDelivered: result.emailDelivered
+				}
+			};
+		} catch (cause) {
+			const message = cause instanceof Error ? cause.message : 'No se pudo enviar la propuesta.';
+			return fail(400, {
+				correctionProposal: {
+					ok: false,
+					message
+				}
+			});
+		}
+	}
 };

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import CitationSuggestionCard from '$lib/components/ui/CitationSuggestionCard.svelte';
 	import LegalCard from '$lib/components/ui/LegalCard.svelte';
@@ -12,6 +12,7 @@
 	// import bitesoLogo from '$lib/assets/logos/biteso.png';
 	import byNcLogo from '$lib/assets/logos/by-nc.svg';
 	import Download from 'lucide-svelte/icons/download';
+	import PencilLine from 'lucide-svelte/icons/pencil-line';
 	import List from 'lucide-svelte/icons/list';
 	import X from 'lucide-svelte/icons/x';
 	import {
@@ -19,9 +20,9 @@
 		formatPrefixedDisplayWorkTitleHtml
 	} from '$lib/utils/format-display-work-title';
 
-	import type { PageData } from './$types';
+	import type { ActionData, PageData } from './$types';
 
-	let { data }: { data: PageData } = $props();
+	let { data, form }: { data: PageData; form?: ActionData } = $props();
 	const displayWorkTitle = $derived.by(() => formatDisplayWorkTitle(data.work.title));
 	const displayBitesoTitle = $derived.by(() => `Texto digital de ${displayWorkTitle}`);
 	const publicationDateLabel = $derived.by(() => {
@@ -168,6 +169,19 @@
 	);
 
 	let activeTextAnchor = $state('biteso-text-start');
+	let isCorrectionFormOpen = $state(false);
+	let correctionTextarea = $state<HTMLTextAreaElement | null>(null);
+	const correctionFeedback = $derived(form?.correctionProposal);
+
+	const openCorrectionForm = async (): Promise<void> => {
+		isCorrectionFormOpen = true;
+		await tick();
+		correctionTextarea?.focus();
+	};
+
+	$effect(() => {
+		if (correctionFeedback) isCorrectionFormOpen = true;
+	});
 
 	const navLinkClass = (id: string, isStart = false): string =>
 		`rounded-[8px] px-2 py-1.5 no-underline transition hover:no-underline ${
@@ -284,7 +298,16 @@
 			<span data-i18n-skip>{displayWorkTitle.toLocaleUpperCase('es-ES')}</span>
 		</h2>
 
-		<div class="flex min-w-0 max-w-full justify-end">
+		<div class="flex min-w-0 max-w-full flex-wrap justify-end gap-3">
+			<InlineActionButton
+				type="button"
+				icon={PencilLine}
+				ariaLabel="Proponer corrección"
+				title="Proponer corrección"
+				onclick={openCorrectionForm}
+			>
+				Proponer corrección
+			</InlineActionButton>
 			<InlineActionButton
 				type="button"
 				icon={Download}
@@ -295,6 +318,126 @@
 				Descargar TXT
 			</InlineActionButton>
 		</div>
+
+		{#if isCorrectionFormOpen}
+			<section
+				class="grid gap-4 rounded-[8px] border border-border-accent-blue bg-surface-soft px-4 py-4 font-ui text-text-main sm:px-5"
+				aria-labelledby="biteso-correction-heading"
+			>
+				<div class="grid gap-2">
+					<h3 id="biteso-correction-heading" class="m-0 text-[1.05rem] font-bold text-brand-blue-dark">
+						Proponer corrección
+					</h3>
+					<p class="m-0 text-[0.92rem] leading-[1.6] text-text-main">
+						<span class="font-semibold" data-i18n-skip>{displayWorkTitle}</span>
+					</p>
+					<p class="m-0 w-full max-w-none text-[0.92rem] leading-[1.65] text-text-soft">
+						BITESO es una biblioteca en construcción. Si has localizado una errata, una lectura mejorable o
+						una corrección textual, puedes proponernos una modificación. La propuesta no se publicará
+						automáticamente: será revisada antes de incorporarse. Si indicas tu nombre, tu contribución será
+						reconocida en esta página. Puedes mantener todo el texto con las modificaciones que consideres o
+						explicar directamente qué habría que mejorar en el comentario.
+					</p>
+				</div>
+
+				{#if correctionFeedback}
+					<p
+						class={`m-0 rounded-[8px] border px-3 py-2 text-[0.9rem] ${
+							correctionFeedback.ok
+								? 'border-[#b9dec7] bg-[#f3fbf6] text-[#1f6b3a]'
+								: 'border-[#f1c7cf] bg-[#fff6f8] text-[#972842]'
+						}`}
+						role="status"
+					>
+						{correctionFeedback.message}
+					</p>
+				{/if}
+
+				<form method="POST" class="grid gap-4">
+					<div class="absolute left-[-10000px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
+						<label for="biteso-correction-website">Sitio web</label>
+						<input
+							id="biteso-correction-website"
+							name="website"
+							type="text"
+							tabindex="-1"
+							autocomplete="off"
+						/>
+					</div>
+
+					<div class="grid gap-1.5">
+						<label for="biteso-correction-text" class="text-[0.86rem] font-semibold text-brand-blue-dark">
+							Texto propuesto <span class="font-normal text-text-soft">(opcional)</span>
+						</label>
+						<textarea
+							id="biteso-correction-text"
+							name="proposed_text"
+							bind:this={correctionTextarea}
+							class="min-h-[28rem] w-full resize-y rounded-[8px] border border-border bg-white px-3 py-3 font-reading text-[1rem] leading-[1.7] text-text-main outline-none transition focus:border-brand-blue/45 focus:ring-0"
+							data-i18n-skip
+						>{data.biteso.text}</textarea>
+					</div>
+
+					<div class="grid gap-1.5">
+						<label for="biteso-correction-comment" class="text-[0.86rem] font-semibold text-brand-blue-dark">
+							Comentario <span class="font-normal text-text-soft">(opcional)</span>
+						</label>
+						<textarea
+							id="biteso-correction-comment"
+							name="contributor_comment"
+							rows="4"
+							maxlength="4000"
+							class="w-full resize-y rounded-[8px] border border-border bg-white px-3 py-2 text-[0.95rem] leading-[1.55] text-text-main outline-none transition focus:border-brand-blue/45 focus:ring-0"
+						></textarea>
+					</div>
+
+					<div class="grid gap-3 md:grid-cols-2">
+						<div class="grid gap-1.5">
+							<label for="biteso-correction-name" class="text-[0.86rem] font-semibold text-brand-blue-dark">
+								Nombre <span class="font-normal text-text-soft">(opcional)</span>
+							</label>
+							<input
+								id="biteso-correction-name"
+								name="contributor_name"
+								type="text"
+								maxlength="160"
+								autocomplete="name"
+								class="h-[44px] rounded-[8px] border border-border bg-white px-3 py-2 text-[0.95rem] text-text-main outline-none transition focus:border-brand-blue/45 focus:ring-0"
+							/>
+						</div>
+						<div class="grid gap-1.5">
+							<label for="biteso-correction-email" class="text-[0.86rem] font-semibold text-brand-blue-dark">
+								Email <span class="font-normal text-text-soft">(opcional)</span>
+							</label>
+							<input
+								id="biteso-correction-email"
+								name="contributor_email"
+								type="email"
+								maxlength="320"
+								autocomplete="email"
+								class="h-[44px] rounded-[8px] border border-border bg-white px-3 py-2 text-[0.95rem] text-text-main outline-none transition focus:border-brand-blue/45 focus:ring-0"
+							/>
+						</div>
+					</div>
+
+					<div class="flex flex-wrap items-center justify-end gap-3">
+						<button
+							type="button"
+							class="inline-flex h-[42px] items-center justify-center rounded-[8px] border border-border bg-white px-4 py-2 text-[0.9rem] font-semibold text-brand-blue-dark transition hover:bg-surface-accent-blue"
+							onclick={() => (isCorrectionFormOpen = false)}
+						>
+							Cancelar
+						</button>
+						<button
+							type="submit"
+							class="inline-flex h-[42px] items-center justify-center rounded-[8px] bg-brand-blue px-4 py-2 text-[0.9rem] font-semibold text-white transition hover:bg-brand-blue-dark"
+						>
+							Enviar propuesta
+						</button>
+					</div>
+				</form>
+			</section>
+		{/if}
 
 		<div class="grid gap-5 lg:grid-cols-[11rem_minmax(0,1fr)_11rem] lg:items-start lg:gap-8">
 			<nav

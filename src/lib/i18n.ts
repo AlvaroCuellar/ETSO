@@ -2002,17 +2002,306 @@ Object.assign(esToFr, {
 		'Les distances chargées dans work_distances depuis Turso sont affichées. Dans la version finale, cette section pourra être enrichie par les services de calcul officiels du projet.'
 });
 
+const correctionLiteralTranslations: Record<Exclude<Locale, 'es'>, Record<string, string>> = {
+	en: {
+		'Proponer corrección': 'Suggest correction',
+		'Enviar propuesta': 'Send proposal',
+		'Texto propuesto': 'Proposed text',
+		'Resumen propuesto': 'Proposed summary',
+		'(opcional)': '(optional)',
+		'Comentario': 'Comment',
+		'Nombre': 'Name',
+		'Email': 'Email',
+		'Cancelar': 'Cancel',
+		'Sitio web': 'Website',
+		'BITESO es una biblioteca en construcción. Si has localizado una errata, una lectura mejorable o una corrección textual, puedes proponernos una modificación. La propuesta no se publicará automáticamente: será revisada antes de incorporarse. Si indicas tu nombre, tu contribución será reconocida en esta página. Puedes mantener todo el texto con las modificaciones que consideres o explicar directamente qué habría que mejorar en el comentario.':
+			'BITESO is a library under construction. If you have found a typo, a questionable reading, or a textual correction, you can suggest a change. The proposal will not be published automatically: it will be reviewed before being incorporated. If you provide your name, your contribution will be acknowledged on this page. You can keep the full text with the changes you consider appropriate, or explain directly in the comment what should be improved.',
+		'ETSO ofrece resúmenes automáticos como ayuda inicial. Si has localizado una errata, una incoherencia o una mejora de redacción, puedes proponernos una modificación. La propuesta no se publicará automáticamente: será revisada antes de incorporarse. Si indicas tu nombre, tu contribución será reconocida en esta página. Puedes mantener todo el texto con las modificaciones que consideres o explicar directamente qué habría que mejorar en el comentario.':
+			'ETSO offers automatic summaries as an initial aid. If you have found a typo, an inconsistency, or an improvement in wording, you can suggest a change. The proposal will not be published automatically: it will be reviewed before being incorporated. If you provide your name, your contribution will be acknowledged on this page. You can keep the full text with the changes you consider appropriate, or explain directly in the comment what should be improved.',
+		'Gracias. Tu propuesta de corrección se ha enviado correctamente y será revisada antes de incorporarse a BITESO.':
+			'Thank you. Your correction proposal has been sent successfully and will be reviewed before being incorporated into BITESO.',
+		'Gracias. Tu propuesta de corrección se ha enviado correctamente y será revisada antes de incorporarse a ETSO.':
+			'Thank you. Your correction proposal has been sent successfully and will be reviewed before being incorporated into ETSO.',
+		'La propuesta debe incluir una corrección textual o un comentario.':
+			'The proposal must include a textual correction or a comment.',
+		'La propuesta supera la longitud máxima permitida.': 'The proposal exceeds the maximum allowed length.',
+		'El email introducido no parece válido.': 'The email address entered does not look valid.',
+		'Solicitud no válida.': 'Invalid request.',
+		'Demasiados envíos. Inténtalo de nuevo más tarde.': 'Too many submissions. Please try again later.',
+		'No se pudo enviar la propuesta.': 'The proposal could not be sent.',
+		'La propuesta debe ser distinta del texto actual.': 'The proposal must differ from the current text.',
+		'La propuesta debe ser distinta del resumen actual.': 'The proposal must differ from the current summary.'
+	},
+	fr: {
+		'Proponer corrección': 'Proposer une correction',
+		'Enviar propuesta': 'Envoyer la proposition',
+		'Texto propuesto': 'Texte proposé',
+		'Resumen propuesto': 'Résumé proposé',
+		'(opcional)': '(facultatif)',
+		'Comentario': 'Commentaire',
+		'Nombre': 'Nom',
+		'Email': 'Email',
+		'Cancelar': 'Annuler',
+		'Sitio web': 'Site web',
+		'BITESO es una biblioteca en construcción. Si has localizado una errata, una lectura mejorable o una corrección textual, puedes proponernos una modificación. La propuesta no se publicará automáticamente: será revisada antes de incorporarse. Si indicas tu nombre, tu contribución será reconocida en esta página. Puedes mantener todo el texto con las modificaciones que consideres o explicar directamente qué habría que mejorar en el comentario.':
+			'BITESO est une bibliothèque en construction. Si vous avez repéré une coquille, une lecture améliorable ou une correction textuelle, vous pouvez nous proposer une modification. La proposition ne sera pas publiée automatiquement : elle sera relue avant d’être intégrée. Si vous indiquez votre nom, votre contribution sera reconnue sur cette page. Vous pouvez conserver tout le texte avec les modifications que vous jugez utiles, ou expliquer directement dans le commentaire ce qui devrait être amélioré.',
+		'ETSO ofrece resúmenes automáticos como ayuda inicial. Si has localizado una errata, una incoherencia o una mejora de redacción, puedes proponernos una modificación. La propuesta no se publicará automáticamente: será revisada antes de incorporarse. Si indicas tu nombre, tu contribución será reconocida en esta página. Puedes mantener todo el texto con las modificaciones que consideres o explicar directamente qué habría que mejorar en el comentario.':
+			'ETSO propose des résumés automatiques comme première aide. Si vous avez repéré une coquille, une incohérence ou une amélioration de rédaction, vous pouvez nous proposer une modification. La proposition ne sera pas publiée automatiquement : elle sera relue avant d’être intégrée. Si vous indiquez votre nom, votre contribution sera reconnue sur cette page. Vous pouvez conserver tout le texte avec les modifications que vous jugez utiles, ou expliquer directement dans le commentaire ce qui devrait être amélioré.',
+		'Gracias. Tu propuesta de corrección se ha enviado correctamente y será revisada antes de incorporarse a BITESO.':
+			'Merci. Votre proposition de correction a bien été envoyée et sera relue avant d’être intégrée à BITESO.',
+		'Gracias. Tu propuesta de corrección se ha enviado correctamente y será revisada antes de incorporarse a ETSO.':
+			'Merci. Votre proposition de correction a bien été envoyée et sera relue avant d’être intégrée à ETSO.',
+		'La propuesta debe incluir una corrección textual o un comentario.':
+			'La proposition doit inclure une correction textuelle ou un commentaire.',
+		'La propuesta supera la longitud máxima permitida.': 'La proposition dépasse la longueur maximale autorisée.',
+		'El email introducido no parece válido.': "L'adresse email saisie ne semble pas valide.",
+		'Solicitud no válida.': 'Demande non valide.',
+		'Demasiados envíos. Inténtalo de nuevo más tarde.': 'Trop d’envois. Veuillez réessayer plus tard.',
+		'No se pudo enviar la propuesta.': "La proposition n'a pas pu être envoyée.",
+		'La propuesta debe ser distinta del texto actual.': 'La proposition doit être différente du texte actuel.',
+		'La propuesta debe ser distinta del resumen actual.': 'La proposition doit être différente du résumé actuel.'
+	},
+	pt: {
+		'Proponer corrección': 'Propor correção',
+		'Enviar propuesta': 'Enviar proposta',
+		'Texto propuesto': 'Texto proposto',
+		'Resumen propuesto': 'Resumo proposto',
+		'(opcional)': '(opcional)',
+		'Comentario': 'Comentário',
+		'Nombre': 'Nome',
+		'Email': 'Email',
+		'Cancelar': 'Cancelar',
+		'Sitio web': 'Site',
+		'BITESO es una biblioteca en construcción. Si has localizado una errata, una lectura mejorable o una corrección textual, puedes proponernos una modificación. La propuesta no se publicará automáticamente: será revisada antes de incorporarse. Si indicas tu nombre, tu contribución será reconocida en esta página. Puedes mantener todo el texto con las modificaciones que consideres o explicar directamente qué habría que mejorar en el comentario.':
+			'BITESO é uma biblioteca em construção. Se você encontrou uma gralha, uma leitura melhorável ou uma correção textual, pode propor uma alteração. A proposta não será publicada automaticamente: será revista antes de ser incorporada. Se indicar o seu nome, sua contribuição será reconhecida nesta página. Você pode manter todo o texto com as modificações que considerar adequadas ou explicar diretamente no comentário o que deveria ser melhorado.',
+		'ETSO ofrece resúmenes automáticos como ayuda inicial. Si has localizado una errata, una incoherencia o una mejora de redacción, puedes proponernos una modificación. La propuesta no se publicará automáticamente: será revisada antes de incorporarse. Si indicas tu nombre, tu contribución será reconocida en esta página. Puedes mantener todo el texto con las modificaciones que consideres o explicar directamente qué habría que mejorar en el comentario.':
+			'ETSO oferece resumos automáticos como ajuda inicial. Se você encontrou uma gralha, uma incoerência ou uma melhoria de redação, pode propor uma alteração. A proposta não será publicada automaticamente: será revista antes de ser incorporada. Se indicar o seu nome, sua contribuição será reconhecida nesta página. Você pode manter todo o texto com as modificações que considerar adequadas ou explicar diretamente no comentário o que deveria ser melhorado.',
+		'Gracias. Tu propuesta de corrección se ha enviado correctamente y será revisada antes de incorporarse a BITESO.':
+			'Obrigado. Sua proposta de correção foi enviada corretamente e será revista antes de ser incorporada ao BITESO.',
+		'Gracias. Tu propuesta de corrección se ha enviado correctamente y será revisada antes de incorporarse a ETSO.':
+			'Obrigado. Sua proposta de correção foi enviada corretamente e será revista antes de ser incorporada ao ETSO.',
+		'La propuesta debe incluir una corrección textual o un comentario.':
+			'A proposta deve incluir uma correção textual ou um comentário.',
+		'La propuesta supera la longitud máxima permitida.': 'A proposta ultrapassa o comprimento máximo permitido.',
+		'El email introducido no parece válido.': 'O email introduzido não parece válido.',
+		'Solicitud no válida.': 'Pedido inválido.',
+		'Demasiados envíos. Inténtalo de nuevo más tarde.': 'Demasiados envios. Tente novamente mais tarde.',
+		'No se pudo enviar la propuesta.': 'Não foi possível enviar a proposta.',
+		'La propuesta debe ser distinta del texto actual.': 'A proposta deve ser diferente do texto atual.',
+		'La propuesta debe ser distinta del resumen actual.': 'A proposta deve ser diferente do resumo atual.'
+	},
+	it: {
+		'Proponer corrección': 'Proporre correzione',
+		'Enviar propuesta': 'Invia proposta',
+		'Texto propuesto': 'Testo proposto',
+		'Resumen propuesto': 'Riassunto proposto',
+		'(opcional)': '(opzionale)',
+		'Comentario': 'Commento',
+		'Nombre': 'Nome',
+		'Email': 'Email',
+		'Cancelar': 'Annulla',
+		'Sitio web': 'Sito web',
+		'BITESO es una biblioteca en construcción. Si has localizado una errata, una lectura mejorable o una corrección textual, puedes proponernos una modificación. La propuesta no se publicará automáticamente: será revisada antes de incorporarse. Si indicas tu nombre, tu contribución será reconocida en esta página. Puedes mantener todo el texto con las modificaciones que consideres o explicar directamente qué habría que mejorar en el comentario.':
+			'BITESO è una biblioteca in costruzione. Se hai individuato un refuso, una lettura migliorabile o una correzione testuale, puoi proporci una modifica. La proposta non sarà pubblicata automaticamente: sarà revisionata prima di essere incorporata. Se indichi il tuo nome, il tuo contributo sarà riconosciuto in questa pagina. Puoi mantenere tutto il testo con le modifiche che ritieni opportune oppure spiegare direttamente nel commento che cosa andrebbe migliorato.',
+		'ETSO ofrece resúmenes automáticos como ayuda inicial. Si has localizado una errata, una incoherencia o una mejora de redacción, puedes proponernos una modificación. La propuesta no se publicará automáticamente: será revisada antes de incorporarse. Si indicas tu nombre, tu contribución será reconocida en esta página. Puedes mantener todo el texto con las modificaciones que consideres o explicar directamente qué habría que mejorar en el comentario.':
+			'ETSO offre riassunti automatici come aiuto iniziale. Se hai individuato un refuso, un’incoerenza o un miglioramento di redazione, puoi proporci una modifica. La proposta non sarà pubblicata automaticamente: sarà revisionata prima di essere incorporata. Se indichi il tuo nome, il tuo contributo sarà riconosciuto in questa pagina. Puoi mantenere tutto il testo con le modifiche che ritieni opportune oppure spiegare direttamente nel commento che cosa andrebbe migliorato.',
+		'Gracias. Tu propuesta de corrección se ha enviado correctamente y será revisada antes de incorporarse a BITESO.':
+			'Grazie. La tua proposta di correzione è stata inviata correttamente e sarà revisionata prima di essere incorporata in BITESO.',
+		'Gracias. Tu propuesta de corrección se ha enviado correctamente y será revisada antes de incorporarse a ETSO.':
+			'Grazie. La tua proposta di correzione è stata inviata correttamente e sarà revisionata prima di essere incorporata in ETSO.',
+		'La propuesta debe incluir una corrección textual o un comentario.':
+			'La proposta deve includere una correzione testuale o un commento.',
+		'La propuesta supera la longitud máxima permitida.': 'La proposta supera la lunghezza massima consentita.',
+		'El email introducido no parece válido.': "L'email inserita non sembra valida.",
+		'Solicitud no válida.': 'Richiesta non valida.',
+		'Demasiados envíos. Inténtalo de nuevo más tarde.': 'Troppi invii. Riprova più tardi.',
+		'No se pudo enviar la propuesta.': 'Non è stato possibile inviare la proposta.',
+		'La propuesta debe ser distinta del texto actual.': 'La proposta deve essere diversa dal testo attuale.',
+		'La propuesta debe ser distinta del resumen actual.': 'La proposta deve essere diversa dal riassunto attuale.'
+	},
+	de: {
+		'Proponer corrección': 'Korrektur vorschlagen',
+		'Enviar propuesta': 'Vorschlag senden',
+		'Texto propuesto': 'Vorgeschlagener Text',
+		'Resumen propuesto': 'Vorgeschlagene Zusammenfassung',
+		'(opcional)': '(optional)',
+		'Comentario': 'Kommentar',
+		'Nombre': 'Name',
+		'Email': 'Email',
+		'Cancelar': 'Abbrechen',
+		'Sitio web': 'Website',
+		'BITESO es una biblioteca en construcción. Si has localizado una errata, una lectura mejorable o una corrección textual, puedes proponernos una modificación. La propuesta no se publicará automáticamente: será revisada antes de incorporarse. Si indicas tu nombre, tu contribución será reconocida en esta página. Puedes mantener todo el texto con las modificaciones que consideres o explicar directamente qué habría que mejorar en el comentario.':
+			'BITESO ist eine Bibliothek im Aufbau. Wenn Sie einen Tippfehler, eine verbesserungswürdige Lesart oder eine textuelle Korrektur gefunden haben, können Sie uns eine Änderung vorschlagen. Der Vorschlag wird nicht automatisch veröffentlicht: Er wird vor der Aufnahme geprüft. Wenn Sie Ihren Namen angeben, wird Ihr Beitrag auf dieser Seite gewürdigt. Sie können den gesamten Text mit den gewünschten Änderungen beibehalten oder im Kommentar direkt erklären, was verbessert werden sollte.',
+		'ETSO ofrece resúmenes automáticos como ayuda inicial. Si has localizado una errata, una incoherencia o una mejora de redacción, puedes proponernos una modificación. La propuesta no se publicará automáticamente: será revisada antes de incorporarse. Si indicas tu nombre, tu contribución será reconocida en esta página. Puedes mantener todo el texto con las modificaciones que consideres o explicar directamente qué habría que mejorar en el comentario.':
+			'ETSO bietet automatische Zusammenfassungen als erste Hilfe. Wenn Sie einen Tippfehler, eine Unstimmigkeit oder eine sprachliche Verbesserung gefunden haben, können Sie uns eine Änderung vorschlagen. Der Vorschlag wird nicht automatisch veröffentlicht: Er wird vor der Aufnahme geprüft. Wenn Sie Ihren Namen angeben, wird Ihr Beitrag auf dieser Seite gewürdigt. Sie können den gesamten Text mit den gewünschten Änderungen beibehalten oder im Kommentar direkt erklären, was verbessert werden sollte.',
+		'Gracias. Tu propuesta de corrección se ha enviado correctamente y será revisada antes de incorporarse a BITESO.':
+			'Danke. Ihr Korrekturvorschlag wurde erfolgreich gesendet und wird vor der Aufnahme in BITESO geprüft.',
+		'Gracias. Tu propuesta de corrección se ha enviado correctamente y será revisada antes de incorporarse a ETSO.':
+			'Danke. Ihr Korrekturvorschlag wurde erfolgreich gesendet und wird vor der Aufnahme in ETSO geprüft.',
+		'La propuesta debe incluir una corrección textual o un comentario.':
+			'Der Vorschlag muss eine Textkorrektur oder einen Kommentar enthalten.',
+		'La propuesta supera la longitud máxima permitida.': 'Der Vorschlag überschreitet die maximal zulässige Länge.',
+		'El email introducido no parece válido.': 'Die eingegebene E-Mail-Adresse scheint nicht gültig zu sein.',
+		'Solicitud no válida.': 'Ungültige Anfrage.',
+		'Demasiados envíos. Inténtalo de nuevo más tarde.': 'Zu viele Einsendungen. Bitte versuchen Sie es später erneut.',
+		'No se pudo enviar la propuesta.': 'Der Vorschlag konnte nicht gesendet werden.',
+		'La propuesta debe ser distinta del texto actual.': 'Der Vorschlag muss sich vom aktuellen Text unterscheiden.',
+		'La propuesta debe ser distinta del resumen actual.': 'Der Vorschlag muss sich von der aktuellen Zusammenfassung unterscheiden.'
+	},
+	zh: {
+		'Proponer corrección': '提交更正建议',
+		'Enviar propuesta': '发送建议',
+		'Texto propuesto': '建议文本',
+		'Resumen propuesto': '建议摘要',
+		'(opcional)': '（可选）',
+		'Comentario': '说明',
+		'Nombre': '姓名',
+		'Email': 'Email',
+		'Cancelar': '取消',
+		'Sitio web': '网站',
+		'BITESO es una biblioteca en construcción. Si has localizado una errata, una lectura mejorable o una corrección textual, puedes proponernos una modificación. La propuesta no se publicará automáticamente: será revisada antes de incorporarse. Si indicas tu nombre, tu contribución será reconocida en esta página. Puedes mantener todo el texto con las modificaciones que consideres o explicar directamente qué habría que mejorar en el comentario.':
+			'BITESO 是一个正在建设中的文库。如果你发现了错字、可改进的异文或文本校正，可以向我们提出修改建议。建议不会自动发布：在纳入之前会先经过审核。如果你填写姓名，你的贡献将在本页获得致谢。你可以保留全文并加入你认为合适的修改，也可以直接在说明中解释需要改进的地方。',
+		'ETSO ofrece resúmenes automáticos como ayuda inicial. Si has localizado una errata, una incoherencia o una mejora de redacción, puedes proponernos una modificación. La propuesta no se publicará automáticamente: será revisada antes de incorporarse. Si indicas tu nombre, tu contribución será reconocida en esta página. Puedes mantener todo el texto con las modificaciones que consideres o explicar directamente qué habría que mejorar en el comentario.':
+			'ETSO 提供自动摘要作为初步辅助。如果你发现了错字、不一致之处或文字表达可改进的地方，可以向我们提出修改建议。建议不会自动发布：在纳入之前会先经过审核。如果你填写姓名，你的贡献将在本页获得致谢。你可以保留全文并加入你认为合适的修改，也可以直接在说明中解释需要改进的地方。',
+		'Gracias. Tu propuesta de corrección se ha enviado correctamente y será revisada antes de incorporarse a BITESO.':
+			'谢谢。你的更正建议已成功发送，并将在纳入 BITESO 之前经过审核。',
+		'Gracias. Tu propuesta de corrección se ha enviado correctamente y será revisada antes de incorporarse a ETSO.':
+			'谢谢。你的更正建议已成功发送，并将在纳入 ETSO 之前经过审核。',
+		'La propuesta debe incluir una corrección textual o un comentario.': '建议必须包含文本校正或说明。',
+		'La propuesta supera la longitud máxima permitida.': '建议超过了允许的最大长度。',
+		'El email introducido no parece válido.': '输入的电子邮件地址似乎无效。',
+		'Solicitud no válida.': '请求无效。',
+		'Demasiados envíos. Inténtalo de nuevo más tarde.': '提交次数过多。请稍后再试。',
+		'No se pudo enviar la propuesta.': '无法发送建议。',
+		'La propuesta debe ser distinta del texto actual.': '建议必须不同于当前文本。',
+		'La propuesta debe ser distinta del resumen actual.': '建议必须不同于当前摘要。'
+	},
+	ja: {
+		'Proponer corrección': '修正を提案',
+		'Enviar propuesta': '提案を送信',
+		'Texto propuesto': '提案する本文',
+		'Resumen propuesto': '提案する要約',
+		'(opcional)': '（任意）',
+		'Comentario': 'コメント',
+		'Nombre': '名前',
+		'Email': 'Email',
+		'Cancelar': 'キャンセル',
+		'Sitio web': 'ウェブサイト',
+		'BITESO es una biblioteca en construcción. Si has localizado una errata, una lectura mejorable o una corrección textual, puedes proponernos una modificación. La propuesta no se publicará automáticamente: será revisada antes de incorporarse. Si indicas tu nombre, tu contribución será reconocida en esta página. Puedes mantener todo el texto con las modificaciones que consideres o explicar directamente qué habría que mejorar en el comentario.':
+			'BITESO は構築中のライブラリです。誤字、改善できる読み、または本文の修正を見つけた場合は、変更を提案できます。提案は自動的には公開されず、取り込まれる前に確認されます。名前を入力した場合、あなたの貢献はこのページで明記されます。必要だと思う修正を加えた全文を残すことも、改善すべき点をコメントで直接説明することもできます。',
+		'ETSO ofrece resúmenes automáticos como ayuda inicial. Si has localizado una errata, una incoherencia o una mejora de redacción, puedes proponernos una modificación. La propuesta no se publicará automáticamente: será revisada antes de incorporarse. Si indicas tu nombre, tu contribución será reconocida en esta página. Puedes mantener todo el texto con las modificaciones que consideres o explicar directamente qué habría que mejorar en el comentario.':
+			'ETSO は初期的な補助として自動要約を提供しています。誤字、不整合、または文章表現の改善点を見つけた場合は、変更を提案できます。提案は自動的には公開されず、取り込まれる前に確認されます。名前を入力した場合、あなたの貢献はこのページで明記されます。必要だと思う修正を加えた全文を残すことも、改善すべき点をコメントで直接説明することもできます。',
+		'Gracias. Tu propuesta de corrección se ha enviado correctamente y será revisada antes de incorporarse a BITESO.':
+			'ありがとうございます。修正提案は正常に送信され、BITESO に取り込まれる前に確認されます。',
+		'Gracias. Tu propuesta de corrección se ha enviado correctamente y será revisada antes de incorporarse a ETSO.':
+			'ありがとうございます。修正提案は正常に送信され、ETSO に取り込まれる前に確認されます。',
+		'La propuesta debe incluir una corrección textual o un comentario.': '提案には本文修正またはコメントを含める必要があります。',
+		'La propuesta supera la longitud máxima permitida.': '提案が許可された最大長を超えています。',
+		'El email introducido no parece válido.': '入力されたメールアドレスは有効ではないようです。',
+		'Solicitud no válida.': '無効なリクエストです。',
+		'Demasiados envíos. Inténtalo de nuevo más tarde.': '送信回数が多すぎます。後でもう一度お試しください。',
+		'No se pudo enviar la propuesta.': '提案を送信できませんでした。',
+		'La propuesta debe ser distinta del texto actual.': '提案は現在の本文と異なる必要があります。',
+		'La propuesta debe ser distinta del resumen actual.': '提案は現在の要約と異なる必要があります。'
+	},
+	ko: {
+		'Proponer corrección': '수정 제안',
+		'Enviar propuesta': '제안 보내기',
+		'Texto propuesto': '제안 텍스트',
+		'Resumen propuesto': '제안 요약',
+		'(opcional)': '(선택)',
+		'Comentario': '의견',
+		'Nombre': '이름',
+		'Email': 'Email',
+		'Cancelar': '취소',
+		'Sitio web': '웹사이트',
+		'BITESO es una biblioteca en construcción. Si has localizado una errata, una lectura mejorable o una corrección textual, puedes proponernos una modificación. La propuesta no se publicará automáticamente: será revisada antes de incorporarse. Si indicas tu nombre, tu contribución será reconocida en esta página. Puedes mantener todo el texto con las modificaciones que consideres o explicar directamente qué habría que mejorar en el comentario.':
+			'BITESO는 구축 중인 라이브러리입니다. 오자, 개선할 수 있는 독해, 또는 텍스트 수정 사항을 발견했다면 변경을 제안할 수 있습니다. 제안은 자동으로 게시되지 않으며, 반영되기 전에 검토됩니다. 이름을 입력하면 이 페이지에서 기여가 인정됩니다. 필요하다고 생각하는 수정 사항을 반영한 전체 텍스트를 유지하거나, 무엇을 개선해야 하는지 의견란에 직접 설명할 수 있습니다.',
+		'ETSO ofrece resúmenes automáticos como ayuda inicial. Si has localizado una errata, una incoherencia o una mejora de redacción, puedes proponernos una modificación. La propuesta no se publicará automáticamente: será revisada antes de incorporarse. Si indicas tu nombre, tu contribución será reconocida en esta página. Puedes mantener todo el texto con las modificaciones que consideres o explicar directamente qué habría que mejorar en el comentario.':
+			'ETSO는 초기 도움으로 자동 요약을 제공합니다. 오자, 불일치, 또는 문장 개선점을 발견했다면 변경을 제안할 수 있습니다. 제안은 자동으로 게시되지 않으며, 반영되기 전에 검토됩니다. 이름을 입력하면 이 페이지에서 기여가 인정됩니다. 필요하다고 생각하는 수정 사항을 반영한 전체 텍스트를 유지하거나, 무엇을 개선해야 하는지 의견란에 직접 설명할 수 있습니다.',
+		'Gracias. Tu propuesta de corrección se ha enviado correctamente y será revisada antes de incorporarse a BITESO.':
+			'감사합니다. 수정 제안이 정상적으로 전송되었으며 BITESO에 반영되기 전에 검토됩니다.',
+		'Gracias. Tu propuesta de corrección se ha enviado correctamente y será revisada antes de incorporarse a ETSO.':
+			'감사합니다. 수정 제안이 정상적으로 전송되었으며 ETSO에 반영되기 전에 검토됩니다.',
+		'La propuesta debe incluir una corrección textual o un comentario.': '제안에는 텍스트 수정 또는 의견이 포함되어야 합니다.',
+		'La propuesta supera la longitud máxima permitida.': '제안이 허용된 최대 길이를 초과했습니다.',
+		'El email introducido no parece válido.': '입력한 이메일이 유효하지 않은 것 같습니다.',
+		'Solicitud no válida.': '유효하지 않은 요청입니다.',
+		'Demasiados envíos. Inténtalo de nuevo más tarde.': '제출이 너무 많습니다. 나중에 다시 시도해 주세요.',
+		'No se pudo enviar la propuesta.': '제안을 보낼 수 없습니다.',
+		'La propuesta debe ser distinta del texto actual.': '제안은 현재 텍스트와 달라야 합니다.',
+		'La propuesta debe ser distinta del resumen actual.': '제안은 현재 요약과 달라야 합니다.'
+	},
+	ru: {
+		'Proponer corrección': 'Предложить исправление',
+		'Enviar propuesta': 'Отправить предложение',
+		'Texto propuesto': 'Предлагаемый текст',
+		'Resumen propuesto': 'Предлагаемое резюме',
+		'(opcional)': '(необязательно)',
+		'Comentario': 'Комментарий',
+		'Nombre': 'Имя',
+		'Email': 'Email',
+		'Cancelar': 'Отмена',
+		'Sitio web': 'Сайт',
+		'BITESO es una biblioteca en construcción. Si has localizado una errata, una lectura mejorable o una corrección textual, puedes proponernos una modificación. La propuesta no se publicará automáticamente: será revisada antes de incorporarse. Si indicas tu nombre, tu contribución será reconocida en esta página. Puedes mantener todo el texto con las modificaciones que consideres o explicar directamente qué habría que mejorar en el comentario.':
+			'BITESO — библиотека в стадии разработки. Если вы нашли опечатку, чтение, которое можно улучшить, или текстологическую правку, вы можете предложить изменение. Предложение не будет опубликовано автоматически: перед включением оно будет проверено. Если вы укажете свое имя, ваш вклад будет отмечен на этой странице. Вы можете оставить весь текст с нужными изменениями или прямо в комментарии объяснить, что следует улучшить.',
+		'ETSO ofrece resúmenes automáticos como ayuda inicial. Si has localizado una errata, una incoherencia o una mejora de redacción, puedes proponernos una modificación. La propuesta no se publicará automáticamente: será revisada antes de incorporarse. Si indicas tu nombre, tu contribución será reconocida en esta página. Puedes mantener todo el texto con las modificaciones que consideres o explicar directamente qué habría que mejorar en el comentario.':
+			'ETSO предлагает автоматические резюме как начальную помощь. Если вы нашли опечатку, несоответствие или улучшение формулировки, вы можете предложить изменение. Предложение не будет опубликовано автоматически: перед включением оно будет проверено. Если вы укажете свое имя, ваш вклад будет отмечен на этой странице. Вы можете оставить весь текст с нужными изменениями или прямо в комментарии объяснить, что следует улучшить.',
+		'Gracias. Tu propuesta de corrección se ha enviado correctamente y será revisada antes de incorporarse a BITESO.':
+			'Спасибо. Ваше предложение исправления успешно отправлено и будет проверено перед включением в BITESO.',
+		'Gracias. Tu propuesta de corrección se ha enviado correctamente y será revisada antes de incorporarse a ETSO.':
+			'Спасибо. Ваше предложение исправления успешно отправлено и будет проверено перед включением в ETSO.',
+		'La propuesta debe incluir una corrección textual o un comentario.':
+			'Предложение должно содержать текстовую правку или комментарий.',
+		'La propuesta supera la longitud máxima permitida.': 'Предложение превышает максимально допустимую длину.',
+		'El email introducido no parece válido.': 'Введенный адрес электронной почты выглядит недействительным.',
+		'Solicitud no válida.': 'Недействительный запрос.',
+		'Demasiados envíos. Inténtalo de nuevo más tarde.': 'Слишком много отправок. Попробуйте позже.',
+		'No se pudo enviar la propuesta.': 'Не удалось отправить предложение.',
+		'La propuesta debe ser distinta del texto actual.': 'Предложение должно отличаться от текущего текста.',
+		'La propuesta debe ser distinta del resumen actual.': 'Предложение должно отличаться от текущего резюме.'
+	},
+	ar: {
+		'Proponer corrección': 'اقتراح تصحيح',
+		'Enviar propuesta': 'إرسال الاقتراح',
+		'Texto propuesto': 'النص المقترح',
+		'Resumen propuesto': 'الملخص المقترح',
+		'(opcional)': '(اختياري)',
+		'Comentario': 'تعليق',
+		'Nombre': 'الاسم',
+		'Email': 'البريد الإلكتروني',
+		'Cancelar': 'إلغاء',
+		'Sitio web': 'الموقع',
+		'BITESO es una biblioteca en construcción. Si has localizado una errata, una lectura mejorable o una corrección textual, puedes proponernos una modificación. La propuesta no se publicará automáticamente: será revisada antes de incorporarse. Si indicas tu nombre, tu contribución será reconocida en esta página. Puedes mantener todo el texto con las modificaciones que consideres o explicar directamente qué habría que mejorar en el comentario.':
+			'BITESO مكتبة قيد الإنشاء. إذا وجدت خطأ مطبعيا أو قراءة يمكن تحسينها أو تصحيحا نصيا، يمكنك اقتراح تعديل. لن ينشر الاقتراح تلقائيا: سيخضع للمراجعة قبل إدراجه. إذا كتبت اسمك فسيتم الاعتراف بمساهمتك في هذه الصفحة. يمكنك الإبقاء على النص كاملا مع التعديلات التي تراها مناسبة، أو شرح ما ينبغي تحسينه مباشرة في التعليق.',
+		'ETSO ofrece resúmenes automáticos como ayuda inicial. Si has localizado una errata, una incoherencia o una mejora de redacción, puedes proponernos una modificación. La propuesta no se publicará automáticamente: será revisada antes de incorporarse. Si indicas tu nombre, tu contribución será reconocida en esta página. Puedes mantener todo el texto con las modificaciones que consideres o explicar directamente qué habría que mejorar en el comentario.':
+			'يوفر ETSO ملخصات آلية بوصفها مساعدة أولية. إذا وجدت خطأ مطبعيا أو تناقضا أو صياغة يمكن تحسينها، يمكنك اقتراح تعديل. لن ينشر الاقتراح تلقائيا: سيخضع للمراجعة قبل إدراجه. إذا كتبت اسمك فسيتم الاعتراف بمساهمتك في هذه الصفحة. يمكنك الإبقاء على النص كاملا مع التعديلات التي تراها مناسبة، أو شرح ما ينبغي تحسينه مباشرة في التعليق.',
+		'Gracias. Tu propuesta de corrección se ha enviado correctamente y será revisada antes de incorporarse a BITESO.':
+			'شكرا لك. تم إرسال اقتراح التصحيح بنجاح وسيخضع للمراجعة قبل إدراجه في BITESO.',
+		'Gracias. Tu propuesta de corrección se ha enviado correctamente y será revisada antes de incorporarse a ETSO.':
+			'شكرا لك. تم إرسال اقتراح التصحيح بنجاح وسيخضع للمراجعة قبل إدراجه في ETSO.',
+		'La propuesta debe incluir una corrección textual o un comentario.': 'يجب أن يتضمن الاقتراح تصحيحا نصيا أو تعليقا.',
+		'La propuesta supera la longitud máxima permitida.': 'يتجاوز الاقتراح الحد الأقصى المسموح به للطول.',
+		'El email introducido no parece válido.': 'عنوان البريد الإلكتروني المدخل لا يبدو صالحا.',
+		'Solicitud no válida.': 'طلب غير صالح.',
+		'Demasiados envíos. Inténtalo de nuevo más tarde.': 'عدد كبير جدا من الإرسالات. حاول مرة أخرى لاحقا.',
+		'No se pudo enviar la propuesta.': 'تعذر إرسال الاقتراح.',
+		'La propuesta debe ser distinta del texto actual.': 'يجب أن يختلف الاقتراح عن النص الحالي.',
+		'La propuesta debe ser distinta del resumen actual.': 'يجب أن يختلف الاقتراح عن الملخص الحالي.'
+	}
+};
+
 export const literalTranslations: Record<Exclude<Locale, 'es'>, Record<string, string>> = {
-	en: esToEn,
-	fr: esToFr,
-	pt: esToPt,
-	it: esToIt,
-	de: esToDe,
-	zh: esToZh,
-	ja: esToJa,
-	ko: esToKo,
-	ru: esToRu,
-	ar: esToAr
+	en: { ...esToEn, ...correctionLiteralTranslations.en },
+	fr: { ...esToFr, ...correctionLiteralTranslations.fr },
+	pt: { ...esToPt, ...correctionLiteralTranslations.pt },
+	it: { ...esToIt, ...correctionLiteralTranslations.it },
+	de: { ...esToDe, ...correctionLiteralTranslations.de },
+	zh: { ...esToZh, ...correctionLiteralTranslations.zh },
+	ja: { ...esToJa, ...correctionLiteralTranslations.ja },
+	ko: { ...esToKo, ...correctionLiteralTranslations.ko },
+	ru: { ...esToRu, ...correctionLiteralTranslations.ru },
+	ar: { ...esToAr, ...correctionLiteralTranslations.ar }
 };
 
 export const isSupportedLocale = (value: string): value is Locale =>

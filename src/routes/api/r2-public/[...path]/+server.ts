@@ -6,7 +6,7 @@ import { getPublicR2BaseUrl } from '$lib/server/r2-public';
 
 import type { RequestHandler } from './$types';
 
-const PUBLIC_PREFIXES = new Set(['resumenes', 'search']);
+const PUBLIC_PREFIXES = new Set(['resumenes', 'search', 'facsimiles']);
 const LOCAL_PUBLIC_ASSETS_DIR = resolve(process.cwd(), 'deploy', 'input', 'public-assets');
 
 const stripTrailingSlash = (value: string): string => value.replace(/\/+$/, '');
@@ -17,6 +17,9 @@ const contentTypeForPath = (path: string): string => {
 	if (extension === '.json') return 'application/json; charset=utf-8';
 	if (extension === '.txt') return 'text/plain; charset=utf-8';
 	if (extension === '.html') return 'text/html; charset=utf-8';
+	if (extension === '.jpg' || extension === '.jpeg') return 'image/jpeg';
+	if (extension === '.png') return 'image/png';
+	if (extension === '.webp') return 'image/webp';
 	return 'application/octet-stream';
 };
 

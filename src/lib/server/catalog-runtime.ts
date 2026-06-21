@@ -5,8 +5,8 @@ import forceAtlas2 from 'graphology-layout-forceatlas2';
 import { dev } from '$app/environment';
 import { env } from '$env/dynamic/private';
 import { existsSync } from 'node:fs';
-import { readPrivateTextByWorkId } from '$lib/server/r2-private';
-import { fetchPublicR2Json, getSummariesBaseUrl } from '$lib/server/r2-public';
+import { readPrivateTextByTextKey, readPrivateTextByWorkId } from '$lib/server/r2-private';
+import { fetchPublicR2Json, getPublicAssetUrl, getSummariesBaseUrl } from '$lib/server/r2-public';
 import { buildWorkTitleSearchText, formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
 import { REPORT_SLUG_PREFIX } from '$lib/utils/report-slug';
 import {
@@ -21,6 +21,7 @@ import {
 	type AttributionSet,
 	type AuthorMetrics,
 	type AuthorWorkRelation,
+	type BitesoTeiViewer,
 	type CatalogAuthor,
 	type CatalogBiteso,
 	type CatalogInforme,
@@ -238,17 +239,26 @@ interface WorkRow {
 	genero: string | null;
 	adicion: string | null;
 	estado_texto: string | null;
+	tipo_transcripcion: string | null;
 	fecha_biteso: string | null;
 	fecha_resumen: string | null;
 	resultado1: string | null;
 	examen_autorias: number;
 	biteso: number;
 	biteso_nombre: string | null;
+	tiene_tei: number;
+	facsimile_first: string | null;
+	facsimile_last: string | null;
 	tiene_acceso_externo: number;
 	procede: string | null;
 	has_report: number;
 	has_resumen_breve: number;
 }
+
+const optionalPublicAssetUrl = (relativePath: string | null | undefined): string | undefined => {
+	const cleanPath = relativePath?.trim();
+	return cleanPath ? getPublicAssetUrl(cleanPath) : undefined;
+};
 
 interface AuthorRow {
 	id: string;
@@ -840,6 +850,7 @@ const buildCatalogWorksFromRows = (
 			genre: row.genero?.trim() || 'Sin genero',
 			origin: row.procede?.trim() || 'Sin procedencia',
 			textState: row.estado_texto?.trim() || 'Sin estado',
+			transcriptionType: row.tipo_transcripcion?.trim() || undefined,
 			addedOn: row.adicion?.trim() || 'Sin fecha',
 			bitesoPublishedOn: row.fecha_biteso?.trim() || undefined,
 			summaryPublishedOn: row.fecha_resumen?.trim() || undefined,
@@ -851,7 +862,10 @@ const buildCatalogWorksFromRows = (
 			stylometryAttribution,
 			textLinks: links,
 			reportId: hasReport ? row.id : undefined,
-			reportSlug
+			reportSlug,
+			hasTeiViewer: Number(row.tiene_tei) === 1,
+			facsimileFirstUrl: optionalPublicAssetUrl(row.facsimile_first),
+			facsimileLastUrl: optionalPublicAssetUrl(row.facsimile_last)
 		};
 	});
 
@@ -870,6 +884,16 @@ const loadWorkRowsByIds = async (workIds: string[]): Promise<WorkRow[]> => {
 	const bitesoPublicationDateSelect = worksTableColumns.has('fecha_biteso')
 		? 'fecha_biteso'
 		: 'NULL AS fecha_biteso';
+	const transcriptionTypeSelect = worksTableColumns.has('tipo_transcripcion')
+		? 'tipo_transcripcion'
+		: 'NULL AS tipo_transcripcion';
+	const hasTeiSelect = worksTableColumns.has('tiene_tei') ? 'tiene_tei' : '0 AS tiene_tei';
+	const facsimileFirstSelect = worksTableColumns.has('facsimile_first')
+		? 'facsimile_first'
+		: 'NULL AS facsimile_first';
+	const facsimileLastSelect = worksTableColumns.has('facsimile_last')
+		? 'facsimile_last'
+		: 'NULL AS facsimile_last';
 	const summaryPublicationDateSelect = worksTableColumns.has('fecha_resumen')
 		? 'fecha_resumen'
 		: 'NULL AS fecha_resumen';
@@ -879,7 +903,11 @@ const loadWorkRowsByIds = async (workIds: string[]): Promise<WorkRow[]> => {
 		 ${publicIdSelect},
 		 ${titleVariantsSelect},
 		 genero, adicion, estado_texto,
+		 ${transcriptionTypeSelect},
 		 ${bitesoPublicationDateSelect},
+		 ${hasTeiSelect},
+		 ${facsimileFirstSelect},
+		 ${facsimileLastSelect},
 		 ${summaryPublicationDateSelect},
 		 resultado1,
 		 examen_autorias, biteso, biteso_nombre, tiene_acceso_externo,
@@ -1090,6 +1118,16 @@ const createSnapshot = async (): Promise<Snapshot> => {
 	const bitesoPublicationDateSelect = worksTableColumns.has('fecha_biteso')
 		? 'fecha_biteso'
 		: 'NULL AS fecha_biteso';
+	const transcriptionTypeSelect = worksTableColumns.has('tipo_transcripcion')
+		? 'tipo_transcripcion'
+		: 'NULL AS tipo_transcripcion';
+	const hasTeiSelect = worksTableColumns.has('tiene_tei') ? 'tiene_tei' : '0 AS tiene_tei';
+	const facsimileFirstSelect = worksTableColumns.has('facsimile_first')
+		? 'facsimile_first'
+		: 'NULL AS facsimile_first';
+	const facsimileLastSelect = worksTableColumns.has('facsimile_last')
+		? 'facsimile_last'
+		: 'NULL AS facsimile_last';
 	const summaryPublicationDateSelect = worksTableColumns.has('fecha_resumen')
 		? 'fecha_resumen'
 		: 'NULL AS fecha_resumen';
@@ -1099,7 +1137,11 @@ const createSnapshot = async (): Promise<Snapshot> => {
 		 ${publicIdSelect},
 		 ${titleVariantsSelect},
 		 genero, adicion, estado_texto,
+		 ${transcriptionTypeSelect},
 		 ${bitesoPublicationDateSelect},
+		 ${hasTeiSelect},
+		 ${facsimileFirstSelect},
+		 ${facsimileLastSelect},
 		 ${summaryPublicationDateSelect},
 		 resultado1,
 		 examen_autorias, biteso, biteso_nombre, tiene_acceso_externo,
@@ -1159,6 +1201,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 			genre: row.genero?.trim() || 'Sin genero',
 			origin: row.procede?.trim() || 'Sin procedencia',
 			textState: row.estado_texto?.trim() || 'Sin estado',
+			transcriptionType: row.tipo_transcripcion?.trim() || undefined,
 			addedOn: row.adicion?.trim() || 'Sin fecha',
 			bitesoPublishedOn: row.fecha_biteso?.trim() || undefined,
 			summaryPublishedOn: row.fecha_resumen?.trim() || undefined,
@@ -1170,7 +1213,10 @@ const createSnapshot = async (): Promise<Snapshot> => {
 			stylometryAttribution,
 			textLinks: links,
 			reportId: hasReport ? row.id : undefined,
-			reportSlug
+			reportSlug,
+			hasTeiViewer: Number(row.tiene_tei) === 1,
+			facsimileFirstUrl: optionalPublicAssetUrl(row.facsimile_first),
+			facsimileLastUrl: optionalPublicAssetUrl(row.facsimile_last)
 		};
 	});
 
@@ -2682,13 +2728,25 @@ const getBitesoForWork = async (
 
 	const text = await readPrivateTextByWorkId(work.id);
 	if (!text) return undefined;
+	let tei: BitesoTeiViewer | undefined;
+	if (work.hasTeiViewer) {
+		const rawTei = await readPrivateTextByTextKey(`${work.id}.tei.json`);
+		if (rawTei) {
+			try {
+				tei = JSON.parse(rawTei) as BitesoTeiViewer;
+			} catch (cause) {
+				console.warn(`[catalog-runtime] TEI BITESO invalido para ${work.id}`, cause);
+			}
+		}
+	}
 
 	return {
 		id: snapshot.bitesoSlugByWorkId.get(work.id) || work.slug,
 		workId: work.id,
 		bitesoNombre: snapshot.bitesoNameByWorkId.get(work.id) || 'ETSO',
 		title: `Texto digital de ${work.title}`,
-		text
+		text,
+		tei
 	};
 };
 

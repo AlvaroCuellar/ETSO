@@ -221,6 +221,17 @@
 			<dd class="m-0 font-ui text-[0.97rem] leading-[1.65] text-text-main">{work.genre}</dd>
 		</div>
 
+		{#if work.transcriptionType}
+			<div class="grid content-start gap-1.5">
+				<dt class="m-0 font-ui text-[0.72rem] font-bold uppercase tracking-[0.05em] text-text-soft">
+					Tipo de transcripción
+				</dt>
+				<dd class="m-0 font-ui text-[0.97rem] leading-[1.65] text-text-main">
+					{work.transcriptionType}
+				</dd>
+			</div>
+		{/if}
+
 		<div class="grid content-start gap-1.5">
 			<dt class="m-0 font-ui text-[0.72rem] font-bold uppercase tracking-[0.05em] text-text-soft">
 				Procedencia

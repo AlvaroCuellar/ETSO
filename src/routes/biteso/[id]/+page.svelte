@@ -168,6 +168,22 @@
 				segment.type === 'jornada' && Boolean(segment.id) && Boolean(segment.label)
 		)
 	);
+	const teiPageMarks = $derived.by(
+		() =>
+			data.biteso.tei?.pages.map((page, index) => ({
+				id: `tei-page-${page.n || index + 1}`,
+				label: page.folio ? `Fol. ${page.folio}` : `Página ${page.n || index + 1}`
+			})) ?? []
+	);
+	const textNavigationMarks = $derived.by(() => (data.biteso.tei ? teiPageMarks : jornadaMarks));
+	const facsimileImages = $derived.by(() =>
+		[
+			data.work.facsimileFirstUrl
+				? { src: data.work.facsimileFirstUrl, label: 'Primera página con texto' }
+				: undefined,
+			data.work.facsimileLastUrl ? { src: data.work.facsimileLastUrl, label: 'Última página con texto' } : undefined
+		].filter((item): item is { src: string; label: string } => Boolean(item))
+	);
 
 	let activeTextAnchor = $state('biteso-text-start');
 	let isCorrectionFormOpen = $state(false);
@@ -215,7 +231,7 @@
 		let frame = 0;
 
 		const resolveTargets = (): HTMLElement[] =>
-			['biteso-text-start', ...jornadaMarks.map((mark) => mark.id)]
+			['biteso-text-start', ...textNavigationMarks.map((mark) => mark.id)]
 				.map((id) => document.getElementById(id))
 				.filter((element): element is HTMLElement => Boolean(element));
 
@@ -302,6 +318,26 @@
 		</div>
 
 		<CitationSuggestionCard class="w-full" citation={data.citation} allowHtml />
+
+		{#if facsimileImages.length > 0}
+			<section class="grid gap-3" aria-label="Páginas del manuscrito">
+				<div class="grid gap-3 md:grid-cols-2">
+					{#each facsimileImages as image}
+						<figure class="m-0 grid gap-2">
+							<img
+								src={image.src}
+								alt={image.label}
+								class="h-auto max-h-[36rem] w-full rounded-[8px] border border-border bg-white object-contain"
+								loading="lazy"
+							/>
+							<figcaption class="font-ui text-[0.78rem] font-semibold uppercase tracking-[0.06em] text-text-soft">
+								{image.label}
+							</figcaption>
+						</figure>
+					{/each}
+				</div>
+			</section>
+		{/if}
 
 		<div id="biteso-text-start" class="grid min-h-6 place-items-center pt-2 scroll-mt-28">
 			<!-- Reponer cuando haya un nuevo logo autorizado:
@@ -470,7 +506,7 @@
 					>
 						Inicio
 					</a>
-					{#each jornadaMarks as mark}
+					{#each textNavigationMarks as mark}
 						<a
 							href={`#${mark.id}`}
 							aria-current={activeTextAnchor === mark.id ? 'location' : undefined}
@@ -488,19 +524,57 @@
 			<div
 				class="mx-auto grid w-full max-w-[82ch] gap-4 px-0 font-reading text-base leading-[1.8] text-text-main md:px-[clamp(0.5rem,2.8vw,2.25rem)]"
 			>
-				{#each textSegments as segment}
-					{#if segment.type === 'jornada'}
-						<h3
-							id={segment.id}
-							class="mt-10 mb-4 scroll-mt-28 text-center font-ui text-[0.88rem] font-bold uppercase tracking-[0.09em] text-text-accent-purple"
-							data-i18n-skip
-						>
-							{segment.label}
-						</h3>
-					{:else}
-						<p class="m-0 whitespace-pre-wrap" data-i18n-skip>{segment.text}</p>
-					{/if}
-				{/each}
+				{#if data.biteso.tei}
+					{#each data.biteso.tei.pages as page, pageIndex}
+						<section id={`tei-page-${page.n || pageIndex + 1}`} class="grid scroll-mt-28 gap-3">
+							<h3 class="mt-8 mb-1 font-ui text-[0.82rem] font-bold uppercase tracking-[0.08em] text-text-accent-purple">
+								{page.folio ? `Folio ${page.folio}` : `Página ${page.n || pageIndex + 1}`}
+							</h3>
+							{#each page.blocks as block}
+								{#if block.type === 'stage'}
+									<p class="m-0 py-1 font-ui text-[0.92rem] leading-[1.65] text-text-soft italic" data-i18n-skip>
+										{block.text}
+									</p>
+								{:else if block.type === 'note'}
+									<p class="m-0 py-1 font-ui text-[0.86rem] leading-[1.55] text-text-soft" data-i18n-skip>
+										{block.text}
+									</p>
+								{:else}
+									<div class="grid gap-2 border-t border-border/60 pt-3 sm:grid-cols-[5.75rem_minmax(0,1fr)]">
+										<div class="font-ui text-[0.78rem] font-bold uppercase tracking-[0.06em] text-brand-blue-dark" data-i18n-skip>
+											{block.speaker ?? ''}
+										</div>
+										<div class="grid gap-1.5">
+											{#each block.lines ?? [] as line}
+												<p class="m-0 leading-[1.75]" data-i18n-skip>
+													{#each line.parts as part}
+														<span class={part.unclear ? 'rounded-[4px] bg-[#fff1f3] px-0.5 text-[#b4233c]' : ''}>
+															{part.text}
+														</span>{' '}
+													{/each}
+												</p>
+											{/each}
+										</div>
+									</div>
+								{/if}
+							{/each}
+						</section>
+					{/each}
+				{:else}
+					{#each textSegments as segment}
+						{#if segment.type === 'jornada'}
+							<h3
+								id={segment.id}
+								class="mt-10 mb-4 scroll-mt-28 text-center font-ui text-[0.88rem] font-bold uppercase tracking-[0.09em] text-text-accent-purple"
+								data-i18n-skip
+							>
+								{segment.label}
+							</h3>
+						{:else}
+							<p class="m-0 whitespace-pre-wrap" data-i18n-skip>{segment.text}</p>
+						{/if}
+					{/each}
+				{/if}
 			</div>
 
 			<div class="hidden lg:block" aria-hidden="true"></div>
@@ -523,7 +597,7 @@
 		>
 			Inicio
 		</a>
-		{#each jornadaMarks as mark}
+		{#each textNavigationMarks as mark}
 			<a
 				href={`#${mark.id}`}
 				class={navLinkClass(mark.id)}

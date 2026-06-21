@@ -25,6 +25,15 @@ export const getTexoroIndexBaseUrl = (): string =>
 export const getSummariesBaseUrl = (): string =>
 	stripTrailingSlash(publicEnv.PUBLIC_SUMMARIES_BASE_URL || joinUrl(getPublicR2BaseUrl(), 'resumenes'));
 
+export const getPublicAssetUrl = (relativePath: string): string => {
+	const cleanPath = trimSlashes(relativePath);
+	if (!cleanPath || cleanPath.includes('..')) {
+		throw new Error('Ruta publica R2 invalida.');
+	}
+	if (dev) return `/api/r2-public/${encodePath(cleanPath)}`;
+	return `${getPublicR2BaseUrl()}/${encodePath(cleanPath)}`;
+};
+
 export const getPublicSummaryAssetUrl = (relativePath: string): string => {
 	const cleanPath = trimSlashes(relativePath);
 	if (!cleanPath || cleanPath.includes('..')) {

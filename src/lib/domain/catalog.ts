@@ -42,6 +42,7 @@ export interface CatalogWork {
 	genre: string;
 	origin: string;
 	textState: string;
+	transcriptionType?: string;
 	addedOn: string;
 	bitesoPublishedOn?: string;
 	summaryPublishedOn?: string;
@@ -55,6 +56,9 @@ export interface CatalogWork {
 	textLinks: WorkResourceLink[];
 	reportId?: string;
 	reportSlug?: string;
+	hasTeiViewer?: boolean;
+	facsimileFirstUrl?: string;
+	facsimileLastUrl?: string;
 }
 
 export interface CatalogAuthor {
@@ -283,6 +287,46 @@ export interface CatalogBiteso {
 	bitesoNombre: string;
 	title: string;
 	text: string;
+	tei?: BitesoTeiViewer;
+}
+
+export interface BitesoTeiLinePart {
+	text: string;
+	unclear?: boolean;
+}
+
+export interface BitesoTeiLine {
+	text: string;
+	parts: BitesoTeiLinePart[];
+	unclear?: boolean;
+}
+
+export interface BitesoTeiBlock {
+	type: 'speech' | 'stage' | 'note';
+	speaker?: string;
+	text?: string;
+	lines?: BitesoTeiLine[];
+}
+
+export interface BitesoTeiPage {
+	n?: string;
+	folio?: string;
+	facs?: string;
+	source?: string;
+	blocks: BitesoTeiBlock[];
+}
+
+export interface BitesoTeiViewer {
+	source: 'tei';
+	version: number;
+	workId: string;
+	archivo: string;
+	pages: BitesoTeiPage[];
+	stats?: {
+		pages?: number;
+		lines?: number;
+		unclearLines?: number;
+	};
 }
 
 export interface SummaryNamedItem {

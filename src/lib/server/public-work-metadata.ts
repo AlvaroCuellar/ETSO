@@ -67,6 +67,7 @@ export interface PublicWorkMetadata {
 	genre: string;
 	origin: string;
 	textState: string;
+	transcriptionType: string | null;
 	addedOn: string;
 	bitesoPublishedOn: string | null;
 	summaryPublishedOn: string | null;
@@ -239,6 +240,7 @@ export const toPublicWorkMetadata = (work: CatalogWork): PublicWorkMetadata => {
 		genre: work.genre,
 		origin: work.origin,
 		textState: work.textState,
+		transcriptionType: work.transcriptionType ?? null,
 		addedOn: work.addedOn,
 		bitesoPublishedOn: work.bitesoPublishedOn ?? null,
 		summaryPublishedOn: work.summaryPublishedOn ?? null,

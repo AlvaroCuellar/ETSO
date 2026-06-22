@@ -294,15 +294,14 @@
 	};
 
 	const formatTeiPageLabel = (
-		page: {
+		_page: {
 			n?: string;
 			folio?: string;
 		},
 		index: number,
 		_compact = false
 	): string => {
-		if (page.folio) return `Pag. ${page.folio}`;
-		return `Página ${index + 1}`;
+		return `Pag. ${index + 1}`;
 	};
 	const formatJornadaAnchorId = (page: { jornada?: { id?: string; n?: string } }, index: number): string =>
 		`tei-jornada-${page.jornada?.id || page.jornada?.n || index + 1}`;

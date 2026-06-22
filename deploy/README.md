@@ -144,9 +144,15 @@ datos antiguos.
 
 Copiar:
 
-- ResÃºmenes a `deploy/input/public-assets/resumenes/`
+- Resumenes a `deploy/input/public-assets/resumenes/`
 - TXT a `deploy/input/private-assets/texts/`
 - SQLite a `deploy/input/turso/etso.sqlite`
+- Facsimiles de primera y ultima pagina a `static/facsimiles/`
+
+Los facsimiles deben entrar siempre por el repo como assets estaticos. La web
+los sirve como `/facsimiles/...`; si Turso tiene rutas `facsimiles/...` pero no
+existe el JPG correspondiente en `static/facsimiles/`, la ficha de obra no puede
+mostrar la primera y la ultima pagina.
 
 El Ã­ndice de bÃºsqueda se genera automÃ¡ticamente desde los TXT en:
 `deploy/input/public-assets/search/`.
@@ -166,15 +172,18 @@ Por defecto el builder usa 8 GB de heap de Node. Se puede ajustar con
 # Probar entorno
 bash deploy/scripts/check-deploy-env.sh
 
-# Probar R2 sin ejecutar cambios. Esto no reemplaza Turso.
+# Probar R2 sin ejecutar cambios. Esto no sincroniza Turso.
 bash deploy/scripts/build-search-index.sh
 DRY_RUN=true bash deploy/scripts/sync-r2.sh
 
-# Probar el flujo completo sin reemplazar Turso ni subir cambios reales a R2
+# Probar el flujo completo sin sincronizar Turso ni subir cambios reales a R2
 DRY_RUN=true bash deploy/scripts/deploy-all.sh
 
 # Desplegar todo en un Ãºnico paso
 bash deploy/scripts/deploy-all.sh
+
+# Emergencia: forzar el reemplazo completo de Turso en vez del parche incremental
+TURSO_SYNC_MODE=replace bash deploy/scripts/deploy-all.sh
 
 # Borrar entrada temporal
 rm -rf deploy/input/

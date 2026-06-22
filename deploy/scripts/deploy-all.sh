@@ -21,6 +21,24 @@ echo "==> Iniciando despliegue completo"
 CACHE_SCRIPT="$ROOT_DIR/deploy/scripts/deploy-cache.py"
 DEPLOY_CHANGED=0
 
+notify_finished() {
+  local sound="${CETSO_DONE_SOUND:-/System/Library/Sounds/Glass.aiff}"
+  case "$sound" in
+    ""|"0"|"false"|"no"|"off")
+      return 0
+      ;;
+  esac
+
+  if command -v afplay >/dev/null && [ -f "$sound" ]; then
+    afplay "$sound" || true
+    afplay "$sound" || true
+    afplay "$sound" || true
+    return 0
+  fi
+
+  printf '\a\a\a'
+}
+
 cache_check() {
   python3 "$CACHE_SCRIPT" check "$@"
 }
@@ -91,23 +109,39 @@ else
   fi
 fi
 
-echo "==> Paso 5/5: reemplazo Turso"
+echo "==> Paso 5/5: sincronizacion Turso"
 TURSO_CACHE_ARGS=(
   --key "turso-db"
   --path "$ROOT_DIR/${SQLITE_LOCAL_PATH:-deploy/input/turso/etso.sqlite}"
 )
+TURSO_SYNC_RESULT="$ROOT_DIR/deploy/tmp/turso-sync-result.env"
 if [ "${DRY_RUN:-false}" = "true" ]; then
   if cache_check "${TURSO_CACHE_ARGS[@]}" >/dev/null; then
-    echo "==> SQLite sin cambios: Turso no se reemplazaria"
+    echo "==> SQLite sin cambios: Turso no se sincronizaria"
   else
-    echo "==> DRY_RUN=true: no se reemplaza Turso"
+    echo "==> DRY_RUN=true: no se sincroniza Turso"
   fi
 elif cache_check "${TURSO_CACHE_ARGS[@]}" >/dev/null; then
   echo "==> SQLite sin cambios: se omite Turso"
 else
-  bash "$ROOT_DIR/deploy/scripts/replace-turso-db.sh"
+  if [ "${TURSO_SYNC_MODE:-incremental}" = "replace" ]; then
+    echo "==> TURSO_SYNC_MODE=replace: se usa reemplazo completo"
+    bash "$ROOT_DIR/deploy/scripts/replace-turso-db.sh"
+    DEPLOY_CHANGED=1
+  else
+    rm -f "$TURSO_SYNC_RESULT"
+    bash "$ROOT_DIR/deploy/scripts/sync-turso-db.sh"
+    if [ -f "$TURSO_SYNC_RESULT" ]; then
+      # shellcheck disable=SC1090
+      source "$TURSO_SYNC_RESULT"
+    else
+      CHANGED=1
+    fi
+    if [ "${CHANGED:-1}" = "1" ]; then
+      DEPLOY_CHANGED=1
+    fi
+  fi
   cache_mark "${TURSO_CACHE_ARGS[@]}"
-  DEPLOY_CHANGED=1
 fi
 
 if [ "$DEPLOY_CHANGED" -eq 0 ]; then
@@ -130,3 +164,4 @@ elif [ "${DRY_RUN:-false}" != "true" ]; then
 fi
 
 echo "==> Despliegue completo terminado"
+notify_finished

@@ -822,7 +822,7 @@ const buildCatalogWorksFromRows = (
 
 		let bitesoSlug = '';
 		if (Number(row.biteso) === 1) {
-			const bitesoBaseSlug = slugify(row.titulo ?? '') || slugify(row.id ?? '') || 'texto';
+			const bitesoBaseSlug = slug || slugify(row.titulo ?? '') || slugify(row.id ?? '') || 'texto';
 			const bitesoSlugCount = (bitesoSlugCounts.get(bitesoBaseSlug) ?? 0) + 1;
 			bitesoSlugCounts.set(bitesoBaseSlug, bitesoSlugCount);
 			bitesoSlug = bitesoSlugCount === 1 ? bitesoBaseSlug : `${bitesoBaseSlug}-${bitesoSlugCount}`;
@@ -1173,7 +1173,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 		bitesoNameByWorkId.set(row.id, bitesoNombre);
 		let bitesoSlug = '';
 		if (Number(row.biteso) === 1) {
-			const bitesoBaseSlug = slugify(row.titulo ?? '') || slugify(row.id ?? '') || 'texto';
+			const bitesoBaseSlug = slug || slugify(row.titulo ?? '') || slugify(row.id ?? '') || 'texto';
 			const bitesoSlugCount = (bitesoSlugCounts.get(bitesoBaseSlug) ?? 0) + 1;
 			bitesoSlugCounts.set(bitesoBaseSlug, bitesoSlugCount);
 			bitesoSlug = bitesoSlugCount === 1 ? bitesoBaseSlug : `${bitesoBaseSlug}-${bitesoSlugCount}`;
@@ -1229,10 +1229,22 @@ const createSnapshot = async (): Promise<Snapshot> => {
 	const workBySlug = new Map(works.map((work) => [work.slug, work] as const));
 	const workByReportSlug = new Map<string, CatalogWork>();
 	const bitesoWorkBySlug = new Map<string, CatalogWork>();
+	const legacyTitleBitesoSlugCounts = new Map<string, number>();
 	for (const work of works) {
 		if (work.reportSlug) workByReportSlug.set(work.reportSlug, work);
 		const bitesoSlug = bitesoSlugByWorkId.get(work.id);
-		if (bitesoSlug) bitesoWorkBySlug.set(bitesoSlug, work);
+		if (bitesoSlug) {
+			bitesoWorkBySlug.set(bitesoSlug, work);
+
+			const legacyBaseSlug = slugify(work.title) || slugify(work.id) || 'texto';
+			const legacySlugCount = (legacyTitleBitesoSlugCounts.get(legacyBaseSlug) ?? 0) + 1;
+			legacyTitleBitesoSlugCounts.set(legacyBaseSlug, legacySlugCount);
+			const legacySlug =
+				legacySlugCount === 1 ? legacyBaseSlug : `${legacyBaseSlug}-${legacySlugCount}`;
+			if (legacySlug !== bitesoSlug && !bitesoWorkBySlug.has(legacySlug)) {
+				bitesoWorkBySlug.set(legacySlug, work);
+			}
+		}
 	}
 
 	return {

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import SeoHead from '$lib/components/seo/SeoHead.svelte';
+	import { localizePath } from '$lib/i18n';
 	import transcripcionAutomatica1 from '$lib/assets/transcripcion/transcripcion-automatica-1.jpg';
 	import transcripcionAutomatica2 from '$lib/assets/transcripcion/transcripcion-automatica-2.jpg';
 	import type { PageData } from './$types';
@@ -266,6 +267,137 @@
 		}
 	} as const;
 	const pageText = $derived(pageTextByLocale[data.locale] ?? pageTextByLocale.es);
+	const htrLlmSectionByLocale = {
+		es: {
+			eyebrow: 'Nuevo flujo de trabajo',
+			title: 'HTR + LLM: transcripciones revisadas página a página',
+			paragraphs: [
+				'Además de los modelos generales de HTR, estamos desarrollando un nuevo proceso de trabajo para manuscritos teatrales especialmente complejos. Primero obtenemos una lectura automática inicial y después la contrastamos página a página con ayuda de modelos lingüísticos y lectura visual directa del facsímil.',
+				'El objetivo es producir textos más útiles para la lectura y la investigación: se ordenan por jornadas, se numeran de forma sencilla por páginas, se conservan las dudas cuando la lectura no es segura y se preparan en formato TEI para su consulta en BITESO.',
+				'Este procedimiento no sustituye una edición crítica, pero permite convertir manuscritos difíciles en textos digitales navegables, revisables y enlazados con sus imágenes.'
+			],
+			worksTitle: 'Primeras obras incorporadas con este procedimiento'
+		},
+		en: {
+			eyebrow: 'New workflow',
+			title: 'HTR + LLM: page-by-page reviewed transcriptions',
+			paragraphs: [
+				'Alongside our general HTR models, we are developing a new workflow for complex theatrical manuscripts. An initial automatic reading is checked page by page with language models and direct visual inspection of the facsimile.',
+				'The resulting texts are organized by acts, numbered with simple sequential pages, preserve doubts when a reading is uncertain, and are prepared in TEI format for consultation in BITESO.',
+				'This process does not replace a critical edition, but it helps turn difficult manuscripts into navigable, reviewable digital texts linked to their images.'
+			],
+			worksTitle: 'First works produced with this workflow'
+		},
+		fr: {
+			eyebrow: 'Nouveau flux de travail',
+			title: 'HTR + LLM : transcriptions relues page par page',
+			paragraphs: [
+				'En plus de nos modèles généraux de HTR, nous développons un nouveau processus pour les manuscrits théâtraux particulièrement complexes. Nous obtenons d’abord une lecture automatique initiale, puis nous la confrontons page par page à des modèles linguistiques et à une lecture visuelle directe du fac-similé.',
+				'L’objectif est de produire des textes plus utiles pour la lecture et la recherche : ils sont organisés par journées, numérotés simplement par pages, conservent les doutes lorsque la lecture n’est pas certaine et sont préparés en TEI pour BITESO.',
+				'Ce procédé ne remplace pas une édition critique, mais il permet de transformer des manuscrits difficiles en textes numériques navigables, révisables et liés à leurs images.'
+			],
+			worksTitle: 'Premières œuvres intégrées avec ce procédé'
+		},
+		pt: {
+			eyebrow: 'Novo fluxo de trabalho',
+			title: 'HTR + LLM: transcrições revistas página a página',
+			paragraphs: [
+				'Além dos modelos gerais de HTR, estamos desenvolvendo um novo processo para manuscritos teatrais especialmente complexos. Primeiro obtemos uma leitura automática inicial e depois a confrontamos página a página com modelos linguísticos e leitura visual direta do fac-símile.',
+				'O objetivo é produzir textos mais úteis para a leitura e a pesquisa: eles são organizados por jornadas, numerados de modo simples por páginas, mantêm as dúvidas quando a leitura não é segura e são preparados em TEI para consulta no BITESO.',
+				'Esse procedimento não substitui uma edição crítica, mas permite transformar manuscritos difíceis em textos digitais navegáveis, revisáveis e vinculados às suas imagens.'
+			],
+			worksTitle: 'Primeiras obras incorporadas com esse procedimento'
+		},
+		it: {
+			eyebrow: 'Nuovo flusso di lavoro',
+			title: 'HTR + LLM: trascrizioni riviste pagina per pagina',
+			paragraphs: [
+				'Oltre ai modelli generali di HTR, stiamo sviluppando un nuovo processo per manoscritti teatrali particolarmente complessi. Prima otteniamo una lettura automatica iniziale e poi la confrontiamo pagina per pagina con modelli linguistici e con la lettura visiva diretta del facsimile.',
+				'L’obiettivo è produrre testi più utili per la lettura e la ricerca: sono organizzati per giornate, numerati in modo semplice per pagine, conservano i dubbi quando la lettura non è sicura e sono preparati in formato TEI per BITESO.',
+				'Questo procedimento non sostituisce un’edizione critica, ma permette di trasformare manoscritti difficili in testi digitali navigabili, rivedibili e collegati alle loro immagini.'
+			],
+			worksTitle: 'Prime opere incorporate con questo procedimento'
+		},
+		de: {
+			eyebrow: 'Neuer Workflow',
+			title: 'HTR + LLM: seitenweise geprüfte Transkriptionen',
+			paragraphs: [
+				'Neben unseren allgemeinen HTR-Modellen entwickeln wir einen neuen Arbeitsprozess für besonders komplexe Theaterhandschriften. Zunächst erstellen wir eine automatische Erstlesung und vergleichen sie anschließend Seite für Seite mit Sprachmodellen und direkter visueller Prüfung des Faksimiles.',
+				'Ziel ist es, Texte zu erstellen, die für Lektüre und Forschung nützlicher sind: Sie werden nach Akten geordnet, einfach nach Seiten nummeriert, behalten unsichere Lesarten sichtbar bei und werden im TEI-Format für BITESO vorbereitet.',
+				'Dieses Verfahren ersetzt keine kritische Edition, macht schwierige Handschriften aber zu navigierbaren, überprüfbaren digitalen Texten, die mit ihren Bildern verknüpft sind.'
+			],
+			worksTitle: 'Erste Werke, die mit diesem Verfahren aufgenommen wurden'
+		},
+		zh: {
+			eyebrow: '新的工作流程',
+			title: 'HTR + LLM：逐页校阅的转录',
+			paragraphs: [
+				'除了通用的 HTR 模型外，我们正在为特别复杂的戏剧手稿开发一种新的工作流程。我们先获得初步的自动识读结果，再借助语言模型和对传真图像的直接目视检查逐页核对。',
+				'目标是生成更适合阅读和研究的文本：按幕次组织，使用简单的连续页码，在读法不确定时保留疑问，并以 TEI 格式准备，供 BITESO 查阅。',
+				'这一过程并不取代校勘本，但能把难以处理的手稿转化为可浏览、可复核并与图像相连的数字文本。'
+			],
+			worksTitle: '首批采用这一流程收入的作品'
+		},
+		ja: {
+			eyebrow: '新しいワークフロー',
+			title: 'HTR + LLM：ページごとに確認した転写',
+			paragraphs: [
+				'一般的な HTR モデルに加えて、特に複雑な演劇写本のための新しい作業プロセスを開発しています。まず自動読み取りによる初期転写を作成し、その後、言語モデルとファクシミリ画像の直接的な目視確認によってページごとに照合します。',
+				'目的は、読解と研究により役立つテキストを作ることです。作品は幕ごとに整理し、単純な連続ページ番号を付け、不確かな読みは疑問として残し、BITESO で閲覧できるよう TEI 形式で整えます。',
+				'この手順は校訂版に代わるものではありませんが、扱いにくい写本を、閲覧・確認が可能で画像と結びついたデジタルテキストへ変換します。'
+			],
+			worksTitle: 'この手順で最初に組み込まれた作品'
+		},
+		ko: {
+			eyebrow: '새 작업 흐름',
+			title: 'HTR + LLM: 페이지별 검토 전사',
+			paragraphs: [
+				'일반 HTR 모델과 함께, 특히 복잡한 연극 필사본을 위한 새로운 작업 절차를 개발하고 있습니다. 먼저 자동 판독으로 초기 전사를 얻고, 이후 언어 모델과 팩시밀리 이미지의 직접 시각 검토를 통해 페이지별로 대조합니다.',
+				'목표는 읽기와 연구에 더 유용한 텍스트를 만드는 것입니다. 작품은 막별로 정리하고, 단순한 연속 페이지 번호를 부여하며, 판독이 불확실한 부분은 의문으로 남기고, BITESO에서 볼 수 있도록 TEI 형식으로 준비합니다.',
+				'이 절차는 비평판을 대체하지 않지만, 어려운 필사본을 탐색 가능하고 검토 가능한 디지털 텍스트로 만들며 이미지와 연결해 줍니다.'
+			],
+			worksTitle: '이 절차로 처음 수록된 작품'
+		},
+		ru: {
+			eyebrow: 'Новый рабочий процесс',
+			title: 'HTR + LLM: постранично проверенные транскрипции',
+			paragraphs: [
+				'Наряду с общими моделями HTR мы разрабатываем новый процесс для особенно сложных театральных рукописей. Сначала создается первоначальное автоматическое чтение, а затем оно постранично сверяется с помощью языковых моделей и прямой визуальной проверки факсимиле.',
+				'Цель состоит в том, чтобы получить тексты, более полезные для чтения и исследования: они организуются по хорнадам, получают простую сквозную нумерацию страниц, сохраняют сомнения при неуверенном чтении и готовятся в формате TEI для BITESO.',
+				'Этот процесс не заменяет критическое издание, но позволяет превращать сложные рукописи в навигируемые и проверяемые цифровые тексты, связанные с их изображениями.'
+			],
+			worksTitle: 'Первые произведения, подготовленные этим способом'
+		},
+		ar: {
+			eyebrow: 'سير عمل جديد',
+			title: 'HTR + LLM: نسخ مُراجع صفحة بصفحة',
+			paragraphs: [
+				'إلى جانب نماذج HTR العامة، نطوّر عملية عمل جديدة للمخطوطات المسرحية المعقدة على نحو خاص. نحصل أولًا على قراءة آلية أولية، ثم نقارنها صفحة بصفحة بمساعدة نماذج لغوية وقراءة بصرية مباشرة للصورة الأصلية.',
+				'الهدف هو إنتاج نصوص أنفع للقراءة والبحث: تُرتب بحسب الجورنادات، وتُرقم ترقيمًا بسيطًا حسب الصفحات، وتُحفظ مواضع الشك عندما لا تكون القراءة مؤكدة، وتُعد بصيغة TEI للاطلاع عليها في BITESO.',
+				'لا يحل هذا الإجراء محل الطبعة النقدية، لكنه يتيح تحويل المخطوطات الصعبة إلى نصوص رقمية قابلة للتصفح والمراجعة ومرتبطة بصورها.'
+			],
+			worksTitle: 'أولى الأعمال المدرجة بهذا الإجراء'
+		}
+	} as const;
+	const htrLlmSection = $derived(htrLlmSectionByLocale[data.locale] ?? htrLlmSectionByLocale.es);
+	const htrLlmWorks = [
+		{
+			title: 'A averiguados celos no hay prudencia',
+			href: '/biteso/averiguados-celos-no-hay-prudencia'
+		},
+		{
+			title: 'A más desdén más amor',
+			href: '/biteso/mas-amor-mas-desden'
+		},
+		{
+			title: 'Abraham del yermo',
+			href: '/biteso/abraham-del-yermo'
+		},
+		{
+			title: 'Acis y Galatea',
+			href: '/biteso/acis-y-galatea'
+		}
+	] as const;
 </script>
 
 <SeoHead
@@ -307,6 +439,44 @@
 				pp. 101-115.
 			</p>
 		</blockquote>
+
+			<section class="grid gap-5 border-y border-border bg-surface-soft px-5 py-6 lg:px-7" data-i18n-skip>
+				<div class="grid gap-2">
+					<p class="m-0 font-ui text-[0.76rem] font-semibold uppercase tracking-[0.05em] text-text-accent-purple">
+						{htrLlmSection.eyebrow}
+					</p>
+					<h2 class="m-0 font-ui text-[1.25rem] font-bold leading-[1.25] text-brand-blue-dark">
+						{htrLlmSection.title}
+					</h2>
+				</div>
+
+				<div class="grid gap-3">
+					{#each htrLlmSection.paragraphs as paragraph}
+						<p class="m-0 leading-[1.72] text-text-main" dir={data.locale === 'ar' ? 'rtl' : undefined}>
+							{paragraph}
+						</p>
+					{/each}
+				</div>
+
+				<div class="grid gap-3">
+					<h3 class="m-0 font-ui text-[0.95rem] font-semibold leading-[1.4] text-brand-blue-dark">
+						{htrLlmSection.worksTitle}
+					</h3>
+					<ul class="m-0 grid list-none gap-2 p-0 sm:grid-cols-2">
+						{#each htrLlmWorks as work}
+							<li>
+								<a
+									href={localizePath(work.href, data.locale)}
+									class="inline-flex w-full items-center justify-between gap-3 rounded-[8px] border border-border bg-surface px-4 py-3 font-ui text-[0.92rem] font-semibold text-brand-blue-dark no-underline transition hover:border-border-accent-blue hover:bg-surface-accent-blue hover:text-brand-blue-dark hover:no-underline"
+								>
+									<span>{work.title}</span>
+									<span aria-hidden="true">→</span>
+								</a>
+							</li>
+						{/each}
+					</ul>
+				</div>
+			</section>
 
 			<p class="m-0 leading-[1.72] text-text-main" data-i18n-skip dir={data.locale === 'ar' ? 'rtl' : undefined}>
 				{pageText.intro}

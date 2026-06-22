@@ -396,6 +396,10 @@
 		{
 			title: 'Acis y Galatea',
 			href: '/biteso/acis-y-galatea'
+		},
+		{
+			title: 'Adonis y Venus',
+			href: '/biteso/adonis-y-venus-0'
 		}
 	] as const;
 </script>

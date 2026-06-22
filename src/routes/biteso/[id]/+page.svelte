@@ -299,9 +299,9 @@
 			folio?: string;
 		},
 		index: number,
-		compact = false
+		_compact = false
 	): string => {
-		if (page.folio) return `${compact ? 'Fol.' : 'Folio'} ${page.folio}`;
+		if (page.folio) return `Pag. ${page.folio}`;
 		return `Página ${index + 1}`;
 	};
 	const formatJornadaAnchorId = (page: { jornada?: { id?: string; n?: string } }, index: number): string =>
@@ -371,7 +371,7 @@
 					currentGroup = {
 						id: 'tei-pages-without-jornada',
 						anchorId: pageMark.id,
-						label: 'Folios',
+						label: 'Páginas',
 						pages: []
 					};
 					groups.push(currentGroup);
@@ -447,7 +447,7 @@
 
 	const navMarkClass = (mark: NavigationMark): string =>
 		`${navLinkClass(mark.id)} ${mark.type === 'jornada' ? 'mt-2 font-bold uppercase tracking-[0.04em] text-text-accent-purple' : 'ml-2'}`;
-	const navFolioClass = (id: string): string =>
+	const navPageClass = (id: string): string =>
 		`block rounded-[6px] px-2 py-1 text-[0.74rem] leading-[1.22] no-underline transition hover:no-underline ${
 			activeTextAnchor === id
 				? 'font-semibold text-brand-blue-dark'
@@ -800,7 +800,7 @@
 								<button
 									type="button"
 									class={navGroupButtonClass(group.id)}
-									aria-label={isTeiNavigationGroupOpen(group.id) ? 'Plegar folios' : 'Desplegar folios'}
+									aria-label={isTeiNavigationGroupOpen(group.id) ? 'Plegar páginas' : 'Desplegar páginas'}
 									aria-expanded={isTeiNavigationGroupOpen(group.id)}
 									aria-controls={`tei-nav-group-${group.id}`}
 									onclick={() => toggleTeiNavigationGroup(group.id)}
@@ -818,7 +818,7 @@
 											<a
 												href={`#${mark.id}`}
 												aria-current={activeTextAnchor === mark.id ? 'location' : undefined}
-												class={navFolioClass(mark.id)}
+												class={navPageClass(mark.id)}
 												onclick={() => {
 													activeTextAnchor = mark.id;
 												}}
@@ -938,7 +938,7 @@
 					<button
 						type="button"
 						class={navGroupButtonClass(group.id)}
-						aria-label={isTeiNavigationGroupOpen(group.id) ? 'Plegar folios' : 'Desplegar folios'}
+						aria-label={isTeiNavigationGroupOpen(group.id) ? 'Plegar páginas' : 'Desplegar páginas'}
 						aria-expanded={isTeiNavigationGroupOpen(group.id)}
 						aria-controls={`tei-mobile-nav-group-${group.id}`}
 						onclick={() => toggleTeiNavigationGroup(group.id)}
@@ -955,7 +955,7 @@
 							{#each group.pages as mark}
 								<a
 									href={`#${mark.id}`}
-									class={navFolioClass(mark.id)}
+									class={navPageClass(mark.id)}
 									onclick={() => {
 										activeTextAnchor = mark.id;
 										isMobileMenuOpen = false;

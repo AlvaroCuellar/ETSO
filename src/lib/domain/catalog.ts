@@ -335,7 +335,7 @@ export interface BitesoTeiViewer {
 	source: 'tei';
 	version: number;
 	workId: string;
-	archivo: string;
+	archivo?: string;
 	pages: BitesoTeiPage[];
 	downloads?: {
 		teiXml?: string;

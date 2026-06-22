@@ -573,7 +573,7 @@
 							<img
 								src={image.src}
 								alt={image.label}
-								class="h-auto max-h-[28rem] w-full rounded-[8px] border border-border bg-white object-contain"
+								class="h-auto max-h-[28rem] max-w-full object-contain"
 								loading="lazy"
 							/>
 							<figcaption class="text-center font-ui text-[0.78rem] font-semibold uppercase tracking-[0.06em] text-text-soft">

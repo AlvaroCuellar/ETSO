@@ -70,9 +70,12 @@
 	const formatPeople = (people: string[]): string => people.length > 0 ? people.join(', ') : 'No apunta hacia ningún autor';
 	const authorsForMode = (node: WorkNetworkNode, mode: AttributionMode): string[] =>
 		mode === 'traditional' ? node.traditionalAuthors : node.stylometryAuthors;
+	const attributionModeLabel = (mode: AttributionMode): string =>
+		mode === 'traditional' ? 'Tradicional' : 'Estilometría';
 
 	const selectedNode = $derived.by(() => nodeById.get(selectedId));
 	const hoveredNode = $derived.by(() => nodeById.get(hoveredId));
+	const activeAttributionModeLabel = $derived(attributionModeLabel(attributionMode));
 	const activeAuthorColorAssignments = $derived.by(() =>
 		authorColorAssignments.filter((assignment) => assignment.mode === attributionMode).slice(0, MAX_AUTHOR_COLOR_ASSIGNMENTS)
 	);
@@ -863,6 +866,7 @@
 						placeholder="Escribe y selecciona autores"
 						options={authorOptions}
 						selectedIds={selectedAuthorIds}
+						selectedLabelSuffix={` (${activeAttributionModeLabel})`}
 						helpText={`Permite seleccionar hasta ${MAX_AUTHOR_COLOR_ASSIGNMENTS} autores para colorear sus obras en la red.`}
 						inputClass="js-author-multiselect"
 						onChange={updateSelectedAuthors}
@@ -895,7 +899,7 @@
 										);
 									}}
 								/>
-								<span class="truncate">{assignment.author}</span>
+								<span class="truncate">{assignment.author} ({attributionModeLabel(assignment.mode)})</span>
 							</label>
 						{/each}
 					</div>

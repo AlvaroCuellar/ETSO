@@ -19,6 +19,7 @@
 		helpText?: string;
 		inputClass?: string;
 		name?: string;
+		selectedLabelSuffix?: string;
 		onChange?: (nextIds: string[]) => void;
 		onIntent?: () => void;
 	}
@@ -32,6 +33,7 @@
 		helpText = '',
 		inputClass = 'js-static-multiselect',
 		name = '',
+		selectedLabelSuffix = '',
 		onChange = () => {},
 		onIntent = () => {}
 	}: Props = $props();
@@ -203,7 +205,7 @@
 		<div class="author-chips">
 			{#each selectedIds as selectedId}
 				<span class="author-chip">
-					<span class="author-chip-label">{optionMap.get(selectedId) ?? selectedId}</span>
+					<span class="author-chip-label">{optionMap.get(selectedId) ?? selectedId}{selectedLabelSuffix}</span>
 					<button
 						type="button"
 						class="author-chip-remove"
@@ -475,6 +477,5 @@
 		color: var(--color-brand-blue-dark);
 	}
 </style>
-
 
 

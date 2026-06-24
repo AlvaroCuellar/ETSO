@@ -259,7 +259,10 @@
 						onmouseenter={() => {
 							activeIndex = index;
 						}}
-						onclick={() => addOption(option)}
+						onclick={(event) => {
+							event.stopPropagation();
+							addOption(option);
+						}}
 					>
 						{option.label}
 					</button>
@@ -472,7 +475,6 @@
 		color: var(--color-brand-blue-dark);
 	}
 </style>
-
 
 
 

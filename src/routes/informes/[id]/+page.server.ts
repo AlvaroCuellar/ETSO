@@ -1,5 +1,6 @@
 import { error, redirect } from '@sveltejs/kit';
 import { ambitos, type Ambito, type InformeDistanceView } from '$lib/domain/catalog';
+import informeRedirectAliases from '$lib/data/informe-redirect-aliases.json';
 import { setPublicCatalogCacheHeaders } from '$lib/server/cache-control';
 import { localizePath } from '$lib/i18n';
 import {
@@ -10,6 +11,7 @@ import {
 	getInformeByWorkSlug,
 	getInformeDistanceRows,
 	getWorkById,
+	getWorkByPublicId,
 	withWorkReportResults
 } from '$lib/server/catalog-runtime';
 
@@ -23,9 +25,20 @@ export const load: PageServerLoad = async ({ locals, params, setHeaders }) => {
 			throw redirect(308, localizePath(`/informes/${workSlugInforme.slug}`, locals.locale));
 		}
 
+		const publicId = /^\d+$/.test(params.id) ? Number.parseInt(params.id, 10) : null;
+		const publicIdWork = publicId === null ? undefined : await getWorkByPublicId(publicId);
+		const publicIdInforme = publicIdWork ? await getInformeById(publicIdWork.id) : undefined;
+		if (publicIdInforme) {
+			throw redirect(308, localizePath(`/informes/${publicIdInforme.slug}`, locals.locale));
+		}
+
 		const legacyInforme = await getInformeById(params.id);
 		if (legacyInforme) {
 			throw redirect(308, localizePath(`/informes/${legacyInforme.slug}`, locals.locale));
+		}
+		const redirectAlias = (informeRedirectAliases as Record<string, string>)[params.id];
+		if (redirectAlias) {
+			throw redirect(308, localizePath(`/informes/${redirectAlias}`, locals.locale));
 		}
 		throw error(404, 'Informe no encontrado');
 	}

@@ -31,27 +31,78 @@
 
 	let { data }: { data: PageData } = $props();
 
-	const baseEndpoints = (
-		one: string,
-		all: string,
-		authors = 'Devuelve el listado completo de autores con id numérico, clave textual y nombre.'
-	): ApiEndpointText[] => [
-		{
-			method: 'GET',
-			path: '/api/obras',
-			description: all
+	const authorEndpointTextByLocale: Record<Locale, { all: string; one: string }> = {
+		es: {
+			all: 'Devuelve el listado completo de autores con id numérico, clave textual y nombre.',
+			one: 'Devuelve un solo autor usando su id numérico o su clave textual.'
 		},
-		{
-			method: 'GET',
-			path: '/api/obras/{id-publicId-o-slug}',
-			description: one
+		en: {
+			all: 'Returns the complete author list with numeric id, textual key, and name.',
+			one: 'Returns a single author using the numeric id or textual key.'
 		},
-		{
-			method: 'GET',
-			path: '/api/autores',
-			description: authors
+		fr: {
+			all: 'Renvoie la liste complète des auteurs avec identifiant numérique, clé textuelle et nom.',
+			one: 'Renvoie un seul auteur à partir de son identifiant numérique ou de sa clé textuelle.'
+		},
+		pt: {
+			all: 'Devolve a lista completa de autores com id numérico, chave textual e nome.',
+			one: 'Devolve um único autor usando o id numérico ou a chave textual.'
+		},
+		it: {
+			all: 'Restituisce l’elenco completo degli autori con id numerico, chiave testuale e nome.',
+			one: 'Restituisce un singolo autore usando l’id numerico o la chiave testuale.'
+		},
+		de: {
+			all: 'Gibt die vollständige Autorenliste mit numerischer ID, Textschlüssel und Namen zurück.',
+			one: 'Gibt einen einzelnen Autor anhand der numerischen ID oder des Textschlüssels zurück.'
+		},
+		zh: {
+			all: '返回包含数字 ID、文本键和姓名的完整作者列表。',
+			one: '使用数字 ID 或文本键返回单个作者。'
+		},
+		ja: {
+			all: '数値 ID、テキストキー、名前を含む著者一覧全体を返します。',
+			one: '数値 ID またはテキストキーを使って単一の著者を返します。'
+		},
+		ko: {
+			all: '숫자 ID, 텍스트 키, 이름이 포함된 전체 저자 목록을 반환합니다.',
+			one: '숫자 ID 또는 텍스트 키를 사용해 단일 저자를 반환합니다.'
+		},
+		ru: {
+			all: 'Возвращает полный список авторов с числовым ID, текстовым ключом и именем.',
+			one: 'Возвращает одного автора по числовому ID или текстовому ключу.'
+		},
+		ar: {
+			all: 'يعيد القائمة الكاملة للمؤلفين مع المعرّف الرقمي والمفتاح النصي والاسم.',
+			one: 'يعيد مؤلفًا واحدًا باستخدام المعرّف الرقمي أو المفتاح النصي.'
 		}
-	];
+	};
+
+	const baseEndpoints = (one: string, all: string, locale: Locale): ApiEndpointText[] => {
+		const authorText = authorEndpointTextByLocale[locale] ?? authorEndpointTextByLocale.es;
+		return [
+			{
+				method: 'GET',
+				path: '/api/obras',
+				description: all
+			},
+			{
+				method: 'GET',
+				path: '/api/obras/{id-publicId-o-slug}',
+				description: one
+			},
+			{
+				method: 'GET',
+				path: '/api/autores',
+				description: authorText.all
+			},
+			{
+				method: 'GET',
+				path: '/api/autores/{id-publicId-o-key}',
+				description: authorText.one
+			}
+		];
+	};
 
 	const publicIdDescriptionByLocale: Record<Locale, string> = {
 		es: 'Identificador público numérico estable de la obra.',
@@ -102,7 +153,8 @@
 			endpointsHeading: 'Endpoints',
 			endpoints: baseEndpoints(
 				'Devuelve una sola obra usando su identificador o su slug público.',
-				'Devuelve el catálogo completo de obras con sus metadatos públicos.'
+				'Devuelve el catálogo completo de obras con sus metadatos públicos.',
+				'es'
 			),
 			fieldsHeading: 'Campos principales',
 			fieldColumn: 'Campo',
@@ -126,7 +178,8 @@
 			endpointsHeading: 'Endpoints',
 			endpoints: baseEndpoints(
 				'Returns a single work using its identifier or public slug.',
-				'Returns the complete work catalogue with its public metadata.'
+				'Returns the complete work catalogue with its public metadata.',
+				'en'
 			),
 			fieldsHeading: 'Main Fields',
 			fieldColumn: 'Field',
@@ -169,7 +222,8 @@
 			endpointsHeading: 'Endpoints',
 			endpoints: baseEndpoints(
 				"Renvoie une seule œuvre à partir de son identifiant ou de son slug public.",
-				"Renvoie le catalogue complet des œuvres avec leurs métadonnées publiques."
+				"Renvoie le catalogue complet des œuvres avec leurs métadonnées publiques.",
+				'fr'
 			),
 			fieldsHeading: 'Champs principaux',
 			fieldColumn: 'Champ',
@@ -212,7 +266,8 @@
 			endpointsHeading: 'Endpoints',
 			endpoints: baseEndpoints(
 				'Devolve uma única obra usando seu identificador ou slug público.',
-				'Devolve o catálogo completo de obras com seus metadados públicos.'
+				'Devolve o catálogo completo de obras com seus metadados públicos.',
+				'pt'
 			),
 			fieldsHeading: 'Campos principais',
 			fieldColumn: 'Campo',
@@ -255,7 +310,8 @@
 			endpointsHeading: 'Endpoint',
 			endpoints: baseEndpoints(
 				'Restituisce una singola opera usando il suo identificatore o slug pubblico.',
-				'Restituisce il catalogo completo delle opere con i relativi metadati pubblici.'
+				'Restituisce il catalogo completo delle opere con i relativi metadati pubblici.',
+				'it'
 			),
 			fieldsHeading: 'Campi principali',
 			fieldColumn: 'Campo',
@@ -298,7 +354,8 @@
 			endpointsHeading: 'Endpoints',
 			endpoints: baseEndpoints(
 				'Gibt ein einzelnes Werk anhand seiner Kennung oder seines öffentlichen Slugs zurück.',
-				'Gibt den vollständigen Werkkatalog mit seinen öffentlichen Metadaten zurück.'
+				'Gibt den vollständigen Werkkatalog mit seinen öffentlichen Metadaten zurück.',
+				'de'
 			),
 			fieldsHeading: 'Hauptfelder',
 			fieldColumn: 'Feld',
@@ -341,7 +398,8 @@
 			endpointsHeading: '端点',
 			endpoints: baseEndpoints(
 				'使用作品标识符或公共 slug 返回单部作品。',
-				'返回完整作品目录及其公共元数据。'
+				'返回完整作品目录及其公共元数据。',
+				'zh'
 			),
 			fieldsHeading: '主要字段',
 			fieldColumn: '字段',
@@ -383,7 +441,8 @@
 			endpointsHeading: 'エンドポイント',
 			endpoints: baseEndpoints(
 				'識別子または公開 slug を使って単一の作品を返します。',
-				'公開メタデータ付きの作品カタログ全体を返します。'
+				'公開メタデータ付きの作品カタログ全体を返します。',
+				'ja'
 			),
 			fieldsHeading: '主なフィールド',
 			fieldColumn: 'フィールド',
@@ -425,7 +484,8 @@
 			endpointsHeading: '엔드포인트',
 			endpoints: baseEndpoints(
 				'식별자 또는 공개 slug를 사용해 단일 작품을 반환합니다.',
-				'공개 메타데이터가 포함된 전체 작품 카탈로그를 반환합니다.'
+				'공개 메타데이터가 포함된 전체 작품 카탈로그를 반환합니다.',
+				'ko'
 			),
 			fieldsHeading: '주요 필드',
 			fieldColumn: '필드',
@@ -467,7 +527,8 @@
 			endpointsHeading: 'Эндпоинты',
 			endpoints: baseEndpoints(
 				'Возвращает одно произведение по его идентификатору или публичному slug.',
-				'Возвращает полный каталог произведений с публичными метаданными.'
+				'Возвращает полный каталог произведений с публичными метаданными.',
+				'ru'
 			),
 			fieldsHeading: 'Основные поля',
 			fieldColumn: 'Поле',
@@ -509,7 +570,8 @@
 			endpointsHeading: 'نقاط الوصول',
 			endpoints: baseEndpoints(
 				'تعيد عملًا واحدًا باستخدام معرّفه أو slug العام الخاص به.',
-				'تعيد فهرس الأعمال الكامل مع بياناته الوصفية العامة.'
+				'تعيد فهرس الأعمال الكامل مع بياناته الوصفية العامة.',
+				'ar'
 			),
 			fieldsHeading: 'الحقول الرئيسية',
 			fieldColumn: 'الحقل',

@@ -123,6 +123,7 @@ interface Snapshot {
 	bitesoNameByWorkId: Map<string, string>;
 	authors: CatalogAuthor[];
 	authorById: Map<string, CatalogAuthor>;
+	authorByPublicId: Map<number, CatalogAuthor>;
 }
 
 interface SummaryFile {
@@ -997,6 +998,11 @@ const createSnapshot = async (): Promise<Snapshot> => {
 		nameVariants: splitVariants(row.variaciones_nombre)
 	}));
 	const authorById = new Map(authors.map((author) => [author.id, author] as const));
+	const authorByPublicId = new Map(
+		authors
+			.filter((author): author is CatalogAuthor & { publicId: number } => typeof author.publicId === 'number')
+			.map((author) => [author.publicId, author] as const)
+	);
 
 	const attributionRows = await getRows<AttributionRow>(
 		`SELECT
@@ -1257,7 +1263,8 @@ const createSnapshot = async (): Promise<Snapshot> => {
 		bitesoSlugByWorkId,
 		bitesoNameByWorkId,
 		authors,
-		authorById
+		authorById,
+		authorByPublicId
 	};
 };
 
@@ -1470,6 +1477,9 @@ export const getAuthorById = async (authorId: string): Promise<CatalogAuthor | u
 	if (authorId === UNRESOLVED_AUTHOR_ID) return undefined;
 	return (await getSnapshot()).authorById.get(authorId);
 };
+
+export const getAuthorByPublicId = async (publicId: number): Promise<CatalogAuthor | undefined> =>
+	(await getSnapshot()).authorByPublicId.get(publicId);
 
 export const listGenres = async (): Promise<string[]> =>
 	Array.from(new Set(getAuthorshipExamWorksFromSnapshot(await getSnapshot()).map((work) => work.genre))).sort((a, b) =>

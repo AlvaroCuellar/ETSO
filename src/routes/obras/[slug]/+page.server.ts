@@ -16,10 +16,7 @@ export const load: PageServerLoad = async ({ locals, params, setHeaders }) => {
 		const publicId = /^\d+$/.test(params.slug) ? Number.parseInt(params.slug, 10) : null;
 		const publicIdWork = publicId === null ? undefined : await getWorkByPublicId(publicId);
 		if (publicIdWork) {
-			const targetPath = publicIdWork.hasSummaryFile
-				? `/obras/${publicIdWork.slug}/resumen`
-				: `/obras/${publicIdWork.slug}`;
-			throw redirect(308, localizePath(targetPath, locals.locale));
+			throw redirect(308, localizePath(`/obras/${publicIdWork.slug}`, locals.locale));
 		}
 		throw error(404, 'Obra no encontrada');
 	}

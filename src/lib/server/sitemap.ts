@@ -1,4 +1,4 @@
-import { getLocalizedAlternates, localizeUrl, SUPPORTED_LOCALES, type Locale } from '$lib/i18n';
+import { localizeUrl, SUPPORTED_LOCALES, type Locale } from '$lib/i18n';
 import { SITE_URL } from '$lib/seo';
 import {
 	getAllAuthors,
@@ -29,7 +29,7 @@ const STATIC_PATHS = [
 	'/repercusion'
 ];
 
-export const SITEMAP_CACHE_SECONDS = 3600;
+export const SITEMAP_CACHE_SECONDS = 86400;
 export const SITEMAP_MAX_URLS = 45000;
 
 interface CachedPaths {
@@ -111,12 +111,5 @@ export const sitemapFileUrl = (locale: Locale, chunk: number): string =>
 
 export const sitemapUrlEntry = (path: string, locale: Locale): string => {
 	const loc = localizeUrl(path, locale);
-	const alternates = getLocalizedAlternates(path)
-		.map(
-			(alternate) =>
-				`    <xhtml:link rel="alternate" hreflang="${alternate.locale}" href="${escapeXml(alternate.href)}" />`
-		)
-		.join('\n');
-
-	return ['  <url>', `    <loc>${escapeXml(loc)}</loc>`, alternates, '  </url>'].join('\n');
+	return ['  <url>', `    <loc>${escapeXml(loc)}</loc>`, '  </url>'].join('\n');
 };

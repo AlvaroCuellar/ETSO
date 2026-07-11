@@ -174,7 +174,7 @@
 			graphLoading = true;
 			graphError = '';
 			try {
-				const response = await fetch('/api/red-obras', { cache: 'force-cache' });
+				const response = await fetch('/data/red-obras.json', { cache: 'force-cache' });
 				if (!response.ok) throw new Error(`No se pudo cargar el grafo: ${response.status}`);
 				graph = (await response.json()) as WorkNetworkGraph;
 			} catch (cause) {

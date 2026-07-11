@@ -8,7 +8,7 @@
 	},
 	"scripts": {
 		"dev": "vite dev",
-		"build": "vite build",
+		"build": "npm run data:red-obras && vite build",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -19,7 +19,8 @@
 		"compare:informe-slugs": "node scripts/compare-informe-slugs.mjs",
 		"index:texts": "node scripts/build-search-index.mjs",
 		"index:texts:compact": "node scripts/build-search-index.mjs --compact",
-		"index:validate": "node scripts/validate-search-index.mjs"
+		"index:validate": "node scripts/validate-search-index.mjs",
+		"data:red-obras": "node scripts/build-red-obras-graph.mjs"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^7.0.1",

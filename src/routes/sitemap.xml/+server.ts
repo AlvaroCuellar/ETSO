@@ -32,7 +32,7 @@ export const GET: RequestHandler = async () => {
 		{
 			headers: {
 				'content-type': 'application/xml; charset=utf-8',
-				'cache-control': `public, max-age=${SITEMAP_CACHE_SECONDS}`
+				'cache-control': `public, max-age=3600, s-maxage=${SITEMAP_CACHE_SECONDS}, stale-while-revalidate=604800`
 			}
 		}
 	);

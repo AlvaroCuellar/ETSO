@@ -549,15 +549,13 @@
 						No hay distancias disponibles para este informe.
 					</div>
 				{:else}
-					{#each availableAmbitos as ambito}
-						<div class={`${activeAmbito === ambito ? 'block' : 'hidden'} min-w-0 max-w-full`} id={`acto-${ambito}`}>
-							<WorksTable
-								rows={rowsByAmbito[ambito]}
-								mode="informe"
-								emptyMessage="No hay obras cercanas disponibles en este ámbito."
-							/>
-						</div>
-					{/each}
+					<div class="min-w-0 max-w-full" id={`acto-${activeAmbito}`}>
+						<WorksTable
+							rows={rowsByAmbito[activeAmbito]}
+							mode="informe"
+							emptyMessage="No hay obras cercanas disponibles en este ámbito."
+						/>
+					</div>
 				{/if}
 			</div>
 		</div>

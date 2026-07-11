@@ -232,6 +232,7 @@
 								class={languageOptionClass(option.locale === locale)}
 								href={currentPathForLocale(option.locale)}
 								hreflang={option.locale}
+								data-sveltekit-preload-data="off"
 								data-i18n-preserve-locale
 								aria-current={option.locale === locale ? 'true' : undefined}
 								aria-label={`${translations.nav.switchToLanguage} ${option.name}`}

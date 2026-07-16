@@ -26,15 +26,11 @@ const server = await createServer({
 	logLevel: 'error'
 });
 
+let graph;
+
 try {
 	const { getWorkNetworkGraph } = await server.ssrLoadModule('/src/lib/server/catalog-runtime.ts');
-	const graph = validateGraph(await getWorkNetworkGraph(3));
-	await mkdir(dirname(outputPath), { recursive: true });
-	await writeFile(temporaryOutputPath, JSON.stringify(graph));
-	await rename(temporaryOutputPath, outputPath);
-	console.log(
-		`Grafo de red-obras generado: ${graph.nodes.length} nodos, ${graph.links.length} enlaces (${outputPath})`
-	);
+	graph = validateGraph(await getWorkNetworkGraph(3));
 } catch (cause) {
 	try {
 		const existingGraph = await validateExistingGraph();
@@ -48,4 +44,16 @@ try {
 	}
 } finally {
 	await server.close();
+}
+
+if (graph) {
+	// El servidor de Vite observa el árbol de archivos del proyecto. Cerrarlo antes
+	// de publicar el JSON evita que procese el rename como un cambio pendiente al
+	// mismo tiempo que se destruye durante la compilación en Vercel.
+	await mkdir(dirname(outputPath), { recursive: true });
+	await writeFile(temporaryOutputPath, JSON.stringify(graph));
+	await rename(temporaryOutputPath, outputPath);
+	console.log(
+		`Grafo de red-obras generado: ${graph.nodes.length} nodos, ${graph.links.length} enlaces (${outputPath})`
+	);
 }

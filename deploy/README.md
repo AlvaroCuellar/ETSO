@@ -154,6 +154,13 @@ los sirve como `/facsimiles/...`; si Turso tiene rutas `facsimiles/...` pero no
 existe el JPG correspondiente en `static/facsimiles/`, la ficha de obra no puede
 mostrar la primera y la ultima pagina.
 
+El sincronizador valida que cada ruta de facsimil guardada en SQLite tenga su
+pareja inicial/final y que no sobren imagenes en el paquete. A continuacion
+reemplaza `static/facsimiles/` por un espejo exacto del paquete, eliminando
+archivos obsoletos de obras renombradas o retiradas. `deploy-all.sh` incluye el
+contenido de esa carpeta en su cache: un cambio solo de imagen tambien obliga a
+ejecutar el Deploy Hook de Vercel.
+
 El Ã­ndice de bÃºsqueda se genera automÃ¡ticamente desde los TXT en:
 `deploy/input/public-assets/search/`.
 

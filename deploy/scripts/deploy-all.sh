@@ -20,6 +20,8 @@ fi
 echo "==> Iniciando despliegue completo"
 CACHE_SCRIPT="$ROOT_DIR/deploy/scripts/deploy-cache.py"
 DEPLOY_CHANGED=0
+STATIC_FACSIMILES_CHANGED=0
+DEPLOY_HOOK_EXECUTED=0
 
 notify_finished() {
   local sound="${CETSO_DONE_SOUND:-/System/Library/Sounds/Glass.aiff}"
@@ -47,10 +49,25 @@ cache_mark() {
   python3 "$CACHE_SCRIPT" mark "$@" >/dev/null
 }
 
-echo "==> Paso 1/5: comprobacion del entorno"
+echo "==> Paso 1/6: comprobacion del entorno"
 bash "$ROOT_DIR/deploy/scripts/check-deploy-env.sh"
 
-echo "==> Paso 2/5: generacion del indice de busqueda"
+echo "==> Paso 2/6: comprobacion de facsimiles estaticos"
+STATIC_FACSIMILES="$ROOT_DIR/static/facsimiles"
+STATIC_FACSIMILES_CACHE_ARGS=(
+  --key "static-facsimiles"
+  --path "$STATIC_FACSIMILES"
+  --require-nonempty-dir "$STATIC_FACSIMILES"
+)
+if cache_check "${STATIC_FACSIMILES_CACHE_ARGS[@]}" >/dev/null; then
+  echo "==> Facsimiles estaticos sin cambios"
+else
+  echo "==> Facsimiles estaticos nuevos o modificados: Vercel debe redesplegarse"
+  STATIC_FACSIMILES_CHANGED=1
+  DEPLOY_CHANGED=1
+fi
+
+echo "==> Paso 3/6: generacion del indice de busqueda"
 SEARCH_INPUT="$ROOT_DIR/${SEARCH_INDEX_INPUT_PATH:-deploy/input/private-assets/texts}"
 SEARCH_OUTPUT="$ROOT_DIR/${SEARCH_INDEX_OUTPUT_PATH:-deploy/input/public-assets/search}"
 SEARCH_CACHE_ARGS=(
@@ -69,7 +86,7 @@ else
   DEPLOY_CHANGED=1
 fi
 
-echo "==> Paso 3/5: generacion del indice de busqueda de resumenes"
+echo "==> Paso 4/6: generacion del indice de busqueda de resumenes"
 SUMMARY_SQLITE="$ROOT_DIR/${SUMMARY_INDEX_SQLITE_PATH:-${SQLITE_LOCAL_PATH:-deploy/input/turso/etso.sqlite}}"
 SUMMARY_INPUT="$ROOT_DIR/${SUMMARY_INDEX_INPUT_PATH:-deploy/input/public-assets/resumenes}"
 SUMMARY_OUTPUT="$ROOT_DIR/${SUMMARY_INDEX_OUTPUT_PATH:-deploy/input/public-assets/resumenes/search-index.json}"
@@ -90,7 +107,7 @@ else
   DEPLOY_CHANGED=1
 fi
 
-echo "==> Paso 4/5: sincronizacion R2"
+echo "==> Paso 5/6: sincronizacion R2"
 R2_CACHE_ARGS=(
   --key "r2-sync"
   --path "$ROOT_DIR/deploy/input/public-assets/search"
@@ -109,7 +126,7 @@ else
   fi
 fi
 
-echo "==> Paso 5/5: sincronizacion Turso"
+echo "==> Paso 6/6: sincronizacion Turso"
 TURSO_CACHE_ARGS=(
   --key "turso-db"
   --path "$ROOT_DIR/${SQLITE_LOCAL_PATH:-deploy/input/turso/etso.sqlite}"
@@ -153,6 +170,7 @@ elif [ -n "${DEPLOY_HOOK_URL:-}" ]; then
     echo "==> Lanzando deploy hook"
     curl -fsS -X POST "$DEPLOY_HOOK_URL" >/dev/null
     echo "==> Deploy hook ejecutado"
+    DEPLOY_HOOK_EXECUTED=1
   fi
 elif [ "${DRY_RUN:-false}" != "true" ]; then
   if [ "${REQUIRE_DEPLOY_HOOK:-true}" = "true" ]; then
@@ -161,6 +179,12 @@ elif [ "${DRY_RUN:-false}" != "true" ]; then
     exit 1
   fi
   echo "==> DEPLOY_HOOK_URL no configurado; Vercel requiere redeploy manual"
+fi
+
+if [ "$STATIC_FACSIMILES_CHANGED" -eq 1 ] && [ "$DEPLOY_HOOK_EXECUTED" -eq 1 ]; then
+  cache_mark "${STATIC_FACSIMILES_CACHE_ARGS[@]}"
+elif [ "$STATIC_FACSIMILES_CHANGED" -eq 1 ] && [ "${DRY_RUN:-false}" != "true" ]; then
+  echo "==> La cache de facsimiles no se marca hasta confirmar el redeploy de Vercel"
 fi
 
 echo "==> Despliegue completo terminado"

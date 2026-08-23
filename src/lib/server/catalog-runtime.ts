@@ -240,7 +240,6 @@ interface WorkRow {
 	genero: string | null;
 	adicion: string | null;
 	estado_texto: string | null;
-	tipo_transcripcion: string | null;
 	fecha_biteso: string | null;
 	fecha_resumen: string | null;
 	resultado1: string | null;
@@ -255,6 +254,25 @@ interface WorkRow {
 	has_report: number;
 	has_resumen_breve: number;
 }
+
+const parseBitesoCredits = (
+	value: string | null | undefined
+): { nombre: string; revisores: string[] } => {
+	const raw = value?.trim() || 'ETSO';
+	const marker = /\s*\|\s*Revisores:\s*/i;
+	const markerMatch = marker.exec(raw);
+	if (!markerMatch || markerMatch.index < 0) {
+		return { nombre: raw, revisores: [] };
+	}
+
+	const nombre = raw.slice(0, markerMatch.index).trim() || 'ETSO';
+	const reviewerText = raw.slice(markerMatch.index + markerMatch[0].length).trim();
+	const revisores = reviewerText
+		.split(';')
+		.map((reviewer) => reviewer.trim())
+		.filter(Boolean);
+	return { nombre, revisores };
+};
 
 const optionalPublicAssetUrl = (relativePath: string | null | undefined): string | undefined => {
 	const cleanPath = relativePath?.trim();
@@ -851,7 +869,6 @@ const buildCatalogWorksFromRows = (
 			genre: row.genero?.trim() || 'Sin genero',
 			origin: row.procede?.trim() || 'Sin procedencia',
 			textState: row.estado_texto?.trim() || 'Sin estado',
-			transcriptionType: row.tipo_transcripcion?.trim() || undefined,
 			addedOn: row.adicion?.trim() || 'Sin fecha',
 			bitesoPublishedOn: row.fecha_biteso?.trim() || undefined,
 			summaryPublishedOn: row.fecha_resumen?.trim() || undefined,
@@ -885,9 +902,6 @@ const loadWorkRowsByIds = async (workIds: string[]): Promise<WorkRow[]> => {
 	const bitesoPublicationDateSelect = worksTableColumns.has('fecha_biteso')
 		? 'fecha_biteso'
 		: 'NULL AS fecha_biteso';
-	const transcriptionTypeSelect = worksTableColumns.has('tipo_transcripcion')
-		? 'tipo_transcripcion'
-		: 'NULL AS tipo_transcripcion';
 	const hasTeiSelect = worksTableColumns.has('tiene_tei') ? 'tiene_tei' : '0 AS tiene_tei';
 	const facsimileFirstSelect = worksTableColumns.has('facsimile_first')
 		? 'facsimile_first'
@@ -904,7 +918,6 @@ const loadWorkRowsByIds = async (workIds: string[]): Promise<WorkRow[]> => {
 		 ${publicIdSelect},
 		 ${titleVariantsSelect},
 		 genero, adicion, estado_texto,
-		 ${transcriptionTypeSelect},
 		 ${bitesoPublicationDateSelect},
 		 ${hasTeiSelect},
 		 ${facsimileFirstSelect},
@@ -1124,9 +1137,6 @@ const createSnapshot = async (): Promise<Snapshot> => {
 	const bitesoPublicationDateSelect = worksTableColumns.has('fecha_biteso')
 		? 'fecha_biteso'
 		: 'NULL AS fecha_biteso';
-	const transcriptionTypeSelect = worksTableColumns.has('tipo_transcripcion')
-		? 'tipo_transcripcion'
-		: 'NULL AS tipo_transcripcion';
 	const hasTeiSelect = worksTableColumns.has('tiene_tei') ? 'tiene_tei' : '0 AS tiene_tei';
 	const facsimileFirstSelect = worksTableColumns.has('facsimile_first')
 		? 'facsimile_first'
@@ -1143,7 +1153,6 @@ const createSnapshot = async (): Promise<Snapshot> => {
 		 ${publicIdSelect},
 		 ${titleVariantsSelect},
 		 genero, adicion, estado_texto,
-		 ${transcriptionTypeSelect},
 		 ${bitesoPublicationDateSelect},
 		 ${hasTeiSelect},
 		 ${facsimileFirstSelect},
@@ -1207,7 +1216,6 @@ const createSnapshot = async (): Promise<Snapshot> => {
 			genre: row.genero?.trim() || 'Sin genero',
 			origin: row.procede?.trim() || 'Sin procedencia',
 			textState: row.estado_texto?.trim() || 'Sin estado',
-			transcriptionType: row.tipo_transcripcion?.trim() || undefined,
 			addedOn: row.adicion?.trim() || 'Sin fecha',
 			bitesoPublishedOn: row.fecha_biteso?.trim() || undefined,
 			summaryPublishedOn: row.fecha_resumen?.trim() || undefined,
@@ -2750,6 +2758,7 @@ const getBitesoForWork = async (
 
 	const text = await readPrivateTextByWorkId(work.id);
 	if (!text) return undefined;
+	const bitesoCredits = parseBitesoCredits(snapshot.bitesoNameByWorkId.get(work.id));
 	let tei: BitesoTeiViewer | undefined;
 	if (work.hasTeiViewer) {
 		const rawTei = await readPrivateTextByTextKey(`${work.id}.tei.json`);
@@ -2765,7 +2774,8 @@ const getBitesoForWork = async (
 	return {
 		id: snapshot.bitesoSlugByWorkId.get(work.id) || work.slug,
 		workId: work.id,
-		bitesoNombre: snapshot.bitesoNameByWorkId.get(work.id) || 'ETSO',
+		bitesoNombre: bitesoCredits.nombre,
+		bitesoRevisores: bitesoCredits.revisores,
 		title: `Texto digital de ${work.title}`,
 		text,
 		tei

@@ -106,6 +106,7 @@
 		return labels[data.locale] ?? labels.es;
 	});
 	const hasPublishedOn = $derived(data.publishedOn.trim().length > 0);
+	const hasReviewers = $derived(data.biteso.bitesoRevisores.length > 0);
 	const formattedPublishedOn = $derived.by(() => formatPublicationDate(data.publishedOn, data.locale));
 	const seoDescription = $derived.by(() => {
 		const descriptions = {
@@ -532,6 +533,11 @@
 		{#if hasPublishedOn}
 			<p class="m-0 font-ui text-[0.92rem] font-semibold text-text-soft" data-i18n-skip>
 				{publicationDateLabel}: {formattedPublishedOn}
+			</p>
+		{/if}
+		{#if hasReviewers}
+			<p class="m-0 font-ui text-[0.92rem] text-text-soft" data-i18n-skip>
+				<span class="font-semibold">Revisores:</span> {data.biteso.bitesoRevisores.join('; ')}
 			</p>
 		{/if}
 

@@ -38,6 +38,14 @@ require_dir() {
   fi
 }
 
+require_nonempty_dir() {
+  require_dir "$1"
+  if [ -d "$ROOT_DIR/$1" ] && ! find "$ROOT_DIR/$1" -type f -print -quit | grep -q .; then
+    echo "Carpeta requerida vacia: $1"
+    missing=1
+  fi
+}
+
 require_file() {
   if [ ! -f "$ROOT_DIR/$1" ]; then
     echo "Falta archivo requerido: $1"
@@ -94,6 +102,7 @@ fi
 
 require_dir "${SEARCH_INDEX_INPUT_PATH:-deploy/input/private-assets/texts}"
 require_dir "${SUMMARY_INDEX_INPUT_PATH:-deploy/input/public-assets/resumenes}"
+require_nonempty_dir "static/facsimiles"
 require_file "${SUMMARY_INDEX_SQLITE_PATH:-${SQLITE_LOCAL_PATH:-deploy/input/turso/etso.sqlite}}"
 if [ "${DRY_RUN:-false}" != "true" ]; then
   require_file "$SQLITE_LOCAL_PATH"

@@ -79,8 +79,12 @@ def get_columns(connection: sqlite3.Connection, table: str) -> list[str]:
     return [str(row["name"]) for row in rows]
 
 
-def validate_schema(local: sqlite3.Connection, remote: sqlite3.Connection) -> dict[str, list[str]]:
+def validate_schema(
+    local: sqlite3.Connection,
+    remote: sqlite3.Connection,
+) -> tuple[dict[str, list[str]], list[str]]:
     columns_by_table: dict[str, list[str]] = {}
+    schema_migrations: list[str] = []
     for table in CATALOG_TABLES:
         local_columns = get_columns(local, table)
         remote_columns = get_columns(remote, table)
@@ -88,14 +92,22 @@ def validate_schema(local: sqlite3.Connection, remote: sqlite3.Connection) -> di
             raise SystemExit(f"Falta tabla local: {table}")
         if not remote_columns:
             raise SystemExit(f"Falta tabla remota: {table}. Usa replace-turso-db.sh para inicializar.")
-        if local_columns != remote_columns:
+        removes_legacy_transcription_type = (
+            table == "works"
+            and "tipo_transcripcion" in remote_columns
+            and "tipo_transcripcion" not in local_columns
+            and [column for column in remote_columns if column != "tipo_transcripcion"] == local_columns
+        )
+        if removes_legacy_transcription_type:
+            schema_migrations.append('ALTER TABLE "works" DROP COLUMN "tipo_transcripcion";')
+        elif local_columns != remote_columns:
             raise SystemExit(
                 "Esquema Turso distinto del SQLite local en "
                 f"{table}: local={local_columns!r}, remoto={remote_columns!r}. "
                 "No aplico sincronizacion incremental."
             )
         columns_by_table[table] = local_columns
-    return columns_by_table
+    return columns_by_table, schema_migrations
 
 
 def normalize_value(value: Any) -> Any:
@@ -364,7 +376,7 @@ def main() -> int:
     args = parse_args()
     local = connect(args.local_db)
     remote = connect(args.remote_db)
-    columns_by_table = validate_schema(local, remote)
+    columns_by_table, schema_migrations = validate_schema(local, remote)
 
     local_authors = rows_by_id(local, "authors", columns_by_table["authors"])
     remote_authors = rows_by_id(remote, "authors", columns_by_table["authors"])
@@ -411,6 +423,7 @@ def main() -> int:
         "PRAGMA foreign_keys=OFF;",
         "BEGIN TRANSACTION;",
         "PRAGMA defer_foreign_keys=ON;",
+        *schema_migrations,
     ]
 
     append_dependent_deletes(sql_lines, rewrite_dependents_for)
@@ -432,7 +445,8 @@ def main() -> int:
 
     report = {
         "changed": bool(
-            added_authors
+            schema_migrations
+            or added_authors
             or removed_authors
             or changed_authors
             or added_works
@@ -440,6 +454,7 @@ def main() -> int:
             or changed_works
             or changed_dependent_works
         ),
+        "schema_migrations": schema_migrations,
         "authors": {
             "added": len(added_authors),
             "updated": len(changed_authors),

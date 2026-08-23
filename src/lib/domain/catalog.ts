@@ -42,7 +42,6 @@ export interface CatalogWork {
 	genre: string;
 	origin: string;
 	textState: string;
-	transcriptionType?: string;
 	addedOn: string;
 	bitesoPublishedOn?: string;
 	summaryPublishedOn?: string;
@@ -285,6 +284,7 @@ export interface CatalogBiteso {
 	id: string;
 	workId: string;
 	bitesoNombre: string;
+	bitesoRevisores: string[];
 	title: string;
 	text: string;
 	tei?: BitesoTeiViewer;

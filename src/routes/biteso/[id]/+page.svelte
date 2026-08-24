@@ -880,8 +880,13 @@
 										{block.text}
 									</p>
 								{:else}
-									<div class="grid gap-2 border-t border-border/60 pt-3 sm:grid-cols-[5.75rem_minmax(0,1fr)]">
-										<div class="font-ui text-[0.78rem] font-bold uppercase tracking-[0.06em] text-brand-blue-dark" data-i18n-skip>
+									<div
+										class="grid gap-2 border-t border-border/60 pt-3 sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-6 lg:grid-cols-[12rem_minmax(0,1fr)]"
+									>
+										<div
+											class="min-w-0 break-words font-ui text-[0.78rem] leading-[1.55] font-bold uppercase tracking-[0.06em] text-brand-blue-dark"
+											data-i18n-skip
+										>
 											{block.speaker ?? ''}
 										</div>
 										<div class="grid gap-1.5">

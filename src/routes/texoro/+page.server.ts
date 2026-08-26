@@ -1,4 +1,5 @@
 import { env as publicEnv } from '$env/dynamic/public';
+import { normalizeResultSort, normalizeResultSortDirection } from '$lib/search/result-sort';
 
 import type { PageServerLoad } from './$types';
 
@@ -16,6 +17,14 @@ const resolveTexoroIndexBaseUrl = (): string => {
 	);
 };
 
-export const load: PageServerLoad = async () => ({
-	texoroIndexBaseUrl: resolveTexoroIndexBaseUrl()
-});
+export const load: PageServerLoad = async ({ url }) => {
+	const resultSort = normalizeResultSort(url.searchParams.get('orden'));
+	return {
+		texoroIndexBaseUrl: resolveTexoroIndexBaseUrl(),
+		resultSort,
+		resultSortDirection: normalizeResultSortDirection(
+			url.searchParams.get('direccion'),
+			resultSort
+		)
+	};
+};

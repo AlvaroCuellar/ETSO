@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { onMount, tick } from 'svelte';
+	import { replaceState } from '$app/navigation';
+	import { page } from '$app/state';
 	import MatchToggle from '$lib/components/search/MatchToggle.svelte';
 	import TokenMultiSelect from '$lib/components/search/TokenMultiSelect.svelte';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
@@ -442,8 +444,8 @@
 	let exportError = $state('');
 	let searchExecution = $state<SearchExecution | null>(null);
 	let resultsPage = $state(1);
-	let resultSort = $state<ResultSort>('occurrences');
-	let resultSortDirection = $state<ResultSortDirection>('desc');
+	let resultSort = $derived<ResultSort>(data.resultSort);
+	let resultSortDirection = $derived<ResultSortDirection>(data.resultSortDirection);
 	let resultsRegion = $state<HTMLElement | null>(null);
 	let resultsPaginationRegion = $state<HTMLElement | null>(null);
 	let indexStats = $state<{ works: number; tokens: number; vocabSize: number } | null>(null);
@@ -1537,6 +1539,7 @@
 		resultsPage = 1;
 		resultSort = 'occurrences';
 		resultSortDirection = 'desc';
+		syncResultSortUrl();
 		isPreparingResults = false;
 		searchError = '';
 		exportError = '';
@@ -2497,12 +2500,25 @@
 		prefetchResultsPage(nextPage, 'top');
 	};
 
+	const syncResultSortUrl = (): void => {
+		const url = new URL(window.location.href);
+		if (resultSort === 'occurrences' && resultSortDirection === 'desc') {
+			url.searchParams.delete('orden');
+			url.searchParams.delete('direccion');
+		} else {
+			url.searchParams.set('orden', resultSort);
+			url.searchParams.set('direccion', resultSortDirection);
+		}
+		replaceState(url, page.state);
+	};
+
 	const changeResultSort = (event: Event): void => {
 		const nextSort = (event.currentTarget as HTMLSelectElement).value as ResultSort;
 		resultSort = nextSort;
 		resultSortDirection = nextSort === 'occurrences' ? 'desc' : 'asc';
 		visiblePreviewRequestId += 1;
 		resultsPage = 1;
+		syncResultSortUrl();
 		void scrollToResults().then(() => prefetchResultsPage(1, 'all'));
 	};
 
@@ -2510,6 +2526,7 @@
 		resultSortDirection = resultSortDirection === 'asc' ? 'desc' : 'asc';
 		visiblePreviewRequestId += 1;
 		resultsPage = 1;
+		syncResultSortUrl();
 		void scrollToResults().then(() => prefetchResultsPage(1, 'all'));
 	};
 
@@ -3721,7 +3738,7 @@
 										value={resultSort}
 										onchange={changeResultSort}
 									>
-										{#each ['occurrences', 'traditional', 'stylometry', 'genre', 'state'] as sortOption}
+										{#each ['occurrences', 'title', 'traditional', 'stylometry', 'genre', 'state'] as sortOption}
 											<option value={sortOption}>{resultSortLabel(sortOption as ResultSort)}</option>
 										{/each}
 									</select>

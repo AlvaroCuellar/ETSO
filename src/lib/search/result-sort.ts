@@ -1,11 +1,12 @@
 import type { AttributionSet } from '$lib/domain/catalog';
 import type { SearchResult } from '$lib/search/types';
 
-export type ResultSort = 'occurrences' | 'traditional' | 'stylometry' | 'genre' | 'state';
+export type ResultSort = 'occurrences' | 'title' | 'traditional' | 'stylometry' | 'genre' | 'state';
 export type ResultSortDirection = 'asc' | 'desc';
 
 export const normalizeResultSort = (value: unknown): ResultSort => {
 	if (
+		value === 'title' ||
 		value === 'traditional' ||
 		value === 'stylometry' ||
 		value === 'genre' ||
@@ -25,6 +26,7 @@ export const normalizeResultSortDirection = (
 };
 
 export const resultSortLabel = (sort: ResultSort): string => {
+	if (sort === 'title') return 'Título';
 	if (sort === 'traditional') return 'Atribución tradicional';
 	if (sort === 'stylometry') return 'Atribución estilométrica';
 	if (sort === 'genre') return 'Género';
@@ -87,7 +89,9 @@ export const sortSearchResults = (
 		}
 
 		let selectedComparison = 0;
-		if (sort === 'traditional') {
+		if (sort === 'title') {
+			selectedComparison = compareOptionalText(left.meta?.title, right.meta?.title, collator, direction);
+		} else if (sort === 'traditional') {
 			selectedComparison = compareOptionalText(
 				attributionSortValue(left.meta?.traditionalAttribution, collator),
 				attributionSortValue(right.meta?.traditionalAttribution, collator),

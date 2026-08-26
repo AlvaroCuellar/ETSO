@@ -3,6 +3,15 @@ import { error } from '@sveltejs/kit';
 import { formatAttribution, type AttributionSet } from '$lib/domain/catalog';
 import { getServerTexoroEngine, searchTexoro } from '$lib/server/texoro-runtime';
 import { buildWorkTitleSearchText, formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
+import {
+	normalizeResultSort,
+	normalizeResultSortDirection,
+	resultSortDirectionLabel,
+	resultSortLabel,
+	sortSearchResults,
+	type ResultSort,
+	type ResultSortDirection
+} from '$lib/search/result-sort';
 
 import type { RequestHandler } from './$types';
 import type {
@@ -49,6 +58,8 @@ interface TexoroExportPayload {
 	structuredQuery?: StructuredSearchQuery;
 	terms: SubmittedTermPayload[];
 	filters: TexoroExportFilters;
+	sort: ResultSort;
+	sortDirection: ResultSortDirection;
 }
 
 interface OccurrenceExportRow {
@@ -142,12 +153,15 @@ const normalizePayload = async (request: Request): Promise<TexoroExportPayload> 
 	const body = (await request.json().catch(() => null)) as Record<string, unknown> | null;
 	const query = normalizeString(body?.query);
 	if (!query) throw error(400, 'Consulta vacia');
+	const sort = normalizeResultSort(body?.sort);
 
 	return {
 		query,
 		structuredQuery: normalizeStructuredQuery(body?.structuredQuery),
 		terms: normalizeTerms(body?.terms),
-		filters: normalizeFilters(body?.filters)
+		filters: normalizeFilters(body?.filters),
+		sort,
+		sortDirection: normalizeResultSortDirection(body?.sortDirection, sort)
 	};
 };
 
@@ -193,10 +207,15 @@ const formatTitleFilter = (filters: TexoroExportFilters): string => {
 	return filters.title || 'Sin filtro';
 };
 
-const filterResults = (execution: SearchExecution, filters: TexoroExportFilters): SearchResult[] => {
+const filterResults = (
+	execution: SearchExecution,
+	filters: TexoroExportFilters,
+	sort: ResultSort,
+	sortDirection: ResultSortDirection
+): SearchResult[] => {
 	const normalizedTitle = normalizeText(filters.title);
 	const selectedWorkIds = new Set(filters.titleIds);
-	return execution.allResults
+	const filtered = execution.allResults
 		.filter((result) => {
 			const meta = result.meta;
 			if (!meta) return false;
@@ -226,9 +245,8 @@ const filterResults = (execution: SearchExecution, filters: TexoroExportFilters)
 			}
 			if (filters.states.length > 0 && !filters.states.includes(meta.textState)) return false;
 			return true;
-		})
-		.sort((a, b) => sumResultOccurrences(b) - sumResultOccurrences(a) || b.score - a.score || a.docId - b.docId)
-		.slice(0, RESULT_EXPORT_LIMIT);
+		});
+	return sortSearchResults(filtered, sort, sortDirection, 'es').slice(0, RESULT_EXPORT_LIMIT);
 };
 
 const keyForMatch = (match: Pick<SearchResultMatch, 'kind' | 'source'>): string => `${match.kind}:${match.source}`;
@@ -438,6 +456,10 @@ const addQuerySheet = (
 		['Filtro autoría estilométrica', payload.filters.stylometryAuthorIds.join('; ') || 'Sin filtro'],
 		['Modo autoría estilométrica', payload.filters.stylometryMatch],
 		['Filtro estados', payload.filters.states.join('; ') || 'Sin filtro'],
+		[
+			'Orden de resultados',
+			`${resultSortLabel(payload.sort)} · ${resultSortDirectionLabel(payload.sort, payload.sortDirection)}`
+		],
 		['Versión del índice', indexVersion],
 		['Avisos de consulta', execution.parsed.warnings.join('; ') || 'Sin avisos'],
 		['Fecha de exportación', new Date().toISOString()],
@@ -467,7 +489,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		const execution = await searchTexoro(payload.query, options);
 		const engine = await getServerTexoroEngine();
 		const indexVersion = engine.manifest?.indexVersion ?? 'n/d';
-		const results = filterResults(execution, payload.filters);
+		const results = filterResults(execution, payload.filters, payload.sort, payload.sortDirection);
 		const matchColumns = buildMatchColumns(payload.terms, results);
 		const occurrenceRows = await buildOccurrenceRows(results, matchColumns);
 

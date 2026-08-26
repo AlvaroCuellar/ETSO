@@ -29,9 +29,20 @@
 	import FolderOpen from 'lucide-svelte/icons/folder-open';
 	import Search from 'lucide-svelte/icons/search';
 	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
+	import ArrowDownAZ from 'lucide-svelte/icons/arrow-down-a-z';
+	import ArrowDownZA from 'lucide-svelte/icons/arrow-down-z-a';
+	import ArrowDownWideNarrow from 'lucide-svelte/icons/arrow-down-wide-narrow';
+	import ArrowUpNarrowWide from 'lucide-svelte/icons/arrow-up-narrow-wide';
 	import X from 'lucide-svelte/icons/x';
 
 	import { normalizePattern, normalizePlainText } from '$lib/search';
+	import {
+		resultSortDirectionLabel,
+		resultSortLabel,
+		sortSearchResults,
+		type ResultSort,
+		type ResultSortDirection
+	} from '$lib/search/result-sort';
 	import {
 		initializeTexoroClientWorker,
 		isTexoroClientWorkerReady,
@@ -431,6 +442,8 @@
 	let exportError = $state('');
 	let searchExecution = $state<SearchExecution | null>(null);
 	let resultsPage = $state(1);
+	let resultSort = $state<ResultSort>('occurrences');
+	let resultSortDirection = $state<ResultSortDirection>('desc');
 	let resultsRegion = $state<HTMLElement | null>(null);
 	let resultsPaginationRegion = $state<HTMLElement | null>(null);
 	let indexStats = $state<{ works: number; tokens: number; vocabSize: number } | null>(null);
@@ -672,12 +685,7 @@
 
 	const filteredResults = $derived.by(() => {
 		if (!searchExecution) return [] as SearchResult[];
-		return [...searchExecution.allResults].sort(
-			(a, b) =>
-				sumResultOccurrences(b) - sumResultOccurrences(a) ||
-				b.score - a.score ||
-				a.docId - b.docId
-		);
+		return sortSearchResults(searchExecution.allResults, resultSort, resultSortDirection, numberLocale);
 	});
 
 	const resultPageCount = $derived.by(() =>
@@ -1527,6 +1535,8 @@
 		lastSubmittedSearch = null;
 		searchExecution = null;
 		resultsPage = 1;
+		resultSort = 'occurrences';
+		resultSortDirection = 'desc';
 		isPreparingResults = false;
 		searchError = '';
 		exportError = '';
@@ -2175,11 +2185,6 @@
 		prefetchResultsPage(nextPage, 'all');
 	};
 
-	const hasPendingPreview = (result: SearchResult): boolean =>
-		result.matches.length > 0 &&
-		!occurrencePreviews.has(result.docId) &&
-		(previewLoadsByDocId.has(result.docId) || queuedPreviewDocIds.has(result.docId));
-
 	const observeResultRow = (node: HTMLElement, result: SearchResult) => {
 		let current = result;
 		let observer: IntersectionObserver | null = null;
@@ -2492,6 +2497,22 @@
 		prefetchResultsPage(nextPage, 'top');
 	};
 
+	const changeResultSort = (event: Event): void => {
+		const nextSort = (event.currentTarget as HTMLSelectElement).value as ResultSort;
+		resultSort = nextSort;
+		resultSortDirection = nextSort === 'occurrences' ? 'desc' : 'asc';
+		visiblePreviewRequestId += 1;
+		resultsPage = 1;
+		void scrollToResults().then(() => prefetchResultsPage(1, 'all'));
+	};
+
+	const toggleResultSortDirection = (): void => {
+		resultSortDirection = resultSortDirection === 'asc' ? 'desc' : 'asc';
+		visiblePreviewRequestId += 1;
+		resultsPage = 1;
+		void scrollToResults().then(() => prefetchResultsPage(1, 'all'));
+	};
+
 	const exportCurrentSearch = async (): Promise<void> => {
 		if (!lastSubmittedSearch || !searchExecution) return;
 		exportError = '';
@@ -2501,7 +2522,9 @@
 				query: lastSubmittedSearch.query,
 				structuredQuery: lastSubmittedSearch.structuredQuery,
 				terms: lastSubmittedSearch.terms,
-				filters: lastSubmittedSearch.filters
+				filters: lastSubmittedSearch.filters,
+				sort: resultSort,
+				sortDirection: resultSortDirection
 			});
 			const downloadUrl = URL.createObjectURL(blob);
 			const anchor = document.createElement('a');
@@ -3687,9 +3710,46 @@
 								numberFormatter.format(filteredResults.length)
 							)}
 						</p>
-						{#if resultPageCount > 1}
-							<div class="flex items-center justify-center gap-2 max-md:w-full">
-								<AppButton
+						<div class="flex flex-wrap items-center justify-center gap-3 max-md:w-full">
+							<div class="flex items-center gap-2 font-['Roboto',sans-serif] text-[0.84rem] text-text-main">
+								<span id="texoro-result-sort-label" class="font-semibold whitespace-nowrap">Ordenar por</span>
+								<span class="inline-flex h-9 overflow-hidden rounded-[9px] border border-border bg-white shadow-[0_2px_7px_rgba(25,46,80,0.05)] focus-within:border-brand-blue/35 focus-within:shadow-[0_0_0_3px_rgba(13,63,145,0.1)]">
+									<select
+										id="texoro-result-sort"
+										aria-labelledby="texoro-result-sort-label"
+										class="min-w-0 max-w-[15rem] border-0 bg-transparent px-3 text-[0.84rem] text-text-main focus:outline-none"
+										value={resultSort}
+										onchange={changeResultSort}
+									>
+										{#each ['occurrences', 'traditional', 'stylometry', 'genre', 'state'] as sortOption}
+											<option value={sortOption}>{resultSortLabel(sortOption as ResultSort)}</option>
+										{/each}
+									</select>
+									<button
+										type="button"
+										class="inline-flex min-w-[7.8rem] cursor-pointer items-center justify-center gap-1.5 border-0 border-l border-border bg-surface-soft px-2.5 text-[0.79rem] font-semibold text-brand-blue-dark transition hover:bg-surface-accent-blue focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand-blue"
+										title={`Invertir orden. Orden actual: ${resultSortDirectionLabel(resultSort, resultSortDirection)}`}
+										aria-label={`Invertir orden. Orden actual: ${resultSortDirectionLabel(resultSort, resultSortDirection)}`}
+										onclick={toggleResultSortDirection}
+									>
+										{#if resultSort === 'occurrences'}
+											{#if resultSortDirection === 'desc'}
+												<ArrowDownWideNarrow class="h-4 w-4" aria-hidden="true" />
+											{:else}
+												<ArrowUpNarrowWide class="h-4 w-4" aria-hidden="true" />
+											{/if}
+										{:else if resultSortDirection === 'asc'}
+											<ArrowDownAZ class="h-4 w-4" aria-hidden="true" />
+										{:else}
+											<ArrowDownZA class="h-4 w-4" aria-hidden="true" />
+										{/if}
+										<span>{resultSortDirectionLabel(resultSort, resultSortDirection)}</span>
+									</button>
+								</span>
+							</div>
+							{#if resultPageCount > 1}
+								<div class="flex items-center justify-center gap-2">
+									<AppButton
 									type="button"
 									variant="secondary"
 									disabled={resultsPage <= 1}
@@ -3703,11 +3763,11 @@
 								>
 									<ChevronLeft class="h-5 w-5" aria-hidden="true" />
 									<span class="sr-only">Anterior</span>
-								</AppButton>
-								<span class="font-['Roboto',sans-serif] text-[0.86rem] font-normal text-text-main">
-									{resultText.page(numberFormatter.format(resultsPage), numberFormatter.format(resultPageCount))}
-								</span>
-								<AppButton
+									</AppButton>
+									<span class="font-['Roboto',sans-serif] text-[0.86rem] font-normal text-text-main">
+										{resultText.page(numberFormatter.format(resultsPage), numberFormatter.format(resultPageCount))}
+									</span>
+									<AppButton
 									type="button"
 									variant="secondary"
 									disabled={resultsPage >= resultPageCount}
@@ -3721,9 +3781,10 @@
 								>
 									<ChevronRight class="h-5 w-5" aria-hidden="true" />
 									<span class="sr-only">Siguiente</span>
-								</AppButton>
-							</div>
-						{/if}
+									</AppButton>
+								</div>
+							{/if}
+						</div>
 					</div>
 					<ul class="m-0 grid min-w-0 w-full max-w-full list-none gap-3 p-0">
 						{#each visibleResults as result, resultIndex (result.docId)}
@@ -3801,10 +3862,11 @@
 										</ol>
 									{:else if preview}
 										<p class="mt-3 mb-0 text-[0.9rem] text-text-soft">No hay ocurrencias para mostrar.</p>
-									{:else if hasPendingPreview(result)}
-										<div class="texoro-preview-reserve mt-3" aria-hidden="true"></div>
 									{:else}
-										<div class="texoro-preview-reserve mt-3" aria-hidden="true"></div>
+										<div class="texoro-preview-reserve mt-3 flex items-center justify-center gap-2 text-[0.84rem] text-text-soft" role="status">
+											<LoaderCircle class="h-4 w-4 animate-spin" aria-hidden="true" />
+											<span>Cargando fragmentos...</span>
+										</div>
 									{/if}
 
 									<div class="mt-4 flex flex-wrap gap-1.5">

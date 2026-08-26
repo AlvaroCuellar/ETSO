@@ -3711,13 +3711,13 @@
 							)}
 						</p>
 						<div class="flex flex-wrap items-center justify-center gap-3 max-md:w-full">
-							<div class="flex items-center gap-2 font-['Roboto',sans-serif] text-[0.84rem] text-text-main">
-								<span id="texoro-result-sort-label" class="font-semibold whitespace-nowrap">Ordenar por</span>
-								<span class="inline-flex h-9 overflow-hidden rounded-[9px] border border-border bg-white shadow-[0_2px_7px_rgba(25,46,80,0.05)] focus-within:border-brand-blue/35 focus-within:shadow-[0_0_0_3px_rgba(13,63,145,0.1)]">
+							<div class="flex items-center gap-2 font-['Roboto',sans-serif] text-[0.84rem] text-text-main max-sm:grid max-sm:w-full max-sm:gap-1.5">
+								<span id="texoro-result-sort-label" class="font-semibold whitespace-nowrap max-sm:text-center">Ordenar por</span>
+								<span class="inline-flex h-9 overflow-hidden rounded-[9px] border border-border bg-white shadow-[0_2px_7px_rgba(25,46,80,0.05)] focus-within:border-brand-blue/35 focus-within:shadow-[0_0_0_3px_rgba(13,63,145,0.1)] max-sm:w-full">
 									<select
 										id="texoro-result-sort"
 										aria-labelledby="texoro-result-sort-label"
-										class="min-w-0 max-w-[15rem] border-0 bg-transparent px-3 text-[0.84rem] text-text-main focus:outline-none"
+										class="min-w-0 max-w-[15rem] border-0 bg-transparent px-3 text-[0.84rem] text-text-main focus:outline-none max-sm:flex-1 max-sm:max-w-none"
 										value={resultSort}
 										onchange={changeResultSort}
 									>
@@ -3727,7 +3727,7 @@
 									</select>
 									<button
 										type="button"
-										class="inline-flex min-w-[7.8rem] cursor-pointer items-center justify-center gap-1.5 border-0 border-l border-border bg-surface-soft px-2.5 text-[0.79rem] font-semibold text-brand-blue-dark transition hover:bg-surface-accent-blue focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand-blue"
+										class="inline-flex min-w-[7.8rem] cursor-pointer items-center justify-center gap-1.5 border-0 border-l border-border bg-surface-soft px-2.5 text-[0.79rem] font-semibold whitespace-nowrap text-brand-blue-dark transition hover:bg-surface-accent-blue focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand-blue max-sm:min-w-[7rem] max-sm:px-2"
 										title={`Invertir orden. Orden actual: ${resultSortDirectionLabel(resultSort, resultSortDirection)}`}
 										aria-label={`Invertir orden. Orden actual: ${resultSortDirectionLabel(resultSort, resultSortDirection)}`}
 										onclick={toggleResultSortDirection}

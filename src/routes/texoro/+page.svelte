@@ -3134,7 +3134,7 @@
 					<input
 						type="search"
 						bind:value={mainQuery}
-						placeholder="Ejemplos: amor | amor constante | honor*"
+						placeholder="Ejemplos: amor | amor constante | am*"
 						class="h-[46px] w-full appearance-none rounded-[10px] border border-border bg-white py-2 pr-12 pl-11 text-[15px] text-text-main outline-none shadow-none transition focus:border-brand-blue/35 focus:shadow-none focus:outline-none focus-visible:border-brand-blue/35 focus-visible:outline-none"
 					/>
 					<span class="pointer-events-none absolute inset-y-0 left-3 inline-flex items-center text-text-accent-purple">

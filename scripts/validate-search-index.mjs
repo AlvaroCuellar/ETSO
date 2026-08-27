@@ -50,13 +50,23 @@ const main = async () => {
 	}
 
 	const manifest = await readJson(join(indexDir, 'manifest.json'));
+	if (manifest.features?.publicIds === true) {
+		await ensureExists(join(indexDir, manifest.files?.publicIds ?? 'public-ids.json'));
+	}
 	const works = await readJson(join(indexDir, 'works.json'));
+	const publicIds =
+		manifest.features?.publicIds === true
+			? await readJson(join(indexDir, manifest.files?.publicIds ?? 'public-ids.json'))
+			: null;
 	const vocabRoot = await readJson(join(indexDir, 'vocab.json'));
 	const kgramsRoot = await readJson(join(indexDir, 'kgrams.json'));
 	const wildcardLengths = await readJson(join(indexDir, 'wildcard-lengths.json'));
 
 	if (manifest.indexVersion !== works.indexVersion) {
 		throw new Error('Index version mismatch between manifest and works.json');
+	}
+	if (publicIds && manifest.indexVersion !== publicIds.indexVersion) {
+		throw new Error('Index version mismatch between manifest and public-ids.json');
 	}
 	if (manifest.indexVersion !== vocabRoot.indexVersion) {
 		throw new Error('Index version mismatch between manifest and vocab.json');
@@ -69,6 +79,26 @@ const main = async () => {
 	}
 	if (manifest.features?.positions !== true || manifest.features?.proximity !== true) {
 		throw new Error('Index manifest is missing positions/proximity features');
+	}
+	if (manifest.features?.publicIds === true) {
+		if (!publicIds || publicIds.schemaVersion !== 'etso-search-public-ids-v1') {
+			throw new Error('Missing or invalid public-ids.json');
+		}
+		if (publicIds.publicIds.length !== works.works.length) {
+			throw new Error('public-ids.json does not cover every indexed work');
+		}
+		const seenPublicIds = new Set();
+		for (let index = 0; index < publicIds.publicIds.length; index += 1) {
+			const [docId, publicId] = publicIds.publicIds[index] ?? [];
+			if (docId !== index || works.works[index]?.[0] !== docId) {
+				throw new Error(`Unexpected docId in public-ids row ${index}: ${docId}`);
+			}
+			if (!Number.isInteger(publicId) || publicId <= 0) {
+				throw new Error(`Invalid publicId in public-ids row ${index}: ${publicId}`);
+			}
+			if (seenPublicIds.has(publicId)) throw new Error(`Duplicate publicId: ${publicId}`);
+			seenPublicIds.add(publicId);
+		}
 	}
 
 	const termMeta = new Map();

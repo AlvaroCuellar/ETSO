@@ -16,11 +16,13 @@ fi
 
 SEARCH_INDEX_INPUT_PATH="${SEARCH_INDEX_INPUT_PATH:-deploy/input/private-assets/texts}"
 SEARCH_INDEX_OUTPUT_PATH="${SEARCH_INDEX_OUTPUT_PATH:-deploy/input/public-assets/search}"
+SEARCH_INDEX_METADATA_SQLITE_PATH="${SEARCH_INDEX_METADATA_SQLITE_PATH:-deploy/input/turso/etso.sqlite}"
 SEARCH_INDEX_COMPACT="${SEARCH_INDEX_COMPACT:-true}"
 SEARCH_INDEX_NODE_MAX_OLD_SPACE_SIZE="${SEARCH_INDEX_NODE_MAX_OLD_SPACE_SIZE:-8192}"
 
 INPUT_DIR="$ROOT_DIR/$SEARCH_INDEX_INPUT_PATH"
 OUTPUT_DIR="$ROOT_DIR/$SEARCH_INDEX_OUTPUT_PATH"
+METADATA_SQLITE="$ROOT_DIR/$SEARCH_INDEX_METADATA_SQLITE_PATH"
 
 command -v node >/dev/null || { echo "Falta node"; exit 1; }
 
@@ -34,15 +36,22 @@ if [ -z "$(find "$INPUT_DIR" -maxdepth 1 -type f -name '*.txt' -print -quit)" ];
   exit 1
 fi
 
+if [ ! -f "$METADATA_SQLITE" ]; then
+  echo "No existe el SQLite de metadatos para el índice: $METADATA_SQLITE"
+  exit 1
+fi
+
 echo "==> Generando índice de búsqueda"
 echo "   - entrada: $SEARCH_INDEX_INPUT_PATH"
 echo "   - salida:  $SEARCH_INDEX_OUTPUT_PATH"
+echo "   - metadatos: $SEARCH_INDEX_METADATA_SQLITE_PATH"
 echo "   - workers: ${SEARCH_INDEX_WORKERS:-auto}"
 
 ARGS=(
   "$ROOT_DIR/scripts/build-search-index.mjs"
   --input "$INPUT_DIR"
   --output "$OUTPUT_DIR"
+  --metadata-sqlite "$METADATA_SQLITE"
 )
 
 if [ "$SEARCH_INDEX_COMPACT" = "true" ]; then

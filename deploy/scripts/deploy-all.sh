@@ -70,9 +70,11 @@ fi
 echo "==> Paso 3/6: generacion del indice de busqueda"
 SEARCH_INPUT="$ROOT_DIR/${SEARCH_INDEX_INPUT_PATH:-deploy/input/private-assets/texts}"
 SEARCH_OUTPUT="$ROOT_DIR/${SEARCH_INDEX_OUTPUT_PATH:-deploy/input/public-assets/search}"
+SEARCH_METADATA_SQLITE="$ROOT_DIR/${SEARCH_INDEX_METADATA_SQLITE_PATH:-deploy/input/turso/etso.sqlite}"
 SEARCH_CACHE_ARGS=(
   --key "search-index"
   --path "$SEARCH_INPUT"
+  --path "$SEARCH_METADATA_SQLITE"
   --path "$ROOT_DIR/scripts/build-search-index.mjs"
   --path "$ROOT_DIR/scripts/validate-search-index.mjs"
   --extra "compact=${SEARCH_INDEX_COMPACT:-true}"

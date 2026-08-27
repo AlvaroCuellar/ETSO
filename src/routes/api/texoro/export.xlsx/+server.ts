@@ -345,12 +345,16 @@ const buildOccurrenceRows = async (results: SearchResult[], matchColumns: Submit
 		for (const match of matches) {
 			if (workContextCount >= CONTEXT_EXPORT_LIMIT_PER_WORK) break;
 			const remaining = CONTEXT_EXPORT_LIMIT_PER_WORK - workContextCount;
-			const details = await engine.getOccurrencesForMatch({ docId: result.docId, workId: result.workId }, match, {
-				maxItems: remaining,
-				snippetRadius: SNIPPET_RADIUS,
-				snippetMode: 'lines',
-				lineContext: LINE_CONTEXT
-			});
+			const details = await engine.getOccurrencesForMatch(
+				{ docId: result.docId, workId: result.workId, publicId: result.publicId },
+				match,
+				{
+					maxItems: remaining,
+					snippetRadius: SNIPPET_RADIUS,
+					snippetMode: 'lines',
+					lineContext: LINE_CONTEXT
+				}
+			);
 			for (const item of details.items) {
 				rows.push({
 					result,

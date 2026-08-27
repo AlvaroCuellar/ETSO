@@ -17,6 +17,7 @@ import type {
 	TexoroPostingsShard,
 	TexoroPositionsDoc,
 	TexoroPositionsShard,
+	TexoroPublicIdsFile,
 	TexoroVocabRoot,
 	TexoroVocabShard,
 	TexoroWildcardLengths,
@@ -43,6 +44,7 @@ interface MatchOccurrencesOptions {
 interface PreviewRequestItem {
 	docId: number;
 	workId: string;
+	publicId: number | null;
 	matches: SearchResultMatch[];
 }
 
@@ -569,6 +571,8 @@ export class TexoroSearchEngine {
 
 	#docRowById = new Map<number, [number, string, string, string, number, number]>();
 	#docIdByWorkId = new Map<string, number>();
+	#docIdByPublicId = new Map<number, number>();
+	#publicIdByDocId = new Map<number, number>();
 	#allTermIdsCache: number[] | null = null;
 
 	constructor(config: SearchEngineConfig = {}) {
@@ -719,9 +723,13 @@ export class TexoroSearchEngine {
 			await this.#cache.clearMismatchedVersion(manifest.indexVersion);
 		}
 
-		const [worksFile, vocabRoot] = await Promise.all([
+		const publicIdsPath = manifest.features?.publicIds === true ? manifest.files.publicIds : undefined;
+		const [worksFile, vocabRoot, publicIdsFile] = await Promise.all([
 			this.#fetchJson<TexoroWorksFile>('works.json', manifest.indexVersion),
-			this.#fetchJson<TexoroVocabRoot>('vocab.json', manifest.indexVersion)
+			this.#fetchJson<TexoroVocabRoot>('vocab.json', manifest.indexVersion),
+			publicIdsPath
+				? this.#fetchJson<TexoroPublicIdsFile>(publicIdsPath, manifest.indexVersion)
+				: Promise.resolve(null)
 		]);
 
 		this.#worksFile = worksFile;
@@ -729,6 +737,8 @@ export class TexoroSearchEngine {
 
 		this.#docRowById = new Map(worksFile.works.map((row) => [row[0], row]));
 		this.#docIdByWorkId = new Map(worksFile.works.map((row) => [row[1], row[0]]));
+		this.#docIdByPublicId = new Map(publicIdsFile?.publicIds.map(([docId, publicId]) => [publicId, docId]) ?? []);
+		this.#publicIdByDocId = new Map(publicIdsFile?.publicIds ?? []);
 		this.#initialized = true;
 	}
 
@@ -907,6 +917,7 @@ export class TexoroSearchEngine {
 
 			rawResults.push({
 				workId,
+				publicId: this.#publicIdByDocId.get(docId) ?? null,
 				docId,
 				docTokenCount: row[4],
 				score: (retrievalScores.get(docId) ?? 0) + matchedGroups,
@@ -954,14 +965,17 @@ export class TexoroSearchEngine {
 	}
 
 	async getOccurrencesForMatch(
-		result: Pick<SearchResult, 'docId' | 'workId'>,
+		result: Pick<SearchResult, 'docId' | 'workId' | 'publicId'>,
 		match: SearchResultMatch,
 		options: MatchOccurrencesOptions = {}
 	): Promise<SearchMatchOccurrences> {
 		await this.initialize();
 		const requestedRow = this.#docRowById.get(result.docId);
+		const docIdFromPublicId =
+			typeof result.publicId === 'number' ? this.#docIdByPublicId.get(result.publicId) : undefined;
 		const resolvedDocId =
-			requestedRow?.[1] === result.workId ? result.docId : this.#docIdByWorkId.get(result.workId);
+			docIdFromPublicId ??
+			(requestedRow?.[1] === result.workId ? result.docId : this.#docIdByWorkId.get(result.workId));
 		const prepared = resolvedDocId === undefined ? null : await this.#getPreparedText(resolvedDocId);
 		if (!prepared) {
 			return {
@@ -1319,7 +1333,7 @@ export class TexoroSearchEngine {
 				if (snippets.length >= maxItemsPerDoc) break;
 				const remainingItems = Math.max(1, maxItemsPerDoc - snippets.length);
 				const details = await this.getOccurrencesForMatch(
-					{ docId: item.docId, workId: item.workId },
+					{ docId: item.docId, workId: item.workId, publicId: item.publicId },
 					match,
 					{ maxItems: remainingItems, snippetRadius }
 				);

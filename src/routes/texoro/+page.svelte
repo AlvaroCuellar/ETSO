@@ -2065,7 +2065,7 @@
 		structuredQuery: StructuredSearchQuery,
 		filters: TexoroSearchFilters
 	): Promise<SearchExecution> =>
-		postJson<SearchExecution>('/api/texoro/search', {
+		postJson<SearchExecution>('/api/texoro/search-ui', {
 			query,
 			structuredQuery,
 			options: {
@@ -2123,6 +2123,7 @@
 				items: eligible.map((result) => ({
 					docId: result.docId,
 					workId: result.workId,
+					publicId: result.publicId,
 					matches: result.matches
 				})),
 				options: {
@@ -2450,6 +2451,7 @@
 		const pending = postJson<SearchMatchOccurrences>('/api/texoro/occurrences', {
 			docId: result.docId,
 			workId: result.workId,
+			publicId: result.publicId,
 			match: assignment.match,
 			options: {
 				maxItems: OCCURRENCE_MODAL_MAX_ITEMS,

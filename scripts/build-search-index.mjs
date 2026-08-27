@@ -4,6 +4,7 @@ import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { availableParallelism } from 'node:os';
 import { basename, extname, join, resolve } from 'node:path';
 import process from 'node:process';
+import { DatabaseSync } from 'node:sqlite';
 import { isMainThread, parentPort, Worker } from 'node:worker_threads';
 
 const TOKEN_REGEX = /[\p{L}\p{N}]+/gu;
@@ -28,13 +29,14 @@ const DEFAULTS = {
 	kgramShardTargetBytes: 256_000,
 	preserveEnie: true,
 	pretty: true,
+	metadataSqlite: null,
 	workers: detectDefaultWorkers()
 };
 
 const DEFAULT_SCHEMA_VERSION = 'etso-search-index-v1';
 
 const usage = () => {
-	console.log(`Usage: node scripts/build-search-index.mjs [options]\n\nOptions:\n  --input <dir>                         Input TXT directory (default: ${DEFAULTS.input})\n  --output <dir>                        Output index directory (default: ${DEFAULTS.output})\n  --encoding <name>                     Text encoding for TXT files (default: ${DEFAULTS.encoding})\n  --kgram <n>                           K value for wildcard index (default: ${DEFAULTS.kgram})\n  --vocab-shard-target-bytes <n>        Approximate target size per vocab shard\n  --postings-shard-target-bytes <n>     Approximate target size per postings shard\n  --positions-shard-target-bytes <n>    Approximate target size per positions shard\n  --kgram-shard-target-bytes <n>        Approximate target size per kgram shard\n  --preserve-enie                       Preserve ñ when removing diacritics (default)\n  --no-preserve-enie                    Fold ñ into n\n  --pretty                              Pretty JSON output (default)\n  --compact                             Compact JSON output\n  --workers <n>                         Number of text-processing workers (default: ${DEFAULTS.workers})\n  --help                                Show this help\n`);
+	console.log(`Usage: node scripts/build-search-index.mjs [options]\n\nOptions:\n  --input <dir>                         Input TXT directory (default: ${DEFAULTS.input})\n  --output <dir>                        Output index directory (default: ${DEFAULTS.output})\n  --metadata-sqlite <file>              SQLite catalog used to attach stable public IDs\n  --encoding <name>                     Text encoding for TXT files (default: ${DEFAULTS.encoding})\n  --kgram <n>                           K value for wildcard index (default: ${DEFAULTS.kgram})\n  --vocab-shard-target-bytes <n>        Approximate target size per vocab shard\n  --postings-shard-target-bytes <n>     Approximate target size per postings shard\n  --positions-shard-target-bytes <n>    Approximate target size per positions shard\n  --kgram-shard-target-bytes <n>        Approximate target size per kgram shard\n  --preserve-enie                       Preserve ñ when removing diacritics (default)\n  --no-preserve-enie                    Fold ñ into n\n  --pretty                              Pretty JSON output (default)\n  --compact                             Compact JSON output\n  --workers <n>                         Number of text-processing workers (default: ${DEFAULTS.workers})\n  --help                                Show this help\n`);
 };
 
 const parsePositiveInt = (raw, name) => {
@@ -86,6 +88,11 @@ const parseArgs = (argv) => {
 			i += 1;
 			continue;
 		}
+		if (arg === '--metadata-sqlite') {
+			options.metadataSqlite = next;
+			i += 1;
+			continue;
+		}
 		if (arg === '--encoding') {
 			options.encoding = next;
 			i += 1;
@@ -128,7 +135,8 @@ const parseArgs = (argv) => {
 	return {
 		...options,
 		input: resolve(process.cwd(), options.input),
-		output: resolve(process.cwd(), options.output)
+		output: resolve(process.cwd(), options.output),
+		metadataSqlite: options.metadataSqlite ? resolve(process.cwd(), options.metadataSqlite) : null
 	};
 };
 
@@ -236,6 +244,33 @@ const ensureDir = async (dirPath) => {
 const writeJson = async (filePath, value, pretty) => {
 	const text = `${JSON.stringify(value, null, pretty ? 2 : 0)}\n`;
 	await writeFile(filePath, text, 'utf8');
+};
+
+const collectPublicIds = (works, metadataSqlite) => {
+	if (!metadataSqlite) return [];
+
+	const database = new DatabaseSync(metadataSqlite, { readOnly: true });
+	try {
+		const rows = database.prepare('SELECT id, public_id FROM works').all();
+		const publicIdByWorkId = new Map();
+		const seenPublicIds = new Set();
+		for (const row of rows) {
+			const workId = typeof row.id === 'string' ? row.id.trim() : '';
+			const publicId = Number(row.public_id);
+			if (!workId || !Number.isInteger(publicId) || publicId <= 0) continue;
+			if (seenPublicIds.has(publicId)) throw new Error(`Duplicate work public_id in metadata: ${publicId}`);
+			seenPublicIds.add(publicId);
+			publicIdByWorkId.set(workId, publicId);
+		}
+
+		return works.map((row) => {
+			const publicId = publicIdByWorkId.get(row[1]);
+			if (!publicId) throw new Error(`Missing public_id for indexed work: ${row[1]}`);
+			return [row[0], publicId];
+		});
+	} finally {
+		database.close();
+	}
 };
 
 const analyzeDocument = async ({ docId, fileName, input, encoding, preserveEnie }) => {
@@ -380,6 +415,7 @@ const buildIndex = async (options) => {
 	};
 	await processDocuments(fileNames, options, state);
 	const { works, termStats, totalChars, totalTokens } = state;
+	const publicIds = collectPublicIds(works, options.metadataSqlite);
 
 	const sortedTerms = Array.from(termStats.entries()).sort((a, b) => stableCompare(a[0], b[0]));
 	const termEntries = sortedTerms.map(([term, stats], termId) => {
@@ -638,6 +674,19 @@ const buildIndex = async (options) => {
 		options.pretty
 	);
 
+	if (publicIds.length > 0) {
+		await writeJson(
+			join(options.output, 'public-ids.json'),
+			{
+				schemaVersion: 'etso-search-public-ids-v1',
+				indexVersion,
+				generatedAt,
+				publicIds
+			},
+			options.pretty
+		);
+	}
+
 	await writeJson(
 		join(options.output, 'vocab.json'),
 		{
@@ -724,11 +773,13 @@ const buildIndex = async (options) => {
 			features: {
 				positions: true,
 				proximity: true,
-				byteOffsets: true
+				byteOffsets: true,
+				publicIds: Boolean(options.metadataSqlite)
 			},
 			files: {
 				manifest: 'manifest.json',
 				works: 'works.json',
+				...(publicIds.length > 0 ? { publicIds: 'public-ids.json' } : {}),
 				vocab: 'vocab.json',
 				kgrams: 'kgrams.json',
 				wildcardLengths: 'wildcard-lengths.json'

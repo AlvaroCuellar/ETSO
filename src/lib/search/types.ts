@@ -42,10 +42,12 @@ export interface TexoroIndexManifest {
 		positions?: boolean;
 		proximity?: boolean;
 		byteOffsets?: boolean;
+		publicIds?: boolean;
 	};
 	files: {
 		manifest: string;
 		works: string;
+		publicIds?: string;
 		vocab: string;
 		kgrams: string;
 		wildcardLengths: string;
@@ -74,6 +76,13 @@ export interface TexoroWorksFile {
 		tokens: number;
 		chars: number;
 	};
+}
+
+export interface TexoroPublicIdsFile {
+	schemaVersion: string;
+	indexVersion: string;
+	generatedAt: string;
+	publicIds: Array<[number, number]>;
 }
 
 export interface TexoroVocabRoot {
@@ -255,6 +264,7 @@ export interface SearchResultMatch {
 
 export interface SearchResult {
 	workId: string;
+	publicId: number | null;
 	docId: number;
 	docTokenCount: number;
 	score: number;
@@ -336,5 +346,3 @@ export interface SearchOptions {
 		| { kind: 'proximity'; value: string; distance: number; operator?: 'near'; order?: SearchProximityOrder }
 	>;
 }
-
-

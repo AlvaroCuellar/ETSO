@@ -9,23 +9,12 @@ export const POST: RequestHandler = async ({ request }) => {
 	const startedAt = Date.now();
 	try {
 		const result = await executeTexoroSearchRequest(request);
-		const withoutInternalIds = (item: (typeof result.results)[number]) => {
-			const { publicId: _publicId, ...publicItem } = item;
-			return publicItem;
-		};
-		const publicResult = {
-			...result,
-			results: result.results.map(withoutInternalIds),
-			allResults: result.allResults.map(withoutInternalIds)
-		};
 		const elapsed = Date.now() - startedAt;
-		if (elapsed >= SLOW_API_LOG_MS) {
-			console.warn(`[api/texoro/search] slow request: ${elapsed}ms`);
-		}
-		return json(publicResult);
+		if (elapsed >= SLOW_API_LOG_MS) console.warn(`[api/texoro/search-ui] slow request: ${elapsed}ms`);
+		return json(result);
 	} catch (cause) {
 		if (isHttpError(cause)) throw cause;
-		console.error('[api/texoro/search] Unable to search', cause);
+		console.error('[api/texoro/search-ui] Unable to search', cause);
 		throw error(500, cause instanceof Error ? cause.message : 'Error ejecutando la busqueda');
 	}
 };

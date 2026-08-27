@@ -47,13 +47,24 @@ export const POST: RequestHandler = async ({ request }) => {
 			const docId =
 				typeof raw.docId === 'number' && Number.isInteger(raw.docId) && raw.docId >= 0 ? raw.docId : null;
 			const workId = typeof raw.workId === 'string' ? raw.workId.trim() : '';
+			const publicId =
+				typeof raw.publicId === 'number' && Number.isInteger(raw.publicId) && raw.publicId > 0
+					? raw.publicId
+					: null;
 			const matches = Array.isArray(raw.matches)
 				? raw.matches.map(normalizeMatch).filter((match): match is SearchResultMatch => Boolean(match))
 				: [];
 			if (docId === null || !workId || matches.length === 0) return null;
-			return { docId, workId, matches };
+			return { docId, workId, publicId, matches };
 		})
-		.filter((item): item is { docId: number; workId: string; matches: SearchResultMatch[] } => Boolean(item));
+		.filter(
+			(item): item is {
+				docId: number;
+				workId: string;
+				publicId: number | null;
+				matches: SearchResultMatch[];
+			} => Boolean(item)
+		);
 
 	if (items.length === 0) throw error(400, 'Parametros de previews invalidos');
 

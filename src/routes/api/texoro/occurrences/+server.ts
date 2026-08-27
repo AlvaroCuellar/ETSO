@@ -46,6 +46,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		| {
 				docId?: unknown;
 				workId?: unknown;
+				publicId?: unknown;
 				match?: unknown;
 				options?: Record<string, unknown>;
 		  }
@@ -53,6 +54,10 @@ export const POST: RequestHandler = async ({ request }) => {
 	const docId =
 		typeof body?.docId === 'number' && Number.isInteger(body.docId) && body.docId >= 0 ? body.docId : null;
 	const workId = typeof body?.workId === 'string' ? body.workId.trim() : '';
+	const publicId =
+		typeof body?.publicId === 'number' && Number.isInteger(body.publicId) && body.publicId > 0
+			? body.publicId
+			: null;
 	const match = normalizeMatch(body?.match);
 	if (docId === null || !workId || !match) {
 		throw error(400, 'Parametros de ocurrencias invalidos');
@@ -68,7 +73,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
 	try {
 		const engine = await getServerTexoroEngine();
-		const result = await engine.getOccurrencesForMatch({ docId, workId }, match, options);
+		const result = await engine.getOccurrencesForMatch({ docId, workId, publicId }, match, options);
 		const elapsed = Date.now() - startedAt;
 		if (elapsed >= SLOW_API_LOG_MS) {
 			console.warn(`[api/texoro/occurrences] slow request: ${elapsed}ms`);

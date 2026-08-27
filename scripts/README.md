@@ -78,6 +78,8 @@ Document catalog used by search layer:
 - `works: [docId, workId, fileName, textKey, tokenCount, charCount][]`
 - `workId` comes from TXT basename
 - `textKey` defaults to `${workId}.txt`
+- `public-ids.json` keeps the stable `[docId, publicId][]` lookup separate so the historical
+  `works.json` contract does not change.
 
 ### `vocab.json` + `vocab-shards/*.json`
 

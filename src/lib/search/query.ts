@@ -95,9 +95,6 @@ const combineGroups = (
 	return groups.flatMap((group) => clauses.map((clause) => [...group, clause]));
 };
 
-const isSimpleClause = (clause: ParsedQueryClause): clause is ParsedQueryTerm | ParsedQueryPhrase =>
-	clause.kind === 'term' || clause.kind === 'phrase';
-
 export const parseSearchQuery = (input: string, preserveEnie: boolean): ParsedQuery => {
 	const warnings: string[] = [];
 	const tokens = lexQuery(input.trim());
@@ -228,19 +225,25 @@ export const parseStructuredQuery = (
 	}
 	if (proximityTerms.length > 0) {
 		const proximityMode = normalizeBooleanMode(query.proximityMode);
-		groups = groups.flatMap((group) => {
-			const baseClauses = group.filter(isSimpleClause);
-			const proximityClauses: ParsedQueryClause[] = proximityTerms.flatMap((term) =>
-				baseClauses.map((left) => ({
-					kind: 'proximity',
-					left,
-					right: term.right,
-					distance: term.distance,
-					order: term.order
-				}))
-			);
-			return combineGroups([group], proximityClauses, proximityMode);
-		});
+		if (proximityMode === 'all' && proximityTerms.length > 1) {
+			groups = groups.map((group) => [
+				...group,
+				{
+					kind: 'proximityGroup',
+					anchor: mainClause,
+					terms: proximityTerms
+				}
+			]);
+		} else {
+			const proximityClauses: ParsedQueryClause[] = proximityTerms.map((term) => ({
+				kind: 'proximity',
+				left: mainClause,
+				right: term.right,
+				distance: term.distance,
+				order: term.order
+			}));
+			groups = combineGroups(groups, proximityClauses, proximityMode);
+		}
 	}
 
 	const filteredGroups = groups.filter((group) => group.length > 0);

@@ -844,8 +844,11 @@ export class TexoroSearchEngine {
 				let groupOk = true;
 				const consumedByProximity = new Set<string>();
 				for (const clause of group.clauses) {
-					if (clause.clause.kind !== 'proximity') continue;
-					consumedByProximity.add(this.#formatClauseSource(clause.clause.left));
+					if (clause.clause.kind === 'proximity') {
+						consumedByProximity.add(this.#formatClauseSource(clause.clause.left));
+					} else if (clause.clause.kind === 'proximityGroup') {
+						consumedByProximity.add(this.#formatClauseSource(clause.clause.anchor));
+					}
 				}
 
 				for (const clause of group.clauses) {
@@ -865,6 +868,14 @@ export class TexoroSearchEngine {
 								clause.clause.distance,
 								clause.clause.order
 							),
+							clause.scores.get(docId) ?? 0
+						);
+						continue;
+					}
+					if (clause.clause.kind === 'proximityGroup') {
+						addMatch(
+							'proximityGroup',
+							this.#formatProximityGroupSource(clause.clause),
 							clause.scores.get(docId) ?? 0
 						);
 						continue;
@@ -984,7 +995,57 @@ export class TexoroSearchEngine {
 		const items: SearchMatchOccurrence[] = [];
 		let count = 0;
 
-		if (match.kind === 'proximity') {
+		if (match.kind === 'proximityGroup') {
+			const group = this.#parseProximityGroupSource(match.source);
+			if (!group) {
+				return { workId: result.workId, docId: result.docId, match, count: 0, items: [], truncated: false };
+			}
+			const sourcePatterns = (value: string): string[] =>
+				value
+					.replace(/^"|"$/g, '')
+					.split(/\s+/)
+					.map((part) => normalizePattern(part, this.#preserveEnie))
+					.filter(Boolean);
+			const anchorSpans = findPreparedSpans(prepared.tokens, sourcePatterns(group.anchor));
+			const termSpans = group.terms.map((term) =>
+				findPreparedSpans(prepared.tokens, sourcePatterns(term.value))
+			);
+
+			for (const anchor of anchorSpans) {
+				const selected = group.terms.map((term, index) => {
+					const candidates = termSpans[index]
+						.map((span) => ({ span, gap: this.#proximityGap(anchor, span, term.order) }))
+						.filter((candidate): candidate is { span: (typeof termSpans)[number][number]; gap: number } =>
+							candidate.gap !== null && candidate.gap <= term.distance
+						)
+						.sort((a, b) => a.gap - b.gap || a.span.tokenStart - b.span.tokenStart);
+					return candidates[0]?.span ?? null;
+				});
+				if (selected.some((span) => span === null)) continue;
+				count += 1;
+				if (items.length >= maxItems) continue;
+				const spans = [anchor, ...selected.filter((span): span is NonNullable<typeof span> => span !== null)];
+				const first = spans.reduce((current, span) => (span.start < current.start ? span : current));
+				const last = spans.reduce((current, span) => (span.end > current.end ? span : current));
+				const snippet = buildOccurrenceSnippet(
+					first.start,
+					last.end,
+					spans.map((span) => ({
+						start: span.start,
+						end: span.end,
+						tokenIndex: span.tokenStart + 1
+					}))
+				);
+				items.push({
+					start: first.start,
+					end: last.end,
+					tokenIndex: Math.min(...spans.map((span) => span.tokenStart)) + 1,
+					tokenEndIndex: Math.max(...spans.map((span) => span.tokenEnd)) + 1,
+					tokenCount: prepared.tokens.length,
+					...snippet
+				});
+			}
+		} else if (match.kind === 'proximity') {
 			const proximity = this.#parseProximitySource(match.source);
 			if (!proximity) {
 				return {
@@ -1129,6 +1190,14 @@ export class TexoroSearchEngine {
 	}
 
 	#extractPatternsFromMatch(match: SearchResultMatch): string[] {
+		if (match.kind === 'proximityGroup') {
+			const group = this.#parseProximityGroupSource(match.source);
+			if (!group) return [];
+			return [group.anchor, ...group.terms.map((term) => term.value)]
+				.flatMap((part) => part.replace(/^"|"$/g, '').split(/\s+/))
+				.map((part) => normalizePattern(part, this.#preserveEnie))
+				.filter(Boolean);
+		}
 		if (match.kind === 'proximity') {
 			const proximity = this.#parseProximitySource(match.source);
 			const parts = proximity
@@ -1157,7 +1226,39 @@ export class TexoroSearchEngine {
 	#patternsForClause(clause: ParsedQueryClause): string[] {
 		if (clause.kind === 'term') return [clause.pattern];
 		if (clause.kind === 'phrase') return clause.patterns;
+		if (clause.kind === 'proximityGroup') {
+			return [
+				...this.#patternsForClause(clause.anchor),
+				...clause.terms.flatMap((term) => this.#patternsForClause(term.right))
+			];
+		}
 		return [...this.#patternsForClause(clause.left), ...this.#patternsForClause(clause.right)];
+	}
+
+	#parseProximityGroupSource(source: string): {
+		anchor: string;
+		terms: Array<{ value: string; distance: number; order: 'any' | 'after' | 'before' }>;
+	} | null {
+		try {
+			const raw = JSON.parse(source) as Record<string, unknown>;
+			if (typeof raw.anchor !== 'string' || !Array.isArray(raw.terms)) return null;
+			const terms = raw.terms
+				.map((item) => {
+					if (!item || typeof item !== 'object') return null;
+					const term = item as Record<string, unknown>;
+					if (typeof term.value !== 'string' || typeof term.distance !== 'number') return null;
+					const order = term.order === 'before' || term.order === 'after' ? term.order : 'any';
+					return {
+						value: term.value,
+						distance: Math.min(100, Math.max(0, Math.floor(term.distance))),
+						order
+					};
+				})
+				.filter((term): term is { value: string; distance: number; order: 'any' | 'after' | 'before' } => Boolean(term));
+			return raw.anchor.trim() && terms.length > 0 ? { anchor: raw.anchor, terms } : null;
+		} catch {
+			return null;
+		}
 	}
 
 	#parseProximitySource(
@@ -1232,7 +1333,19 @@ export class TexoroSearchEngine {
 	#formatClauseSource(clause: ParsedQueryClause): string {
 		if (clause.kind === 'term') return clause.pattern;
 		if (clause.kind === 'phrase') return `"${clause.literal}"`;
+		if (clause.kind === 'proximityGroup') return this.#formatProximityGroupSource(clause);
 		return this.#formatProximitySource(clause.left, clause.right, clause.distance, clause.order);
+	}
+
+	#formatProximityGroupSource(clause: Extract<ParsedQueryClause, { kind: 'proximityGroup' }>): string {
+		return JSON.stringify({
+			anchor: this.#formatClauseSource(clause.anchor),
+			terms: clause.terms.map((term) => ({
+				value: this.#formatClauseSource(term.right),
+				distance: term.distance,
+				order: term.order
+			}))
+		});
 	}
 
 	#formatProximitySource(
@@ -1342,6 +1455,9 @@ export class TexoroSearchEngine {
 		if (clause.kind === 'proximity') {
 			return this.#evaluateProximityClause(clause);
 		}
+		if (clause.kind === 'proximityGroup') {
+			return this.#evaluateProximityGroupClause(clause);
+		}
 		return this.#evaluatePhraseClause(clause.patterns, clause);
 	}
 
@@ -1369,7 +1485,10 @@ export class TexoroSearchEngine {
 		return { clause, docs, scores };
 	}
 
-	async #evaluatePhraseClause(patterns: string[], clause: ParsedQueryClause): Promise<ClauseEvaluation> {
+	async #evaluatePhraseClause(
+		patterns: string[],
+		clause: Extract<ParsedQueryClause, { kind: 'phrase' }>
+	): Promise<ClauseEvaluation> {
 		if (patterns.length === 0) {
 			return { clause, docs: new Set<number>(), scores: new Map<number, number>() };
 		}
@@ -1432,12 +1551,40 @@ export class TexoroSearchEngine {
 		return { clause, docs, scores };
 	}
 
-	async #positionsForSimpleClause(
-		clause: ParsedQueryClause
-	): Promise<Map<number, ClausePositionOccurrence[]>> {
-		if (clause.kind === 'proximity') {
-			return this.#positionsForSimpleClause(clause.right);
+	async #evaluateProximityGroupClause(
+		clause: Extract<ParsedQueryClause, { kind: 'proximityGroup' }>
+	): Promise<ClauseEvaluation> {
+		const [anchorPositions, ...termPositions] = await Promise.all([
+			this.#positionsForSimpleClause(clause.anchor),
+			...clause.terms.map((term) => this.#positionsForSimpleClause(term.right))
+		]);
+		const docs = new Set<number>();
+		const scores = new Map<number, number>();
+
+		for (const [docId, anchors] of anchorPositions) {
+			const positionsForDoc = termPositions.map((positions) => positions.get(docId) ?? []);
+			if (positionsForDoc.some((positions) => positions.length === 0)) continue;
+			let matchingAnchors = 0;
+			for (const anchor of anchors) {
+				const allTermsMatch = clause.terms.every((term, index) =>
+					positionsForDoc[index].some((right) => {
+						const gap = this.#proximityGap(anchor, right, term.order);
+						return gap !== null && gap <= term.distance;
+					})
+				);
+				if (allTermsMatch) matchingAnchors += 1;
+			}
+			if (matchingAnchors === 0) continue;
+			docs.add(docId);
+			scores.set(docId, matchingAnchors);
 		}
+
+		return { clause, docs, scores };
+	}
+
+	async #positionsForSimpleClause(
+		clause: Extract<ParsedQueryClause, { kind: 'term' | 'phrase' }>
+	): Promise<Map<number, ClausePositionOccurrence[]>> {
 		if (clause.kind === 'term') {
 			const termIds = await this.#resolvePatternTermIds(clause.pattern);
 			const byDoc = new Map<number, ClausePositionOccurrence[]>();
@@ -1867,6 +2014,3 @@ export const isPrefixPattern = (pattern: string): boolean => /\*$/.test(pattern)
 
 export const shardMayContainPrefix = (termMin: string, termMax: string, prefix: string): boolean =>
 	rangeIntersectsPrefix(termMin, termMax, prefix);
-
-
-

@@ -252,6 +252,18 @@ const filterResults = (
 const keyForMatch = (match: Pick<SearchResultMatch, 'kind' | 'source'>): string => `${match.kind}:${match.source}`;
 
 const defaultMatchLabel = (match: Pick<SearchResultMatch, 'kind' | 'source'>): string => {
+	if (match.kind === 'proximityGroup') {
+		try {
+			const raw = JSON.parse(match.source) as { anchor?: unknown; terms?: Array<{ value?: unknown }> };
+			const anchor = typeof raw.anchor === 'string' ? raw.anchor.replace(/^"|"$/g, '') : '';
+			const terms = Array.isArray(raw.terms)
+				? raw.terms.map((term) => (typeof term.value === 'string' ? term.value.replace(/^"|"$/g, '') : '')).filter(Boolean)
+				: [];
+			if (anchor && terms.length > 0) return `${terms.join(', ')} junto a la misma aparición de ${anchor}`;
+		} catch {
+			// La fuente se conserva como alternativa si procede de una versión incompatible.
+		}
+	}
 	if (match.kind === 'phrase' && match.source.startsWith('"') && match.source.endsWith('"')) {
 		return match.source.slice(1, -1);
 	}
@@ -448,7 +460,7 @@ const addQuerySheet = (
 		['Términos adicionales', query?.additionalTerms?.join('; ') || 'Sin términos adicionales'],
 		['Modo términos adicionales', additionalModeLabel(query?.additionalMode)],
 		['Condiciones de proximidad', proximityDescription],
-		['Modo proximidad', query?.proximityMode === 'any' ? 'Basta con una' : 'Todas las condiciones'],
+		['Modo proximidad', query?.proximityMode === 'any' ? 'Basta con una' : 'Todas junto a la principal'],
 		['Filtro título', formatTitleFilter(payload.filters)],
 		['Filtro géneros', payload.filters.genres.join('; ') || 'Sin filtro'],
 		['Filtro autoría tradicional', payload.filters.traditionalAuthorIds.join('; ') || 'Sin filtro'],

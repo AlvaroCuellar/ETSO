@@ -225,7 +225,21 @@ export interface ParsedQueryProximity {
 	order: SearchProximityOrder;
 }
 
-export type ParsedQueryClause = ParsedQueryTerm | ParsedQueryPhrase | ParsedQueryProximity;
+export interface ParsedQueryProximityGroup {
+	kind: 'proximityGroup';
+	anchor: ParsedQueryTerm | ParsedQueryPhrase;
+	terms: Array<{
+		right: ParsedQueryTerm | ParsedQueryPhrase;
+		distance: number;
+		order: SearchProximityOrder;
+	}>;
+}
+
+export type ParsedQueryClause =
+	| ParsedQueryTerm
+	| ParsedQueryPhrase
+	| ParsedQueryProximity
+	| ParsedQueryProximityGroup;
 
 export interface ParsedQuery {
 	groups: ParsedQueryClause[][];
@@ -233,7 +247,7 @@ export interface ParsedQuery {
 }
 
 export interface SearchResultMatch {
-	kind: 'term' | 'phrase' | 'proximity';
+	kind: 'term' | 'phrase' | 'proximity' | 'proximityGroup';
 	source: string;
 	occurrences: number;
 	tokenIndex?: number;
@@ -322,6 +336,5 @@ export interface SearchOptions {
 		| { kind: 'proximity'; value: string; distance: number; operator?: 'near'; order?: SearchProximityOrder }
 	>;
 }
-
 
 

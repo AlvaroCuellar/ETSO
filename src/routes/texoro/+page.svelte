@@ -532,8 +532,38 @@
 		return null;
 	};
 
+	const parseProximityGroupMatchSource = (
+		source: string
+	): { anchor: string; terms: Array<{ value: string; distance: number; order: SearchProximityOrder }> } | null => {
+		try {
+			const raw = JSON.parse(source) as Record<string, unknown>;
+			if (typeof raw.anchor !== 'string' || !Array.isArray(raw.terms)) return null;
+			const terms = raw.terms
+				.map((item) => {
+					if (!item || typeof item !== 'object') return null;
+					const term = item as Record<string, unknown>;
+					if (typeof term.value !== 'string' || typeof term.distance !== 'number') return null;
+					return {
+						value: term.value.replace(/^"|"$/g, ''),
+						distance: term.distance,
+						order: (term.order === 'before' || term.order === 'after' ? term.order : 'any') as SearchProximityOrder
+					};
+				})
+				.filter((term): term is { value: string; distance: number; order: SearchProximityOrder } => Boolean(term));
+			return terms.length > 0 ? { anchor: raw.anchor.replace(/^"|"$/g, ''), terms } : null;
+		} catch {
+			return null;
+		}
+	};
+
 	const formatMatchSource = (match: Pick<SearchResultMatch, 'kind' | 'source'>): string => {
 		const source = match.source.trim();
+		if (match.kind === 'proximityGroup') {
+			const group = parseProximityGroupMatchSource(source);
+			if (group) {
+				return `${group.terms.map((term) => term.value).join(', ')} junto a la misma aparición de ${group.anchor}`;
+			}
+		}
 		if (match.kind === 'proximity') {
 			const proximity = parseProximityMatchSource(source);
 			if (proximity) {
@@ -1004,7 +1034,7 @@
 	const createProximityTerm = (): ProximityQueryTerm => ({
 		id: nextProximityTermId++,
 		value: '',
-		distance: 5,
+		distance: 7,
 		order: 'any'
 	});
 
@@ -1133,7 +1163,7 @@
 	};
 
 	const proximityBaseValuesForQuery = (query: StructuredSearchQuery): string[] =>
-		uniqueSearchValues([query.main, ...(query.additionalTerms ?? [])]).map(formatFormulaValue);
+		uniqueSearchValues([query.main]).map(formatFormulaValue);
 
 	const textPart = (value: string): InterpretedQueryPart => ({ kind: 'text', value });
 	const termPart = (value: string): InterpretedQueryPart => ({ kind: 'term', value });
@@ -1226,7 +1256,7 @@
 		const parts: InterpretedQueryPart[] = [];
 		const main = normalizeSearchValue(query.main);
 		const additionalRaw = (query.additionalTerms ?? []).map(normalizeSearchValue).filter(Boolean);
-		const proximityBaseTerms = uniqueSearchValues([main, ...additionalRaw]);
+		const proximityBaseTerms = uniqueSearchValues([main]);
 		const quotedMain = quoteTerm(main);
 		const quotedAdditional = additionalRaw.map((term) => quoteTerm(term));
 
@@ -1271,7 +1301,7 @@
 					appendProximityRelativeToBases(parts, proximityBaseTerms, query.proximityMode ?? 'all', term);
 				});
 			} else {
-				parts.push(textPart(' y en los que se cumplan todas estas cercanías: '));
+				parts.push(textPart(' y en los que todas estas cercanías se cumplan alrededor de una misma aparición de la búsqueda principal: '));
 				proximity.forEach((term, index) => {
 					if (index > 0) parts.push(textPart(' y '));
 					appendProximityRelativeToBases(parts, proximityBaseTerms, query.proximityMode ?? 'all', term);
@@ -1390,7 +1420,9 @@
 			parts.push(
 				proximity.length === 1
 					? proximity[0]
-					: `(${proximity.join(query.proximityMode === 'any' ? ' OR ' : ' AND ')})`
+					: query.proximityMode === 'any'
+						? `(${proximity.join(' OR ')})`
+						: `MISMA_APARICION(${main}; ${proximity.join('; ')})`
 			);
 		}
 		return parts.join(' AND ');
@@ -1445,7 +1477,7 @@
 		for (const term of cleanAdditionalTerms) {
 			terms.push(buildTermDescriptor(term, term, additionalMode));
 		}
-		const proximityBaseTerms = uniqueSearchValues([normalizedMain, ...cleanAdditionalTerms]);
+		const proximityBaseTerms = uniqueSearchValues([normalizedMain]);
 
 		const cleanProximityTerms = proximityTerms
 			.map((term) => ({
@@ -1711,6 +1743,18 @@
 
 	const extractMatchPatterns = (match: SearchResultMatch): string[] => {
 		const source = match.source.trim();
+		if (match.kind === 'proximityGroup') {
+			const group = parseProximityGroupMatchSource(source);
+			if (!group) return [];
+			return Array.from(
+				new Set(
+					[group.anchor, ...group.terms.map((term) => term.value)]
+						.flatMap((part) => part.split(/\s+/))
+						.map((chunk) => normalizePattern(chunk, preserveEnieForHighlight))
+						.filter(Boolean)
+				)
+			);
+		}
 		if (match.kind === 'proximity') {
 			const proximity = parseProximityMatchSource(source);
 			const chunks = proximity
@@ -1756,7 +1800,7 @@
 				regexes: patterns.map((pattern) => wildcardPatternToRegex(pattern)),
 				chipStyle: palette.chip,
 				markStyle:
-					match.kind === 'proximity'
+					match.kind === 'proximity' || match.kind === 'proximityGroup'
 						? `${palette.mark}text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:2px;`
 						: palette.mark
 			};
@@ -3193,7 +3237,7 @@
 										class={`${modePillButtonClass} ${proximityMode === 'all' ? 'text-brand-blue-dark max-sm:bg-white max-sm:shadow-soft' : 'text-text-soft hover:text-brand-blue-dark'}`}
 										onclick={(event) => setProximityMode(event, 'all')}
 									>
-										Todas las condiciones
+						Todas junto a la principal
 									</button>
 									<button
 										type="button"

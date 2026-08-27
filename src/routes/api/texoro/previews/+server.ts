@@ -16,7 +16,15 @@ const normalizeMatch = (value: unknown): SearchResultMatch | null => {
 	if (!value || typeof value !== 'object') return null;
 	const raw = value as Record<string, unknown>;
 	const kind =
-		raw.kind === 'phrase' ? 'phrase' : raw.kind === 'term' ? 'term' : raw.kind === 'proximity' ? 'proximity' : null;
+		raw.kind === 'phrase'
+			? 'phrase'
+			: raw.kind === 'term'
+				? 'term'
+				: raw.kind === 'proximity'
+					? 'proximity'
+					: raw.kind === 'proximityGroup'
+						? 'proximityGroup'
+						: null;
 	const source = typeof raw.source === 'string' ? raw.source : '';
 	const occurrences =
 		typeof raw.occurrences === 'number' && Number.isFinite(raw.occurrences)

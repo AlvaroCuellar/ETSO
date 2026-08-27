@@ -4,6 +4,7 @@
 	import { page } from '$app/state';
 	import MatchToggle from '$lib/components/search/MatchToggle.svelte';
 	import TokenMultiSelect from '$lib/components/search/TokenMultiSelect.svelte';
+	import InlineCodeHint from '$lib/components/search/InlineCodeHint.svelte';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import AppButton from '$lib/components/ui/AppButton.svelte';
 	import SeoHead from '$lib/components/seo/SeoHead.svelte';
@@ -190,6 +191,75 @@
 		ar: 'و'
 	} as const;
 	const wildcardConnector = $derived(wildcardConnectorByLocale[data.locale] ?? wildcardConnectorByLocale.es);
+	const wildcardHelpByLocale = {
+		es: {
+		asteriskLabel: 'Ayuda sobre el comodín asterisco',
+		asterisk: 'El asterisco (*) sustituye cero o más caracteres. Por ejemplo, ing*laterra encuentra Inglaterra e Ingalaterra.',
+		questionLabel: 'Ayuda sobre el comodín interrogación',
+		question: 'La interrogación (?) sustituye exactamente un carácter. Por ejemplo, a?ora encuentra agora y ahora.'
+	},
+		en: {
+		asteriskLabel: 'Help with the asterisk wildcard',
+		asterisk: 'The asterisk (*) replaces zero or more characters. For example, ing*laterra finds Inglaterra and Ingalaterra.',
+		questionLabel: 'Help with the question-mark wildcard',
+		question: 'The question mark (?) replaces exactly one character. For example, a?ora finds agora and ahora.'
+	},
+		fr: {
+		asteriskLabel: 'Aide sur le joker astérisque',
+		asterisk: 'L’astérisque (*) remplace zéro ou plusieurs caractères. Par exemple, ing*laterra trouve Inglaterra et Ingalaterra.',
+		questionLabel: 'Aide sur le joker point d’interrogation',
+		question: 'Le point d’interrogation (?) remplace exactement un caractère. Par exemple, a?ora trouve agora et ahora.'
+	},
+		pt: {
+		asteriskLabel: 'Ajuda sobre o curinga asterisco',
+		asterisk: 'O asterisco (*) substitui zero ou mais caracteres. Por exemplo, ing*laterra encontra Inglaterra e Ingalaterra.',
+		questionLabel: 'Ajuda sobre o curinga ponto de interrogação',
+		question: 'O ponto de interrogação (?) substitui exatamente um caractere. Por exemplo, a?ora encontra agora e ahora.'
+	},
+		it: {
+		asteriskLabel: 'Aiuto sul carattere jolly asterisco',
+		asterisk: 'L’asterisco (*) sostituisce zero o più caratteri. Per esempio, ing*laterra trova Inglaterra e Ingalaterra.',
+		questionLabel: 'Aiuto sul carattere jolly punto interrogativo',
+		question: 'Il punto interrogativo (?) sostituisce esattamente un carattere. Per esempio, a?ora trova agora e ahora.'
+	},
+		de: {
+		asteriskLabel: 'Hilfe zum Sternchen-Platzhalter',
+		asterisk: 'Das Sternchen (*) ersetzt null oder mehr Zeichen. Zum Beispiel findet ing*laterra Inglaterra und Ingalaterra.',
+		questionLabel: 'Hilfe zum Fragezeichen-Platzhalter',
+		question: 'Das Fragezeichen (?) ersetzt genau ein Zeichen. Zum Beispiel findet a?ora agora und ahora.'
+	},
+		zh: {
+		asteriskLabel: '星号通配符帮助',
+		asterisk: '星号 (*) 可代替零个或多个字符。例如，ing*laterra 可找到 Inglaterra 和 Ingalaterra。',
+		questionLabel: '问号通配符帮助',
+		question: '问号 (?) 恰好代替一个字符。例如，a?ora 可找到 agora 和 ahora。'
+	},
+		ja: {
+		asteriskLabel: 'アスタリスクのワイルドカードのヘルプ',
+		asterisk: 'アスタリスク (*) は 0 文字以上の文字列を表します。例: ing*laterra は Inglaterra と Ingalaterra に一致します。',
+		questionLabel: '疑問符のワイルドカードのヘルプ',
+		question: '疑問符 (?) はちょうど 1 文字を表します。例: a?ora は agora と ahora に一致します。'
+	},
+		ko: {
+		asteriskLabel: '별표 와일드카드 도움말',
+		asterisk: '별표(*)는 0개 이상의 문자를 대신합니다. 예: ing*laterra는 Inglaterra와 Ingalaterra를 찾습니다.',
+		questionLabel: '물음표 와일드카드 도움말',
+		question: '물음표(?)는 정확히 한 문자를 대신합니다. 예: a?ora는 agora와 ahora를 찾습니다.'
+	},
+		ru: {
+		asteriskLabel: 'Справка о подстановочном знаке «звёздочка»',
+		asterisk: 'Звёздочка (*) заменяет ноль или более символов. Например, ing*laterra находит Inglaterra и Ingalaterra.',
+		questionLabel: 'Справка о подстановочном знаке «вопрос»',
+		question: 'Знак вопроса (?) заменяет ровно один символ. Например, a?ora находит agora и ahora.'
+	},
+		ar: {
+		asteriskLabel: 'مساعدة حول علامة البدل النجمية',
+		asterisk: 'تستبدل النجمة (*) صفرًا أو أكثر من المحارف. مثلًا، يعثر ing*laterra على Inglaterra وIngalaterra.',
+		questionLabel: 'مساعدة حول علامة البدل الاستفهامية',
+		question: 'تستبدل علامة الاستفهام (?) محرفًا واحدًا بالضبط. مثلًا، يعثر a?ora على agora وahora.'
+	}
+	} as const;
+	const wildcardHelp = $derived(wildcardHelpByLocale[data.locale] ?? wildcardHelpByLocale.es);
 	const TEXORO_SEO_DESCRIPTION =
 		'Búsquedas textuales complejas en TEXORO, un corpus del Siglo de Oro con millones de palabras indexadas.';
 
@@ -3041,7 +3111,21 @@
 	<section class="rounded-[14px] px-0 py-5 font-['Roboto',sans-serif] md:p-5">
 		<h2 class="m-0 font-['Roboto',sans-serif] text-[1.45rem] font-bold text-brand-blue-dark">{t('Buscar en TEXORO')}</h2>
 		<p class="mt-2 mb-0 text-[0.98rem] text-text-soft">
-			{t('Busca una palabra, frase exacta o patrón con comodines')} <code>*</code> {wildcardConnector} <code>?</code>. {t('Si escribes varias palabras, se buscan como frase exacta.')}
+			{t('Busca una palabra, frase exacta o patrón con comodines')}
+			<InlineCodeHint
+				id="texoro-wildcard-asterisk-help"
+				symbol="*"
+				label={wildcardHelp.asteriskLabel}
+				text={wildcardHelp.asterisk}
+			/>
+			{wildcardConnector}
+			<InlineCodeHint
+				id="texoro-wildcard-question-help"
+				symbol="?"
+				label={wildcardHelp.questionLabel}
+				text={wildcardHelp.question}
+			/>.
+			{t('Si escribes varias palabras, se buscan como frase exacta.')}
 		</p>
 
 		<form class="mt-5 grid gap-4" onsubmit={submitSearch}>

@@ -259,7 +259,7 @@ const defaultMatchLabel = (match: Pick<SearchResultMatch, 'kind' | 'source'>): s
 			const terms = Array.isArray(raw.terms)
 				? raw.terms.map((term) => (typeof term.value === 'string' ? term.value.replace(/^"|"$/g, '') : '')).filter(Boolean)
 				: [];
-			if (anchor && terms.length > 0) return `${terms.join(', ')} junto a la misma aparición de ${anchor}`;
+			if (anchor && terms.length > 0) return `${terms.join(', ')} junto a ${anchor}`;
 		} catch {
 			// La fuente se conserva como alternativa si procede de una versión incompatible.
 		}

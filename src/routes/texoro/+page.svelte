@@ -561,7 +561,7 @@
 		if (match.kind === 'proximityGroup') {
 			const group = parseProximityGroupMatchSource(source);
 			if (group) {
-				return `${group.terms.map((term) => term.value).join(', ')} junto a la misma aparición de ${group.anchor}`;
+				return `${group.terms.map((term) => term.value).join(', ')} junto a ${group.anchor}`;
 			}
 		}
 		if (match.kind === 'proximity') {
@@ -1301,7 +1301,7 @@
 					appendProximityRelativeToBases(parts, proximityBaseTerms, query.proximityMode ?? 'all', term);
 				});
 			} else {
-				parts.push(textPart(' y en los que todas estas cercanías se cumplan alrededor de una misma aparición de la búsqueda principal: '));
+				parts.push(textPart(' y en los que todas estas cercanías se cumplan alrededor de la búsqueda principal: '));
 				proximity.forEach((term, index) => {
 					if (index > 0) parts.push(textPart(' y '));
 					appendProximityRelativeToBases(parts, proximityBaseTerms, query.proximityMode ?? 'all', term);

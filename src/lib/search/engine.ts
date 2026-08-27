@@ -229,8 +229,10 @@ const withCacheBuster = (url: string): string => {
 };
 const withIndexVersion = (url: string, indexVersion: string | null): string =>
 	indexVersion ? withQueryParam(url, 'v', indexVersion) : url;
-const manifestRequest = (url: string): { url: string; init?: RequestInit } =>
-	import.meta.env.DEV ? { url: withCacheBuster(url), init: { cache: 'no-store' } } : { url };
+const manifestRequest = (url: string): { url: string; init: RequestInit } => ({
+	url: withCacheBuster(url),
+	init: { cache: 'no-store' }
+});
 
 const readPayloadIndexVersion = (value: unknown): string | null => {
 	if (!value || typeof value !== 'object') return null;
@@ -566,6 +568,7 @@ export class TexoroSearchEngine {
 	#textLoadCount = 0;
 
 	#docRowById = new Map<number, [number, string, string, string, number, number]>();
+	#docIdByWorkId = new Map<string, number>();
 	#allTermIdsCache: number[] | null = null;
 
 	constructor(config: SearchEngineConfig = {}) {
@@ -725,6 +728,7 @@ export class TexoroSearchEngine {
 		this.#vocabRoot = vocabRoot;
 
 		this.#docRowById = new Map(worksFile.works.map((row) => [row[0], row]));
+		this.#docIdByWorkId = new Map(worksFile.works.map((row) => [row[1], row[0]]));
 		this.#initialized = true;
 	}
 
@@ -955,7 +959,10 @@ export class TexoroSearchEngine {
 		options: MatchOccurrencesOptions = {}
 	): Promise<SearchMatchOccurrences> {
 		await this.initialize();
-		const prepared = await this.#getPreparedText(result.docId);
+		const requestedRow = this.#docRowById.get(result.docId);
+		const resolvedDocId =
+			requestedRow?.[1] === result.workId ? result.docId : this.#docIdByWorkId.get(result.workId);
+		const prepared = resolvedDocId === undefined ? null : await this.#getPreparedText(resolvedDocId);
 		if (!prepared) {
 			return {
 				workId: result.workId,
@@ -1982,7 +1989,7 @@ export class TexoroSearchEngine {
 			return (await response.json()) as T;
 		};
 
-		const request = isManifest
+		const request: { url: string; init?: RequestInit } = isManifest
 			? manifestRequest(requestUrl)
 			: { url: withIndexVersion(requestUrl, indexVersion) };
 		let data = await fetchJsonFromUrl(request.url, request.init);

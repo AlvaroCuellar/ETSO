@@ -406,8 +406,10 @@
 		const separator = url.includes('?') ? '&' : '?';
 		return `${url}${separator}t=${Date.now()}`;
 	};
-	const manifestRequest = (url: string): { url: string; init?: RequestInit } =>
-		import.meta.env.DEV ? { url: withCacheBuster(url), init: { cache: 'no-store' } } : { url };
+	const manifestRequest = (url: string): { url: string; init: RequestInit } => ({
+		url: withCacheBuster(url),
+		init: { cache: 'no-store' }
+	});
 	const texoroIndexBaseUrl = $derived(stripTrailingSlash(data.texoroIndexBaseUrl ?? ''));
 	const initialStatsPayload = getClientMemoryCache<TexoroStatsPayload>(TEXORO_STATS_CACHE_KEY);
 

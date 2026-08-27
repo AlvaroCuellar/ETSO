@@ -122,7 +122,9 @@ const resolveTexoroIndexBaseUrl = (): string => {
 const fetchIndexManifest = async (fetch: typeof globalThis.fetch): Promise<TexoroIndexManifest | null> => {
 	const baseUrl = resolveTexoroIndexBaseUrl();
 	if (!baseUrl) return null;
-	const response = await fetch(joinUrl(baseUrl, 'manifest.json'));
+	const manifestUrl = new URL(joinUrl(baseUrl, 'manifest.json'));
+	manifestUrl.searchParams.set('t', String(Date.now()));
+	const response = await fetch(manifestUrl, { cache: 'no-store' });
 	if (!response.ok) return null;
 	return (await response.json()) as TexoroIndexManifest;
 };

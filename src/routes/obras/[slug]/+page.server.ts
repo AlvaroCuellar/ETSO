@@ -2,7 +2,6 @@ import { error, redirect } from '@sveltejs/kit';
 import { setPublicCatalogCacheHeaders } from '$lib/server/cache-control';
 import { localizePath } from '$lib/i18n';
 import {
-	getInformeByWorkId,
 	getWorkByPublicId,
 	getWorkBySlug,
 	withWorkShortSummary
@@ -24,6 +23,11 @@ export const load: PageServerLoad = async ({ locals, params, setHeaders }) => {
 	setPublicCatalogCacheHeaders(setHeaders);
 	return {
 		work: await withWorkShortSummary(work),
-		informe: await getInformeByWorkId(work.id)
+		// The work snapshot already tells us whether a public report exists and
+		// contains its canonical slug. Loading the complete report here used to
+		// query all of its distance rows just to decide whether to render a link.
+		// On a crawler burst across many uncached work pages, that multiplied the
+		// Turso load and could turn the whole route into 5xx responses.
+		informe: work.reportSlug ? { slug: work.reportSlug } : undefined
 	};
 };

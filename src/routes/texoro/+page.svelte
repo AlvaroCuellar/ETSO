@@ -15,6 +15,7 @@
 	import TexoroLiveChart from '$lib/components/search/TexoroLiveChart.svelte';
 	import TexoroComparisonChart from '$lib/components/search/TexoroComparisonChart.svelte';
 	import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
+	import { formatTraditionalAttributionCompact } from '$lib/utils/traditional-attribution-phrase';
 	import { getClientMemoryCache, loadClientMemoryCache } from '$lib/utils/client-memory-cache';
 	import {
 		type AttributionSet
@@ -1052,29 +1053,8 @@
 		return suffix ? `${chartTitles[chartKey]} · ${queryLabelNoun}: ${suffix}` : chartTitles[chartKey];
 	};
 
-	const formatNameList = (names: string[]): string => {
-		if (names.length === 0) return '';
-		if (names.length === 1) return names[0];
-		if (names.length === 2) return `${names[0]} y ${names[1]}`;
-		return `${names.slice(0, -1).join(', ')} y ${names[names.length - 1]}`;
-	};
-
 	const formatCompactAttribution = (set: AttributionSet): string => {
-		if (set.unresolved) return 'No apunta hacia ningún autor';
-		if (!set.groups.length) return 'Sin datos';
-
-		const names: string[] = [];
-		const seen = new Set<string>();
-		for (const group of set.groups) {
-			for (const member of group.members) {
-				const authorName = member.authorName.trim();
-				if (!authorName || seen.has(authorName)) continue;
-				seen.add(authorName);
-				names.push(authorName);
-			}
-		}
-		if (!names.length) return 'Sin datos';
-		return formatNameList(names);
+		return formatTraditionalAttributionCompact(set, set.unresolved ? 'No apunta hacia ningún autor' : 'Sin datos');
 	};
 
 	const resultMetadataLine = (result: SearchResult): string => {

@@ -1942,6 +1942,12 @@ Object.assign(esToEn, {
 	'diez ingenios': 'ten authors',
 	'Obra atribuida a': 'Work attributed to',
 	'Obra atribuida a la escritura en colaboración entre': 'Work attributed to collaborative writing by',
+	'Obra atribuida a la colaboración de': 'Work attributed to the collaboration of',
+	'Obra atribuida alternativamente a': 'Work alternatively attributed to',
+	'Obra atribuida alternativamente a la colaboración de':
+		'Work alternatively attributed to the collaboration of',
+	'a': 'to',
+	'a la colaboración de': 'to the collaboration of',
 	'Los análisis de estilometría no permiten asociar esta obra de forma clara con ningún perfil autorial del corpus.':
 		'The stylometric analyses do not allow this work to be clearly associated with any authorial profile in the corpus.',
 	'Los análisis no pueden asociar esta obra con el perfil estilístico del autor tradicional, debido a lo reducido de su corpus. Tampoco identifican de forma clara una alternativa autorial.':
@@ -1986,6 +1992,12 @@ Object.assign(esToFr, {
 	'diez ingenios': 'dix auteurs',
 	'Obra atribuida a': 'Œuvre attribuée à',
 	'Obra atribuida a la escritura en colaboración entre': 'Œuvre attribuée à une écriture collaborative entre',
+	'Obra atribuida a la colaboración de': 'Œuvre attribuée à la collaboration de',
+	'Obra atribuida alternativamente a': 'Œuvre attribuée alternativement à',
+	'Obra atribuida alternativamente a la colaboración de':
+		'Œuvre attribuée alternativement à la collaboration de',
+	'a': 'à',
+	'a la colaboración de': 'à la collaboration de',
 	'Los análisis de estilometría no permiten asociar esta obra de forma clara con ningún perfil autorial del corpus.':
 		"Les analyses stylométriques ne permettent pas d'associer clairement cette œuvre à un profil d'auteur du corpus.",
 	'Los análisis no pueden asociar esta obra con el perfil estilístico del autor tradicional, debido a lo reducido de su corpus. Tampoco identifican de forma clara una alternativa autorial.':

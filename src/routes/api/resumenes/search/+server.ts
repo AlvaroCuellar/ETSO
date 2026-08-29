@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { getWorksForSummaryIndex } from '$lib/server/catalog-runtime';
 import { normalizePlainText } from '$lib/search/normalize';
 import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
+import { formatTraditionalAttributionCompact } from '$lib/utils/traditional-attribution-phrase';
 
 import type { RequestHandler } from './$types';
 
@@ -58,29 +59,8 @@ const splitSearchTerms = (value: string): string[] =>
 		.map((term) => term.trim())
 		.filter((term) => term.length > 0))];
 
-const formatNameList = (names: string[]): string => {
-	if (names.length === 0) return '';
-	if (names.length === 1) return names[0];
-	if (names.length === 2) return `${names[0]} y ${names[1]}`;
-	return `${names.slice(0, -1).join(', ')} y ${names[names.length - 1]}`;
-};
-
 const formatTraditionalAttribution = (work: Awaited<ReturnType<typeof getWorksForSummaryIndex>>[number]): string => {
-	const set = work.traditionalAttribution;
-	if (set.unresolved || set.groups.length === 0) return 'Desconocido';
-
-	const names: string[] = [];
-	const seen = new Set<string>();
-	for (const group of set.groups) {
-		for (const member of group.members) {
-			const authorName = member.authorName.trim();
-			if (!authorName || seen.has(authorName)) continue;
-			seen.add(authorName);
-			names.push(authorName);
-		}
-	}
-
-	return names.length > 0 ? formatNameList(names) : 'Desconocido';
+	return formatTraditionalAttributionCompact(work.traditionalAttribution);
 };
 
 const joinSummaryParts = (parts: string[] | undefined): string =>

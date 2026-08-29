@@ -13,6 +13,7 @@
 		"prepare": "svelte-kit sync",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"test:attribution-phrases": "node --test --experimental-strip-types tests/traditional-attribution-phrase.test.ts",
 		"actualizar": "cd ../ETSOdatos && .venv/bin/python scripts/deploy_cetso_full.py",
 		"actualizar:probar": "cd ../ETSOdatos && .venv/bin/python scripts/deploy_cetso_full.py --dry-run",
 		"actualizar:sin-hook": "cd ../ETSOdatos && .venv/bin/python scripts/deploy_cetso_full.py --allow-manual-vercel-redeploy",

@@ -17,7 +17,7 @@ fi
 
 : "${R2_ACCOUNT_ID:?Falta R2_ACCOUNT_ID en .env.deploy}"
 
-ENDPOINT_URL="https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com"
+ENDPOINT_URL="${R2_ENDPOINT_URL:-https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com}"
 DRY_RUN="${DRY_RUN:-false}"
 
 command -v aws >/dev/null || { echo "Falta aws cli"; exit 1; }

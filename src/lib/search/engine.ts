@@ -1,5 +1,10 @@
 import { IndexedDbCache } from './idb-cache';
 import { buildSnippet, normalizePattern, normalizePlainText, tokenizeWithOffsets } from './normalize';
+import {
+	assignDistinctProximitySpans,
+	canonicalSpanPairKey,
+	canonicalSpanSetKey
+} from './proximity-assignment';
 import { parseSearchQuery, parseStructuredQuery, parseStructuredSearchQuery } from './query';
 
 import type {
@@ -204,6 +209,20 @@ interface RawOccurrenceHighlight {
 	end: number;
 	tokenIndex: number;
 }
+
+type SimpleParsedClause = Extract<ParsedQueryClause, { kind: 'term' | 'phrase' }>;
+
+const simpleClausePatterns = (clause: SimpleParsedClause): string[] =>
+	clause.kind === 'term' ? [clause.pattern] : clause.patterns;
+
+const simpleClausesMatchSameOccurrences = (left: SimpleParsedClause, right: SimpleParsedClause): boolean => {
+	const leftPatterns = simpleClausePatterns(left);
+	const rightPatterns = simpleClausePatterns(right);
+	return (
+		leftPatterns.length === rightPatterns.length &&
+		leftPatterns.every((pattern, index) => pattern === rightPatterns[index])
+	);
+};
 
 interface TextLineRange {
 	start: number;
@@ -1031,21 +1050,26 @@ export class TexoroSearchEngine {
 			const termSpans = group.terms.map((term) =>
 				findPreparedSpans(prepared.tokens, sourcePatterns(term.value))
 			);
+			const seenGroupOccurrences = new Set<string>();
 
 			for (const anchor of anchorSpans) {
-				const selected = group.terms.map((term, index) => {
-					const candidates = termSpans[index]
+				const candidatesByTerm = group.terms.map((term, index) =>
+					termSpans[index]
 						.map((span) => ({ span, gap: this.#proximityGap(anchor, span, term.order) }))
 						.filter((candidate): candidate is { span: (typeof termSpans)[number][number]; gap: number } =>
 							candidate.gap !== null && candidate.gap <= term.distance
 						)
-						.sort((a, b) => a.gap - b.gap || a.span.tokenStart - b.span.tokenStart);
-					return candidates[0]?.span ?? null;
-				});
-				if (selected.some((span) => span === null)) continue;
+						.sort((a, b) => a.gap - b.gap || a.span.tokenStart - b.span.tokenStart)
+						.map((candidate) => candidate.span)
+				);
+				const selected = assignDistinctProximitySpans(candidatesByTerm);
+				if (!selected) continue;
+				const spans = [anchor, ...selected];
+				const occurrenceKey = canonicalSpanSetKey(spans);
+				if (seenGroupOccurrences.has(occurrenceKey)) continue;
+				seenGroupOccurrences.add(occurrenceKey);
 				count += 1;
 				if (items.length >= maxItems) continue;
-				const spans = [anchor, ...selected.filter((span): span is NonNullable<typeof span> => span !== null)];
 				const first = spans.reduce((current, span) => (span.start < current.start ? span : current));
 				const last = spans.reduce((current, span) => (span.end > current.end ? span : current));
 				const snippet = buildOccurrenceSnippet(
@@ -1080,6 +1104,12 @@ export class TexoroSearchEngine {
 			}
 			const leftSpans = findPreparedSpans(prepared.tokens, proximity.left);
 			const rightSpans = findPreparedSpans(prepared.tokens, proximity.right);
+			const seenUnorderedPairs =
+				proximity.order === 'any' &&
+				proximity.left.length === proximity.right.length &&
+				proximity.left.every((pattern, index) => pattern === proximity.right[index])
+					? new Set<string>()
+					: null;
 
 			for (const leftSpan of leftSpans) {
 				for (const rightSpan of rightSpans) {
@@ -1088,6 +1118,11 @@ export class TexoroSearchEngine {
 					if (gap > proximity.distance) {
 						if (rightSpan.tokenStart > leftSpan.tokenEnd) break;
 						continue;
+					}
+					if (seenUnorderedPairs) {
+						const pairKey = canonicalSpanPairKey(leftSpan, rightSpan);
+						if (seenUnorderedPairs.has(pairKey)) continue;
+						seenUnorderedPairs.add(pairKey);
 					}
 					count += 1;
 					if (items.length < maxItems) {
@@ -1552,6 +1587,10 @@ export class TexoroSearchEngine {
 			const rightOccurrences = rightPositions.get(docId);
 			if (!rightOccurrences || leftOccurrences.length === 0 || rightOccurrences.length === 0) continue;
 			let count = 0;
+			const seenUnorderedPairs =
+				clause.order === 'any' && simpleClausesMatchSameOccurrences(clause.left, clause.right)
+					? new Set<string>()
+					: null;
 
 			for (const left of leftOccurrences) {
 				for (const right of rightOccurrences) {
@@ -1560,6 +1599,11 @@ export class TexoroSearchEngine {
 					if (gap > clause.distance) {
 						if (right.tokenStart > left.tokenEnd) break;
 						continue;
+					}
+					if (seenUnorderedPairs) {
+						const pairKey = canonicalSpanPairKey(left, right);
+						if (seenUnorderedPairs.has(pairKey)) continue;
+						seenUnorderedPairs.add(pairKey);
 					}
 					count += 1;
 				}
@@ -1586,14 +1630,20 @@ export class TexoroSearchEngine {
 			const positionsForDoc = termPositions.map((positions) => positions.get(docId) ?? []);
 			if (positionsForDoc.some((positions) => positions.length === 0)) continue;
 			let matchingAnchors = 0;
+			const seenGroupOccurrences = new Set<string>();
 			for (const anchor of anchors) {
-				const allTermsMatch = clause.terms.every((term, index) =>
-					positionsForDoc[index].some((right) => {
+				const candidatesByTerm = clause.terms.map((term, index) =>
+					positionsForDoc[index].filter((right) => {
 						const gap = this.#proximityGap(anchor, right, term.order);
 						return gap !== null && gap <= term.distance;
 					})
 				);
-				if (allTermsMatch) matchingAnchors += 1;
+				const selected = assignDistinctProximitySpans(candidatesByTerm);
+				if (!selected) continue;
+				const occurrenceKey = canonicalSpanSetKey([anchor, ...selected]);
+				if (seenGroupOccurrences.has(occurrenceKey)) continue;
+				seenGroupOccurrences.add(occurrenceKey);
+				matchingAnchors += 1;
 			}
 			if (matchingAnchors === 0) continue;
 			docs.add(docId);

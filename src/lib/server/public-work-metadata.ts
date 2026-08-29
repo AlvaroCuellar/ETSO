@@ -185,12 +185,23 @@ const toPublicAttributionSet = (set: AttributionSet): PublicAttributionSet => ({
 	...(set.rawExpression === undefined ? {} : { rawExpression: set.rawExpression })
 });
 
-const stylometryResultSentence = (set: AttributionSet): string => {
+const hasAlternativeTraditionalAttributions = (set: AttributionSet): boolean =>
+	set.groups.filter((group) =>
+		group.members.some((member) => member.authorName.trim().length > 0)
+	).length > 1;
+
+const stylometryResultSentence = (
+	set: AttributionSet,
+	traditionalAttribution: AttributionSet
+): string => {
 	const rawExpression = normalizeText(set.rawExpression ?? '');
 	if (rawExpression.includes('no_apunta_a_ningun_autor')) {
 		return 'Los analisis de estilometria no permiten asociar esta obra de forma clara con ningun perfil autorial del corpus.';
 	}
 	if (rawExpression.includes('no_es_posible')) {
+		if (hasAlternativeTraditionalAttributions(traditionalAttribution)) {
+			return 'Los análisis no permiten contrastar de forma concluyente las atribuciones tradicionales, debido a la insuficiencia de perfiles autoriales independientes. Tampoco identifican con claridad una alternativa.';
+		}
 		return 'Los análisis no pueden asociar esta obra con el perfil estilístico del autor tradicional, debido a lo reducido de su corpus. Tampoco identifican de forma clara una alternativa autorial.';
 	}
 	if (rawExpression.includes('no_analizada')) {
@@ -220,7 +231,9 @@ const stylometryResultSentence = (set: AttributionSet): string => {
 const resolveGeneratedResult = (work: CatalogWork): string | null => {
 	const result = work.result1?.trim();
 	if (!result) return null;
-	return hasAutomaticMarker(result) ? stylometryResultSentence(work.stylometryAttribution) : result;
+	return hasAutomaticMarker(result)
+		? stylometryResultSentence(work.stylometryAttribution, work.traditionalAttribution)
+		: result;
 };
 
 export const toPublicWorkMetadata = (work: CatalogWork): PublicWorkMetadata => {

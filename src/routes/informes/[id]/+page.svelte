@@ -98,12 +98,23 @@
 		return normalized.includes('automatico') || /\bauto\b/.test(normalized);
 	};
 
-	const stylometryResultSentence = (set: AttributionSet): string => {
+	const hasAlternativeTraditionalAttributions = (set: AttributionSet): boolean =>
+		set.groups.filter((group) =>
+			group.members.some((member) => member.authorName.trim().length > 0)
+		).length > 1;
+
+	const stylometryResultSentence = (
+		set: AttributionSet,
+		traditionalAttribution: AttributionSet
+	): string => {
 		const rawExpression = normalizeText(set.rawExpression ?? '');
 		if (rawExpression.includes('no_apunta_a_ningun_autor')) {
 			return t('Los análisis de estilometría no permiten asociar esta obra de forma clara con ningún perfil autorial del corpus.');
 		}
 		if (rawExpression.includes('no_es_posible')) {
+			if (hasAlternativeTraditionalAttributions(traditionalAttribution)) {
+				return t('Los análisis no permiten contrastar de forma concluyente las atribuciones tradicionales, debido a la insuficiencia de perfiles autoriales independientes. Tampoco identifican con claridad una alternativa.');
+			}
 			return t('Los análisis no pueden asociar esta obra con el perfil estilístico del autor tradicional, debido a lo reducido de su corpus. Tampoco identifican de forma clara una alternativa autorial.');
 		}
 		if (rawExpression.includes('no_analizada')) {
@@ -290,7 +301,10 @@
 		const result = data.work.result1?.trim() ?? '';
 		if (!result) return '';
 		return hasAutomaticMarker(result)
-			? stylometryResultSentence(data.work.stylometryAttribution)
+			? stylometryResultSentence(
+					data.work.stylometryAttribution,
+					data.work.traditionalAttribution
+				)
 			: localizeStoredReportText(result);
 	};
 

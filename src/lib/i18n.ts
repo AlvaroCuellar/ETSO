@@ -1952,6 +1952,8 @@ Object.assign(esToEn, {
 		'The stylometric analyses do not allow this work to be clearly associated with any authorial profile in the corpus.',
 	'Los análisis no pueden asociar esta obra con el perfil estilístico del autor tradicional, debido a lo reducido de su corpus. Tampoco identifican de forma clara una alternativa autorial.':
 		'The analyses cannot associate this work with the stylistic profile of the traditional author because the corpus is too small. Nor do they clearly identify an alternative authorship.',
+	'Los análisis no permiten contrastar de forma concluyente las atribuciones tradicionales, debido a la insuficiencia de perfiles autoriales independientes. Tampoco identifican con claridad una alternativa.':
+		'The analyses do not allow the traditional attributions to be tested conclusively because there are insufficient independent authorial profiles. Nor do they clearly identify an alternative.',
 	'Esta obra no ha sido analizada estilométricamente, por lo que no es posible valorar su asociación con ningún perfil autorial del corpus.':
 		'This work has not been analyzed stylometrically, so it is not possible to assess its association with any authorial profile in the corpus.',
 	'Los resultados estilométricos disponibles requieren una revisión en profundidad antes de formular una conclusión autorial.':
@@ -2002,6 +2004,8 @@ Object.assign(esToFr, {
 		"Les analyses stylométriques ne permettent pas d'associer clairement cette œuvre à un profil d'auteur du corpus.",
 	'Los análisis no pueden asociar esta obra con el perfil estilístico del autor tradicional, debido a lo reducido de su corpus. Tampoco identifican de forma clara una alternativa autorial.':
 		"Les analyses ne peuvent pas associer cette œuvre au profil stylistique de l'auteur traditionnel, en raison de la taille réduite de son corpus. Elles n'identifient pas non plus clairement une autre attribution.",
+	'Los análisis no permiten contrastar de forma concluyente las atribuciones tradicionales, debido a la insuficiencia de perfiles autoriales independientes. Tampoco identifican con claridad una alternativa.':
+		"Les analyses ne permettent pas d'évaluer de manière concluante les attributions traditionnelles, faute de profils d'auteur indépendants suffisants. Elles n'identifient pas non plus clairement une autre attribution.",
 	'Esta obra no ha sido analizada estilométricamente, por lo que no es posible valorar su asociación con ningún perfil autorial del corpus.':
 		"Cette œuvre n'a pas été analysée stylométriquement ; il n'est donc pas possible d'évaluer son association avec un profil d'auteur du corpus.",
 	'Los resultados estilométricos disponibles requieren una revisión en profundidad antes de formular una conclusión autorial.':

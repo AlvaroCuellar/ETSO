@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { page } from '$app/state';
 	import { onMount } from 'svelte';
+	import { DEFAULT_LOCALE, translateText } from '$lib/i18n';
 	import HelpBubble from '$lib/components/search/HelpBubble.svelte';
 	import TokenMultiSelect from '$lib/components/search/TokenMultiSelect.svelte';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
@@ -67,7 +69,10 @@
 	const normalizeFilterText = (value: string): string =>
 		normalizePlainText(value, false).replace(/\s+/g, ' ').trim();
 
-	const formatPeople = (people: string[]): string => people.length > 0 ? people.join(', ') : 'No apunta hacia ningún autor';
+	const t = (value: string): string => translateText(page.data.locale ?? DEFAULT_LOCALE, value);
+	const formatPeople = (people: string[]): string => people.length > 0
+		? people.map((name) => name === 'Desconocido' ? t(name) : name).join(', ')
+		: t('No apunta hacia ningún autor');
 	const authorsForMode = (node: WorkNetworkNode, mode: AttributionMode): string[] =>
 		mode === 'traditional' ? node.traditionalAuthors : node.stylometryAuthors;
 	const attributionModeLabel = (mode: AttributionMode): string =>
@@ -865,6 +870,7 @@
 						label="Autor"
 						placeholder="Escribe y selecciona autores"
 						options={authorOptions}
+						preserveOptions
 						selectedIds={selectedAuthorIds}
 						selectedLabelSuffix={` (${activeAttributionModeLabel})`}
 						helpText={`Permite seleccionar hasta ${MAX_AUTHOR_COLOR_ASSIGNMENTS} autores para colorear sus obras en la red.`}
@@ -899,7 +905,7 @@
 										);
 									}}
 								/>
-								<span class="truncate">{assignment.author} ({attributionModeLabel(assignment.mode)})</span>
+								<span class="truncate"><span data-i18n-skip={assignment.author !== 'Desconocido' || undefined}>{assignment.author}</span> ({attributionModeLabel(assignment.mode)})</span>
 							</label>
 						{/each}
 					</div>
@@ -916,17 +922,17 @@
 							(window as Window & { centerSelectedWorkNode?: (nodeId?: string) => void }).centerSelectedWorkNode?.(node.id);
 						}}
 					>
-						<span class="block text-[0.95rem] font-semibold leading-[1.35] text-brand-blue-dark">
+						<span class="block text-[0.95rem] font-semibold leading-[1.35] text-brand-blue-dark" data-i18n-skip>
 							{formatDisplayWorkTitle(node.title)}
 						</span>
 						<span class="block text-[0.8rem] leading-[1.4] text-text-soft">
 							{node.genre}
 						</span>
 						<span class="block text-[0.78rem] leading-[1.4] text-text-soft">
-							Trad.: {formatPeople(node.traditionalAuthors)}
+							Trad.: <span data-i18n-skip={node.traditionalAuthors.length > 0 || undefined}>{formatPeople(node.traditionalAuthors)}</span>
 						</span>
 						<span class="block text-[0.78rem] leading-[1.4] text-text-soft">
-							Estil.: {formatPeople(node.stylometryAuthors)}
+							Estil.: <span data-i18n-skip={node.stylometryAuthors.length > 0 || undefined}>{formatPeople(node.stylometryAuthors)}</span>
 						</span>
 					</button>
 				{/each}
@@ -939,14 +945,14 @@
 					<div class="grid gap-2">
 						<div>
 							<p class="m-0 font-ui text-[0.72rem] font-bold uppercase tracking-[0.05em] text-[#b45f06]">Obra seleccionada</p>
-							<h2 class="m-0 mt-1 text-[1rem] font-semibold leading-[1.2] text-[#b45f06]">
+							<h2 class="m-0 mt-1 text-[1rem] font-semibold leading-[1.2] text-[#b45f06]" data-i18n-skip>
 								{formatDisplayWorkTitle(selectedNode.title)}
 							</h2>
 						</div>
 						<div class="grid gap-1 text-[0.82rem] leading-[1.35] text-text-main">
 							<p class="m-0"><span class="font-semibold text-text-soft">Género:</span> {selectedNode.genre}</p>
-							<p class="m-0"><span class="font-semibold text-text-soft">Trad.:</span> {formatPeople(selectedNode.traditionalAuthors)}</p>
-							<p class="m-0"><span class="font-semibold text-text-soft">Estil.:</span> {formatPeople(selectedNode.stylometryAuthors)}</p>
+							<p class="m-0"><span class="font-semibold text-text-soft">Trad.:</span> <span data-i18n-skip={selectedNode.traditionalAuthors.length > 0 || undefined}>{formatPeople(selectedNode.traditionalAuthors)}</span></p>
+							<p class="m-0"><span class="font-semibold text-text-soft">Estil.:</span> <span data-i18n-skip={selectedNode.stylometryAuthors.length > 0 || undefined}>{formatPeople(selectedNode.stylometryAuthors)}</span></p>
 						</div>
 						<div class="flex flex-wrap gap-2">
 							<button
@@ -1006,10 +1012,10 @@
 											(window as Window & { centerSelectedWorkNode?: (nodeId?: string) => void }).centerSelectedWorkNode?.(entry.node.id);
 										}}
 									>
-										<span class="font-semibold">{formatDisplayWorkTitle(entry.node.title)}</span>
+										<span data-i18n-skip class="font-semibold">{formatDisplayWorkTitle(entry.node.title)}</span>
 										<span class="text-text-soft">{entry.node.genre} · distancia {entry.link.distance.toFixed(3)}</span>
-										<span class="text-text-soft">Trad.: {formatPeople(entry.node.traditionalAuthors)}</span>
-										<span class="text-text-soft">Estil.: {formatPeople(entry.node.stylometryAuthors)}</span>
+										<span class="text-text-soft">Trad.: <span data-i18n-skip={entry.node.traditionalAuthors.length > 0 || undefined}>{formatPeople(entry.node.traditionalAuthors)}</span></span>
+										<span class="text-text-soft">Estil.: <span data-i18n-skip={entry.node.stylometryAuthors.length > 0 || undefined}>{formatPeople(entry.node.stylometryAuthors)}</span></span>
 									</button>
 								{/each}
 							</div>
@@ -1069,16 +1075,16 @@
 					style={`left: ${label.left}px; top: ${label.top}px; width: ${label.width}px; min-height: ${label.height}px;`}
 				>
 					<span class={`block text-[0.78rem] font-semibold leading-[1.25] ${label.id === selectedId ? 'text-[#c62828]' : 'text-brand-blue-dark'}`}>
-						{label.title}
+						<span data-i18n-skip>{label.title}</span>
 					</span>
 					<span class="mt-1 block text-[0.68rem] leading-[1.25] text-text-soft">
 						{label.genre}
 					</span>
 					<span class="mt-1 block text-[0.66rem] leading-[1.25] text-text-soft">
-						Trad.: {label.traditional}
+						Trad.: <span data-i18n-skip={label.traditional !== 'No apunta hacia ningún autor' || undefined}>{label.traditional}</span>
 					</span>
 					<span class="block text-[0.66rem] leading-[1.25] text-text-soft">
-						Estil.: {label.stylometry}
+						Estil.: <span data-i18n-skip={label.stylometry !== 'No apunta hacia ningún autor' || undefined}>{label.stylometry}</span>
 					</span>
 				</div>
 			{/each}

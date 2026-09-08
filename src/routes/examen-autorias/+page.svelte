@@ -750,6 +750,7 @@
 								label="Atribución"
 								placeholder="Escribe y selecciona autores"
 								options={authorOptions}
+								preserveOptions
 								selectedIds={selectedMainAuthors}
 								disabled={mainAuthorDisabled}
 								helpText="Permite multiselección de autores. Este campo se desactiva si usas Atribución tradicional o estilometría en Más filtros."
@@ -803,6 +804,7 @@
 												label="Atribución tradicional"
 												placeholder="Escribe y selecciona autores"
 												options={authorOptions}
+												preserveOptions
 												selectedIds={selectedTradAuthors}
 												helpText="Autores propuestos desde la tradición filológica. Puedes seleccionar varios."
 												inputClass="js-author-multiselect"
@@ -830,6 +832,7 @@
 												label="Atribución estilometría"
 												placeholder="Escribe y selecciona autores"
 												options={authorOptions}
+												preserveOptions
 												selectedIds={selectedEstoAuthors}
 												helpText="Autores propuestos a partir del análisis estilométrico. Puedes seleccionar varios."
 												inputClass="js-author-multiselect"
@@ -1023,7 +1026,7 @@
 									}}
 								>
 									<ChevronLeft class="h-5 w-5" aria-hidden="true" />
-									<span class="sr-only">Anterior</span>
+									<span class="sr-only">Página anterior</span>
 								</AppButton>
 								<span class="font-['Roboto',sans-serif] text-[0.86rem] font-normal text-text-main">
 									{resultText.page(pageNumberFormatter.format(resultsPage), pageNumberFormatter.format(totalPages))}
@@ -1042,7 +1045,7 @@
 									}}
 								>
 									<ChevronRight class="h-5 w-5" aria-hidden="true" />
-									<span class="sr-only">Siguiente</span>
+									<span class="sr-only">Página siguiente</span>
 								</AppButton>
 							</div>
 						{/if}
@@ -1080,7 +1083,7 @@
 							}}
 						>
 							<ChevronLeft class="h-5 w-5" aria-hidden="true" />
-							<span class="sr-only">Anterior</span>
+							<span class="sr-only">Página anterior</span>
 						</AppButton>
 						<span class="font-['Roboto',sans-serif] text-[0.86rem] font-normal text-text-main">
 							{resultText.page(pageNumberFormatter.format(resultsPage), pageNumberFormatter.format(totalPages))}
@@ -1099,7 +1102,7 @@
 							}}
 						>
 							<ChevronRight class="h-5 w-5" aria-hidden="true" />
-							<span class="sr-only">Siguiente</span>
+							<span class="sr-only">Página siguiente</span>
 						</AppButton>
 					</nav>
 				{/if}

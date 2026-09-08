@@ -14,6 +14,7 @@
 		label: string;
 		placeholder: string;
 		options: TokenOption[];
+		preserveOptions?: boolean;
 		selectedIds: string[];
 		disabled?: boolean;
 		helpText?: string;
@@ -28,6 +29,7 @@
 		label,
 		placeholder,
 		options,
+		preserveOptions = false,
 		selectedIds,
 		disabled = false,
 		helpText = '',
@@ -205,7 +207,7 @@
 		<div class="author-chips">
 			{#each selectedIds as selectedId}
 				<span class="author-chip">
-					<span class="author-chip-label">{optionMap.get(selectedId) ?? selectedId}{selectedLabelSuffix}</span>
+					<span class="author-chip-label"><span data-i18n-skip={(preserveOptions && selectedId !== 'desconocido') || undefined}>{optionMap.get(selectedId) ?? selectedId}</span>{selectedLabelSuffix}</span>
 					<button
 						type="button"
 						class="author-chip-remove"
@@ -257,6 +259,7 @@
 					<button
 						type="button"
 						class="autocomplete-item"
+						data-i18n-skip={(preserveOptions && option.id !== 'desconocido') || undefined}
 						class:active={index === activeIndex}
 						onmouseenter={() => {
 							activeIndex = index;
@@ -477,5 +480,4 @@
 		color: var(--color-brand-blue-dark);
 	}
 </style>
-
 

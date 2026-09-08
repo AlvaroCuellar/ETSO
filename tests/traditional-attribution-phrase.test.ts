@@ -62,3 +62,26 @@ test('conserva los grupos en las etiquetas compactas', () => {
 		'Calderón o Zabaleta, Belmonte y Martínez'
 	);
 });
+
+test('traduce fragmentos de atribuciones alternativas sin alterar los nombres', () => {
+	const translations: Record<string, string> = {
+		'Obra atribuida alternativamente a': 'Work alternatively attributed to',
+		a: 'to'
+	};
+	const parts = buildTraditionalAttributionParts(
+		attribution(['Vicente Cipriano Segura'], ['Calderón']),
+		{
+			translate: (value) => translations[value] ?? value,
+			connectorLabels: { and: 'and', or: 'or' }
+		}
+	);
+
+	assert.equal(
+		parts.map((part) => part.value).join(''),
+		'Work alternatively attributed to Vicente Cipriano Segura or to Calderón.'
+	);
+	assert.deepEqual(
+		parts.filter((part) => part.kind === 'author').map((part) => part.value),
+		['Vicente Cipriano Segura', 'Calderón']
+	);
+});

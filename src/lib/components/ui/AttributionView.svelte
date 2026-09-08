@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { page } from '$app/state';
+	import { DEFAULT_LOCALE, translateText } from '$lib/i18n';
 	import { formatConfidence, type AttributionSet } from '$lib/domain/catalog';
 
 	interface Props {
@@ -8,7 +10,8 @@
 
 	let { set, linkAuthors = true }: Props = $props();
 
-	const connectorLabel = (connector: 'and' | 'or'): string => (connector === 'and' ? 'y' : 'o');
+	const t = (value: string): string => translateText(page.data.locale ?? DEFAULT_LOCALE, value);
+	const connectorLabel = (connector: 'and' | 'or'): string => t(connector === 'and' ? 'y' : 'o');
 </script>
 
 {#if set.unresolved}
@@ -21,9 +24,9 @@
 			<span class="attribution-group">
 				{#each group.members as member, memberIndex}
 					{#if linkAuthors}
-						<a href={`/autores/${member.authorId}`}>{member.authorName}</a>
+						<a href={`/autores/${member.authorId}`} data-i18n-skip={member.authorId !== 'desconocido' || undefined}>{member.authorName}</a>
 					{:else}
-						<span>{member.authorName}</span>
+						<span data-i18n-skip={member.authorId !== 'desconocido' || undefined}>{member.authorName}</span>
 					{/if}
 
 					{#if member.confidence}
@@ -36,13 +39,13 @@
 					{/if}
 
 					{#if memberIndex < group.members.length - 1}
-						<span class="logic-operator">y</span>
+						<span class="logic-operator" data-i18n-skip>{t('y')}</span>
 					{/if}
 				{/each}
 			</span>
 
 			{#if groupIndex < set.groups.length - 1}
-				<span class="logic-operator">{connectorLabel(set.connector)}</span>
+				<span class="logic-operator" data-i18n-skip>{connectorLabel(set.connector)}</span>
 			{/if}
 		{/each}
 	</div>

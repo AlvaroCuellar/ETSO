@@ -1054,7 +1054,8 @@
 	};
 
 	const formatCompactAttribution = (set: AttributionSet): string => {
-		return formatTraditionalAttributionCompact(set, set.unresolved ? 'No apunta hacia ningún autor' : 'Sin datos');
+		const attribution = formatTraditionalAttributionCompact(set, t(set.unresolved ? 'No apunta hacia ningún autor' : 'Sin datos'), { and: t('y'), or: t('o') });
+		return attribution === 'Desconocido' ? t(attribution) : attribution;
 	};
 
 	const resultMetadataLine = (result: SearchResult): string => {
@@ -2910,7 +2911,7 @@
 			<p class="m-0 text-[0.68rem] leading-[1.2] font-semibold uppercase text-text-accent-purple">
 				Atribución tradicional
 			</p>
-			<p class="m-0 text-[0.86rem] leading-[1.2] text-text-main">
+			<p class="m-0 text-[0.86rem] leading-[1.2] text-text-main" data-i18n-skip>
 				{formatCompactAttribution(meta.traditionalAttribution)}
 			</p>
 		</div>
@@ -2918,7 +2919,7 @@
 			<p class="m-0 text-[0.68rem] leading-[1.2] font-semibold uppercase text-text-accent-purple">
 				Atribución estilométrica
 			</p>
-			<p class="m-0 text-[0.86rem] leading-[1.2] text-text-main">
+			<p class="m-0 text-[0.86rem] leading-[1.2] text-text-main" data-i18n-skip>
 				{formatCompactAttribution(meta.stylometryAttribution)}
 			</p>
 		</div>
@@ -3305,7 +3306,7 @@
 										class={`${modePillButtonClass} ${proximityMode === 'all' ? 'text-brand-blue-dark max-sm:bg-white max-sm:shadow-soft' : 'text-text-soft hover:text-brand-blue-dark'}`}
 										onclick={(event) => setProximityMode(event, 'all')}
 									>
-						Todas junto a la principal
+						{t('Todas junto a la principal')}
 									</button>
 									<button
 										type="button"
@@ -3440,6 +3441,7 @@
 								label="Título"
 								placeholder="Escribe y selecciona títulos"
 								options={titleOptions}
+								preserveOptions
 								selectedIds={selectedTitleIds}
 								helpText="Selecciona una o varias obras para limitar la búsqueda textual a esos títulos."
 								inputClass="js-static-multiselect"
@@ -3475,6 +3477,7 @@
 									label="Atribución tradicional"
 									placeholder="Escribe y selecciona autores"
 									options={authorOptions}
+									preserveOptions
 									selectedIds={selectedTradAuthors}
 									helpText="Autores propuestos por la tradición filológica."
 									inputClass="js-author-multiselect"
@@ -3502,6 +3505,7 @@
 									label="Atribución estilometría"
 									placeholder="Escribe y selecciona autores"
 									options={authorOptions}
+									preserveOptions
 									selectedIds={selectedEstoAuthors}
 									helpText="Autores sugeridos por el análisis estilométrico."
 									inputClass="js-author-multiselect"
@@ -3549,9 +3553,9 @@
 					<p class="mt-1 mb-0 text-[0.9rem] leading-[1.75] text-text-main">
 						{#each interpretedQuery.summaryParts as part}
 							{#if part.kind === 'term'}
-								<span class={interpretedQueryTermClass} title={part.value}>{part.value}</span>
+								<span data-i18n-skip class={interpretedQueryTermClass} title={part.value}>{part.value}</span>
 							{:else}
-								<span>{part.value}</span>
+								<span data-i18n-skip>{part.value}</span>
 							{/if}
 						{/each}
 					</p>
@@ -3937,6 +3941,7 @@
 													rel="noopener noreferrer"
 													class="inline whitespace-normal break-words text-brand-blue no-underline hover:text-brand-blue-dark"
 													title={formatDisplayWorkTitle(result.meta.title)}
+													data-i18n-skip
 												>{formatDisplayWorkTitle(result.meta.title)}</a>
 											{:else}
 												Obra sin metadatos
@@ -3979,7 +3984,7 @@
 														#{index + 1}
 													</span>
 													<div class="grid min-w-0 gap-1 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start sm:gap-3">
-														<span class="texoro-occurrence-snippet block min-w-0">
+														<span class="texoro-occurrence-snippet block min-w-0" data-i18n-skip>
 															{@html highlightExactOccurrenceSnippet(item.centeredSnippet, itemAssignment, item)}
 														</span>
 														<span class="font-['Roboto',sans-serif] text-[0.76rem] font-medium whitespace-nowrap text-text-accent-purple sm:text-right">
@@ -4021,6 +4026,7 @@
 													{#each matchDisplayParts(assignment.match, { includeProximityMeta: false }) as part}
 														<span
 															class={part.kind === 'text' ? 'texoro-more-button__term-text' : 'texoro-more-button__meta'}
+															data-i18n-skip={part.kind === 'text' || undefined}
 														>
 															{part.value}
 														</span>
@@ -4107,6 +4113,7 @@
 									rel="noopener noreferrer"
 									class="inline whitespace-normal break-words text-brand-blue no-underline hover:text-brand-blue-dark"
 									title={formatDisplayWorkTitle(occurrenceModal.result.meta.title)}
+									data-i18n-skip
 								>
 									{formatDisplayWorkTitle(occurrenceModal.result.meta.title)}
 								</a>
@@ -4137,6 +4144,7 @@
 					>
 						{#each matchDisplayParts(occurrenceModal.assignment.match) as part}
 							<span
+								data-i18n-skip={part.kind === 'text' || undefined}
 								class={`${
 									part.kind === 'text'
 										? 'min-w-0 overflow-hidden text-ellipsis'
@@ -4184,7 +4192,7 @@
 									</p>
 								</div>
 								<div class="px-3 py-2">
-									<p class="texoro-occurrence-modal-snippet m-0 text-[0.93rem] leading-[1.55] text-text-main">
+									<p class="texoro-occurrence-modal-snippet m-0 text-[0.93rem] leading-[1.55] text-text-main" data-i18n-skip>
 										{@html highlightExactOccurrenceSnippet(item.snippet, occurrenceModal.assignment, item)}
 									</p>
 								</div>

@@ -457,15 +457,15 @@
 							class="grid gap-2 rounded-[10px] border border-border bg-white px-4 py-3 text-inherit no-underline shadow-[0_8px_24px_rgba(25,46,80,0.05)] transition hover:border-border-accent-blue hover:bg-[rgba(237,242,255,0.55)] hover:no-underline md:px-5"
 						>
 							<p class="m-0 font-ui text-[1rem] leading-[1.4] text-brand-blue-dark">
-								<span class="font-semibold">{result.title}</span>
+								<span data-i18n-skip class="font-semibold">{result.title}</span>
 								<span class="mx-1.5 text-text-soft/70">·</span>
-								<span class="font-normal text-text-main">{result.traditional}</span>
+								<span data-i18n-skip={result.traditional !== 'Desconocido' || undefined} class="font-normal text-text-main">{result.traditional}</span>
 								<span class="mx-1.5 text-text-soft/70">·</span>
 								<span class="font-normal text-text-soft">{result.genre}</span>
 							</p>
 							<div class="grid gap-1.5">
 								{#each getResultSnippets(result) as snippet}
-									<p class="m-0 text-[0.95rem] leading-[1.65] text-text-main">
+									<p class="m-0 text-[0.95rem] leading-[1.65] text-text-main" data-i18n-skip>
 										{snippet.before}<mark class="rounded-[4px] bg-[#ffe49a] px-0.5 text-[#4d3200]">{snippet.match}</mark>{snippet.after}
 									</p>
 								{/each}
@@ -512,16 +512,16 @@
 							class="grid gap-1 px-4 py-3 text-inherit no-underline transition hover:bg-[rgba(237,242,255,0.7)] hover:no-underline md:px-5"
 						>
 							<p class="m-0 font-ui text-[0.99rem] leading-[1.45] text-brand-blue-dark">
-								<span class="font-semibold">{formatDisplayWorkTitle(work.title)}</span>
+								<span data-i18n-skip class="font-semibold">{formatDisplayWorkTitle(work.title)}</span>
 								<span class="mx-1.5 text-text-soft/70">·</span>
-								<span class="font-normal text-text-main">{work.traditional}</span>
+								<span class="font-normal text-text-main" data-i18n-skip={work.traditional !== 'Desconocido' || undefined}>{work.traditional}</span>
 								<span class="mx-1.5 text-text-soft/70">·</span>
 								<span class="font-normal text-text-soft">{formatGenre(work.genre)}</span>
 							</p>
 							{#if work.titleVariants.length > 0}
 								<p class="m-0 text-[0.92rem] leading-[1.5] text-text-soft">
 									{#each work.titleVariants as variante, index}
-										<span class="italic">{formatDisplayWorkTitle(variante)}</span>
+										<span data-i18n-skip class="italic">{formatDisplayWorkTitle(variante)}</span>
 										{#if index < work.titleVariants.length - 1}
 											<span class="mx-1 not-italic text-text-soft/65">|</span>
 										{/if}

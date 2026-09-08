@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { page } from '$app/state';
+	import { DEFAULT_LOCALE, translateText } from '$lib/i18n';
 	import ArrowUpRight from 'lucide-svelte/icons/arrow-up-right';
 	import InfoCard from '$lib/components/ui/InfoCard.svelte';
 	import InlineActionButton from '$lib/components/ui/InlineActionButton.svelte';
@@ -19,7 +21,8 @@
 			.toLowerCase()
 			.trim();
 
-	const connectorLabel = (connector: 'and' | 'or'): string => (connector === 'and' ? 'y' : 'o');
+	const t = (value: string): string => translateText(page.data.locale ?? DEFAULT_LOCALE, value);
+	const connectorLabel = (connector: 'and' | 'or'): string => t(connector === 'and' ? 'y' : 'o');
 
 	const confidenceClass = (confidence?: Confidence): string => {
 		if (confidence === 'segura') return 'bg-[#d4edda] text-[#155724]';
@@ -69,12 +72,12 @@
 										href={`/autores/${member.authorId}`}
 										class="inline-flex items-baseline gap-1 font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline"
 									>
-										<span>{member.authorName}</span>
+										<span data-i18n-skip={member.authorId !== 'desconocido' || undefined}>{member.authorName}</span>
 									</a>
 									{#if memberIndex < group.members.length - 1}
 										<span
 											class="inline-flex rounded bg-surface-accent-purple px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-text-accent-purple lowercase"
-											>y</span
+											data-i18n-skip>{t('y')}</span
 										>
 									{/if}
 								{/each}
@@ -117,7 +120,7 @@
 										href={`/autores/${member.authorId}`}
 										class="inline-flex items-baseline gap-1 font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline"
 									>
-										<span>{member.authorName}</span>
+										<span data-i18n-skip={member.authorId !== 'desconocido' || undefined}>{member.authorName}</span>
 									</a>
 									{#if member.confidence}
 										<span
@@ -129,7 +132,7 @@
 									{#if memberIndex < group.members.length - 1}
 										<span
 											class="inline-flex rounded bg-surface-accent-purple px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-text-accent-purple lowercase"
-											>y</span
+											data-i18n-skip>{t('y')}</span
 										>
 									{/if}
 								{/each}
@@ -167,7 +170,7 @@
 			<dt class="m-0 font-ui text-[0.72rem] font-bold uppercase tracking-[0.05em] text-text-soft">
 				Procedencia
 			</dt>
-			<dd class="m-0 font-ui text-[0.97rem] leading-[1.65] text-text-main">
+			<dd class="m-0 font-ui text-[0.97rem] leading-[1.65] text-text-main" data-i18n-skip={procedeValue !== 'No disponible.' || undefined}>
 				{@html renderInlineItalicsHtml(procedeValue)}
 			</dd>
 		</div>

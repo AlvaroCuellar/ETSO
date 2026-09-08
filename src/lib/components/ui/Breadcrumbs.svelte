@@ -2,6 +2,7 @@
 	export interface BreadcrumbItem {
 		label: string;
 		href?: string;
+		preserveLabel?: boolean;
 	}
 
 	interface Props {
@@ -14,7 +15,7 @@
 <nav class="mb-4" aria-label="Breadcrumb">
 	<ol class="m-0 flex list-none flex-wrap items-center gap-2 p-0 text-[0.83rem] font-ui text-text-soft">
 		{#each items as item, index}
-			<li>
+			<li data-i18n-skip={item.preserveLabel || undefined}>
 				{#if item.href}
 					<a class="text-inherit no-underline hover:no-underline focus-visible:no-underline" href={item.href}
 						>{item.label}</a

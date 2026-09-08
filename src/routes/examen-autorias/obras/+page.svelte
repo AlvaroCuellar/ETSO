@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import SeoHead from '$lib/components/seo/SeoHead.svelte';
+	import { translateText } from '$lib/i18n';
 	import { normalizePlainText } from '$lib/search/normalize';
 	import {
 		buildWorkTitleSearchText,
@@ -20,8 +21,11 @@
 	const normalizeFilterText = (value: string): string =>
 		normalizePlainText(value, false).replace(/\s+/g, ' ').trim();
 
-	const formatTraditionalAttribution = (set: AttributionSet): string =>
-		formatTraditionalAttributionCompact(set);
+	const t = (value: string): string => translateText(data.locale, value);
+	const formatTraditionalAttribution = (set: AttributionSet): string => {
+		const attribution = formatTraditionalAttributionCompact(set, t('Desconocido'), { and: t('y'), or: t('o') });
+		return attribution === 'Desconocido' ? t(attribution) : attribution;
+	};
 
 	const formatGenre = (genre: string): string => genre.trim() || 'Sin género';
 
@@ -84,16 +88,16 @@
 							class="grid gap-1 px-4 py-3 text-inherit no-underline transition hover:bg-[rgba(237,242,255,0.7)] hover:no-underline md:px-5"
 						>
 							<p class="m-0 font-ui text-[0.99rem] leading-[1.45] text-brand-blue-dark">
-								<span class="font-semibold">{formatDisplayWorkTitle(work.title)}</span>
+								<span data-i18n-skip class="font-semibold">{formatDisplayWorkTitle(work.title)}</span>
 								<span class="mx-1.5 text-text-soft/70">·</span>
-								<span class="font-normal text-text-main">{formatTraditionalAttribution(work.traditionalAttribution)}</span>
+								<span class="font-normal text-text-main" data-i18n-skip>{formatTraditionalAttribution(work.traditionalAttribution)}</span>
 								<span class="mx-1.5 text-text-soft/70">·</span>
 								<span class="font-normal text-text-soft">{formatGenre(work.genre)}</span>
 							</p>
 							{#if work.titleVariants.length > 0}
 								<p class="m-0 text-[0.92rem] leading-[1.5] text-text-soft">
 									{#each work.titleVariants as variante, index}
-										<span class="italic">{formatDisplayWorkTitle(variante)}</span>
+										<span data-i18n-skip class="italic">{formatDisplayWorkTitle(variante)}</span>
 										{#if index < work.titleVariants.length - 1}
 											<span class="mx-1 not-italic text-text-soft/65">|</span>
 										{/if}

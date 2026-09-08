@@ -73,7 +73,7 @@
 					const dataIndex = typeof first === 'object' && first ? (first as { dataIndex?: number }).dataIndex : -1;
 					const row = typeof dataIndex === 'number' ? rows[dataIndex] : null;
 					if (!row) return '';
-					return `${row.label}<br/>${decimalFormatter.format(row.value)} (${decimalFormatter.format(row.percentage)}%)`;
+					return `<span data-i18n-skip>${row.label}</span><br/>${decimalFormatter.format(row.value)} (${decimalFormatter.format(row.percentage)}%)`;
 				}
 			},
 			xAxis: {
@@ -148,7 +148,7 @@
 			textStyle: { color: '#f4f8ff', fontFamily: 'Roboto' },
 			formatter: (params: unknown): string => {
 				const item = params as { name?: string; value?: number; percent?: number };
-				return `${item.name ?? ''}<br/>${decimalFormatter.format(item.value ?? 0)} (${decimalFormatter.format(item.percent ?? 0)}%)`;
+				return `<span data-i18n-skip>${item.name ?? ''}</span><br/>${decimalFormatter.format(item.value ?? 0)} (${decimalFormatter.format(item.percent ?? 0)}%)`;
 			}
 		},
 		legend: {

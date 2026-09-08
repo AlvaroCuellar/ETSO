@@ -7,7 +7,7 @@
 	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import InlineActionButton from '$lib/components/ui/InlineActionButton.svelte';
 	import WorkMetadataCard from '$lib/components/ui/WorkMetadataCard.svelte';
-	import { DEFAULT_LOCALE, literalTranslations } from '$lib/i18n';
+	import { DEFAULT_LOCALE, literalTranslations, translateText } from '$lib/i18n';
 	import { formatPublicationDate } from '$lib/resource-publication-dates';
 	// Importar aquí el futuro logo de BITESO cuando esté disponible.
 	// import bitesoLogo from '$lib/assets/logos/biteso.png';
@@ -88,7 +88,7 @@
 		}
 	};
 	const displayWorkTitle = $derived.by(() => formatDisplayWorkTitle(data.work.title));
-	const displayBitesoTitle = $derived.by(() => `Texto digital de ${displayWorkTitle}`);
+	const displayBitesoTitle = $derived.by(() => `${translateText(data.locale, 'Texto digital de')} ${displayWorkTitle}`);
 	const publicationDateLabel = $derived.by(() => {
 		const labels = {
 			es: 'Fecha de publicación',
@@ -125,7 +125,7 @@
 		return descriptions[data.locale] ?? descriptions.es;
 	});
 	const displayBitesoTitleHtml = $derived.by(() =>
-		formatPrefixedDisplayWorkTitleHtml('Texto digital de', data.work.title)
+		formatPrefixedDisplayWorkTitleHtml(translateText(data.locale, 'Texto digital de'), data.work.title)
 	);
 	const downloadBaseFilename = $derived(data.biteso.id || data.work.slug || 'texto-biteso');
 	const citationPlainText = $derived(
@@ -514,6 +514,7 @@
 
 <SeoHead
 	title={`${displayBitesoTitle} | BITESO`}
+	preserveTitle
 	description={seoDescription}
 	canonicalUrl={data.canonicalUrl}
 />
@@ -523,11 +524,11 @@
 		items={[
 			{ label: 'Inicio', href: '/' },
 			{ label: 'BITESO', href: '/biteso' },
-			{ label: displayWorkTitle }
+			{ label: displayWorkTitle, preserveLabel: true }
 		]}
 	/>
 
-	<PageHero compact eyebrow="Texto digital" title={displayBitesoTitle} titleHtml={displayBitesoTitleHtml} />
+	<PageHero compact eyebrow="Texto digital" title={displayBitesoTitle} titleHtml={displayBitesoTitleHtml} preserveTitle />
 
 	<section class="grid gap-4">
 		{#if hasPublishedOn}
@@ -537,7 +538,7 @@
 		{/if}
 		{#if hasReviewers}
 			<p class="m-0 font-ui text-[0.92rem] text-text-soft" data-i18n-skip>
-				<span class="font-semibold">Revisores:</span> {data.biteso.bitesoRevisores.join('; ')}
+				<span class="font-semibold">{translateText(data.locale, 'Revisores:')}</span> {data.biteso.bitesoRevisores.join('; ')}
 			</p>
 		{/if}
 
@@ -574,7 +575,7 @@
 			<section class="mx-auto grid w-full max-w-4xl gap-5" aria-label={facsimileLabels.section}>
 				<div class="grid gap-6 md:grid-cols-2 md:gap-8">
 					{#each facsimileImages as image}
-						<figure class="m-0 grid justify-items-center gap-2">
+						<figure class="m-0 grid justify-items-center gap-2" data-i18n-skip>
 							<img
 								src={image.src}
 								alt={image.label}

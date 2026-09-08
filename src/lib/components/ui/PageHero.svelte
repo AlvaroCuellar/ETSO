@@ -4,11 +4,13 @@
 		title: string;
 		titleHtml?: string;
 		subtitle?: string;
+		preserveTitle?: boolean;
+		preserveSubtitle?: boolean;
 		compact?: boolean;
 		backgroundImage?: string;
 	}
 
-	let { eyebrow, title, titleHtml, subtitle, compact = false, backgroundImage }: Props = $props();
+	let { eyebrow, title, titleHtml, subtitle, preserveTitle = false, preserveSubtitle = false, compact = false, backgroundImage }: Props = $props();
 
 	const heroStyle = $derived.by(() => {
 		if (backgroundImage) {
@@ -27,7 +29,7 @@
 			{eyebrow}
 		</span>
 	{/if}
-	<h1 class="mt-3 font-ui text-[clamp(1.55rem,2.7vw,2.5rem)] leading-[1.2] font-bold text-white">
+	<h1 data-i18n-skip={preserveTitle || undefined} class="mt-3 font-ui text-[clamp(1.55rem,2.7vw,2.5rem)] leading-[1.2] font-bold text-white">
 		{#if titleHtml}
 			{@html titleHtml}
 		{:else}
@@ -35,6 +37,6 @@
 		{/if}
 	</h1>
 	{#if subtitle}
-		<p class="mt-3 max-w-[68ch] font-reading text-[1.02rem] text-white/90">{subtitle}</p>
+		<p data-i18n-skip={preserveSubtitle || undefined} class="mt-3 max-w-[68ch] font-reading text-[1.02rem] text-white/90">{subtitle}</p>
 	{/if}
 </section>

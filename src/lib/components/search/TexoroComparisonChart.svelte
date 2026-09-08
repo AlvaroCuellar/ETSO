@@ -62,7 +62,7 @@
 		const row = dataIndex >= 0 ? rows[dataIndex] : null;
 		if (!row) return '';
 
-		const lines = [`<strong>${row.label}</strong>`];
+		const lines = [`<strong data-i18n-skip>${row.label}</strong>`];
 		for (const entry of list as Array<{ seriesIndex?: number; marker?: string }>) {
 			const seriesIndex = typeof entry.seriesIndex === 'number' ? entry.seriesIndex : -1;
 			if (seriesIndex < 0 || seriesIndex >= series.length) continue;
@@ -72,7 +72,7 @@
 			const share = row.totalOccurrences > 0 ? (occ / row.totalOccurrences) * 100 : 0;
 			const mainValue = metricValueForRow(row, seriesIndex);
 			lines.push(
-				`${entry.marker ?? ''}${seriesMeta.label}: ${decimalFormatter.format(mainValue)}${
+				`${entry.marker ?? ''}<span data-i18n-skip>${seriesMeta.label}</span>: ${decimalFormatter.format(mainValue)}${
 					metric === 'share' ? '%' : ''
 				}<br/><span style="opacity:.86">occ: ${decimalFormatter.format(occ)} · /10k: ${decimalFormatter.format(per10k)} · %: ${decimalFormatter.format(share)}%</span>`
 			);

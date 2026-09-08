@@ -264,7 +264,8 @@
 </script>
 
 <SeoHead
-	title={`Resumen automático de ${displayWorkTitle}`}
+	title={`${localizeLiteral('Resumen automático de')} ${displayWorkTitle}`}
+	preserveTitle
 	description={seoDescription}
 	path={`/obras/${data.work.slug}/resumen`}
 />
@@ -275,13 +276,13 @@
 			{ label: 'Inicio', href: '/' },
 			{ label: 'Examen de autorías', href: '/examen-autorias' },
 			{ label: 'Obras', href: '/examen-autorias/obras' },
-			{ label: displayWorkTitle, href: `/obras/${data.work.slug}` },
+			{ label: displayWorkTitle, href: `/obras/${data.work.slug}`, preserveLabel: true },
 			{ label: 'Resumen automático' }
 		]}
 	/>
 
 	<div class="mx-auto grid w-full max-w-[1280px] gap-6">
-		<PageHero compact eyebrow="Resumen automático" title={displayWorkTitle} backgroundImage={heroBg} />
+		<PageHero compact eyebrow="Resumen automático" title={displayWorkTitle} preserveTitle backgroundImage={heroBg} />
 
 		<section class="grid gap-3" aria-label="Aviso y cita">
 			{#if hasPublishedOn}
@@ -454,7 +455,7 @@
 				{:else if summaryError}
 					<p class="m-0 rounded-[9px] border border-[#f3c0ca] bg-[#fff5f7] px-3 py-2 text-[#8f1e36]">{summaryError}</p>
 				{:else if summary.resumenBreve.length > 0}
-					<p class="m-0 text-base leading-[1.68] text-[#2f465c]">{resumenBreveText}</p>
+					<p class="m-0 text-base leading-[1.68] text-[#2f465c]" data-i18n-skip>{resumenBreveText}</p>
 				{:else}
 					<p class="m-0 italic text-[#546b82]">No disponible.</p>
 				{/if}
@@ -469,7 +470,7 @@
 				{:else if summary.resumenLargo.length > 0}
 					<div class="grid gap-3">
 						{#each summary.resumenLargo as paragraph}
-							<p class="m-0 text-base leading-[1.68] text-[#2f465c]">{paragraph}</p>
+							<p class="m-0 text-base leading-[1.68] text-[#2f465c]" data-i18n-skip>{paragraph}</p>
 						{/each}
 					</div>
 				{:else}
@@ -482,7 +483,7 @@
 				{#if summary.personajes.length > 0}
 					<div class="grid gap-2">
 						{#each summary.personajes as item}
-							<article class="border-b border-[rgba(0,51,167,0.14)] py-2 last:border-b-0">
+							<article class="border-b border-[rgba(0,51,167,0.14)] py-2 last:border-b-0" data-i18n-skip>
 								{#if item.nombre}
 									<h3 class="m-0 mb-1 text-base font-semibold leading-[1.28] text-[#20354b]">{item.nombre}</h3>
 								{/if}
@@ -502,7 +503,7 @@
 				{#if summary.espacios.length > 0}
 					<div class="grid gap-2">
 						{#each summary.espacios as item}
-							<article class="border-b border-[rgba(0,51,167,0.14)] py-2 last:border-b-0">
+							<article class="border-b border-[rgba(0,51,167,0.14)] py-2 last:border-b-0" data-i18n-skip>
 								{#if item.nombre}
 									<h3 class="m-0 mb-1 text-base font-semibold leading-[1.28] text-[#20354b]">{item.nombre}</h3>
 								{/if}
@@ -522,7 +523,7 @@
 				{#if summary.tematicas.length > 0}
 					<div class="grid gap-2">
 						{#each summary.tematicas as item}
-							<article class="border-b border-[rgba(0,51,167,0.14)] py-2 last:border-b-0">
+							<article class="border-b border-[rgba(0,51,167,0.14)] py-2 last:border-b-0" data-i18n-skip>
 								{#if item.tema}
 									<h3 class="m-0 mb-1 text-base font-semibold leading-[1.28] text-[#20354b]">{item.tema}</h3>
 								{/if}

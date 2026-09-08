@@ -334,7 +334,7 @@
 			href={`/obras/${row.work.slug}`}
 			class="inline-flex min-w-0 items-baseline gap-1 text-text-main visited:text-text-main no-underline hover:underline focus:underline focus-visible:underline"
 		>
-			<span class="min-w-0 overflow-wrap-anywhere">{formatDisplayWorkTitle(row.work.title)}</span>
+			<span data-i18n-skip class="min-w-0 overflow-wrap-anywhere">{formatDisplayWorkTitle(row.work.title)}</span>
 			<span class="hidden flex-none translate-y-[2px] text-text-soft max-md:inline-flex" aria-hidden="true">
 				<ExternalLink class="h-3.5 w-3.5" />
 			</span>
@@ -346,7 +346,7 @@
 				<CornerDownRight class="h-3 w-3 stroke-[2.1]" />
 			</span>
 			{#each row.work.titleVariants as variante, index}
-				<span class="variante-item italic">{formatDisplayWorkTitle(variante)}</span>
+				<span data-i18n-skip class="variante-item italic">{formatDisplayWorkTitle(variante)}</span>
 				{#if index < row.work.titleVariants.length - 1}
 					<span class="variantes-sep mx-1 text-text-soft/55 not-italic">|</span>
 				{/if}
@@ -366,13 +366,13 @@
 								href={`/autores/${member.authorId}`}
 								class="autor-name inline font-normal text-text-main visited:text-text-main no-underline hover:underline focus:underline focus-visible:underline"
 							>
-								<span class="overflow-wrap-anywhere">{member.authorName}</span>
+								<span data-i18n-skip={member.authorId !== 'desconocido' || undefined} class="overflow-wrap-anywhere">{member.authorName}</span>
 								<span class="hidden flex-none translate-y-[2px] text-text-soft max-md:inline-flex" aria-hidden="true">
 									<ExternalLink class="h-3 w-3" />
 								</span>
 							</a>
 						{:else}
-							<span class="autor-name font-normal text-text-main">{member.authorName}</span>
+							<span data-i18n-skip={member.authorId !== 'desconocido' || undefined} class="autor-name font-normal text-text-main">{member.authorName}</span>
 						{/if}
 						{#if memberIndex < group.members.length - 1}
 							<span class="logic-operator mx-1 inline-block rounded-[3px] bg-surface-accent-purple px-1.5 py-[1px] align-middle text-[10px] font-semibold text-text-accent-purple uppercase">
@@ -406,13 +406,13 @@
 								href={`/autores/${member.authorId}`}
 								class="autor-name inline font-normal text-text-main visited:text-text-main no-underline hover:underline focus:underline focus-visible:underline"
 							>
-								<span class="overflow-wrap-anywhere">{member.authorName}</span>
+								<span data-i18n-skip={member.authorId !== 'desconocido' || undefined} class="overflow-wrap-anywhere">{member.authorName}</span>
 								<span class="hidden flex-none translate-y-[2px] text-text-soft max-md:inline-flex" aria-hidden="true">
 									<ExternalLink class="h-3 w-3" />
 								</span>
 							</a>
 						{:else}
-							<span class="autor-name font-normal text-text-main">{member.authorName}</span>
+							<span data-i18n-skip={member.authorId !== 'desconocido' || undefined} class="autor-name font-normal text-text-main">{member.authorName}</span>
 						{/if}
 						{#if member.confidence}
 							<span class={confidenceClass(member.confidence)}>
@@ -643,7 +643,7 @@
 				<div class="detail-section-title mb-2.5 text-[12px] font-semibold tracking-[0.5px] text-text-soft uppercase">
 					Resumen breve automático
 				</div>
-				<p class="resumen-text mb-3 text-[14px] leading-[1.7] text-text-soft">{getShortSummaryText(row.work)}</p>
+				<p data-i18n-skip class="resumen-text mb-3 text-[14px] leading-[1.7] text-text-soft">{getShortSummaryText(row.work)}</p>
 			</div>
 		{:else if summaryState?.status === 'loading'}
 			<div class="detail-section detail-section--resumen mb-5 border-b border-[#dfe5ee] pb-3 last:mb-0">
@@ -667,7 +667,7 @@
 						Texto empleado
 					</span>
 					{#if row.work.origin}
-						<span class="metadata-value overflow-wrap-anywhere text-[14px] text-text-main">
+						<span class="metadata-value overflow-wrap-anywhere text-[14px] text-text-main" data-i18n-skip={row.work.origin !== 'No disponible' || undefined}>
 							{@html renderInlineItalicsHtml(row.work.origin)}
 						</span>
 					{:else}

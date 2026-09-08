@@ -38,11 +38,11 @@
 	<div class="form-radios">
 		<label class="form-item">
 			<input type="radio" name={name} value="or" checked={value === 'or'} disabled={disabled} />
-			Cualquiera (OR)
+			<span>Cualquiera</span> <span data-i18n-skip>(OR)</span>
 		</label>
 		<label class="form-item">
 			<input type="radio" name={name} value="and" checked={value === 'and'} disabled={disabled} />
-			Todos (AND)
+			<span>Todos</span> <span data-i18n-skip>(AND)</span>
 		</label>
 	</div>
 

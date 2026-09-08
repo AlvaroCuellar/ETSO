@@ -77,7 +77,7 @@
 	</div>
 
 	<div class="grid gap-2 p-4">
-		<h3 class="m-0 font-ui text-[1rem] font-semibold leading-[1.3] text-brand-blue-dark">{title}</h3>
+		<h3 class="m-0 font-ui text-[1rem] font-semibold leading-[1.3] text-brand-blue-dark" data-i18n-skip>{title}</h3>
 		{#if organizations.length > 0}
 			<p class="m-0 text-[0.92rem] leading-[1.55] text-text-soft">{organizations.join(' | ')}</p>
 		{/if}

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { formatAttribution, formatConfidence, type AttributionSet, type Confidence } from '$lib/domain/catalog';
+	import { translateText } from '$lib/i18n';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import InfoCard from '$lib/components/ui/InfoCard.svelte';
 	import InlineActionButton from '$lib/components/ui/InlineActionButton.svelte';
@@ -43,7 +44,8 @@
 		return descriptions[data.locale] ?? descriptions.es;
 	});
 
-	const connectorLabel = (connector: 'and' | 'or'): string => (connector === 'and' ? 'y' : 'o');
+	const t = (value: string): string => translateText(data.locale, value);
+	const connectorLabel = (connector: 'and' | 'or'): string => t(connector === 'and' ? 'y' : 'o');
 
 	const confidenceClass = (confidence?: Confidence): string => {
 		if (confidence === 'segura') return 'bg-[#d4edda] text-[#155724]';
@@ -73,7 +75,7 @@
 		'group grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3.5 rounded-lg border-0 bg-white px-[0.85rem] py-3 text-inherit no-underline transition hover:no-underline';
 </script>
 
-<SeoHead title={displayWorkTitle} description={seoDescription} path={`/obras/${data.work.slug}`} />
+<SeoHead title={displayWorkTitle} preserveTitle description={seoDescription} path={`/obras/${data.work.slug}`} />
 
 {#snippet textAccessActions()}
 	{#if hasTextAccess()}
@@ -118,7 +120,7 @@
 			{ label: 'Inicio', href: '/' },
 			{ label: 'Examen de autorías', href: '/examen-autorias' },
 			{ label: 'Obras', href: '/examen-autorias/obras' },
-			{ label: displayWorkTitle }
+			{ label: displayWorkTitle, preserveLabel: true }
 		]}
 	/>
 
@@ -126,6 +128,8 @@
 		compact
 		eyebrow="Ficha de obra"
 		title={displayWorkTitle}
+		preserveTitle
+		preserveSubtitle
 		subtitle={displayTitleVariants.length ? displayTitleVariants.join(' | ') : undefined}
 		backgroundImage={heroBg}
 	/>
@@ -161,7 +165,7 @@
 														href={`/autores/${member.authorId}`}
 														class="inline-flex items-baseline gap-1 font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline"
 													>
-														<span>{member.authorName}</span>
+														<span data-i18n-skip={member.authorId !== 'desconocido' || undefined}>{member.authorName}</span>
 														<span class="hidden flex-none translate-y-[2px] text-text-soft max-md:inline-flex" aria-hidden="true">
 															<ExternalLink class="h-3 w-3" />
 														</span>
@@ -169,7 +173,7 @@
 													{#if memberIndex < group.members.length - 1}
 														<span
 															class="inline-flex rounded bg-surface-accent-purple px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-text-accent-purple lowercase"
-															>y</span
+															data-i18n-skip>{t('y')}</span
 														>
 													{/if}
 												{/each}
@@ -210,7 +214,7 @@
 														href={`/autores/${member.authorId}`}
 														class="inline-flex items-baseline gap-1 font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline"
 													>
-														<span>{member.authorName}</span>
+														<span data-i18n-skip={member.authorId !== 'desconocido' || undefined}>{member.authorName}</span>
 														<span class="hidden flex-none translate-y-[2px] text-text-soft max-md:inline-flex" aria-hidden="true">
 															<ExternalLink class="h-3 w-3" />
 														</span>
@@ -225,7 +229,7 @@
 													{#if memberIndex < group.members.length - 1}
 														<span
 															class="inline-flex rounded bg-surface-accent-purple px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-text-accent-purple lowercase"
-															>y</span
+															data-i18n-skip>{t('y')}</span
 														>
 													{/if}
 												{/each}
@@ -262,7 +266,7 @@
 					{/snippet}
 
 					{#if hasShortSummary()}
-						<p>{data.work.shortSummary}</p>
+						<p data-i18n-skip>{data.work.shortSummary}</p>
 					{:else if data.work.hasSummaryFile}
 						<p class="italic text-text-soft">
 							No hay resumen breve disponible. Puedes consultar el resumen automático completo.
@@ -310,7 +314,7 @@
 									<Archive class="h-[0.82rem] w-[0.82rem] text-text-soft stroke-2" aria-hidden="true" />
 									Procedencia
 								</dt>
-								<dd class="m-0 text-[0.96rem] text-text-main">
+								<dd class="m-0 text-[0.96rem] text-text-main" data-i18n-skip={data.work.origin !== 'No disponible' || undefined}>
 									{@html renderInlineItalicsHtml(data.work.origin)}
 								</dd>
 							</div>

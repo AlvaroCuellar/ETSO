@@ -74,9 +74,9 @@
 				<div class="divide-y divide-[rgba(0,51,167,0.08)]">
 					{#each filteredAuthors as author}
 						<div class="grid gap-2 px-4 py-3 md:px-5">
-							<p class="m-0 font-ui text-[0.99rem] font-semibold leading-[1.35] text-brand-blue-dark">{author.name}</p>
+							<p data-i18n-skip={author.id !== 'desconocido' || undefined} class="m-0 font-ui text-[0.99rem] font-semibold leading-[1.35] text-brand-blue-dark">{author.name}</p>
 							{#if author.nameVariants.length > 0}
-								<p class="m-0 text-[0.92rem] leading-[1.5] text-text-soft">{author.nameVariants.join(' | ')}</p>
+								<p data-i18n-skip class="m-0 text-[0.92rem] leading-[1.5] text-text-soft">{author.nameVariants.join(' | ')}</p>
 							{/if}
 								<div class="grid gap-1 pl-4">
 									{#each author.works as work}
@@ -84,6 +84,7 @@
 											<span class="mr-1.5 text-text-soft" aria-hidden="true">·</span>
 											<a
 												href={`/obras/${work.slug}`}
+												data-i18n-skip
 												class="text-text-main no-underline hover:text-brand-blue-dark hover:underline focus:underline focus-visible:underline"
 											>
 												{formatDisplayWorkTitle(work.title)}

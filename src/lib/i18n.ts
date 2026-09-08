@@ -1,5 +1,6 @@
 import { SITE_URL } from '$lib/seo';
 import { esToAr, esToDe, esToIt, esToJa, esToKo, esToPt, esToRu, esToZh } from '$lib/i18n-extra';
+import { completeCopyTranslations } from '$lib/i18n-copy';
 
 export const DEFAULT_LOCALE = 'es';
 export const SUPPORTED_LOCALES = ['es', 'en', 'fr', 'pt', 'it', 'de', 'zh', 'ja', 'ko', 'ru', 'ar'] as const;
@@ -1539,6 +1540,8 @@ Object.assign(esToEn, {
 		'No short summary is available. You can consult the full automatic summary.',
 	'No hay resumen disponible para esta obra.': 'No summary is available for this work.',
 	'Metadatos de la obra': 'Work metadata',
+	'Información de la obra': 'Work information',
+	'Texto BITESO': 'BITESO text',
 	'Ficha obra': 'Work record',
 	'Sin atribución tradicional determinada': 'No traditional attribution determined',
 	'No apunta hacia ningún autor de forma clara': 'Does not point clearly to any author',
@@ -1684,7 +1687,7 @@ Object.assign(esToFr, {
 		"Il n'y a pas assez de données d'attribution pour comparer les termes.",
 	'No hay datos suficientes de género para comparar términos.':
 		"Il n'y a pas assez de données de genre pour comparer les termes.",
-	'Caracteres permitidos:': 'Tipoctères autorisés :',
+	'Caracteres permitidos:': 'Caractères autorisés :',
 	'letras, números, espacios y los comodines': 'lettres, chiffres, espaces et jokers',
 	'Términos adicionales:': 'Termes additionnels :',
 	'puedes exigir que aparezcan todos, al menos uno, o buscar cualquiera de los términos.':
@@ -1833,6 +1836,8 @@ Object.assign(esToFr, {
 		"Aucun résumé bref n'est disponible. Vous pouvez consulter le résumé automatique complet.",
 	'No hay resumen disponible para esta obra.': "Aucun résumé n'est disponible pour cette œuvre.",
 	'Metadatos de la obra': "Métadonnées de l'œuvre",
+	'Información de la obra': "Informations sur l'œuvre",
+	'Texto BITESO': 'Texte BITESO',
 	'Ficha obra': "Fiche d'œuvre",
 	'Sin atribución tradicional determinada': 'Aucune attribution traditionnelle déterminée',
 	'No apunta hacia ningún autor de forma clara': 'Ne pointe clairement vers aucun auteur',
@@ -1946,7 +1951,6 @@ Object.assign(esToEn, {
 	'Obra atribuida alternativamente a': 'Work alternatively attributed to',
 	'Obra atribuida alternativamente a la colaboración de':
 		'Work alternatively attributed to the collaboration of',
-	'a': 'to',
 	'a la colaboración de': 'to the collaboration of',
 	'Los análisis de estilometría no permiten asociar esta obra de forma clara con ningún perfil autorial del corpus.':
 		'The stylometric analyses do not allow this work to be clearly associated with any authorial profile in the corpus.',
@@ -1998,7 +2002,6 @@ Object.assign(esToFr, {
 	'Obra atribuida alternativamente a': 'Œuvre attribuée alternativement à',
 	'Obra atribuida alternativamente a la colaboración de':
 		'Œuvre attribuée alternativement à la collaboration de',
-	'a': 'à',
 	'a la colaboración de': 'à la collaboration de',
 	'Los análisis de estilometría no permiten asociar esta obra de forma clara con ningún perfil autorial del corpus.':
 		"Les analyses stylométriques ne permettent pas d'associer clairement cette œuvre à un profil d'auteur du corpus.",
@@ -2318,16 +2321,30 @@ const correctionLiteralTranslations: Record<Exclude<Locale, 'es'>, Record<string
 };
 
 export const literalTranslations: Record<Exclude<Locale, 'es'>, Record<string, string>> = {
-	en: { ...esToEn, ...correctionLiteralTranslations.en },
-	fr: { ...esToFr, ...correctionLiteralTranslations.fr },
-	pt: { ...esToPt, ...correctionLiteralTranslations.pt },
-	it: { ...esToIt, ...correctionLiteralTranslations.it },
-	de: { ...esToDe, ...correctionLiteralTranslations.de },
-	zh: { ...esToZh, ...correctionLiteralTranslations.zh },
-	ja: { ...esToJa, ...correctionLiteralTranslations.ja },
-	ko: { ...esToKo, ...correctionLiteralTranslations.ko },
-	ru: { ...esToRu, ...correctionLiteralTranslations.ru },
-	ar: { ...esToAr, ...correctionLiteralTranslations.ar }
+	en: { ...esToEn, ...correctionLiteralTranslations.en, ...completeCopyTranslations.en },
+	fr: { ...esToFr, ...correctionLiteralTranslations.fr, ...completeCopyTranslations.fr },
+	pt: { ...esToPt, ...correctionLiteralTranslations.pt, ...completeCopyTranslations.pt },
+	it: { ...esToIt, ...correctionLiteralTranslations.it, ...completeCopyTranslations.it },
+	de: { ...esToDe, ...correctionLiteralTranslations.de, ...completeCopyTranslations.de },
+	zh: { ...esToZh, ...correctionLiteralTranslations.zh, ...completeCopyTranslations.zh },
+	ja: { ...esToJa, ...correctionLiteralTranslations.ja, ...completeCopyTranslations.ja },
+	ko: { ...esToKo, ...correctionLiteralTranslations.ko, ...completeCopyTranslations.ko },
+	ru: { ...esToRu, ...correctionLiteralTranslations.ru, ...completeCopyTranslations.ru },
+	ar: { ...esToAr, ...correctionLiteralTranslations.ar, ...completeCopyTranslations.ar }
+};
+
+// Attribution fragments are translated explicitly, never by the document runtime.
+const explicitOnlyTranslations: Record<Exclude<Locale, 'es'>, Record<string, string>> = {
+	en: { a: 'to', y: 'and', o: 'or' },
+	fr: { a: 'à', y: 'et', o: 'ou' },
+	pt: { a: 'a', y: 'e', o: 'ou' },
+	it: { a: 'a', y: 'e', o: 'o' },
+	de: { a: 'an', y: 'und', o: 'oder' },
+	zh: { a: '归于', y: '和', o: '或' },
+	ja: { a: '帰属先：', y: 'および', o: 'または' },
+	ko: { a: '귀속 대상:', y: '및', o: '또는' },
+	ru: { a: '', y: 'и', o: 'или' },
+	ar: { a: 'إلى', y: 'و', o: 'أو' }
 };
 
 export const isSupportedLocale = (value: string): value is Locale =>
@@ -2389,7 +2406,10 @@ export const getLocalizedAlternates = (pathOrUrl: string): Array<{ locale: Local
 
 export const translateText = (locale: Locale, value: string): string => {
 	if (locale === DEFAULT_LOCALE) return value;
-	return literalTranslations[locale][value] ?? value;
+	const explicitTranslations = explicitOnlyTranslations[locale];
+	if (Object.hasOwn(explicitTranslations, value)) return explicitTranslations[value];
+	const dictionary = literalTranslations[locale];
+	return Object.hasOwn(dictionary, value) ? dictionary[value] : value;
 };
 
 export const translateJsonLd = (locale: Locale, value: unknown): unknown => {

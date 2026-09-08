@@ -141,146 +141,9 @@
 		return t('Los resultados estilométricos disponibles requieren revisión antes de formular una conclusión autorial.');
 	};
 
-	const reportFallbackReplacement = (source: string): string => {
-		const en: Record<string, string> = {
-			'Lectura preliminar para': 'Preliminary reading for',
-			'con perfil': 'with profile',
-			'y nivel': 'and level',
-			'sin autoria determinada': 'without determined authorship',
-			'sin confianza explicita': 'without explicit confidence',
-			desconocida: 'unknown',
-			colaboracion: 'collaboration',
-			unica: 'single-author'
-		};
-		const fr: Record<string, string> = {
-			'Lectura preliminar para': 'Lecture préliminaire pour',
-			'con perfil': 'avec profil',
-			'y nivel': 'et niveau',
-			'sin autoria determinada': 'sans attribution déterminée',
-			'sin confianza explicita': 'sans confiance explicite',
-			desconocida: 'inconnue',
-			colaboracion: 'collaboration',
-			unica: 'unique'
-		};
-		const pt: Record<string, string> = {
-			'Lectura preliminar para': 'Leitura preliminar para',
-			'con perfil': 'com perfil',
-			'y nivel': 'e nível',
-			'sin autoria determinada': 'sem autoria determinada',
-			'sin confianza explicita': 'sem confiança explícita',
-			desconocida: 'desconhecida',
-			colaboracion: 'colaboração',
-			unica: 'única'
-		};
-		const it: Record<string, string> = {
-			'Lectura preliminar para': 'Lettura preliminare per',
-			'con perfil': 'con profilo',
-			'y nivel': 'e livello',
-			'sin autoria determinada': 'senza attribuzione determinata',
-			'sin confianza explicita': 'senza fiducia esplicita',
-			desconocida: 'sconosciuta',
-			colaboracion: 'collaborazione',
-			unica: 'unica'
-		};
-		const de: Record<string, string> = {
-			'Lectura preliminar para': 'Vorläufige Lektüre zu',
-			'con perfil': 'mit Profil',
-			'y nivel': 'und Niveau',
-			'sin autoria determinada': 'ohne bestimmte Autorschaft',
-			'sin confianza explicita': 'ohne ausdrückliche Sicherheit',
-			desconocida: 'unbekannt',
-			colaboracion: 'Zusammenarbeit',
-			unica: 'einzeln'
-		};
-		const zh: Record<string, string> = {
-			'Lectura preliminar para': '初步解读：',
-			'con perfil': '作者类型',
-			'y nivel': '置信度',
-			'sin autoria determinada': '未确定作者',
-			'sin confianza explicita': '无明确置信度',
-			desconocida: '未知',
-			colaboracion: '合作',
-			unica: '单一作者'
-		};
-		const ja: Record<string, string> = {
-			'Lectura preliminar para': '予備的読解：',
-			'con perfil': '著者プロファイル',
-			'y nivel': '信頼度',
-			'sin autoria determinada': '著者未確定',
-			'sin confianza explicita': '明示的な信頼度なし',
-			desconocida: '不明',
-			colaboracion: '共同執筆',
-			unica: '単独著者'
-		};
-		const ko: Record<string, string> = {
-			'Lectura preliminar para': '예비 판독:',
-			'con perfil': '저자 프로필',
-			'y nivel': '신뢰 수준',
-			'sin autoria determinada': '저자 미확정',
-			'sin confianza explicita': '명시적 신뢰도 없음',
-			desconocida: '알 수 없음',
-			colaboracion: '공동 집필',
-			unica: '단독 저자'
-		};
-		const ru: Record<string, string> = {
-			'Lectura preliminar para': 'Предварительное прочтение для',
-			'con perfil': 'с профилем',
-			'y nivel': 'и уровнем',
-			'sin autoria determinada': 'без установленного авторства',
-			'sin confianza explicita': 'без явной уверенности',
-			desconocida: 'неизвестно',
-			colaboracion: 'соавторство',
-			unica: 'единоличное авторство'
-		};
-		const ar: Record<string, string> = {
-			'Lectura preliminar para': 'قراءة أولية لـ',
-			'con perfil': 'وفق ملف',
-			'y nivel': 'ومستوى',
-			'sin autoria determinada': 'دون إسناد تأليف محدد',
-			'sin confianza explicita': 'دون مستوى ثقة محدد',
-			desconocida: 'غير معروفة',
-			colaboracion: 'تأليف مشترك',
-			unica: 'تأليف منفرد'
-		};
-		if (data.locale === 'en') return en[source] ?? source;
-		if (data.locale === 'fr') return fr[source] ?? source;
-		if (data.locale === 'pt') return pt[source] ?? source;
-		if (data.locale === 'it') return it[source] ?? source;
-		if (data.locale === 'de') return de[source] ?? source;
-		if (data.locale === 'zh') return zh[source] ?? source;
-		if (data.locale === 'ja') return ja[source] ?? source;
-		if (data.locale === 'ko') return ko[source] ?? source;
-		if (data.locale === 'ru') return ru[source] ?? source;
-		if (data.locale === 'ar') return ar[source] ?? source;
-		return source;
-	};
-
-	const localizeStoredReportText = (value: string): string => {
-		if (data.locale === 'es') return value;
-		let next = translateText(data.locale, value);
-		if (next !== value) return next;
-
-		const replacements: Array<[string, string]> = [
-			['Lectura preliminar para', reportFallbackReplacement('Lectura preliminar para')],
-			['con perfil', reportFallbackReplacement('con perfil')],
-			['y nivel', reportFallbackReplacement('y nivel')],
-			['sin autoria determinada', reportFallbackReplacement('sin autoria determinada')],
-			['sin confianza explicita', reportFallbackReplacement('sin confianza explicita')],
-			['desconocida', reportFallbackReplacement('desconocida')],
-			['colaboracion', reportFallbackReplacement('colaboracion')],
-			['unica', reportFallbackReplacement('unica')]
-		];
-
-		for (const [source, target] of replacements) {
-			next = next.replaceAll(source, target);
-		}
-		return next;
-	};
-
 	const seoDescription = $derived.by(() => {
 		const intro = data.informe.intro?.trim();
-		const localizedIntro = intro ? localizeStoredReportText(intro) : '';
-		if (localizedIntro.length >= 50 && localizedIntro.split(/\s+/).length >= 6) return localizedIntro;
+		if (data.locale === 'es' && intro && intro.length >= 50 && intro.split(/\s+/).length >= 6) return intro;
 		const descriptions = {
 			es: `Informe estilométrico de ${displayWorkTitle} en ETSO, con distancias léxicas, obras cercanas e indicios de atribución para el estudio de la autoría teatral del Siglo de Oro.`,
 			en: `Stylometric report for ${displayWorkTitle} in ETSO, with lexical distances, closest works and authorship clues for the study of Golden Age theatre.`,
@@ -305,7 +168,7 @@
 					data.work.stylometryAttribution,
 					data.work.traditionalAttribution
 				)
-			: localizeStoredReportText(result);
+			: result;
 	};
 
 	const tokenizeResultText = (value: string): ResultTextPart[] => {
@@ -350,7 +213,7 @@
 	};
 
 	const result1Parts = $derived.by(() => tokenizeResultText(resolveResult1Text()));
-	const result2Parts = $derived.by(() => tokenizeResultText(localizeStoredReportText(data.work.result2?.trim() ?? '')));
+	const result2Parts = $derived.by(() => tokenizeResultText(data.work.result2?.trim() ?? ''));
 
 	const procedeValue = $derived.by(() => {
 		const origin = data.work.origin?.trim();
@@ -435,7 +298,7 @@
 	}));
 </script>
 
-<SeoHead title={displayInformeTitle} description={seoDescription} path={`/informes/${data.informe.slug}`} />
+<SeoHead title={displayInformeTitle} preserveTitle description={seoDescription} path={`/informes/${data.informe.slug}`} />
 
 <div class="grid min-w-0 max-w-full gap-6">
 	<Breadcrumbs
@@ -443,7 +306,7 @@
 			{ label: 'Inicio', href: '/' },
 			{ label: 'Examen de autorías', href: '/examen-autorias' },
 			{ label: 'Obras', href: '/examen-autorias/obras' },
-			{ label: displayWorkTitle, href: `/obras/${data.work.slug}` },
+			{ label: displayWorkTitle, href: `/obras/${data.work.slug}`, preserveLabel: true },
 			{ label: 'Informe' }
 		]}
 	/>
@@ -453,6 +316,7 @@
 		eyebrow="Informe estilométrico"
 		title={displayInformeTitle}
 		titleHtml={displayInformeTitleHtml}
+		preserveTitle
 		backgroundImage={informeBg}
 	/>
 
@@ -462,7 +326,7 @@
 				<dt class="m-0 text-[0.72rem] font-bold uppercase tracking-[0.06em] text-text-accent-purple">
 					Atribución tradicional
 				</dt>
-				<dd class="m-0 text-base leading-[1.55] text-text-main">
+				<dd class="m-0 text-base leading-[1.55] text-text-main" data-i18n-skip>
 					{#each traditionalAttributionParts as part}
 						{#if part.kind === 'author' && part.authorId}
 							<a href={`/autores/${part.authorId}`} class="font-semibold text-brand-blue underline hover:text-brand-blue-dark focus-visible:text-brand-blue-dark">
@@ -486,7 +350,7 @@
 				<dt class="m-0 text-[0.72rem] font-bold uppercase tracking-[0.06em] text-text-accent-purple">
 					Procedencia
 				</dt>
-				<dd class="m-0 text-base leading-[1.6] text-text-main">
+				<dd class="m-0 text-base leading-[1.6] text-text-main" data-i18n-skip={procedeValue !== 'No disponible.' || undefined}>
 					{@html renderInlineItalicsHtml(procedeValue)}
 				</dd>
 			</div>
@@ -524,7 +388,7 @@
 						}}
 					>
 						{#each availableAmbitos as ambito}
-							<option value={ambito}>{ambitoLabels[ambito]} ({rowsByAmbito[ambito].length})</option>
+							<option value={ambito} data-i18n-skip>{t(ambitoLabels[ambito])} ({rowsByAmbito[ambito].length})</option>
 						{/each}
 					</select>
 				</div>
@@ -545,7 +409,7 @@
 									event.currentTarget.blur();
 								}}
 							>
-								{ambitoLabels[ambito]}
+								<span data-i18n-skip>{t(ambitoLabels[ambito])}</span>
 								<span
 									class="ml-2 inline-flex rounded-[10px] bg-surface-accent-purple px-2 py-1 text-[0.75rem] leading-none text-text-accent-purple"
 								>
@@ -580,7 +444,7 @@
 		{#if result1Parts.length > 0}
 			<article class="rounded-[8px] bg-surface-soft px-4 py-3.5 max-md:px-[0.9rem] max-md:py-3">
 				<div class="grid gap-2">
-					<p class="m-0 text-base leading-[1.62] text-text-main">
+					<p class="m-0 text-base leading-[1.62] text-text-main" data-i18n-skip>
 						{#each result1Parts as part}
 							{#if part.kind === 'author' && part.authorId}
 								<a href={`/autores/${part.authorId}`} class="font-semibold text-text-main underline hover:text-brand-blue-dark focus-visible:text-brand-blue-dark">
@@ -597,7 +461,7 @@
 	{#if result2Parts.length > 0}
 		<article class="rounded-[8px] bg-surface-accent-blue px-4 py-3.5 max-md:px-[0.9rem] max-md:py-3">
 			<div class="grid gap-2">
-				<p class="m-0 text-base leading-[1.72] text-text-main">
+				<p class="m-0 text-base leading-[1.72] text-text-main" data-i18n-skip>
 					{#each result2Parts as part}
 						{#if part.kind === 'author' && part.authorId}
 							<a href={`/autores/${part.authorId}`} class="font-semibold text-brand-blue underline hover:text-brand-blue-dark focus-visible:text-brand-blue-dark">

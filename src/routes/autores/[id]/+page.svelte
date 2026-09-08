@@ -100,7 +100,7 @@
 	};
 </script>
 
-<SeoHead title={data.author.name} description={seoDescription} path={`/autores/${data.author.id}`} />
+<SeoHead title={data.author.name} preserveTitle={data.author.id !== 'desconocido'} description={seoDescription} path={`/autores/${data.author.id}`} />
 
 <div class="grid min-w-0 max-w-full gap-6">
 	<Breadcrumbs
@@ -108,7 +108,7 @@
 			{ label: 'Inicio', href: '/' },
 			{ label: 'Examen de autorías', href: '/examen-autorias' },
 			{ label: 'Dramaturgos', href: '/examen-autorias/dramaturgos' },
-			{ label: data.author.name }
+			{ label: data.author.name, preserveLabel: data.author.id !== 'desconocido' }
 		]}
 	/>
 
@@ -116,6 +116,8 @@
 		compact
 		eyebrow="Ficha de autor"
 		title={data.author.name}
+		preserveTitle={data.author.id !== 'desconocido'}
+		preserveSubtitle
 		subtitle={data.author.nameVariants.length ? data.author.nameVariants.join(' | ') : undefined}
 		backgroundImage={autorBg}
 	/>

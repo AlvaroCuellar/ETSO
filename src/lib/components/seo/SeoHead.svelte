@@ -18,6 +18,7 @@
 
 	interface Props {
 		title: string;
+		preserveTitle?: boolean;
 		description: string;
 		path?: string;
 		canonicalUrl?: string;
@@ -29,6 +30,7 @@
 
 	let {
 		title,
+		preserveTitle = false,
 		description,
 		path = '/',
 		canonicalUrl,
@@ -40,7 +42,7 @@
 
 	const locale = $derived((page.data.locale ?? DEFAULT_LOCALE) as Locale);
 	const ui = $derived(getUiTranslations(locale));
-	const translatedTitle = $derived(translateText(locale, title));
+	const translatedTitle = $derived(preserveTitle ? title : translateText(locale, title));
 	const translatedDescription = $derived(translateText(locale, description));
 	const seoTitle = $derived(buildSeoTitle(translatedTitle, ui.seo.siteName));
 	const seoDescription = $derived(buildSeoDescription(translatedDescription, ui.seo.defaultDescription));
@@ -57,7 +59,7 @@
 
 <svelte:head>
 	<title>{seoTitle}</title>
-	<meta name="description" content={seoDescription} />
+	<meta name="description" content={seoDescription} data-i18n-skip />
 	{#if noindex}
 		<meta name="robots" content="noindex,nofollow" />
 	{/if}
@@ -65,14 +67,14 @@
 	{#each alternateLinks as alternate}
 		<link rel="alternate" hreflang={alternate.locale} href={alternate.href} />
 	{/each}
-	<meta property="og:title" content={seoTitle} />
-	<meta property="og:description" content={seoDescription} />
+	<meta property="og:title" content={seoTitle} data-i18n-skip />
+	<meta property="og:description" content={seoDescription} data-i18n-skip />
 	<meta property="og:url" content={seoCanonicalUrl} />
 	<meta property="og:type" content={type} />
 	<meta property="og:image" content={seoImageUrl} />
 	<meta name="twitter:card" content="summary_large_image" />
-	<meta name="twitter:title" content={seoTitle} />
-	<meta name="twitter:description" content={seoDescription} />
+	<meta name="twitter:title" content={seoTitle} data-i18n-skip />
+	<meta name="twitter:description" content={seoDescription} data-i18n-skip />
 	<meta name="twitter:image" content={seoImageUrl} />
 	{@html jsonLdMarkup}
 </svelte:head>

@@ -1,23 +1,22 @@
 import { json } from '@sveltejs/kit';
 import { PUBLIC_CATALOG_CACHE_CONTROL } from '$lib/server/cache-control';
-import { getAllAuthors } from '$lib/server/catalog-runtime';
-import { SITE_URL } from '$lib/seo';
+import { getAllAuthors, getStylometryWorkPublicIdsByAuthor } from '$lib/server/catalog-runtime';
+import { PUBLIC_AUTHOR_METADATA_FIELDS, toPublicAuthorMetadata } from '$lib/server/public-author-metadata';
+import { parsePublicApiFields, projectPublicApiFields } from '$lib/server/public-api-fields';
 
 import type { RequestHandler } from './$types';
 
-const authorResource = (authorKey: string): string => `/autores/${authorKey}`;
-
-export const GET: RequestHandler = async () => {
-	const authors = (await getAllAuthors()).map((author) => ({
-		id: author.publicId,
-		key: author.id,
-		name: author.name,
-		nameVariants: author.nameVariants,
-		resources: {
-			author: authorResource(author.id),
-			url: `${SITE_URL}${authorResource(author.id)}`
-		}
-	}));
+export const GET: RequestHandler = async ({ url }) => {
+	const fields = parsePublicApiFields(url.searchParams.get('fields'), PUBLIC_AUTHOR_METADATA_FIELDS);
+	const [catalogAuthors, idsByAuthor] = await Promise.all([
+		getAllAuthors(),
+		fields === null || fields.includes('stylometryWorkPublicIds')
+			? getStylometryWorkPublicIdsByAuthor()
+			: undefined
+	]);
+	const authors = catalogAuthors.map((author) =>
+		projectPublicApiFields(toPublicAuthorMetadata(author, idsByAuthor?.get(author.id)), fields)
+	);
 
 	return json(
 		{

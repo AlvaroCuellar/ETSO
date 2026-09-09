@@ -35,15 +35,33 @@ The project follows a human-in-the-loop approach. Automated results are treated 
 ETSO provides a public API for consulting its catalogue:
 
 - `GET /api/obras` — complete catalogue of public work metadata.
-- `GET /api/obras/{id-or-slug}` — metadata for an individual work, addressed by internal identifier or public slug.
+- `GET /api/obras/{id-publicId-or-slug}` — metadata for an individual work, addressed by internal identifier, numeric public identifier, or public slug.
+- `GET /api/autores` — complete author list, including the public identifiers of works supported by stylometry for each author.
+- `GET /api/autores/{id-publicId-or-key}` — an individual author, addressed by numeric public identifier or textual key.
 
-Example:
+### Author–work associations for ASODAT
+
+Each author object includes `stylometryWorkPublicIds: number[]`. This is the list of work `publicId` values shown under **Obras respaldadas por la estilometría** on that author's profile in **Examen de autorías**. It uses the same selection as the website, including probable/possible attributions and collaborations, and excludes unresolved attribution sets. Inclusion records stylometric support and does not imply certain or exclusive authorship. An empty array (`[]`) means that no works meet those criteria for that author.
+
+The numeric author `id` is ETSO's identifier: it matches `authorId` in the public work attributions. It is independent of ASODAT's dramaturge identifiers. The author's `key` is the textual identifier used in ETSO author URLs. Each work identifier in `stylometryWorkPublicIds` can be used with `/api/obras/{publicId}` or linked as `https://etso.es/obras/{publicId}`, which redirects to the canonical work page.
+
+### Selecting response fields
+
+All four endpoints accept an optional `fields` parameter: a comma-separated list of public top-level fields to include in each work or author object. For example:
 
 ```text
-https://etso.es/api/obras/la-francesa-laura
+https://etso.es/api/autores?fields=id,stylometryWorkPublicIds
+https://etso.es/api/autores/104?fields=id,stylometryWorkPublicIds
+https://etso.es/api/obras/690677?fields=publicId,title,resources
 ```
 
+The first request retrieves the complete author–work mapping in one response. Author fields are `id`, `key`, `name`, `nameVariants`, `stylometryWorkPublicIds`, and `resources`. Work fields are described on the [API documentation page](https://etso.es/api). Selecting an object such as `resources` returns that entire public object; nested paths such as `resources.work` are not supported.
+
+The existing `authors`, `author`, `works`, or `work` response wrapper and any `meta` information are preserved. With no `fields` parameter, responses retain all their public fields, including the new author association array. Empty selections, unknown fields, nested paths, and private content fields return HTTP 400.
+
 The API exposes a controlled set of catalogue fields, including titles and variants, genre, provenance, textual state, public authorship results, attributions, and links to related resources. It does not expose complete texts or unpublished automatic summaries.
+
+Responses already use public caching (`public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800`). External integrations should cache responses locally. Selecting fields reduces response size and data transfer; it does not itself reduce the number of requests or eliminate all database work.
 
 ## Local development
 

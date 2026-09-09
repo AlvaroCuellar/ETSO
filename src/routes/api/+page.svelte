@@ -29,6 +29,14 @@
 		exampleLead: string;
 	}
 
+	interface ApiIntegrationText {
+		associationsHeading: string;
+		associationParagraphs: string[];
+		selectionHeading: string;
+		selectionParagraphs: string[];
+		performanceNote: string;
+	}
+
 	let { data }: { data: PageData } = $props();
 
 	const authorEndpointTextByLocale: Record<Locale, { all: string; one: string }> = {
@@ -604,12 +612,175 @@
 		}
 	};
 
+	const integrationTextByLocale: Record<Locale, ApiIntegrationText> = {
+		es: {
+			associationsHeading: 'Obras por autor e integración con ASODAT',
+			associationParagraphs: [
+				'Cada autor incluye stylometryWorkPublicIds, un array de publicId numéricos de las obras que aparecen en «Obras respaldadas por la estilometría» de su ficha en Examen de autorías. Se aplican los mismos criterios que en la web: se incluyen atribuciones probables o posibles y colaboraciones, y se excluyen las atribuciones sin resolver. La inclusión indica respaldo estilométrico, sin implicar autoría segura ni exclusiva. Si no hay obras que cumplan estos criterios, el array es [].',
+				'El id numérico del autor es el identificador de ETSO y coincide con authorId en las atribuciones de las obras. Es independiente del identificador de dramaturgo de ASODAT. La clave key identifica al autor en las URLs de ETSO.',
+				'Cada publicId de obra permite consultar /api/obras/{publicId} o enlazar a https://etso.es/obras/{publicId}, que redirige a la ficha canónica. La primera consulta siguiente recupera la relación completa de autores y obras en una sola respuesta.'
+			],
+			selectionHeading: 'Seleccionar campos de la respuesta',
+			selectionParagraphs: [
+				'Los cuatro endpoints aceptan el parámetro opcional fields con los campos públicos de primer nivel separados por comas. En autores se admiten id, key, name, nameVariants, stylometryWorkPublicIds y resources. En obras se admiten sus campos públicos de primer nivel, como publicId, title o resources. Seleccionar un objeto devuelve ese objeto público completo.',
+				'Sin fields se devuelven todos los campos públicos. La selección conserva las envolturas authors, author, works o work y los metadatos meta que correspondan. Una selección vacía, un campo desconocido o privado, o una ruta anidada como resources.work devuelve HTTP 400.'
+			],
+			performanceNote: 'Seleccionar campos reduce el tamaño de la respuesta y la transferencia de datos. Por sí solo no reduce el número de peticiones ni elimina todas las consultas a la base de datos.'
+		},
+		en: {
+			associationsHeading: 'Works by author and ASODAT integration',
+			associationParagraphs: [
+				'Each author includes stylometryWorkPublicIds, an array of numeric work publicId values matching “Works supported by stylometry” on their profile in the authorship examination. The same criteria as the website apply: probable or possible attributions and collaborations are included; unresolved attributions are excluded. Inclusion indicates stylometric support without implying certain or exclusive authorship. The array is [] when no works meet these criteria.',
+				'The numeric author id is the ETSO identifier and matches authorId in work attributions. It is independent of ASODAT dramaturge identifiers. The textual key identifies the author in ETSO URLs.',
+				'Each work publicId can be queried at /api/obras/{publicId} or linked as https://etso.es/obras/{publicId}, which redirects to the canonical work page. The first request below retrieves the complete author–work mapping in one response.'
+			],
+			selectionHeading: 'Selecting response fields',
+			selectionParagraphs: [
+				'All four endpoints accept the optional fields parameter with comma-separated public top-level field names. Author fields are id, key, name, nameVariants, stylometryWorkPublicIds, and resources. Works support their public top-level fields, such as publicId, title, or resources. Selecting an object returns that entire public object.',
+				'Without fields, all public fields are returned. Selection preserves the authors, author, works, or work wrapper and any applicable meta information. Empty selections, unknown or private fields, and nested paths such as resources.work return HTTP 400.'
+			],
+			performanceNote: 'Selecting fields reduces response size and data transfer. By itself, it does not reduce the number of requests or eliminate all database queries.'
+		},
+		fr: {
+			associationsHeading: 'Œuvres par auteur et intégration avec ASODAT',
+			associationParagraphs: [
+				'Chaque auteur inclut stylometryWorkPublicIds, un tableau des publicId numériques des œuvres figurant parmi les œuvres étayées par la stylométrie sur sa fiche dans l’examen d’autorie. Les critères sont ceux du site : les attributions probables ou possibles et les collaborations sont incluses ; les attributions non résolues sont exclues. Cette présence indique un appui stylométrique sans impliquer une paternité certaine ou exclusive. Le tableau vaut [] si aucune œuvre ne répond à ces critères.',
+				'L’id numérique de l’auteur est l’identifiant ETSO et correspond à authorId dans les attributions des œuvres. Il est indépendant des identifiants de dramaturges d’ASODAT. La clé textuelle key identifie l’auteur dans les URL d’ETSO.',
+				'Chaque publicId d’œuvre permet de consulter /api/obras/{publicId} ou de créer un lien vers https://etso.es/obras/{publicId}, qui redirige vers la fiche canonique. La première requête ci-dessous récupère toutes les associations auteurs–œuvres en une réponse.'
+			],
+			selectionHeading: 'Sélectionner les champs de la réponse',
+			selectionParagraphs: [
+				'Les quatre endpoints acceptent le paramètre facultatif fields, avec les noms de champs publics de premier niveau séparés par des virgules. Pour les auteurs : id, key, name, nameVariants, stylometryWorkPublicIds et resources. Pour les œuvres : leurs champs publics de premier niveau, tels que publicId, title ou resources. La sélection d’un objet renvoie l’objet public complet.',
+				'Sans fields, tous les champs publics sont renvoyés. La sélection conserve les enveloppes authors, author, works ou work et les informations meta applicables. Une sélection vide, un champ inconnu ou privé, ou un chemin imbriqué tel que resources.work renvoie HTTP 400.'
+			],
+			performanceNote: 'La sélection de champs réduit la taille de la réponse et le transfert de données. À elle seule, elle ne réduit pas le nombre de requêtes et ne supprime pas toutes les consultations de la base de données.'
+		},
+		pt: {
+			associationsHeading: 'Obras por autor e integração com ASODAT',
+			associationParagraphs: [
+				'Cada autor inclui stylometryWorkPublicIds, um array de publicId numéricos das obras respaldadas pela estilometria na sua ficha do exame de autorias. Aplicam-se os mesmos critérios do site: incluem-se atribuições prováveis ou possíveis e colaborações; excluem-se atribuições não resolvidas. A inclusão indica respaldo estilométrico sem implicar autoria certa ou exclusiva. O array é [] quando nenhuma obra cumpre esses critérios.',
+				'O id numérico do autor é o identificador do ETSO e corresponde a authorId nas atribuições das obras. É independente dos identificadores de dramaturgos do ASODAT. A chave textual key identifica o autor nas URLs do ETSO.',
+				'Cada publicId de obra permite consultar /api/obras/{publicId} ou criar um link para https://etso.es/obras/{publicId}, que redireciona para a ficha canônica. A primeira consulta abaixo recupera todas as relações entre autores e obras em uma única resposta.'
+			],
+			selectionHeading: 'Selecionar campos da resposta',
+			selectionParagraphs: [
+				'Os quatro endpoints aceitam o parâmetro opcional fields com os nomes dos campos públicos de primeiro nível separados por vírgulas. Para autores: id, key, name, nameVariants, stylometryWorkPublicIds e resources. Para obras: seus campos públicos de primeiro nível, como publicId, title ou resources. Selecionar um objeto devolve esse objeto público completo.',
+				'Sem fields, todos os campos públicos são devolvidos. A seleção preserva os objetos envolventes authors, author, works ou work e as informações meta aplicáveis. Seleções vazias, campos desconhecidos ou privados e caminhos aninhados como resources.work devolvem HTTP 400.'
+			],
+			performanceNote: 'Selecionar campos reduz o tamanho da resposta e a transferência de dados. Por si só, não reduz o número de requisições nem elimina todas as consultas à base de dados.'
+		},
+		it: {
+			associationsHeading: 'Opere per autore e integrazione con ASODAT',
+			associationParagraphs: [
+				'Ogni autore include stylometryWorkPublicIds, un array dei publicId numerici delle opere sostenute dalla stilometria nella sua scheda dell’esame delle autorie. Si applicano gli stessi criteri del sito: sono incluse le attribuzioni probabili o possibili e le collaborazioni; sono escluse le attribuzioni irrisolte. L’inclusione indica un sostegno stilometrico senza implicare una paternità certa o esclusiva. L’array è [] se nessuna opera soddisfa questi criteri.',
+				'L’id numerico dell’autore è l’identificatore ETSO e corrisponde ad authorId nelle attribuzioni delle opere. È indipendente dagli identificatori dei drammaturghi di ASODAT. La chiave testuale key identifica l’autore negli URL di ETSO.',
+				'Ogni publicId di un’opera permette di consultare /api/obras/{publicId} o creare un collegamento a https://etso.es/obras/{publicId}, che reindirizza alla scheda canonica. La prima richiesta seguente recupera tutte le associazioni tra autori e opere in una sola risposta.'
+			],
+			selectionHeading: 'Selezionare i campi della risposta',
+			selectionParagraphs: [
+				'I quattro endpoint accettano il parametro facoltativo fields con i nomi dei campi pubblici di primo livello separati da virgole. Per gli autori: id, key, name, nameVariants, stylometryWorkPublicIds e resources. Per le opere: i loro campi pubblici di primo livello, come publicId, title o resources. Selezionare un oggetto restituisce l’intero oggetto pubblico.',
+				'Senza fields vengono restituiti tutti i campi pubblici. La selezione conserva i contenitori authors, author, works o work e le informazioni meta applicabili. Selezioni vuote, campi sconosciuti o privati e percorsi annidati come resources.work restituiscono HTTP 400.'
+			],
+			performanceNote: 'Selezionare i campi riduce la dimensione della risposta e il trasferimento di dati. Da solo, non riduce il numero di richieste né elimina tutte le interrogazioni al database.'
+		},
+		de: {
+			associationsHeading: 'Werke nach Autor und ASODAT-Integration',
+			associationParagraphs: [
+				'Jeder Autor enthält stylometryWorkPublicIds, ein Array numerischer publicId-Werte der Werke, die im Autorenprofil der Autorschaftsprüfung als stilometrisch gestützt aufgeführt sind. Es gelten dieselben Kriterien wie auf der Website: Wahrscheinliche oder mögliche Zuschreibungen und Gemeinschaftswerke sind enthalten; ungeklärte Zuschreibungen sind ausgeschlossen. Die Aufnahme bedeutet stilometrische Unterstützung und keine sichere oder alleinige Autorschaft. Wenn kein Werk diese Kriterien erfüllt, ist das Array [].',
+				'Die numerische Autoren-id ist die ETSO-Kennung und entspricht authorId in den Werkzuschreibungen. Sie ist unabhängig von den Dramatikerkennungen in ASODAT. Der Textschlüssel key identifiziert den Autor in ETSO-URLs.',
+				'Jede Werk-publicId kann über /api/obras/{publicId} abgefragt oder über https://etso.es/obras/{publicId} verlinkt werden; dieser Link leitet zur kanonischen Werkseite weiter. Die erste folgende Anfrage liefert die vollständige Zuordnung von Autoren und Werken in einer Antwort.'
+			],
+			selectionHeading: 'Antwortfelder auswählen',
+			selectionParagraphs: [
+				'Alle vier Endpunkte akzeptieren den optionalen Parameter fields mit kommagetrennten öffentlichen Feldnamen der obersten Ebene. Autorenfelder: id, key, name, nameVariants, stylometryWorkPublicIds und resources. Für Werke stehen ihre öffentlichen Felder der obersten Ebene zur Verfügung, etwa publicId, title oder resources. Die Auswahl eines Objekts liefert das vollständige öffentliche Objekt.',
+				'Ohne fields werden alle öffentlichen Felder zurückgegeben. Die Auswahl behält die Hüllen authors, author, works oder work und gegebenenfalls meta bei. Leere Auswahlen, unbekannte oder private Felder und verschachtelte Pfade wie resources.work führen zu HTTP 400.'
+			],
+			performanceNote: 'Die Feldauswahl verringert die Antwortgröße und die Datenübertragung. Sie allein reduziert weder die Anzahl der Anfragen noch entfallen dadurch sämtliche Datenbankabfragen.'
+		},
+		zh: {
+			associationsHeading: '按作者关联作品及 ASODAT 集成',
+			associationParagraphs: [
+				'每个作者对象都包含 stylometryWorkPublicIds，即作者归属审查中该作者页面所列“文体计量学支持的作品”的数字 publicId 数组。筛选标准与网站相同：包括很可能或可能的归属及合作创作，排除尚未解决的归属。列入数组表示获得文体计量学支持，并不代表确定或独有的作者身份。若没有作品符合这些标准，则返回 []。',
+				'作者的数字 id 是 ETSO 标识符，与作品归属中的 authorId 一致，独立于 ASODAT 的剧作家标识符。文本键 key 用于 ETSO 作者页面的 URL。',
+				'每个作品 publicId 均可用于查询 /api/obras/{publicId}，或链接到 https://etso.es/obras/{publicId}，后者会重定向至作品的规范页面。下面的第一个请求可在一次响应中获取全部作者与作品的对应关系。'
+			],
+			selectionHeading: '选择响应字段',
+			selectionParagraphs: [
+				'四个端点均支持可选参数 fields，以逗号分隔公开的顶层字段名。作者字段包括 id、key、name、nameVariants、stylometryWorkPublicIds 和 resources。作品支持其公开的顶层字段，例如 publicId、title 或 resources。选择对象字段时会返回整个公开对象。',
+				'不传 fields 时返回全部公开字段。字段选择保留 authors、author、works 或 work 包装结构及适用的 meta 信息。空选择、未知或私有字段，以及 resources.work 等嵌套路径均返回 HTTP 400。'
+			],
+			performanceNote: '选择字段可缩小响应体并减少数据传输，但本身不会减少请求次数，也不会消除所有数据库查询。'
+		},
+		ja: {
+			associationsHeading: '著者ごとの作品と ASODAT 連携',
+			associationParagraphs: [
+				'各著者には stylometryWorkPublicIds が含まれます。これは著者帰属の検討にある著者ページの「文体計量分析で支持される作品」に対応する、作品の数値 publicId の配列です。ウェブサイトと同じ基準で、蓋然性や可能性のある帰属および共同執筆を含み、未解決の帰属は除外します。配列への掲載は文体計量分析による支持を示し、確実な帰属や単独執筆を意味しません。該当作品がない場合は [] になります。',
+				'著者の数値 id は ETSO の識別子で、作品の帰属情報にある authorId と一致します。ASODAT の劇作家識別子とは独立しています。テキストキー key は ETSO の著者 URL に使われます。',
+				'各作品の publicId は /api/obras/{publicId} の照会や https://etso.es/obras/{publicId} へのリンクに使用できます。このリンクは正規の作品ページへリダイレクトします。次の最初のリクエストは、著者と作品の対応関係を一度のレスポンスですべて取得します。'
+			],
+			selectionHeading: 'レスポンスのフィールドを選択',
+			selectionParagraphs: [
+				'4 つのエンドポイントはいずれも、公開された最上位フィールド名をカンマで区切る任意の fields パラメーターを受け付けます。著者のフィールドは id、key、name、nameVariants、stylometryWorkPublicIds、resources です。作品では publicId、title、resources など、公開された最上位フィールドを指定できます。オブジェクトを選択すると、その公開オブジェクト全体を返します。',
+				'fields を省略するとすべての公開フィールドを返します。選択後も authors、author、works、work のラッパーと該当する meta 情報は保持されます。空の選択、不明または非公開のフィールド、resources.work のような入れ子のパスは HTTP 400 を返します。'
+			],
+			performanceNote: 'フィールドの選択はレスポンスサイズとデータ転送量を減らします。それ自体でリクエスト数を減らしたり、データベース照会をすべてなくしたりするものではありません。'
+		},
+		ko: {
+			associationsHeading: '저자별 작품과 ASODAT 연동',
+			associationParagraphs: [
+				'각 저자 객체에는 저자 귀속 검토의 저자 페이지에서 문체 계량 분석으로 뒷받침되는 작품의 숫자 publicId 배열인 stylometryWorkPublicIds가 포함됩니다. 웹사이트와 같은 기준으로 개연성이 있거나 가능한 귀속 및 공동 집필을 포함하고, 미해결 귀속은 제외합니다. 배열에 포함되었다는 것은 문체 계량 분석의 뒷받침을 뜻하며, 확정적인 저자 귀속이나 단독 집필을 의미하지 않습니다. 기준에 맞는 작품이 없으면 []를 반환합니다.',
+				'저자의 숫자 id는 ETSO 식별자이며 작품 귀속 정보의 authorId와 일치합니다. ASODAT의 극작가 식별자와는 독립적입니다. 텍스트 키 key는 ETSO 저자 URL에서 사용됩니다.',
+				'각 작품 publicId로 /api/obras/{publicId}를 조회하거나 https://etso.es/obras/{publicId}에 연결할 수 있습니다. 이 링크는 정식 작품 페이지로 리디렉션됩니다. 아래 첫 번째 요청은 모든 저자와 작품의 연결 관계를 한 번의 응답으로 가져옵니다.'
+			],
+			selectionHeading: '응답 필드 선택',
+			selectionParagraphs: [
+				'네 엔드포인트 모두 공개 최상위 필드 이름을 쉼표로 구분하는 선택적 fields 매개변수를 지원합니다. 저자 필드는 id, key, name, nameVariants, stylometryWorkPublicIds, resources입니다. 작품에서는 publicId, title, resources 등 공개 최상위 필드를 선택할 수 있습니다. 객체를 선택하면 해당 공개 객체 전체를 반환합니다.',
+				'fields를 생략하면 모든 공개 필드를 반환합니다. 필드를 선택해도 authors, author, works 또는 work 구조와 해당 meta 정보는 유지됩니다. 빈 선택, 알 수 없거나 비공개인 필드, resources.work 같은 중첩 경로는 HTTP 400을 반환합니다.'
+			],
+			performanceNote: '필드 선택은 응답 크기와 데이터 전송량을 줄입니다. 그 자체로 요청 횟수를 줄이거나 모든 데이터베이스 조회를 없애지는 않습니다.'
+		},
+		ru: {
+			associationsHeading: 'Произведения по авторам и интеграция с ASODAT',
+			associationParagraphs: [
+				'Каждый автор содержит stylometryWorkPublicIds — массив числовых publicId произведений, перечисленных как поддерживаемые стилометрией в его профиле раздела проверки авторства. Применяются те же критерии, что и на сайте: включены вероятные или возможные атрибуции и соавторство; неразрешённые атрибуции исключены. Включение означает стилометрическую поддержку, а не достоверное или единоличное авторство. Если ни одно произведение не отвечает этим критериям, массив равен [].',
+				'Числовой id автора — это идентификатор ETSO, совпадающий с authorId в атрибуциях произведений. Он независим от идентификаторов драматургов ASODAT. Текстовый ключ key используется в URL авторов ETSO.',
+				'Каждый publicId произведения можно использовать для запроса /api/obras/{publicId} или ссылки https://etso.es/obras/{publicId}, которая перенаправляет на каноническую страницу произведения. Первый запрос ниже получает все связи авторов и произведений одним ответом.'
+			],
+			selectionHeading: 'Выбор полей ответа',
+			selectionParagraphs: [
+				'Все четыре эндпоинта принимают необязательный параметр fields с именами публичных полей верхнего уровня через запятую. Поля авторов: id, key, name, nameVariants, stylometryWorkPublicIds и resources. Для произведений доступны их публичные поля верхнего уровня, например publicId, title или resources. При выборе объекта возвращается весь публичный объект.',
+				'Без fields возвращаются все публичные поля. Выбор сохраняет оболочки authors, author, works или work и соответствующие сведения meta. Пустой выбор, неизвестные или закрытые поля и вложенные пути вроде resources.work возвращают HTTP 400.'
+			],
+			performanceNote: 'Выбор полей уменьшает размер ответа и объём передаваемых данных. Сам по себе он не сокращает число запросов и не устраняет все обращения к базе данных.'
+		},
+		ar: {
+			associationsHeading: 'الأعمال حسب المؤلف والتكامل مع ASODAT',
+			associationParagraphs: [
+				'يتضمن كل مؤلف stylometryWorkPublicIds، وهي مصفوفة من معرّفات publicId الرقمية للأعمال المدعومة بالقياس الأسلوبي في صفحته ضمن فحص الإسناد. تُطبّق معايير الموقع نفسها: تُدرج الإسنادات المرجّحة أو الممكنة والأعمال المشتركة، وتُستبعد الإسنادات غير المحسومة. يشير الإدراج إلى دعم أسلوبي ولا يعني تأليفًا مؤكدًا أو منفردًا. تكون المصفوفة [] إذا لم يستوفِ أي عمل هذه المعايير.',
+				'المعرّف الرقمي id للمؤلف هو معرّف ETSO ويطابق authorId في إسنادات الأعمال. وهو مستقل عن معرّفات الكتّاب المسرحيين في ASODAT. يُستخدم المفتاح النصي key لتعريف المؤلف في روابط ETSO.',
+				'يمكن استخدام publicId لكل عمل للاستعلام عبر /api/obras/{publicId} أو الربط إلى https://etso.es/obras/{publicId} الذي يعيد التوجيه إلى صفحة العمل الأساسية. يجلب الطلب الأول أدناه جميع الروابط بين المؤلفين والأعمال في استجابة واحدة.'
+			],
+			selectionHeading: 'اختيار حقول الاستجابة',
+			selectionParagraphs: [
+				'تقبل نقاط الوصول الأربع المعامل الاختياري fields مع أسماء الحقول العامة في المستوى الأعلى مفصولة بفواصل. حقول المؤلفين هي id وkey وname وnameVariants وstylometryWorkPublicIds وresources. وتدعم الأعمال حقولها العامة في المستوى الأعلى مثل publicId وtitle وresources. يؤدي اختيار كائن إلى إرجاع ذلك الكائن العام كاملًا.',
+				'عند حذف fields تُرجع جميع الحقول العامة. يحافظ الاختيار على البنية الخارجية authors أو author أو works أو work وعلى معلومات meta المنطبقة. تُرجع الاختيارات الفارغة والحقول المجهولة أو الخاصة والمسارات المتداخلة مثل resources.work الحالة HTTP 400.'
+			],
+			performanceNote: 'يقلل اختيار الحقول حجم الاستجابة ونقل البيانات. ولا يقلل بمفرده عدد الطلبات ولا يلغي جميع الاستعلامات إلى قاعدة البيانات.'
+		}
+	};
+
 	const text = $derived(pageTextByLocale[data.locale] ?? pageTextByLocale.es);
+	const integrationText = $derived(integrationTextByLocale[data.locale] ?? integrationTextByLocale.es);
 	const publicIdDescription = $derived(
 		publicIdDescriptionByLocale[data.locale] ?? publicIdDescriptionByLocale.es
 	);
 
 	const exampleRequest = 'https://etso.es/api/obras/690677';
+	const associationRequests = [
+		'https://etso.es/api/autores?fields=id,stylometryWorkPublicIds',
+		'https://etso.es/api/autores/104?fields=id,stylometryWorkPublicIds'
+	].join('\n');
+	const selectedWorkRequest = 'https://etso.es/api/obras/690677?fields=publicId,title,resources';
 	const exampleResponse = `{
   "meta": {
     "contentPolicy": {
@@ -746,6 +917,22 @@
 	</section>
 
 	<section class="grid gap-3">
+		<h2 class="m-0 text-[clamp(1.25rem,2vw,1.55rem)] font-semibold text-brand-blue-dark">{integrationText.associationsHeading}</h2>
+		{#each integrationText.associationParagraphs as paragraph}
+			<p class="m-0 leading-[1.68] text-text-main">{paragraph}</p>
+		{/each}
+		<pre class="overflow-x-auto rounded-md bg-brand-blue-dark p-4 text-[0.9rem] leading-[1.55] text-white"><code>{associationRequests}</code></pre>
+	</section>
+
+	<section class="grid gap-3">
+		<h2 class="m-0 text-[clamp(1.25rem,2vw,1.55rem)] font-semibold text-brand-blue-dark">{integrationText.selectionHeading}</h2>
+		{#each integrationText.selectionParagraphs as paragraph}
+			<p class="m-0 leading-[1.68] text-text-main">{paragraph}</p>
+		{/each}
+		<pre class="overflow-x-auto rounded-md bg-brand-blue-dark p-4 text-[0.9rem] leading-[1.55] text-white"><code>{selectedWorkRequest}</code></pre>
+	</section>
+
+	<section class="grid gap-3">
 		<h2 class="m-0 text-[clamp(1.25rem,2vw,1.55rem)] font-semibold text-brand-blue-dark">{text.fieldsHeading}</h2>
 		<div class="overflow-x-auto rounded-md border border-border">
 			<table class="w-full min-w-[680px] border-collapse bg-white text-left text-[0.95rem]">
@@ -778,6 +965,7 @@
 		<p class="m-0 leading-[1.68] text-text-main">
 			{text.cachePrefix} <code>public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800</code>. {text.cacheSuffix}
 		</p>
+		<p class="m-0 leading-[1.68] text-text-main">{integrationText.performanceNote}</p>
 	</section>
 
 	<section class="grid gap-3">

@@ -9,7 +9,7 @@ import { readPrivateTextByTextKey, readPrivateTextByWorkId } from '$lib/server/r
 import { fetchPublicR2Json, getPublicAssetUrl, getSummariesBaseUrl } from '$lib/server/r2-public';
 import { buildWorkTitleSearchText, formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
 import { REPORT_SLUG_PREFIX } from '$lib/utils/report-slug';
-import { buildStylometryWorkPublicIdsByAuthor } from '$lib/domain/author-stylometry-works';
+import { buildAuthorWorkPublicIdsByAuthor, type AuthorWorkPublicIds } from '$lib/domain/author-work-public-ids';
 import {
 	UNRESOLVED_AUTHOR_ID,
 	ambitos,
@@ -1319,7 +1319,7 @@ const getSnapshot = async (): Promise<Snapshot> => {
 
 const distancesBySnapshot = new WeakMap<Snapshot, Map<string, Promise<Record<Ambito, DistanceRow[]>>>>();
 const summaryIndexWorksBySnapshot = new WeakMap<Snapshot, CatalogWork[]>();
-const stylometryWorkPublicIdsBySnapshot = new WeakMap<Snapshot, ReadonlyMap<string, readonly number[]>>();
+const authorWorkPublicIdsBySnapshot = new WeakMap<Snapshot, ReadonlyMap<string, AuthorWorkPublicIds>>();
 
 const normalizeSummaryNamedItems = (
 	rows: Array<{ nombre?: string; descripcion?: string }> | undefined
@@ -1465,12 +1465,12 @@ export const withWorkReportResults = async (work: CatalogWork): Promise<CatalogW
 export const getAllAuthors = async (): Promise<CatalogAuthor[]> =>
 	(await getSnapshot()).authors.filter((author) => author.id !== UNRESOLVED_AUTHOR_ID);
 
-export const getStylometryWorkPublicIdsByAuthor = async (): Promise<ReadonlyMap<string, readonly number[]>> => {
+export const getAuthorWorkPublicIdsByAuthor = async (): Promise<ReadonlyMap<string, AuthorWorkPublicIds>> => {
 	const snapshot = await getSnapshot();
-	const cached = stylometryWorkPublicIdsBySnapshot.get(snapshot);
+	const cached = authorWorkPublicIdsBySnapshot.get(snapshot);
 	if (cached) return cached;
-	const idsByAuthor = buildStylometryWorkPublicIdsByAuthor(snapshot.works);
-	stylometryWorkPublicIdsBySnapshot.set(snapshot, idsByAuthor);
+	const idsByAuthor = buildAuthorWorkPublicIdsByAuthor(snapshot.works);
+	authorWorkPublicIdsBySnapshot.set(snapshot, idsByAuthor);
 	return idsByAuthor;
 };
 

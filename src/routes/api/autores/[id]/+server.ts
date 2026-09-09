@@ -1,7 +1,11 @@
 import { error, json } from '@sveltejs/kit';
 import { PUBLIC_CATALOG_CACHE_CONTROL } from '$lib/server/cache-control';
-import { getAuthorById, getAuthorByPublicId, getStylometryWorkPublicIdsByAuthor } from '$lib/server/catalog-runtime';
-import { PUBLIC_AUTHOR_METADATA_FIELDS, toPublicAuthorMetadata } from '$lib/server/public-author-metadata';
+import { getAuthorById, getAuthorByPublicId, getAuthorWorkPublicIdsByAuthor } from '$lib/server/catalog-runtime';
+import {
+	includesAuthorWorkPublicIds,
+	PUBLIC_AUTHOR_METADATA_FIELDS,
+	toPublicAuthorMetadata
+} from '$lib/server/public-author-metadata';
 import { parsePublicApiFields, projectPublicApiFields } from '$lib/server/public-api-fields';
 
 import type { RequestHandler } from './$types';
@@ -16,8 +20,8 @@ export const GET: RequestHandler = async ({ params, url }) => {
 		(publicId === null ? undefined : await getAuthorByPublicId(publicId)) ??
 		(await getAuthorById(authorKey));
 	if (!author) throw error(404, 'Autor no encontrado');
-	const idsByAuthor = fields === null || fields.includes('stylometryWorkPublicIds')
-		? await getStylometryWorkPublicIdsByAuthor()
+	const idsByAuthor = includesAuthorWorkPublicIds(fields)
+		? await getAuthorWorkPublicIdsByAuthor()
 		: undefined;
 
 	return json(

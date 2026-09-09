@@ -37,7 +37,7 @@ test('exposes all five author-page categories', () => {
 		'traditionalWorkPublicIds',
 		'stylometryWorkPublicIds',
 		'traditionalOnlyWorkPublicIds',
-		'stylometryOnlyWorkPublicIds'
+		'newStylometrySupportedWorkPublicIds'
 	]);
 	const index = buildAuthorWorkPublicIdsByAuthor([work()]);
 	assert.deepEqual(index.get('traditional-author'), {
@@ -45,14 +45,14 @@ test('exposes all five author-page categories', () => {
 		traditionalWorkPublicIds: [100001],
 		stylometryWorkPublicIds: [],
 		traditionalOnlyWorkPublicIds: [100001],
-		stylometryOnlyWorkPublicIds: []
+		newStylometrySupportedWorkPublicIds: []
 	});
 	assert.deepEqual(index.get('stylometry-author'), {
 		relatedWorkPublicIds: [100001],
 		traditionalWorkPublicIds: [],
 		stylometryWorkPublicIds: [100001],
 		traditionalOnlyWorkPublicIds: [],
-		stylometryOnlyWorkPublicIds: [100001]
+		newStylometrySupportedWorkPublicIds: [100001]
 	});
 });
 
@@ -67,21 +67,21 @@ test('computes overlapping memberships and differences per author, including mix
 		traditionalWorkPublicIds: [100001, 100002],
 		stylometryWorkPublicIds: [100002, 100003],
 		traditionalOnlyWorkPublicIds: [100001],
-		stylometryOnlyWorkPublicIds: [100003]
+		newStylometrySupportedWorkPublicIds: [100003]
 	});
 	assert.deepEqual(index.get('b'), {
 		relatedWorkPublicIds: [100001],
 		traditionalWorkPublicIds: [100001],
 		stylometryWorkPublicIds: [100001],
 		traditionalOnlyWorkPublicIds: [],
-		stylometryOnlyWorkPublicIds: []
+		newStylometrySupportedWorkPublicIds: []
 	});
 	assert.deepEqual(index.get('c'), {
 		relatedWorkPublicIds: [100001, 100003],
 		traditionalWorkPublicIds: [100003],
 		stylometryWorkPublicIds: [100001],
 		traditionalOnlyWorkPublicIds: [100003],
-		stylometryOnlyWorkPublicIds: [100001]
+		newStylometrySupportedWorkPublicIds: [100001]
 	});
 });
 
@@ -104,14 +104,14 @@ test('ignores unresolved attributions independently on each side', () => {
 		traditionalWorkPublicIds: [100001],
 		stylometryWorkPublicIds: [],
 		traditionalOnlyWorkPublicIds: [100001],
-		stylometryOnlyWorkPublicIds: []
+		newStylometrySupportedWorkPublicIds: []
 	});
 	assert.deepEqual(index.get('stylometry-author'), {
 		relatedWorkPublicIds: [100002],
 		traditionalWorkPublicIds: [],
 		stylometryWorkPublicIds: [100002],
 		traditionalOnlyWorkPublicIds: [],
-		stylometryOnlyWorkPublicIds: [100002]
+		newStylometrySupportedWorkPublicIds: [100002]
 	});
 });
 
@@ -149,7 +149,7 @@ test('preserves collaborators, alternative candidates and every displayed confid
 			traditionalWorkPublicIds: [100001],
 			stylometryWorkPublicIds: [100001],
 			traditionalOnlyWorkPublicIds: [],
-			stylometryOnlyWorkPublicIds: []
+			newStylometrySupportedWorkPublicIds: []
 		});
 	}
 });
@@ -169,7 +169,7 @@ test('deduplicates associations and preserves catalogue order in each category',
 		traditionalWorkPublicIds: [100004, 100001, 100003],
 		stylometryWorkPublicIds: [100002, 100001, 100005],
 		traditionalOnlyWorkPublicIds: [100004, 100003],
-		stylometryOnlyWorkPublicIds: [100002, 100005]
+		newStylometrySupportedWorkPublicIds: [100002, 100005]
 	});
 });
 
@@ -183,7 +183,7 @@ test('deduplicated public IDs supported on both sides are excluded from both dif
 		traditionalWorkPublicIds: [100001],
 		stylometryWorkPublicIds: [100001],
 		traditionalOnlyWorkPublicIds: [],
-		stylometryOnlyWorkPublicIds: []
+		newStylometrySupportedWorkPublicIds: []
 	});
 });
 

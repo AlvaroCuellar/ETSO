@@ -38,7 +38,7 @@ export const toPublicAuthorMetadata = (
 	traditionalWorkPublicIds: [...(workPublicIds?.traditionalWorkPublicIds ?? [])],
 	stylometryWorkPublicIds: [...(workPublicIds?.stylometryWorkPublicIds ?? [])],
 	traditionalOnlyWorkPublicIds: [...(workPublicIds?.traditionalOnlyWorkPublicIds ?? [])],
-	stylometryOnlyWorkPublicIds: [...(workPublicIds?.stylometryOnlyWorkPublicIds ?? [])],
+	newStylometrySupportedWorkPublicIds: [...(workPublicIds?.newStylometrySupportedWorkPublicIds ?? [])],
 	resources: {
 		author: `/autores/${author.id}`,
 		url: `${SITE_URL}/autores/${author.id}`

@@ -49,9 +49,9 @@ Each author object includes five arrays of numeric work `publicId` values (`numb
 | `traditionalWorkPublicIds` | **Obras respaldadas por la tradición**: traditional attribution to this author. |
 | `stylometryWorkPublicIds` | **Obras respaldadas por la estilometría**: stylometric attribution to this author; its existing meaning is unchanged. |
 | `traditionalOnlyWorkPublicIds` | **Obras respaldadas solo por la tradición**: traditional attribution without stylometric support for this author. |
-| `stylometryOnlyWorkPublicIds` | **Novedades respaldadas por la estilometría**: stylometric support without traditional attribution to this author. |
+| `newStylometrySupportedWorkPublicIds` | **Novedades respaldadas por la estilometría**: stylometric support without traditional attribution to this author. |
 
-All five lists use the same selection as the website and include only works in **Examen de autorías**. Probable/possible attributions and collaborations are included; unresolved traditional or stylometric attribution sets are excluded from their respective side. Inclusion does not imply certain or exclusive authorship. An empty array (`[]`) means that no works meet that category's criteria for that author. The two “only” categories are evaluated for the current author: a work traditionally attributed to one author and supported by stylometry for another can appear in a different category for each author.
+All five lists use the same selection as the website and include only works in **Examen de autorías**. Probable/possible attributions and collaborations are included; unresolved traditional or stylometric attribution sets are excluded from their respective side. Inclusion does not imply certain or exclusive authorship. An empty array (`[]`) means that no works meet that category's criteria for that author. The tradition-only and new-attribution categories are evaluated for the current author: a work traditionally attributed to one author and supported by stylometry for another can appear in a different category for each author.
 
 The numeric author `id` is ETSO's identifier: it matches `authorId` in the public work attributions. The author's `key` is the textual identifier used in ETSO author URLs. Each work identifier in these arrays can be used with `/api/obras/{publicId}` or linked as `https://etso.es/obras/{publicId}`, which redirects to the canonical work page.
 
@@ -62,11 +62,11 @@ All four endpoints accept an optional `fields` parameter: a comma-separated list
 ```text
 https://etso.es/api/autores?fields=id,stylometryWorkPublicIds
 https://etso.es/api/autores/104?fields=id,stylometryWorkPublicIds
-https://etso.es/api/autores?fields=id,relatedWorkPublicIds,traditionalWorkPublicIds,stylometryWorkPublicIds,traditionalOnlyWorkPublicIds,stylometryOnlyWorkPublicIds
+https://etso.es/api/autores?fields=id,relatedWorkPublicIds,traditionalWorkPublicIds,stylometryWorkPublicIds,traditionalOnlyWorkPublicIds,newStylometrySupportedWorkPublicIds
 https://etso.es/api/obras/690677?fields=publicId,title,resources
 ```
 
-The first request retrieves the complete stylometry author–work mapping in one response. The third retrieves all five categories for every author. The same fields are available for individual authors at `/api/autores/{id-publicId-or-key}`. Author fields are `id`, `key`, `name`, `nameVariants`, `relatedWorkPublicIds`, `traditionalWorkPublicIds`, `stylometryWorkPublicIds`, `traditionalOnlyWorkPublicIds`, `stylometryOnlyWorkPublicIds`, and `resources`. Work fields are described on the [API documentation page](https://etso.es/api). Selecting an object such as `resources` returns that entire public object; nested paths such as `resources.work` are not supported.
+The first request retrieves the complete stylometry author–work mapping in one response. The third retrieves all five categories for every author. The same fields are available for individual authors at `/api/autores/{id-publicId-or-key}`. Author fields are `id`, `key`, `name`, `nameVariants`, `relatedWorkPublicIds`, `traditionalWorkPublicIds`, `stylometryWorkPublicIds`, `traditionalOnlyWorkPublicIds`, `newStylometrySupportedWorkPublicIds`, and `resources`. Work fields are described on the [API documentation page](https://etso.es/api). Selecting an object such as `resources` returns that entire public object; nested paths such as `resources.work` are not supported.
 
 The existing `authors`, `author`, `works`, or `work` response wrapper and any `meta` information are preserved. With no `fields` parameter, responses retain all their public fields, including all five author association arrays. Empty selections, unknown fields, nested paths, and private content fields return HTTP 400.
 

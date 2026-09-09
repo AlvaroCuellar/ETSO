@@ -5,7 +5,7 @@ export const AUTHOR_WORK_PUBLIC_ID_FIELDS = [
 	'traditionalWorkPublicIds',
 	'stylometryWorkPublicIds',
 	'traditionalOnlyWorkPublicIds',
-	'stylometryOnlyWorkPublicIds'
+	'newStylometrySupportedWorkPublicIds'
 ] as const;
 
 export type AuthorWorkPublicIds = {
@@ -62,7 +62,7 @@ export const buildAuthorWorkPublicIdsByAuthor = (
 			traditionalWorkPublicIds: [...sets.traditional],
 			stylometryWorkPublicIds: [...sets.stylometry],
 			traditionalOnlyWorkPublicIds: relatedWorkPublicIds.filter((id) => !sets.stylometry.has(id)),
-			stylometryOnlyWorkPublicIds: relatedWorkPublicIds.filter((id) => !sets.traditional.has(id))
+			newStylometrySupportedWorkPublicIds: relatedWorkPublicIds.filter((id) => !sets.traditional.has(id))
 		}];
 	}));
 };

@@ -655,7 +655,7 @@
 			associationParagraphs: [
 				'El id numérico del autor es el identificador de ETSO y coincide con authorId en las atribuciones de las obras. La clave key identifica al autor en las URLs de ETSO.',
 				'Cada autor incluye cinco arrays de publicId numéricos de obras (number[]), correspondientes a las cinco categorías de su ficha en Examen de autorías. Solo se incluyen obras de ese examen y se aplican los mismos criterios que en la web: se admiten atribuciones probables o posibles y colaboraciones; las atribuciones tradicionales o estilométricas sin resolver se excluyen de su lado correspondiente. La inclusión no implica autoría segura ni exclusiva.',
-				'Cada categoría sin obras devuelve []. Las categorías «solo» se calculan para el autor consultado. Cada publicId de obra permite consultar /api/obras/{publicId} o enlazar a https://etso.es/obras/{publicId}, que redirige a la ficha canónica.'
+				'Cada categoría sin obras devuelve []. Las categorías se calculan para el autor consultado. Cada publicId de obra permite consultar /api/obras/{publicId} o enlazar a https://etso.es/obras/{publicId}, que redirige a la ficha canónica.'
 			],
 			authorFields: [
 				['id', 'Identificador público numérico del autor; coincide con authorId en las atribuciones de las obras.'],
@@ -670,7 +670,7 @@
 				['traditionalWorkPublicIds', 'Obras respaldadas por la tradición.'],
 				['stylometryWorkPublicIds', 'Obras respaldadas por la estilometría.'],
 				['traditionalOnlyWorkPublicIds', 'Obras respaldadas solo por la tradición: sin respaldo estilométrico para este autor.'],
-				['stylometryOnlyWorkPublicIds', 'Novedades respaldadas por la estilometría: sin atribución tradicional a este autor.']
+				['newStylometrySupportedWorkPublicIds', 'Novedades respaldadas por la estilometría: sin atribución tradicional a este autor.']
 			],
 			associationExampleLabels: [
 				'Todos los autores y sus cinco listas de obras',
@@ -689,7 +689,7 @@
 			associationParagraphs: [
 				'The numeric author id is the ETSO identifier and matches authorId in work attributions. The textual key identifies the author in ETSO URLs.',
 				'Each author includes five arrays of numeric work publicId values (number[]), matching the five categories on their profile in the authorship examination. Only works in that examination are included, using the same criteria as the website: probable or possible attributions and collaborations are included; unresolved traditional or stylometric attributions are excluded from their respective side. Inclusion does not imply certain or exclusive authorship.',
-				'Each category with no works returns []. The “only” categories are evaluated for the queried author. Each work publicId can be queried at /api/obras/{publicId} or linked as https://etso.es/obras/{publicId}, which redirects to the canonical work page.'
+				'Each category with no works returns []. Categories are evaluated for the queried author. Each work publicId can be queried at /api/obras/{publicId} or linked as https://etso.es/obras/{publicId}, which redirects to the canonical work page.'
 			],
 			authorFields: [
 				['id', 'Public numeric author identifier; matches authorId in work attributions.'],
@@ -704,7 +704,7 @@
 				['traditionalWorkPublicIds', 'Works supported by tradition.'],
 				['stylometryWorkPublicIds', 'Works supported by stylometry.'],
 				['traditionalOnlyWorkPublicIds', 'Works supported only by tradition: no stylometric support for this author.'],
-				['stylometryOnlyWorkPublicIds', 'New works supported by stylometry: no traditional attribution to this author.']
+				['newStylometrySupportedWorkPublicIds', 'New attributions supported by stylometry: no traditional attribution to this author.']
 			],
 			associationExampleLabels: [
 				'All authors and their five work lists',
@@ -723,7 +723,7 @@
 			associationParagraphs: [
 				'L’id numérique de l’auteur est l’identifiant ETSO et correspond à authorId dans les attributions des œuvres. La clé textuelle key identifie l’auteur dans les URL d’ETSO.',
 				'Chaque auteur inclut cinq tableaux de publicId numériques d’œuvres (number[]), correspondant aux cinq catégories de sa fiche dans l’examen d’autorie. Seules les œuvres de cet examen sont incluses, selon les critères du site : les attributions probables ou possibles et les collaborations sont admises ; les attributions traditionnelles ou stylométriques non résolues sont exclues de leur côté respectif. La présence d’une œuvre n’implique pas une paternité certaine ou exclusive.',
-				'Chaque catégorie sans œuvre renvoie []. Les catégories « uniquement » sont calculées pour l’auteur consulté. Chaque publicId d’œuvre permet de consulter /api/obras/{publicId} ou de créer un lien vers https://etso.es/obras/{publicId}, qui redirige vers la fiche canonique.'
+				'Chaque catégorie sans œuvre renvoie []. Les catégories sont calculées pour l’auteur consulté. Chaque publicId d’œuvre permet de consulter /api/obras/{publicId} ou de créer un lien vers https://etso.es/obras/{publicId}, qui redirige vers la fiche canonique.'
 			],
 			authorFields: [
 				['id', 'Identifiant public numérique de l’auteur, correspondant à authorId dans les attributions des œuvres.'],
@@ -738,7 +738,7 @@
 				['traditionalWorkPublicIds', 'Œuvres étayées par la tradition.'],
 				['stylometryWorkPublicIds', 'Œuvres étayées par la stylométrie.'],
 				['traditionalOnlyWorkPublicIds', 'Œuvres étayées uniquement par la tradition : sans appui stylométrique pour cet auteur.'],
-				['stylometryOnlyWorkPublicIds', 'Nouvelles attributions étayées par la stylométrie : sans attribution traditionnelle à cet auteur.']
+				['newStylometrySupportedWorkPublicIds', 'Nouvelles attributions étayées par la stylométrie : sans attribution traditionnelle à cet auteur.']
 			],
 			associationExampleLabels: [
 				'Tous les auteurs et leurs cinq listes d’œuvres',
@@ -757,7 +757,7 @@
 			associationParagraphs: [
 				'O id numérico do autor é o identificador do ETSO e corresponde a authorId nas atribuições das obras. A chave textual key identifica o autor nas URLs do ETSO.',
 				'Cada autor inclui cinco arrays de publicId numéricos de obras (number[]), correspondentes às cinco categorias da sua ficha no exame de autorias. Só são incluídas obras desse exame, com os mesmos critérios do site: admitem-se atribuições prováveis ou possíveis e colaborações; as atribuições tradicionais ou estilométricas não resolvidas são excluídas do respetivo lado. A inclusão não implica autoria certa ou exclusiva.',
-				'Cada categoria sem obras devolve []. As categorias «apenas» são calculadas para o autor consultado. Cada publicId de obra permite consultar /api/obras/{publicId} ou criar um link para https://etso.es/obras/{publicId}, que redireciona para a ficha canônica.'
+				'Cada categoria sem obras devolve []. As categorias são calculadas para o autor consultado. Cada publicId de obra permite consultar /api/obras/{publicId} ou criar um link para https://etso.es/obras/{publicId}, que redireciona para a ficha canônica.'
 			],
 			authorFields: [
 				['id', 'Identificador público numérico do autor; corresponde a authorId nas atribuições das obras.'],
@@ -772,7 +772,7 @@
 				['traditionalWorkPublicIds', 'Obras respaldadas pela tradição.'],
 				['stylometryWorkPublicIds', 'Obras respaldadas pela estilometria.'],
 				['traditionalOnlyWorkPublicIds', 'Obras respaldadas apenas pela tradição: sem respaldo estilométrico para este autor.'],
-				['stylometryOnlyWorkPublicIds', 'Novidades respaldadas pela estilometria: sem atribuição tradicional a este autor.']
+				['newStylometrySupportedWorkPublicIds', 'Novidades respaldadas pela estilometria: sem atribuição tradicional a este autor.']
 			],
 			associationExampleLabels: [
 				'Todos os autores e as suas cinco listas de obras',
@@ -791,7 +791,7 @@
 			associationParagraphs: [
 				'L’id numerico dell’autore è l’identificatore ETSO e corrisponde ad authorId nelle attribuzioni delle opere. La chiave testuale key identifica l’autore negli URL di ETSO.',
 				'Ogni autore include cinque array di publicId numerici di opere (number[]), corrispondenti alle cinque categorie della sua scheda nell’esame delle autorie. Sono incluse solo le opere di tale esame, con gli stessi criteri del sito: sono ammesse attribuzioni probabili o possibili e collaborazioni; le attribuzioni tradizionali o stilometriche irrisolte sono escluse dal rispettivo lato. L’inclusione non implica una paternità certa o esclusiva.',
-				'Ogni categoria senza opere restituisce []. Le categorie «solo» sono calcolate per l’autore consultato. Ogni publicId di un’opera permette di consultare /api/obras/{publicId} o creare un collegamento a https://etso.es/obras/{publicId}, che reindirizza alla scheda canonica.'
+				'Ogni categoria senza opere restituisce []. Le categorie sono calcolate per l’autore consultato. Ogni publicId di un’opera permette di consultare /api/obras/{publicId} o creare un collegamento a https://etso.es/obras/{publicId}, che reindirizza alla scheda canonica.'
 			],
 			authorFields: [
 				['id', 'Identificatore pubblico numerico dell’autore; corrisponde ad authorId nelle attribuzioni delle opere.'],
@@ -806,7 +806,7 @@
 				['traditionalWorkPublicIds', 'Opere sostenute dalla tradizione.'],
 				['stylometryWorkPublicIds', 'Opere sostenute dalla stilometria.'],
 				['traditionalOnlyWorkPublicIds', 'Opere sostenute solo dalla tradizione: senza sostegno stilometrico per questo autore.'],
-				['stylometryOnlyWorkPublicIds', 'Nuove attribuzioni sostenute dalla stilometria: senza attribuzione tradizionale a questo autore.']
+				['newStylometrySupportedWorkPublicIds', 'Nuove attribuzioni sostenute dalla stilometria: senza attribuzione tradizionale a questo autore.']
 			],
 			associationExampleLabels: [
 				'Tutti gli autori e i loro cinque elenchi di opere',
@@ -825,7 +825,7 @@
 			associationParagraphs: [
 				'Die numerische Autoren-id ist die ETSO-Kennung und entspricht authorId in den Werkzuschreibungen. Der Textschlüssel key identifiziert den Autor in ETSO-URLs.',
 				'Jeder Autor enthält fünf Arrays numerischer Werk-publicId-Werte (number[]), entsprechend den fünf Kategorien seines Profils in der Autorschaftsprüfung. Enthalten sind nur Werke dieser Prüfung, nach denselben Kriterien wie auf der Website: Wahrscheinliche oder mögliche Zuschreibungen und Gemeinschaftswerke werden berücksichtigt; ungeklärte traditionelle oder stilometrische Zuschreibungen werden auf der jeweiligen Seite ausgeschlossen. Die Aufnahme bedeutet keine sichere oder alleinige Autorschaft.',
-				'Jede Kategorie ohne Werke liefert []. Die Kategorien „nur“ werden für den abgefragten Autor berechnet. Jede Werk-publicId kann über /api/obras/{publicId} abgefragt oder über https://etso.es/obras/{publicId} verlinkt werden; dieser Link leitet zur kanonischen Werkseite weiter.'
+				'Jede Kategorie ohne Werke liefert []. Die Kategorien werden für den abgefragten Autor berechnet. Jede Werk-publicId kann über /api/obras/{publicId} abgefragt oder über https://etso.es/obras/{publicId} verlinkt werden; dieser Link leitet zur kanonischen Werkseite weiter.'
 			],
 			authorFields: [
 				['id', 'Öffentliche numerische Autorenkennung; entspricht authorId in Werkzuschreibungen.'],
@@ -840,7 +840,7 @@
 				['traditionalWorkPublicIds', 'Durch die Tradition gestützte Werke.'],
 				['stylometryWorkPublicIds', 'Durch Stilometrie gestützte Werke.'],
 				['traditionalOnlyWorkPublicIds', 'Nur durch die Tradition gestützte Werke: ohne stilometrische Unterstützung für diesen Autor.'],
-				['stylometryOnlyWorkPublicIds', 'Durch Stilometrie gestützte neue Zuschreibungen: ohne traditionelle Zuschreibung an diesen Autor.']
+				['newStylometrySupportedWorkPublicIds', 'Durch Stilometrie gestützte neue Zuschreibungen: ohne traditionelle Zuschreibung an diesen Autor.']
 			],
 			associationExampleLabels: [
 				'Alle Autoren mit ihren fünf Werklisten',
@@ -859,7 +859,7 @@
 			associationParagraphs: [
 				'作者的数字 id 是 ETSO 标识符，与作品归属中的 authorId 一致。文本键 key 用于 ETSO 作者页面的 URL。',
 				'每个作者对象都包含五个作品数字 publicId 数组（number[]），对应作者归属审查中该作者页面的五个类别。仅收录属于该审查的作品，筛选标准与网站相同：包括很可能或可能的归属及合作创作；传统归属或文体计量学归属尚未解决时，从相应一侧排除。列入数组不代表确定或独有的作者身份。',
-				'没有作品的类别返回 []。“仅”类别按所查询作者分别计算。 每个作品 publicId 均可用于查询 /api/obras/{publicId}，或链接到 https://etso.es/obras/{publicId}，后者会重定向至作品的规范页面。'
+				'没有作品的类别返回 []。各类别按所查询作者分别计算。 每个作品 publicId 均可用于查询 /api/obras/{publicId}，或链接到 https://etso.es/obras/{publicId}，后者会重定向至作品的规范页面。'
 			],
 			authorFields: [
 				['id', '作者的公共数字标识符，与作品归属中的 authorId 一致。'],
@@ -874,7 +874,7 @@
 				['traditionalWorkPublicIds', '传统归属支持的作品。'],
 				['stylometryWorkPublicIds', '文体计量学支持的作品。'],
 				['traditionalOnlyWorkPublicIds', '仅传统归属支持的作品：文体计量学不支持归属于该作者。'],
-				['stylometryOnlyWorkPublicIds', '文体计量学支持的新归属：传统上未归属于该作者。']
+				['newStylometrySupportedWorkPublicIds', '文体计量学支持的新归属：传统上未归属于该作者。']
 			],
 			associationExampleLabels: [
 				'所有作者及各自的五个作品列表',
@@ -893,7 +893,7 @@
 			associationParagraphs: [
 				'著者の数値 id は ETSO の識別子で、作品の帰属情報にある authorId と一致します。テキストキー key は ETSO の著者 URL に使われます。',
 				'各著者には作品の数値 publicId の配列（number[]）が五つ含まれ、著者帰属の検討にある著者ページの五つのカテゴリに対応します。この検討に属する作品のみを対象とし、ウェブサイトと同じ基準で、蓋然性や可能性のある帰属および共同執筆を含めます。未解決の伝統的帰属または文体計量分析による帰属は、それぞれの側から除外します。掲載は確実な帰属や単独執筆を意味しません。',
-				'作品がないカテゴリは [] を返します。「のみ」のカテゴリは照会した著者ごとに計算します。 各作品の publicId は /api/obras/{publicId} の照会や https://etso.es/obras/{publicId} へのリンクに使用できます。このリンクは正規の作品ページへリダイレクトします。'
+				'作品がないカテゴリは [] を返します。各カテゴリは照会した著者ごとに計算します。 各作品の publicId は /api/obras/{publicId} の照会や https://etso.es/obras/{publicId} へのリンクに使用できます。このリンクは正規の作品ページへリダイレクトします。'
 			],
 			authorFields: [
 				['id', '著者の公開数値識別子。作品の帰属情報の authorId と一致します。'],
@@ -908,7 +908,7 @@
 				['traditionalWorkPublicIds', '伝統的帰属で支持される作品。'],
 				['stylometryWorkPublicIds', '文体計量分析で支持される作品。'],
 				['traditionalOnlyWorkPublicIds', '伝統的帰属のみで支持される作品：この著者への文体計量分析による支持がない作品。'],
-				['stylometryOnlyWorkPublicIds', '文体計量分析で支持される新たな帰属：この著者への伝統的帰属がない作品。']
+				['newStylometrySupportedWorkPublicIds', '文体計量分析で支持される新たな帰属：この著者への伝統的帰属がない作品。']
 			],
 			associationExampleLabels: [
 				'すべての著者と各著者の五つの作品リスト',
@@ -927,7 +927,7 @@
 			associationParagraphs: [
 				'저자의 숫자 id는 ETSO 식별자이며 작품 귀속 정보의 authorId와 일치합니다. 텍스트 키 key는 ETSO 저자 URL에서 사용됩니다.',
 				'각 저자 객체에는 저자 귀속 검토의 저자 페이지에 있는 다섯 범주에 해당하는 작품 숫자 publicId 배열(number[]) 다섯 개가 포함됩니다. 해당 검토에 속한 작품만 웹사이트와 같은 기준으로 포함합니다. 개연성이 있거나 가능한 귀속 및 공동 집필을 포함하며, 미해결된 전통적 귀속이나 문체 계량 분석에 따른 귀속은 각각 해당 측에서 제외합니다. 포함되었다는 것이 확정적인 저자 귀속이나 단독 집필을 뜻하지는 않습니다.',
-				'작품이 없는 범주는 []를 반환합니다. “오직” 범주는 조회한 저자를 기준으로 계산합니다. 각 작품 publicId로 /api/obras/{publicId}를 조회하거나 https://etso.es/obras/{publicId}에 연결할 수 있습니다. 이 링크는 정식 작품 페이지로 리디렉션됩니다.'
+				'작품이 없는 범주는 []를 반환합니다. 각 범주는 조회한 저자를 기준으로 계산합니다. 각 작품 publicId로 /api/obras/{publicId}를 조회하거나 https://etso.es/obras/{publicId}에 연결할 수 있습니다. 이 링크는 정식 작품 페이지로 리디렉션됩니다.'
 			],
 			authorFields: [
 				['id', '저자의 공개 숫자 식별자이며 작품 귀속 정보의 authorId와 일치합니다.'],
@@ -942,7 +942,7 @@
 				['traditionalWorkPublicIds', '전통적으로 귀속되는 작품.'],
 				['stylometryWorkPublicIds', '문체 계량 분석으로 뒷받침되는 작품.'],
 				['traditionalOnlyWorkPublicIds', '오직 전통적으로만 귀속되는 작품: 이 저자에 대한 문체 계량 분석의 뒷받침이 없음.'],
-				['stylometryOnlyWorkPublicIds', '문체 계량 분석으로 뒷받침되는 새로운 귀속: 이 저자에 대한 전통적 귀속이 없음.']
+				['newStylometrySupportedWorkPublicIds', '문체 계량 분석으로 뒷받침되는 새로운 귀속: 이 저자에 대한 전통적 귀속이 없음.']
 			],
 			associationExampleLabels: [
 				'전체 저자와 각 저자의 다섯 작품 목록',
@@ -961,7 +961,7 @@
 			associationParagraphs: [
 				'Числовой id автора — это идентификатор ETSO, совпадающий с authorId в атрибуциях произведений. Текстовый ключ key используется в URL авторов ETSO.',
 				'Каждый автор содержит пять массивов числовых publicId произведений (number[]), соответствующих пяти категориям его профиля в разделе проверки авторства. Включаются только произведения этого раздела по тем же критериям, что и на сайте: допускаются вероятные или возможные атрибуции и соавторство; неразрешённые традиционные или стилометрические атрибуции исключаются с соответствующей стороны. Включение не означает достоверного или единоличного авторства.',
-				'Категория без произведений возвращает []. Категории «только» рассчитываются для запрошенного автора. Каждый publicId произведения можно использовать для запроса /api/obras/{publicId} или ссылки https://etso.es/obras/{publicId}, которая перенаправляет на каноническую страницу произведения.'
+				'Категория без произведений возвращает []. Категории рассчитываются для запрошенного автора. Каждый publicId произведения можно использовать для запроса /api/obras/{publicId} или ссылки https://etso.es/obras/{publicId}, которая перенаправляет на каноническую страницу произведения.'
 			],
 			authorFields: [
 				['id', 'Публичный числовой идентификатор автора; совпадает с authorId в атрибуциях произведений.'],
@@ -976,7 +976,7 @@
 				['traditionalWorkPublicIds', 'Произведения, поддерживаемые традицией.'],
 				['stylometryWorkPublicIds', 'Произведения, поддерживаемые стилометрией.'],
 				['traditionalOnlyWorkPublicIds', 'Произведения, поддерживаемые только традицией: без стилометрической поддержки для этого автора.'],
-				['stylometryOnlyWorkPublicIds', 'Новые атрибуции, поддерживаемые стилометрией: без традиционной атрибуции этому автору.']
+				['newStylometrySupportedWorkPublicIds', 'Новые атрибуции, поддерживаемые стилометрией: без традиционной атрибуции этому автору.']
 			],
 			associationExampleLabels: [
 				'Все авторы и их пять списков произведений',
@@ -995,7 +995,7 @@
 			associationParagraphs: [
 				'المعرّف الرقمي id للمؤلف هو معرّف ETSO ويطابق authorId في إسنادات الأعمال. يُستخدم المفتاح النصي key لتعريف المؤلف في روابط ETSO.',
 				'يتضمن كل مؤلف خمس مصفوفات من معرّفات publicId الرقمية للأعمال (number[])، توافق الفئات الخمس في صفحته ضمن فحص الإسناد. تُدرج أعمال هذا الفحص فقط وفق معايير الموقع نفسها: تشمل الإسنادات المرجّحة أو الممكنة والأعمال المشتركة؛ وتُستبعد الإسنادات التقليدية أو الأسلوبية غير المحسومة من جانبها المعني. لا يعني الإدراج تأليفًا مؤكدًا أو منفردًا.',
-				'تُرجع كل فئة بلا أعمال []. تُحسب فئات «فقط» بالنسبة إلى المؤلف المطلوب. يمكن استخدام publicId لكل عمل للاستعلام عبر /api/obras/{publicId} أو الربط إلى https://etso.es/obras/{publicId} الذي يعيد التوجيه إلى صفحة العمل الأساسية.'
+				'تُرجع كل فئة بلا أعمال []. تُحسب الفئات بالنسبة إلى المؤلف المطلوب. يمكن استخدام publicId لكل عمل للاستعلام عبر /api/obras/{publicId} أو الربط إلى https://etso.es/obras/{publicId} الذي يعيد التوجيه إلى صفحة العمل الأساسية.'
 			],
 			authorFields: [
 				['id', 'المعرّف العام الرقمي للمؤلف؛ يطابق authorId في إسنادات الأعمال.'],
@@ -1010,7 +1010,7 @@
 				['traditionalWorkPublicIds', 'الأعمال المدعومة بالإسناد التقليدي.'],
 				['stylometryWorkPublicIds', 'الأعمال المدعومة بالقياس الأسلوبي.'],
 				['traditionalOnlyWorkPublicIds', 'الأعمال المدعومة بالإسناد التقليدي فقط: دون دعم أسلوبي لهذا المؤلف.'],
-				['stylometryOnlyWorkPublicIds', 'الإسنادات الجديدة المدعومة بالقياس الأسلوبي: دون إسناد تقليدي إلى هذا المؤلف.']
+				['newStylometrySupportedWorkPublicIds', 'الإسنادات الجديدة المدعومة بالقياس الأسلوبي: دون إسناد تقليدي إلى هذا المؤلف.']
 			],
 			associationExampleLabels: [
 				'جميع المؤلفين وقوائم أعمالهم الخمس',

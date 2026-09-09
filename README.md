@@ -39,7 +39,7 @@ ETSO provides a public API for consulting its catalogue:
 - `GET /api/autores` — complete author list, including work public identifiers for all five categories on each author's profile.
 - `GET /api/autores/{id-publicId-or-key}` — an individual author, addressed by numeric public identifier or textual key.
 
-### Author–work associations for ASODAT
+### Author–work associations
 
 Each author object includes five arrays of numeric work `publicId` values (`number[]`), matching the five categories on that author's profile in **Examen de autorías**:
 
@@ -53,7 +53,7 @@ Each author object includes five arrays of numeric work `publicId` values (`numb
 
 All five lists use the same selection as the website and include only works in **Examen de autorías**. Probable/possible attributions and collaborations are included; unresolved traditional or stylometric attribution sets are excluded from their respective side. Inclusion does not imply certain or exclusive authorship. An empty array (`[]`) means that no works meet that category's criteria for that author. The two “only” categories are evaluated for the current author: a work traditionally attributed to one author and supported by stylometry for another can appear in a different category for each author.
 
-The numeric author `id` is ETSO's identifier: it matches `authorId` in the public work attributions. It is independent of ASODAT's dramaturge identifiers. The author's `key` is the textual identifier used in ETSO author URLs. Each work identifier in these arrays can be used with `/api/obras/{publicId}` or linked as `https://etso.es/obras/{publicId}`, which redirects to the canonical work page.
+The numeric author `id` is ETSO's identifier: it matches `authorId` in the public work attributions. The author's `key` is the textual identifier used in ETSO author URLs. Each work identifier in these arrays can be used with `/api/obras/{publicId}` or linked as `https://etso.es/obras/{publicId}`, which redirects to the canonical work page.
 
 ### Selecting response fields
 
@@ -66,7 +66,7 @@ https://etso.es/api/autores?fields=id,relatedWorkPublicIds,traditionalWorkPublic
 https://etso.es/api/obras/690677?fields=publicId,title,resources
 ```
 
-The first request retrieves the complete stylometry author–work mapping in one response and remains compatible with existing ASODAT integrations. The third retrieves all five categories for every author. The same fields are available for individual authors at `/api/autores/{id-publicId-or-key}`. Author fields are `id`, `key`, `name`, `nameVariants`, `relatedWorkPublicIds`, `traditionalWorkPublicIds`, `stylometryWorkPublicIds`, `traditionalOnlyWorkPublicIds`, `stylometryOnlyWorkPublicIds`, and `resources`. Work fields are described on the [API documentation page](https://etso.es/api). Selecting an object such as `resources` returns that entire public object; nested paths such as `resources.work` are not supported.
+The first request retrieves the complete stylometry author–work mapping in one response. The third retrieves all five categories for every author. The same fields are available for individual authors at `/api/autores/{id-publicId-or-key}`. Author fields are `id`, `key`, `name`, `nameVariants`, `relatedWorkPublicIds`, `traditionalWorkPublicIds`, `stylometryWorkPublicIds`, `traditionalOnlyWorkPublicIds`, `stylometryOnlyWorkPublicIds`, and `resources`. Work fields are described on the [API documentation page](https://etso.es/api). Selecting an object such as `resources` returns that entire public object; nested paths such as `resources.work` are not supported.
 
 The existing `authors`, `author`, `works`, or `work` response wrapper and any `meta` information are preserved. With no `fields` parameter, responses retain all their public fields, including all five author association arrays. Empty selections, unknown fields, nested paths, and private content fields return HTTP 400.
 

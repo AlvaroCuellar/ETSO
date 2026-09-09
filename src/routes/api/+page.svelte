@@ -615,11 +615,11 @@
 
 	const integrationTextByLocale: Record<Locale, ApiIntegrationText> = {
 		es: {
-			associationsHeading: 'Obras por autor e integración con ASODAT',
+			associationsHeading: 'Obras por autor',
 			associationParagraphs: [
 				'Cada autor incluye cinco arrays de publicId numéricos de obras (number[]), correspondientes a las cinco categorías de su ficha en Examen de autorías. Solo se incluyen obras de ese examen y se aplican los mismos criterios que en la web: se admiten atribuciones probables o posibles y colaboraciones; las atribuciones tradicionales o estilométricas sin resolver se excluyen de su lado correspondiente. La inclusión no implica autoría segura ni exclusiva. Cada categoría sin obras devuelve []. Las categorías «solo» se calculan para el autor consultado. El significado de stylometryWorkPublicIds se mantiene sin cambios.',
-				'El id numérico del autor es el identificador de ETSO y coincide con authorId en las atribuciones de las obras. Es independiente del identificador de dramaturgo de ASODAT. La clave key identifica al autor en las URLs de ETSO.',
-				'Cada publicId de obra permite consultar /api/obras/{publicId} o enlazar a https://etso.es/obras/{publicId}, que redirige a la ficha canónica. La primera consulta siguiente recupera todas las vinculaciones estilométricas y sigue siendo compatible con ASODAT. La tercera devuelve las cinco categorías de todos los autores. También pueden solicitarse estos campos para un solo autor en /api/autores/{id}.'
+				'El id numérico del autor es el identificador de ETSO y coincide con authorId en las atribuciones de las obras. La clave key identifica al autor en las URLs de ETSO.',
+				'Cada publicId de obra permite consultar /api/obras/{publicId} o enlazar a https://etso.es/obras/{publicId}, que redirige a la ficha canónica. La primera consulta siguiente recupera todas las vinculaciones estilométricas y conserva la compatibilidad con las integraciones existentes. La tercera devuelve las cinco categorías de todos los autores. También pueden solicitarse estos campos para un solo autor en /api/autores/{id}.'
 			],
 			associationFields: [
 				['relatedWorkPublicIds', 'Obras relacionadas con el autor: atribución tradicional o estilométrica.'],
@@ -636,11 +636,11 @@
 			performanceNote: 'Seleccionar campos reduce el tamaño de la respuesta y la transferencia de datos. Por sí solo no reduce el número de peticiones ni elimina todas las consultas a la base de datos.'
 		},
 		en: {
-			associationsHeading: 'Works by author and ASODAT integration',
+			associationsHeading: 'Works by author',
 			associationParagraphs: [
 				'Each author includes five arrays of numeric work publicId values (number[]), matching the five categories on their profile in the authorship examination. Only works in that examination are included, using the same criteria as the website: probable or possible attributions and collaborations are included; unresolved traditional or stylometric attributions are excluded from their respective side. Inclusion does not imply certain or exclusive authorship. Each category with no works returns []. The “only” categories are evaluated for the queried author. The meaning of stylometryWorkPublicIds is unchanged.',
-				'The numeric author id is the ETSO identifier and matches authorId in work attributions. It is independent of ASODAT dramaturge identifiers. The textual key identifies the author in ETSO URLs.',
-				'Each work publicId can be queried at /api/obras/{publicId} or linked as https://etso.es/obras/{publicId}, which redirects to the canonical work page. The first request below retrieves all stylometric associations and remains compatible with ASODAT. The third returns all five categories for every author. These fields can also be requested for a single author at /api/autores/{id}.'
+				'The numeric author id is the ETSO identifier and matches authorId in work attributions. The textual key identifies the author in ETSO URLs.',
+				'Each work publicId can be queried at /api/obras/{publicId} or linked as https://etso.es/obras/{publicId}, which redirects to the canonical work page. The first request below retrieves all stylometric associations and remains compatible with existing integrations. The third returns all five categories for every author. These fields can also be requested for a single author at /api/autores/{id}.'
 			],
 			associationFields: [
 				['relatedWorkPublicIds', 'Works related to the author: traditional or stylometric attribution.'],
@@ -657,11 +657,11 @@
 			performanceNote: 'Selecting fields reduces response size and data transfer. By itself, it does not reduce the number of requests or eliminate all database queries.'
 		},
 		fr: {
-			associationsHeading: 'Œuvres par auteur et intégration avec ASODAT',
+			associationsHeading: 'Œuvres par auteur',
 			associationParagraphs: [
 				'Chaque auteur inclut cinq tableaux de publicId numériques d’œuvres (number[]), correspondant aux cinq catégories de sa fiche dans l’examen d’autorie. Seules les œuvres de cet examen sont incluses, selon les critères du site : les attributions probables ou possibles et les collaborations sont admises ; les attributions traditionnelles ou stylométriques non résolues sont exclues de leur côté respectif. La présence d’une œuvre n’implique pas une paternité certaine ou exclusive. Chaque catégorie sans œuvre renvoie []. Les catégories « uniquement » sont calculées pour l’auteur consulté. Le sens de stylometryWorkPublicIds reste inchangé.',
-				'L’id numérique de l’auteur est l’identifiant ETSO et correspond à authorId dans les attributions des œuvres. Il est indépendant des identifiants de dramaturges d’ASODAT. La clé textuelle key identifie l’auteur dans les URL d’ETSO.',
-				'Chaque publicId d’œuvre permet de consulter /api/obras/{publicId} ou de créer un lien vers https://etso.es/obras/{publicId}, qui redirige vers la fiche canonique. La première requête ci-dessous récupère toutes les associations stylométriques et reste compatible avec ASODAT. La troisième renvoie les cinq catégories pour tous les auteurs. Ces champs peuvent aussi être demandés pour un seul auteur à /api/autores/{id}.'
+				'L’id numérique de l’auteur est l’identifiant ETSO et correspond à authorId dans les attributions des œuvres. La clé textuelle key identifie l’auteur dans les URL d’ETSO.',
+				'Chaque publicId d’œuvre permet de consulter /api/obras/{publicId} ou de créer un lien vers https://etso.es/obras/{publicId}, qui redirige vers la fiche canonique. La première requête ci-dessous récupère toutes les associations stylométriques et reste compatible avec les intégrations existantes. La troisième renvoie les cinq catégories pour tous les auteurs. Ces champs peuvent aussi être demandés pour un seul auteur à /api/autores/{id}.'
 			],
 			associationFields: [
 				['relatedWorkPublicIds', 'Œuvres liées à l’auteur : attribution traditionnelle ou stylométrique.'],
@@ -678,11 +678,11 @@
 			performanceNote: 'La sélection de champs réduit la taille de la réponse et le transfert de données. À elle seule, elle ne réduit pas le nombre de requêtes et ne supprime pas toutes les consultations de la base de données.'
 		},
 		pt: {
-			associationsHeading: 'Obras por autor e integração com ASODAT',
+			associationsHeading: 'Obras por autor',
 			associationParagraphs: [
 				'Cada autor inclui cinco arrays de publicId numéricos de obras (number[]), correspondentes às cinco categorias da sua ficha no exame de autorias. Só são incluídas obras desse exame, com os mesmos critérios do site: admitem-se atribuições prováveis ou possíveis e colaborações; as atribuições tradicionais ou estilométricas não resolvidas são excluídas do respetivo lado. A inclusão não implica autoria certa ou exclusiva. Cada categoria sem obras devolve []. As categorias «apenas» são calculadas para o autor consultado. O significado de stylometryWorkPublicIds mantém-se inalterado.',
-				'O id numérico do autor é o identificador do ETSO e corresponde a authorId nas atribuições das obras. É independente dos identificadores de dramaturgos do ASODAT. A chave textual key identifica o autor nas URLs do ETSO.',
-				'Cada publicId de obra permite consultar /api/obras/{publicId} ou criar um link para https://etso.es/obras/{publicId}, que redireciona para a ficha canônica. A primeira consulta abaixo recupera todas as relações estilométricas e mantém a compatibilidade com ASODAT. A terceira devolve as cinco categorias de todos os autores. Estes campos também podem ser pedidos para um único autor em /api/autores/{id}.'
+				'O id numérico do autor é o identificador do ETSO e corresponde a authorId nas atribuições das obras. A chave textual key identifica o autor nas URLs do ETSO.',
+				'Cada publicId de obra permite consultar /api/obras/{publicId} ou criar um link para https://etso.es/obras/{publicId}, que redireciona para a ficha canônica. A primeira consulta abaixo recupera todas as relações estilométricas e mantém a compatibilidade com as integrações existentes. A terceira devolve as cinco categorias de todos os autores. Estes campos também podem ser pedidos para um único autor em /api/autores/{id}.'
 			],
 			associationFields: [
 				['relatedWorkPublicIds', 'Obras relacionadas com o autor: atribuição tradicional ou estilométrica.'],
@@ -699,11 +699,11 @@
 			performanceNote: 'Selecionar campos reduz o tamanho da resposta e a transferência de dados. Por si só, não reduz o número de requisições nem elimina todas as consultas à base de dados.'
 		},
 		it: {
-			associationsHeading: 'Opere per autore e integrazione con ASODAT',
+			associationsHeading: 'Opere per autore',
 			associationParagraphs: [
 				'Ogni autore include cinque array di publicId numerici di opere (number[]), corrispondenti alle cinque categorie della sua scheda nell’esame delle autorie. Sono incluse solo le opere di tale esame, con gli stessi criteri del sito: sono ammesse attribuzioni probabili o possibili e collaborazioni; le attribuzioni tradizionali o stilometriche irrisolte sono escluse dal rispettivo lato. L’inclusione non implica una paternità certa o esclusiva. Ogni categoria senza opere restituisce []. Le categorie «solo» sono calcolate per l’autore consultato. Il significato di stylometryWorkPublicIds rimane invariato.',
-				'L’id numerico dell’autore è l’identificatore ETSO e corrisponde ad authorId nelle attribuzioni delle opere. È indipendente dagli identificatori dei drammaturghi di ASODAT. La chiave testuale key identifica l’autore negli URL di ETSO.',
-				'Ogni publicId di un’opera permette di consultare /api/obras/{publicId} o creare un collegamento a https://etso.es/obras/{publicId}, che reindirizza alla scheda canonica. La prima richiesta seguente recupera tutte le associazioni stilometriche e rimane compatibile con ASODAT. La terza restituisce le cinque categorie per tutti gli autori. Questi campi possono essere richiesti anche per un singolo autore in /api/autores/{id}.'
+				'L’id numerico dell’autore è l’identificatore ETSO e corrisponde ad authorId nelle attribuzioni delle opere. La chiave testuale key identifica l’autore negli URL di ETSO.',
+				'Ogni publicId di un’opera permette di consultare /api/obras/{publicId} o creare un collegamento a https://etso.es/obras/{publicId}, che reindirizza alla scheda canonica. La prima richiesta seguente recupera tutte le associazioni stilometriche e rimane compatibile con le integrazioni esistenti. La terza restituisce le cinque categorie per tutti gli autori. Questi campi possono essere richiesti anche per un singolo autore in /api/autores/{id}.'
 			],
 			associationFields: [
 				['relatedWorkPublicIds', 'Opere collegate all’autore: attribuzione tradizionale o stilometrica.'],
@@ -720,11 +720,11 @@
 			performanceNote: 'Selezionare i campi riduce la dimensione della risposta e il trasferimento di dati. Da solo, non riduce il numero di richieste né elimina tutte le interrogazioni al database.'
 		},
 		de: {
-			associationsHeading: 'Werke nach Autor und ASODAT-Integration',
+			associationsHeading: 'Werke nach Autor',
 			associationParagraphs: [
 				'Jeder Autor enthält fünf Arrays numerischer Werk-publicId-Werte (number[]), entsprechend den fünf Kategorien seines Profils in der Autorschaftsprüfung. Enthalten sind nur Werke dieser Prüfung, nach denselben Kriterien wie auf der Website: Wahrscheinliche oder mögliche Zuschreibungen und Gemeinschaftswerke werden berücksichtigt; ungeklärte traditionelle oder stilometrische Zuschreibungen werden auf der jeweiligen Seite ausgeschlossen. Die Aufnahme bedeutet keine sichere oder alleinige Autorschaft. Jede Kategorie ohne Werke liefert []. Die Kategorien „nur“ werden für den abgefragten Autor berechnet. Die Bedeutung von stylometryWorkPublicIds bleibt unverändert.',
-				'Die numerische Autoren-id ist die ETSO-Kennung und entspricht authorId in den Werkzuschreibungen. Sie ist unabhängig von den Dramatikerkennungen in ASODAT. Der Textschlüssel key identifiziert den Autor in ETSO-URLs.',
-				'Jede Werk-publicId kann über /api/obras/{publicId} abgefragt oder über https://etso.es/obras/{publicId} verlinkt werden; dieser Link leitet zur kanonischen Werkseite weiter. Die erste folgende Anfrage liefert alle stilometrischen Zuordnungen und bleibt mit ASODAT kompatibel. Die dritte liefert alle fünf Kategorien für sämtliche Autoren. Diese Felder können auch für einen einzelnen Autor unter /api/autores/{id} angefragt werden.'
+				'Die numerische Autoren-id ist die ETSO-Kennung und entspricht authorId in den Werkzuschreibungen. Der Textschlüssel key identifiziert den Autor in ETSO-URLs.',
+				'Jede Werk-publicId kann über /api/obras/{publicId} abgefragt oder über https://etso.es/obras/{publicId} verlinkt werden; dieser Link leitet zur kanonischen Werkseite weiter. Die erste folgende Anfrage liefert alle stilometrischen Zuordnungen und bleibt mit bestehenden Integrationen kompatibel. Die dritte liefert alle fünf Kategorien für sämtliche Autoren. Diese Felder können auch für einen einzelnen Autor unter /api/autores/{id} angefragt werden.'
 			],
 			associationFields: [
 				['relatedWorkPublicIds', 'Mit dem Autor verbundene Werke: traditionelle oder stilometrische Zuschreibung.'],
@@ -741,11 +741,11 @@
 			performanceNote: 'Die Feldauswahl verringert die Antwortgröße und die Datenübertragung. Sie allein reduziert weder die Anzahl der Anfragen noch entfallen dadurch sämtliche Datenbankabfragen.'
 		},
 		zh: {
-			associationsHeading: '按作者关联作品及 ASODAT 集成',
+			associationsHeading: '按作者关联作品',
 			associationParagraphs: [
 				'每个作者对象都包含五个作品数字 publicId 数组（number[]），对应作者归属审查中该作者页面的五个类别。仅收录属于该审查的作品，筛选标准与网站相同：包括很可能或可能的归属及合作创作；传统归属或文体计量学归属尚未解决时，从相应一侧排除。列入数组不代表确定或独有的作者身份。没有作品的类别返回 []。“仅”类别按所查询作者分别计算。stylometryWorkPublicIds 的含义保持不变。',
-				'作者的数字 id 是 ETSO 标识符，与作品归属中的 authorId 一致，独立于 ASODAT 的剧作家标识符。文本键 key 用于 ETSO 作者页面的 URL。',
-				'每个作品 publicId 均可用于查询 /api/obras/{publicId}，或链接到 https://etso.es/obras/{publicId}，后者会重定向至作品的规范页面。下面的第一个请求获取全部文体计量学关联，并保持与 ASODAT 的兼容性。第三个请求返回所有作者的全部五个类别。也可通过 /api/autores/{id} 为单个作者请求这些字段。'
+				'作者的数字 id 是 ETSO 标识符，与作品归属中的 authorId 一致。文本键 key 用于 ETSO 作者页面的 URL。',
+				'每个作品 publicId 均可用于查询 /api/obras/{publicId}，或链接到 https://etso.es/obras/{publicId}，后者会重定向至作品的规范页面。下面的第一个请求获取全部文体计量学关联，并保持与现有集成的兼容性。第三个请求返回所有作者的全部五个类别。也可通过 /api/autores/{id} 为单个作者请求这些字段。'
 			],
 			associationFields: [
 				['relatedWorkPublicIds', '与该作者相关的作品：传统归属或文体计量学归属。'],
@@ -762,11 +762,11 @@
 			performanceNote: '选择字段可缩小响应体并减少数据传输，但本身不会减少请求次数，也不会消除所有数据库查询。'
 		},
 		ja: {
-			associationsHeading: '著者ごとの作品と ASODAT 連携',
+			associationsHeading: '著者ごとの作品',
 			associationParagraphs: [
 				'各著者には作品の数値 publicId の配列（number[]）が五つ含まれ、著者帰属の検討にある著者ページの五つのカテゴリに対応します。この検討に属する作品のみを対象とし、ウェブサイトと同じ基準で、蓋然性や可能性のある帰属および共同執筆を含めます。未解決の伝統的帰属または文体計量分析による帰属は、それぞれの側から除外します。掲載は確実な帰属や単独執筆を意味しません。作品がないカテゴリは [] を返します。「のみ」のカテゴリは照会した著者ごとに計算します。stylometryWorkPublicIds の意味は変わりません。',
-				'著者の数値 id は ETSO の識別子で、作品の帰属情報にある authorId と一致します。ASODAT の劇作家識別子とは独立しています。テキストキー key は ETSO の著者 URL に使われます。',
-				'各作品の publicId は /api/obras/{publicId} の照会や https://etso.es/obras/{publicId} へのリンクに使用できます。このリンクは正規の作品ページへリダイレクトします。以下の最初のリクエストは文体計量分析による対応関係をすべて取得し、ASODAT との互換性を維持します。三つ目は全著者の五つのカテゴリを返します。/api/autores/{id} で単一の著者についてこれらのフィールドを照会することもできます。'
+				'著者の数値 id は ETSO の識別子で、作品の帰属情報にある authorId と一致します。テキストキー key は ETSO の著者 URL に使われます。',
+				'各作品の publicId は /api/obras/{publicId} の照会や https://etso.es/obras/{publicId} へのリンクに使用できます。このリンクは正規の作品ページへリダイレクトします。以下の最初のリクエストは文体計量分析による対応関係をすべて取得し、既存の連携との互換性を維持します。三つ目は全著者の五つのカテゴリを返します。/api/autores/{id} で単一の著者についてこれらのフィールドを照会することもできます。'
 			],
 			associationFields: [
 				['relatedWorkPublicIds', '著者に関連する作品：伝統的帰属または文体計量分析による帰属。'],
@@ -783,11 +783,11 @@
 			performanceNote: 'フィールドの選択はレスポンスサイズとデータ転送量を減らします。それ自体でリクエスト数を減らしたり、データベース照会をすべてなくしたりするものではありません。'
 		},
 		ko: {
-			associationsHeading: '저자별 작품과 ASODAT 연동',
+			associationsHeading: '저자별 작품',
 			associationParagraphs: [
 				'각 저자 객체에는 저자 귀속 검토의 저자 페이지에 있는 다섯 범주에 해당하는 작품 숫자 publicId 배열(number[]) 다섯 개가 포함됩니다. 해당 검토에 속한 작품만 웹사이트와 같은 기준으로 포함합니다. 개연성이 있거나 가능한 귀속 및 공동 집필을 포함하며, 미해결된 전통적 귀속이나 문체 계량 분석에 따른 귀속은 각각 해당 측에서 제외합니다. 포함되었다는 것이 확정적인 저자 귀속이나 단독 집필을 뜻하지는 않습니다. 작품이 없는 범주는 []를 반환합니다. “오직” 범주는 조회한 저자를 기준으로 계산합니다. stylometryWorkPublicIds의 의미는 그대로 유지됩니다.',
-				'저자의 숫자 id는 ETSO 식별자이며 작품 귀속 정보의 authorId와 일치합니다. ASODAT의 극작가 식별자와는 독립적입니다. 텍스트 키 key는 ETSO 저자 URL에서 사용됩니다.',
-				'각 작품 publicId로 /api/obras/{publicId}를 조회하거나 https://etso.es/obras/{publicId}에 연결할 수 있습니다. 이 링크는 정식 작품 페이지로 리디렉션됩니다. 아래 첫 번째 요청은 모든 문체 계량 분석 관련 연결을 가져오며 ASODAT와의 호환성을 유지합니다. 세 번째 요청은 모든 저자의 다섯 범주를 반환합니다. /api/autores/{id}에서 한 저자에 대해서도 이 필드들을 요청할 수 있습니다.'
+				'저자의 숫자 id는 ETSO 식별자이며 작품 귀속 정보의 authorId와 일치합니다. 텍스트 키 key는 ETSO 저자 URL에서 사용됩니다.',
+				'각 작품 publicId로 /api/obras/{publicId}를 조회하거나 https://etso.es/obras/{publicId}에 연결할 수 있습니다. 이 링크는 정식 작품 페이지로 리디렉션됩니다. 아래 첫 번째 요청은 모든 문체 계량 분석 관련 연결을 가져오며 기존 연동과의 호환성을 유지합니다. 세 번째 요청은 모든 저자의 다섯 범주를 반환합니다. /api/autores/{id}에서 한 저자에 대해서도 이 필드들을 요청할 수 있습니다.'
 			],
 			associationFields: [
 				['relatedWorkPublicIds', '저자와 관련된 작품: 전통적 귀속 또는 문체 계량 분석에 따른 귀속.'],
@@ -804,11 +804,11 @@
 			performanceNote: '필드 선택은 응답 크기와 데이터 전송량을 줄입니다. 그 자체로 요청 횟수를 줄이거나 모든 데이터베이스 조회를 없애지는 않습니다.'
 		},
 		ru: {
-			associationsHeading: 'Произведения по авторам и интеграция с ASODAT',
+			associationsHeading: 'Произведения по авторам',
 			associationParagraphs: [
 				'Каждый автор содержит пять массивов числовых publicId произведений (number[]), соответствующих пяти категориям его профиля в разделе проверки авторства. Включаются только произведения этого раздела по тем же критериям, что и на сайте: допускаются вероятные или возможные атрибуции и соавторство; неразрешённые традиционные или стилометрические атрибуции исключаются с соответствующей стороны. Включение не означает достоверного или единоличного авторства. Категория без произведений возвращает []. Категории «только» рассчитываются для запрошенного автора. Значение stylometryWorkPublicIds не изменилось.',
-				'Числовой id автора — это идентификатор ETSO, совпадающий с authorId в атрибуциях произведений. Он независим от идентификаторов драматургов ASODAT. Текстовый ключ key используется в URL авторов ETSO.',
-				'Каждый publicId произведения можно использовать для запроса /api/obras/{publicId} или ссылки https://etso.es/obras/{publicId}, которая перенаправляет на каноническую страницу произведения. Первый запрос ниже получает все стилометрические связи и сохраняет совместимость с ASODAT. Третий возвращает все пять категорий для каждого автора. Эти поля можно также запросить для одного автора по адресу /api/autores/{id}.'
+				'Числовой id автора — это идентификатор ETSO, совпадающий с authorId в атрибуциях произведений. Текстовый ключ key используется в URL авторов ETSO.',
+				'Каждый publicId произведения можно использовать для запроса /api/obras/{publicId} или ссылки https://etso.es/obras/{publicId}, которая перенаправляет на каноническую страницу произведения. Первый запрос ниже получает все стилометрические связи и сохраняет совместимость с существующими интеграциями. Третий возвращает все пять категорий для каждого автора. Эти поля можно также запросить для одного автора по адресу /api/autores/{id}.'
 			],
 			associationFields: [
 				['relatedWorkPublicIds', 'Произведения, связанные с автором: традиционная или стилометрическая атрибуция.'],
@@ -825,11 +825,11 @@
 			performanceNote: 'Выбор полей уменьшает размер ответа и объём передаваемых данных. Сам по себе он не сокращает число запросов и не устраняет все обращения к базе данных.'
 		},
 		ar: {
-			associationsHeading: 'الأعمال حسب المؤلف والتكامل مع ASODAT',
+			associationsHeading: 'الأعمال حسب المؤلف',
 			associationParagraphs: [
 				'يتضمن كل مؤلف خمس مصفوفات من معرّفات publicId الرقمية للأعمال (number[])، توافق الفئات الخمس في صفحته ضمن فحص الإسناد. تُدرج أعمال هذا الفحص فقط وفق معايير الموقع نفسها: تشمل الإسنادات المرجّحة أو الممكنة والأعمال المشتركة؛ وتُستبعد الإسنادات التقليدية أو الأسلوبية غير المحسومة من جانبها المعني. لا يعني الإدراج تأليفًا مؤكدًا أو منفردًا. تُرجع كل فئة بلا أعمال []. تُحسب فئات «فقط» بالنسبة إلى المؤلف المطلوب. يبقى معنى stylometryWorkPublicIds دون تغيير.',
-				'المعرّف الرقمي id للمؤلف هو معرّف ETSO ويطابق authorId في إسنادات الأعمال. وهو مستقل عن معرّفات الكتّاب المسرحيين في ASODAT. يُستخدم المفتاح النصي key لتعريف المؤلف في روابط ETSO.',
-				'يمكن استخدام publicId لكل عمل للاستعلام عبر /api/obras/{publicId} أو الربط إلى https://etso.es/obras/{publicId} الذي يعيد التوجيه إلى صفحة العمل الأساسية. يجلب الطلب الأول أدناه جميع الروابط الأسلوبية ويحافظ على التوافق مع ASODAT. ويُرجع الطلب الثالث الفئات الخمس لجميع المؤلفين. يمكن أيضًا طلب هذه الحقول لمؤلف واحد عبر /api/autores/{id}.'
+				'المعرّف الرقمي id للمؤلف هو معرّف ETSO ويطابق authorId في إسنادات الأعمال. يُستخدم المفتاح النصي key لتعريف المؤلف في روابط ETSO.',
+				'يمكن استخدام publicId لكل عمل للاستعلام عبر /api/obras/{publicId} أو الربط إلى https://etso.es/obras/{publicId} الذي يعيد التوجيه إلى صفحة العمل الأساسية. يجلب الطلب الأول أدناه جميع الروابط الأسلوبية ويحافظ على التوافق مع عمليات التكامل الحالية. ويُرجع الطلب الثالث الفئات الخمس لجميع المؤلفين. يمكن أيضًا طلب هذه الحقول لمؤلف واحد عبر /api/autores/{id}.'
 			],
 			associationFields: [
 				['relatedWorkPublicIds', 'الأعمال المرتبطة بالمؤلف: إسناد تقليدي أو أسلوبي.'],

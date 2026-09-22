@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { getAsodatWorkUrl } from '$lib/domain/asodat';
 	import { formatAttribution, formatConfidence, type AttributionSet, type Confidence } from '$lib/domain/catalog';
 	import { translateText } from '$lib/i18n';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
@@ -23,6 +24,7 @@
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
+	const asodatUrl = $derived(getAsodatWorkUrl(data.work.asodatId));
 	const displayWorkTitle = $derived.by(() => formatDisplayWorkTitle(data.work.title));
 	const displayTitleVariants = $derived.by(() => formatDisplayWorkTitleList(data.work.titleVariants));
 	const seoDescription = $derived.by(() => {
@@ -337,14 +339,14 @@
 									ASODAT
 								</dt>
 								<dd class="m-0 text-[0.96rem] leading-[1.55] text-text-main">
-									Estamos trabajando para vincular esta obra con
+									{#if !asodatUrl}Estamos trabajando para vincular esta obra con{/if}
 									<a
-										href="https://asodat.uv.es/"
+										href={asodatUrl ?? 'https://asodat.uv.es/'}
 										target="_blank"
 										rel="noopener noreferrer"
 										class="font-medium text-brand-blue underline hover:text-brand-blue-dark focus-visible:text-brand-blue-dark"
 									>
-										ASODAT
+										ASODAT · Consultar ficha ↗
 									</a>.
 								</dd>
 							</div>

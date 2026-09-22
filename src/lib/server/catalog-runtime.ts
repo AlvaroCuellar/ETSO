@@ -233,6 +233,7 @@ interface BibliographyViewConfigNormalized {
 }
 
 interface WorkRow {
+	asodat_id: number | null;
 	id: string;
 	public_id: number | null;
 	slug: string | null;
@@ -883,6 +884,7 @@ const buildCatalogWorksFromRows = (
 			reportId: hasReport ? row.id : undefined,
 			reportSlug,
 			hasTeiViewer: Number(row.tiene_tei) === 1,
+			asodatId: row.asodat_id == null ? undefined : Number(row.asodat_id),
 			facsimileFirstUrl: optionalPublicAssetUrl(row.facsimile_first),
 			facsimileLastUrl: optionalPublicAssetUrl(row.facsimile_last)
 		};
@@ -899,6 +901,7 @@ const loadWorkRowsByIds = async (workIds: string[]): Promise<WorkRow[]> => {
 	if (workIds.length === 0) return [];
 	const titleVariantsSelect = await getTitleVariantsSelect();
 	const worksTableColumns = await getTableColumnNames('works');
+	const asodatIdSelect = worksTableColumns.has('asodat_id') ? 'asodat_id' : 'NULL AS asodat_id';
 	const publicIdSelect = worksTableColumns.has('public_id') ? 'public_id' : 'NULL AS public_id';
 	const bitesoPublicationDateSelect = worksTableColumns.has('fecha_biteso')
 		? 'fecha_biteso'
@@ -917,6 +920,7 @@ const loadWorkRowsByIds = async (workIds: string[]): Promise<WorkRow[]> => {
 	return getRows<WorkRow>(
 		`SELECT id, slug, titulo,
 		 ${publicIdSelect},
+		 ${asodatIdSelect},
 		 ${titleVariantsSelect},
 		 genero, adicion, estado_texto,
 		 ${bitesoPublicationDateSelect},
@@ -1129,6 +1133,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 	}
 	const hasWorkOtherTitlesColumn = worksTableColumns.has('otrostitulos');
 	const hasWorkLegacyTitleVariantsColumn = worksTableColumns.has('variaciones_titulo');
+	const asodatIdSelect = worksTableColumns.has('asodat_id') ? 'asodat_id' : 'NULL AS asodat_id';
 	const publicIdSelect = worksTableColumns.has('public_id') ? 'public_id' : 'NULL AS public_id';
 	const titleVariantsSelect = hasWorkOtherTitlesColumn
 		? 'otrostitulos AS title_variants'
@@ -1152,6 +1157,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 	const workRows = await getRows<WorkRow>(
 		`SELECT id, slug, titulo,
 		 ${publicIdSelect},
+		 ${asodatIdSelect},
 		 ${titleVariantsSelect},
 		 genero, adicion, estado_texto,
 		 ${bitesoPublicationDateSelect},
@@ -1230,6 +1236,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 			reportId: hasReport ? row.id : undefined,
 			reportSlug,
 			hasTeiViewer: Number(row.tiene_tei) === 1,
+			asodatId: row.asodat_id == null ? undefined : Number(row.asodat_id),
 			facsimileFirstUrl: optionalPublicAssetUrl(row.facsimile_first),
 			facsimileLastUrl: optionalPublicAssetUrl(row.facsimile_last)
 		};

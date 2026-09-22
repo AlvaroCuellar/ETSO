@@ -1,3 +1,4 @@
+import { getAsodatWorkUrl } from '$lib/domain/asodat';
 import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
 import { formatAttribution } from '$lib/domain/catalog';
 import { SITE_URL } from '$lib/seo';
@@ -9,6 +10,7 @@ import {
 import type { AttributionSet, CatalogWork, WorkResourceLink } from '$lib/domain/catalog';
 
 interface PublicWorkMetadataResources {
+	asodat: string | null;
 	work: string;
 	summary: string | null;
 	report: string | null;
@@ -57,6 +59,7 @@ interface PublicAttributionSet {
 }
 
 export interface PublicWorkMetadata {
+	asodatId: number | null;
 	id: string;
 	publicId: number | null;
 	slug: string;
@@ -244,6 +247,7 @@ export const toPublicWorkMetadata = (work: CatalogWork): PublicWorkMetadata => {
 	return {
 		id: work.id,
 		publicId: work.publicId ?? null,
+		asodatId: work.asodatId ?? null,
 		slug: work.slug,
 		title: work.title,
 		displayTitle: formatDisplayWorkTitle(work.title),
@@ -271,6 +275,7 @@ export const toPublicWorkMetadata = (work: CatalogWork): PublicWorkMetadata => {
 		traditionalAttribution: toPublicAttributionSet(work.traditionalAttribution),
 		stylometryAttribution: toPublicAttributionSet(work.stylometryAttribution),
 		resources: {
+			asodat: getAsodatWorkUrl(work.asodatId) ?? null,
 			work: `/obras/${work.slug}`,
 			summary: work.hasSummaryFile ? `/obras/${work.slug}/resumen` : null,
 			report: hasReport ? `/informes/${work.reportSlug}` : null,

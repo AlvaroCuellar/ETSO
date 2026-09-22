@@ -34,6 +34,7 @@ export interface WorkResourceLink {
 }
 
 export interface CatalogWork {
+	asodatId?: number;
 	id: string;
 	publicId?: number;
 	slug: string;

@@ -5,6 +5,7 @@ import type { PublicWorkMetadata } from './public-work-metadata';
 const workMetadataFieldAllowlist = {
 	id: true,
 	publicId: true,
+	asodatId: true,
 	slug: true,
 	title: true,
 	displayTitle: true,

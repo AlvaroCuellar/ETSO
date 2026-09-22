@@ -92,15 +92,17 @@ def validate_schema(
             raise SystemExit(f"Falta tabla local: {table}")
         if not remote_columns:
             raise SystemExit(f"Falta tabla remota: {table}. Usa replace-turso-db.sh para inicializar.")
-        removes_legacy_transcription_type = (
-            table == "works"
-            and "tipo_transcripcion" in remote_columns
-            and "tipo_transcripcion" not in local_columns
-            and [column for column in remote_columns if column != "tipo_transcripcion"] == local_columns
-        )
-        if removes_legacy_transcription_type:
-            schema_migrations.append('ALTER TABLE "works" DROP COLUMN "tipo_transcripcion";')
-        elif local_columns != remote_columns:
+        # ASODAT is an additive, nullable field. Keep the legacy cleanup and
+        # accept column order differences: every query names its columns.
+        effective_remote_columns = list(remote_columns)
+        if table == "works":
+            if "tipo_transcripcion" in remote_columns and "tipo_transcripcion" not in local_columns:
+                schema_migrations.append('ALTER TABLE "works" DROP COLUMN "tipo_transcripcion";')
+                effective_remote_columns.remove("tipo_transcripcion")
+            if "asodat_id" in local_columns and "asodat_id" not in remote_columns:
+                schema_migrations.append('ALTER TABLE "works" ADD COLUMN "asodat_id" INTEGER;')
+                effective_remote_columns.append("asodat_id")
+        if set(local_columns) != set(effective_remote_columns):
             raise SystemExit(
                 "Esquema Turso distinto del SQLite local en "
                 f"{table}: local={local_columns!r}, remoto={remote_columns!r}. "
@@ -123,8 +125,15 @@ def normalize_row(row: sqlite3.Row, columns: list[str]) -> tuple[Any, ...]:
 
 
 def rows_by_id(connection: sqlite3.Connection, table: str, columns: list[str]) -> dict[str, tuple[Any, ...]]:
+    existing_columns = set(get_columns(connection, table))
+    select_columns = [
+        'NULL AS "asodat_id"'
+        if table == "works" and column == "asodat_id" and column not in existing_columns
+        else quote_identifier(column)
+        for column in columns
+    ]
     rows = connection.execute(
-        f"SELECT {', '.join(quote_identifier(column) for column in columns)} "
+        f"SELECT {', '.join(select_columns)} "
         f"FROM {quote_identifier(table)} ORDER BY id"
     ).fetchall()
     return {str(row["id"]): normalize_row(row, columns) for row in rows}
@@ -372,6 +381,36 @@ def write_expected_counts(path: Path, local: sqlite3.Connection) -> None:
     )
 
 
+def release_changed_work_keys(
+    sql_lines: list[str],
+    local: sqlite3.Connection,
+    remote: sqlite3.Connection,
+    changed_work_ids: set[str],
+) -> None:
+    """Free unique keys before upserts, allowing swaps within the transaction."""
+    occupied_slugs = {
+        row[0]
+        for connection in (local, remote)
+        for row in connection.execute("SELECT slug FROM works")
+    }
+    for work_id in sorted(changed_work_ids):
+        old = remote.execute("SELECT slug, public_id FROM works WHERE id=?", (work_id,)).fetchone()
+        new = local.execute("SELECT slug, public_id FROM works WHERE id=?", (work_id,)).fetchone()
+        assignments = []
+        if old[0] != new[0]:
+            temporary_slug = f"__turso_sync_pending__{work_id}"
+            while temporary_slug in occupied_slugs:
+                temporary_slug += "_"
+            occupied_slugs.add(temporary_slug)
+            assignments.append(f"slug={sql_literal(temporary_slug)}")
+        if old[1] != new[1]:
+            assignments.append("public_id=NULL")
+        if assignments:
+            sql_lines.append(
+                f"UPDATE works SET {', '.join(assignments)} WHERE id={sql_literal(work_id)};"
+            )
+
+
 def main() -> int:
     args = parse_args()
     local = connect(args.local_db)
@@ -429,6 +468,7 @@ def main() -> int:
     append_dependent_deletes(sql_lines, rewrite_dependents_for)
     delete_where_in(sql_lines, "works", "id", removed_works)
     delete_where_in(sql_lines, "authors", "id", removed_authors)
+    release_changed_work_keys(sql_lines, local, remote, changed_works)
 
     for author_id in sorted(upsert_author_ids):
         sql_lines.append(make_upsert_sql("authors", columns_by_table["authors"], local_author_rows[author_id]))

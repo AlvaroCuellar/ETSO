@@ -349,7 +349,14 @@
 											ASODAT · Consultar ficha ↗
 										</a>
 									{:else}
-										ASODAT
+										<a
+											href="https://asodat.uv.es/"
+											target="_blank"
+											rel="noopener noreferrer"
+											class="font-medium text-brand-blue underline hover:text-brand-blue-dark focus-visible:text-brand-blue-dark"
+										>
+											ASODAT
+										</a>
 									{/if}
 								</dd>
 							</div>

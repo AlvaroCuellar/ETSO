@@ -349,6 +349,7 @@
 											ASODAT · Consultar ficha ↗
 										</a>
 									{:else}
+										Estamos trabajando para vincular esta obra con
 										<a
 											href="https://asodat.uv.es/"
 											target="_blank"
@@ -356,7 +357,7 @@
 											class="font-medium text-brand-blue underline hover:text-brand-blue-dark focus-visible:text-brand-blue-dark"
 										>
 											ASODAT
-										</a>
+										</a>.
 									{/if}
 								</dd>
 							</div>

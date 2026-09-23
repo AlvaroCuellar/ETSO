@@ -339,15 +339,18 @@
 									ASODAT
 								</dt>
 								<dd class="m-0 text-[0.96rem] leading-[1.55] text-text-main">
-									{#if !asodatUrl}Estamos trabajando para vincular esta obra con{/if}
-									<a
-										href={asodatUrl ?? 'https://asodat.uv.es/'}
-										target="_blank"
-										rel="noopener noreferrer"
-										class="font-medium text-brand-blue underline hover:text-brand-blue-dark focus-visible:text-brand-blue-dark"
-									>
-										ASODAT · Consultar ficha ↗
-									</a>.
+									{#if asodatUrl}
+										<a
+											href={asodatUrl}
+											target="_blank"
+											rel="noopener noreferrer"
+											class="font-medium text-brand-blue underline hover:text-brand-blue-dark focus-visible:text-brand-blue-dark"
+										>
+											ASODAT · Consultar ficha ↗
+										</a>
+									{:else}
+										ASODAT
+									{/if}
 								</dd>
 							</div>
 					</dl>

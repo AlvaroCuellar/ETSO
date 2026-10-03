@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { env } from '$env/dynamic/public';
+	import humanitalisLogo from '$lib/assets/logos/humanitalis-lockup.svg';
 	import logoEtso from '$lib/assets/logos/etso-logo-light.svg';
 	import thaliaLogo from '$lib/assets/logos/thalia.webp';
 	import { getUiTranslations, localizePath, type Locale } from '$lib/i18n';
@@ -8,6 +10,7 @@
 	}
 
 	let { locale = 'es' }: Props = $props();
+	const humanitalisUrl = (env.PUBLIC_HUMANITALIS_URL || 'https://www.humanitalis.com').replace(/\/$/, '');
 	const translations = $derived(getUiTranslations(locale));
 	const primaryNavItems = $derived(translations.nav.items.slice(0, 3).concat(translations.nav.infoItems.slice(0, 1)));
 	const secondaryNavItems = $derived([
@@ -19,6 +22,15 @@
 
 <footer class="mt-12 border-t border-brand-purple/20 bg-brand-blue font-ui text-white">
 	<div class="mx-auto w-full max-w-7xl px-4 py-10 sm:px-5 lg:px-14 xl:px-10">
+		<div class="mb-10 border-b border-white/16 pb-8">
+			<p class="m-0 flex flex-wrap items-center justify-center gap-x-3 gap-y-3 text-center text-[0.9rem] text-white/80">
+				<span>{translations.footer.webDevelopment}</span>
+				<a href={humanitalisUrl} target="_blank" rel="noopener noreferrer" class="inline-flex text-white no-underline transition hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
+					<img src={humanitalisLogo} alt="HUMANITALIS" width="1052" height="232" class="h-auto w-44 max-w-full brightness-0 invert" />
+				</a>
+				<span>{locale === 'es' ? 'a cargo de' : 'led by'} <a class="text-white underline underline-offset-4 transition hover:opacity-80" href="https://davidmerinorecalde.com/" target="_blank" rel="noopener noreferrer">David Merino Recalde</a></span>
+			</p>
+		</div>
 		<div class="grid gap-10">
 			<div class="order-3 grid items-start gap-8 md:grid-cols-2 md:gap-10">
 				<div class="grid w-full gap-8 sm:grid-cols-2">
@@ -125,19 +137,13 @@
 		</div>
 
 		<div class="mt-8 border-t border-white/16 pt-6 text-center text-[0.84rem] text-white/80">
-			&copy; 2026 ETSO |
-			<a class="text-white/90 underline transition hover:text-white" href={localizePath('/licencias', locale)}>{translations.footer.contentLicenses}</a>
-			{translations.footer.and}
-			<a class="text-white/90 underline transition hover:text-white" href={localizePath('/privacidad', locale)}>{translations.footer.privacy}</a> |
-			{translations.footer.webDevelopment}
-			<a
-				class="text-white/90 underline transition hover:text-white"
-				href="https://dxvidmr.github.io"
-				target="_blank"
-				rel="noopener noreferrer"
-			>
-				David Merino Recalde
-			</a>
+			<p class="m-0">
+				&copy; 2026 ETSO ·
+				<a class="text-white/90 underline transition hover:text-white" href={localizePath('/licencias', locale)}>{translations.footer.contentLicenses}</a>
+				{translations.footer.and}
+				<a class="text-white/90 underline transition hover:text-white" href={localizePath('/privacidad', locale)}>{translations.footer.privacy}</a>
+			</p>
+
 		</div>
 	</div>
 </footer>

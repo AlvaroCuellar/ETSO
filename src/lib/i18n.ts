@@ -97,7 +97,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			contentLicenses: 'Licencias de contenido',
 			privacy: 'privacidad',
 			and: 'y',
-			webDevelopment: 'Desarrollo web:'
+			webDevelopment: 'Desarrollado por'
 		},
 		seo: {
 			siteName: 'ETSO: Estilometría aplicada al Teatro del Siglo de Oro',
@@ -140,7 +140,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 			contentLicenses: 'Content licenses',
 			privacy: 'privacy',
 			and: 'and',
-			webDevelopment: 'Web development:'
+			webDevelopment: 'Developed by'
 		},
 		seo: {
 			siteName: 'ETSO: Stylometry Applied to Golden Age Theatre',

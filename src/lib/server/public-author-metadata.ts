@@ -8,8 +8,8 @@ export interface PublicAuthorMetadata extends AuthorWorkPublicIds {
 	name: string;
 	nameVariants: string[];
 	resources: {
-		author: string;
-		url: string;
+		author: string | null;
+		url: string | null;
 	};
 }
 
@@ -40,7 +40,7 @@ export const toPublicAuthorMetadata = (
 	traditionalOnlyWorkPublicIds: [...(workPublicIds?.traditionalOnlyWorkPublicIds ?? [])],
 	newStylometrySupportedWorkPublicIds: [...(workPublicIds?.newStylometrySupportedWorkPublicIds ?? [])],
 	resources: {
-		author: `/autores/${author.id}`,
-		url: `${SITE_URL}/autores/${author.id}`
+		author: author.hasAuthorshipExam ? `/autores/${author.id}` : null,
+		url: author.hasAuthorshipExam ? `${SITE_URL}/autores/${author.id}` : null
 	}
 });

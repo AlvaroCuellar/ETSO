@@ -68,12 +68,16 @@
 						{#each work.traditionalAttribution.groups as group, groupIndex}
 							<div class="flex flex-wrap items-center gap-3">
 								{#each group.members as member, memberIndex}
-									<a
-										href={`/autores/${member.authorId}`}
-										class="inline-flex items-baseline gap-1 font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline"
-									>
-										<span data-i18n-skip={member.authorId !== 'desconocido' || undefined}>{member.authorName}</span>
-									</a>
+									{#if member.hasAuthorshipExam}
+										<a
+											href={`/autores/${member.authorId}`}
+											class="inline-flex items-baseline gap-1 font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline"
+										>
+											<span data-i18n-skip={member.authorId !== 'desconocido' || undefined}>{member.authorName}</span>
+										</a>
+									{:else}
+										<span class="font-medium" data-i18n-skip={member.authorId !== 'desconocido' || undefined}>{member.authorName}</span>
+									{/if}
 									{#if memberIndex < group.members.length - 1}
 										<span
 											class="inline-flex rounded bg-surface-accent-purple px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-text-accent-purple lowercase"
@@ -116,12 +120,16 @@
 						{#each work.stylometryAttribution.groups as group, groupIndex}
 							<div class="flex flex-wrap items-center gap-3">
 								{#each group.members as member, memberIndex}
-									<a
-										href={`/autores/${member.authorId}`}
-										class="inline-flex items-baseline gap-1 font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline"
-									>
-										<span data-i18n-skip={member.authorId !== 'desconocido' || undefined}>{member.authorName}</span>
-									</a>
+									{#if member.hasAuthorshipExam}
+										<a
+											href={`/autores/${member.authorId}`}
+											class="inline-flex items-baseline gap-1 font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline"
+										>
+											<span data-i18n-skip={member.authorId !== 'desconocido' || undefined}>{member.authorName}</span>
+										</a>
+									{:else}
+										<span class="font-medium" data-i18n-skip={member.authorId !== 'desconocido' || undefined}>{member.authorName}</span>
+									{/if}
 									{#if member.confidence}
 										<span
 											class={`inline-flex rounded-full px-[0.55rem] py-[0.24rem] font-ui text-[0.72rem] font-bold leading-none tracking-[0.02em] uppercase ${confidenceClass(member.confidence)}`}

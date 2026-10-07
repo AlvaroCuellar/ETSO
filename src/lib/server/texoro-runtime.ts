@@ -1,3 +1,4 @@
+import { isPersonAuthor } from '$lib/domain/catalog';
 import { env as publicEnv } from '$env/dynamic/public';
 import { TexoroSearchEngine, buildWorkMetaMap } from '$lib/search';
 import { getAllWorks } from '$lib/server/catalog-runtime';
@@ -101,7 +102,7 @@ const countAttributedAuthors = (works: CatalogWork[]): number => {
 			for (const group of set.groups) {
 				for (const member of group.members) {
 					const id = member.authorId?.trim();
-					if (id) ids.add(id);
+					if (id && isPersonAuthor(id)) ids.add(id);
 				}
 			}
 		}

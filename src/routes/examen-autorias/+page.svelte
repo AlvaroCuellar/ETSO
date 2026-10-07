@@ -1,4 +1,5 @@
 ﻿<script lang="ts">
+	import { isPersonAuthor } from '$lib/domain/catalog';
 	import { onMount, tick } from 'svelte';
 	import { goto } from '$app/navigation';
 	import HelpBubble from '$lib/components/search/HelpBubble.svelte';
@@ -389,6 +390,7 @@
 	});
 
 	const authorOptions = $derived(authorOptionItems);
+	const traditionalAuthorOptions = $derived(authorOptions.filter((option) => isPersonAuthor(option.id)));
 	const genreOptions = $derived(genreOptionItems);
 	const stateOptions = $derived(stateOptionItems);
 	const confidenceOptions: TokenOption[] = [
@@ -606,7 +608,7 @@
 
 	const clearFilters = async (event: MouseEvent): Promise<void> => {
 		event.preventDefault();
-		await navigateToUrl('/examen-autorias', { scrollToTable: false });
+		await navigateToUrl(localizePath('/examen-autorias', data.locale), { scrollToTable: false });
 	};
 
 	const introAuthorLinkClass = 'font-semibold text-brand-blue-dark no-underline hover:underline';
@@ -803,7 +805,7 @@
 												name="autor_trad_ids"
 												label="Atribución tradicional"
 												placeholder="Escribe y selecciona autores"
-												options={authorOptions}
+												options={traditionalAuthorOptions}
 												preserveOptions
 												selectedIds={selectedTradAuthors}
 												helpText="Autores propuestos desde la tradición filológica. Puedes seleccionar varios."
@@ -928,7 +930,7 @@
 											<input
 												id="filtro-fecha-desde"
 												name="desde"
-												type="date"
+												type="month"
 												class="h-[42px] rounded-[10px] border border-border bg-white px-3 text-[15px] text-text-main transition focus:border-brand-blue/35 focus:shadow-[0_0_0_3px_rgba(13,63,145,0.1)] focus:outline-none"
 												bind:value={dateFrom}
 											/>
@@ -946,7 +948,7 @@
 											<input
 												id="filtro-fecha-hasta"
 												name="hasta"
-												type="date"
+												type="month"
 												class="h-[42px] rounded-[10px] border border-border bg-white px-3 text-[15px] text-text-main transition focus:border-brand-blue/35 focus:shadow-[0_0_0_3px_rgba(13,63,145,0.1)] focus:outline-none"
 												bind:value={dateTo}
 											/>

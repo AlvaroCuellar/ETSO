@@ -12,6 +12,8 @@ import { REPORT_SLUG_PREFIX } from '$lib/utils/report-slug';
 import { buildAuthorWorkPublicIdsByAuthor, type AuthorWorkPublicIds } from '$lib/domain/author-work-public-ids';
 import {
 	UNRESOLVED_AUTHOR_ID,
+	ANALYSIS_STATUS_AUTHOR_IDS,
+	isPersonAuthor,
 	ambitos,
 	formatConfidence,
 	inferWorkAuthorshipType,
@@ -282,6 +284,7 @@ const optionalPublicAssetUrl = (relativePath: string | null | undefined): string
 };
 
 interface AuthorRow {
+	has_authorship_exam?: number;
 	id: string;
 	public_id: number | null;
 	nombre: string;
@@ -671,8 +674,22 @@ const toCatalogAuthors = (rows: AuthorRow[]): CatalogAuthor[] =>
 		id: row.id,
 		publicId: row.public_id === null || row.public_id === undefined ? null : Number(row.public_id),
 		name: row.nombre,
+		hasAuthorshipExam: isPersonAuthor(row.id) && Number(row.has_authorship_exam) === 1,
 		nameVariants: splitVariants(row.variaciones_nombre)
 	}));
+
+const authorExamSelect = `EXISTS (
+ SELECT 1 FROM attribution_members em
+ JOIN attribution_groups eg ON eg.id = em.attribution_group_id
+ JOIN attribution_sets es ON es.id = eg.attribution_set_id
+ JOIN works ew ON ew.id = es.work_id
+ WHERE em.author_id = authors.id AND ew.examen_autorias = 1
+ AND es.attribution_type IN ('tradicional', 'estilometria')
+ AND LOWER(COALESCE(es.raw_expression, '')) NOT LIKE '%${UNRESOLVED_AUTHOR_ID}%'
+ AND NOT EXISTS (SELECT 1 FROM attribution_groups ug
+ JOIN attribution_members um ON um.attribution_group_id = ug.id
+ WHERE ug.attribution_set_id = es.id AND um.author_id = '${UNRESOLVED_AUTHOR_ID}')
+) AS has_authorship_exam`;
 
 const loadAuthorsByIds = async (authorIds: Iterable<string>): Promise<Map<string, CatalogAuthor>> => {
 	const ids = Array.from(new Set(Array.from(authorIds).filter((id) => id && id !== UNRESOLVED_AUTHOR_ID)));
@@ -680,7 +697,7 @@ const loadAuthorsByIds = async (authorIds: Iterable<string>): Promise<Map<string
 	const publicIdSelect = await getAuthorPublicIdSelect();
 	const variantsSelect = await getAuthorVariantsSelect();
 	const rows = await getRows<AuthorRow>(
-		`SELECT id, ${publicIdSelect}, nombre, ${variantsSelect}
+		`SELECT id, ${publicIdSelect}, nombre, ${variantsSelect}, ${authorExamSelect}
 		 FROM authors
 		 WHERE id IN (${createPlaceholders(ids)})`,
 		ids
@@ -733,7 +750,8 @@ const normalizeAttributionRows = (
 						authorId: member.authorId,
 						authorPublicId: memberPublicIdFromId(member.authorId, authorById),
 						authorName: memberNameFromId(member.authorId, authorById),
-						confidence: normalizeConfidence(member.confidence)
+						hasAuthorshipExam: authorById.get(member.authorId)?.hasAuthorshipExam === true,
+						confidence: member.authorId === 'no_analizada' ? undefined : normalizeConfidence(member.confidence)
 					}));
 				return { members };
 			})
@@ -1004,7 +1022,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 	const hasAuthorPublicIdColumn = authorsTableColumns.has('public_id');
 	const hasAuthorVariantsColumn = authorsTableColumns.has('variaciones_nombre');
 	const authorRows = await getRows<AuthorRow>(
-		`SELECT id, ${hasAuthorPublicIdColumn ? 'public_id' : 'NULL AS public_id'}, nombre, ${hasAuthorVariantsColumn ? 'variaciones_nombre' : 'NULL AS variaciones_nombre'}
+		`SELECT id, ${hasAuthorPublicIdColumn ? 'public_id' : 'NULL AS public_id'}, nombre, ${hasAuthorVariantsColumn ? 'variaciones_nombre' : 'NULL AS variaciones_nombre'}, ${authorExamSelect}
 		 FROM authors
 		 ORDER BY nombre COLLATE NOCASE`
 	);
@@ -1013,6 +1031,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 		id: row.id,
 		publicId: row.public_id === null || row.public_id === undefined ? null : Number(row.public_id),
 		name: row.nombre,
+		hasAuthorshipExam: isPersonAuthor(row.id) && Number(row.has_authorship_exam) === 1,
 		nameVariants: splitVariants(row.variaciones_nombre)
 	}));
 	const authorById = new Map(authors.map((author) => [author.id, author] as const));
@@ -1080,7 +1099,8 @@ const createSnapshot = async (): Promise<Snapshot> => {
 						authorId: member.authorId,
 						authorPublicId: memberPublicIdFromId(member.authorId, authorById),
 						authorName: memberNameFromId(member.authorId, authorById),
-						confidence: normalizeConfidence(member.confidence)
+						hasAuthorshipExam: authorById.get(member.authorId)?.hasAuthorshipExam === true,
+						confidence: member.authorId === 'no_analizada' ? undefined : normalizeConfidence(member.confidence)
 					}));
 				return { members };
 			})
@@ -1487,10 +1507,10 @@ export const getAuthorshipExamAuthors = async (): Promise<CatalogAuthor[]> => {
 
 	for (const work of getAuthorshipExamWorksFromSnapshot(snapshot)) {
 		for (const authorId of collectAuthorIds(work.traditionalAttribution)) {
-			if (authorId !== UNRESOLVED_AUTHOR_ID) authorIds.add(authorId);
+			if (isPersonAuthor(authorId)) authorIds.add(authorId);
 		}
 		for (const authorId of collectAuthorIds(work.stylometryAttribution)) {
-			if (authorId !== UNRESOLVED_AUTHOR_ID) authorIds.add(authorId);
+			if (isPersonAuthor(authorId)) authorIds.add(authorId);
 		}
 	}
 
@@ -1768,7 +1788,7 @@ const stylometryAuthorCountSql = `(
 	FROM work_author_index wai
 	WHERE wai.work_id = w.id
 		AND wai.attribution_type = 'estilometria'
-		AND wai.author_id <> '${UNRESOLVED_AUTHOR_ID}'
+		AND wai.author_id NOT IN (${ANALYSIS_STATUS_AUTHOR_IDS.map((id) => `'${id}'`).join(', ')})
 )`;
 
 const traditionalAuthorCountSql = `(
@@ -1776,7 +1796,7 @@ const traditionalAuthorCountSql = `(
 	FROM work_author_index wai
 	WHERE wai.work_id = w.id
 		AND wai.attribution_type = 'tradicional'
-		AND wai.author_id <> '${UNRESOLVED_AUTHOR_ID}'
+		AND wai.author_id NOT IN (${ANALYSIS_STATUS_AUTHOR_IDS.map((id) => `'${id}'`).join(', ')})
 )`;
 
 const stylometryUnresolvedSql = `EXISTS (
@@ -1848,17 +1868,31 @@ const addDateRangeFilter = (conditions: string[], args: SqlArg[], filters: Exame
 	}
 };
 
+const normalizeTitleSql = (expression: string): string => {
+	// SQLite's LOWER/NOCASE only fold ASCII; normalize the Spanish diacritics explicitly.
+	const replacements: [string, string][] = [
+		['á', 'a'], ['é', 'e'], ['í', 'i'], ['ó', 'o'], ['ú', 'u'],
+		['ü', 'u'], ['ñ', 'n'], ['ç', 'c']
+	];
+	return replacements.reduce(
+		(sql, [accented, plain]) => `REPLACE(REPLACE(${sql}, '${accented}', '${plain}'), '${accented.toUpperCase()}', '${plain}')`,
+		`LOWER(COALESCE(${expression}, ''))`
+	);
+};
+
+const escapeSqlLikeLiteral = (value: string): string => value.replace(/[\\%_]/g, '\\$&');
+
 const buildExamenWhereClause = async (filters: ExamenWorksFilters): Promise<SqlWhereClause> => {
 	const conditions = ['w.examen_autorias = 1'];
 	const args: SqlArg[] = [];
-	const normalizedTitle = filters.titulo.trim();
+	const normalizedTitle = normalizeText(filters.titulo);
 
 	if (normalizedTitle) {
 		const titleFilterExpressions = await getTitleSearchFilterExpressions();
-		const likeValue = `%${normalizedTitle}%`;
+		const likeValue = `%${escapeSqlLikeLiteral(normalizedTitle)}%`;
 		conditions.push(
 			`(${titleFilterExpressions
-				.map((expression) => `COALESCE(${expression}, '') LIKE ? COLLATE NOCASE`)
+				.map((expression) => `${normalizeTitleSql(expression)} LIKE ? ESCAPE '\\'`)
 				.join(' OR ')})`
 		);
 		args.push(...titleFilterExpressions.map(() => likeValue));
@@ -2056,13 +2090,13 @@ export const getExamenCatalogStats = async (): Promise<CatalogStats> => {
 			 FROM work_author_index wai
 			 JOIN works w ON w.id = wai.work_id
 			 WHERE w.examen_autorias = 1
-				AND wai.author_id <> ?`,
-			[UNRESOLVED_AUTHOR_ID]
+				AND wai.author_id NOT IN (${createPlaceholders(ANALYSIS_STATUS_AUTHOR_IDS)})`,
+			[...ANALYSIS_STATUS_AUTHOR_IDS]
 		),
 		getRows<{ total: number }>(
 			`SELECT COUNT(*) AS total
 			 FROM works
-			 WHERE resultado1 IS NOT NULL OR resultado2 IS NOT NULL`
+			 WHERE examen_autorias = 1 AND (resultado1 IS NOT NULL OR resultado2 IS NOT NULL)`
 		),
 		getRows<{ total: number }>('SELECT COUNT(*) AS total FROM works WHERE biteso = 1')
 	]);
@@ -2084,7 +2118,7 @@ export const getCatalogStats = async (): Promise<CatalogStats> => {
 
 	return {
 		works: snapshot.works.length,
-		authors: snapshot.authors.filter((author) => author.id !== UNRESOLVED_AUTHOR_ID).length,
+		authors: snapshot.authors.filter((author) => isPersonAuthor(author.id)).length,
 		informes,
 		bitesoTexts
 	};

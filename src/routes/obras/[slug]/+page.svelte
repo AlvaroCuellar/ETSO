@@ -120,8 +120,11 @@
 	<Breadcrumbs
 		items={[
 			{ label: 'Inicio', href: '/' },
-			{ label: 'Examen de autorías', href: '/examen-autorias' },
-			{ label: 'Obras', href: '/examen-autorias/obras' },
+			{
+				label: data.work.inAuthorshipExam ? 'Examen de autorías' : 'TEXORO',
+				href: data.work.inAuthorshipExam ? '/examen-autorias' : '/texoro'
+			},
+			{ label: 'Obras', href: data.work.inAuthorshipExam ? '/examen-autorias/obras' : '/texoro/obras' },
 			{ label: displayWorkTitle, preserveLabel: true }
 		]}
 	/>
@@ -163,15 +166,19 @@
 										{#each data.work.traditionalAttribution.groups as group, groupIndex}
 											<div class="flex flex-wrap items-center gap-3">
 												{#each group.members as member, memberIndex}
-													<a
-														href={`/autores/${member.authorId}`}
-														class="inline-flex items-baseline gap-1 font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline"
-													>
-														<span data-i18n-skip={member.authorId !== 'desconocido' || undefined}>{member.authorName}</span>
-														<span class="hidden flex-none translate-y-[2px] text-text-soft max-md:inline-flex" aria-hidden="true">
-															<ExternalLink class="h-3 w-3" />
-														</span>
-													</a>
+													{#if member.hasAuthorshipExam}
+														<a
+															href={`/autores/${member.authorId}`}
+															class="inline-flex items-baseline gap-1 font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline"
+														>
+															<span data-i18n-skip={member.authorId !== 'desconocido' || undefined}>{member.authorName}</span>
+															<span class="hidden flex-none translate-y-[2px] text-text-soft max-md:inline-flex" aria-hidden="true">
+																<ExternalLink class="h-3 w-3" />
+															</span>
+														</a>
+													{:else}
+														<span class="font-medium" data-i18n-skip={member.authorId !== 'desconocido' || undefined}>{member.authorName}</span>
+													{/if}
 													{#if memberIndex < group.members.length - 1}
 														<span
 															class="inline-flex rounded bg-surface-accent-purple px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-text-accent-purple lowercase"
@@ -212,15 +219,19 @@
 										{#each data.work.stylometryAttribution.groups as group, groupIndex}
 											<div class="flex flex-wrap items-center gap-3">
 												{#each group.members as member, memberIndex}
-													<a
-														href={`/autores/${member.authorId}`}
-														class="inline-flex items-baseline gap-1 font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline"
-													>
-														<span data-i18n-skip={member.authorId !== 'desconocido' || undefined}>{member.authorName}</span>
-														<span class="hidden flex-none translate-y-[2px] text-text-soft max-md:inline-flex" aria-hidden="true">
-															<ExternalLink class="h-3 w-3" />
-														</span>
-													</a>
+													{#if member.hasAuthorshipExam}
+														<a
+															href={`/autores/${member.authorId}`}
+															class="inline-flex items-baseline gap-1 font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline"
+														>
+															<span data-i18n-skip={member.authorId !== 'desconocido' || undefined}>{member.authorName}</span>
+															<span class="hidden flex-none translate-y-[2px] text-text-soft max-md:inline-flex" aria-hidden="true">
+																<ExternalLink class="h-3 w-3" />
+															</span>
+														</a>
+													{:else}
+														<span class="font-medium" data-i18n-skip={member.authorId !== 'desconocido' || undefined}>{member.authorName}</span>
+													{/if}
 													{#if member.confidence}
 														<span
 															class={`inline-flex rounded-full px-[0.55rem] py-[0.24rem] text-[0.72rem] font-bold tracking-[0.02em] uppercase ${confidenceClass(member.confidence)}`}
@@ -331,6 +342,7 @@
 								<dd class="m-0 text-[0.96rem] text-text-main">{data.work.addedOn}</dd>
 							</div>
 
+							{#if asodatUrl || data.work.inAuthorshipExam}
 							<div class="flex flex-col gap-[0.45rem] border-b border-border py-[0.9rem] first:pt-0 last:border-b-0 last:pb-0">
 								<dt
 									class="m-0 flex items-center gap-[0.35rem] text-[0.72rem] font-bold tracking-[0.05em] text-text-soft uppercase"
@@ -361,6 +373,7 @@
 									{/if}
 								</dd>
 							</div>
+							{/if}
 					</dl>
 				</InfoCard>
 			</aside>

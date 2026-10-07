@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import type { AttributionSet, CatalogWork } from '../src/lib/domain/catalog.ts';
+import { inferWorkAuthorshipType, type AttributionSet, type CatalogWork } from '../src/lib/domain/catalog.ts';
 import {
 	AUTHOR_WORK_PUBLIC_ID_FIELDS,
 	buildAuthorWorkPublicIdsByAuthor
@@ -203,4 +203,28 @@ test('new catalogues produce fresh associations without mutating previous result
 	assert.deepEqual(first, firstBefore);
 	assert.deepEqual(first.get('stylometry-author')?.stylometryWorkPublicIds, [100001]);
 	assert.deepEqual(second.get('stylometry-author')?.stylometryWorkPublicIds, [100002]);
+});
+
+
+test('analysis statuses use traditional authorship type', () => {
+ for (const status of ['no_es_posible', 'pendiente_profundidad', 'no_analizada', 'pendiente']) {
+  assert.equal(inferWorkAuthorshipType(work({
+   traditionalAttribution: attribution('author-a', 'author-b', 'author-c'),
+   stylometryAttribution: attribution(status)
+  })), 'colaboracion');
+  assert.equal(inferWorkAuthorshipType(work({
+   traditionalAttribution: attribution('author-a'),
+   stylometryAttribution: attribution(status)
+  })), 'unica');
+ }
+});
+
+test('concrete stylometry and unresolved results retain their precedence', () => {
+ assert.equal(inferWorkAuthorshipType(work({
+  traditionalAttribution: attribution('author-a', 'author-b'),
+  stylometryAttribution: attribution('author-c')
+ })), 'unica');
+ assert.equal(inferWorkAuthorshipType(work({
+  stylometryAttribution: { groups: [], connector: 'and', unresolved: true }
+ })), 'desconocida');
 });

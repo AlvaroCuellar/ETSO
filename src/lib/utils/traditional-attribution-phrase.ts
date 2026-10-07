@@ -4,11 +4,13 @@ export interface AttributionPhrasePart {
 	kind: 'text' | 'author';
 	value: string;
 	authorId?: string;
+	hasAuthorshipExam?: boolean;
 }
 
 interface AuthorReference {
 	authorId: string;
 	authorName: string;
+	hasAuthorshipExam?: boolean;
 }
 
 type AuthorGroup = AuthorReference[];
@@ -53,7 +55,8 @@ const formatAuthorListParts = (authors: AuthorReference[], connector: string): A
 		parts.push({
 			kind: 'author',
 			value: author.authorName,
-			authorId: author.authorId
+			authorId: author.authorId,
+			hasAuthorshipExam: author.hasAuthorshipExam
 		});
 	}
 	return parts;
@@ -65,7 +68,8 @@ const attributionGroups = (set: AttributionSet): AuthorGroup[] =>
 			group.members
 				.map((member) => ({
 					authorId: member.authorId,
-					authorName: member.authorName.trim()
+					authorName: member.authorName.trim(),
+					hasAuthorshipExam: member.hasAuthorshipExam
 				}))
 				.filter((member) => member.authorName.length > 0)
 		)
@@ -125,7 +129,8 @@ export const buildTraditionalAttributionParts = (
 			{
 				kind: 'author',
 				value: translate('desconocida'),
-				authorId: authors[0].authorId
+				authorId: authors[0].authorId,
+				hasAuthorshipExam: authors[0].hasAuthorshipExam
 			},
 			...(ingeniosLabel ? [{ kind: 'text' as const, value: ` (${translate(ingeniosLabel)})` }] : []),
 			...(includePhrasePrefix ? [{ kind: 'text' as const, value: '.' }] : [])

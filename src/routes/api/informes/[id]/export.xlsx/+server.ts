@@ -5,9 +5,12 @@ import {
 	getInformeById,
 	getInformeByReportSlug,
 	getInformeByWorkSlug,
-	getInformeDistanceRows
+	getInformeDistanceRows,
+	getWorkById,
+	getWorkByPublicId
 } from '$lib/server/catalog-runtime';
 import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
+import { buildCanonicalUrl } from '$lib/seo';
 
 import type { RequestHandler } from './$types';
 
@@ -23,9 +26,12 @@ const sheetNames: Record<Ambito, string> = {
 };
 
 const resolveInforme = async (id: string) => {
+	const publicId = /^\d+$/.test(id) ? Number.parseInt(id, 10) : null;
+	const publicIdWork = publicId === null ? undefined : await getWorkByPublicId(publicId);
 	const informe =
 		(await getInformeByReportSlug(id)) ??
 		(await getInformeByWorkSlug(id)) ??
+		(publicIdWork ? await getInformeById(publicIdWork.id) : undefined) ??
 		(await getInformeById(id));
 	if (!informe) throw error(404, 'Informe no encontrado');
 	return informe;
@@ -68,6 +74,7 @@ const addDistanceSheet = (
 	const worksheet = workbook.addWorksheet(sheetNames[ambito]);
 	worksheet.columns = [
 		{ header: 'Posición', key: 'position', width: 10 },
+		{ header: 'Distancia', key: 'distance', width: 18, style: { numFmt: '0.000000' } },
 		{ header: 'Título', key: 'title', width: 42 },
 		{ header: 'Atribución tradicional', key: 'traditionalAttribution', width: 42 },
 		{ header: 'Atribución estilometría', key: 'stylometryAttribution', width: 42 },
@@ -80,6 +87,7 @@ const addDistanceSheet = (
 		const work = row.relatedWork;
 		worksheet.addRow({
 			position: row.rank,
+			distance: row.distancia,
 			title: formatDisplayWorkTitle(work.title),
 			traditionalAttribution: formatAttribution(work.traditionalAttribution),
 			stylometryAttribution: formatAttribution(work.stylometryAttribution),
@@ -107,6 +115,21 @@ export const GET: RequestHandler = async ({ params }) => {
 		workbook.created = new Date();
 		workbook.modified = new Date();
 		workbook.properties.date1904 = false;
+		const work = await getWorkById(informe.workId);
+		if (!work) throw error(500, 'Obra del informe no disponible');
+		const metadata = workbook.addWorksheet('Informe');
+		metadata.columns = [
+			{ header: 'Campo', key: 'field', width: 28 },
+			{ header: 'Valor', key: 'value', width: 85 }
+		];
+		metadata.addRows([
+			{ field: 'Obra analizada', value: formatDisplayWorkTitle(work.title) },
+			{ field: 'Identificador público', value: work.publicId ?? '' },
+			{ field: 'Informe', value: buildCanonicalUrl(`/informes/${informe.slug}`) },
+			{ field: 'Fecha de exportación', value: workbook.created.toISOString() }
+		]);
+		addHeaderStyle(metadata);
+		applyReadableCells(metadata);
 
 		for (const [ambito, rows] of distanceEntries) {
 			if (ambito !== 'obracompleta' && rows.length === 0) continue;

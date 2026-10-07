@@ -12,6 +12,7 @@ export interface AttributionMember {
 	authorId: string;
 	authorPublicId?: number | null;
 	authorName: string;
+	hasAuthorshipExam?: boolean;
 	confidence?: Confidence;
 }
 
@@ -62,6 +63,7 @@ export interface CatalogWork {
 }
 
 export interface CatalogAuthor {
+	hasAuthorshipExam?: boolean;
 	id: string;
 	publicId: number | null;
 	name: string;
@@ -432,6 +434,14 @@ export const ambitoLabels: Record<Ambito, string> = {
 
 export const UNRESOLVED_AUTHOR_ID = 'no_apunta_a_ningun_autor';
 
+export const ANALYSIS_STATUS_AUTHOR_IDS = [
+	UNRESOLVED_AUTHOR_ID, 'no_analizada', 'no_es_posible', 'pendiente_profundidad', 'pendiente'
+] as const;
+
+export const isPersonAuthor = (authorId: string): boolean =>
+	!ANALYSIS_STATUS_AUTHOR_IDS.some((id) => id === authorId);
+
+
 export const normalizeConfidence = (raw?: string | null): Confidence | undefined => {
 	if (!raw) return undefined;
 	const value = raw.toLowerCase().trim();
@@ -475,7 +485,7 @@ export const inferWorkAuthorshipType = (work: CatalogWork): WorkAuthorshipType =
 		work.stylometryAttribution.groups.flatMap((group) =>
 			group.members
 				.map((member) => member.authorId)
-				.filter((authorId) => authorId && authorId !== UNRESOLVED_AUTHOR_ID)
+				.filter((authorId) => authorId && isPersonAuthor(authorId))
 		)
 	);
 	if (stylometryAuthors.size > 0) {
@@ -486,7 +496,7 @@ export const inferWorkAuthorshipType = (work: CatalogWork): WorkAuthorshipType =
 		work.traditionalAttribution.groups.flatMap((group) =>
 			group.members
 				.map((member) => member.authorId)
-				.filter((authorId) => authorId && authorId !== UNRESOLVED_AUTHOR_ID)
+				.filter((authorId) => authorId && isPersonAuthor(authorId))
 		)
 	);
 	if (traditionalAuthors.size === 0) return 'desconocida';

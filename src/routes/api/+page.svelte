@@ -662,7 +662,7 @@
 				['key', 'Clave textual usada en las URLs del autor.'],
 				['name', 'Nombre del autor.'],
 				['nameVariants', 'Variantes del nombre del autor.'],
-				['resources', 'Enlaces a la ficha pública del autor: author es la ruta y url, la URL absoluta.']
+				['resources', 'Enlaces a la ficha del autor: author es la ruta y url, la URL absoluta. Ambos son null si no tiene ficha en Examen de autorías.']
 			],
 			categoriesHeading: 'Obras por autor',
 			associationFields: [
@@ -696,7 +696,7 @@
 				['key', 'Textual key used in author URLs.'],
 				['name', 'Author name.'],
 				['nameVariants', 'Variants of the author’s name.'],
-				['resources', 'Links to the public author profile: author is the path and url is the absolute URL.']
+				['resources', 'Author profile links: author is the path and url is the absolute URL. Both are null without a profile in the authorship examination.']
 			],
 			categoriesHeading: 'Works by author',
 			associationFields: [
@@ -730,7 +730,7 @@
 				['key', 'Clé textuelle utilisée dans les URL de l’auteur.'],
 				['name', 'Nom de l’auteur.'],
 				['nameVariants', 'Variantes du nom de l’auteur.'],
-				['resources', 'Liens vers la fiche publique de l’auteur : author est le chemin et url, l’URL absolue.']
+				['resources', 'Liens vers la fiche de l’auteur : author est le chemin et url, l’URL absolue. Les deux valent null sans fiche dans l’examen d’autorie.']
 			],
 			categoriesHeading: 'Œuvres par auteur',
 			associationFields: [
@@ -764,7 +764,7 @@
 				['key', 'Chave textual usada nas URLs do autor.'],
 				['name', 'Nome do autor.'],
 				['nameVariants', 'Variantes do nome do autor.'],
-				['resources', 'Ligações para a ficha pública do autor: author é o caminho e url é a URL absoluta.']
+				['resources', 'Ligações para a ficha do autor: author é o caminho e url é a URL absoluta. Ambos são null se não existir ficha no exame de autorias.']
 			],
 			categoriesHeading: 'Obras por autor',
 			associationFields: [
@@ -798,7 +798,7 @@
 				['key', 'Chiave testuale usata negli URL dell’autore.'],
 				['name', 'Nome dell’autore.'],
 				['nameVariants', 'Varianti del nome dell’autore.'],
-				['resources', 'Collegamenti alla scheda pubblica dell’autore: author è il percorso e url è l’URL assoluto.']
+				['resources', 'Collegamenti alla scheda dell’autore: author è il percorso e url è l’URL assoluto. Entrambi sono null senza una scheda nell’esame delle attribuzioni.']
 			],
 			categoriesHeading: 'Opere per autore',
 			associationFields: [
@@ -832,7 +832,7 @@
 				['key', 'In Autoren-URLs verwendeter Textschlüssel.'],
 				['name', 'Name des Autors.'],
 				['nameVariants', 'Varianten des Autorennamens.'],
-				['resources', 'Links zum öffentlichen Autorenprofil: author ist der Pfad und url die absolute URL.']
+				['resources', 'Links zum Autorenprofil: author ist der Pfad und url die absolute URL. Beide sind null, wenn kein Profil in der Autorschaftsprüfung existiert.']
 			],
 			categoriesHeading: 'Werke nach Autor',
 			associationFields: [
@@ -866,7 +866,7 @@
 				['key', '作者 URL 中使用的文本键。'],
 				['name', '作者姓名。'],
 				['nameVariants', '作者姓名的变体。'],
-				['resources', '作者公共页面的链接：author 为路径，url 为绝对 URL。']
+				['resources', '作者页面的链接：author 为路径，url 为绝对 URL。如果作者没有作者归属分析页面，两者均为 null。']
 			],
 			categoriesHeading: '按作者分类的作品',
 			associationFields: [
@@ -900,7 +900,7 @@
 				['key', '著者の URL に使用されるテキストキー。'],
 				['name', '著者名。'],
 				['nameVariants', '著者名の異表記。'],
-				['resources', '著者の公開ページへのリンク。author はパス、url は絶対 URL です。']
+				['resources', '著者ページへのリンク。author はパス、url は絶対 URL です。著者帰属分析のページがない場合、両方とも null です。']
 			],
 			categoriesHeading: '著者ごとの作品',
 			associationFields: [
@@ -934,7 +934,7 @@
 				['key', '저자 URL에서 사용하는 텍스트 키입니다.'],
 				['name', '저자 이름입니다.'],
 				['nameVariants', '저자 이름의 다른 표기입니다.'],
-				['resources', '저자의 공개 페이지 링크입니다. author는 경로이며 url은 절대 URL입니다.']
+				['resources', '저자 페이지 링크입니다. author는 경로이며 url은 절대 URL입니다. 저자 귀속 분석 페이지가 없으면 둘 다 null입니다.']
 			],
 			categoriesHeading: '저자별 작품',
 			associationFields: [
@@ -968,7 +968,7 @@
 				['key', 'Текстовый ключ, используемый в URL автора.'],
 				['name', 'Имя автора.'],
 				['nameVariants', 'Варианты имени автора.'],
-				['resources', 'Ссылки на публичную страницу автора: author — путь, url — абсолютный URL.']
+				['resources', 'Ссылки на страницу автора: author — путь, url — абсолютный URL. Оба значения равны null, если страницы в разделе проверки авторства нет.']
 			],
 			categoriesHeading: 'Произведения по авторам',
 			associationFields: [
@@ -1002,7 +1002,7 @@
 				['key', 'المفتاح النصي المستخدم في روابط المؤلف.'],
 				['name', 'اسم المؤلف.'],
 				['nameVariants', 'الصيغ الأخرى لاسم المؤلف.'],
-				['resources', 'روابط الصفحة العامة للمؤلف: author هو المسار وurl هو الرابط المطلق.']
+				['resources', 'روابط صفحة المؤلف: author هو المسار وurl هو الرابط المطلق. كلاهما null إذا لم تكن له صفحة في فحص نسبة التأليف.']
 			],
 			categoriesHeading: 'الأعمال حسب المؤلف',
 			associationFields: [

@@ -1,5 +1,5 @@
 import {
-	UNRESOLVED_AUTHOR_ID,
+	isPersonAuthor,
 	type AttributionSet,
 	type CatalogWork
 } from '$lib/domain/catalog';
@@ -19,7 +19,7 @@ const collectAuthorIds = (set: AttributionSet, authorIds: Set<string>): void => 
 
 	for (const group of set.groups) {
 		for (const member of group.members) {
-			if (!member.authorId || member.authorId === UNRESOLVED_AUTHOR_ID) continue;
+			if (!member.authorId || !isPersonAuthor(member.authorId)) continue;
 			authorIds.add(member.authorId);
 		}
 	}

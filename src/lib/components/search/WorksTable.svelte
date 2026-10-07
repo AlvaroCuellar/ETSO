@@ -361,7 +361,7 @@
 			{#each row.work.traditionalAttribution.groups as group, groupIndex}
 				<span class="autor-group">
 					{#each group.members as member, memberIndex}
-						{#if canLinkAuthor(member.authorId)}
+						{#if canLinkAuthor(member.authorId) && member.hasAuthorshipExam}
 							<a
 								href={`/autores/${member.authorId}`}
 								class="autor-name inline font-normal text-text-main visited:text-text-main no-underline hover:underline focus:underline focus-visible:underline"
@@ -401,7 +401,7 @@
 			{#each row.work.stylometryAttribution.groups as group, groupIndex}
 				<span class="autor-group">
 					{#each group.members as member, memberIndex}
-						{#if canLinkAuthor(member.authorId)}
+						{#if canLinkAuthor(member.authorId) && member.hasAuthorshipExam}
 							<a
 								href={`/autores/${member.authorId}`}
 								class="autor-name inline font-normal text-text-main visited:text-text-main no-underline hover:underline focus:underline focus-visible:underline"

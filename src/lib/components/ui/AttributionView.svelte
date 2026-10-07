@@ -23,7 +23,7 @@
 		{#each set.groups as group, groupIndex}
 			<span class="attribution-group">
 				{#each group.members as member, memberIndex}
-					{#if linkAuthors}
+					{#if linkAuthors && member.hasAuthorshipExam}
 						<a href={`/autores/${member.authorId}`} data-i18n-skip={member.authorId !== 'desconocido' || undefined}>{member.authorName}</a>
 					{:else}
 						<span data-i18n-skip={member.authorId !== 'desconocido' || undefined}>{member.authorName}</span>

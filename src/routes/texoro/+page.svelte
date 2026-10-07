@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { isPersonAuthor } from '$lib/domain/catalog';
 	import { onMount, tick } from 'svelte';
 	import { replaceState } from '$app/navigation';
 	import { page } from '$app/state';
@@ -533,6 +534,7 @@
 	let loadedPreserveEnieForHighlight = $state<boolean | null>(null);
 	const preserveEnieForHighlight = $derived(loadedPreserveEnieForHighlight ?? statsPayload?.preserveEnie ?? true);
 	let occurrenceModal = $state<OccurrenceModalState | null>(null);
+	let occurrenceModalOpener = $state<HTMLElement | null>(null);
 	let openTextDropdownDocId = $state<number | null>(null);
 	let occurrencePreviews = $state<Map<number, ResultOccurrencePreview>>(new Map());
 	let previewLoadsByDocId = $state<Map<number, Promise<void>>>(new Map());
@@ -706,6 +708,7 @@
 	};
 
 	const authorOptions = $derived(authorOptionItems);
+	const traditionalAuthorOptions = $derived(authorOptions.filter((option) => isPersonAuthor(option.id)));
 	const titleOptions = $derived(titleOptionItems);
 	const genreOptions = $derived(genreOptionItems);
 	const stateOptions = $derived(stateOptionItems);
@@ -1625,6 +1628,7 @@
 		resultSort = 'occurrences';
 		resultSortDirection = 'desc';
 		syncResultSortUrl();
+		isSearching = false;
 		isPreparingResults = false;
 		searchError = '';
 		exportError = '';
@@ -2533,8 +2537,10 @@
 
 	const openOccurrenceModal = async (
 		result: SearchResult,
-		assignment: MatchAssignment
+		assignment: MatchAssignment,
+		opener: HTMLElement
 	): Promise<void> => {
+		occurrenceModalOpener = opener;
 		const key = occurrenceDetailsKey(result, assignment);
 		const cached = occurrenceDetailsCache.get(key) ?? null;
 		occurrenceError = '';
@@ -2574,6 +2580,58 @@
 
 	const closeInfoModal = (): void => {
 		infoModalOpen = false;
+	};
+
+	const accessibleDialog = (node: HTMLElement, options: { close: () => void; returnFocus?: HTMLElement | null }) => {
+		const { close } = options;
+		const previousFocus = options.returnFocus ?? (document.activeElement instanceof HTMLElement ? document.activeElement : null);
+		const focusableElements = (): HTMLElement[] =>
+			Array.from(node.querySelectorAll<HTMLElement>(
+				'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+			)).filter((element) => element.tabIndex >= 0 && element.getClientRects().length > 0);
+		const focusInitial = (): void => {
+			(node.querySelector<HTMLElement>('button[aria-label]') ?? focusableElements()[0] ?? node).focus();
+		};
+		const onKeydown = (event: KeyboardEvent): void => {
+			if (event.key === 'Escape') {
+				event.preventDefault();
+				event.stopImmediatePropagation();
+				close();
+				return;
+			}
+			if (event.key !== 'Tab') return;
+			const elements = focusableElements();
+			const first = elements[0];
+			const last = elements.at(-1);
+			if (!first || !last) {
+				event.preventDefault();
+				node.focus();
+			} else if (!node.contains(document.activeElement) || document.activeElement === node) {
+				event.preventDefault();
+				(event.shiftKey ? last : first).focus();
+			} else if (event.shiftKey && document.activeElement === first) {
+				event.preventDefault();
+				last.focus();
+			} else if (!event.shiftKey && document.activeElement === last) {
+				event.preventDefault();
+				first.focus();
+			}
+		};
+		const onFocusin = (event: FocusEvent): void => {
+			if (event.target instanceof Node && !node.contains(event.target)) focusInitial();
+		};
+		let active = true;
+		void tick().then(() => { if (active) focusInitial(); });
+		document.addEventListener('keydown', onKeydown, true);
+		document.addEventListener('focusin', onFocusin);
+		return {
+			destroy() {
+				active = false;
+				document.removeEventListener('keydown', onKeydown, true);
+				document.removeEventListener('focusin', onFocusin);
+				if (previousFocus?.isConnected) previousFocus.focus();
+			}
+		};
 	};
 
 	$effect(() => {
@@ -2888,6 +2946,7 @@
 				prefetchResultsPage(1, 'top');
 			});
 		} catch (cause) {
+			if (requestId !== searchRequestId) return;
 			submittedTerms = [];
 			lastSubmittedSearch = null;
 			searchError = cause instanceof Error ? cause.message : 'Error ejecutando la búsqueda';
@@ -3476,7 +3535,7 @@
 									name="texoro-traditional-attribution"
 									label="Atribución tradicional"
 									placeholder="Escribe y selecciona autores"
-									options={authorOptions}
+									options={traditionalAuthorOptions}
 									preserveOptions
 									selectedIds={selectedTradAuthors}
 									helpText="Autores propuestos por la tradición filológica."
@@ -4015,7 +4074,7 @@
 												onpointerdown={() => prefetchOccurrenceDetails(result, assignment)}
 												ontouchstart={() => prefetchOccurrenceDetails(result, assignment)}
 												onfocus={() => prefetchOccurrenceDetails(result, assignment)}
-												onclick={() => openOccurrenceModal(result, assignment)}
+												onclick={(event) => openOccurrenceModal(result, assignment, event.currentTarget)}
 												title={`Ver más ocurrencias de ${formatMatchDisplayLabel(assignment.match)}`}
 											>
 												<span class="texoro-more-button__label">Ver más</span>
@@ -4100,6 +4159,7 @@
 			role="dialog"
 			aria-modal="true"
 			aria-label={`Ocurrencias de ${formatMatchDisplayLabel(occurrenceModal.assignment.match)}`}
+			use:accessibleDialog={{ close: closeOccurrenceModal, returnFocus: occurrenceModalOpener }}
 			tabindex="-1"
 		>
 			<div class="relative z-10 grid gap-3 rounded-t-[12px] bg-surface-soft px-4 py-3 sm:gap-4">
@@ -4355,6 +4415,7 @@
 			role="dialog"
 			aria-modal="true"
 			aria-label="Guía de búsqueda en TEXORO"
+			use:accessibleDialog={{ close: closeInfoModal }}
 			tabindex="-1"
 		>
 			<div class="relative bg-surface-soft px-4 py-3">

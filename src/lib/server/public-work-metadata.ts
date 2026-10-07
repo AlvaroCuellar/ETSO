@@ -147,8 +147,7 @@ const serializeAttributionPhrase = (
 					value: part.value,
 					authorId: publicIdByAuthorKey.get(part.authorId) ?? null,
 					authorKey: part.authorId,
-					href: authorHref(part.authorId),
-					url: authorUrl(part.authorId)
+					...(part.hasAuthorshipExam ? { href: authorHref(part.authorId), url: authorUrl(part.authorId) } : {}),
 				}
 			: {
 					kind: part.kind,

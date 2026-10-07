@@ -1,3 +1,4 @@
+import { isPersonAuthor } from '$lib/domain/catalog';
 import { setPublicCatalogCacheHeaders } from '$lib/server/cache-control';
 import { getAllAuthors, getAllWorks } from '$lib/server/catalog-runtime';
 
@@ -32,7 +33,7 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 	setPublicCatalogCacheHeaders(setHeaders);
 	return {
 		authors: authors
-			.filter((author) => worksByTraditionalAuthorId.has(author.id))
+			.filter((author) => isPersonAuthor(author.id) && worksByTraditionalAuthorId.has(author.id))
 			.map((author) => ({
 				id: author.id,
 				name: author.name,

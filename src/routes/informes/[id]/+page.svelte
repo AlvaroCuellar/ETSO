@@ -34,7 +34,7 @@
 
 	let activeAmbito = $state<Ambito>('obracompleta');
 
-	const authorNameById = $derived.by(() => new Map(data.authors.map((author) => [author.id, author.name] as const)));
+	const authorById = $derived.by(() => new Map(data.authors.map((author) => [author.id, author] as const)));
 
 	const availableAmbitos = $derived.by(() =>
 		ambitos.filter((ambito) => (data.distances[ambito] ?? []).length > 0)
@@ -186,13 +186,14 @@
 			}
 
 			const authorId = match[1];
-			const authorName = authorNameById.get(authorId);
+			const author = authorById.get(authorId);
 			parts.push(
-				authorName
+				author
 					? {
 							kind: 'author',
-							value: authorName,
-							authorId
+							value: author.name,
+							authorId,
+							hasAuthorshipExam: author.hasAuthorshipExam
 						}
 					: {
 							kind: 'text',
@@ -328,7 +329,7 @@
 				</dt>
 				<dd class="m-0 text-base leading-[1.55] text-text-main" data-i18n-skip>
 					{#each traditionalAttributionParts as part}
-						{#if part.kind === 'author' && part.authorId}
+						{#if part.kind === 'author' && part.authorId && part.hasAuthorshipExam}
 							<a href={`/autores/${part.authorId}`} class="font-semibold text-brand-blue underline hover:text-brand-blue-dark focus-visible:text-brand-blue-dark">
 								{part.value}
 							</a>
@@ -446,7 +447,7 @@
 				<div class="grid gap-2">
 					<p class="m-0 text-base leading-[1.62] text-text-main" data-i18n-skip>
 						{#each result1Parts as part}
-							{#if part.kind === 'author' && part.authorId}
+							{#if part.kind === 'author' && part.authorId && part.hasAuthorshipExam}
 								<a href={`/autores/${part.authorId}`} class="font-semibold text-text-main underline hover:text-brand-blue-dark focus-visible:text-brand-blue-dark">
 									{part.value}
 								</a>
@@ -463,7 +464,7 @@
 			<div class="grid gap-2">
 				<p class="m-0 text-base leading-[1.72] text-text-main" data-i18n-skip>
 					{#each result2Parts as part}
-						{#if part.kind === 'author' && part.authorId}
+						{#if part.kind === 'author' && part.authorId && part.hasAuthorshipExam}
 							<a href={`/autores/${part.authorId}`} class="font-semibold text-brand-blue underline hover:text-brand-blue-dark focus-visible:text-brand-blue-dark">
 								{part.value}
 							</a>

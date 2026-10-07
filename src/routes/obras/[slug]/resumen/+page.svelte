@@ -274,8 +274,11 @@
 	<Breadcrumbs
 		items={[
 			{ label: 'Inicio', href: '/' },
-			{ label: 'Examen de autorías', href: '/examen-autorias' },
-			{ label: 'Obras', href: '/examen-autorias/obras' },
+			{
+				label: data.work.inAuthorshipExam ? 'Examen de autorías' : 'TEXORO',
+				href: data.work.inAuthorshipExam ? '/examen-autorias' : '/texoro'
+			},
+			{ label: 'Obras', href: data.work.inAuthorshipExam ? '/examen-autorias/obras' : '/texoro/obras' },
 			{ label: displayWorkTitle, href: `/obras/${data.work.slug}`, preserveLabel: true },
 			{ label: 'Resumen automático' }
 		]}

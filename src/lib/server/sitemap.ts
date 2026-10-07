@@ -1,7 +1,7 @@
 import { localizeUrl, SUPPORTED_LOCALES, type Locale } from '$lib/i18n';
 import { SITE_URL } from '$lib/seo';
 import {
-	getAllAuthors,
+	getAuthorshipExamAuthors,
 	getAllWorks,
 	getBitesoWorks,
 	getWorksForSummaryIndex
@@ -57,7 +57,7 @@ export const getSitemapPaths = async (): Promise<string[]> => {
 
 	const [works, authors, bitesoWorks, summaryWorks] = await Promise.all([
 		getAllWorks(),
-		getAllAuthors(),
+		getAuthorshipExamAuthors(),
 		getBitesoWorks(),
 		getWorksForSummaryIndex()
 	]);

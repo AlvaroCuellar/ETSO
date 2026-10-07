@@ -15,7 +15,7 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 			genre: work.genre
 		}))
 		.sort((a, b) => {
-			const titleComparison = a.title.localeCompare(b.title, 'es', { sensitivity: 'base' });
+			const titleComparison = a.title.localeCompare(b.title, 'es', { sensitivity: 'base', ignorePunctuation: true });
 			if (titleComparison !== 0) return titleComparison;
 			return a.slug.localeCompare(b.slug, 'es', { sensitivity: 'base' });
 		});

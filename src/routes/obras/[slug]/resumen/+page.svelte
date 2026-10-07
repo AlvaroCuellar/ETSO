@@ -10,6 +10,7 @@
 	import { DEFAULT_LOCALE, literalTranslations } from '$lib/i18n';
 	import { formatPublicationDate } from '$lib/resource-publication-dates';
 	import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
+	import { formatTraditionalAttributionCompact } from '$lib/utils/traditional-attribution-phrase';
 	import { buildSummaryCorrectionText } from '$lib/utils/summary-correction-text';
 	import Download from 'lucide-svelte/icons/download';
 	import PencilLine from 'lucide-svelte/icons/pencil-line';
@@ -70,6 +71,24 @@
 	const resumenBreveText = $derived(summary.resumenBreve.join(' ').replace(/\s+/g, ' ').trim());
 	const localizeLiteral = (value: string): string =>
 		data.locale === DEFAULT_LOCALE ? value : (literalTranslations[data.locale]?.[value] ?? value);
+	const summaryNotice = $derived.by(() => {
+		const textOrigin = localizeLiteral('(modelo 5.4) a partir del texto disponible. Puede incluir errores y omisiones. Si detectas');
+		return [
+			localizeLiteral('A continuación se ofrece un resumen automático no revisado de la obra, generado con ChatGPT'),
+			data.work.id.startsWith('TEXORO_') ? localizeLiteral('a partir del texto disponible. Puede incluir errores y omisiones. Si detectas') : textOrigin,
+			localizeLiteral('problemas o incoherencias, te agradecemos que contactes con nosotros para incorporar'),
+			localizeLiteral('actualizaciones.')
+		].join(' ');
+	});
+	const summaryAuthor = $derived.by(() => {
+		const attribution = data.work.traditionalAttribution;
+		if (data.work.collectionSize && new Set(attribution.groups.flatMap((group) => group.members.map((member) => member.authorId))).size > 1) {
+			return localizeLiteral('Varios');
+		}
+		return formatTraditionalAttributionCompact(attribution, localizeLiteral('Desconocido'), {
+			and: localizeLiteral('y'), or: localizeLiteral('o')
+		});
+	});
 
 	const summaryCitation =
 		'Cuéllar, Álvaro. "Resúmenes asistidos por modelos de lenguaje para un vasto corpus de obras literarias del Siglo de Oro". En: <i>El teatro del Siglo de Oro en el horizonte de las humanidades digitales</i>. Peter Lang, 2026 (en prensa).';
@@ -132,7 +151,8 @@
 			'',
 			summaryCitationPlainText,
 			'',
-			`Obra resumida: ${displayWorkTitle}`
+			`Obra resumida: ${displayWorkTitle}`,
+			`Atribución tradicional: ${summaryAuthor}`
 		];
 		if (hasPublishedOn) {
 			lines.push(`Fecha de publicación del resumen: ${formattedPublishedOn}`);
@@ -285,7 +305,7 @@
 	/>
 
 	<div class="mx-auto grid w-full max-w-[1280px] gap-6">
-		<PageHero compact eyebrow="Resumen automático" title={displayWorkTitle} preserveTitle backgroundImage={heroBg} />
+		<PageHero compact eyebrow="Resumen automático" title={displayWorkTitle} subtitle={summaryAuthor} preserveTitle preserveSubtitle backgroundImage={heroBg} />
 
 		<section class="grid gap-3" aria-label="Aviso y cita">
 			{#if hasPublishedOn}
@@ -295,12 +315,7 @@
 			{/if}
 
 			<LegalCard label="Aviso" class="w-full">
-				<p>
-					A continuación se ofrece un resumen automático no revisado de la obra, generado con ChatGPT
-					(modelo 5.4) a partir del texto disponible. Puede incluir errores y omisiones. Si detectas
-					problemas o incoherencias, te agradecemos que contactes con nosotros para incorporar
-					actualizaciones.
-				</p>
+				<p data-i18n-skip>{summaryNotice}</p>
 			</LegalCard>
 
 			<CitationSuggestionCard class="w-full" citation={summaryCitation} allowHtml />

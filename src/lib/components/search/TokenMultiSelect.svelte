@@ -1,5 +1,6 @@
 ﻿<script lang="ts">
 	import { onMount } from 'svelte';
+	import { isPersonAuthor } from '$lib/domain/catalog';
 	import Plus from 'lucide-svelte/icons/plus';
 	import X from 'lucide-svelte/icons/x';
 	import HelpBubble from './HelpBubble.svelte';
@@ -207,7 +208,7 @@
 		<div class="author-chips">
 			{#each selectedIds as selectedId}
 				<span class="author-chip">
-					<span class="author-chip-label"><span data-i18n-skip={(preserveOptions && selectedId !== 'desconocido') || undefined}>{optionMap.get(selectedId) ?? selectedId}</span>{selectedLabelSuffix}</span>
+					<span class="author-chip-label"><span data-i18n-skip={(preserveOptions && isPersonAuthor(selectedId)) || undefined}>{optionMap.get(selectedId) ?? selectedId}</span>{selectedLabelSuffix}</span>
 					<button
 						type="button"
 						class="author-chip-remove"
@@ -259,7 +260,7 @@
 					<button
 						type="button"
 						class="autocomplete-item"
-						data-i18n-skip={(preserveOptions && option.id !== 'desconocido') || undefined}
+						data-i18n-skip={(preserveOptions && isPersonAuthor(option.id)) || undefined}
 						class:active={index === activeIndex}
 						onmouseenter={() => {
 							activeIndex = index;
@@ -480,4 +481,3 @@
 		color: var(--color-brand-blue-dark);
 	}
 </style>
-

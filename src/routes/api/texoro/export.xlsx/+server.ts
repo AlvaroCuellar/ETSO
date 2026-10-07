@@ -45,6 +45,7 @@ interface TexoroExportFilters {
 	title: string;
 	titleIds: string[];
 	titleLabels: string[];
+	generalGenres: string[];
 	genres: string[];
 	traditionalAuthorIds: string[];
 	traditionalMatch: 'or' | 'and';
@@ -140,6 +141,7 @@ const normalizeFilters = (value: unknown): TexoroExportFilters => {
 		title: normalizeString(raw.title),
 		titleIds: normalizeStringList(raw.titleIds, 5_000),
 		titleLabels: normalizeStringList(raw.titleLabels, 5_000),
+		generalGenres: normalizeStringList(raw.generalGenres),
 		genres: normalizeStringList(raw.genres),
 		traditionalAuthorIds: normalizeStringList(raw.traditionalAuthorIds),
 		traditionalMatch: raw.traditionalMatch === 'and' ? 'and' : 'or',
@@ -172,10 +174,10 @@ const normalizeText = (value: string): string =>
 		.toLowerCase()
 		.trim();
 
-const formatCompactAttribution = (set: AttributionSet): string => {
+const formatCompactAttribution = (set: AttributionSet, emptyLabel = 'Sin datos'): string => {
 	if (set.unresolved) return UNRESOLVED_ATTRIBUTION_LABEL;
 	const label = formatAttribution(set).trim();
-	if (!label || label === 'Sin datos') return 'Sin datos';
+	if (!label || label === 'Sin datos') return emptyLabel;
 	if (label === 'No apunta hacia ningún autor' || label === 'No apunta hacia ningún autor') return UNRESOLVED_ATTRIBUTION_LABEL;
 	return label;
 };
@@ -224,6 +226,7 @@ const filterResults = (
 				const haystack = normalizeText(buildWorkTitleSearchText(meta.title, meta.titleVariants));
 				if (!haystack.includes(normalizedTitle)) return false;
 			}
+			if (filters.generalGenres.length > 0 && !filters.generalGenres.includes(meta.generalGenre?.trim() || 'Teatro')) return false;
 			if (filters.genres.length > 0 && !filters.genres.includes(meta.genre)) return false;
 			if (
 				!matchesByMode(
@@ -380,7 +383,10 @@ const addResultsSheet = (
 	setColumns(worksheet, [
 		{ header: 'Orden', key: 'rank', width: 9 },
 		{ header: 'Título', key: 'title', width: 38 },
-		{ header: 'Género', key: 'genre', width: 20 },
+		{ header: 'Género', key: 'generalGenre', width: 20 },
+		{ header: 'Subgénero', key: 'genre', width: 20 },
+		{ header: 'Procedencia', key: 'origin', width: 48 },
+		{ header: 'Poemas en la colección', key: 'collectionSize', width: 22 },
 		{ header: 'Estado textual', key: 'textState', width: 22 },
 		{ header: 'Atribución tradicional', key: 'traditionalAttribution', width: 42 },
 		{ header: 'Atribución estilométrica', key: 'stylometryAttribution', width: 42 },
@@ -399,10 +405,13 @@ const addResultsSheet = (
 		const row: Record<string, string | number> = {
 			rank: index + 1,
 			title: meta ? formatDisplayWorkTitle(meta.title) : 'Obra sin metadatos',
-			genre: meta?.genre?.trim() || 'Sin género',
+			generalGenre: meta?.generalGenre?.trim() || 'Teatro',
+			genre: meta?.genre?.trim() || 'Sin subgénero',
+			origin: meta?.origin ?? '',
+			collectionSize: meta?.collectionSize ?? '',
 			textState: meta?.textState?.trim() || 'Sin estado',
 			traditionalAttribution: meta ? formatCompactAttribution(meta.traditionalAttribution) : 'Sin datos',
-			stylometryAttribution: meta ? formatCompactAttribution(meta.stylometryAttribution) : 'Sin datos',
+			stylometryAttribution: meta ? formatCompactAttribution(meta.stylometryAttribution, 'No analizada') : 'Sin datos',
 			totalOccurrences: sumResultOccurrences(result),
 			tokenCount: result.docTokenCount
 		};
@@ -423,7 +432,10 @@ const addOccurrencesSheet = (workbook: ExcelJS.Workbook, rows: OccurrenceExportR
 		{ header: 'Tipo', key: 'kind', width: 15 },
 		{ header: 'Posición', key: 'position', width: 24 },
 		{ header: 'Contexto', key: 'snippet', width: 90 },
-		{ header: 'Género', key: 'genre', width: 20 },
+		{ header: 'Género', key: 'generalGenre', width: 20 },
+		{ header: 'Subgénero', key: 'genre', width: 20 },
+		{ header: 'Procedencia', key: 'origin', width: 48 },
+		{ header: 'Poemas en la colección', key: 'collectionSize', width: 22 },
 		{ header: 'Atribución tradicional', key: 'traditionalAttribution', width: 38 },
 		{ header: 'Atribución estilométrica', key: 'stylometryAttribution', width: 38 }
 	]);
@@ -437,9 +449,12 @@ const addOccurrencesSheet = (workbook: ExcelJS.Workbook, rows: OccurrenceExportR
 			kind: row.match.kind === 'term' ? 'palabra/patrón' : row.match.kind === 'phrase' ? 'frase' : 'proximidad',
 			position: occurrencePosition(row.item),
 			snippet: row.item.snippet,
-			genre: meta?.genre?.trim() || 'Sin género',
+			generalGenre: meta?.generalGenre?.trim() || 'Teatro',
+			genre: meta?.genre?.trim() || 'Sin subgénero',
+			origin: meta?.origin ?? '',
+			collectionSize: meta?.collectionSize ?? '',
 			traditionalAttribution: meta ? formatCompactAttribution(meta.traditionalAttribution) : 'Sin datos',
-			stylometryAttribution: meta ? formatCompactAttribution(meta.stylometryAttribution) : 'Sin datos'
+			stylometryAttribution: meta ? formatCompactAttribution(meta.stylometryAttribution, 'No analizada') : 'Sin datos'
 		});
 	});
 	applyReadableCells(worksheet);
@@ -466,7 +481,8 @@ const addQuerySheet = (
 		['Condiciones de proximidad', proximityDescription],
 		['Modo proximidad', query?.proximityMode === 'any' ? 'Basta con una' : 'Todas junto a la principal'],
 		['Filtro título', formatTitleFilter(payload.filters)],
-		['Filtro géneros', payload.filters.genres.join('; ') || 'Sin filtro'],
+		['Filtro género', payload.filters.generalGenres.join('; ') || 'Sin filtro'],
+		['Filtro subgéneros', payload.filters.genres.join('; ') || 'Sin filtro'],
 		['Filtro autoría tradicional', payload.filters.traditionalAuthorIds.join('; ') || 'Sin filtro'],
 		['Modo autoría tradicional', payload.filters.traditionalMatch],
 		['Filtro autoría estilométrica', payload.filters.stylometryAuthorIds.join('; ') || 'Sin filtro'],
@@ -493,6 +509,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		includeSnippets: false,
 		structuredQuery: payload.structuredQuery,
 		workIds: payload.filters.titleIds,
+		generalGenres: payload.filters.generalGenres,
 		genres: payload.filters.genres,
 		states: payload.filters.states,
 		traditionalAuthorIds: payload.filters.traditionalAuthorIds,

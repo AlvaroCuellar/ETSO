@@ -67,6 +67,9 @@ export interface PublicWorkMetadata {
 	displayTitle: string;
 	titleVariants: string[];
 	displayTitleVariants: string[];
+	collectionSize: number | null;
+	generalGenre: string;
+	subgenre: string;
 	genre: string;
 	origin: string;
 	textState: string;
@@ -238,6 +241,21 @@ const resolveGeneratedResult = (work: CatalogWork): string | null => {
 		: result;
 };
 
+const publicTraditionalAttributionParts = (work: CatalogWork): AttributionPhrasePart[] => {
+	if (!(typeof work.collectionSize === 'number' && work.collectionSize > 0)) {
+		return buildTraditionalAttributionParts(work.traditionalAttribution);
+	}
+	const members = [...new Map(work.traditionalAttribution.groups.flatMap((group) => group.members)
+		.map((member) => [member.authorId, member] as const)).values()];
+	const parts: AttributionPhrasePart[] = [{ kind: 'text', value: 'Autores de la colección: ' }];
+	for (const [index, member] of members.entries()) {
+		if (index > 0) parts.push({ kind: 'text', value: index === members.length - 1 ? ' y ' : ', ' });
+		parts.push({ kind: 'author', value: member.authorName, authorId: member.authorId, hasAuthorshipExam: member.hasAuthorshipExam });
+	}
+	parts.push({ kind: 'text', value: '.' });
+	return parts;
+};
+
 export const toPublicWorkMetadata = (work: CatalogWork): PublicWorkMetadata => {
 	const hasReport = Boolean(work.reportId && work.reportSlug);
 	const textAccess = work.textLinks.map(cloneTextAccessLink);
@@ -252,6 +270,9 @@ export const toPublicWorkMetadata = (work: CatalogWork): PublicWorkMetadata => {
 		displayTitle: formatDisplayWorkTitle(work.title),
 		titleVariants: [...work.titleVariants],
 		displayTitleVariants: work.titleVariants.map(formatDisplayWorkTitle),
+		collectionSize: work.collectionSize ?? null,
+		generalGenre: work.generalGenre?.trim() || 'Teatro',
+		subgenre: work.genre,
 		genre: work.genre,
 		origin: work.origin,
 		textState: work.textState,
@@ -267,7 +288,7 @@ export const toPublicWorkMetadata = (work: CatalogWork): PublicWorkMetadata => {
 		},
 		traditionalAttributionText: formatAttribution(work.traditionalAttribution),
 		traditionalAttributionPhrase: serializeAttributionPhrase(
-			buildTraditionalAttributionParts(work.traditionalAttribution),
+			publicTraditionalAttributionParts(work),
 			traditionalAuthorPublicIdByKey
 		),
 		stylometryAttributionText: formatAttribution(work.stylometryAttribution),

@@ -32,6 +32,7 @@ export const executeTexoroSearchRequest = async (request: Request) => {
 		includeSnippets: false,
 		workIds: normalizeStringList(rawOptions.workIds),
 		genres: normalizeStringList(rawOptions.genres),
+		generalGenres: normalizeStringList(rawOptions.generalGenres),
 		states: normalizeStringList(rawOptions.states),
 		traditionalAuthorIds: normalizeStringList(rawOptions.traditionalAuthorIds),
 		traditionalMatch: normalizeMatchMode(rawOptions.traditionalMatch),

@@ -1,4 +1,5 @@
 import { dev } from '$app/environment';
+import { env } from '$env/dynamic/private';
 import { error } from '@sveltejs/kit';
 import { readFile } from 'node:fs/promises';
 import { extname, resolve } from 'node:path';
@@ -34,8 +35,12 @@ const resolvePublicPath = (rawPath: string): string => {
 
 const readLocalPublicAsset = async (publicPath: string): Promise<Response | null> => {
 	if (!dev) return null;
-	const target = resolve(LOCAL_PUBLIC_ASSETS_DIR, ...publicPath.split('/'));
-	if (!target.startsWith(`${LOCAL_PUBLIC_ASSETS_DIR}\\`) && !target.startsWith(`${LOCAL_PUBLIC_ASSETS_DIR}/`)) {
+	const localSummaries = env.LOCAL_TEXORO_SUMMARIES_PATH?.trim();
+	const summaryOverride = localSummaries && publicPath.startsWith('resumenes/');
+	const base = summaryOverride ? resolve(localSummaries) : LOCAL_PUBLIC_ASSETS_DIR;
+	const relativePath = summaryOverride ? publicPath.slice('resumenes/'.length) : publicPath;
+	const target = resolve(base, ...relativePath.split('/'));
+	if (!target.startsWith(`${base}\\`) && !target.startsWith(`${base}/`)) {
 		throw error(400, 'Ruta publica R2 invalida');
 	}
 

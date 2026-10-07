@@ -279,6 +279,15 @@ const analyzeDocument = async ({ docId, fileName, input, encoding, preserveEnie 
 	const rawText = await readFile(filePath, encoding);
 	const tokens = tokenizeWithOffsets(rawText, preserveEnie);
 	const localTf = new Map();
+	// Form feeds delimit independently authored texts inside a collection.
+	const sectionStarts = [1];
+	let previousEnd = 0;
+	for (const token of tokens) {
+		if (rawText.slice(previousEnd, token.start).includes('\f') && token.tokenIndex > 1) {
+			sectionStarts.push(token.tokenIndex);
+		}
+		previousEnd = token.end;
+	}
 
 	for (const token of tokens) {
 		if (!localTf.has(token.norm)) localTf.set(token.norm, []);
@@ -287,7 +296,7 @@ const analyzeDocument = async ({ docId, fileName, input, encoding, preserveEnie 
 
 	return {
 		docId,
-		work: [docId, workId, fileName, `${workId}.txt`, tokens.length, rawText.length],
+		work: [docId, workId, fileName, `${workId}.txt`, tokens.length, rawText.length, ...(sectionStarts.length > 1 ? [sectionStarts] : [])],
 		charCount: rawText.length,
 		tokenCount: tokens.length,
 		terms: Array.from(localTf.entries())

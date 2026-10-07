@@ -214,8 +214,10 @@
 				if (!Array.isArray(payload.entries)) {
 					throw new Error('El índice de resúmenes no tiene el formato esperado.');
 				}
-				summarySearchIndex = payload.entries;
-				return payload.entries;
+				summarySearchIndex = payload.entries.sort((a, b) =>
+					a.title.localeCompare(b.title, 'es', { sensitivity: 'base', ignorePunctuation: true })
+				);
+				return summarySearchIndex;
 			})
 			.finally(() => {
 				summarySearchIndexPromise = null;

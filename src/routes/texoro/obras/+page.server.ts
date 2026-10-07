@@ -10,10 +10,12 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 			title: work.title,
 			titleVariants: work.titleVariants,
 			traditionalAttribution: work.traditionalAttribution,
+			collectionSize: work.collectionSize,
+			generalGenre: work.generalGenre || 'Teatro',
 			genre: work.genre
 		}))
 		.sort((a, b) => {
-			const titleComparison = a.title.localeCompare(b.title, 'es', { sensitivity: 'base' });
+			const titleComparison = a.title.localeCompare(b.title, 'es', { sensitivity: 'base', ignorePunctuation: true });
 			if (titleComparison !== 0) return titleComparison;
 			return a.slug.localeCompare(b.slug, 'es', { sensitivity: 'base' });
 		});

@@ -37,7 +37,7 @@ const countUniqueAuthors = (works: CatalogWork[]): number => {
 export const load: PageServerLoad = async ({ setHeaders }) => {
 	const bitesoWorks = (await getBitesoWorks())
 		.sort((a, b) => {
-			const titleComparison = a.title.localeCompare(b.title, 'es', { sensitivity: 'base' });
+			const titleComparison = a.title.localeCompare(b.title, 'es', { sensitivity: 'base', ignorePunctuation: true });
 			if (titleComparison !== 0) return titleComparison;
 			return a.id.localeCompare(b.id, 'es', { sensitivity: 'base' });
 		});

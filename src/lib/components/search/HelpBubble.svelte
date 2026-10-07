@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { page } from '$app/state';
+	import { DEFAULT_LOCALE, translateText } from '$lib/i18n';
 	interface Props {
 		id: string;
 		label: string;
@@ -7,6 +9,12 @@
 
 	let { id, label, text }: Props = $props();
 	let isOpen = $state(false);
+	const accessibleLabel = $derived.by(() => {
+		const locale = page.data.locale ?? DEFAULT_LOCALE;
+		const topic = translateText(locale, label);
+		const help = translateText(locale, 'Ayuda sobre');
+		return locale === 'ja' || locale === 'ko' ? `${topic} ${help}` : `${help} ${topic}`;
+	});
 
 	const handlePointerDown = (event: PointerEvent): void => {
 		event.preventDefault();
@@ -37,7 +45,7 @@
 	<button
 		type="button"
 		class="help-trigger"
-		aria-label={`Ayuda sobre ${label}`}
+		aria-label={accessibleLabel}
 		aria-describedby={id}
 		aria-expanded={isOpen}
 		onpointerdown={handlePointerDown}

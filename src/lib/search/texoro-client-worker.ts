@@ -108,12 +108,11 @@ export const initializeTexoroClientWorker = async ({
 	indexBaseUrl: string;
 	worksMeta: TexoroWorkMeta[];
 }): Promise<TexoroIndexManifest> => {
-	const initKey = `${indexBaseUrl}::${worksMeta.map((work) => work.id).join('|')}`;
-	if (worker && initializedKey === initKey && initPromise) return initPromise;
+	const initKey = `${indexBaseUrl}::${JSON.stringify(worksMeta)}`;
+	while (initPromise) await initPromise;
 	if (worker && initializedKey === initKey && initializedManifest) return initializedManifest;
-	if (initPromise) return initPromise;
 
-	initPromise = requestTexoroClientWorker<{ manifest?: TexoroIndexManifest | null }>({
+	const nextInitPromise = requestTexoroClientWorker<{ manifest?: TexoroIndexManifest | null }>({
 		action: 'init',
 		indexBaseUrl,
 		worksMeta
@@ -127,11 +126,16 @@ export const initializeTexoroClientWorker = async ({
 			return response.manifest;
 		})
 		.catch((cause) => {
-			initPromise = null;
-			initializedKey = '';
-			initializedManifest = null;
+			if (initPromise === nextInitPromise) {
+				initializedKey = '';
+				initializedManifest = null;
+			}
 			throw cause;
+		})
+		.finally(() => {
+			if (initPromise === nextInitPromise) initPromise = null;
 		});
+	initPromise = nextInitPromise;
 
-	return initPromise;
+	return nextInitPromise;
 };

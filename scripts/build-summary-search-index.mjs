@@ -289,7 +289,7 @@ const buildIndex = async (options) => {
 		});
 	}
 
-	entries.sort((a, b) => a.title.localeCompare(b.title, 'es', { sensitivity: 'base' }));
+	entries.sort((a, b) => a.title.localeCompare(b.title, 'es', { sensitivity: 'base', ignorePunctuation: true }));
 	const output = {
 		schemaVersion: SCHEMA_VERSION,
 		generatedAt: new Date().toISOString(),

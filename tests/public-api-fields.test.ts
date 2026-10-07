@@ -86,3 +86,11 @@ test('cada recurso define su lista explícita de campos permitidos', () => {
 		(error: unknown) => isHttpError(error, 400)
 	);
 });
+
+
+test('permite seleccionar género general y subgénero sin retirar genre', () => {
+	const fields = parsePublicApiFields('generalGenre,subgenre,genre,collectionSize', PUBLIC_WORK_METADATA_FIELDS);
+	assert.deepEqual(fields, ['generalGenre', 'subgenre', 'genre', 'collectionSize']);
+	assert.deepEqual(projectPublicApiFields({ generalGenre: 'Prosa', subgenre: 'Novela', genre: 'Novela' }, ['generalGenre', 'subgenre', 'genre']),
+		{ generalGenre: 'Prosa', subgenre: 'Novela', genre: 'Novela' });
+});

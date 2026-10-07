@@ -5,6 +5,8 @@ import forceAtlas2 from 'graphology-layout-forceatlas2';
 import { dev } from '$app/environment';
 import { env } from '$env/dynamic/private';
 import { existsSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
 import { readPrivateTextByTextKey, readPrivateTextByWorkId } from '$lib/server/r2-private';
 import { fetchPublicR2Json, getPublicAssetUrl, getSummariesBaseUrl } from '$lib/server/r2-public';
 import { buildWorkTitleSearchText, formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
@@ -242,6 +244,8 @@ interface WorkRow {
 	titulo: string;
 	title_variants: string | null;
 	genero: string | null;
+	genero_general: string | null;
+	collection_size: number | null;
 	adicion: string | null;
 	estado_texto: string | null;
 	fecha_biteso: string | null;
@@ -592,6 +596,16 @@ const createLocalFallbackDbClient = (): ReturnType<typeof createClient> => {
 
 const getDbClient = (): ReturnType<typeof createClient> => {
 	if (dbClient) return dbClient;
+	if (env.LOCAL_CATALOG_ONLY === 'true') {
+		if (!dev) throw new Error('LOCAL_CATALOG_ONLY solo está permitido en desarrollo.');
+		const localPath = env.LOCAL_CATALOG_SQLITE_PATH?.trim();
+		if (!localPath || !existsSync(localPath)) {
+			throw new Error('LOCAL_CATALOG_ONLY requiere un LOCAL_CATALOG_SQLITE_PATH existente.');
+		}
+		dbClientMode = 'local-fallback';
+		dbClient = createClient({ url: `file:${localPath}` });
+		return dbClient;
+	}
 	try {
 		dbClient = createConfiguredDbClient();
 	} catch (cause) {
@@ -887,6 +901,8 @@ const buildCatalogWorksFromRows = (
 			title: row.titulo,
 			titleVariants: splitTitleVariants(row.title_variants),
 			genre: row.genero?.trim() || 'Sin genero',
+			generalGenre: row.genero_general?.trim() || 'Teatro',
+			collectionSize: row.collection_size && Number(row.collection_size) > 0 ? Number(row.collection_size) : undefined,
 			origin: row.procede?.trim() || 'Sin procedencia',
 			textState: row.estado_texto?.trim() || 'Sin estado',
 			addedOn: row.adicion?.trim() || 'Sin fecha',
@@ -940,7 +956,7 @@ const loadWorkRowsByIds = async (workIds: string[]): Promise<WorkRow[]> => {
 		 ${publicIdSelect},
 		 ${asodatIdSelect},
 		 ${titleVariantsSelect},
-		 genero, adicion, estado_texto,
+		 genero, ${worksTableColumns.has('genero_general') ? 'genero_general' : "'Teatro' AS genero_general"}, ${worksTableColumns.has('collection_size') ? 'collection_size' : 'NULL AS collection_size'}, adicion, estado_texto,
 		 ${bitesoPublicationDateSelect},
 		 ${hasTeiSelect},
 		 ${facsimileFirstSelect},
@@ -1014,8 +1030,21 @@ const resolveWorkSlug = (row: WorkRow, seenSlugs: Map<string, string>): string =
 	return slug;
 };
 
-const fetchSummaryFile = async (workId: string): Promise<SummaryFile | null> =>
-	fetchPublicR2Json<SummaryFile>(getSummariesBaseUrl(), `${workId}.json`);
+const fetchSummaryFile = async (workId: string): Promise<SummaryFile | null> => {
+	const localSummaries = dev && env.LOCAL_TEXORO_SUMMARIES_PATH?.trim();
+	if (localSummaries) {
+		const base = resolve(localSummaries);
+		const target = resolve(base, `${workId}.json`);
+		if (!target.startsWith(`${base}/`)) throw new Error('Ruta de resumen local invalida.');
+		try {
+			return JSON.parse(await readFile(target, 'utf8')) as SummaryFile;
+		} catch (cause) {
+			if (cause && typeof cause === 'object' && 'code' in cause && cause.code === 'ENOENT') return null;
+			throw cause;
+		}
+	}
+	return fetchPublicR2Json<SummaryFile>(getSummariesBaseUrl(), `${workId}.json`);
+};
 
 const createSnapshot = async (): Promise<Snapshot> => {
 	const authorsTableColumns = await getTableColumnNames('authors');
@@ -1179,7 +1208,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 		 ${publicIdSelect},
 		 ${asodatIdSelect},
 		 ${titleVariantsSelect},
-		 genero, adicion, estado_texto,
+		 genero, ${worksTableColumns.has('genero_general') ? 'genero_general' : "'Teatro' AS genero_general"}, ${worksTableColumns.has('collection_size') ? 'collection_size' : 'NULL AS collection_size'}, adicion, estado_texto,
 		 ${bitesoPublicationDateSelect},
 		 ${hasTeiSelect},
 		 ${facsimileFirstSelect},
@@ -1241,6 +1270,8 @@ const createSnapshot = async (): Promise<Snapshot> => {
 			title: row.titulo,
 			titleVariants: splitTitleVariants(row.title_variants),
 			genre: row.genero?.trim() || 'Sin genero',
+			generalGenre: row.genero_general?.trim() || 'Teatro',
+			collectionSize: row.collection_size && Number(row.collection_size) > 0 ? Number(row.collection_size) : undefined,
 			origin: row.procede?.trim() || 'Sin procedencia',
 			textState: row.estado_texto?.trim() || 'Sin estado',
 			addedOn: row.adicion?.trim() || 'Sin fecha',
@@ -1288,6 +1319,9 @@ const createSnapshot = async (): Promise<Snapshot> => {
 			}
 		}
 	}
+
+	// Sort after resolving current and legacy slugs, whose assignment uses the original row order.
+	works.sort((a, b) => a.title.localeCompare(b.title, 'es', { sensitivity: 'base', ignorePunctuation: true }));
 
 	return {
 		works,
@@ -2001,15 +2035,20 @@ export const getExamenWorksPage = async (
 	const idRows =
 		totalResults === 0
 			? []
-			: await getRows<{ id: string }>(
-					`SELECT w.id
+			: await getRows<{ id: string; titulo: string }>(
+					`SELECT w.id, w.titulo
 					 FROM works w
-					 WHERE ${where.sql}
-					 ORDER BY w.titulo COLLATE NOCASE, w.id
-					 LIMIT ? OFFSET ?`,
-					[...where.args, safePageSize, offset]
+					 WHERE ${where.sql}`,
+					where.args
 				);
-	const ids = idRows.map((row) => row.id);
+	// Use Spanish title ordering before pagination; only the selected page is hydrated.
+	const ids = idRows
+		.sort((a, b) =>
+			a.titulo.localeCompare(b.titulo, 'es', { sensitivity: 'base', ignorePunctuation: true }) ||
+			a.id.localeCompare(b.id)
+		)
+		.slice(offset, offset + safePageSize)
+		.map((row) => row.id);
 
 	const value = {
 		works: await hydrateWorksByIds(ids),
@@ -2425,7 +2464,7 @@ const buildWorkNetworkGraph = async (nearestPerWork = 3): Promise<WorkNetworkGra
 				reportSlug: work.reportSlug
 			};
 		})
-		.sort((a, b) => a.title.localeCompare(b.title, 'es', { sensitivity: 'base' }));
+		.sort((a, b) => a.title.localeCompare(b.title, 'es', { sensitivity: 'base', ignorePunctuation: true }));
 
 	for (const node of nodes) {
 		layoutGraph.addNode(node.id, {
@@ -2494,7 +2533,7 @@ const buildWorkNetworkGraph = async (nearestPerWork = 3): Promise<WorkNetworkGra
 			const positionB = positions.get(b.id) ?? { x: 0, y: 0 };
 			const angleA = Math.atan2(positionA.y - centroidY, positionA.x - centroidX);
 			const angleB = Math.atan2(positionB.y - centroidY, positionB.x - centroidX);
-			return angleA - angleB || a.title.localeCompare(b.title, 'es', { sensitivity: 'base' });
+			return angleA - angleB || a.title.localeCompare(b.title, 'es', { sensitivity: 'base', ignorePunctuation: true });
 		});
 		const chunkSize = Math.ceil(members.length / groupCount);
 		const chunks: Array<typeof nodes> = [];

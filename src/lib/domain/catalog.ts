@@ -42,6 +42,8 @@ export interface CatalogWork {
 	title: string;
 	titleVariants: string[];
 	genre: string;
+	generalGenre?: string;
+	collectionSize?: number;
 	origin: string;
 	textState: string;
 	addedOn: string;

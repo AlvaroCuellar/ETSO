@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { translateText } from '$lib/i18n';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import { normalizePlainText } from '$lib/search/normalize';
@@ -90,7 +91,7 @@
 												{formatDisplayWorkTitle(work.title)}
 											</a>
 											<span class="mx-1.5 text-text-soft/70">·</span>
-											<span class="text-text-soft">{formatGenre(work.genre)}</span>
+											<span class="text-text-soft" data-i18n-skip>{translateText(data.locale, work.generalGenre || 'Teatro')} · {translateText(data.locale, formatGenre(work.genre))}</span>
 										</p>
 									{/each}
 								</div>

@@ -1,4 +1,7 @@
 import { createHash, createHmac } from 'node:crypto';
+import { readFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import { dev } from '$app/environment';
 
 import { env } from '$env/dynamic/private';
 
@@ -177,6 +180,16 @@ const loadPrivateTextByFileName = async (fileName: string): Promise<string | nul
 
 export const readPrivateTextByTextKey = async (textKey: string): Promise<string | null> => {
 	const fileName = ensurePlainFileName(textKey);
+	if (dev && env.LOCAL_CATALOG_ONLY === 'true') {
+		const directory = env.LOCAL_TEXORO_TEXTS_PATH?.trim();
+		if (!directory) throw new Error('Falta LOCAL_TEXORO_TEXTS_PATH para la vista local');
+		try {
+			return await readFile(resolve(directory, fileName), 'utf8');
+		} catch (cause) {
+			if ((cause as NodeJS.ErrnoException).code === 'ENOENT') return null;
+			throw cause;
+		}
+	}
 	const now = Date.now();
 	const cached = privateTextCache.get(fileName);
 
@@ -220,6 +233,18 @@ export const readPrivateTextRangeByTextKey = async (
 	startByte: number,
 	endByte: number
 ): Promise<string | null> => {
+	if (dev && env.LOCAL_CATALOG_ONLY === 'true') {
+		const fileName = ensurePlainFileName(textKey);
+		const directory = env.LOCAL_TEXORO_TEXTS_PATH?.trim();
+		if (!directory) throw new Error('Falta LOCAL_TEXORO_TEXTS_PATH para la vista local');
+		try {
+			const buffer = await readFile(resolve(directory, fileName));
+			return buffer.subarray(Math.max(0, Math.floor(startByte)), Math.max(0, Math.floor(endByte)) + 1).toString('utf8');
+		} catch (cause) {
+			if ((cause as NodeJS.ErrnoException).code === 'ENOENT') return null;
+			throw cause;
+		}
+	}
 	const { textPrefix } = assertR2Config();
 	const fileName = ensurePlainFileName(textKey);
 	const start = Math.max(0, Math.floor(startByte));

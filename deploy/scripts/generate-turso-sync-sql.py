@@ -30,6 +30,14 @@ CATALOG_TABLES = (
 
 ROOT_TABLES = ("authors", "works")
 
+# Only these known additive fields can be introduced by incremental sync.
+# Their virtual values must match ALTER TABLE defaults for legacy records.
+ADDITIVE_WORK_COLUMNS = {
+    "asodat_id": ("INTEGER", "NULL"),
+    "genero_general": ("TEXT NOT NULL DEFAULT 'Teatro'", "'Teatro'"),
+    "collection_size": ("INTEGER", "NULL"),
+}
+
 DEPENDENT_TABLES = (
     "attribution_sets",
     "attribution_groups",
@@ -92,16 +100,19 @@ def validate_schema(
             raise SystemExit(f"Falta tabla local: {table}")
         if not remote_columns:
             raise SystemExit(f"Falta tabla remota: {table}. Usa replace-turso-db.sh para inicializar.")
-        # ASODAT is an additive, nullable field. Keep the legacy cleanup and
-        # accept column order differences: every query names its columns.
+        # Keep the legacy cleanup and accept column order differences:
+        # every query names its columns.
         effective_remote_columns = list(remote_columns)
         if table == "works":
             if "tipo_transcripcion" in remote_columns and "tipo_transcripcion" not in local_columns:
                 schema_migrations.append('ALTER TABLE "works" DROP COLUMN "tipo_transcripcion";')
                 effective_remote_columns.remove("tipo_transcripcion")
-            if "asodat_id" in local_columns and "asodat_id" not in remote_columns:
-                schema_migrations.append('ALTER TABLE "works" ADD COLUMN "asodat_id" INTEGER;')
-                effective_remote_columns.append("asodat_id")
+            for column, (declaration, _) in ADDITIVE_WORK_COLUMNS.items():
+                if column in local_columns and column not in remote_columns:
+                    schema_migrations.append(
+                        f'ALTER TABLE "works" ADD COLUMN {quote_identifier(column)} {declaration};'
+                    )
+                    effective_remote_columns.append(column)
         if set(local_columns) != set(effective_remote_columns):
             raise SystemExit(
                 "Esquema Turso distinto del SQLite local en "
@@ -127,8 +138,8 @@ def normalize_row(row: sqlite3.Row, columns: list[str]) -> tuple[Any, ...]:
 def rows_by_id(connection: sqlite3.Connection, table: str, columns: list[str]) -> dict[str, tuple[Any, ...]]:
     existing_columns = set(get_columns(connection, table))
     select_columns = [
-        'NULL AS "asodat_id"'
-        if table == "works" and column == "asodat_id" and column not in existing_columns
+        f'{ADDITIVE_WORK_COLUMNS[column][1]} AS {quote_identifier(column)}'
+        if table == "works" and column in ADDITIVE_WORK_COLUMNS and column not in existing_columns
         else quote_identifier(column)
         for column in columns
     ]

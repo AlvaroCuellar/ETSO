@@ -70,7 +70,7 @@ export interface TexoroWorksFile {
 	schemaVersion: string;
 	indexVersion: string;
 	generatedAt: string;
-	works: Array<[number, string, string, string, number, number]>;
+	works: Array<[number, string, string, string, number, number, number[]?]>;
 	totals: {
 		works: number;
 		tokens: number;
@@ -208,6 +208,9 @@ export interface TexoroWorkMeta {
 	titleVariants: string[];
 	slug: string;
 	genre: string;
+	generalGenre?: string;
+	collectionSize?: number;
+	origin?: string;
 	textState: string;
 	shortSummary: string;
 	traditionalAttribution: AttributionSet;
@@ -334,6 +337,7 @@ export interface SearchOptions {
 	includeSnippets?: boolean;
 	workIds?: string[];
 	genres?: string[];
+	generalGenres?: string[];
 	states?: string[];
 	traditionalAuthorIds?: string[];
 	traditionalMatch?: 'or' | 'and';

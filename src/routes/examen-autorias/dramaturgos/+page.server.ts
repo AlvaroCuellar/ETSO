@@ -38,7 +38,7 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 				name: author.name,
 				nameVariants: author.nameVariants,
 				works: (worksByTraditionalAuthorId.get(author.id) ?? []).sort((a, b) => {
-					const titleComparison = a.title.localeCompare(b.title, 'es', { sensitivity: 'base' });
+					const titleComparison = a.title.localeCompare(b.title, 'es', { sensitivity: 'base', ignorePunctuation: true });
 					if (titleComparison !== 0) return titleComparison;
 					return a.slug.localeCompare(b.slug, 'es', { sensitivity: 'base' });
 				})

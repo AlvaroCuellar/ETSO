@@ -1,4 +1,6 @@
 import { json } from '@sveltejs/kit';
+import { dev } from '$app/environment';
+import { env } from '$env/dynamic/private';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { getWorksForSummaryIndex } from '$lib/server/catalog-runtime';
@@ -108,7 +110,8 @@ const buildSummarySearchText = (summary: SummaryJson | null, shortText: string, 
 
 const loadLocalSummary = async (workId: string): Promise<SummaryJson | null> => {
 	try {
-		const raw = await readFile(join(process.cwd(), 'data', 'resumenes', `${workId}.json`), 'utf8');
+		const directory = (dev && env.LOCAL_TEXORO_SUMMARIES_PATH?.trim()) || join(process.cwd(), 'data', 'resumenes');
+		const raw = await readFile(join(directory, `${workId}.json`), 'utf8');
 		return JSON.parse(raw) as SummaryJson;
 	} catch {
 		return null;
@@ -195,7 +198,7 @@ const buildSummarySearchIndex = async (): Promise<SummarySearchEntry[]> => {
 	});
 
 	await Promise.all(workers);
-	return entries.sort((a, b) => a.title.localeCompare(b.title, 'es', { sensitivity: 'base' }));
+	return entries.sort((a, b) => a.title.localeCompare(b.title, 'es', { sensitivity: 'base', ignorePunctuation: true }));
 };
 
 const getSummarySearchIndex = (): Promise<SummarySearchEntry[]> => {

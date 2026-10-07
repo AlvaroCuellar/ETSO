@@ -73,6 +73,7 @@ interface PrimeQueryOptions {
 	workMetaById?: Map<string, TexoroWorkMeta>;
 	workIds?: string[];
 	genres?: string[];
+	generalGenres?: string[];
 	states?: string[];
 	traditionalAuthorIds?: string[];
 	traditionalMatch?: 'or' | 'and';
@@ -88,6 +89,7 @@ interface TextWarmupOptions {
 
 interface NormalizedSearchMetadataFilters {
 	genres: string[];
+	generalGenres: string[];
 	states: string[];
 	traditionalAuthorIds: string[];
 	traditionalMatch: 'or' | 'and';
@@ -119,11 +121,13 @@ const normalizeOptionList = (values: string[] | undefined): string[] =>
 
 const buildMetadataFilters = (options: SearchOptions): NormalizedSearchMetadataFilters => {
 	const genres = normalizeOptionList(options.genres);
+	const generalGenres = normalizeOptionList(options.generalGenres);
 	const states = normalizeOptionList(options.states);
 	const traditionalAuthorIds = normalizeOptionList(options.traditionalAuthorIds);
 	const stylometryAuthorIds = normalizeOptionList(options.stylometryAuthorIds);
 	return {
 		genres,
+		generalGenres,
 		states,
 		traditionalAuthorIds,
 		traditionalMatch: options.traditionalMatch === 'and' ? 'and' : 'or',
@@ -131,6 +135,7 @@ const buildMetadataFilters = (options: SearchOptions): NormalizedSearchMetadataF
 		stylometryMatch: options.stylometryMatch === 'and' ? 'and' : 'or',
 		hasFilters:
 			genres.length > 0 ||
+			generalGenres.length > 0 ||
 			states.length > 0 ||
 			traditionalAuthorIds.length > 0 ||
 			stylometryAuthorIds.length > 0
@@ -141,6 +146,7 @@ const matchesMetadataFilters = (meta: TexoroWorkMeta | undefined, filters: Norma
 	if (!filters.hasFilters) return true;
 	if (!meta) return false;
 	if (filters.genres.length > 0 && !filters.genres.includes(meta.genre)) return false;
+	if (filters.generalGenres.length > 0 && !filters.generalGenres.includes(meta.generalGenre || 'Teatro')) return false;
 	if (filters.states.length > 0 && !filters.states.includes(meta.textState)) return false;
 	if (
 		!matchesByMode(
@@ -588,7 +594,7 @@ export class TexoroSearchEngine {
 	#positionsShardLoadCount = 0;
 	#textLoadCount = 0;
 
-	#docRowById = new Map<number, [number, string, string, string, number, number]>();
+	#docRowById = new Map<number, TexoroWorksFile['works'][number]>();
 	#docIdByWorkId = new Map<string, number>();
 	#docIdByPublicId = new Map<number, number>();
 	#publicIdByDocId = new Map<number, number>();
@@ -1011,15 +1017,44 @@ export class TexoroSearchEngine {
 		const snippetRadius = options.snippetRadius ?? DEFAULT_SNIPPET_RADIUS;
 		const snippetMode = options.snippetMode === 'lines' ? 'lines' : 'chars';
 		const lineContext = options.lineContext ?? DEFAULT_LINE_CONTEXT;
-		const lineRanges = snippetMode === 'lines' ? buildTextLineRanges(prepared.raw) : [];
+		const sectionBoundaries: number[] = [];
+		for (let offset = prepared.raw.indexOf('\f'); offset >= 0; offset = prepared.raw.indexOf('\f', offset + 1)) {
+			sectionBoundaries.push(offset);
+		}
+		const nextSectionBoundaryIndex = (offset: number): number => {
+			let low = 0;
+			let high = sectionBoundaries.length;
+			while (low < high) {
+				const mid = Math.floor((low + high) / 2);
+				if (sectionBoundaries[mid] < offset) low = mid + 1;
+				else high = mid;
+			}
+			return low;
+		};
+		// Reuse line ranges across occurrences; a long prose work may have thousands of matches.
+		const snippetSections = new Map<string, { raw: string; lineRanges: TextLineRange[] }>();
 		const buildOccurrenceSnippet = (
 			start: number,
 			end: number,
 			highlights: RawOccurrenceHighlight[]
-		): Pick<SearchMatchOccurrence, 'snippet' | 'highlights'> =>
-			snippetMode === 'lines'
-				? buildLineSnippetWithHighlights(prepared.raw, start, end, highlights, lineRanges, lineContext)
-				: buildSnippetWithHighlights(prepared.raw, start, end, highlights, snippetRadius);
+		): Pick<SearchMatchOccurrence, 'snippet' | 'highlights'> => {
+			const precedingBoundary = nextSectionBoundaryIndex(start + 1) - 1;
+			const sectionStart = precedingBoundary < 0 ? 0 : sectionBoundaries[precedingBoundary] + 1;
+			const sectionEnd = sectionBoundaries[nextSectionBoundaryIndex(end)] ?? prepared.raw.length;
+			const sectionKey = `${sectionStart}:${sectionEnd}`;
+			let section = snippetSections.get(sectionKey);
+			if (!section) {
+				const raw = prepared.raw.slice(sectionStart, sectionEnd);
+				section = { raw, lineRanges: snippetMode === 'lines' ? buildTextLineRanges(raw) : [] };
+				snippetSections.set(sectionKey, section);
+			}
+			const localHighlights = highlights.map((highlight) => ({
+				...highlight, start: highlight.start - sectionStart, end: highlight.end - sectionStart
+			}));
+			return snippetMode === 'lines'
+				? buildLineSnippetWithHighlights(section.raw, start - sectionStart, end - sectionStart, localHighlights, section.lineRanges, lineContext)
+				: buildSnippetWithHighlights(section.raw, start - sectionStart, end - sectionStart, localHighlights, snippetRadius);
+		};
 		const patterns = this.#extractPatternsFromMatch(match);
 		if (patterns.length === 0) {
 			return {
@@ -1046,9 +1081,11 @@ export class TexoroSearchEngine {
 					.split(/\s+/)
 					.map((part) => normalizePattern(part, this.#preserveEnie))
 					.filter(Boolean);
-			const anchorSpans = findPreparedSpans(prepared.tokens, sourcePatterns(group.anchor));
+			const anchorSpans = findPreparedSpans(prepared.tokens, sourcePatterns(group.anchor))
+				.filter((span) => this.#sameSection(resolvedDocId!, span.tokenStart + 1, span.tokenEnd + 1));
 			const termSpans = group.terms.map((term) =>
 				findPreparedSpans(prepared.tokens, sourcePatterns(term.value))
+					.filter((span) => this.#sameSection(resolvedDocId!, span.tokenStart + 1, span.tokenEnd + 1))
 			);
 			const seenGroupOccurrences = new Set<string>();
 
@@ -1057,7 +1094,8 @@ export class TexoroSearchEngine {
 					termSpans[index]
 						.map((span) => ({ span, gap: this.#proximityGap(anchor, span, term.order) }))
 						.filter((candidate): candidate is { span: (typeof termSpans)[number][number]; gap: number } =>
-							candidate.gap !== null && candidate.gap <= term.distance
+							candidate.gap !== null && candidate.gap <= term.distance &&
+							this.#sameSection(resolvedDocId!, Math.min(anchor.tokenStart, candidate.span.tokenStart) + 1, Math.max(anchor.tokenEnd, candidate.span.tokenEnd) + 1)
 						)
 						.sort((a, b) => a.gap - b.gap || a.span.tokenStart - b.span.tokenStart)
 						.map((candidate) => candidate.span)
@@ -1102,8 +1140,10 @@ export class TexoroSearchEngine {
 					truncated: false
 				};
 			}
-			const leftSpans = findPreparedSpans(prepared.tokens, proximity.left);
-			const rightSpans = findPreparedSpans(prepared.tokens, proximity.right);
+			const leftSpans = findPreparedSpans(prepared.tokens, proximity.left)
+				.filter((span) => this.#sameSection(resolvedDocId!, span.tokenStart + 1, span.tokenEnd + 1));
+			const rightSpans = findPreparedSpans(prepared.tokens, proximity.right)
+				.filter((span) => this.#sameSection(resolvedDocId!, span.tokenStart + 1, span.tokenEnd + 1));
 			const seenUnorderedPairs =
 				proximity.order === 'any' &&
 				proximity.left.length === proximity.right.length &&
@@ -1113,6 +1153,7 @@ export class TexoroSearchEngine {
 
 			for (const leftSpan of leftSpans) {
 				for (const rightSpan of rightSpans) {
+					if (!this.#sameSection(resolvedDocId!, Math.min(leftSpan.tokenStart, rightSpan.tokenStart) + 1, Math.max(leftSpan.tokenEnd, rightSpan.tokenEnd) + 1)) continue;
 					const gap = this.#proximityGap(leftSpan, rightSpan, proximity.order);
 					if (gap === null) continue;
 					if (gap > proximity.distance) {
@@ -1182,7 +1223,7 @@ export class TexoroSearchEngine {
 						break;
 					}
 				}
-				if (!matched) continue;
+				if (!matched || !this.#sameSection(resolvedDocId!, start + 1, start + regexes.length)) continue;
 				count += 1;
 				if (items.length < maxItems) {
 					const first = prepared.tokens[start];
@@ -1239,7 +1280,10 @@ export class TexoroSearchEngine {
 		const regexes = patterns.map((pattern) => wildcardToRegex(pattern));
 		for (const token of prepared.tokens) {
 			if (regexes.some((regex) => regex.test(token.norm))) {
-				return buildSnippet(prepared.raw, token.start, token.end, snippetRadius);
+				const sectionStart = prepared.raw.lastIndexOf('\f', token.start) + 1;
+				const nextBoundary = prepared.raw.indexOf('\f', token.end);
+				const sectionEnd = nextBoundary < 0 ? prepared.raw.length : nextBoundary;
+				return buildSnippet(prepared.raw.slice(sectionStart, sectionEnd), token.start - sectionStart, token.end - sectionStart, snippetRadius);
 			}
 		}
 		return undefined;
@@ -1561,6 +1605,19 @@ export class TexoroSearchEngine {
 		return { clause, docs, scores };
 	}
 
+	#sameSection(docId: number, start: number, end: number): boolean {
+		const boundaries = this.#docRowById.get(docId)?.[6];
+		if (!boundaries || boundaries.length < 2) return true;
+		let low = 0;
+		let high = boundaries.length;
+		while (low < high) {
+			const mid = Math.floor((low + high) / 2);
+			if (boundaries[mid] <= start) low = mid + 1;
+			else high = mid;
+		}
+		return low === boundaries.length || boundaries[low] > end;
+	}
+
 	#proximityGap(
 		left: { tokenStart: number; tokenEnd: number },
 		right: { tokenStart: number; tokenEnd: number },
@@ -1594,6 +1651,7 @@ export class TexoroSearchEngine {
 
 			for (const left of leftOccurrences) {
 				for (const right of rightOccurrences) {
+					if (!this.#sameSection(docId, Math.min(left.tokenStart, right.tokenStart), Math.max(left.tokenEnd, right.tokenEnd))) continue;
 					const gap = this.#proximityGap(left, right, clause.order);
 					if (gap === null) continue;
 					if (gap > clause.distance) {
@@ -1635,7 +1693,8 @@ export class TexoroSearchEngine {
 				const candidatesByTerm = clause.terms.map((term, index) =>
 					positionsForDoc[index].filter((right) => {
 						const gap = this.#proximityGap(anchor, right, term.order);
-						return gap !== null && gap <= term.distance;
+						return gap !== null && gap <= term.distance &&
+							this.#sameSection(docId, Math.min(anchor.tokenStart, right.tokenStart), Math.max(anchor.tokenEnd, right.tokenEnd));
 					})
 				);
 				const selected = assignDistinctProximitySpans(candidatesByTerm);
@@ -1705,7 +1764,7 @@ export class TexoroSearchEngine {
 					}
 					last = next;
 				}
-				if (matched) {
+				if (matched && this.#sameSection(docId, start.tokenStart, last.tokenEnd)) {
 					matches.push({
 						tokenStart: start.tokenStart,
 						tokenEnd: last.tokenEnd,

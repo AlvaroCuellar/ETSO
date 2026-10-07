@@ -3,6 +3,7 @@
 	import { onMount, tick } from 'svelte';
 	import { replaceState } from '$app/navigation';
 	import { page } from '$app/state';
+	import { dev } from '$app/environment';
 	import MatchToggle from '$lib/components/search/MatchToggle.svelte';
 	import TokenMultiSelect from '$lib/components/search/TokenMultiSelect.svelte';
 	import InlineCodeHint from '$lib/components/search/InlineCodeHint.svelte';
@@ -17,7 +18,6 @@
 	import TexoroComparisonChart from '$lib/components/search/TexoroComparisonChart.svelte';
 	import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
 	import { formatTraditionalAttributionCompact } from '$lib/utils/traditional-attribution-phrase';
-	import { getClientMemoryCache, loadClientMemoryCache } from '$lib/utils/client-memory-cache';
 	import {
 		type AttributionSet
 	} from '$lib/domain/catalog';
@@ -134,47 +134,47 @@
 	const resultText = $derived(resultTextByLocale[data.locale] ?? resultTextByLocale.es);
 	const texoroIntroByLocale = {
 		es: [
-			'TEXORO es una plataforma de búsqueda textual que permite consultar de forma unificada un amplio corpus de obras del Siglo de Oro. El recurso reúne cerca de 3000 textos, con más de 38 millones de palabras indexadas y obras de más de 400 autores, y ofrece distintas posibilidades para explorar el patrimonio literario aurisecular desde criterios léxicos, textuales y documentales.',
+			'TEXORO permite realizar búsquedas textuales en obras de teatro, prosa y poesía del Siglo de Oro, reunidas en un corpus literario en expansión.',
 			'El buscador permite localizar palabras, frases exactas y patrones con comodines, así como realizar consultas avanzadas mediante la combinación de términos, condiciones de proximidad y filtros por título, género, atribución tradicional, atribución estilométrica o estado del texto. De este modo, TEXORO facilita tanto búsquedas puntuales como exploraciones más complejas sobre la presencia, distribución y relación de palabras o expresiones en el conjunto del corpus.'
 		],
 		en: [
-			'TEXORO is a textual search platform that allows users to search a large corpus of Spanish Golden Age works through a unified interface. The resource brings together nearly 3,000 texts, more than 38 million indexed words and works by more than 400 authors, offering several ways to explore this literary heritage through lexical, textual and documentary criteria.',
+			'TEXORO enables textual searches across Golden Age drama, prose and poetry in an expanding literary corpus.',
 			'The search engine can locate words, exact phrases and wildcard patterns, and it also supports advanced queries combining terms, proximity conditions and filters by title, genre, traditional attribution, stylometric attribution or textual condition. In this way, TEXORO supports both targeted searches and more complex explorations of the presence, distribution and relationships of words or expressions across the corpus.'
 		],
 		fr: [
-			'TEXORO est une plateforme de recherche textuelle qui permet d’interroger de manière unifiée un vaste corpus d’œuvres du Siècle d’or espagnol. La ressource réunit près de 3000 textes, plus de 38 millions de mots indexés et des œuvres de plus de 400 auteurs, et offre plusieurs façons d’explorer ce patrimoine littéraire selon des critères lexicaux, textuels et documentaires.',
+			'TEXORO permet des recherches textuelles dans un corpus littéraire en expansion réunissant théâtre, prose et poésie du Siècle d’or espagnol.',
 			'Le moteur de recherche permet de localiser des mots, des expressions exactes et des motifs avec jokers, ainsi que de lancer des requêtes avancées combinant termes, conditions de proximité et filtres par titre, genre, attribution traditionnelle, attribution stylométrique ou état du texte. TEXORO facilite ainsi aussi bien les recherches ciblées que les explorations plus complexes de la présence, de la distribution et des relations des mots ou expressions dans l’ensemble du corpus.'
 		],
 		pt: [
-			'TEXORO é uma plataforma de pesquisa textual que permite consultar de forma unificada um amplo corpus de obras do Século de Ouro espanhol. O recurso reúne cerca de 3000 textos, mais de 38 milhões de palavras indexadas e obras de mais de 400 autores, oferecendo diferentes possibilidades para explorar esse patrimônio literário por critérios lexicais, textuais e documentais.',
+			'TEXORO permite pesquisas textuais em obras de teatro, prosa e poesia do Século de Ouro espanhol, reunidas em um corpus literário em expansão.',
 			'O buscador permite localizar palavras, frases exatas e padrões com curingas, além de realizar consultas avançadas mediante a combinação de termos, condições de proximidade e filtros por título, gênero, atribuição tradicional, atribuição estilométrica ou estado do texto. Desse modo, TEXORO facilita tanto pesquisas específicas quanto explorações mais complexas sobre a presença, a distribuição e a relação de palavras ou expressões no conjunto do corpus.'
 		],
 		it: [
-			'TEXORO è una piattaforma di ricerca testuale che permette di consultare in modo unitario un ampio corpus di opere del Secolo d’Oro spagnolo. La risorsa riunisce circa 3000 testi, più di 38 milioni di parole indicizzate e opere di oltre 400 autori, offrendo diverse possibilità per esplorare questo patrimonio letterario secondo criteri lessicali, testuali e documentari.',
+			'TEXORO consente ricerche testuali in opere teatrali, in prosa e in poesia del Secolo d’Oro spagnolo, raccolte in un corpus letterario in espansione.',
 			'Il motore di ricerca consente di individuare parole, frasi esatte e pattern con caratteri jolly, nonché di effettuare ricerche avanzate combinando termini, condizioni di prossimità e filtri per titolo, genere, attribuzione tradizionale, attribuzione stilometrica o stato del testo. In questo modo, TEXORO facilita sia ricerche specifiche sia esplorazioni più complesse sulla presenza, distribuzione e relazione di parole o espressioni nell’intero corpus.'
 		],
 		de: [
-			'TEXORO ist eine Textsuchplattform, mit der sich ein umfangreiches Korpus von Werken des spanischen Siglo de Oro einheitlich durchsuchen lässt. Die Ressource umfasst rund 3000 Texte mit mehr als 38 Millionen indexierten Wörtern und Werke von über 400 Autorinnen und Autoren; sie bietet verschiedene Möglichkeiten, dieses literarische Erbe nach lexikalischen, textuellen und dokumentarischen Kriterien zu erschließen.',
+			'TEXORO ermöglicht Textsuchen in einem wachsenden literarischen Korpus mit Theater, Prosa und Lyrik des spanischen Siglo de Oro.',
 			'Die Suche findet Wörter, exakte Phrasen und Muster mit Platzhaltern und ermöglicht erweiterte Abfragen durch die Kombination von Begriffen, Nähebedingungen und Filtern nach Titel, Gattung, traditioneller Zuschreibung, stilometrischer Zuschreibung oder Textzustand. So unterstützt TEXORO sowohl gezielte Suchen als auch komplexere Untersuchungen zur Präsenz, Verteilung und Beziehung von Wörtern oder Ausdrücken im gesamten Korpus.'
 		],
 		zh: [
-			'TEXORO 是一个文本搜索平台，可通过统一界面检索西班牙黄金时代的大型作品语料库。该资源汇集近 3000 篇文本、超过 3800 万个索引词以及 400 多位作者的作品，可从词汇、文本和文献等角度探索这一文学遗产。',
+			'TEXORO 支持检索西班牙黄金时代的戏剧、散文和诗歌，涵盖不断扩充的文学语料库。',
 			'检索器可以查找词语、精确短语和带通配符的模式，也支持通过组合术语、邻近条件以及标题、体裁、传统归属、文体计量归属或文本状态等筛选条件进行高级查询。通过这种方式，TEXORO 既支持有针对性的检索，也支持对整个语料库中词语或表达的出现、分布和关系进行更复杂的探索。'
 		],
 		ja: [
-			'TEXORO は、スペイン黄金世紀作品の大規模コーパスを統一的に検索できるテキスト検索プラットフォームです。このリソースは約 3000 件のテキスト、3800 万語以上の索引語、400 人を超える著者の作品を収録し、語彙・テキスト・文献の観点からこの文学遺産を探索するための複数の方法を提供します。',
+			'TEXORO は、拡充を続けるスペイン黄金世紀の文学コーパスで、演劇・散文・詩のテキスト検索を提供します。',
 			'検索機能では、単語、完全一致のフレーズ、ワイルドカードを用いたパターンを探せるほか、語、近接条件、タイトル、ジャンル、伝統的帰属、文体計量による帰属、テキストの状態などのフィルターを組み合わせた高度な検索も可能です。これにより TEXORO は、対象を絞った検索と、コーパス全体における語句の出現、分布、関係についてのより複雑な探索の両方を支援します。'
 		],
 		ko: [
-			'TEXORO는 스페인 황금세기 작품의 대규모 말뭉치를 통합적으로 검색할 수 있는 텍스트 검색 플랫폼입니다. 이 리소스는 약 3000편의 텍스트, 3800만 개가 넘는 색인어, 400명 이상의 저자 작품을 모아 어휘, 텍스트, 문헌 기준으로 이 문학 유산을 탐색할 수 있게 합니다.',
+			'TEXORO는 확장 중인 스페인 황금세기 문학 코퍼스의 희곡, 산문, 시를 대상으로 텍스트 검색을 제공합니다.',
 			'검색기는 단어, 정확한 구, 와일드카드 패턴을 찾을 수 있으며, 용어 조합, 근접 조건, 제목, 장르, 전통적 귀속, 문체계량 귀속 또는 텍스트 상태 필터를 결합한 고급 검색도 지원합니다. 이를 통해 TEXORO는 특정 검색뿐 아니라 전체 말뭉치에서 단어나 표현의 출현, 분포, 관계를 살피는 더 복합적인 탐색도 가능하게 합니다.'
 		],
 		ru: [
-			'TEXORO — это платформа текстового поиска, которая позволяет единообразно обращаться к большому корпусу произведений испанского Золотого века. Ресурс объединяет около 3000 текстов, более 38 миллионов проиндексированных слов и произведения более чем 400 авторов, предлагая разные способы изучать это литературное наследие по лексическим, текстовым и документальным критериям.',
+			'TEXORO позволяет выполнять текстовый поиск по драматургии, прозе и поэзии испанского Золотого века в расширяющемся литературном корпусе.',
 			'Поиск позволяет находить слова, точные фразы и шаблоны с подстановочными знаками, а также выполнять расширенные запросы с сочетанием терминов, условий близости и фильтров по названию, жанру, традиционной атрибуции, стилометрической атрибуции или состоянию текста. Так TEXORO поддерживает как точечный поиск, так и более сложные исследования присутствия, распределения и связей слов или выражений во всем корпусе.'
 		],
 		ar: [
-			'TEXORO منصة للبحث النصي تتيح البحث عبر واجهة موحّدة في مجموعة واسعة من أعمال العصر الذهبي الإسباني. يجمع المورد قرابة 3000 نص، تضم أكثر من 38 مليون كلمة مفهرسة وأعمالًا لأكثر من 400 مؤلف، ويوفر إمكانات متعددة لاستكشاف هذا التراث الأدبي وفق معايير معجمية ونصية ووثائقية.',
+			'يتيح TEXORO البحث النصي في أعمال المسرح والنثر والشعر من العصر الذهبي الإسباني ضمن مجموعة أدبية تتوسع باستمرار.',
 			'يتيح محرك البحث العثور على الكلمات والعبارات الدقيقة والأنماط ذات العلامات البديلة، كما يتيح إجراء عمليات بحث متقدمة تجمع بين المصطلحات وشروط التقارب ومرشحات العنوان والنوع والإسناد التقليدي والإسناد الأسلوبي وحالة النص. وبهذا يدعم TEXORO البحث الموجّه والاستكشافات الأكثر تعقيدًا لحضور الكلمات أو العبارات وتوزيعها وعلاقاتها داخل corpus كامل.'
 		]
 	} as const;
@@ -408,6 +408,7 @@
 	interface TexoroOptionsPayload {
 		titles: TokenOption[];
 		authors: TokenOption[];
+		generalGenres?: TokenOption[];
 		genres: TokenOption[];
 		states: TokenOption[];
 	}
@@ -421,6 +422,7 @@
 	interface TexoroSearchFilters {
 		titleIds: string[];
 		titleLabels: string[];
+		generalGenres: string[];
 		genres: string[];
 		traditionalAuthorIds: string[];
 		traditionalMatch: 'or' | 'and';
@@ -468,8 +470,6 @@
 	const OCCURRENCE_DETAILS_CACHE_LIMIT = 24;
 	const OCCURRENCE_MODAL_MAX_ITEMS = 100;
 	const TEXORO_PRIME_DEBOUNCE_MS = 500;
-	const TEXORO_STATS_CACHE_KEY = 'texoro:stats';
-	const TEXORO_OPTIONS_CACHE_KEY = 'texoro:options';
 
 	const stripTrailingSlash = (value: string): string => value.replace(/\/+$/, '');
 	const joinUrl = (base: string, path: string): string =>
@@ -483,7 +483,6 @@
 		init: { cache: 'no-store' }
 	});
 	const texoroIndexBaseUrl = $derived(stripTrailingSlash(data.texoroIndexBaseUrl ?? ''));
-	const initialStatsPayload = getClientMemoryCache<TexoroStatsPayload>(TEXORO_STATS_CACHE_KEY);
 
 	let isEngineReady = $state(false);
 	let mainQuery = $state('');
@@ -503,6 +502,7 @@
 	let nextAdditionalTermId = 1;
 	let nextProximityTermId = 1;
 	let selectedTitleIds = $state<string[]>([]);
+	let selectedGeneralGenres = $state<string[]>([]);
 	let selectedGenres = $state<string[]>([]);
 	let selectedTradAuthors = $state<string[]>([]);
 	let tradMatch = $state<'or' | 'and'>('or');
@@ -523,8 +523,8 @@
 	let resultsRegion = $state<HTMLElement | null>(null);
 	let resultsPaginationRegion = $state<HTMLElement | null>(null);
 	let indexStats = $state<{ works: number; tokens: number; vocabSize: number } | null>(null);
-	let statsPayload = $state<TexoroStatsPayload | null>(initialStatsPayload);
-	let isStatsLoading = $state(!initialStatsPayload);
+	let statsPayload = $state<TexoroStatsPayload | null>(null);
+	let isStatsLoading = $state(true);
 	const displayIndexStats = $derived(
 		indexStats ??
 			(statsPayload
@@ -559,6 +559,7 @@
 	let optionsLoadPromise: Promise<void> | null = null;
 	let titleOptionItems = $state<TokenOption[]>([]);
 	let authorOptionItems = $state<TokenOption[]>([]);
+	let generalGenreOptionItems = $state<TokenOption[]>(['Teatro', 'Prosa', 'Poesía'].map((id) => ({ id, label: id })));
 	let genreOptionItems = $state<TokenOption[]>([]);
 	let stateOptionItems = $state<TokenOption[]>([]);
 	let searchRequestId = 0;
@@ -710,6 +711,8 @@
 	const authorOptions = $derived(authorOptionItems);
 	const traditionalAuthorOptions = $derived(authorOptions.filter((option) => isPersonAuthor(option.id)));
 	const titleOptions = $derived(titleOptionItems);
+	const generalGenreOptions = $derived(generalGenreOptionItems);
+	const generalGenreLabelById = $derived(new Map(generalGenreOptions.map((option) => [option.id, option.label])));
 	const genreOptions = $derived(genreOptionItems);
 	const stateOptions = $derived(stateOptionItems);
 	const authorLabelById = $derived.by(() => new Map(authorOptions.map((option) => [option.id, option.label] as const)));
@@ -731,7 +734,7 @@
 		return count;
 	});
 
-	const hasActiveFilters = $derived.by(
+	const hasActivePanelFilters = $derived.by(
 		() =>
 			selectedTitleIds.length > 0 ||
 			selectedGenres.length > 0 ||
@@ -741,6 +744,7 @@
 	);
 	const filtersHaveValues = (filters: TexoroSearchFilters): boolean =>
 		filters.titleIds.length > 0 ||
+		filters.generalGenres.length > 0 ||
 		filters.genres.length > 0 ||
 		filters.traditionalAuthorIds.length > 0 ||
 		filters.stylometryAuthorIds.length > 0 ||
@@ -752,6 +756,7 @@
 	const buildCurrentSearchFilters = (): TexoroSearchFilters => ({
 		titleIds: [...selectedTitleIds],
 		titleLabels: [...selectedTitleLabels],
+		generalGenres: [...selectedGeneralGenres],
 		genres: [...selectedGenres],
 		traditionalAuthorIds: [...selectedTradAuthors],
 		traditionalMatch: tradMatch,
@@ -763,6 +768,7 @@
 	const buildSearchFilterOptions = (filters: TexoroSearchFilters): Pick<
 		SearchOptions,
 		| 'workIds'
+		| 'generalGenres'
 		| 'genres'
 		| 'states'
 		| 'traditionalAuthorIds'
@@ -771,6 +777,7 @@
 		| 'stylometryMatch'
 	> => ({
 		workIds: filters.titleIds,
+		generalGenres: filters.generalGenres,
 		genres: filters.genres,
 		states: filters.states,
 		traditionalAuthorIds: filters.traditionalAuthorIds,
@@ -786,7 +793,7 @@
 	});
 
 	$effect(() => {
-		if (hasActiveFilters) {
+		if (hasActivePanelFilters) {
 			filtersOpen = true;
 		}
 	});
@@ -866,12 +873,12 @@
 
 	const chartTitles: Record<ChartKey, string> = {
 		author: 'Ocurrencias por autor',
-		genre: 'Ocurrencias por género'
+		genre: 'Ocurrencias por subgénero'
 	};
 
 	const chartEmptyMessages: Record<ChartKey, string> = {
 		author: 'No hay datos de autoría estilométrica para graficar.',
-		genre: 'No hay datos de género para graficar.'
+		genre: 'No hay datos de subgénero para graficar.'
 	};
 
 	const modePillButtonClass =
@@ -1056,18 +1063,19 @@
 		return suffix ? `${chartTitles[chartKey]} · ${queryLabelNoun}: ${suffix}` : chartTitles[chartKey];
 	};
 
-	const formatCompactAttribution = (set: AttributionSet): string => {
-		const attribution = formatTraditionalAttributionCompact(set, t(set.unresolved ? 'No apunta hacia ningún autor' : 'Sin datos'), { and: t('y'), or: t('o') });
-		return attribution === 'Desconocido' ? t(attribution) : attribution;
+	const formatCompactAttribution = (set: AttributionSet, emptyLabel = 'Sin datos'): string => {
+		const attribution = formatTraditionalAttributionCompact(set, t(set.unresolved ? 'No apunta hacia ningún autor' : emptyLabel), { and: t('y'), or: t('o') });
+		return set.groups.some((group) => group.members.some((member) => isPersonAuthor(member.authorId))) ? attribution : t(attribution);
 	};
 
 	const resultMetadataLine = (result: SearchResult): string => {
 		const meta = result.meta;
-		if (!meta) return 'Sin metadatos';
-		const traditional = formatCompactAttribution(meta.traditionalAttribution);
-		const stylometry = formatCompactAttribution(meta.stylometryAttribution);
-		const genre = meta.genre.trim() || 'Sin género';
-		return `Trad. ${traditional} · Estil. ${stylometry} · Género ${genre}`;
+		if (!meta) return t('Sin metadatos');
+		const traditional = meta.collectionSize && new Set(meta.traditionalAttribution.groups.flatMap((group) => group.members.map((member) => member.authorId))).size > 1 ? t('Varios') : formatCompactAttribution(meta.traditionalAttribution);
+		const stylometry = formatCompactAttribution(meta.stylometryAttribution, 'No analizada');
+		const genre = t(meta.genre.trim() || 'Sin género');
+		const stylometryLabel = ` · ${t('Atribución estilométrica')} ${stylometry}`;
+		return `${t(meta.collectionSize ? 'Autores de la colección' : 'Atribución tradicional')} ${traditional}${stylometryLabel} · ${t('Género')} ${t(meta.generalGenre || 'Teatro')} · ${t('Subgénero')} ${genre}`;
 	};
 
 	const closeTextDropdown = (): void => {
@@ -1221,7 +1229,7 @@
 	const proximityBaseValuesForQuery = (query: StructuredSearchQuery): string[] =>
 		uniqueSearchValues([query.main]).map(formatFormulaValue);
 
-	const textPart = (value: string): InterpretedQueryPart => ({ kind: 'text', value });
+	const textPart = (value: string): InterpretedQueryPart => ({ kind: 'text', value: t(value) });
 	const termPart = (value: string): InterpretedQueryPart => ({ kind: 'term', value });
 	const quoteTerm = (value: string): string => `“${normalizeSearchValue(value)}”`;
 	const isPatternTerm = (value: string): boolean => /[*?]/.test(value);
@@ -1300,6 +1308,7 @@
 
 	interface InterpretedFilterView {
 		titles: string[];
+		generalGenres: string[];
 		genres: string[];
 		traditionalAuthors: string[];
 		traditionalMatch: 'or' | 'and';
@@ -1372,6 +1381,7 @@
 		const parts: InterpretedQueryPart[] = [];
 		const hasFilters =
 			filters.titles.length > 0 ||
+			filters.generalGenres.length > 0 ||
 			filters.genres.length > 0 ||
 			filters.states.length > 0 ||
 			filters.traditionalAuthors.length > 0 ||
@@ -1391,13 +1401,19 @@
 			appendHumanTermList(parts, filters.titles.map(quoteTerm), 'o');
 			parts.push(textPart(' '));
 		}
+		if (filters.generalGenres.length > 0) {
+			pushJoin();
+			parts.push(textPart('de género '));
+			appendHumanTermList(parts, filters.generalGenres.map(quoteTerm), 'o');
+			parts.push(textPart(' '));
+		}
 		if (filters.genres.length > 0) {
 			pushJoin();
 			if (filters.genres.length === 1) {
-				parts.push(textPart('del género '));
+				parts.push(textPart('del subgénero '));
 				parts.push(termPart(quoteTerm(filters.genres[0])));
 			} else {
-				parts.push(textPart('de los géneros '));
+				parts.push(textPart('de los subgéneros '));
 				appendHumanTermList(parts, filters.genres.map(quoteTerm), 'o');
 			}
 			parts.push(textPart(' '));
@@ -1585,12 +1601,15 @@
 		};
 		const interpretedFilters: InterpretedFilterView = {
 			titles: resolveFilterLabels(selectedTitleIds, titleLabelById),
-			genres: resolveFilterLabels(selectedGenres, genreLabelById),
+			generalGenres: resolveFilterLabels(selectedGeneralGenres, generalGenreLabelById).map(t),
+			genres: resolveFilterLabels(selectedGenres, genreLabelById).map(t),
 			traditionalAuthors: resolveFilterLabels(selectedTradAuthors, authorLabelById),
 			traditionalMatch: tradMatch,
-			stylometryAuthors: resolveFilterLabels(selectedEstoAuthors, authorLabelById),
+			stylometryAuthors: resolveFilterLabels(selectedEstoAuthors, authorLabelById).map((label) =>
+				selectedEstoAuthors.some((id) => !isPersonAuthor(id) && authorLabelById.get(id) === label) ? t(label) : label
+			),
 			stylometryMatch: estoMatch,
-			states: resolveFilterLabels(selectedStates, stateLabelById)
+			states: resolveFilterLabels(selectedStates, stateLabelById).map(t)
 		};
 		return {
 			summaryParts: buildInterpretedSummaryParts(structuredQuery, interpretedFilters)
@@ -1615,6 +1634,7 @@
 		proximityTerms = [];
 		proximityMode = 'all';
 		selectedTitleIds = [];
+		selectedGeneralGenres = [];
 		selectedGenres = [];
 		selectedTradAuthors = [];
 		tradMatch = 'or';
@@ -1987,20 +2007,12 @@
 	};
 
 	const loadTexoroStats = async (): Promise<void> => {
-		const cached = getClientMemoryCache<TexoroStatsPayload>(TEXORO_STATS_CACHE_KEY);
-		if (cached) {
-			statsPayload = cached;
-			isStatsLoading = false;
-			return;
-		}
 		if (statsLoadPromise) return statsLoadPromise;
 		statsLoadPromise = (async () => {
 			try {
-				statsPayload = await loadClientMemoryCache<TexoroStatsPayload>(TEXORO_STATS_CACHE_KEY, async () => {
-					const response = await fetch('/api/texoro/stats');
-					if (!response.ok) throw new Error(`No se pudieron cargar los indicadores de TEXORO: ${response.status}`);
-					return (await response.json()) as TexoroStatsPayload;
-				});
+				const response = await fetch('/api/texoro/stats', { cache: dev ? 'no-store' : 'no-cache' });
+				if (!response.ok) throw new Error(`No se pudieron cargar los indicadores de TEXORO: ${response.status}`);
+				statsPayload = (await response.json()) as TexoroStatsPayload;
 			} catch (cause) {
 				console.warn('[texoro] stats load failed', cause);
 				statsPayload = null;
@@ -2012,24 +2024,16 @@
 	};
 
 	const ensureTexoroOptionsLoaded = async (): Promise<void> => {
-		const cached = getClientMemoryCache<TexoroOptionsPayload>(TEXORO_OPTIONS_CACHE_KEY);
-		if (cached) {
-			titleOptionItems = cached.titles;
-			authorOptionItems = cached.authors;
-			genreOptionItems = cached.genres;
-			stateOptionItems = cached.states;
-			return;
-		}
+		// Revalidate on each page visit; reuse the result within this visit only.
 		if (optionsLoadPromise) return optionsLoadPromise;
 		optionsLoadPromise = (async () => {
 			try {
-				const payload = await loadClientMemoryCache<TexoroOptionsPayload>(TEXORO_OPTIONS_CACHE_KEY, async () => {
-					const response = await fetch('/api/texoro/options');
-					if (!response.ok) throw new Error(`No se pudieron cargar los filtros de TEXORO: ${response.status}`);
-					return (await response.json()) as TexoroOptionsPayload;
-				});
+				const response = await fetch('/api/texoro/options', { cache: dev ? 'no-store' : 'no-cache' });
+				if (!response.ok) throw new Error(`No se pudieron cargar los filtros de TEXORO: ${response.status}`);
+				const payload = (await response.json()) as TexoroOptionsPayload;
 				titleOptionItems = payload.titles;
 				authorOptionItems = payload.authors;
+				generalGenreOptionItems = payload.generalGenres ?? generalGenreOptionItems;
 				genreOptionItems = payload.genres;
 				stateOptionItems = payload.states;
 			} catch (cause) {
@@ -2041,7 +2045,7 @@
 	};
 
 	const fetchWorksMeta = async (): Promise<TexoroWorkMeta[]> => {
-		const response = await fetch('/api/texoro/work-meta');
+		const response = await fetch('/api/texoro/work-meta', { cache: dev ? 'no-store' : 'no-cache' });
 		if (!response.ok) {
 			throw new Error(`No se pudieron cargar los metadatos de TEXORO: ${response.status}`);
 		}
@@ -2748,6 +2752,7 @@
 			proximityMode,
 			...proximityTerms.map((term) => `${term.order}:${term.distance}:${term.value}`),
 			...filters.titleIds,
+			...filters.generalGenres,
 			...filters.genres,
 			...filters.traditionalAuthorIds,
 			filters.traditionalMatch,
@@ -2968,10 +2973,10 @@
 	>
 		<div class="grid min-w-0 max-w-full content-start">
 			<p class="m-0 text-[0.68rem] leading-[1.2] font-semibold uppercase text-text-accent-purple">
-				Atribución tradicional
+				{meta.collectionSize ? 'Autores de la colección' : 'Atribución tradicional'}
 			</p>
 			<p class="m-0 text-[0.86rem] leading-[1.2] text-text-main" data-i18n-skip>
-				{formatCompactAttribution(meta.traditionalAttribution)}
+				{meta.collectionSize && new Set(meta.traditionalAttribution.groups.flatMap((group) => group.members.map((member) => member.authorId))).size > 1 ? t('Varios') : formatCompactAttribution(meta.traditionalAttribution)}
 			</p>
 		</div>
 		<div class="grid min-w-0 max-w-full content-start">
@@ -2979,12 +2984,16 @@
 				Atribución estilométrica
 			</p>
 			<p class="m-0 text-[0.86rem] leading-[1.2] text-text-main" data-i18n-skip>
-				{formatCompactAttribution(meta.stylometryAttribution)}
+				{formatCompactAttribution(meta.stylometryAttribution, 'No analizada')}
 			</p>
 		</div>
 		<div class="grid min-w-0 max-w-full content-start">
+			<p class="m-0 text-[0.68rem] leading-[1.2] font-semibold uppercase text-text-accent-purple">Género</p>
+			<p class="m-0 text-[0.86rem] leading-[1.2] text-text-main">{meta.generalGenre || 'Teatro'}</p>
+		</div>
+		<div class="grid min-w-0 max-w-full content-start">
 			<p class="m-0 text-[0.68rem] leading-[1.2] font-semibold uppercase text-text-accent-purple">
-				Género
+				Subgénero
 			</p>
 			<p class="m-0 text-[0.86rem] leading-[1.2] text-text-main">
 				{meta.genre.trim() || 'Sin género'}
@@ -3096,7 +3105,7 @@
 	<FeatureHeroSection
 		eyebrow=""
 		title="TEXORO"
-		subtitle="Búsquedas textuales en 3000 obras del Siglo de Oro"
+		subtitle="Búsquedas textuales en teatro, prosa y poesía del Siglo de Oro"
 		backgroundImage={fondoLogo}
 		statsAriaLabel="Indicadores de TEXORO"
 		statsLayout="three"
@@ -3194,6 +3203,26 @@
 						{/if}
 					</button>
 				</div>
+			</div>
+
+
+			<div class="flex flex-wrap items-center gap-3">
+				<label for="texoro-main-genre" class="text-[0.88rem] font-semibold text-brand-blue-dark">{t('Género')}</label>
+				<select
+					id="texoro-main-genre"
+					name="texoro-genero-general"
+					value={selectedGeneralGenres[0] ?? ''}
+					class="h-[42px] w-full rounded-[10px] border border-border bg-white px-3 text-[15px] text-text-main outline-none transition focus:border-brand-blue/35 sm:w-52"
+					onchange={(event) => {
+						const genre = event.currentTarget.value;
+						selectedGeneralGenres = genre ? [genre] : [];
+					}}
+				>
+					<option value="">{t('Cualquiera')}</option>
+					<option value="Teatro">{t('Teatro')}</option>
+					<option value="Prosa">{t('Prosa')}</option>
+					<option value="Poesía">{t('Poesía')}</option>
+				</select>
 			</div>
 
 			<p class="m-0 text-[0.84rem] text-text-soft">
@@ -3512,13 +3541,14 @@
 								}}
 							/>
 
+
 							<TokenMultiSelect
 								name="texoro-genero"
-								label="Género"
-								placeholder="Escribe y selecciona géneros"
+								label="Subgénero"
+								placeholder="Escribe y selecciona subgéneros"
 								options={genreOptions}
 								selectedIds={selectedGenres}
-								helpText="Selecciona uno o varios géneros para limitar los resultados."
+								helpText="Selecciona uno o varios subgéneros para limitar los resultados."
 								inputClass="js-static-multiselect"
 								onIntent={() => {
 									void ensureTexoroOptionsLoaded();
@@ -3538,7 +3568,7 @@
 									options={traditionalAuthorOptions}
 									preserveOptions
 									selectedIds={selectedTradAuthors}
-									helpText="Autores propuestos por la tradición filológica."
+									helpText="Autores propuestos por la tradición filológica. En poesía, el filtro selecciona colecciones que contienen al autor y busca en la colección completa."
 									inputClass="js-author-multiselect"
 									onIntent={() => {
 										void ensureTexoroOptionsLoaded();
@@ -3904,7 +3934,7 @@
 						</p>
 						<div class="flex flex-wrap items-center justify-center gap-3 max-md:w-full">
 							<div class="flex items-center gap-2 font-['Roboto',sans-serif] text-[0.84rem] text-text-main max-sm:grid max-sm:w-full max-sm:gap-1.5">
-								<span id="texoro-result-sort-label" class="font-semibold whitespace-nowrap max-sm:text-center">Ordenar por</span>
+								<span id="texoro-result-sort-label" class="font-semibold whitespace-nowrap max-sm:text-center">{t('Ordenar por')}</span>
 								<span class="inline-flex h-9 overflow-hidden rounded-[9px] border border-border bg-white shadow-[0_2px_7px_rgba(25,46,80,0.05)] focus-within:border-brand-blue/35 focus-within:shadow-[0_0_0_3px_rgba(13,63,145,0.1)] max-sm:w-full">
 									<select
 										id="texoro-result-sort"
@@ -3913,15 +3943,15 @@
 										value={resultSort}
 										onchange={changeResultSort}
 									>
-										{#each ['occurrences', 'title', 'traditional', 'stylometry', 'genre', 'state'] as sortOption}
-											<option value={sortOption}>{resultSortLabel(sortOption as ResultSort)}</option>
+										{#each ['occurrences', 'title', 'traditional', 'stylometry', 'generalGenre', 'genre', 'state'] as sortOption}
+											<option value={sortOption}>{t(resultSortLabel(sortOption as ResultSort))}</option>
 										{/each}
 									</select>
 									<button
 										type="button"
 										class="inline-flex min-w-[7.8rem] cursor-pointer items-center justify-center gap-1.5 border-0 border-l border-border bg-surface-soft px-2.5 text-[0.79rem] font-semibold whitespace-nowrap text-brand-blue-dark transition hover:bg-surface-accent-blue focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand-blue max-sm:min-w-[7rem] max-sm:px-2"
-										title={`Invertir orden. Orden actual: ${resultSortDirectionLabel(resultSort, resultSortDirection)}`}
-										aria-label={`Invertir orden. Orden actual: ${resultSortDirectionLabel(resultSort, resultSortDirection)}`}
+										title={`${t('Invertir orden. Orden actual:')} ${t(resultSortDirectionLabel(resultSort, resultSortDirection))}`}
+										aria-label={`${t('Invertir orden. Orden actual:')} ${t(resultSortDirectionLabel(resultSort, resultSortDirection))}`}
 										onclick={toggleResultSortDirection}
 									>
 										{#if resultSort === 'occurrences'}
@@ -3935,7 +3965,7 @@
 										{:else}
 											<ArrowDownZA class="h-4 w-4" aria-hidden="true" />
 										{/if}
-										<span>{resultSortDirectionLabel(resultSort, resultSortDirection)}</span>
+										<span>{t(resultSortDirectionLabel(resultSort, resultSortDirection))}</span>
 									</button>
 								</span>
 							</div>

@@ -8,7 +8,7 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 	const [works, authors] = await Promise.all([getAllWorks(), getAllAuthors()]);
 	const worksByTraditionalAuthorId = new Map<
 		string,
-		Array<{ slug: string; title: string; titleVariants: string[]; genre: string }>
+		Array<{ slug: string; title: string; titleVariants: string[]; genre: string; generalGenre: string; collectionSize?: number }>
 	>();
 
 	for (const work of works) {
@@ -23,6 +23,8 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 					slug: work.slug,
 					title: work.title,
 					titleVariants: work.titleVariants,
+					collectionSize: work.collectionSize,
+					generalGenre: work.generalGenre || 'Teatro',
 					genre: work.genre
 				});
 				worksByTraditionalAuthorId.set(authorId, authorWorks);
@@ -39,7 +41,7 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 				name: author.name,
 				nameVariants: author.nameVariants,
 				works: (worksByTraditionalAuthorId.get(author.id) ?? []).sort((a, b) => {
-					const titleComparison = a.title.localeCompare(b.title, 'es', { sensitivity: 'base' });
+					const titleComparison = a.title.localeCompare(b.title, 'es', { sensitivity: 'base', ignorePunctuation: true });
 					if (titleComparison !== 0) return titleComparison;
 					return a.slug.localeCompare(b.slug, 'es', { sensitivity: 'base' });
 				})

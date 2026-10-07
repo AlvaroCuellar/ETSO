@@ -4,7 +4,7 @@
 	import ArrowUpRight from 'lucide-svelte/icons/arrow-up-right';
 	import InfoCard from '$lib/components/ui/InfoCard.svelte';
 	import InlineActionButton from '$lib/components/ui/InlineActionButton.svelte';
-	import { formatConfidence, type CatalogWork, type AttributionSet, type Confidence } from '$lib/domain/catalog';
+	import { formatConfidence, isPersonAuthor, type CatalogWork, type AttributionSet, type Confidence } from '$lib/domain/catalog';
 	import { renderInlineItalicsHtml } from '$lib/utils/render-inline-italics-html';
 
 	interface Props {
@@ -61,10 +61,10 @@
 		{#if hasTraditionalAttribution(work.traditionalAttribution)}
 			<div class="grid content-start gap-1.5">
 				<dt class="m-0 font-ui text-[0.72rem] font-bold uppercase tracking-[0.05em] text-text-soft">
-					Atribución tradicional
+					{work.collectionSize ? 'Autores de la colección' : 'Atribución tradicional'}
 				</dt>
 				<dd class="m-0 font-ui text-[0.97rem] leading-[1.65] text-text-main">
-					<div class="flex flex-col items-start gap-[0.65rem]">
+					{#if work.collectionSize && new Set(work.traditionalAttribution.groups.flatMap((group) => group.members.map((member) => member.authorId))).size > 1}<span>Varios</span>{:else}<div class="flex flex-col items-start gap-[0.65rem]">
 						{#each work.traditionalAttribution.groups as group, groupIndex}
 							<div class="flex flex-wrap items-center gap-3">
 								{#each group.members as member, memberIndex}
@@ -73,10 +73,10 @@
 											href={`/autores/${member.authorId}`}
 											class="inline-flex items-baseline gap-1 font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline"
 										>
-											<span data-i18n-skip={member.authorId !== 'desconocido' || undefined}>{member.authorName}</span>
+											<span data-i18n-skip={isPersonAuthor(member.authorId) || undefined}>{member.authorName}</span>
 										</a>
 									{:else}
-										<span class="font-medium" data-i18n-skip={member.authorId !== 'desconocido' || undefined}>{member.authorName}</span>
+										<span class="font-medium" data-i18n-skip={isPersonAuthor(member.authorId) || undefined}>{member.authorName}</span>
 									{/if}
 									{#if memberIndex < group.members.length - 1}
 										<span
@@ -94,7 +94,7 @@
 								</span>
 							{/if}
 						{/each}
-					</div>
+					</div>{/if}
 				</dd>
 			</div>
 		{/if}
@@ -125,10 +125,10 @@
 											href={`/autores/${member.authorId}`}
 											class="inline-flex items-baseline gap-1 font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline"
 										>
-											<span data-i18n-skip={member.authorId !== 'desconocido' || undefined}>{member.authorName}</span>
+											<span data-i18n-skip={isPersonAuthor(member.authorId) || undefined}>{member.authorName}</span>
 										</a>
 									{:else}
-										<span class="font-medium" data-i18n-skip={member.authorId !== 'desconocido' || undefined}>{member.authorName}</span>
+										<span class="font-medium" data-i18n-skip={isPersonAuthor(member.authorId) || undefined}>{member.authorName}</span>
 									{/if}
 									{#if member.confidence}
 										<span
@@ -158,9 +158,15 @@
 			</div>
 		{/if}
 
+		{#if !work.inAuthorshipExam}
+		<div class="grid content-start gap-1.5">
+			<dt class="m-0 font-ui text-[0.72rem] font-bold uppercase tracking-[0.05em] text-text-soft">Género</dt>
+			<dd class="m-0 font-ui text-[0.97rem] leading-[1.65] text-text-main">{work.generalGenre || 'Teatro'}</dd>
+		</div>
+		{/if}
 		<div class="grid content-start gap-1.5">
 			<dt class="m-0 font-ui text-[0.72rem] font-bold uppercase tracking-[0.05em] text-text-soft">
-				Género
+				{work.inAuthorshipExam ? 'Género' : 'Subgénero'}
 			</dt>
 			<dd class="m-0 font-ui text-[0.97rem] leading-[1.65] text-text-main">{work.genre}</dd>
 		</div>

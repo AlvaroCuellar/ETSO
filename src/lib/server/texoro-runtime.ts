@@ -19,6 +19,7 @@ export interface TexoroOptions {
 	titles: TexoroTokenOption[];
 	authors: TexoroTokenOption[];
 	genres: TexoroTokenOption[];
+	generalGenres: TexoroTokenOption[];
 	states: TexoroTokenOption[];
 }
 
@@ -53,6 +54,9 @@ export const toTexoroWorkMeta = (work: CatalogWork): TexoroWorkMeta => ({
 	titleVariants: work.titleVariants,
 	slug: work.slug,
 	genre: work.genre,
+	generalGenre: work.generalGenre || 'Teatro',
+	collectionSize: work.collectionSize,
+	origin: work.origin,
 	textState: work.textState,
 	shortSummary: work.shortSummary,
 	traditionalAttribution: work.traditionalAttribution,
@@ -92,7 +96,7 @@ const collectTitleOptions = (works: CatalogWork[]): TexoroTokenOption[] =>
 			label: formatDisplayWorkTitle(work.title),
 			searchText: buildWorkTitleSearchText(work.title, work.titleVariants)
 		}))
-		.sort((a, b) => a.label.localeCompare(b.label, 'es'));
+		.sort((a, b) => a.label.localeCompare(b.label, 'es', { sensitivity: 'base', ignorePunctuation: true }));
 
 const countAttributedAuthors = (works: CatalogWork[]): number => {
 	const ids = new Set<string>();
@@ -152,6 +156,7 @@ export const getTexoroOptions = async (): Promise<TexoroOptions> => {
 		titles: collectTitleOptions(works),
 		authors: collectAuthorOptions(works),
 		genres: collectStringOptions(works.map((work) => work.genre)),
+		generalGenres: collectStringOptions(works.map((work) => work.generalGenre || 'Teatro')),
 		states: collectStringOptions(works.map((work) => work.textState))
 	};
 	cachedTexoroOptions = { cachedAt: Date.now(), value };

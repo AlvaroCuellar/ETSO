@@ -1,7 +1,7 @@
 import type { AttributionSet } from '$lib/domain/catalog';
 import type { SearchResult } from '$lib/search/types';
 
-export type ResultSort = 'occurrences' | 'title' | 'traditional' | 'stylometry' | 'genre' | 'state';
+export type ResultSort = 'occurrences' | 'title' | 'traditional' | 'stylometry' | 'generalGenre' | 'genre' | 'state';
 export type ResultSortDirection = 'asc' | 'desc';
 
 export const normalizeResultSort = (value: unknown): ResultSort => {
@@ -9,6 +9,7 @@ export const normalizeResultSort = (value: unknown): ResultSort => {
 		value === 'title' ||
 		value === 'traditional' ||
 		value === 'stylometry' ||
+		value === 'generalGenre' ||
 		value === 'genre' ||
 		value === 'state'
 	) {
@@ -29,7 +30,8 @@ export const resultSortLabel = (sort: ResultSort): string => {
 	if (sort === 'title') return 'Título';
 	if (sort === 'traditional') return 'Atribución tradicional';
 	if (sort === 'stylometry') return 'Atribución estilométrica';
-	if (sort === 'genre') return 'Género';
+	if (sort === 'generalGenre') return 'Género';
+	if (sort === 'genre') return 'Subgénero';
 	if (sort === 'state') return 'Estado del texto';
 	return 'Número de ocurrencias';
 };
@@ -79,6 +81,9 @@ export const sortSearchResults = (
 	locale = 'es'
 ): SearchResult[] => {
 	const collator = new Intl.Collator(locale, { sensitivity: 'base', numeric: true });
+	const titleCollator = new Intl.Collator(locale, {
+		sensitivity: 'base', numeric: true, ignorePunctuation: true
+	});
 	return [...results].sort((left, right) => {
 		if (sort === 'occurrences') {
 			return (
@@ -90,7 +95,7 @@ export const sortSearchResults = (
 
 		let selectedComparison = 0;
 		if (sort === 'title') {
-			selectedComparison = compareOptionalText(left.meta?.title, right.meta?.title, collator, direction);
+			selectedComparison = compareOptionalText(left.meta?.title, right.meta?.title, titleCollator, direction);
 		} else if (sort === 'traditional') {
 			selectedComparison = compareOptionalText(
 				attributionSortValue(left.meta?.traditionalAttribution, collator),
@@ -105,6 +110,8 @@ export const sortSearchResults = (
 				collator,
 				direction
 			);
+		} else if (sort === 'generalGenre') {
+			selectedComparison = compareOptionalText(left.meta ? left.meta.generalGenre || 'Teatro' : null, right.meta ? right.meta.generalGenre || 'Teatro' : null, collator, direction);
 		} else if (sort === 'genre') {
 			selectedComparison = compareOptionalText(left.meta?.genre, right.meta?.genre, collator, direction);
 		} else {
@@ -113,7 +120,7 @@ export const sortSearchResults = (
 
 		return (
 			selectedComparison ||
-			compareOptionalText(left.meta?.title, right.meta?.title, collator) ||
+			compareOptionalText(left.meta?.title, right.meta?.title, titleCollator) ||
 			sumOccurrences(right) - sumOccurrences(left) ||
 			right.score - left.score ||
 			left.docId - right.docId

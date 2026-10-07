@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getAsodatWorkUrl } from '$lib/domain/asodat';
-	import { formatAttribution, formatConfidence, type AttributionSet, type Confidence } from '$lib/domain/catalog';
+	import { formatAttribution, formatConfidence, isPersonAuthor, type AttributionSet, type Confidence } from '$lib/domain/catalog';
 	import { translateText } from '$lib/i18n';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import InfoCard from '$lib/components/ui/InfoCard.svelte';
@@ -160,9 +160,9 @@
 
 						{#if hasTraditionalAttribution(data.work.traditionalAttribution)}
 							<div class={attributionBlockClass}>
-								<h3 class={attributionHeadingClass}>Atribución tradicional</h3>
+								<h3 class={attributionHeadingClass}>{data.work.collectionSize ? 'Autores de la colección' : 'Atribución tradicional'}</h3>
 								<div class="text-[0.97rem] leading-[1.6] text-text-main">
-									<div class="flex flex-col items-start gap-[0.65rem]">
+									{#if data.work.collectionSize && new Set(data.work.traditionalAttribution.groups.flatMap((group) => group.members.map((member) => member.authorId))).size > 1}<span>Varios</span>{:else}<div class="flex flex-col items-start gap-[0.65rem]">
 										{#each data.work.traditionalAttribution.groups as group, groupIndex}
 											<div class="flex flex-wrap items-center gap-3">
 												{#each group.members as member, memberIndex}
@@ -171,13 +171,13 @@
 															href={`/autores/${member.authorId}`}
 															class="inline-flex items-baseline gap-1 font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline"
 														>
-															<span data-i18n-skip={member.authorId !== 'desconocido' || undefined}>{member.authorName}</span>
+															<span data-i18n-skip={isPersonAuthor(member.authorId) || undefined}>{member.authorName}</span>
 															<span class="hidden flex-none translate-y-[2px] text-text-soft max-md:inline-flex" aria-hidden="true">
 																<ExternalLink class="h-3 w-3" />
 															</span>
 														</a>
 													{:else}
-														<span class="font-medium" data-i18n-skip={member.authorId !== 'desconocido' || undefined}>{member.authorName}</span>
+														<span class="font-medium" data-i18n-skip={isPersonAuthor(member.authorId) || undefined}>{member.authorName}</span>
 													{/if}
 													{#if memberIndex < group.members.length - 1}
 														<span
@@ -195,7 +195,7 @@
 												</span>
 											{/if}
 										{/each}
-									</div>
+									</div>{/if}
 								</div>
 							</div>
 						{/if}
@@ -224,13 +224,13 @@
 															href={`/autores/${member.authorId}`}
 															class="inline-flex items-baseline gap-1 font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline"
 														>
-															<span data-i18n-skip={member.authorId !== 'desconocido' || undefined}>{member.authorName}</span>
+															<span data-i18n-skip={isPersonAuthor(member.authorId) || undefined}>{member.authorName}</span>
 															<span class="hidden flex-none translate-y-[2px] text-text-soft max-md:inline-flex" aria-hidden="true">
 																<ExternalLink class="h-3 w-3" />
 															</span>
 														</a>
 													{:else}
-														<span class="font-medium" data-i18n-skip={member.authorId !== 'desconocido' || undefined}>{member.authorName}</span>
+														<span class="font-medium" data-i18n-skip={isPersonAuthor(member.authorId) || undefined}>{member.authorName}</span>
 													{/if}
 													{#if member.confidence}
 														<span
@@ -300,12 +300,18 @@
 
 				<InfoCard label="Información de la obra" class="lg:sticky lg:top-[calc(2rem+68px)]" bodyClass="font-ui leading-[1.5]">
 					<dl class="m-0">
+							{#if !data.work.inAuthorshipExam}
+							<div class="flex flex-col gap-[0.45rem] border-b border-border py-[0.9rem] first:pt-0 last:border-b-0 last:pb-0">
+								<dt class="m-0 text-[0.72rem] font-bold tracking-[0.05em] text-text-soft uppercase">Género</dt>
+								<dd class="m-0 text-[0.96rem] text-text-main">{data.work.generalGenre || 'Teatro'}</dd>
+							</div>
+							{/if}
 							<div class="flex flex-col gap-[0.45rem] border-b border-border py-[0.9rem] first:pt-0 last:border-b-0 last:pb-0">
 								<dt
 									class="m-0 flex items-center gap-[0.35rem] text-[0.72rem] font-bold tracking-[0.05em] text-text-soft uppercase"
 								>
 									<Drama class="h-[0.82rem] w-[0.82rem] text-text-soft stroke-2" aria-hidden="true" />
-									Género
+									{data.work.inAuthorshipExam ? 'Género' : 'Subgénero'}
 								</dt>
 								<dd class="m-0 text-[0.96rem] text-text-main">{data.work.genre}</dd>
 							</div>

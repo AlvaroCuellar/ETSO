@@ -86,9 +86,9 @@
 							<p class="m-0 font-ui text-[0.99rem] leading-[1.45] text-brand-blue-dark">
 								<span data-i18n-skip class="font-semibold">{formatDisplayWorkTitle(work.title)}</span>
 								<span class="mx-1.5 text-text-soft/70">·</span>
-								<span class="font-normal text-text-main" data-i18n-skip>{formatTraditionalAttribution(work.traditionalAttribution)}</span>
+								<span class="font-normal text-text-main" data-i18n-skip>{work.collectionSize && new Set(work.traditionalAttribution.groups.flatMap((group) => group.members.map((member) => member.authorId))).size > 1 ? translateText(data.locale, 'Varios') : formatTraditionalAttribution(work.traditionalAttribution)}</span>
 								<span class="mx-1.5 text-text-soft/70">·</span>
-								<span class="font-normal text-text-soft">{formatGenre(work.genre)}</span>
+								<span class="font-normal text-text-soft" data-i18n-skip>{translateText(data.locale, work.generalGenre || 'Teatro')} · {translateText(data.locale, formatGenre(work.genre))}</span>
 							</p>
 							{#if work.titleVariants.length > 0}
 								<p class="m-0 text-[0.92rem] leading-[1.5] text-text-soft">

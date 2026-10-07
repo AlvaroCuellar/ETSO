@@ -43,3 +43,6 @@ deploy/tools/
 deploy/backups/*.sql
 deploy/backups/*.db
 deploy/backups/*.sqlite
+
+# Isolated local corpus previews (private texts and generated indices)
+.local/

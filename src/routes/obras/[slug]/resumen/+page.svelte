@@ -1,5 +1,5 @@
 ﻿<script lang="ts">
-	import { onMount, tick } from 'svelte';
+	import { tick } from 'svelte';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import CitationSuggestionCard from '$lib/components/ui/CitationSuggestionCard.svelte';
 	import InlineActionButton from '$lib/components/ui/InlineActionButton.svelte';
@@ -18,6 +18,8 @@
 	import type { ActionData, PageData } from './$types';
 
 	let { data, form }: { data: PageData; form?: ActionData } = $props();
+	const localizeLiteral = (value: string): string =>
+		data.locale === DEFAULT_LOCALE ? value : (literalTranslations[data.locale]?.[value] ?? value);
 	const displayWorkTitle = $derived.by(() => formatDisplayWorkTitle(data.work.title));
 	const summaryPublicationDateLabel = $derived.by(() => {
 		const labels = {
@@ -53,15 +55,14 @@
 		} as const;
 		return descriptions[data.locale] ?? descriptions.es;
 	});
-	let summary = $state({
+	const summary = $derived(data.summary ?? {
 		resumenBreve: [] as string[],
 		resumenLargo: [] as string[],
 		personajes: [] as Array<{ nombre: string; descripcion: string }>,
 		espacios: [] as Array<{ nombre: string; descripcion: string }>,
 		tematicas: [] as Array<{ tema: string; descripcion: string }>
 	});
-	let summaryLoading = $state(true);
-	let summaryError = $state('');
+	const summaryError = $derived(data.summaryUnavailable ? localizeLiteral('No se pudo cargar el resumen. Inténtalo de nuevo más tarde.') : '');
 	let isSummaryCorrectionFormOpen = $state(false);
 	let summaryCorrectionTextarea = $state<HTMLTextAreaElement | null>(null);
 	let summaryCorrectionText = $state('');
@@ -69,8 +70,6 @@
 	let lastSummaryCorrectionAlertMessage = '';
 	const summaryCorrectionFeedback = $derived(form?.summaryCorrectionProposal);
 	const resumenBreveText = $derived(summary.resumenBreve.join(' ').replace(/\s+/g, ' ').trim());
-	const localizeLiteral = (value: string): string =>
-		data.locale === DEFAULT_LOCALE ? value : (literalTranslations[data.locale]?.[value] ?? value);
 	const summaryNotice = $derived.by(() => {
 		const textOrigin = localizeLiteral('(modelo 5.4) a partir del texto disponible. Puede incluir errores y omisiones. Si detectas');
 		return [
@@ -139,7 +138,7 @@
 	});
 
 	$effect(() => {
-		if (summaryLoading || summaryError || !hasDownloadableSummary || hasInitializedSummaryCorrectionText) return;
+		if (summaryError || !hasDownloadableSummary || hasInitializedSummaryCorrectionText) return;
 		summaryCorrectionText = buildEditableSummaryText();
 		hasInitializedSummaryCorrectionText = true;
 	});
@@ -215,72 +214,6 @@
 		URL.revokeObjectURL(url);
 	};
 
-	const normalizeNamedItems = (rows: unknown): Array<{ nombre: string; descripcion: string }> =>
-		Array.isArray(rows)
-			? rows
-					.map((row) => ({
-						nombre:
-							row && typeof row === 'object' && typeof (row as { nombre?: unknown }).nombre === 'string'
-								? (row as { nombre: string }).nombre.trim()
-								: '',
-						descripcion:
-							row &&
-							typeof row === 'object' &&
-							typeof (row as { descripcion?: unknown }).descripcion === 'string'
-								? (row as { descripcion: string }).descripcion.trim()
-								: ''
-					}))
-					.filter((row) => row.nombre || row.descripcion)
-			: [];
-
-	const normalizeThemeItems = (rows: unknown): Array<{ tema: string; descripcion: string }> =>
-		Array.isArray(rows)
-			? rows
-					.map((row) => ({
-						tema:
-							row && typeof row === 'object' && typeof (row as { tema?: unknown }).tema === 'string'
-								? (row as { tema: string }).tema.trim()
-								: '',
-						descripcion:
-							row &&
-							typeof row === 'object' &&
-							typeof (row as { descripcion?: unknown }).descripcion === 'string'
-								? (row as { descripcion: string }).descripcion.trim()
-								: ''
-					}))
-					.filter((row) => row.tema || row.descripcion)
-			: [];
-
-	onMount(() => {
-		void (async () => {
-			try {
-				const response = await fetch(data.summaryUrl);
-				if (!response.ok) {
-					throw new Error(`No se pudo cargar el resumen desde R2: ${response.status}`);
-				}
-				const parsed = (await response.json()) as Record<string, unknown>;
-				summary = {
-					resumenBreve: Array.isArray(parsed.resumen_breve)
-						? parsed.resumen_breve
-								.map((paragraph) => (typeof paragraph === 'string' ? paragraph.trim() : ''))
-								.filter(Boolean)
-						: [],
-					resumenLargo: Array.isArray(parsed.resumen_largo)
-						? parsed.resumen_largo
-								.map((paragraph) => (typeof paragraph === 'string' ? paragraph.trim() : ''))
-								.filter(Boolean)
-						: [],
-					personajes: normalizeNamedItems(parsed.personajes_principales),
-					espacios: normalizeNamedItems(parsed.espacios_principales),
-					tematicas: normalizeThemeItems(parsed.tematicas_principales)
-				};
-			} catch (cause) {
-				summaryError = cause instanceof Error ? cause.message : 'No se pudo cargar el resumen desde R2';
-			} finally {
-				summaryLoading = false;
-			}
-		})();
-	});
 </script>
 
 <SeoHead
@@ -324,7 +257,7 @@
 				<InlineActionButton
 					type="button"
 					icon={PencilLine}
-					disabled={summaryLoading || Boolean(summaryError) || !hasDownloadableSummary}
+					disabled={Boolean(summaryError) || !hasDownloadableSummary}
 					ariaLabel="Proponer corrección"
 					title="Proponer corrección"
 					onclick={openSummaryCorrectionForm}
@@ -334,7 +267,7 @@
 				<InlineActionButton
 					type="button"
 					icon={Download}
-					disabled={summaryLoading || !hasDownloadableSummary}
+					disabled={!hasDownloadableSummary}
 					ariaLabel="Descargar resumen en TXT"
 					title="Descargar TXT"
 					onclick={downloadSummary}
@@ -468,9 +401,7 @@
 		<div class="grid gap-8">
 			<section class="grid gap-3">
 				<h2 class="m-0 text-[1.25rem] font-semibold leading-[1.2] text-brand-blue-dark">Resumen automático breve</h2>
-				{#if summaryLoading}
-					<p class="m-0 italic text-[#546b82]">Cargando resumen...</p>
-				{:else if summaryError}
+				{#if summaryError}
 					<p class="m-0 rounded-[9px] border border-[#f3c0ca] bg-[#fff5f7] px-3 py-2 text-[#8f1e36]">{summaryError}</p>
 				{:else if summary.resumenBreve.length > 0}
 					<p class="m-0 text-base leading-[1.68] text-[#2f465c]" data-i18n-skip>{resumenBreveText}</p>
@@ -481,9 +412,7 @@
 
 			<section class="grid gap-3">
 				<h2 class="m-0 text-[1.25rem] font-semibold leading-[1.2] text-brand-blue-dark">Resumen automático amplio</h2>
-				{#if summaryLoading}
-					<p class="m-0 italic text-[#546b82]">Cargando resumen...</p>
-				{:else if summaryError}
+				{#if summaryError}
 					<p class="m-0 rounded-[9px] border border-[#f3c0ca] bg-[#fff5f7] px-3 py-2 text-[#8f1e36]">{summaryError}</p>
 				{:else if summary.resumenLargo.length > 0}
 					<div class="grid gap-3">

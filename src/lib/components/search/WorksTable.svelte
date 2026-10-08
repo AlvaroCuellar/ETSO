@@ -126,11 +126,6 @@
 	const expandIconClass = (rowId: string): string =>
 		`expand-icon inline-flex h-3 w-3 flex-shrink-0 items-center justify-center ${isRowExpanded(rowId) ? 'text-brand-blue-dark' : 'text-text-soft'}`;
 
-	const detailRowClass = (rowId: string): string => {
-		const expanded = isRowExpanded(rowId);
-		return `${expanded ? 'table-row' : 'hidden'} detail-row border-b border-border bg-white`;
-	};
-
 	const detailCellClass = '';
 	const detailMetadataGridClass = 'metadata-grid grid grid-cols-3 gap-[14px]';
 
@@ -922,14 +917,13 @@
 						</td>
 					</tr>
 
-					<tr
-						class={detailRowClass(row.rowId)}
-						hidden={!isRowExpanded(row.rowId)}
-					>
-						<td colspan={detailColspan} class={detailCellClass}>
-							{@render detailPanel(row, summaryState, false)}
-						</td>
-					</tr>
+					{#if isRowExpanded(row.rowId)}
+						<tr class="table-row detail-row border-b border-border bg-white">
+							<td colspan={detailColspan} class={detailCellClass}>
+								{@render detailPanel(row, summaryState, false)}
+							</td>
+						</tr>
+					{/if}
 				{/each}
 			</tbody>
 			</table>

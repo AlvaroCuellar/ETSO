@@ -14,7 +14,7 @@
 	import librosHero from '$lib/assets/heros/libros.webp';
 	import fondoEscritura from '$lib/assets/fondos/fondo-escritura.webp';
 	import { localizePath, type Locale } from '$lib/i18n';
-	import { createWebPageJsonLd, SITE_NAME } from '$lib/seo';
+	import { createWebPageJsonLd, DEFAULT_SEO_DESCRIPTION, SITE_NAME } from '$lib/seo';
 
 	import type { PageData } from './$types';
 
@@ -605,8 +605,7 @@
 	];
 
 	const AUTOPLAY_MS = 7000;
-	const HOME_DESCRIPTION =
-		'Estilometría aplicada al teatro del Siglo de Oro: examen de autorías, TEXORO, BITESO, resúmenes automáticos y recursos digitales para la investigación.';
+	const HOME_DESCRIPTION = DEFAULT_SEO_DESCRIPTION;
 	const homeJsonLd = createWebPageJsonLd({
 		title: SITE_NAME,
 		description: HOME_DESCRIPTION,
@@ -703,6 +702,8 @@
 
 <svelte:window onkeydown={handleCarouselKeydown} />
 
+<h1 class="sr-only">{SITE_NAME}</h1>
+
 <section
 	class="home-bleed group relative w-[100dvw] max-w-[100dvw] overflow-hidden"
 	aria-label="Secciones destacadas de ETSO"
@@ -734,9 +735,9 @@
 					<div class="absolute inset-0 flex items-end pb-12 md:items-center md:pb-0">
 						<div class="mx-auto w-full max-w-7xl px-4 sm:px-5 lg:px-6">
 							<div class="max-w-[58rem] text-white">
-								<h1 class="font-ui text-[clamp(1.9rem,4.5vw,3.4rem)] leading-[1.08] font-bold tracking-[-0.01em]">
+								<h2 class="font-ui text-[clamp(1.9rem,4.5vw,3.4rem)] leading-[1.08] font-bold tracking-[-0.01em]">
 									{slide.title}
-								</h1>
+								</h2>
 								<p class="mt-4 max-w-[50rem] font-reading text-[clamp(1rem,1.5vw,1.35rem)] leading-[1.45] text-white/92">
 									{slide.description}
 								</p>

@@ -9,10 +9,11 @@ import {
 import { getPublicSummaryAssetUrl } from '$lib/server/r2-public';
 import { submitCorrectionEmail } from '$lib/server/biteso-correction-proposals';
 import { buildSummaryCorrectionText } from '$lib/utils/summary-correction-text';
+import { loadSummaryDocument } from '$lib/server/summary-document';
 
 import type { Actions, PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ locals, params, setHeaders }) => {
+export const load: PageServerLoad = async ({ locals, params, setHeaders, fetch }) => {
 	const work = await getWorkBySlug(params.slug);
 	if (!work) {
 		const publicId = /^\d+$/.test(params.slug) ? Number.parseInt(params.slug, 10) : null;
@@ -23,10 +24,14 @@ export const load: PageServerLoad = async ({ locals, params, setHeaders }) => {
 		throw error(404, 'Obra no encontrada');
 	}
 
-	setPublicCatalogCacheHeaders(setHeaders);
+	const summaryUrl = getPublicSummaryAssetUrl(`${work.id}.json`);
+	const summary = await loadSummaryDocument(summaryUrl, fetch);
+	if (summary.unavailable) setHeaders({ 'cache-control': 'no-store' });
+	else setPublicCatalogCacheHeaders(setHeaders);
 	return {
 		work,
-		summaryUrl: getPublicSummaryAssetUrl(`${work.id}.json`),
+		summary: summary.document,
+		summaryUnavailable: summary.unavailable,
 		publishedOn: work.summaryPublishedOn ?? ''
 	};
 };

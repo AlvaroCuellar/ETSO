@@ -1,4 +1,4 @@
-import { SITE_URL } from '$lib/seo';
+import { SITE_URL, SITE_NAME, DEFAULT_SEO_DESCRIPTION, TEXORO_SEO_TITLE, TEXORO_SEO_DESCRIPTION } from '$lib/seo';
 import { esToAr, esToDe, esToIt, esToJa, esToKo, esToPt, esToRu, esToZh } from '$lib/i18n-extra';
 import { completeCopyTranslations } from '$lib/i18n-copy';
 
@@ -61,6 +61,75 @@ const navHrefs = {
 	contact: '/contacto'
 } as const;
 
+const seoCopyByLocale: Record<Locale, { texoroTitle: string; texoroDescription: string; defaultDescription: string; summaryLoadError: string }> = {
+	es: {
+		texoroTitle: "TEXORO: búsquedas en teatro, prosa y poesía del Siglo de Oro",
+		texoroDescription: "Busca palabras, frases y patrones en obras de teatro, prosa y poesía del Siglo de Oro. Filtra por título, género y autor en TEXORO.",
+		defaultDescription: "ETSO ofrece análisis de autoría teatral, búsquedas en teatro, prosa y poesía del Siglo de Oro con TEXORO, BITESO y resúmenes automáticos.",
+		summaryLoadError: "No se pudo cargar el resumen. Inténtalo de nuevo más tarde."
+	},
+	en: {
+		texoroTitle: "TEXORO: search Golden Age theatre, prose and poetry",
+		texoroDescription: "Search words, phrases and patterns in Spanish Golden Age theatre, prose and poetry. Filter by title, genre and author in TEXORO.",
+		defaultDescription: "ETSO offers theatrical authorship analysis, searches in Spanish Golden Age theatre, prose and poetry with TEXORO, BITESO and automatic summaries.",
+		summaryLoadError: "The summary could not be loaded. Please try again later."
+	},
+	fr: {
+		texoroTitle: "TEXORO : recherche dans le théâtre, la prose et la poésie du Siècle d’or",
+		texoroDescription: "Recherchez des mots, expressions et motifs dans le théâtre, la prose et la poésie du Siècle d’or espagnol. Filtrez par titre, genre et auteur dans TEXORO.",
+		defaultDescription: "ETSO propose des analyses d’attribution théâtrale, des recherches dans le théâtre, la prose et la poésie du Siècle d’or, BITESO et des résumés automatiques.",
+		summaryLoadError: "Le résumé n’a pas pu être chargé. Réessayez plus tard."
+	},
+	pt: {
+		texoroTitle: "TEXORO: pesquisa em teatro, prosa e poesia do Século de Ouro",
+		texoroDescription: "Pesquise palavras, frases e padrões em teatro, prosa e poesia do Século de Ouro espanhol. Filtre por título, gênero e autor no TEXORO.",
+		defaultDescription: "ETSO oferece análise de autoria teatral, pesquisas em teatro, prosa e poesia do Século de Ouro com TEXORO, BITESO e resumos automáticos.",
+		summaryLoadError: "Não foi possível carregar o resumo. Tente novamente mais tarde."
+	},
+	it: {
+		texoroTitle: "TEXORO: ricerca nel teatro, nella prosa e nella poesia del Secolo d’Oro",
+		texoroDescription: "Cerca parole, frasi e schemi nel teatro, nella prosa e nella poesia del Secolo d’Oro spagnolo. Filtra per titolo, genere e autore in TEXORO.",
+		defaultDescription: "ETSO offre analisi dell’attribuzione teatrale, ricerche nel teatro, nella prosa e nella poesia del Secolo d’Oro con TEXORO, BITESO e riassunti automatici.",
+		summaryLoadError: "Impossibile caricare il riassunto. Riprova più tardi."
+	},
+	de: {
+		texoroTitle: "TEXORO: Textsuche in Theater, Prosa und Lyrik des Siglo de Oro",
+		texoroDescription: "Suche nach Wörtern, Phrasen und Mustern in Theater, Prosa und Lyrik des spanischen Siglo de Oro. Filtere in TEXORO nach Titel, Gattung und Autor.",
+		defaultDescription: "ETSO bietet Autorschaftsanalysen für Theaterstücke, Textsuche in Theater, Prosa und Lyrik des Siglo de Oro mit TEXORO, BITESO und automatische Zusammenfassungen.",
+		summaryLoadError: "Die Zusammenfassung konnte nicht geladen werden. Bitte später erneut versuchen."
+	},
+	zh: {
+		texoroTitle: "TEXORO：检索西班牙黄金时代的戏剧、散文和诗歌",
+		texoroDescription: "在 TEXORO 中搜索西班牙黄金时代戏剧、散文和诗歌中的词语、短语和模式，并按标题、体裁和作者筛选。",
+		defaultDescription: "ETSO 提供戏剧作者归属分析、通过 TEXORO 检索西班牙黄金时代的戏剧、散文和诗歌，以及 BITESO 和自动摘要。",
+		summaryLoadError: "无法加载摘要。请稍后重试。"
+	},
+	ja: {
+		texoroTitle: "TEXORO：スペイン黄金世紀の演劇・散文・詩のテキスト検索",
+		texoroDescription: "TEXOROでスペイン黄金世紀の演劇・散文・詩の単語、フレーズ、パターンを検索し、作品名、ジャンル、著者で絞り込めます。",
+		defaultDescription: "ETSOは劇作品の著者帰属分析、TEXOROによるスペイン黄金世紀の演劇・散文・詩の検索、BITESO、自動要約を提供します。",
+		summaryLoadError: "要約を読み込めませんでした。後でもう一度お試しください。"
+	},
+	ko: {
+		texoroTitle: "TEXORO: 스페인 황금세기 연극·산문·시 텍스트 검색",
+		texoroDescription: "TEXORO에서 스페인 황금세기 연극·산문·시의 단어, 구절, 패턴을 검색하고 제목, 장르, 저자로 필터링하세요.",
+		defaultDescription: "ETSO는 연극 저자 귀속 분석, TEXORO를 통한 스페인 황금세기 연극·산문·시 검색, BITESO와 자동 요약을 제공합니다.",
+		summaryLoadError: "요약을 불러오지 못했습니다. 나중에 다시 시도해 주세요."
+	},
+	ru: {
+		texoroTitle: "TEXORO: поиск по театру, прозе и поэзии Золотого века",
+		texoroDescription: "Ищите слова, фразы и шаблоны в театре, прозе и поэзии испанского Золотого века. Фильтруйте по названию, жанру и автору в TEXORO.",
+		defaultDescription: "ETSO предлагает анализ авторства пьес, поиск по театру, прозе и поэзии испанского Золотого века в TEXORO, BITESO и автоматические аннотации.",
+		summaryLoadError: "Не удалось загрузить аннотацию. Повторите попытку позже."
+	},
+	ar: {
+		texoroTitle: "TEXORO: بحث في مسرح العصر الذهبي الإسباني ونثره وشعره",
+		texoroDescription: "ابحث عن كلمات وعبارات وأنماط في مسرح العصر الذهبي الإسباني ونثره وشعره، وصفِّ النتائج حسب العنوان والنوع والمؤلف في TEXORO.",
+		defaultDescription: "تتيح ETSO تحليل نسبة تأليف المسرحيات، والبحث في مسرح العصر الذهبي الإسباني ونثره وشعره عبر TEXORO، وBITESO والملخصات الآلية.",
+		summaryLoadError: "تعذر تحميل الملخص. حاول مرة أخرى لاحقًا."
+	},
+};
+
 export const uiTranslations: Record<Locale, UiTranslations> = {
 	es: {
 		localeName: 'Español',
@@ -101,8 +170,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 		},
 		seo: {
 			siteName: 'ETSO: Estilometría aplicada al Teatro del Siglo de Oro',
-			defaultDescription:
-				'ETSO es una infraestructura de investigación dedicada al teatro del Siglo de Oro. Permite consultar informes de análisis estilométrico sobre la autoría de las cerca de 3000 obras conservadas, explorar textos teatrales áureos mediante un buscador léxico y acceder a resúmenes automáticos de todas las obras.'
+			defaultDescription: seoCopyByLocale.es.defaultDescription
 		}
 	},
 	en: {
@@ -144,8 +212,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 		},
 		seo: {
 			siteName: 'ETSO: Stylometry Applied to Golden Age Theatre',
-			defaultDescription:
-				'ETSO is a research infrastructure devoted to Golden Age theatre. It provides stylometric authorship reports for nearly 3,000 surviving plays, lexical search across Golden Age dramatic texts, and automatic summaries for the corpus.'
+			defaultDescription: seoCopyByLocale.en.defaultDescription
 		}
 	},
 	fr: {
@@ -187,8 +254,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 		},
 		seo: {
 			siteName: 'ETSO : Stylométrie appliquée au théâtre du Siècle d’or',
-			defaultDescription:
-				"ETSO est une infrastructure de recherche consacrée au théâtre du Siècle d'or. Elle permet de consulter des rapports stylométriques sur l'attribution de près de 3 000 pièces conservées, d'explorer les textes dramatiques au moyen d'un moteur lexical et d'accéder aux résumés automatiques du corpus."
+			defaultDescription: seoCopyByLocale.fr.defaultDescription
 		}
 	},
 	pt: {
@@ -230,8 +296,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 		},
 		seo: {
 			siteName: 'ETSO: Estilometria aplicada ao teatro do Século de Ouro espanhol',
-			defaultDescription:
-				'ETSO é uma infraestrutura de pesquisa dedicada ao teatro do Século de Ouro espanhol. Permite consultar relatórios estilométricos sobre a autoria de cerca de 3000 obras conservadas, fazer pesquisa textual em textos dramáticos e acessar resumos automáticos do corpus.'
+			defaultDescription: seoCopyByLocale.pt.defaultDescription
 		}
 	},
 	it: {
@@ -273,8 +338,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 		},
 		seo: {
 			siteName: 'ETSO: stilometria applicata al teatro del Secolo d’Oro spagnolo',
-			defaultDescription:
-				'ETSO è un’infrastruttura di ricerca dedicata al teatro del Secolo d’Oro spagnolo. Consente di consultare rapporti stilometrici sull’attribuzione d’autore di circa 3000 opere conservate, effettuare ricerche testuali nei testi drammatici e accedere ai riassunti automatici del corpus.'
+			defaultDescription: seoCopyByLocale.it.defaultDescription
 		}
 	},
 	de: {
@@ -316,8 +380,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 		},
 		seo: {
 			siteName: 'ETSO: Stilometrie angewandt auf das Theater des spanischen Siglo de Oro',
-			defaultDescription:
-				'ETSO ist eine Forschungsinfrastruktur zum Theater des spanischen Siglo de Oro. Sie bietet stilometrische Berichte zur Autorschaftszuschreibung von fast 3000 erhaltenen Stücken, Textsuche in dramatischen Texten und automatische Zusammenfassungen des Korpus.'
+			defaultDescription: seoCopyByLocale.de.defaultDescription
 		}
 	},
 	zh: {
@@ -359,8 +422,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 		},
 		seo: {
 			siteName: 'ETSO：应用于西班牙黄金时代戏剧的文体计量学',
-			defaultDescription:
-				'ETSO 是面向西班牙黄金时代戏剧的研究基础设施。它提供近 3000 部存世剧作的文体计量报告、文本检索和语料库自动摘要。'
+			defaultDescription: seoCopyByLocale.zh.defaultDescription
 		}
 	},
 	ja: {
@@ -402,8 +464,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 		},
 		seo: {
 			siteName: 'ETSO：スペイン黄金世紀演劇に応用した文体計量分析',
-			defaultDescription:
-				'ETSOはスペイン黄金世紀演劇を対象とする研究基盤です。現存する約3000作品の著者帰属に関する文体計量レポート、演劇テキストの語彙検索、コーパスの自動要約にアクセスできます。'
+			defaultDescription: seoCopyByLocale.ja.defaultDescription
 		}
 	},
 	ko: {
@@ -445,8 +506,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 		},
 		seo: {
 			siteName: 'ETSO: 스페인 황금세기 연극에 적용한 문체계량학',
-			defaultDescription:
-				'ETSO는 스페인 황금세기 연극을 위한 연구 인프라입니다. 보존된 약 3000편의 작품에 대한 문체계량 보고서, 텍스트 검색, 말뭉치 자동 요약을 제공합니다.'
+			defaultDescription: seoCopyByLocale.ko.defaultDescription
 		}
 	},
 	ru: {
@@ -488,8 +548,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 		},
 		seo: {
 			siteName: 'ETSO: стилометрия применительно к театру испанского Золотого века',
-			defaultDescription:
-				'ETSO — исследовательская инфраструктура, посвященная театру испанского Золотого века. Она позволяет изучать стилометрические отчеты по авторской атрибуции почти 3000 сохранившихся пьес, выполнять текстовый поиск по драматическим текстам и обращаться к автоматическим аннотациям корпуса.'
+			defaultDescription: seoCopyByLocale.ru.defaultDescription
 		}
 	},
 	ar: {
@@ -531,8 +590,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 		},
 		seo: {
 			siteName: 'ETSO: القياس الأسلوبي المطبّق على مسرح العصر الذهبي الإسباني',
-			defaultDescription:
-				'ETSO بنية بحثية مخصصة لمسرح العصر الذهبي الإسباني. تتيح الاطلاع على التقارير الأسلوبية الخاصة بإسناد تأليف نحو 3000 عمل محفوظ، واستكشاف النصوص المسرحية عبر محرك بحث نصي، والاطلاع على الملخصات الآلية للمجموعة النصية.'
+			defaultDescription: seoCopyByLocale.ar.defaultDescription
 		}
 	}
 };
@@ -2332,6 +2390,34 @@ export const literalTranslations: Record<Exclude<Locale, 'es'>, Record<string, s
 	ru: { ...esToRu, ...correctionLiteralTranslations.ru, ...completeCopyTranslations.ru },
 	ar: { ...esToAr, ...correctionLiteralTranslations.ar, ...completeCopyTranslations.ar }
 };
+
+for (const locale of SUPPORTED_LOCALES) {
+	if (locale === DEFAULT_LOCALE) continue;
+	const copy = seoCopyByLocale[locale];
+	Object.assign(literalTranslations[locale], {
+		[SITE_NAME]: uiTranslations[locale].seo.siteName,
+		[TEXORO_SEO_TITLE]: copy.texoroTitle,
+		[TEXORO_SEO_DESCRIPTION]: copy.texoroDescription,
+		[DEFAULT_SEO_DESCRIPTION]: copy.defaultDescription,
+		['No se pudo cargar el resumen. Inténtalo de nuevo más tarde.']: copy.summaryLoadError
+	});
+}
+
+const workPaginationLabels: Record<Exclude<Locale, 'es'>, string> = {
+	en: "Works pagination",
+	fr: "Pagination des œuvres",
+	pt: "Paginação de obras",
+	it: "Paginazione delle opere",
+	de: "Seitennavigation der Werke",
+	zh: "作品分页",
+	ja: "作品一覧のページ切り替え",
+	ko: "작품 페이지 탐색",
+	ru: "Навигация по страницам произведений",
+	ar: "التنقل بين صفحات الأعمال"
+};
+for (const [locale, label] of Object.entries(workPaginationLabels)) {
+	literalTranslations[locale as Exclude<Locale, 'es'>]['Paginación de obras'] = label;
+}
 
 // Attribution fragments are translated explicitly, never by the document runtime.
 const explicitOnlyTranslations: Record<Exclude<Locale, 'es'>, Record<string, string>> = {

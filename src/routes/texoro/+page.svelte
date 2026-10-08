@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { TEXORO_SEO_TITLE, TEXORO_SEO_DESCRIPTION } from '$lib/seo';
 	import { isPersonAuthor } from '$lib/domain/catalog';
 	import { onMount, tick } from 'svelte';
 	import { replaceState } from '$app/navigation';
@@ -263,8 +264,6 @@
 	}
 	} as const;
 	const wildcardHelp = $derived(wildcardHelpByLocale[data.locale] ?? wildcardHelpByLocale.es);
-	const TEXORO_SEO_DESCRIPTION =
-		'Búsquedas textuales complejas en TEXORO, un corpus del Siglo de Oro con millones de palabras indexadas.';
 
 	const numberLocale = $derived(data.locale === 'es' ? 'es-ES' : data.locale);
 	const numberFormatter = $derived(new Intl.NumberFormat(numberLocale));
@@ -3005,7 +3004,7 @@
 	};
 </script>
 
-<SeoHead title="TEXORO" description={TEXORO_SEO_DESCRIPTION} path="/texoro" />
+<SeoHead title={TEXORO_SEO_TITLE} description={TEXORO_SEO_DESCRIPTION} path="/texoro" />
 
 {#snippet resultMetadataBlock(meta: TexoroWorkMeta, metadataTitle: string)}
 	<div

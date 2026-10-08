@@ -3,7 +3,11 @@ export const SITE_SHORT_NAME = 'ETSO';
 export const SITE_URL = 'https://etso.es';
 
 export const DEFAULT_SEO_DESCRIPTION =
-	'ETSO es una infraestructura de investigación dedicada al teatro del Siglo de Oro. Permite consultar informes de análisis estilométrico sobre la autoría de las cerca de 3000 obras conservadas, explorar textos teatrales áureos mediante un buscador léxico y acceder a resúmenes automáticos de todas las obras.';
+	"ETSO ofrece análisis de autoría teatral, búsquedas en teatro, prosa y poesía del Siglo de Oro con TEXORO, BITESO y resúmenes automáticos.";
+
+export const TEXORO_SEO_TITLE = "TEXORO: búsquedas en teatro, prosa y poesía del Siglo de Oro";
+export const TEXORO_SEO_DESCRIPTION =
+	"Busca palabras, frases y patrones en obras de teatro, prosa y poesía del Siglo de Oro. Filtra por título, género y autor en TEXORO.";
 
 const DESCRIPTION_MAX_LENGTH = 165;
 

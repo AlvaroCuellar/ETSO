@@ -26,6 +26,7 @@
 		image?: string;
 		jsonLd?: unknown | unknown[];
 		noindex?: boolean;
+		nofollow?: boolean;
 	}
 
 	let {
@@ -37,7 +38,8 @@
 		type = 'website',
 		image = defaultSeoImage,
 		jsonLd,
-		noindex = false
+		noindex = false,
+		nofollow = true
 	}: Props = $props();
 
 	const locale = $derived((page.data.locale ?? DEFAULT_LOCALE) as Locale);
@@ -61,7 +63,7 @@
 	<title>{seoTitle}</title>
 	<meta name="description" content={seoDescription} data-i18n-skip />
 	{#if noindex}
-		<meta name="robots" content="noindex,nofollow" />
+		<meta name="robots" content={nofollow ? 'noindex,nofollow' : 'noindex,follow'} />
 	{/if}
 	<link rel="canonical" href={seoCanonicalUrl} />
 	{#each alternateLinks as alternate}

@@ -64,3 +64,35 @@ test('bounds internal fetch adapters even when they ignore the abort signal', as
 	const uncooperative = (() => new Promise<Response>(() => {})) as typeof fetch;
 	assert.deepEqual(await loader('/internal', uncooperative), { document: null, unavailable: true });
 });
+
+test('late timed-out responses cannot overwrite a newer summary of the same work', async () => {
+	const loader = createSummaryDocumentLoader({ timeoutMs: 5 });
+	let finishOld!: (value: Response) => void;
+	const old = await loader('/revision', (() => new Promise<Response>((resolve) => { finishOld = resolve; })) as typeof fetch);
+	assert.equal(old.unavailable, true);
+	const fresh = { resumen_breve: ['Revisión corregida'] };
+	await loader('/revision', (async () => Response.json(fresh)) as typeof fetch);
+	finishOld(Response.json({ resumen_breve: ['Revisión anterior'] }));
+	await new Promise((resolve) => setImmediate(resolve));
+	const cached = await loader('/revision', (() => { throw new Error('Must use cache'); }) as typeof fetch);
+	assert.deepEqual(cached.document?.resumenBreve, ['Revisión corregida']);
+});
+
+test('concurrent works never share content and malformed JSON is retryable', async () => {
+	const loader = createSummaryDocumentLoader();
+	const fetcher = (async (url) => Response.json({ resumen_breve: [String(url)] })) as typeof fetch;
+	const [first, second] = await Promise.all([loader('/quijote', fetcher), loader('/sonetos', fetcher)]);
+	assert.deepEqual(first.document?.resumenBreve, ['/quijote']);
+	assert.deepEqual(second.document?.resumenBreve, ['/sonetos']);
+	assert.equal((await loader('/broken', (async () => new Response('{')) as typeof fetch)).unavailable, true);
+	assert.equal((await loader('/broken', fetcher)).unavailable, false);
+});
+
+test('a missing document is retried after expiry and an updated document replaces it', async () => {
+	let clock = 0;
+	const loader = createSummaryDocumentLoader({ ttlMs: 1, now: () => clock });
+	await loader('/new-work', (async () => new Response('', { status: 404 })) as typeof fetch);
+	clock = 2;
+	const result = await loader('/new-work', (async () => Response.json(summary)) as typeof fetch);
+	assert.deepEqual(result.document?.resumenBreve, ['Alonso Quijano muere.']);
+});

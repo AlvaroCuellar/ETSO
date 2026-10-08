@@ -4,8 +4,8 @@
 	import PageHero from '$lib/components/ui/PageHero.svelte';
 	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import autorBg from '$lib/assets/heros/autor-bg.jpg';
-	import { goto } from '$app/navigation';
-	import { onDestroy } from 'svelte';
+	import { afterNavigate, beforeNavigate, goto } from '$app/navigation';
+	import { onDestroy, untrack } from 'svelte';
 	import { localizePath, translateText } from '$lib/i18n';
 	import type { ObraTableRow } from '$lib/domain/catalog';
 
@@ -32,10 +32,25 @@
 		return descriptions[data.locale] ?? descriptions.es;
 	});
 
-	let titleFilter = $derived(data.filters.title);
-	let genreFilter = $derived(data.filters.genre);
+	let titleFilter = $state(untrack(() => data.filters.title));
+	let genreFilter = $state(untrack(() => data.filters.genre));
 	const activeFilter = $derived(data.filters.filter as AuthorFilterKey);
 	let titleTimer: ReturnType<typeof setTimeout> | undefined;
+	const pendingFilterNavigations = new Map<string, number>();
+	const isFilterNavigation = (type: string | null, url: URL | undefined): boolean =>
+		type === 'goto' && Boolean(url && pendingFilterNavigations.has(`${url.pathname}${url.search}`));
+
+	beforeNavigate((navigation) => {
+		if (!isFilterNavigation(navigation.type, navigation.to?.url)) clearTimeout(titleTimer);
+	});
+	afterNavigate((navigation) => {
+		// A previous filter response must not replace text typed while it was loading.
+		// Links and browser history intentionally restore the state in the destination URL.
+		if (!isFilterNavigation(navigation.type, navigation.to?.url)) {
+			titleFilter = data.filters.title;
+			genreFilter = data.filters.genre;
+		}
+	});
 	onDestroy(() => clearTimeout(titleTimer));
 	const t = (value: string): string => translateText(data.locale, value);
 	const basePath = $derived(`/autores/${data.author.id}`);
@@ -51,7 +66,13 @@
 	};
 	const applyFilters = (): void => {
 		clearTimeout(titleTimer);
-		void goto(listingPath(), { replaceState: true, noScroll: true, keepFocus: true });
+		const path = listingPath();
+		pendingFilterNavigations.set(path, (pendingFilterNavigations.get(path) ?? 0) + 1);
+		void goto(path, { replaceState: true, noScroll: true, keepFocus: true }).finally(() => {
+			const remaining = (pendingFilterNavigations.get(path) ?? 1) - 1;
+			if (remaining) pendingFilterNavigations.set(path, remaining);
+			else pendingFilterNavigations.delete(path);
+		});
 	};
 	const queueTitleFilter = (): void => {
 		clearTimeout(titleTimer);

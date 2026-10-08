@@ -252,10 +252,10 @@
 		if (next.has(rowId)) {
 			next.delete(rowId);
 		} else {
-			await loadShortSummary(row.work);
 			next.add(rowId);
 		}
 		expandedRows = next;
+		if (next.has(rowId)) await loadShortSummary(row.work);
 	};
 
 	const handleRowClick = (event: MouseEvent, row: ObraTableRow): void => {
@@ -317,13 +317,23 @@
 {#snippet workTitle(row: ObraTableRow, showExpandIcon: boolean)}
 	<div class="obra-title flex min-w-0 select-none items-center gap-2 font-medium text-text-main">
 		{#if showExpandIcon}
-			<span class={expandIconClass(row.rowId)} aria-hidden="true">
+			<button
+				type="button"
+				class={`${expandIconClass(row.rowId)} border-0 bg-transparent p-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-brand-blue`}
+				aria-expanded={isRowExpanded(row.rowId)}
+				aria-label={`${t(isRowExpanded(row.rowId) ? 'Ver menos' : 'Ver más')}: ${formatDisplayWorkTitle(row.work.title)}`}
+				onclick={(event) => {
+					event.preventDefault();
+					event.stopPropagation();
+					void toggleRowExpanded(row);
+				}}
+		>
 				{#if isRowExpanded(row.rowId)}
 					<ChevronDown class="h-3 w-3 stroke-[2.3]" />
 				{:else}
 					<ChevronRight class="h-3 w-3 stroke-[2.3]" />
 				{/if}
-			</span>
+			</button>
 		{/if}
 		<a
 			href={`/obras/${row.work.slug}`}

@@ -20,6 +20,7 @@ test('author pages expose every related work once through crawlable SSR paginati
 	assert.ok(total > 50, 'fixture must exercise more than one page');
 	assert.equal(rowIds(first).length, 50);
 	assert.equal(first('.detail-row').length, 0, 'collapsed details should not be generated');
+	assert.equal(first('.obra-title button[type="button"][aria-expanded="false"]').length, 50, 'desktop details should have native keyboard controls');
 	const seen = new Set();
 	for (const path of links) {
 		const $ = path === authorPath ? first : await fetchPage(path);
@@ -60,5 +61,54 @@ test('localized pagination and canonical links preserve page and normalize inval
 		const $ = await fetchPage(`${authorPath}?page=${page}`);
 		assert.equal($('link[rel="canonical"]').attr('href'), `https://etso.es${authorPath}`);
 		assert.equal($('a[aria-current="page"]').text(), '1');
+	}
+});
+
+test('all five author categories preserve their totals and filter membership across pages', { skip: !baseUrl }, async () => {
+	const first = await fetchPage(authorPath);
+	const flags = {
+		related_any: 'data-filter-related-any', trad_any: 'data-filter-trad-any',
+		etso_yes: 'data-filter-etso-yes', only_trad: 'data-filter-only-trad', only_etso: 'data-filter-only-etso'
+	};
+	for (const [filter, attribute] of Object.entries(flags)) {
+		const expectedTotal = Number(first(`[data-filter="${filter}"] > div`).first().text().trim());
+		const path = `${authorPath}?filter=${filter}`;
+		const $ = await fetchPage(path);
+		const links = $('nav[aria-label="Paginación de obras"] a[aria-label]').map((_, link) => $(link).attr('href')).get();
+		const seen = new Set();
+		for (const pagePath of links.length ? links : [path]) {
+			const page = await fetchPage(pagePath);
+			for (const row of page('.obra-row').get()) {
+				assert.equal(page(row).attr(attribute), '1', `${filter} must match every rendered row`);
+				const id = page(row).attr('data-obra-id');
+				assert.ok(!seen.has(id)); seen.add(id);
+			}
+		}
+		assert.equal(seen.size, expectedTotal, filter);
+	}
+});
+
+test('empty results and very large page requests stay within the filtered result bounds', { skip: !baseUrl }, async () => {
+	const first = await fetchPage(authorPath);
+	const total = Number(first('[data-filter="related_any"] > div').first().text().trim());
+	const lastPage = Math.ceil(total / 50);
+	const last = await fetchPage(`${authorPath}?page=9999999999999999999999999`);
+	assert.equal(last('link[rel="canonical"]').attr('href'), `https://etso.es${authorPath}?page=${lastPage}`);
+	assert.equal(rowIds(last).length, total % 50 || 50);
+	const empty = await fetchPage(`${authorPath}?title=zzzzzz-no-such-work&page=2000`);
+	assert.equal(rowIds(empty).length, 0);
+	assert.equal(empty('link[rel="canonical"]').attr('href'), `https://etso.es${authorPath}?title=zzzzzz-no-such-work`);
+	assert.equal(empty('meta[name="robots"]').attr('content'), 'noindex,follow');
+});
+
+test('legacy numeric author redirects preserve localized pagination and filter queries', { skip: !baseUrl }, async () => {
+	const metadataResponse = await fetch(new URL('/api/autores/vega_carpio_lope_de?fields=id', baseUrl));
+	assert.equal(metadataResponse.status, 200);
+	const { author } = await metadataResponse.json();
+	for (const prefix of ['', '/en']) {
+		const query = '?page=2&filter=trad_any&title=el';
+		const response = await fetch(new URL(`${prefix}/autores/${author.id}${query}`, baseUrl), { redirect: 'manual' });
+		assert.equal(response.status, 308);
+		assert.equal(response.headers.get('location'), `${prefix}${authorPath}${query}`);
 	}
 });

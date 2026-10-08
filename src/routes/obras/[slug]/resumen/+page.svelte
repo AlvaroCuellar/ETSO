@@ -68,6 +68,7 @@
 	let summaryCorrectionText = $state('');
 	let hasInitializedSummaryCorrectionText = $state(false);
 	let lastSummaryCorrectionAlertMessage = '';
+	let summaryCorrectionWorkId: string | undefined;
 	const summaryCorrectionFeedback = $derived(form?.summaryCorrectionProposal);
 	const resumenBreveText = $derived(summary.resumenBreve.join(' ').replace(/\s+/g, ' ').trim());
 	const summaryNotice = $derived.by(() => {
@@ -122,6 +123,16 @@
 		await tick();
 		summaryCorrectionTextarea?.focus();
 	};
+
+	$effect.pre(() => {
+		const workId = data.work.id;
+		if (summaryCorrectionWorkId === workId) return;
+		summaryCorrectionWorkId = workId;
+		isSummaryCorrectionFormOpen = false;
+		summaryCorrectionText = '';
+		hasInitializedSummaryCorrectionText = false;
+		lastSummaryCorrectionAlertMessage = '';
+	});
 
 	$effect(() => {
 		if (!summaryCorrectionFeedback) return;

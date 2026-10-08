@@ -3,8 +3,7 @@ import { setPublicCatalogCacheHeaders } from '$lib/server/cache-control';
 import { localizePath } from '$lib/i18n';
 import {
 	getWorkByPublicId,
-	getWorkBySlug,
-	getWorkSummaryDetailById
+	getWorkBySlug
 } from '$lib/server/catalog-runtime';
 import { getPublicSummaryAssetUrl } from '$lib/server/r2-public';
 import { submitCorrectionEmail } from '$lib/server/biteso-correction-proposals';
@@ -26,7 +25,7 @@ export const load: PageServerLoad = async ({ locals, params, setHeaders, fetch }
 
 	const summaryUrl = getPublicSummaryAssetUrl(`${work.id}.json`);
 	const summary = await loadSummaryDocument(summaryUrl, fetch);
-	if (summary.unavailable) setHeaders({ 'cache-control': 'no-store' });
+	if (summary.unavailable || !summary.document) setHeaders({ 'cache-control': 'no-store' });
 	else setPublicCatalogCacheHeaders(setHeaders);
 	return {
 		work,
@@ -37,7 +36,7 @@ export const load: PageServerLoad = async ({ locals, params, setHeaders, fetch }
 };
 
 export const actions: Actions = {
-	default: async ({ request, params, url, getClientAddress }) => {
+	default: async ({ request, params, url, getClientAddress, fetch }) => {
 		const work = await getWorkBySlug(params.slug);
 		if (!work) {
 			return fail(404, {
@@ -48,18 +47,21 @@ export const actions: Actions = {
 			});
 		}
 
-		const summary = await getWorkSummaryDetailById(work.id);
+		const result = await loadSummaryDocument(getPublicSummaryAssetUrl(`${work.id}.json`), fetch);
+		const summary = result.document;
 		if (!summary) {
-			return fail(404, {
+			return fail(result.unavailable ? 503 : 404, {
 				summaryCorrectionProposal: {
 					ok: false,
-					message: 'Resumen no encontrado.'
+					message: result.unavailable
+						? 'No se pudo cargar el resumen. Inténtalo de nuevo más tarde.'
+						: 'Resumen no encontrado.'
 				}
 			});
 		}
 
 		const originalText = buildSummaryCorrectionText({
-			shortSummary: work.shortSummary,
+			shortSummary: summary.resumenBreve.join(' ').replace(/\s+/g, ' ').trim(),
 			resumenLargo: summary.resumenLargo,
 			personajes: summary.personajes,
 			espacios: summary.espacios,

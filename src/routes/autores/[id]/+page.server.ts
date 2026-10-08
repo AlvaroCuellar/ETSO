@@ -23,7 +23,7 @@ export const load: PageServerLoad = async ({ locals, params, url, setHeaders }) 
 		const publicId = /^\d+$/.test(params.id) ? Number.parseInt(params.id, 10) : null;
 		const publicIdAuthor = publicId === null ? undefined : await getAuthorByPublicId(publicId);
 		if (publicIdAuthor?.hasAuthorshipExam) {
-			throw redirect(308, localizePath(`/autores/${publicIdAuthor.id}`, locals.locale));
+			throw redirect(308, localizePath(`/autores/${publicIdAuthor.id}${url.search}`, locals.locale));
 		}
 		throw error(404, 'Autor no encontrado');
 	}

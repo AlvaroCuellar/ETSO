@@ -692,18 +692,26 @@ const toCatalogAuthors = (rows: AuthorRow[]): CatalogAuthor[] =>
 		nameVariants: splitVariants(row.variaciones_nombre)
 	}));
 
-const authorExamSelect = `EXISTS (
- SELECT 1 FROM attribution_members em
- JOIN attribution_groups eg ON eg.id = em.attribution_group_id
- JOIN attribution_sets es ON es.id = eg.attribution_set_id
- JOIN works ew ON ew.id = es.work_id
- WHERE em.author_id = authors.id AND ew.examen_autorias = 1
+// Compute eligible authors once, instead of rescanning attributions for each author.
+const authorExamCte = `WITH unresolved_exam_sets AS MATERIALIZED (
+ SELECT DISTINCT ug.attribution_set_id
+ FROM attribution_members um
+ JOIN attribution_groups ug ON ug.id = um.attribution_group_id
+ WHERE um.author_id = '${UNRESOLVED_AUTHOR_ID}'
+), exam_authors AS MATERIALIZED (
+ SELECT DISTINCT em.author_id
+ FROM works ew
+ JOIN attribution_sets es ON es.work_id = ew.id
+ JOIN attribution_groups eg ON eg.attribution_set_id = es.id
+ JOIN attribution_members em ON em.attribution_group_id = eg.id
+ LEFT JOIN unresolved_exam_sets us ON us.attribution_set_id = es.id
+ WHERE ew.examen_autorias = 1
  AND es.attribution_type IN ('tradicional', 'estilometria')
  AND LOWER(COALESCE(es.raw_expression, '')) NOT LIKE '%${UNRESOLVED_AUTHOR_ID}%'
- AND NOT EXISTS (SELECT 1 FROM attribution_groups ug
- JOIN attribution_members um ON um.attribution_group_id = ug.id
- WHERE ug.attribution_set_id = es.id AND um.author_id = '${UNRESOLVED_AUTHOR_ID}')
-) AS has_authorship_exam`;
+ AND us.attribution_set_id IS NULL
+)`;
+const authorExamSelect = 'CASE WHEN ea.author_id IS NULL THEN 0 ELSE 1 END AS has_authorship_exam';
+const authorExamJoin = 'LEFT JOIN exam_authors ea ON ea.author_id = authors.id';
 
 const loadAuthorsByIds = async (authorIds: Iterable<string>): Promise<Map<string, CatalogAuthor>> => {
 	const ids = Array.from(new Set(Array.from(authorIds).filter((id) => id && id !== UNRESOLVED_AUTHOR_ID)));
@@ -711,9 +719,11 @@ const loadAuthorsByIds = async (authorIds: Iterable<string>): Promise<Map<string
 	const publicIdSelect = await getAuthorPublicIdSelect();
 	const variantsSelect = await getAuthorVariantsSelect();
 	const rows = await getRows<AuthorRow>(
-		`SELECT id, ${publicIdSelect}, nombre, ${variantsSelect}, ${authorExamSelect}
+		`${authorExamCte}
+		 SELECT authors.id, ${publicIdSelect}, nombre, ${variantsSelect}, ${authorExamSelect}
 		 FROM authors
-		 WHERE id IN (${createPlaceholders(ids)})`,
+		 ${authorExamJoin}
+		 WHERE authors.id IN (${createPlaceholders(ids)})`,
 		ids
 	);
 	return new Map(toCatalogAuthors(rows).map((author) => [author.id, author] as const));
@@ -1051,8 +1061,10 @@ const createSnapshot = async (): Promise<Snapshot> => {
 	const hasAuthorPublicIdColumn = authorsTableColumns.has('public_id');
 	const hasAuthorVariantsColumn = authorsTableColumns.has('variaciones_nombre');
 	const authorRows = await getRows<AuthorRow>(
-		`SELECT id, ${hasAuthorPublicIdColumn ? 'public_id' : 'NULL AS public_id'}, nombre, ${hasAuthorVariantsColumn ? 'variaciones_nombre' : 'NULL AS variaciones_nombre'}, ${authorExamSelect}
+		`${authorExamCte}
+		 SELECT authors.id, ${hasAuthorPublicIdColumn ? 'public_id' : 'NULL AS public_id'}, nombre, ${hasAuthorVariantsColumn ? 'variaciones_nombre' : 'NULL AS variaciones_nombre'}, ${authorExamSelect}
 		 FROM authors
+		 ${authorExamJoin}
 		 ORDER BY nombre COLLATE NOCASE`
 	);
 
@@ -1354,7 +1366,6 @@ const refreshSnapshot = (): Promise<Snapshot> => {
 		})
 		.catch((cause) => {
 			console.error('[catalog-runtime] snapshot refresh failed', cause);
-			if (cachedSnapshot) return cachedSnapshot;
 			throw cause;
 		})
 		.finally(() => {
@@ -1364,6 +1375,13 @@ const refreshSnapshot = (): Promise<Snapshot> => {
 	return cachedSnapshotPromise;
 };
 
+// Used only after an actual index publication, never by the periodic version probe.
+export const refreshCatalogSnapshot = async (): Promise<void> => {
+	// Retain the last valid catalogue while rebuilding, but never report a failed
+	// refresh as successful to an index that requires current metadata.
+	await refreshSnapshot();
+};
+
 const getSnapshot = async (): Promise<Snapshot> => {
 	const now = Date.now();
 	if (cachedSnapshot && now - cachedAt < CACHE_MS) {
@@ -1371,7 +1389,7 @@ const getSnapshot = async (): Promise<Snapshot> => {
 	}
 
 	if (cachedSnapshot) {
-		void refreshSnapshot();
+		void refreshSnapshot().catch(() => {});
 		return cachedSnapshot;
 	}
 

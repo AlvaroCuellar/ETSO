@@ -2,7 +2,7 @@
 
 import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { availableParallelism } from 'node:os';
-import { basename, extname, join, resolve } from 'node:path';
+import { basename, dirname, extname, join, resolve } from 'node:path';
 import process from 'node:process';
 import { DatabaseSync } from 'node:sqlite';
 import { isMainThread, parentPort, Worker } from 'node:worker_threads';
@@ -30,13 +30,14 @@ const DEFAULTS = {
 	preserveEnie: true,
 	pretty: true,
 	metadataSqlite: null,
+	sectionAuthors: null,
 	workers: detectDefaultWorkers()
 };
 
 const DEFAULT_SCHEMA_VERSION = 'etso-search-index-v1';
 
 const usage = () => {
-	console.log(`Usage: node scripts/build-search-index.mjs [options]\n\nOptions:\n  --input <dir>                         Input TXT directory (default: ${DEFAULTS.input})\n  --output <dir>                        Output index directory (default: ${DEFAULTS.output})\n  --metadata-sqlite <file>              SQLite catalog used to attach stable public IDs\n  --encoding <name>                     Text encoding for TXT files (default: ${DEFAULTS.encoding})\n  --kgram <n>                           K value for wildcard index (default: ${DEFAULTS.kgram})\n  --vocab-shard-target-bytes <n>        Approximate target size per vocab shard\n  --postings-shard-target-bytes <n>     Approximate target size per postings shard\n  --positions-shard-target-bytes <n>    Approximate target size per positions shard\n  --kgram-shard-target-bytes <n>        Approximate target size per kgram shard\n  --preserve-enie                       Preserve ñ when removing diacritics (default)\n  --no-preserve-enie                    Fold ñ into n\n  --pretty                              Pretty JSON output (default)\n  --compact                             Compact JSON output\n  --workers <n>                         Number of text-processing workers (default: ${DEFAULTS.workers})\n  --help                                Show this help\n`);
+	console.log(`Usage: node scripts/build-search-index.mjs [options]\n\nOptions:\n  --input <dir>                         Input TXT directory (default: ${DEFAULTS.input})\n  --output <dir>                        Output index directory (default: ${DEFAULTS.output})\n  --metadata-sqlite <file>              SQLite catalog used to attach stable public IDs\n  --section-authors <file>             Poem author metadata (default: parent of input/section-authors.json)\n  --encoding <name>                     Text encoding for TXT files (default: ${DEFAULTS.encoding})\n  --kgram <n>                           K value for wildcard index (default: ${DEFAULTS.kgram})\n  --vocab-shard-target-bytes <n>        Approximate target size per vocab shard\n  --postings-shard-target-bytes <n>     Approximate target size per postings shard\n  --positions-shard-target-bytes <n>    Approximate target size per positions shard\n  --kgram-shard-target-bytes <n>        Approximate target size per kgram shard\n  --preserve-enie                       Preserve ñ when removing diacritics (default)\n  --no-preserve-enie                    Fold ñ into n\n  --pretty                              Pretty JSON output (default)\n  --compact                             Compact JSON output\n  --workers <n>                         Number of text-processing workers (default: ${DEFAULTS.workers})\n  --help                                Show this help\n`);
 };
 
 const parsePositiveInt = (raw, name) => {
@@ -93,6 +94,11 @@ const parseArgs = (argv) => {
 			i += 1;
 			continue;
 		}
+		if (arg === '--section-authors') {
+			options.sectionAuthors = next;
+			i += 1;
+			continue;
+		}
 		if (arg === '--encoding') {
 			options.encoding = next;
 			i += 1;
@@ -136,7 +142,8 @@ const parseArgs = (argv) => {
 		...options,
 		input: resolve(process.cwd(), options.input),
 		output: resolve(process.cwd(), options.output),
-		metadataSqlite: options.metadataSqlite ? resolve(process.cwd(), options.metadataSqlite) : null
+		metadataSqlite: options.metadataSqlite ? resolve(process.cwd(), options.metadataSqlite) : null,
+		sectionAuthors: options.sectionAuthors ? resolve(process.cwd(), options.sectionAuthors) : null
 	};
 };
 
@@ -271,6 +278,56 @@ const collectPublicIds = (works, metadataSqlite) => {
 	} finally {
 		database.close();
 	}
+};
+
+const attachSectionAuthors = async (works, options) => {
+	const expectedCollections = new Map();
+	if (options.metadataSqlite) {
+		const metadata = new DatabaseSync(options.metadataSqlite, { readOnly: true });
+		try {
+			const columns = new Set(metadata.prepare('PRAGMA table_info(works)').all().map((row) => row.name));
+			if (columns.has('collection_size')) {
+				const indexedIds = new Set(works.map((row) => row[1]));
+				for (const row of metadata.prepare('SELECT id, collection_size FROM works WHERE collection_size > 0').all()) {
+					if (indexedIds.has(row.id)) expectedCollections.set(row.id, Number(row.collection_size));
+				}
+			}
+		} finally { metadata.close(); }
+	}
+	const path = options.sectionAuthors ?? join(dirname(options.input), 'section-authors.json');
+	let text;
+	try { text = await readFile(path, 'utf8'); }
+	catch (error) {
+		if (!options.sectionAuthors && error.code === 'ENOENT' && expectedCollections.size === 0) return;
+		if (error.code === 'ENOENT' && expectedCollections.size > 0) throw new Error('Missing section authors metadata for indexed collections');
+		throw error;
+	}
+	const payload = JSON.parse(text);
+	if (payload.schemaVersion !== 'etso-section-authors-v1' || !payload.works || typeof payload.works !== 'object' || Array.isArray(payload.works)) {
+		throw new Error('Invalid section authors metadata');
+	}
+	for (const [workId, size] of expectedCollections) {
+		if (!Array.isArray(payload.works[workId]) || payload.works[workId].length !== size) throw new Error(`Missing or incomplete section authors for collection: ${workId}`);
+	}
+	const byId = new Map(works.map((work) => [work[1], work]));
+	let database;
+	try {
+		if (options.metadataSqlite) database = new DatabaseSync(options.metadataSqlite, { readOnly: true });
+		for (const [workId, authors] of Object.entries(payload.works)) {
+			const row = byId.get(workId);
+			if (!row) throw new Error(`Unknown section authors work: ${workId}`);
+			const starts = row[6] ?? [1];
+			if (!Array.isArray(authors) || authors.length !== starts.length || !authors.every((ids) => Array.isArray(ids) && ids.length > 0 && ids.every((id) => typeof id === 'string' && id.trim() === id && id.length > 0) && new Set(ids).size === ids.length)) {
+				throw new Error(`Invalid section author count or IDs: ${workId}`);
+			}
+			if (database) {
+				const allowed = new Set(database.prepare("SELECT author_id FROM work_author_index WHERE work_id = ? AND attribution_type = 'tradicional'").all(workId).map((record) => record.author_id));
+				if (authors.some((ids) => ids.some((id) => !allowed.has(id)))) throw new Error(`Section author outside collection attribution: ${workId}`);
+			}
+			row[6] = starts;
+			row[7] = authors;
+		}
+	} finally { database?.close(); }
 };
 
 const analyzeDocument = async ({ docId, fileName, input, encoding, preserveEnie }) => {
@@ -425,6 +482,7 @@ const buildIndex = async (options) => {
 	await processDocuments(fileNames, options, state);
 	const { works, termStats, totalChars, totalTokens } = state;
 	const publicIds = collectPublicIds(works, options.metadataSqlite);
+	await attachSectionAuthors(works, options);
 
 	const sortedTerms = Array.from(termStats.entries()).sort((a, b) => stableCompare(a[0], b[0]));
 	const termEntries = sortedTerms.map(([term, stats], termId) => {

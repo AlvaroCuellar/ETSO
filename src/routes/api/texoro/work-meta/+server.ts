@@ -3,8 +3,8 @@ import { getTexoroWorkMeta } from '$lib/server/texoro-runtime';
 
 import type { RequestHandler } from './$types';
 
-export const GET: RequestHandler = async () => {
-	const worksMeta = await getTexoroWorkMeta();
+export const GET: RequestHandler = async ({ url }) => {
+	const worksMeta = await getTexoroWorkMeta(url.searchParams.get('indexVersion') || undefined);
 
 	return json(worksMeta, {
 		headers: {

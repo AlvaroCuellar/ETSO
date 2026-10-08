@@ -80,6 +80,12 @@ SEARCH_CACHE_ARGS=(
   --extra "compact=${SEARCH_INDEX_COMPACT:-true}"
   --require-nonempty-dir "$SEARCH_OUTPUT"
 )
+SEARCH_SECTION_AUTHORS="$(dirname "$SEARCH_INPUT")/section-authors.json"
+if [ -f "$SEARCH_SECTION_AUTHORS" ]; then
+  SEARCH_CACHE_ARGS+=(--path "$SEARCH_SECTION_AUTHORS")
+else
+  SEARCH_CACHE_ARGS+=(--extra "section-authors=absent")
+fi
 if cache_check "${SEARCH_CACHE_ARGS[@]}" >/dev/null; then
   echo "==> Indice de busqueda sin cambios: se reutiliza"
 else

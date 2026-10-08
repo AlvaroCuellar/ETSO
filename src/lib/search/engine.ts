@@ -87,6 +87,9 @@ interface TextWarmupOptions {
 	docIds?: number[];
 }
 
+type PoemAuthorFilter = NonNullable<SearchResultMatch['poemAuthorFilter']>;
+type AuthorSections = Map<number, boolean[]>;
+
 interface NormalizedSearchMetadataFilters {
 	genres: string[];
 	generalGenres: string[];
@@ -613,6 +616,10 @@ export class TexoroSearchEngine {
 		return this.#manifest;
 	}
 
+	get indexedWorkIds(): string[] {
+		return Array.from(this.#docIdByWorkId.keys());
+	}
+
 	async warmupForFirstSearch(options: WarmupOptions = {}): Promise<void> {
 		if (this.#firstSearchWarmupPromise) return this.#firstSearchWarmupPromise;
 
@@ -818,11 +825,14 @@ export class TexoroSearchEngine {
 			};
 		}
 
+		const metadataFilters = buildMetadataFilters(options);
+		const selectedWorkIds = new Set((options.workIds ?? []).map((id) => id.trim()).filter(Boolean));
+		const authorSections = this.#buildAuthorSections(workMetaById, metadataFilters, selectedWorkIds);
 		const groupEvaluations: GroupEvaluation[] = [];
 		const retrievalScores = new Map<number, number>();
 
 		for (const group of parsed.groups) {
-			const evaluated = await this.#evaluateGroup(group);
+			const evaluated = await this.#evaluateGroup(group, authorSections);
 			groupEvaluations.push(evaluated);
 			for (const [docId, score] of evaluated.scores) {
 				const current = retrievalScores.get(docId) ?? 0;
@@ -831,8 +841,6 @@ export class TexoroSearchEngine {
 		}
 
 		const candidates = unionSets(groupEvaluations.map((group) => group.docs));
-		const selectedWorkIds = new Set((options.workIds ?? []).map((id) => id.trim()).filter(Boolean));
-		const metadataFilters = buildMetadataFilters(options);
 		const restrictedCandidates =
 			selectedWorkIds.size > 0
 				? new Set(
@@ -873,7 +881,11 @@ export class TexoroSearchEngine {
 				matchByKey.set(key, {
 					kind,
 					source,
-					occurrences
+					occurrences,
+					...(authorSections.has(docId) ? { poemAuthorFilter: {
+						authorIds: metadataFilters.traditionalAuthorIds,
+						match: metadataFilters.traditionalMatch
+					} } : {})
 				});
 			};
 
@@ -944,7 +956,7 @@ export class TexoroSearchEngine {
 				workId,
 				publicId: this.#publicIdByDocId.get(docId) ?? null,
 				docId,
-				docTokenCount: row[4],
+				docTokenCount: this.#filteredTokenCount(docId, authorSections),
 				score: (retrievalScores.get(docId) ?? 0) + matchedGroups,
 				meta: workMetaById.get(workId),
 				matches: Array.from(matchByKey.values())
@@ -1012,6 +1024,11 @@ export class TexoroSearchEngine {
 				truncated: false
 			};
 		}
+
+		const authorSections: AuthorSections = match.poemAuthorFilter
+			? new Map([[resolvedDocId!, this.#allowedAuthorSections(resolvedDocId!, match.poemAuthorFilter)]])
+			: new Map();
+		const matchesAuthor = (tokenIndex: number): boolean => this.#matchesAuthorSection(resolvedDocId!, tokenIndex, authorSections);
 
 		const maxItems = options.maxItems ?? 300;
 		const snippetRadius = options.snippetRadius ?? DEFAULT_SNIPPET_RADIUS;
@@ -1082,10 +1099,10 @@ export class TexoroSearchEngine {
 					.map((part) => normalizePattern(part, this.#preserveEnie))
 					.filter(Boolean);
 			const anchorSpans = findPreparedSpans(prepared.tokens, sourcePatterns(group.anchor))
-				.filter((span) => this.#sameSection(resolvedDocId!, span.tokenStart + 1, span.tokenEnd + 1));
+				.filter((span) => matchesAuthor(span.tokenStart + 1) && this.#sameSection(resolvedDocId!, span.tokenStart + 1, span.tokenEnd + 1));
 			const termSpans = group.terms.map((term) =>
 				findPreparedSpans(prepared.tokens, sourcePatterns(term.value))
-					.filter((span) => this.#sameSection(resolvedDocId!, span.tokenStart + 1, span.tokenEnd + 1))
+					.filter((span) => matchesAuthor(span.tokenStart + 1) && this.#sameSection(resolvedDocId!, span.tokenStart + 1, span.tokenEnd + 1))
 			);
 			const seenGroupOccurrences = new Set<string>();
 
@@ -1141,9 +1158,9 @@ export class TexoroSearchEngine {
 				};
 			}
 			const leftSpans = findPreparedSpans(prepared.tokens, proximity.left)
-				.filter((span) => this.#sameSection(resolvedDocId!, span.tokenStart + 1, span.tokenEnd + 1));
+				.filter((span) => matchesAuthor(span.tokenStart + 1) && this.#sameSection(resolvedDocId!, span.tokenStart + 1, span.tokenEnd + 1));
 			const rightSpans = findPreparedSpans(prepared.tokens, proximity.right)
-				.filter((span) => this.#sameSection(resolvedDocId!, span.tokenStart + 1, span.tokenEnd + 1));
+				.filter((span) => matchesAuthor(span.tokenStart + 1) && this.#sameSection(resolvedDocId!, span.tokenStart + 1, span.tokenEnd + 1));
 			const seenUnorderedPairs =
 				proximity.order === 'any' &&
 				proximity.left.length === proximity.right.length &&
@@ -1192,7 +1209,7 @@ export class TexoroSearchEngine {
 			const regexes = patterns.map((pattern) => wildcardToRegex(pattern));
 			for (let index = 0; index < prepared.tokens.length; index += 1) {
 				const token = prepared.tokens[index];
-				if (!regexes.some((regex) => regex.test(token.norm))) continue;
+				if (!matchesAuthor(index + 1) || !regexes.some((regex) => regex.test(token.norm))) continue;
 				count += 1;
 				if (items.length < maxItems) {
 					const snippet = buildOccurrenceSnippet(
@@ -1215,6 +1232,7 @@ export class TexoroSearchEngine {
 			const tokenCount = prepared.tokens.length;
 			const maxStart = tokenCount - regexes.length;
 			for (let start = 0; start <= maxStart; start += 1) {
+				if (!matchesAuthor(start + 1)) continue;
 				let matched = true;
 				for (let offset = 0; offset < regexes.length; offset += 1) {
 					const token = prepared.tokens[start + offset];
@@ -1265,6 +1283,13 @@ export class TexoroSearchEngine {
 
 		for (const result of results) {
 			if (result.snippet) continue;
+			if (result.matches.some((match) => match.poemAuthorFilter)) {
+				for (const match of result.matches) {
+					const details = await this.getOccurrencesForMatch(result, match, { maxItems: 1, snippetRadius });
+					if (details.items[0]) { result.snippet = details.items[0].snippet; break; }
+				}
+				continue;
+			}
 			const snippet = await this.#findSnippetForPatterns(result.docId, fallbackPatterns, snippetRadius);
 			if (snippet) result.snippet = snippet;
 		}
@@ -1517,13 +1542,13 @@ export class TexoroSearchEngine {
 		}
 	}
 
-	async #evaluateGroup(group: ParsedQueryClause[]): Promise<GroupEvaluation> {
+	async #evaluateGroup(group: ParsedQueryClause[], authorSections: AuthorSections = new Map()): Promise<GroupEvaluation> {
 		let currentDocs: Set<number> | null = null;
 		let currentScores = new Map<number, number>();
 		const clauses: ClauseEvaluation[] = [];
 
 		for (const clause of group) {
-			const evaluated = await this.#evaluateClause(clause);
+			const evaluated = await this.#evaluateClause(clause, authorSections);
 			clauses.push(evaluated);
 
 			if (currentDocs === null) {
@@ -1548,17 +1573,17 @@ export class TexoroSearchEngine {
 		};
 	}
 
-	async #evaluateClause(clause: ParsedQueryClause): Promise<ClauseEvaluation> {
+	async #evaluateClause(clause: ParsedQueryClause, authorSections: AuthorSections): Promise<ClauseEvaluation> {
 		if (clause.kind === 'term') {
-			return this.#evaluateTermClause(clause.pattern, clause);
+			return this.#evaluateTermClause(clause.pattern, clause, authorSections);
 		}
 		if (clause.kind === 'proximity') {
-			return this.#evaluateProximityClause(clause);
+			return this.#evaluateProximityClause(clause, authorSections);
 		}
 		if (clause.kind === 'proximityGroup') {
-			return this.#evaluateProximityGroupClause(clause);
+			return this.#evaluateProximityGroupClause(clause, authorSections);
 		}
-		return this.#evaluatePhraseClause(clause.patterns, clause);
+		return this.#evaluatePhraseClause(clause.patterns, clause, authorSections);
 	}
 
 	#trimPreparedTextCache(): void {
@@ -1569,16 +1594,26 @@ export class TexoroSearchEngine {
 		}
 	}
 
-	async #evaluateTermClause(pattern: string, clause: ParsedQueryClause): Promise<ClauseEvaluation> {
+	async #evaluateTermClause(pattern: string, clause: ParsedQueryClause, authorSections: AuthorSections): Promise<ClauseEvaluation> {
 		const termIds = await this.#resolvePatternTermIds(pattern);
 		const docs = new Set<number>();
 		const scores = new Map<number, number>();
 
 		for (const termId of termIds) {
 			const postings = await this.#getPostingsForTerm(termId);
+			const scopedCounts = new Map<number, number>();
+			if (postings.some(([docId]) => authorSections.has(docId))) {
+				for (const [docId, , occurrences] of await this.#getPositionsForTerm(termId)) {
+					if (!authorSections.has(docId)) continue;
+					scopedCounts.set(docId, occurrences.filter(([tokenIndex]) =>
+						this.#matchesAuthorSection(docId, tokenIndex, authorSections)).length);
+				}
+			}
 			for (const [docId, tf] of postings) {
+				const count = authorSections.has(docId) ? scopedCounts.get(docId) ?? 0 : tf;
+				if (count <= 0) continue;
 				docs.add(docId);
-				scores.set(docId, (scores.get(docId) ?? 0) + tf);
+				scores.set(docId, (scores.get(docId) ?? 0) + count);
 			}
 		}
 
@@ -1587,13 +1622,14 @@ export class TexoroSearchEngine {
 
 	async #evaluatePhraseClause(
 		patterns: string[],
-		clause: Extract<ParsedQueryClause, { kind: 'phrase' }>
+		clause: Extract<ParsedQueryClause, { kind: 'phrase' }>,
+		authorSections: AuthorSections
 	): Promise<ClauseEvaluation> {
 		if (patterns.length === 0) {
 			return { clause, docs: new Set<number>(), scores: new Map<number, number>() };
 		}
 
-		const positions = await this.#positionsForSimpleClause(clause);
+		const positions = await this.#positionsForSimpleClause(clause, authorSections);
 		const docs = new Set<number>();
 		const scores = new Map<number, number>();
 		for (const [docId, occurrences] of positions) {
@@ -1603,6 +1639,50 @@ export class TexoroSearchEngine {
 		}
 
 		return { clause, docs, scores };
+	}
+
+	#allowedAuthorSections(docId: number, filter: PoemAuthorFilter): boolean[] {
+		const authors = this.#docRowById.get(docId)?.[7];
+		if (!authors) {
+			throw new Error('La búsqueda por poeta no está disponible temporalmente. Inténtalo de nuevo más tarde.');
+		}
+		return authors.map((ids) => matchesByMode(new Set(ids), filter.authorIds, filter.match));
+	}
+
+	#buildAuthorSections(workMetaById: Map<string, TexoroWorkMeta>, filters: NormalizedSearchMetadataFilters, selectedWorkIds: Set<string>): AuthorSections {
+		const sections: AuthorSections = new Map();
+		if (filters.traditionalAuthorIds.length === 0) return sections;
+		for (const [docId, row] of this.#docRowById) {
+			const meta = workMetaById.get(row[1]);
+			if (!meta?.collectionSize || collectAuthorIds(meta.traditionalAttribution).size <= 1 ||
+				!matchesMetadataFilters(meta, filters) || (selectedWorkIds.size > 0 && !selectedWorkIds.has(row[1]))) continue;
+			sections.set(docId, this.#allowedAuthorSections(docId, {
+				authorIds: filters.traditionalAuthorIds, match: filters.traditionalMatch
+			}));
+		}
+		return sections;
+	}
+
+	#matchesAuthorSection(docId: number, tokenIndex: number, sections: AuthorSections): boolean {
+		const allowed = sections.get(docId);
+		if (!allowed) return true;
+		const starts = this.#docRowById.get(docId)?.[6] ?? [1];
+		let low = 0, high = starts.length;
+		while (low < high) {
+			const mid = Math.floor((low + high) / 2);
+			if (starts[mid] <= tokenIndex) low = mid + 1;
+			else high = mid;
+		}
+		return allowed[low - 1] === true;
+	}
+
+	#filteredTokenCount(docId: number, sections: AuthorSections): number {
+		const row = this.#docRowById.get(docId)!;
+		const allowed = sections.get(docId);
+		if (!allowed) return row[4];
+		const starts = row[6] ?? [1];
+		return starts.reduce((total, start, index) => total + (allowed[index]
+			? (starts[index + 1] ?? row[4] + 1) - start : 0), 0);
 	}
 
 	#sameSection(docId: number, start: number, end: number): boolean {
@@ -1632,10 +1712,10 @@ export class TexoroSearchEngine {
 		return null;
 	}
 
-	async #evaluateProximityClause(clause: Extract<ParsedQueryClause, { kind: 'proximity' }>): Promise<ClauseEvaluation> {
+	async #evaluateProximityClause(clause: Extract<ParsedQueryClause, { kind: 'proximity' }>, authorSections: AuthorSections): Promise<ClauseEvaluation> {
 		const [leftPositions, rightPositions] = await Promise.all([
-			this.#positionsForSimpleClause(clause.left),
-			this.#positionsForSimpleClause(clause.right)
+			this.#positionsForSimpleClause(clause.left, authorSections),
+			this.#positionsForSimpleClause(clause.right, authorSections)
 		]);
 		const docs = new Set<number>();
 		const scores = new Map<number, number>();
@@ -1675,11 +1755,12 @@ export class TexoroSearchEngine {
 	}
 
 	async #evaluateProximityGroupClause(
-		clause: Extract<ParsedQueryClause, { kind: 'proximityGroup' }>
+		clause: Extract<ParsedQueryClause, { kind: 'proximityGroup' }>,
+		authorSections: AuthorSections
 	): Promise<ClauseEvaluation> {
 		const [anchorPositions, ...termPositions] = await Promise.all([
-			this.#positionsForSimpleClause(clause.anchor),
-			...clause.terms.map((term) => this.#positionsForSimpleClause(term.right))
+			this.#positionsForSimpleClause(clause.anchor, authorSections),
+			...clause.terms.map((term) => this.#positionsForSimpleClause(term.right, authorSections))
 		]);
 		const docs = new Set<number>();
 		const scores = new Map<number, number>();
@@ -1713,7 +1794,8 @@ export class TexoroSearchEngine {
 	}
 
 	async #positionsForSimpleClause(
-		clause: Extract<ParsedQueryClause, { kind: 'term' | 'phrase' }>
+		clause: Extract<ParsedQueryClause, { kind: 'term' | 'phrase' }>,
+		authorSections: AuthorSections
 	): Promise<Map<number, ClausePositionOccurrence[]>> {
 		if (clause.kind === 'term') {
 			const termIds = await this.#resolvePatternTermIds(clause.pattern);
@@ -1723,7 +1805,7 @@ export class TexoroSearchEngine {
 				for (const [docId, , occurrences] of docs) {
 					const current = byDoc.get(docId) ?? [];
 					current.push(
-						...occurrences.map((occurrence) => ({
+						...occurrences.filter(([tokenIndex]) => this.#matchesAuthorSection(docId, tokenIndex, authorSections)).map((occurrence) => ({
 							tokenStart: occurrence[0],
 							tokenEnd: occurrence[0],
 							byteStart: occurrence[1],
@@ -1741,7 +1823,7 @@ export class TexoroSearchEngine {
 
 		const patternDocs: Array<Map<number, ClausePositionOccurrence[]>> = [];
 		for (const pattern of clause.patterns) {
-			patternDocs.push(await this.#positionsForSimpleClause({ kind: 'term', pattern }));
+			patternDocs.push(await this.#positionsForSimpleClause({ kind: 'term', pattern }, authorSections));
 		}
 		if (patternDocs.length === 0) return new Map();
 

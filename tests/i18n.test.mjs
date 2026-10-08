@@ -232,3 +232,37 @@ test('streamed HTML is localized only after all chunks arrive, with language and
 		}
 	}
 });
+
+test('interpreted TEXORO queries translate filters and variable proximity distances in every locale', () => {
+	const source = readFileSync(resolve(projectRoot, 'src/routes/texoro/+page.svelte'), 'utf8');
+	const fragment = source.slice(source.indexOf('\tconst normalizeSearchValue'), source.indexOf('\tconst buildTechnicalFormula'));
+	const { outputText } = ts.transpileModule(fragment, {
+		compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS }
+	});
+	const createClauses = new Function('t', outputText + '\nreturn { buildTextualClause, buildFiltersClause };');
+	for (const locale of SUPPORTED_LOCALES) {
+		const t = (value) => translateText(locale, value);
+		const { buildTextualClause, buildFiltersClause } = createClauses(t);
+		for (const order of ['after', 'before', 'any']) {
+			const parts = buildTextualClause({ main: 'amor', additionalMode: 'any', additionalTerms: ['honra'], proximityTerms: [{ value: 'vida', distance: 25, order }] });
+			const clause = parts.map((part) => part.value).join('');
+			assert.ok(clause.includes('“amor”') && clause.includes('“honra”') && clause.includes('“vida”'), locale);
+			assert.ok(clause.includes('25'), locale);
+			assert.ok(!clause.includes('{distance}'), locale);
+			const key = order === 'any' ? ' aparezca a un máximo de {distance} palabras de ' : ` aparezca hasta {distance} palabras ${order === 'after' ? 'después' : 'antes'} de `;
+			assert.ok(clause.includes(t(key).replace('{distance}', '25')), locale);
+			if (locale !== 'es') {
+				assert.ok(!clause.includes('Buscar textos que incluyan'), locale);
+				assert.ok(!clause.includes(' y en los que '), locale);
+			}
+		}
+		const filters = buildFiltersClause({ titles: ['¡Ay, verdades, que en amor…!'], generalGenres: [t('Prosa')], genres: [t('Novela')], states: [t('Bueno')], traditionalAuthors: ['Miguel de Cervantes Saavedra'], traditionalMatch: 'or', stylometryAuthors: [], stylometryMatch: 'or' });
+		const filterText = filters.map((part) => part.value).join('');
+		assert.ok(filterText.includes('¡Ay, verdades, que en amor…!'));
+		assert.ok(filterText.includes('Miguel de Cervantes Saavedra'));
+		assert.ok(filterText.includes(t('Limitar a obras ')), locale);
+		assert.ok(filterText.includes(t('atribución tradicional a ')), locale);
+		if (locale !== 'es') assert.ok(Object.hasOwn(literalTranslations[locale], 'Limitar a obras '), locale);
+		assert.notEqual(t('Busca en teatro, prosa y poesía del Siglo de Oro: más de 3000 obras y más de 42 millones de palabras'), '', locale);
+	}
+});

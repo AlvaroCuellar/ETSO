@@ -1,5 +1,6 @@
 import { error, json } from '@sveltejs/kit';
 import { getServerTexoroEngine } from '$lib/server/texoro-runtime';
+import { normalizePoemAuthorFilter } from '$lib/search/poem-author-filter';
 
 import type { RequestHandler } from './$types';
 import type { SearchResultMatch } from '$lib/search';
@@ -36,7 +37,8 @@ const normalizeMatch = (value: unknown): SearchResultMatch | null => {
 	return {
 		kind,
 		source,
-		occurrences
+		occurrences,
+		poemAuthorFilter: normalizePoemAuthorFilter(raw.poemAuthorFilter)
 	};
 };
 

@@ -23,6 +23,10 @@ interface PrivateTextCacheEntry {
 
 const privateTextCache = new Map<string, PrivateTextCacheEntry>();
 
+export const clearPrivateTextCache = (): void => {
+	privateTextCache.clear();
+};
+
 const estimateTextBytes = (value: string | null): number => (value ? value.length * 2 : 0);
 
 const prunePrivateTextCache = (): void => {
@@ -207,12 +211,14 @@ export const readPrivateTextByTextKey = async (textKey: string): Promise<string 
 				estimatedBytes: estimateTextBytes(value),
 				value
 			};
-			privateTextCache.set(fileName, entry);
-			prunePrivateTextCache();
+			if (privateTextCache.get(fileName)?.promise === promise) {
+				privateTextCache.set(fileName, entry);
+				prunePrivateTextCache();
+			}
 			return value;
 		})
 		.catch((cause) => {
-			privateTextCache.delete(fileName);
+			if (privateTextCache.get(fileName)?.promise === promise) privateTextCache.delete(fileName);
 			throw cause;
 		});
 

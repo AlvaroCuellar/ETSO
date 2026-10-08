@@ -47,6 +47,7 @@ export type TexoroWorkerResponse =
 			ok: true;
 			result?: {
 				manifest?: TexoroIndexManifest | null;
+				missingWorkIds?: string[];
 				execution?: SearchExecution;
 			};
 	  }

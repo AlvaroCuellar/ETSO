@@ -195,9 +195,11 @@ const readSummary = async (inputDir, workId) => {
 
 const collectCatalogData = async (sqlitePath) => {
 	const db = createClient({ url: `file:${sqlitePath}`, authToken: 'local' });
+	const workColumns = await db.execute('PRAGMA table_info(works)');
+	const collectionSizeColumn = workColumns.rows.some((row) => row.name === 'collection_size') ? 'collection_size' : 'NULL AS collection_size';
 	const [workResult, authorResult, attributionResult] = await Promise.all([
 		db.execute(`
-			SELECT id, slug, titulo, genero, resumen_breve
+			SELECT id, slug, titulo, genero, resumen_breve, ${collectionSizeColumn}
 			FROM works
 			WHERE resumen_breve IS NOT NULL
 			ORDER BY titulo COLLATE NOCASE
@@ -250,6 +252,7 @@ const collectCatalogData = async (sqlitePath) => {
 			slug: String(row.slug ?? ''),
 			title: String(row.titulo ?? ''),
 			genre: String(row.genero ?? '').trim() || 'Sin genero',
+			collectionSize: Number(row.collection_size) || 0,
 			shortSummary: String(row.resumen_breve ?? '').trim() || EMPTY_SHORT_SUMMARY
 		})),
 		authorById,
@@ -277,13 +280,16 @@ const buildIndex = async (options) => {
 		const summaryText = buildSummarySearchText(summary, shortText, longText);
 		if (!summaryText) continue;
 
+		const attribution = attributionByWorkId.get(work.id);
+		const authorIds = new Set([...(attribution?.groups.values() ?? [])].flatMap((group) => group.members.map((member) => member.authorId)));
+		const traditional = work.collectionSize > 0 && authorIds.size > 1 ? 'Varios' : traditionalLabel(work.id, attributionByWorkId, authorById);
 		entries.push({
 			id: work.id,
 			slug: work.slug,
 			title: work.title,
 			displayTitle: formatDisplayWorkTitle(work.title),
 			genre: work.genre,
-			traditional: traditionalLabel(work.id, attributionByWorkId, authorById),
+			traditional,
 			summaryText,
 			normalizedSummaryText: normalizeSearchText(summaryText)
 		});

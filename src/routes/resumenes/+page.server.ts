@@ -12,6 +12,7 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 			title: work.title,
 			titleVariants: work.titleVariants,
 			traditional: formatTraditionalAttributionCompact(work.traditionalAttribution),
+			isMultiAuthorCollection: Boolean(work.collectionSize && new Set(work.traditionalAttribution.groups.flatMap((group) => group.members.map((member) => member.authorId))).size > 1),
 			genre: work.genre
 		}))
 		.sort((a, b) => {

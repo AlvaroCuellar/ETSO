@@ -274,79 +274,79 @@
 
 	const texoroIntroByLocale: Record<Locale, { subtitle: string; paragraphs: string[] }> = {
 		es: {
-			subtitle: 'Búsquedas textuales en 3000 obras del Siglo de Oro',
+			subtitle: "Búsquedas textuales en teatro, prosa y poesía del Siglo de Oro",
 			paragraphs: [
-				'TEXORO es una plataforma de búsqueda textual que permite consultar de forma unificada un amplio corpus de obras del Siglo de Oro. El recurso reúne cerca de 3000 textos, con más de 38 millones de palabras indexadas y obras de más de 400 autores, y ofrece distintas posibilidades para explorar el patrimonio literario aurisecular desde criterios léxicos, textuales y documentales.',
+				"TEXORO permite realizar búsquedas textuales en obras de teatro, prosa y poesía del Siglo de Oro, reunidas en un corpus literario en expansión. El corpus reúne más de 3000 obras y más de 42 millones de palabras indexadas.",
 				'El buscador permite localizar palabras, frases exactas y patrones con comodines, así como realizar consultas avanzadas mediante la combinación de términos, condiciones de proximidad y filtros por título, género, atribución tradicional, atribución estilométrica o estado del texto. De este modo, TEXORO facilita tanto búsquedas puntuales como exploraciones más complejas sobre la presencia, distribución y relación de palabras o expresiones en el conjunto del corpus.'
 			]
 		},
 		en: {
-			subtitle: 'Textual searches across 3,000 Golden Age works',
+			subtitle: "Textual searches across Golden Age drama, prose and poetry",
 			paragraphs: [
-				'TEXORO is a textual search platform that allows users to search a large corpus of Spanish Golden Age works through a unified interface. The resource brings together nearly 3,000 texts, more than 38 million indexed words and works by more than 400 authors, offering several ways to explore this literary heritage through lexical, textual and documentary criteria.',
+				"TEXORO enables textual searches across Golden Age drama, prose and poetry in an expanding literary corpus. The corpus brings together more than 3,000 works and over 42 million indexed words.",
 				'The search engine can locate words, exact phrases and wildcard patterns, and it also supports advanced queries combining terms, proximity conditions and filters by title, genre, traditional attribution, stylometric attribution or textual condition. In this way, TEXORO supports both targeted searches and more complex explorations of the presence, distribution and relationships of words or expressions across the corpus.'
 			]
 		},
 		fr: {
-			subtitle: 'Recherches textuelles dans 3000 œuvres du Siècle d’or',
+			subtitle: "Recherches textuelles dans le théâtre, la prose et la poésie du Siècle d’or",
 			paragraphs: [
-				'TEXORO est une plateforme de recherche textuelle qui permet d’interroger de manière unifiée un vaste corpus d’œuvres du Siècle d’or espagnol. La ressource réunit près de 3000 textes, plus de 38 millions de mots indexés et des œuvres de plus de 400 auteurs, et offre plusieurs façons d’explorer ce patrimoine littéraire selon des critères lexicaux, textuels et documentaires.',
+				"TEXORO permet des recherches textuelles dans un corpus littéraire en expansion réunissant théâtre, prose et poésie du Siècle d’or espagnol. Le corpus réunit plus de 3000 œuvres et plus de 42 millions de mots indexés.",
 				'Le moteur de recherche permet de localiser des mots, des expressions exactes et des motifs avec jokers, ainsi que de lancer des requêtes avancées combinant termes, conditions de proximité et filtres par titre, genre, attribution traditionnelle, attribution stylométrique ou état du texte. TEXORO facilite ainsi aussi bien les recherches ciblées que les explorations plus complexes de la présence, de la distribution et des relations des mots ou expressions dans l’ensemble du corpus.'
 			]
 		},
 		pt: {
-			subtitle: 'Pesquisas textuais em 3000 obras do Século de Ouro espanhol',
+			subtitle: "Pesquisas textuais em teatro, prosa e poesia do Século de Ouro",
 			paragraphs: [
-				'TEXORO é uma plataforma de pesquisa textual que permite consultar de forma unificada um amplo corpus de obras do Século de Ouro espanhol. O recurso reúne cerca de 3000 textos, mais de 38 milhões de palavras indexadas e obras de mais de 400 autores, oferecendo diferentes possibilidades para explorar esse patrimônio literário por critérios lexicais, textuais e documentais.',
+				"TEXORO permite pesquisas textuais em obras de teatro, prosa e poesia do Século de Ouro espanhol, reunidas em um corpus literário em expansão. O corpus reúne mais de 3000 obras e mais de 42 milhões de palavras indexadas.",
 				'O buscador permite localizar palavras, frases exatas e padrões com curingas, além de realizar consultas avançadas mediante a combinação de termos, condições de proximidade e filtros por título, gênero, atribuição tradicional, atribuição estilométrica ou estado do texto. Desse modo, TEXORO facilita tanto pesquisas específicas quanto explorações mais complexas sobre a presença, a distribuição e a relação de palavras ou expressões no conjunto do corpus.'
 			]
 		},
 		it: {
-			subtitle: 'Ricerche testuali in 3000 opere del Secolo d’Oro spagnolo',
+			subtitle: "Ricerche testuali nel teatro, nella prosa e nella poesia del Secolo d’Oro",
 			paragraphs: [
-				'TEXORO è una piattaforma di ricerca testuale che permette di consultare in modo unitario un ampio corpus di opere del Secolo d’Oro spagnolo. La risorsa riunisce circa 3000 testi, più di 38 milioni di parole indicizzate e opere di oltre 400 autori, offrendo diverse possibilità per esplorare questo patrimonio letterario secondo criteri lessicali, testuali e documentari.',
+				"TEXORO consente ricerche testuali in opere teatrali, in prosa e in poesia del Secolo d’Oro spagnolo, raccolte in un corpus letterario in espansione. Il corpus raccoglie più di 3000 opere e oltre 42 milioni di parole indicizzate.",
 				'Il motore di ricerca consente di individuare parole, frasi esatte e pattern con caratteri jolly, nonché di effettuare ricerche avanzate combinando termini, condizioni di prossimità e filtri per titolo, genere, attribuzione tradizionale, attribuzione stilometrica o stato del testo. In questo modo, TEXORO facilita sia ricerche specifiche sia esplorazioni più complesse sulla presenza, distribuzione e relazione di parole o espressioni nell’intero corpus.'
 			]
 		},
 		de: {
-			subtitle: 'Textsuche in 3000 Werken des spanischen Siglo de Oro',
+			subtitle: "Textsuche in Theater, Prosa und Lyrik des Siglo de Oro",
 			paragraphs: [
-				'TEXORO ist eine Textsuchplattform, mit der sich ein umfangreiches Korpus von Werken des spanischen Siglo de Oro einheitlich durchsuchen lässt. Die Ressource umfasst rund 3000 Texte mit mehr als 38 Millionen indexierten Wörtern und Werke von über 400 Autorinnen und Autoren; sie bietet verschiedene Möglichkeiten, dieses literarische Erbe nach lexikalischen, textuellen und dokumentarischen Kriterien zu erschließen.',
+				"TEXORO ermöglicht Textsuchen in einem wachsenden literarischen Korpus mit Theater, Prosa und Lyrik des spanischen Siglo de Oro. Das Korpus umfasst mehr als 3000 Werke und über 42 Millionen indexierte Wörter.",
 				'Die Suche findet Wörter, exakte Phrasen und Muster mit Platzhaltern und ermöglicht erweiterte Abfragen durch die Kombination von Begriffen, Nähebedingungen und Filtern nach Titel, Gattung, traditioneller Zuschreibung, stilometrischer Zuschreibung oder Textzustand. So unterstützt TEXORO sowohl gezielte Suchen als auch komplexere Untersuchungen zur Präsenz, Verteilung und Beziehung von Wörtern oder Ausdrücken im gesamten Korpus.'
 			]
 		},
 		zh: {
-			subtitle: '在 3000 部西班牙黄金时代作品中进行文本检索',
+			subtitle: "检索黄金时代戏剧、散文和诗歌的文本",
 			paragraphs: [
-				'TEXORO 是一个文本搜索平台，可通过统一界面检索西班牙黄金时代的大型作品语料库。该资源汇集近 3000 篇文本、超过 3800 万个索引词以及 400 多位作者的作品，可从词汇、文本和文献等角度探索这一文学遗产。',
+				"TEXORO 支持检索西班牙黄金时代的戏剧、散文和诗歌，涵盖不断扩充的文学语料库。 语料库收录3000多部作品，索引词数超过4200万。",
 				'检索器可以查找词语、精确短语和带通配符的模式，也支持通过组合术语、邻近条件以及标题、体裁、传统归属、文体计量归属或文本状态等筛选条件进行高级查询。通过这种方式，TEXORO 既支持有针对性的检索，也支持对整个语料库中词语或表达的出现、分布和关系进行更复杂的探索。'
 			]
 		},
 		ja: {
-			subtitle: 'スペイン黄金世紀の 3000 作品を対象とするテキスト検索',
+			subtitle: "黄金世紀の演劇・散文・詩のテキスト検索",
 			paragraphs: [
-				'TEXORO は、スペイン黄金世紀作品の大規模コーパスを統一的に検索できるテキスト検索プラットフォームです。このリソースは約 3000 件のテキスト、3800 万語以上の索引語、400 人を超える著者の作品を収録し、語彙・テキスト・文献の観点からこの文学遺産を探索するための複数の方法を提供します。',
+				"TEXORO は、拡充を続けるスペイン黄金世紀の文学コーパスで、演劇・散文・詩のテキスト検索を提供します。 コーパスには3000作品以上が収録され、4200万語以上が索引化されています。",
 				'検索機能では、単語、完全一致のフレーズ、ワイルドカードを用いたパターンを探せるほか、語、近接条件、タイトル、ジャンル、伝統的帰属、文体計量による帰属、テキストの状態などのフィルターを組み合わせた高度な検索も可能です。これにより TEXORO は、対象を絞った検索と、コーパス全体における語句の出現、分布、関係についてのより複雑な探索の両方を支援します。'
 			]
 		},
 		ko: {
-			subtitle: '스페인 황금세기 작품 3000편 대상 텍스트 검색',
+			subtitle: "황금세기 희곡·산문·시의 텍스트 검색",
 			paragraphs: [
-				'TEXORO는 스페인 황금세기 작품의 대규모 말뭉치를 통합적으로 검색할 수 있는 텍스트 검색 플랫폼입니다. 이 리소스는 약 3000편의 텍스트, 3800만 개가 넘는 색인어, 400명 이상의 저자 작품을 모아 어휘, 텍스트, 문헌 기준으로 이 문학 유산을 탐색할 수 있게 합니다.',
+				"TEXORO는 확장 중인 스페인 황금세기 문학 코퍼스의 희곡, 산문, 시를 대상으로 텍스트 검색을 제공합니다. 말뭉치에는 3000편 이상의 작품과 4200만 개 이상의 색인어가 포함되어 있습니다.",
 				'검색기는 단어, 정확한 구, 와일드카드 패턴을 찾을 수 있으며, 용어 조합, 근접 조건, 제목, 장르, 전통적 귀속, 문체계량 귀속 또는 텍스트 상태 필터를 결합한 고급 검색도 지원합니다. 이를 통해 TEXORO는 특정 검색뿐 아니라 전체 말뭉치에서 단어나 표현의 출현, 분포, 관계를 살피는 더 복합적인 탐색도 가능하게 합니다.'
 			]
 		},
 		ru: {
-			subtitle: 'Текстовый поиск по 3000 произведениям испанского Золотого века',
+			subtitle: "Текстовый поиск по драматургии, прозе и поэзии Золотого века",
 			paragraphs: [
-				'TEXORO — это платформа текстового поиска, которая позволяет единообразно обращаться к большому корпусу произведений испанского Золотого века. Ресурс объединяет около 3000 текстов, более 38 миллионов проиндексированных слов и произведения более чем 400 авторов, предлагая разные способы изучать это литературное наследие по лексическим, текстовым и документальным критериям.',
+				"TEXORO позволяет выполнять текстовый поиск по драматургии, прозе и поэзии испанского Золотого века в расширяющемся литературном корпусе. Корпус включает более 3000 произведений и более 42 миллионов проиндексированных слов.",
 				'Поиск позволяет находить слова, точные фразы и шаблоны с подстановочными знаками, а также выполнять расширенные запросы с сочетанием терминов, условий близости и фильтров по названию, жанру, традиционной атрибуции, стилометрической атрибуции или состоянию текста. Так TEXORO поддерживает как точечный поиск, так и более сложные исследования присутствия, распределения и связей слов или выражений во всем корпусе.'
 			]
 		},
 		ar: {
-			subtitle: 'بحث نصي في 3000 عمل من العصر الذهبي الإسباني',
+			subtitle: "البحث النصي في مسرح ونثر وشعر العصر الذهبي",
 			paragraphs: [
-				'TEXORO منصة للبحث النصي تتيح البحث عبر واجهة موحّدة في مجموعة واسعة من أعمال العصر الذهبي الإسباني. يجمع المورد قرابة 3000 نص، تضم أكثر من 38 مليون كلمة مفهرسة وأعمالًا لأكثر من 400 مؤلف، ويوفر إمكانات متعددة لاستكشاف هذا التراث الأدبي وفق معايير معجمية ونصية ووثائقية.',
+				"يتيح TEXORO البحث النصي في أعمال المسرح والنثر والشعر من العصر الذهبي الإسباني ضمن مجموعة أدبية تتوسع باستمرار. تضم المجموعة أكثر من 3000 عمل وأكثر من 42 مليون كلمة مفهرسة.",
 				'يتيح محرك البحث العثور على الكلمات والعبارات الدقيقة والأنماط ذات العلامات البديلة، كما يتيح إجراء عمليات بحث متقدمة تجمع بين المصطلحات وشروط التقارب ومرشحات العنوان والنوع والإسناد التقليدي والإسناد الأسلوبي وحالة النص. وبهذا يدعم TEXORO البحث الموجّه والاستكشافات الأكثر تعقيدًا لحضور الكلمات أو العبارات وتوزيعها وعلاقاتها داخل corpus كامل.'
 			]
 		}
@@ -436,7 +436,7 @@
 		es: {
 			title: '¿Cómo te podemos ayudar? ¿Cómo nos puedes ayudar?',
 			paragraphs: [
-				'Podemos ayudarte a explorar los distintos recursos disponibles para el estudio del teatro y la literatura del Siglo de Oro. En Examen de autorías se pueden consultar los informes estilométricos de las obras incorporadas al corpus, con indicios sobre sus posibles relaciones de autoría. TEXORO permite realizar búsquedas textuales sobre cerca de 3000 obras y más de 38 millones de palabras. BITESO ofrece acceso abierto a textos digitales procedentes, en buena medida, de transcripciones automáticas de impresos y manuscritos. Además, los resúmenes automáticos permiten obtener una primera orientación sobre el argumento y el contenido de las obras, siempre como ayuda inicial y no como sustituto de la lectura o del análisis filológico.',
+				'Podemos ayudarte a explorar los distintos recursos disponibles para el estudio del teatro y la literatura del Siglo de Oro. En Examen de autorías se pueden consultar los informes estilométricos de las obras incorporadas al corpus, con indicios sobre sus posibles relaciones de autoría. TEXORO permite realizar búsquedas textuales en teatro, prosa y poesía sobre más de 3000 obras y más de 42 millones de palabras. BITESO ofrece acceso abierto a textos digitales procedentes, en buena medida, de transcripciones automáticas de impresos y manuscritos. Además, los resúmenes automáticos permiten obtener una primera orientación sobre el argumento y el contenido de las obras, siempre como ayuda inicial y no como sustituto de la lectura o del análisis filológico.',
 				'También puedes colaborar con nosotros enviándonos textos del Siglo de Oro que todavía no estén incorporados a nuestros recursos, información bibliográfica, noticias sobre atribuciones, datos sobre testimonios o cualquier material que pueda mejorar el conjunto. Citar nuestros recursos en publicaciones, trabajos académicos o actividades docentes también nos ayuda a difundir el proyecto y a obtener el apoyo necesario para mantenerlo y ampliarlo.'
 			],
 			button: 'Contacta con nosotros',
@@ -445,7 +445,7 @@
 		en: {
 			title: 'How can we help you? How can you help us?',
 			paragraphs: [
-				'We can help you explore the resources available for studying Golden Age theatre and literature. Examen de autorías provides stylometric reports on works in the corpus, with indications of possible authorship relations. TEXORO enables textual searches across nearly 3,000 works and more than 38 million words. BITESO offers open access to digital texts, many of them derived from automatic transcriptions of old printed books and manuscripts. Automatic summaries also provide an initial orientation to the plot and content of works, always as a preliminary aid and never as a substitute for reading or philological analysis.',
+				'We can help you explore the resources available for studying Golden Age theatre and literature. Examen de autorías provides stylometric reports on works in the corpus, with indications of possible authorship relations. TEXORO enables textual searches across drama, prose and poetry in more than 3,000 works and over 42 million words. BITESO offers open access to digital texts, many of them derived from automatic transcriptions of old printed books and manuscripts. Automatic summaries also provide an initial orientation to the plot and content of works, always as a preliminary aid and never as a substitute for reading or philological analysis.',
 				'You can also collaborate with us by sending Golden Age texts that are not yet included in our resources, bibliographic information, news about attributions, data on textual witnesses or any material that may improve the collection. Citing our resources in publications, academic work or teaching also helps us disseminate the project and obtain the support needed to maintain and expand it.'
 			],
 			button: 'Contact us',
@@ -454,7 +454,7 @@
 		fr: {
 			title: 'Comment pouvons-nous vous aider ? Comment pouvez-vous nous aider ?',
 			paragraphs: [
-				'Nous pouvons vous aider à explorer les ressources disponibles pour l’étude du théâtre et de la littérature du Siècle d’or. Examen de autorías donne accès aux rapports stylométriques des œuvres du corpus, avec des indices sur leurs possibles relations d’auteur. TEXORO permet d’effectuer des recherches textuelles dans près de 3000 œuvres et plus de 38 millions de mots. BITESO offre un accès ouvert à des textes numériques issus en grande partie de transcriptions automatiques d’imprimés anciens et de manuscrits. Les résumés automatiques fournissent également une première orientation sur l’intrigue et le contenu des œuvres, toujours comme aide préliminaire et non comme substitut à la lecture ou à l’analyse philologique.',
+				'Nous pouvons vous aider à explorer les ressources disponibles pour l’étude du théâtre et de la littérature du Siècle d’or. Examen de autorías donne accès aux rapports stylométriques des œuvres du corpus, avec des indices sur leurs possibles relations d’auteur. TEXORO permet d’effectuer des recherches textuelles dans le théâtre, la prose et la poésie, sur plus de 3000 œuvres et plus de 42 millions de mots. BITESO offre un accès ouvert à des textes numériques issus en grande partie de transcriptions automatiques d’imprimés anciens et de manuscrits. Les résumés automatiques fournissent également une première orientation sur l’intrigue et le contenu des œuvres, toujours comme aide préliminaire et non comme substitut à la lecture ou à l’analyse philologique.',
 				'Vous pouvez aussi collaborer avec nous en envoyant des textes du Siècle d’or qui ne figurent pas encore dans nos ressources, des informations bibliographiques, des informations sur les attributions, des données sur les témoins textuels ou tout matériau susceptible d’améliorer l’ensemble. Citer nos ressources dans des publications, travaux académiques ou activités d’enseignement nous aide également à diffuser le projet et à obtenir le soutien nécessaire pour le maintenir et l’élargir.'
 			],
 			button: 'Nous contacter',
@@ -463,7 +463,7 @@
 		pt: {
 			title: 'Como podemos ajudar? Como você pode nos ajudar?',
 			paragraphs: [
-				'Podemos ajudar você a explorar os recursos disponíveis para o estudo do teatro e da literatura do Século de Ouro espanhol. Em Examen de autorías, é possível consultar relatórios estilométricos das obras incorporadas ao corpus, com indícios sobre suas possíveis relações de autoria. TEXORO permite realizar pesquisas textuais em cerca de 3000 obras e mais de 38 milhões de palavras. BITESO oferece acesso aberto a textos digitais provenientes, em grande parte, de transcrições automáticas de impressos antigos e manuscritos. Além disso, os resumos automáticos oferecem uma orientação inicial sobre o enredo e o conteúdo das obras, sempre como auxílio preliminar e não como substituto da leitura ou da análise filológica.',
+				'Podemos ajudar você a explorar os recursos disponíveis para o estudo do teatro e da literatura do Século de Ouro espanhol. Em Examen de autorías, é possível consultar relatórios estilométricos das obras incorporadas ao corpus, com indícios sobre suas possíveis relações de autoria. TEXORO permite realizar pesquisas textuais em teatro, prosa e poesia em mais de 3000 obras e mais de 42 milhões de palavras. BITESO oferece acesso aberto a textos digitais provenientes, em grande parte, de transcrições automáticas de impressos antigos e manuscritos. Além disso, os resumos automáticos oferecem uma orientação inicial sobre o enredo e o conteúdo das obras, sempre como auxílio preliminar e não como substituto da leitura ou da análise filológica.',
 				'Você também pode colaborar conosco enviando textos do Século de Ouro espanhol que ainda não estejam incorporados aos nossos recursos, informações bibliográficas, notícias sobre atribuições, dados sobre testemunhos textuais ou qualquer material que possa melhorar a coleção. Citar nossos recursos em publicações, trabalhos acadêmicos ou atividades docentes também nos ajuda a divulgar o projeto e obter o apoio necessário para mantê-lo e ampliá-lo.'
 			],
 			button: 'Entrar em contato',
@@ -472,7 +472,7 @@
 		it: {
 			title: 'Come possiamo aiutarti? Come puoi aiutarci?',
 			paragraphs: [
-				'Possiamo aiutarti a esplorare le risorse disponibili per lo studio del teatro e della letteratura del Secolo d’Oro spagnolo. In Examen de autorías si possono consultare i rapporti stilometrici delle opere incluse nel corpus, con indizi sulle loro possibili relazioni d’autore. TEXORO consente ricerche testuali su circa 3000 opere e oltre 38 milioni di parole. BITESO offre accesso aperto a testi digitali provenienti in larga parte da trascrizioni automatiche di antichi testi a stampa e manoscritti. I riassunti automatici offrono inoltre un primo orientamento sulla trama e sul contenuto delle opere, sempre come aiuto preliminare e non come sostituto della lettura o dell’analisi filologica.',
+				'Possiamo aiutarti a esplorare le risorse disponibili per lo studio del teatro e della letteratura del Secolo d’Oro spagnolo. In Examen de autorías si possono consultare i rapporti stilometrici delle opere incluse nel corpus, con indizi sulle loro possibili relazioni d’autore. TEXORO consente ricerche testuali nel teatro, nella prosa e nella poesia, su più di 3000 opere e oltre 42 milioni di parole. BITESO offre accesso aperto a testi digitali provenienti in larga parte da trascrizioni automatiche di antichi testi a stampa e manoscritti. I riassunti automatici offrono inoltre un primo orientamento sulla trama e sul contenuto delle opere, sempre come aiuto preliminare e non come sostituto della lettura o dell’analisi filologica.',
 				'Puoi anche collaborare con noi inviando testi del Secolo d’Oro spagnolo non ancora inclusi nelle nostre risorse, informazioni bibliografiche, notizie sulle attribuzioni, dati sui testimoni testuali o qualunque materiale possa migliorare la collezione. Citare le nostre risorse in pubblicazioni, lavori accademici o attività didattiche ci aiuta inoltre a diffondere il progetto e a ottenere il sostegno necessario per mantenerlo e ampliarlo.'
 			],
 			button: 'Contattaci',
@@ -481,7 +481,7 @@
 		de: {
 			title: 'Wie können wir Ihnen helfen? Wie können Sie uns helfen?',
 			paragraphs: [
-				'Wir können Ihnen helfen, die verfügbaren Ressourcen für die Erforschung des Theaters und der Literatur des spanischen Siglo de Oro zu nutzen. In Examen de autorías lassen sich stilometrische Berichte zu den Werken des Korpus einsehen, mit Hinweisen auf mögliche Autorschaftsbeziehungen. TEXORO ermöglicht Textsuchen in rund 3000 Werken und mehr als 38 Millionen Wörtern. BITESO bietet offenen Zugang zu digitalen Texten, die zu einem großen Teil aus automatischen Transkriptionen alter Drucke und Handschriften hervorgegangen sind. Die automatischen Zusammenfassungen bieten außerdem eine erste Orientierung zu Handlung und Inhalt der Werke, stets als vorläufige Hilfe und nicht als Ersatz für Lektüre oder philologische Analyse.',
+				'Wir können Ihnen helfen, die verfügbaren Ressourcen für die Erforschung des Theaters und der Literatur des spanischen Siglo de Oro zu nutzen. In Examen de autorías lassen sich stilometrische Berichte zu den Werken des Korpus einsehen, mit Hinweisen auf mögliche Autorschaftsbeziehungen. TEXORO ermöglicht Textsuchen in Theater, Prosa und Lyrik in mehr als 3000 Werken mit über 42 Millionen Wörtern. BITESO bietet offenen Zugang zu digitalen Texten, die zu einem großen Teil aus automatischen Transkriptionen alter Drucke und Handschriften hervorgegangen sind. Die automatischen Zusammenfassungen bieten außerdem eine erste Orientierung zu Handlung und Inhalt der Werke, stets als vorläufige Hilfe und nicht als Ersatz für Lektüre oder philologische Analyse.',
 				'Sie können auch mit uns zusammenarbeiten, indem Sie uns Texte des spanischen Siglo de Oro senden, die noch nicht in unseren Ressourcen enthalten sind, bibliografische Informationen, Hinweise zu Zuschreibungen, Daten zu Textzeugen oder anderes Material, das die Sammlung verbessern kann. Die Zitierung unserer Ressourcen in Publikationen, wissenschaftlichen Arbeiten oder Lehrveranstaltungen hilft uns ebenfalls, das Projekt bekannt zu machen und die nötige Unterstützung für seine Pflege und Erweiterung zu erhalten.'
 			],
 			button: 'Kontakt aufnehmen',
@@ -490,7 +490,7 @@
 		zh: {
 			title: '我们可以怎样帮助您？您可以怎样帮助我们？',
 			paragraphs: [
-				'我们可以帮助您探索用于研究西班牙黄金时代戏剧和文学的各项资源。Examen de autorías 提供语料库中作品的文体计量报告，并给出可能的作者归属关系线索。TEXORO 可在近 3000 部作品和 3800 多万个词中进行文本检索。BITESO 开放提供数字文本，其中很大一部分来自古代印刷本和手稿的自动转录。自动摘要还可为作品情节和内容提供初步参考，但它们始终只是辅助工具，不能替代阅读或文献学分析。',
+				'我们可以帮助您探索用于研究西班牙黄金时代戏剧和文学的各项资源。Examen de autorías 提供语料库中作品的文体计量报告，并给出可能的作者归属关系线索。TEXORO 可检索3000多部戏剧、散文和诗歌作品，涵盖4200多万个词。BITESO 开放提供数字文本，其中很大一部分来自古代印刷本和手稿的自动转录。自动摘要还可为作品情节和内容提供初步参考，但它们始终只是辅助工具，不能替代阅读或文献学分析。',
 				'您也可以向我们提供尚未纳入资源的西班牙黄金时代文本、书目信息、归属研究动态、文本见证资料，或任何有助于改进合集的材料。在出版物、学术研究或教学活动中引用我们的资源，也有助于传播项目并获得维护和扩展所需的支持。'
 			],
 			button: '联系我们',
@@ -499,7 +499,7 @@
 		ja: {
 			title: 'どのようにお手伝いできますか。どのようにご協力いただけますか。',
 			paragraphs: [
-				'スペイン黄金世紀の演劇と文学を研究するために利用できる各種リソースの活用をお手伝いします。Examen de autorías では、コーパスに含まれる作品の文体計量レポートを参照し、著者帰属に関する可能な関係を確認できます。TEXORO では、約 3000 作品、3800 万語以上を対象にテキスト検索を行えます。BITESO は、主に古い印刷本や写本の自動転写に由来するデジタルテキストをオープンアクセスで提供します。自動要約は作品の筋や内容を把握するための初期的な手がかりを提供しますが、読解や文献学的分析の代替ではありません。',
+				'スペイン黄金世紀の演劇と文学を研究するために利用できる各種リソースの活用をお手伝いします。Examen de autorías では、コーパスに含まれる作品の文体計量レポートを参照し、著者帰属に関する可能な関係を確認できます。TEXORO では、演劇・散文・詩の3000作品以上、4200万語以上を対象にテキスト検索を行えます。BITESO は、主に古い印刷本や写本の自動転写に由来するデジタルテキストをオープンアクセスで提供します。自動要約は作品の筋や内容を把握するための初期的な手がかりを提供しますが、読解や文献学的分析の代替ではありません。',
 				'また、まだリソースに含まれていないスペイン黄金世紀のテキスト、書誌情報、帰属に関する情報、本文証言に関するデータ、またはコレクションの改善に役立つ資料をお送りいただくことでもご協力いただけます。出版物、学術研究、教育活動で私たちのリソースを引用することも、プロジェクトの周知と維持・拡充に必要な支援につながります。'
 			],
 			button: 'お問い合わせ',
@@ -508,7 +508,7 @@
 		ko: {
 			title: '어떻게 도와드릴까요? 어떻게 함께할 수 있을까요?',
 			paragraphs: [
-				'스페인 황금세기 연극과 문학 연구에 사용할 수 있는 여러 리소스를 살펴볼 수 있도록 도와드립니다. Examen de autorías에서는 말뭉치에 포함된 작품의 문체계량 보고서를 확인하고 가능한 저자 귀속 관계에 대한 단서를 볼 수 있습니다. TEXORO는 약 3000편의 작품과 3800만 단어 이상을 대상으로 텍스트 검색을 제공합니다. BITESO는 주로 고인쇄본과 필사본의 자동 전사에서 나온 디지털 텍스트를 오픈 액세스로 제공합니다. 자동 요약은 작품의 줄거리와 내용을 파악하기 위한 예비적 도움을 제공하지만, 읽기나 문헌학적 분석을 대체하지 않습니다.',
+				'스페인 황금세기 연극과 문학 연구에 사용할 수 있는 여러 리소스를 살펴볼 수 있도록 도와드립니다. Examen de autorías에서는 말뭉치에 포함된 작품의 문체계량 보고서를 확인하고 가능한 저자 귀속 관계에 대한 단서를 볼 수 있습니다. TEXORO는 희곡·산문·시의 3000편 이상의 작품과 4200만 단어 이상을 대상으로 텍스트 검색을 제공합니다. BITESO는 주로 고인쇄본과 필사본의 자동 전사에서 나온 디지털 텍스트를 오픈 액세스로 제공합니다. 자동 요약은 작품의 줄거리와 내용을 파악하기 위한 예비적 도움을 제공하지만, 읽기나 문헌학적 분석을 대체하지 않습니다.',
 				'아직 리소스에 포함되지 않은 스페인 황금세기 텍스트, 서지 정보, 귀속 관련 소식, 텍스트 증언 자료 또는 컬렉션 개선에 도움이 되는 자료를 보내 주셔도 협력할 수 있습니다. 출판물, 학술 연구 또는 교육 활동에서 우리의 리소스를 인용하는 것도 프로젝트를 알리고 유지·확장하는 데 필요한 지원을 얻는 데 도움이 됩니다.'
 			],
 			button: '문의하기',
@@ -517,7 +517,7 @@
 		ru: {
 			title: 'Как мы можем вам помочь? Как вы можете помочь нам?',
 			paragraphs: [
-				'Мы можем помочь вам освоить ресурсы для изучения театра и литературы испанского Золотого века. В Examen de autorías можно ознакомиться со стилометрическими отчетами по произведениям корпуса и с признаками возможных авторских связей. TEXORO позволяет выполнять текстовый поиск примерно по 3000 произведениям и более чем 38 миллионам слов. BITESO предоставляет открытый доступ к цифровым текстам, многие из которых получены из автоматических транскрипций старопечатных изданий и рукописей. Автоматические аннотации дают первое представление о сюжете и содержании произведений, но служат только предварительной помощью и не заменяют чтение или филологический анализ.',
+				'Мы можем помочь вам освоить ресурсы для изучения театра и литературы испанского Золотого века. В Examen de autorías можно ознакомиться со стилометрическими отчетами по произведениям корпуса и с признаками возможных авторских связей. TEXORO позволяет выполнять текстовый поиск по драматургии, прозе и поэзии: более 3000 произведений и более 42 миллионов слов. BITESO предоставляет открытый доступ к цифровым текстам, многие из которых получены из автоматических транскрипций старопечатных изданий и рукописей. Автоматические аннотации дают первое представление о сюжете и содержании произведений, но служат только предварительной помощью и не заменяют чтение или филологический анализ.',
 				'Вы также можете сотрудничать с нами, присылая тексты испанского Золотого века, еще не включенные в наши ресурсы, библиографическую информацию, сведения об атрибуциях, данные о текстовых свидетелях или любые материалы, способные улучшить коллекцию. Ссылки на наши ресурсы в публикациях, научных работах или преподавании также помогают распространять проект и получать поддержку, необходимую для его поддержания и расширения.'
 			],
 			button: 'Связаться с нами',
@@ -526,7 +526,7 @@
 		ar: {
 			title: 'كيف يمكننا مساعدتك؟ وكيف يمكنك مساعدتنا؟',
 			paragraphs: [
-				'يمكننا مساعدتك على استكشاف الموارد المتاحة لدراسة مسرح العصر الذهبي الإسباني وأدبه. في Examen de autorías يمكن الاطلاع على التقارير الأسلوبية للأعمال المدرجة في corpus، مع مؤشرات على علاقات إسناد التأليف المحتملة. يتيح TEXORO إجراء بحث نصي في نحو 3000 عمل وأكثر من 38 مليون كلمة. وتوفّر BITESO وصولًا مفتوحًا إلى نصوص رقمية ناتجة إلى حد كبير من النسخ الآلي للمطبوعات القديمة والمخطوطات. كما تتيح الملخصات الآلية توجيهًا أوليًا حول حبكة الأعمال ومحتواها، بوصفها مساعدة تمهيدية لا بديلًا عن القراءة أو التحليل الفيلولوجي.',
+				'يمكننا مساعدتك على استكشاف الموارد المتاحة لدراسة مسرح العصر الذهبي الإسباني وأدبه. في Examen de autorías يمكن الاطلاع على التقارير الأسلوبية للأعمال المدرجة في corpus، مع مؤشرات على علاقات إسناد التأليف المحتملة. يتيح TEXORO البحث النصي في المسرح والنثر والشعر في أكثر من 3000 عمل وأكثر من 42 مليون كلمة. وتوفّر BITESO وصولًا مفتوحًا إلى نصوص رقمية ناتجة إلى حد كبير من النسخ الآلي للمطبوعات القديمة والمخطوطات. كما تتيح الملخصات الآلية توجيهًا أوليًا حول حبكة الأعمال ومحتواها، بوصفها مساعدة تمهيدية لا بديلًا عن القراءة أو التحليل الفيلولوجي.',
 				'يمكنك أيضًا التعاون معنا بإرسال نصوص من العصر الذهبي الإسباني لم تُدرج بعد في مواردنا، أو معلومات ببليوغرافية، أو أخبار عن الإسنادات، أو بيانات عن الشواهد النصية، أو أي مادة يمكن أن تحسّن المجموعة. كما أن الاستشهاد بمواردنا في المنشورات والأعمال الأكاديمية والأنشطة التعليمية يساعدنا على نشر المشروع والحصول على الدعم اللازم لصيانته وتوسيعه.'
 			],
 			button: 'تواصل معنا',
@@ -545,7 +545,7 @@
 		{
 			image: texoroHero,
 			title: 'TEXORO',
-			description: 'Realiza búsquedas textuales complejas en un corpus del Siglo de Oro de 38 millones de palabras',
+			description: 'Busca en teatro, prosa y poesía del Siglo de Oro: más de 3000 obras y más de 42 millones de palabras',
 			alt: 'Interfaz de búsqueda textual de TEXORO',
 			link: '/texoro'
 		},

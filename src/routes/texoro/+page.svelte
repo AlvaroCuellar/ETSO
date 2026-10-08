@@ -49,6 +49,7 @@
 		type ResultSortDirection
 	} from '$lib/search/result-sort';
 	import {
+		getTexoroClientWorkerManifest,
 		initializeTexoroClientWorker,
 		isTexoroClientWorkerReady,
 		releaseTexoroClientWorker,
@@ -543,6 +544,7 @@
 	let occurrenceError = $state('');
 	let occurrenceDetailsCache = $state<Map<string, SearchMatchOccurrences>>(new Map());
 	let occurrenceDetailsLoads = $state<Map<string, Promise<SearchMatchOccurrences>>>(new Map());
+	let occurrenceDetailsVersion = 0;
 	let openingOccurrenceKey = $state<string | null>(null);
 	let chartMode = $state<ChartMode>('bars');
 	let comparisonMetric = $state<ComparisonMetric>('frequency10k');
@@ -1229,7 +1231,16 @@
 	const proximityBaseValuesForQuery = (query: StructuredSearchQuery): string[] =>
 		uniqueSearchValues([query.main]).map(formatFormulaValue);
 
-	const textPart = (value: string): InterpretedQueryPart => ({ kind: 'text', value: t(value) });
+	const textPart = (value: string, parameters: Record<string, number | string> = {}): InterpretedQueryPart => {
+		const connector = value.trim();
+		const translated = connector === 'y' || connector === 'o'
+			? `${value.match(/^\s*/)?.[0] ?? ''}${t(connector)}${value.match(/\s*$/)?.[0] ?? ''}`
+			: t(value);
+		return {
+			kind: 'text',
+			value: translated.replace(/\{(\w+)\}/g, (placeholder, name: string) => String(parameters[name] ?? placeholder))
+		};
+	};
 	const termPart = (value: string): InterpretedQueryPart => ({ kind: 'term', value });
 	const quoteTerm = (value: string): string => `“${normalizeSearchValue(value)}”`;
 	const isPatternTerm = (value: string): boolean => /[*?]/.test(value);
@@ -1280,16 +1291,16 @@
 		const cleanOrder = term.order ?? 'any';
 		parts.push(termPart(quoteTerm(term.value)));
 		if (cleanOrder === 'after') {
-			parts.push(textPart(` aparezca hasta ${term.distance} palabras después de `));
+			parts.push(textPart(' aparezca hasta {distance} palabras después de ', { distance: term.distance }));
 			appendProximityTargets(parts, baseTerms, mode, { repeatPrefix: 'de ' });
 			return;
 		}
 		if (cleanOrder === 'before') {
-			parts.push(textPart(` aparezca hasta ${term.distance} palabras antes de `));
+			parts.push(textPart(' aparezca hasta {distance} palabras antes de ', { distance: term.distance }));
 			appendProximityTargets(parts, baseTerms, mode, { repeatPrefix: 'de ' });
 			return;
 		}
-		parts.push(textPart(` aparezca a un máximo de ${term.distance} palabras de `));
+		parts.push(textPart(' aparezca a un máximo de {distance} palabras de ', { distance: term.distance }));
 		appendProximityTargets(parts, baseTerms, mode, { repeatPrefix: 'de ' });
 		parts.push(textPart(', en cualquier orden'));
 	};
@@ -1657,6 +1668,8 @@
 		queuedPreviewDocIds = new Set();
 		occurrenceDetailsCache = new Map();
 		occurrenceDetailsLoads = new Map();
+		occurrenceDetailsVersion += 1;
+		closeOccurrenceModal();
 		openingOccurrenceKey = null;
 		searchRequestId += 1;
 		visiblePreviewRequestId += 1;
@@ -2044,8 +2057,9 @@
 		return optionsLoadPromise;
 	};
 
-	const fetchWorksMeta = async (): Promise<TexoroWorkMeta[]> => {
-		const response = await fetch('/api/texoro/work-meta', { cache: dev ? 'no-store' : 'no-cache' });
+	const fetchWorksMeta = async (indexVersion?: string): Promise<TexoroWorkMeta[]> => {
+		const url = indexVersion ? `/api/texoro/work-meta?indexVersion=${encodeURIComponent(indexVersion)}` : '/api/texoro/work-meta';
+		const response = await fetch(url, { cache: dev ? 'no-store' : 'no-cache' });
 		if (!response.ok) {
 			throw new Error(`No se pudieron cargar los metadatos de TEXORO: ${response.status}`);
 		}
@@ -2096,10 +2110,16 @@
 
 		texoroWorkerInitPromise = (async () => {
 			try {
-				const loadedWorksMeta = await loadWorksMeta();
+				const [loadedWorksMeta, currentManifest] = await Promise.all([loadWorksMeta(), fetchIndexManifest()]);
 				const manifest = await initializeTexoroClientWorker({
 					indexBaseUrl: texoroIndexBaseUrl,
-					worksMeta: loadedWorksMeta
+					worksMeta: loadedWorksMeta,
+					indexVersion: currentManifest.indexVersion,
+					refreshWorksMeta: async (version) => {
+						const freshMeta = await fetchWorksMeta(version);
+						worksMeta = freshMeta;
+						return freshMeta;
+					}
 				});
 				applyIndexManifest(manifest);
 			} catch (cause) {
@@ -2155,7 +2175,11 @@
 						...buildSearchFilterOptions(filters)
 					}
 				});
-				if (response.execution) return response.execution;
+				if (response.execution) {
+					const currentManifest = getTexoroClientWorkerManifest();
+					if (currentManifest) applyIndexManifest(currentManifest);
+					return response.execution;
+				}
 			} catch (cause) {
 				console.warn('[texoro] browser search failed; using server fallback', cause);
 				terminateTexoroClientWorker('Worker TEXORO desactivado tras error de busqueda');
@@ -2478,8 +2502,16 @@
 		openingOccurrenceKey = null;
 	};
 
-	const occurrenceDetailsKey = (result: SearchResult, assignment: MatchAssignment): string =>
-		`${result.docId}:${assignment.key}`;
+	const occurrenceDetailsKey = (result: SearchResult, assignment: MatchAssignment): string => {
+		const filter = assignment.match.poemAuthorFilter;
+		return JSON.stringify([
+			indexVersion,
+			result.workId,
+			result.docId,
+			assignment.key,
+			filter ? [filter.match, [...filter.authorIds].sort()] : null
+		]);
+	};
 
 	const rememberOccurrenceDetails = (
 		key: string,
@@ -2506,6 +2538,7 @@
 
 		const existing = occurrenceDetailsLoads.get(key);
 		if (existing) return existing;
+		const requestVersion = occurrenceDetailsVersion;
 
 		const pending = postJson<SearchMatchOccurrences>('/api/texoro/occurrences', {
 			docId: result.docId,
@@ -2525,11 +2558,14 @@
 		occurrenceDetailsLoads = nextLoads;
 
 		try {
-			return rememberOccurrenceDetails(key, await pending);
+			const details = await pending;
+			return requestVersion === occurrenceDetailsVersion ? rememberOccurrenceDetails(key, details) : details;
 		} finally {
-			const remainingLoads = new Map(occurrenceDetailsLoads);
-			remainingLoads.delete(key);
-			occurrenceDetailsLoads = remainingLoads;
+			if (occurrenceDetailsLoads.get(key) === pending) {
+				const remainingLoads = new Map(occurrenceDetailsLoads);
+				remainingLoads.delete(key);
+				occurrenceDetailsLoads = remainingLoads;
+			}
 		}
 	};
 
@@ -2546,6 +2582,7 @@
 	): Promise<void> => {
 		occurrenceModalOpener = opener;
 		const key = occurrenceDetailsKey(result, assignment);
+		const requestVersion = occurrenceDetailsVersion;
 		const cached = occurrenceDetailsCache.get(key) ?? null;
 		occurrenceError = '';
 		occurrenceLoading = false;
@@ -2561,14 +2598,14 @@
 		openingOccurrenceKey = key;
 		try {
 			const details = await loadOccurrenceDetails(result, assignment);
-			if (openingOccurrenceKey !== key) return;
+			if (requestVersion !== occurrenceDetailsVersion || openingOccurrenceKey !== key) return;
 			occurrenceModal = {
 				result,
 				assignment,
 				details
 			};
 		} catch (cause) {
-			if (openingOccurrenceKey !== key) return;
+			if (requestVersion !== occurrenceDetailsVersion || openingOccurrenceKey !== key) return;
 			occurrenceModal = {
 				result,
 				assignment,
@@ -2577,8 +2614,10 @@
 			occurrenceError =
 				cause instanceof Error ? cause.message : 'No se pudieron cargar las ocurrencias';
 		} finally {
-			if (openingOccurrenceKey === key) openingOccurrenceKey = null;
-			occurrenceLoading = false;
+			if (requestVersion === occurrenceDetailsVersion && openingOccurrenceKey === key) {
+				openingOccurrenceKey = null;
+				occurrenceLoading = false;
+			}
 		}
 	};
 
@@ -2897,6 +2936,8 @@
 		queuedPreviewDocIds = new Set();
 		occurrenceDetailsCache = new Map();
 		occurrenceDetailsLoads = new Map();
+		occurrenceDetailsVersion += 1;
+		closeOccurrenceModal();
 		closeTextDropdown();
 		openingOccurrenceKey = null;
 		previewRequestVersion += 1;
@@ -3568,7 +3609,7 @@
 									options={traditionalAuthorOptions}
 									preserveOptions
 									selectedIds={selectedTradAuthors}
-									helpText="Autores propuestos por la tradición filológica. En poesía, el filtro selecciona colecciones que contienen al autor y busca en la colección completa."
+									helpText="Autores propuestos por la tradición filológica. En poesía, busca solo en los poemas de los autores seleccionados dentro de cada colección."
 									inputClass="js-author-multiselect"
 									onIntent={() => {
 										void ensureTexoroOptionsLoaded();
@@ -3680,7 +3721,7 @@
 		</form>
 
 		{#if searchError}
-			<p class="mt-3 mb-0 rounded-[9px] border border-[#f3c0ca] bg-[#fff5f7] px-3 py-2 text-[0.92rem] text-[#8f1e36]">{searchError}</p>
+			<p class="mt-3 mb-0 rounded-[9px] border border-[#f3c0ca] bg-[#fff5f7] px-3 py-2 text-[0.92rem] text-[#8f1e36]">{t(searchError)}</p>
 		{/if}
 
 		{#if (isSearching || isPreparingResults) && !searchExecution}

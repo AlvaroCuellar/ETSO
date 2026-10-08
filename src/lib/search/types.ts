@@ -66,11 +66,13 @@ export interface TexoroIndexManifest {
 	};
 }
 
+export type TexoroWorkRow = [number, string, string, string, number, number, number[]?, string[][]?];
+
 export interface TexoroWorksFile {
 	schemaVersion: string;
 	indexVersion: string;
 	generatedAt: string;
-	works: Array<[number, string, string, string, number, number, number[]?]>;
+	works: TexoroWorkRow[];
 	totals: {
 		works: number;
 		tokens: number;
@@ -263,6 +265,7 @@ export interface SearchResultMatch {
 	source: string;
 	occurrences: number;
 	tokenIndex?: number;
+	poemAuthorFilter?: { authorIds: string[]; match: 'or' | 'and' };
 }
 
 export interface SearchResult {

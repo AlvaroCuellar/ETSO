@@ -1,8 +1,8 @@
 import { isPersonAuthor } from '$lib/domain/catalog';
 import { env as publicEnv } from '$env/dynamic/public';
 import { TexoroSearchEngine, buildWorkMetaMap } from '$lib/search';
-import { getAllWorks } from '$lib/server/catalog-runtime';
-import { readPrivateTextByTextKey } from '$lib/server/r2-private';
+import { getAllWorks, refreshCatalogSnapshot } from '$lib/server/catalog-runtime';
+import { clearPrivateTextCache, readPrivateTextByTextKey } from '$lib/server/r2-private';
 import { getTexoroIndexBaseUrl } from '$lib/server/r2-public';
 import { buildWorkTitleSearchText, formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
 
@@ -34,6 +34,8 @@ export interface TexoroStats {
 
 let engine: TexoroSearchEngine | null = null;
 let enginePromise: Promise<TexoroSearchEngine> | null = null;
+const ENGINE_VERSION_CHECK_MS = 60_000;
+let engineVersionCheckedAt = 0;
 const DEFAULT_TEXORO_GLOBAL_CACHE_MS = 10 * 60 * 1000;
 const configuredTexoroGlobalCacheMs = Number.parseInt(process.env.TEXORO_GLOBAL_CACHE_MS ?? '', 10);
 const TEXORO_GLOBAL_CACHE_MS =
@@ -43,6 +45,24 @@ const TEXORO_GLOBAL_CACHE_MS =
 let cachedTexoroWorkMeta: { cachedAt: number; value: TexoroWorkMeta[] } | null = null;
 let cachedTexoroOptions: { cachedAt: number; value: TexoroOptions } | null = null;
 let cachedTexoroStats: { cachedAt: number; value: TexoroStats } | null = null;
+let refreshedCatalogIndexVersion: string | null = null;
+let catalogVersionRefreshPromise: Promise<void> | null = null;
+
+const refreshCatalogForIndexVersion = async (indexVersion: string): Promise<void> => {
+	while (catalogVersionRefreshPromise) await catalogVersionRefreshPromise;
+	if (refreshedCatalogIndexVersion === indexVersion) return;
+	const nextRefreshPromise = (async () => {
+		await refreshCatalogSnapshot();
+		cachedTexoroWorkMeta = null;
+		cachedTexoroOptions = null;
+		cachedTexoroStats = null;
+		refreshedCatalogIndexVersion = indexVersion;
+	})().finally(() => {
+		if (catalogVersionRefreshPromise === nextRefreshPromise) catalogVersionRefreshPromise = null;
+	});
+	catalogVersionRefreshPromise = nextRefreshPromise;
+	await nextRefreshPromise;
+};
 
 const stripTrailingSlash = (value: string): string => value.replace(/\/+$/, '');
 const joinUrl = (base: string, path: string): string =>
@@ -134,7 +154,16 @@ const fetchIndexManifest = async (fetch: typeof globalThis.fetch): Promise<Texor
 	return (await response.json()) as TexoroIndexManifest;
 };
 
-export const getTexoroWorkMeta = async (): Promise<TexoroWorkMeta[]> => {
+export const getTexoroWorkMeta = async (expectedIndexVersion?: string): Promise<TexoroWorkMeta[]> => {
+	if (expectedIndexVersion) {
+		const manifest = await fetchIndexManifest(globalThis.fetch);
+		// An arbitrary caller-supplied version must never force another Turso read.
+		if (manifest?.indexVersion === expectedIndexVersion) {
+			// Equal counts can still conceal replaced work IDs. An explicit request
+			// for the verified version refreshes once, shared with server updates.
+			await refreshCatalogForIndexVersion(manifest.indexVersion);
+		}
+	}
 	const now = Date.now();
 	if (cachedTexoroWorkMeta && now - cachedTexoroWorkMeta.cachedAt < TEXORO_GLOBAL_CACHE_MS) {
 		return cachedTexoroWorkMeta.value;
@@ -183,9 +212,17 @@ export const getTexoroStats = async (fetch: typeof globalThis.fetch): Promise<Te
 };
 
 export const getServerTexoroEngine = async (): Promise<TexoroSearchEngine> => {
-	if (engine) return engine;
+	if (engine && Date.now() - engineVersionCheckedAt < ENGINE_VERSION_CHECK_MS) return engine;
 	if (!enginePromise) {
 		enginePromise = (async () => {
+			if (engine) {
+				const manifest = await fetchIndexManifest(globalThis.fetch);
+				if (!manifest) throw new Error('No se pudo comprobar la versión del índice de TEXORO.');
+				if (manifest.indexVersion === engine.manifest?.indexVersion) {
+					engineVersionCheckedAt = Date.now();
+					return engine;
+				}
+			}
 			const created = new TexoroSearchEngine({
 				indexBaseUrl: getTexoroIndexBaseUrl(),
 				textLoader: readPrivateTextByTextKey,
@@ -193,11 +230,16 @@ export const getServerTexoroEngine = async (): Promise<TexoroSearchEngine> => {
 				preparedTextCacheMaxDocs: Number.parseInt(process.env.TEXORO_PREPARED_TEXT_CACHE_MAX_DOCS ?? '64', 10)
 			});
 			await created.initialize();
+			// Even the first engine may follow a catalogue or text cache loaded
+			// before publication by another page. Adopt one coherent version.
+			await refreshCatalogForIndexVersion(created.manifest!.indexVersion);
+			clearPrivateTextCache();
 			engine = created;
+			engineVersionCheckedAt = Date.now();
+			cachedTexoroStats = null;
 			return created;
-		})().catch((cause) => {
+		})().finally(() => {
 			enginePromise = null;
-			throw cause;
 		});
 	}
 
@@ -205,7 +247,8 @@ export const getServerTexoroEngine = async (): Promise<TexoroSearchEngine> => {
 };
 
 export const searchTexoro = async (query: string, options: SearchOptions = {}) => {
-	const [searchEngine, works] = await Promise.all([getServerTexoroEngine(), getAllWorks()]);
+	const searchEngine = await getServerTexoroEngine();
+	const works = await getAllWorks();
 	const workMeta = buildWorkMetaMap(works.map(toTexoroWorkMeta));
 	return searchEngine.search(query, workMeta, options);
 };

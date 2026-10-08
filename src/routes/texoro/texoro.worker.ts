@@ -29,7 +29,8 @@ const handleRequest = async (request: TexoroWorkerRequest): Promise<void> => {
 			id: request.id,
 			ok: true,
 			result: {
-				manifest: engine.manifest
+				manifest: engine.manifest,
+				missingWorkIds: engine.indexedWorkIds.filter((workId) => !workMetaById.has(workId))
 			}
 		});
 		return;

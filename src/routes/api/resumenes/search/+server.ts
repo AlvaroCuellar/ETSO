@@ -62,7 +62,8 @@ const splitSearchTerms = (value: string): string[] =>
 		.filter((term) => term.length > 0))];
 
 const formatTraditionalAttribution = (work: Awaited<ReturnType<typeof getWorksForSummaryIndex>>[number]): string => {
-	return formatTraditionalAttributionCompact(work.traditionalAttribution);
+	const authorIds = new Set(work.traditionalAttribution.groups.flatMap((group) => group.members.map((member) => member.authorId)));
+	return work.collectionSize && authorIds.size > 1 ? 'Varios' : formatTraditionalAttributionCompact(work.traditionalAttribution);
 };
 
 const joinSummaryParts = (parts: string[] | undefined): string =>

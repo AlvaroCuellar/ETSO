@@ -16,12 +16,14 @@ test('summary index compacts collection authors while preserving single authors 
 			CREATE TABLE attribution_sets (id INTEGER, work_id TEXT, raw_expression TEXT, attribution_type TEXT);
 			CREATE TABLE attribution_groups (id INTEGER, attribution_set_id INTEGER, group_order INTEGER);
 			CREATE TABLE attribution_members (attribution_group_id INTEGER, author_id TEXT, member_order INTEGER);
-			INSERT INTO authors VALUES ('one', 'Miguel de Cervantes Saavedra'), ('two', 'Lope de Vega Carpio');
+			INSERT INTO authors VALUES ('one', 'Miguel de Cervantes Saavedra'), ('two', 'Lope de Vega Carpio'),
+				('sepulveda_desconocido', 'Sepúlveda'), ('desconocido', 'Desconocido'),
+				('desconocido_dos_ingenios', 'Desconocido (Dos ingenios)');
 		`);
 		const input = join(root, 'summaries'); await mkdir(input);
-		for (const [index, id, size, names] of [[1, 'multi', 20, ['one', 'two']], [2, 'single', 10, ['one']], [3, 'theatre', null, ['one', 'two']]]) {
+		for (const [index, id, size, names] of [[1, 'multi', 20, ['one', 'two']], [2, 'single', 10, ['one']], [3, 'theatre', null, ['one', 'two']], [4, 'marana', null, ['sepulveda_desconocido']], [5, 'unknown', null, ['desconocido']], [6, 'unknown-collaboration', null, ['desconocido_dos_ingenios']]]) {
 			await db.execute({ sql: 'INSERT INTO works VALUES (?, ?, ?, ?, ?, ?)', args: [id, id, id, 'Sonetos', 'Resumen', size] });
-			await db.execute({ sql: "INSERT INTO attribution_sets VALUES (?, ?, '', 'tradicional')", args: [index, id] });
+			await db.execute({ sql: "INSERT INTO attribution_sets VALUES (?, ?, ?, 'tradicional')", args: [index, id, names.join(' + ')] });
 			await db.execute({ sql: 'INSERT INTO attribution_groups VALUES (?, ?, 0)', args: [index, index] });
 			for (const [memberOrder, author] of names.entries()) await db.execute({ sql: 'INSERT INTO attribution_members VALUES (?, ?, ?)', args: [index, author, memberOrder] });
 			await writeFile(join(input, `${id}.json`), JSON.stringify({ resumen_breve: ['Resumen de la obra.'], resumen_largo: ['Texto del resumen.'] }));
@@ -32,7 +34,10 @@ test('summary index compacts collection authors while preserving single authors 
 		assert.equal(entries.get('multi').traditional, 'Varios');
 		assert.equal(entries.get('single').traditional, 'Miguel de Cervantes Saavedra');
 		assert.equal(entries.get('theatre').traditional, 'Miguel de Cervantes Saavedra y Lope de Vega Carpio');
-		assert.equal((await db.execute('SELECT count(*) AS count FROM attribution_members')).rows[0].count, 5);
+		assert.equal(entries.get('marana').traditional, 'Sepúlveda', 'a surname-only author ID must not be treated as the anonymous marker');
+		assert.equal(entries.get('unknown').traditional, 'Desconocido');
+		assert.equal(entries.get('unknown-collaboration').traditional, 'Desconocido');
+		assert.equal((await db.execute('SELECT count(*) AS count FROM attribution_members')).rows[0].count, 8);
 		// Legacy catalogues without the new column still build the same author labels.
 		await db.execute('ALTER TABLE works DROP COLUMN collection_size');
 		execFileSync(process.execPath, ['scripts/build-summary-search-index.mjs', '--sqlite', join(root, 'catalogue.sqlite'), '--input', input, '--output', output], { stdio: 'pipe' });

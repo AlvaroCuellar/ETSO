@@ -130,13 +130,13 @@ const memberNameFromId = (authorId, authorById) => {
 
 const traditionalLabel = (workId, attributionByWorkId, authorById) => {
 	const set = attributionByWorkId.get(workId);
-	if (!set || set.rawExpression.toLowerCase().includes(UNRESOLVED_AUTHOR_ID)) return 'Desconocido';
+	if (!set) return 'Desconocido';
 
 	const names = [];
 	const seen = new Set();
 	for (const group of [...set.groups.values()].sort((a, b) => a.groupOrder - b.groupOrder)) {
 		for (const member of group.members.sort((a, b) => a.memberOrder - b.memberOrder)) {
-			if (member.authorId === UNRESOLVED_AUTHOR_ID) return 'Desconocido';
+			if (member.authorId === UNRESOLVED_AUTHOR_ID || member.authorId.startsWith(`${UNRESOLVED_AUTHOR_ID}_`)) return 'Desconocido';
 			const name = memberNameFromId(member.authorId, authorById).trim();
 			if (!name || seen.has(name)) continue;
 			seen.add(name);

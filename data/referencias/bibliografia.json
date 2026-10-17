@@ -57,7 +57,7 @@
 			"title": "«La autoría de Solo el piadoso es mi hijo. Detectores digitales y analógicos para no dejarse confundir por los propios dramaturgos»",
 			"journal": "eHumanista. Journal of Iberian Studies",
 			"details": "61, pp. 549-560",
-			"url": "https://dialnet.unirioja.es/servlet/articulo?codigo=9919840"
+			"url": "https://www.ehumanista.ucsb.edu/sites/default/files/sitefiles/ehum61.r.vega.pdf"
 		},
 		"vega-2025-mas-evidencias-tirso": {
 			"entryType": "incollection",
@@ -135,7 +135,8 @@
 			"year": "2026",
 			"title": "«Propuestas novedosas para incrementar y depurar el repertorio dramático de Luis Vélez de Guevara»",
 			"journal": "Revista de Literatura",
-			"note": "En prensa"
+			"details": "88(176), 1645",
+			"doi": "10.3989/revliteratura.2026.02.1645"
 		},
 		"toselli-cuellar-boadas-vidal-sanchez-2026-writer-identification": {
 			"entryType": "article",
@@ -300,7 +301,7 @@
 			"entryType": "incollection",
 			"author": "Martínez Carro, Elena y Álvaro Cuéllar",
 			"year": "2023",
-			"title": "«El periodo final de la dramaturgia moretiana (1655-1659): apuntes desde la estilometría»",
+			"title": "«El periodo final de la dramaturgia moretiana (1655-1669): apuntes desde la estilometría»",
 			"details": "En Escudero Baztán, Juan Manuel (ed.), Bajo la égida calderoniana. Calderón y los dramaturgos de la segunda mitad del siglo XVII, pp. 165-198",
 			"publisher": "Iberoamericana / Vervuert",
 			"url": "https://www.academia.edu/114162230/El_periodo_final_de_la_dramaturgia_moretiana_1655_1699_Apuntes_desde_la_estilometr%C3%ADa"
@@ -310,8 +311,7 @@
 			"author": "Cuéllar, Álvaro",
 			"year": "2022",
 			"title": "«Propuestas de autoría y datación en el teatro de Lope de Vega a la luz de la Inteligencia Artificial»",
-			"containerTitle": "Theses and Dissertations--Hispanic Studies",
-			"details": "55",
+			"containerTitle": "Tesis doctoral, University of Kentucky",
 			"doi": "10.13023/etd.2022.428"
 		},
 		"campion-cuellar-2021-refundicion": {
@@ -336,11 +336,12 @@
 			"entryType": "incollection",
 			"author": "Vega García-Luengos, Germán",
 			"year": "2021",
-			"title": "«Juan Ruiz de Alarcón recupera \"La monja alférez\".»",
+			"title": "«Juan Ruiz de Alarcón recupera La monja alférez»",
 			"containerTitle": "Sor Juana Inés de la Cruz y el teatro novohispano: XLII Jornadas de teatro clásico, Almagro, 9, 10 y 11 de julio de 2019",
 			"publisher": "Ediciones de la Universidad de Castilla-La Mancha",
-			"details": "pp. 89-159",
-			"url": "https://ruidera.uclm.es/xmlui/handle/10578/28570"
+			"details": "pp. 89-149",
+			"url": "https://ruidera.uclm.es/xmlui/handle/10578/28570",
+			"doi": "10.18239/cor_45.2021.05"
 		},
 		"cuellar-2021-transkribus-prints": {
 			"entryType": "article",
@@ -1532,6 +1533,62 @@
 		},
 		"rel-auto-2018-cavadas-docampo-miguel": {
 			"text": "Cavadas Docampo, Miguel. Estrategias de atribución automática de autoría aplicadas al teatro de Tirso de Molina. Dir. Pablo Gamallo Otero. Universidade de Santiago de Compostela, 2018. Traballo de Fin de Grao en Lingua e Literatura Españolas."
+		},
+		"vega-2026-mujer-fuerza": {
+			"entryType": "article",
+			"author": "Vega García-Luengos, Germán",
+			"year": "2026",
+			"title": "«La mujer por fuerza, una comedia atribuida a Tirso de Molina que reclama la incorporación al repertorio de Lope de Vega»",
+			"journal": "Anuario Lope de Vega. Texto, literatura, cultura",
+			"details": "32, pp. 603-643",
+			"doi": "10.5565/rev/anuariolopedevega.618"
+		},
+		"vega-2024-cara-oculta-alarcon": {
+			"entryType": "article",
+			"author": "Vega García-Luengos, Germán",
+			"year": "2024",
+			"title": "«La cara oculta del repertorio de Alarcón. Propuestas de incorporación de dos comedias nuevas: El vencido vencedor y La lealtad en la traición»",
+			"journal": "Edad de Oro",
+			"details": "43, pp. 31-92",
+			"url": "https://revistas.uam.es/edadoro/article/view/20018"
+		},
+		"vega-2024-lope-colaboracion": {
+			"entryType": "article",
+			"author": "Vega García-Luengos, Germán",
+			"year": "2024",
+			"title": "«Lope de Vega y la comedia en colaboración. Un replanteamiento novedoso»",
+			"journal": "Hipogrifo. Revista de literatura y cultura del Siglo de Oro",
+			"details": "12(1), pp. 105-142",
+			"doi": "10.13035/H.2024.12.01.09"
+		},
+		"vega-2023-colaboradas-calderon": {
+			"entryType": "incollection",
+			"author": "Vega García-Luengos, Germán",
+			"year": "2023",
+			"title": "«Nuevos indicios y propuestas para fijar el repertorio de comedias colaboradas de Calderón»",
+			"containerTitle": "Bajo la égida calderoniana. Calderón y los dramaturgos de la segunda mitad del siglo XVII",
+			"details": "En Juan Manuel Escudero Baztán (ed.), pp. 279-314",
+			"publisher": "Iberoamericana / Vervuert",
+			"url": "https://www.academia.edu/109330747/Nuevos_indicios_y_propuestas_para_fijar_el_repertorio_de_comedias_colaboradas_de_Calder%C3%B3n"
+		},
+		"vega-2023-lagrimas-david": {
+			"entryType": "incollection",
+			"author": "Vega García-Luengos, Germán",
+			"year": "2023",
+			"title": "«Una nueva comedia en colaboración de Calderón de la Barca: Las lágrimas de David, atribuida a Felipe Godínez»",
+			"containerTitle": "Aun a pesar de las tinieblas bella, aun a pesar de las estrellas clara. Pur nelle tenebre, bella / chiara, pur tra le stelle. Scritti in ricordo di Ines Ravasini",
+			"details": "En Davide Canfora, Nancy De Benedetto y Paola Laskaris (eds.), pp. 637-658",
+			"publisher": "Edizioni di Pagina",
+			"url": "https://www.academia.edu/109313453/Una_nueva_comedia_en_colaboraci%C3%B3n_de_Calder%C3%B3n_de_la_Barca_Las_l%C3%A1grimas_de_David_atribuida_a_Felipe_God%C3%ADnez"
+		},
+		"vega-2022-casamentero": {
+			"entryType": "article",
+			"author": "Vega García-Luengos, Germán",
+			"year": "2022",
+			"title": "«La subida al trono de Felipe IV en una comedia de 1621: Viejos métodos y recursos últimos para esclarecer atribuciones en el teatro aurisecular»",
+			"journal": "Confluencia: Revista hispánica de cultura y literatura",
+			"details": "38(1), pp. 39-58",
+			"url": "https://uvadoc.uva.es/handle/10324/59524"
 		}
 	},
 	"views": {
@@ -1542,27 +1599,17 @@
 						"id": "bibliografia-uso",
 						"lead": "Para entender los procesos aquí seguidos, puedes consultar:",
 						"entryKeys": [
-							"etso-web",
-							"vega-2023-confirmaciones-ii",
-							"cuellar-2023-ia-rescate",
-							"cuellar-2024-stylometry"
+							"etso-web"
 						]
 					},
 					{
 						"id": "bibliografia-metodologia",
-						"lead": "Se puede obtener más información sobre cómo trabaja ETSO en las tareas de atribución de obras dramáticas del Siglo de Oro en:",
-						"collapsible": true,
-						"collapsibleLabel": "Más información",
-						"defaultOpen": false,
+						"lead": "Para entender los procesos aquí seguidos, puedes consultar:",
 						"entryKeys": [
-							"cuellar-vega-2023-francesa-laura-libro",
-							"cuellar-vega-2023-francesa-laura-articulo",
-							"cuellar-vega-2023-claramonte",
-							"cuellar-2023-cronologia-estilometria",
-							"cuellar-2022-tesis",
-							"campion-cuellar-2021-refundicion",
-							"vega-2021-confirmaciones-i",
-							"vega-2021-monja-alferez"
+							"cuellar-2024-stylometry",
+							"cuellar-2025-atoms-waves",
+							"cuellar-2026-indignity-text",
+							"cuellar-2023-ia-rescate"
 						]
 					}
 				]
@@ -1611,6 +1658,12 @@
 					"id": "algunos-trabajos",
 					"title": "Nuestros trabajos",
 					"entryKeys": [
+						"vega-2026-mujer-fuerza",
+						"vega-2024-cara-oculta-alarcon",
+						"vega-2024-lope-colaboracion",
+						"vega-2023-colaboradas-calderon",
+						"vega-2023-lagrimas-david",
+						"vega-2022-casamentero",
 						"cuellar-2026-indignity-text",
 						"vega-2026-menendez-pelayo-libros",
 						"cuellar-2026-size-does-matter",

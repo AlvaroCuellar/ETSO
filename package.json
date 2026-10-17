@@ -23,7 +23,12 @@
 		"index:texts": "node scripts/build-search-index.mjs",
 		"index:texts:compact": "node scripts/build-search-index.mjs --compact",
 		"index:validate": "node scripts/validate-search-index.mjs",
-		"data:red-obras": "node scripts/build-red-obras-graph.mjs"
+		"data:red-obras": "node scripts/build-red-obras-graph.mjs",
+		"prebuild": "npm run bibliography:validate && npm run test:bibliography && npm run thesis:validate",
+		"bibliography:validate": "node scripts/validate-report-bibliography.mjs --snapshot data/referencias/catalogo-identificadores.json",
+		"bibliography:validate:catalog": "node scripts/validate-report-bibliography.mjs",
+		"test:bibliography": "node --test --experimental-strip-types tests/report-related-bibliography.test.ts tests/report-bibliography-validation.test.ts",
+		"thesis:validate": "python3 scripts/validate-thesis-report-graphics.py"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^7.0.1",

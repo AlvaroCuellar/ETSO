@@ -33,6 +33,7 @@ ROOT_TABLES = ("authors", "works")
 # Only these known additive fields can be introduced by incremental sync.
 # Their virtual values must match ALTER TABLE defaults for legacy records.
 ADDITIVE_WORK_COLUMNS = {
+    "notas": ("TEXT", "NULL"),
     "asodat_id": ("INTEGER", "NULL"),
     "genero_general": ("TEXT NOT NULL DEFAULT 'Teatro'", "'Teatro'"),
     "collection_size": ("INTEGER", "NULL"),
@@ -104,6 +105,14 @@ def validate_schema(
         # every query names its columns.
         effective_remote_columns = list(remote_columns)
         if table == "works":
+            if "citar" in remote_columns and "citar" not in local_columns:
+                # The bibliography now lives in the versioned reference catalog.
+                # SQLite cannot drop an indexed column until its index is removed.
+                schema_migrations.extend([
+                    'DROP INDEX IF EXISTS "idx_works_citar";',
+                    'ALTER TABLE "works" DROP COLUMN "citar";',
+                ])
+                effective_remote_columns.remove("citar")
             if "tipo_transcripcion" in remote_columns and "tipo_transcripcion" not in local_columns:
                 schema_migrations.append('ALTER TABLE "works" DROP COLUMN "tipo_transcripcion";')
                 effective_remote_columns.remove("tipo_transcripcion")

@@ -18,6 +18,11 @@ if [ -f "$ENV_FILE" ]; then
 fi
 
 echo "==> Iniciando despliegue completo"
+# Must run before any remote mutation. Refresh the versioned identifier snapshot
+# only after validating the bibliography against the freshly prepared catalogue.
+node "$ROOT_DIR/scripts/validate-report-bibliography.mjs" \
+  --write-catalog-snapshot "$ROOT_DIR/data/referencias/catalogo-identificadores.json" \
+  "$ROOT_DIR/deploy/input/turso/etso.sqlite"
 CACHE_SCRIPT="$ROOT_DIR/deploy/scripts/deploy-cache.py"
 DEPLOY_CHANGED=0
 STATIC_FACSIMILES_CHANGED=0

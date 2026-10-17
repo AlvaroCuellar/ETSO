@@ -57,6 +57,8 @@ import {
 } from '$lib/domain/catalog';
 import collaboratorsSource from '../../../data/colaboradores/equipo.json';
 import bibliographySource from '../../../data/referencias/bibliografia.json';
+import relatedBibliographySource from '../../../data/referencias/informes-relacionados.json';
+import { getRelatedBibliographyKeys, getRemainingBibliographyKeys } from '$lib/domain/report-related-bibliography';
 import impactSource from '../../../data/referencias/repercusion.json';
 
 type SqlArg = string | number | bigint | boolean | null | Uint8Array | Date;
@@ -430,7 +432,7 @@ let dbClientMode: 'configured' | 'local-fallback' | null = null;
 let warnedLocalCatalogFallback = false;
 const tableColumnsByName = new Map<string, Set<string>>();
 const shortSummaryByWorkId = new Map<string, { cachedAt: number; value: string }>();
-const reportResultsByWorkId = new Map<string, { cachedAt: number; result1?: string; result2?: string }>();
+const reportResultsByWorkId = new Map<string, { cachedAt: number; result1?: string; result2?: string; notes?: string }>();
 
 const getSqlArgType = (arg: SqlArg): string => {
 	if (arg === null) return 'null';
@@ -1513,25 +1515,30 @@ export const withWorkShortSummaries = async (works: CatalogWork[]): Promise<Cata
 
 const getWorkReportResultsById = async (
 	workId: string
-): Promise<{ result1?: string; result2?: string }> => {
+): Promise<{ result1?: string; result2?: string; notes?: string }> => {
 	const cached = reportResultsByWorkId.get(workId);
 	const now = Date.now();
 	if (cached && now - cached.cachedAt < CACHE_MS) {
 		return {
 			result1: cached.result1,
-			result2: cached.result2
+			result2: cached.result2,
+			notes: cached.notes
 		};
 	}
 
-	const rows = await getRows<{ resultado1: string | null; resultado2: string | null }>(
-		'SELECT resultado1, resultado2 FROM works WHERE id = ? LIMIT 1',
+	const columns = await getTableColumnNames('works');
+	const notesSelect = columns.has('notas') ? 'notas' : 'NULL AS notas';
+	const rows = await getRows<{ resultado1: string | null; resultado2: string | null; notas: string | null }>(
+		`SELECT resultado1, resultado2, ${notesSelect} FROM works WHERE id = ? LIMIT 1`,
 		[workId]
 	);
 	const result1 = rows[0]?.resultado1?.trim();
 	const result2 = rows[0]?.resultado2?.trim();
-	const value: { result1?: string; result2?: string } = {};
+	const notes = rows[0]?.notas?.trim();
+	const value: { result1?: string; result2?: string; notes?: string } = {};
 	if (result1) value.result1 = result1;
 	if (result2) value.result2 = result2;
+	if (notes) value.notes = notes;
 	reportResultsByWorkId.set(workId, { cachedAt: now, ...value });
 	return value;
 };
@@ -3821,12 +3828,45 @@ export const buildBitesoCitation = ({
 	return `${escapeHtml(author)}. Texto digital de <i>${escapeHtml(displayTitle)}</i>. BITESO, 2026. URL: ${escapeHtml(canonicalUrl)}.`;
 };
 
-export const getInformeBibliographyByInformeId = (informeId: string): InformeBibliographyView => {
+export const getInformeBibliographyByInformeId = (
+	informeId: string,
+	work?: CatalogWork
+): InformeBibliographyView => {
 	const source = parseBibliographySource();
 	if (!source) return emptyInformeBibliography();
 
 	const selectedConfig = source.informesOverridesById.get(informeId) ?? source.informesBase;
-	return resolveInformeBibliographyView(selectedConfig, source.entryRawByKey);
+	const view = resolveInformeBibliographyView(selectedConfig, source.entryRawByKey);
+	const relatedKeys = work ? getRelatedBibliographyKeys(work, relatedBibliographySource.rules) : [];
+	const entries = resolveBibliographyEntriesByKey(relatedKeys, source.entryRawByKey);
+	const relatedIds = new Set(entries.map((entry) => entry.id));
+	const sections = view.sections
+		.map((section) => ({
+			...section,
+			entries: section.entries.filter((entry) => !relatedIds.has(entry.id))
+		}))
+		.filter((section) => section.entries.length > 0);
+	if (entries.length > 0) sections.splice(1, 0, {
+		id: 'trabajos-relacionados-informe',
+		lead: 'Trabajos relacionados con este informe',
+		entries
+	});
+	const shownIds = sections.flatMap((section) => section.entries.map((entry) => entry.id));
+	const allWorkKeys = relatedBibliographySource.moreInformation.sourceSectionIds.flatMap((id) =>
+		source.comoCitarnos.sections.find((section) => section.id === id)?.entryKeys ?? []
+	);
+	const remainingEntries = resolveBibliographyEntriesByKey(
+		getRemainingBibliographyKeys(allWorkKeys, shownIds), source.entryRawByKey
+	);
+	if (remainingEntries.length > 0) sections.push({
+		id: 'bibliografia-otros-trabajos',
+		lead: 'Se puede obtener más información sobre cómo trabaja ETSO en las tareas de atribución de obras dramáticas del Siglo de Oro en:',
+		collapsible: true,
+		collapsibleLabel: 'Más información',
+		defaultOpen: false,
+		entries: remainingEntries
+	});
+	return { ...view, sections };
 };
 
 export const getComoCitarnosBibliography = (): ComoCitarnosBibliographyView => {

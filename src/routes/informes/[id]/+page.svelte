@@ -14,7 +14,7 @@
 		formatPrefixedDisplayWorkTitleHtml
 	} from '$lib/utils/format-display-work-title';
 	import { translateText } from '$lib/i18n';
-	import { renderInlineItalicsHtml } from '$lib/utils/render-inline-italics-html';
+	import { renderInlineItalicsHtml, renderReportNoteHtml } from '$lib/utils/render-inline-italics-html';
 	import {
 		buildTraditionalAttributionParts,
 		type AttributionPhrasePart
@@ -215,6 +215,21 @@
 
 	const result1Parts = $derived.by(() => tokenizeResultText(resolveResult1Text()));
 	const result2Parts = $derived.by(() => tokenizeResultText(data.work.result2?.trim() ?? ''));
+	const noteParagraphs = $derived.by(() =>
+		(data.work.notes ?? '').trim().split(/\r?\n\s*\r?\n/).filter((paragraph) => paragraph.trim())
+	);
+	const noteGroups = $derived.by(() => {
+		const groups: { citation?: string; literal: boolean; paragraphs: string[] }[] = [];
+		for (const paragraph of noteParagraphs) {
+			if (/^(Como se apunta en |Resumen del estudio: )/.test(paragraph)) {
+				groups.push({ citation: paragraph, literal: paragraph.startsWith('Como se apunta en '), paragraphs: [] });
+			} else {
+				if (!groups.length) groups.push({ literal: false, paragraphs: [] });
+				groups[groups.length - 1].paragraphs.push(paragraph);
+			}
+		}
+		return groups;
+	});
 
 	const procedeValue = $derived.by(() => {
 		const origin = data.work.origin?.trim();
@@ -476,6 +491,40 @@
 			</div>
 		</article>
 	{/if}
+	{#if noteParagraphs.length > 0}
+		<article id="notas" class="grid scroll-mt-24 gap-3 rounded-[8px] border border-border-accent-blue bg-white px-5 py-4 max-md:px-4" aria-label={t('Notas')}>
+			<h3 class="m-0 text-[1.05rem] font-semibold text-brand-blue-dark">{t('Notas')}</h3>
+			{#each noteGroups as group}
+				<div class="grid gap-4">
+					{#if group.citation}<p class="m-0 break-words text-sm leading-relaxed text-text-main" data-i18n-skip>{@html renderReportNoteHtml(group.citation)}</p>{/if}
+					{#if group.literal}
+						<blockquote class="relative mx-3 my-1 grid gap-4 px-7 py-5 sm:mx-6 sm:px-10">
+							<span aria-hidden="true" class="pointer-events-none absolute -left-2 -top-3 font-serif text-[5.5rem] leading-none text-brand-blue-dark opacity-15">“</span>
+							{#each group.paragraphs as paragraph}<p class="relative m-0 whitespace-pre-line break-words text-base leading-[1.72] text-text-main" data-i18n-skip>{@html renderReportNoteHtml(paragraph)}</p>{/each}
+							<span aria-hidden="true" class="pointer-events-none absolute -bottom-8 -right-2 font-serif text-[5.5rem] leading-none text-brand-blue-dark opacity-15">”</span>
+						</blockquote>
+					{:else}
+						{#each group.paragraphs as paragraph}<p class="m-0 whitespace-pre-line break-words text-base leading-[1.72] text-text-main" data-i18n-skip>{@html renderReportNoteHtml(paragraph)}</p>{/each}
+					{/if}
+				</div>
+			{/each}
+		</article>
+	{/if}
+	{#if data.thesisGraphics.length > 0}
+		<article id="graficas-tesis" class="grid scroll-mt-24 gap-5 rounded-[8px] border border-border-accent-blue bg-white px-5 py-5 max-md:px-4">
+			{#if !noteParagraphs.length}<h3 class="m-0 text-[1.05rem] font-semibold text-brand-blue-dark">{t('Notas')}</h3>{/if}
+			<p class="m-0 text-sm leading-relaxed">Cuéllar, Álvaro. (2022). <i>Propuestas de autoría y datación en el teatro de Lope de Vega a la luz de la Inteligencia Artificial</i>. Tesis doctoral, University of Kentucky. <a href="https://doi.org/10.13023/etd.2022.428" class="text-primary underline underline-offset-4">https://doi.org/10.13023/etd.2022.428</a>. Pasaje: {data.thesisPages.length === 1 ? 'p.' : 'pp.'} {data.thesisPages.join(', ')}; metodología: pp. 82–86.</p>
+			{#each data.thesisCommentary as paragraph}<p class="m-0 text-base leading-[1.72] text-text-main" data-i18n-skip>{paragraph}</p>{/each}
+			<div class="grid items-start gap-6 lg:grid-cols-2">
+			{#each data.thesisGraphics as figure}
+				<figure class="m-0 grid gap-3 rounded-lg bg-slate-50/60 p-4">
+					<a href={figure.src} target="_blank" rel="noopener" aria-label={`Ampliar gráfica de ${figure.kind === 'authorship' ? 'autoría' : 'datación'}`}><img src={figure.src} width={figure.width} height={figure.height} loading="lazy" class="mx-auto h-auto max-h-[280px] w-full object-contain" alt={`Gráfica de ${figure.kind === 'authorship' ? 'autoría' : 'datación'} de la obra en la tesis de Álvaro Cuéllar (2022)`} /></a>
+					<figcaption class="text-center text-sm text-text-main">{figure.kind === 'authorship' ? 'Autoría' : 'Datación'} · p. {figure.page}</figcaption>
+				</figure>
+			{/each}
+			</div>
+		</article>
+	{/if}
 </section>
 
 	<section class="grid gap-4 font-ui">
@@ -529,9 +578,9 @@
 						<p class="mb-[0.65rem] mt-0 text-[0.95rem] font-medium leading-[1.45] text-brand-blue-dark">
 							{t(citationSection.lead)}
 						</p>
-						<ol class="m-0 grid gap-[0.55rem] pl-[1.2rem]">
+						<ul class="m-0 grid list-none gap-[0.55rem] p-0" role="list">
 							{#each citationSectionEntries as entry}
-								<li class="m-0">
+								<li class="informe-bibliografia-entry m-0">
 									<p class="m-0 text-[0.95rem] leading-[1.52] text-text-main" data-i18n-skip>
 										{#each entry.parts as part}
 											{#if part.kind === 'link'}
@@ -552,7 +601,7 @@
 									</p>
 								</li>
 							{/each}
-						</ol>
+						</ul>
 					</section>
 				{/if}
 
@@ -561,12 +610,18 @@
 						class="rounded-[10px] bg-white px-[0.9rem] py-[0.8rem] max-md:px-[0.8rem] max-md:py-[0.75rem]"
 						aria-label={t(section.lead)}
 					>
-						<p class="mb-[0.65rem] mt-0 text-[0.95rem] font-medium leading-[1.45] text-brand-blue-dark">
-							{t(section.lead)}
-						</p>
-						<ol class="m-0 grid gap-[0.55rem] pl-[1.2rem]">
+						{#if section.id === 'trabajos-relacionados-informe'}
+							<h3 class="mb-4 mt-0 text-[1.05rem] font-semibold leading-[1.45] text-brand-blue-dark">
+								{t(section.lead)}
+							</h3>
+						{:else}
+							<p class="mb-[0.65rem] mt-0 text-[0.95rem] font-medium leading-[1.45] text-brand-blue-dark">
+								{t(section.lead)}
+							</p>
+						{/if}
+						<ul class="m-0 grid list-none gap-[0.55rem] p-0" role="list">
 							{#each section.entries as entry}
-								<li class="m-0">
+								<li class="informe-bibliografia-entry m-0">
 									<p class="m-0 text-[0.95rem] leading-[1.52] text-text-main" data-i18n-skip>
 										{#each entry.parts as part}
 											{#if part.kind === 'link'}
@@ -587,7 +642,7 @@
 									</p>
 								</li>
 							{/each}
-						</ol>
+						</ul>
 					</section>
 				{/each}
 
@@ -614,9 +669,9 @@
 							<p class="mb-[0.65rem] mt-0 text-[0.95rem] font-medium leading-[1.45] text-brand-blue-dark">
 								{t(section.lead)}
 							</p>
-							<ol class="m-0 grid gap-[0.55rem] pl-[1.2rem]">
+							<ul class="m-0 grid list-none gap-[0.55rem] p-0" role="list">
 								{#each section.entries as entry}
-									<li class="m-0">
+									<li class="informe-bibliografia-entry m-0">
 										<p class="m-0 text-[0.95rem] leading-[1.52] text-text-main" data-i18n-skip>
 											{#each entry.parts as part}
 												{#if part.kind === 'link'}
@@ -637,7 +692,7 @@
 										</p>
 									</li>
 								{/each}
-							</ol>
+							</ul>
 						</div>
 					</details>
 				{/each}
@@ -647,6 +702,11 @@
 </div>
 
 <style>
+	.informe-bibliografia-entry {
+		padding-inline-start: 1.5rem;
+		text-indent: -1.5rem;
+	}
+
 	.informe-ambito-tab,
 	.informe-ambito-tab:focus,
 	.informe-ambito-tab:focus-visible,

@@ -1,0 +1,612 @@
+{
+	"schemaVersion": 1,
+	"moreInformation": {
+		"sourceSectionIds": [
+			"algunos-trabajos"
+		]
+	},
+	"rules": [
+		{
+			"id": "francesa-laura",
+			"workIds": [
+				"DESCONOCIDO_FrancesaLaura"
+			],
+			"entryKeys": [
+				"cuellar-vega-2023-francesa-laura-articulo",
+				"cuellar-vega-2023-francesa-laura-libro"
+			]
+		},
+		{
+			"id": "moreto-periodo-final",
+			"workIds": [
+				"MORETOdudosa_AntesMorirQuePecar",
+				"MORETO_VidaDeSanAlejo",
+				"MORETO_MasIlustreFrances",
+				"MORETO_FingirYAmar",
+				"MORETO_AmorYObligacion",
+				"MORETO_SantoCristo",
+				"MORETO&CANCER&MATOS_FuerzaDelNatural",
+				"MORETO_PrimeroEsLaHonra",
+				"MORETO_LindoDonDiego",
+				"MORETOdudosa_TravesurasDePantoja",
+				"MORETO_IndustriasContraFinezas",
+				"MORETOdudosa_NegraPorElHonor(Transk-IMPR)",
+				"MORETO_ComoSeVenganLosNobles",
+				"MORETO&LANINI_SantaRosa",
+				"MORETO_DefensorDeSuAgravio",
+				"MORETO_YoPorVos",
+				"MORETO_EsclavoDeSuHijoAzoteDeSuPatria",
+				"LOPEdudosa_SatisfacerCallando",
+				"MORETOdudosa_HermanosEncontrados(Transk-IMPR)"
+			],
+			"entryKeys": [
+				"martinez-carro-cuellar-2023-moretiana"
+			]
+		},
+		{
+			"id": "mejor-amigo-versiones",
+			"workIds": [
+				"BELMONTE&ROJAS&CALDERON_MejorAmigoElMuerto(VersionManuscritos)",
+				"BELMONTE&ROJAS&CALDERONdudosa_MejorAmigoElMuerto(VersionImpresos)"
+			],
+			"entryKeys": [
+				"campion-cuellar-2021-refundicion"
+			]
+		},
+		{
+			"id": "calderon-colaboradas",
+			"workIds": [
+				"CALDERON&VELEZ&CANCER_EnfermarConElRemedio",
+				"SOLIS&COELLO&CALDERON_PastorFido(Transk-IMPR)",
+				"MIRA&MONTALBAN&CALDERON_PolifemoYCirce",
+				"ZABALETA&CANCER&CALDERON_MargaritaPreciosa",
+				"CALDERON&MONTALBAN&ZORRILLA_MonstruoDeLaFortuna",
+				"BELMONTE&ROJAS&CALDERON_MejorAmigoElMuerto(VersionManuscritos)",
+				"BELMONTE&ROJAS&CALDERONdudosa_MejorAmigoElMuerto(VersionImpresos)",
+				"CALDERON&ROJAS_PrivilegiosDeLasMujeres",
+				"MORETO&CALDERON_FingidaArcadia",
+				"ZABALETA&ROJAS&CALDERON_MasHidalgaHermosura",
+				"ZABALETA&CALDERON_TroyaAbrasada",
+				"COELLO&CALDERON_YerrosDeLaNaturaleza",
+				"ROJAS&COELLO&CALDERON_JardinDeFalerina",
+				"CALDERON&COELLO_ProdigioDeAlemania",
+				"MORETO&ALII_MejorLunaAfricana",
+				"DESCONOCIDO_SacoDeAmberes",
+				"GODINEZ_LagrimasDeDavid"
+			],
+			"entryKeys": [
+				"vega-2023-colaboradas-calderon"
+			]
+		},
+		{
+			"id": "lagrimas-david",
+			"workIds": [
+				"GODINEZ_LagrimasDeDavid"
+			],
+			"entryKeys": [
+				"vega-2023-lagrimas-david"
+			]
+		},
+		{
+			"id": "casamentero",
+			"workIds": [
+				"DESCONOCIDO_Casamentero"
+			],
+			"entryKeys": [
+				"vega-2022-casamentero"
+			]
+		},
+		{
+			"id": "alarcon-nuevas",
+			"workIds": [
+				"LOPEdudosa_VencidoVencedor"
+			],
+			"entryKeys": [
+				"vega-2024-cara-oculta-alarcon"
+			]
+		},
+		{
+			"id": "monja-alferez",
+			"workIds": [
+				"MONTALBANdudosa_MonjaAlferez"
+			],
+			"entryKeys": [
+				"vega-2021-monja-alferez"
+			]
+		},
+		{
+			"id": "mujer-fuerza",
+			"workIds": [
+				"TIRSO_MujerPorFuerza"
+			],
+			"entryKeys": [
+				"vega-2026-mujer-fuerza"
+			]
+		},
+		{
+			"id": "palmerin",
+			"workIds": [
+				"MONTALBAN_PalmerinDeOliva"
+			],
+			"entryKeys": [
+				"vega-2024-lope-colaboracion"
+			]
+		},
+		{
+			"id": "terceros",
+			"workIds": [
+				"LOPE_TercerosDeSanFrancisco"
+			],
+			"entryKeys": [
+				"vega-2025-restitucion-tirso",
+				"vega-2024-lope-colaboracion"
+			]
+		},
+		{
+			"id": "solo-piadoso",
+			"workIds": [
+				"AVELLANEDA&MATOS&VILLAVICIOSA_SoloElPiadosoEsMiHijo(Transk-IMPR)"
+			],
+			"entryKeys": [
+				"vega-2025-solo-piadoso"
+			]
+		},
+		{
+			"id": "solposto",
+			"workIds": [
+				"CANCER&ROSETE&ROJAS_BandoleroSolPosto"
+			],
+			"entryKeys": [
+				"cuellar-vega-2025-bandolero-solposto"
+			]
+		},
+		{
+			"id": "lope",
+			"authorIds": [
+				"vega_carpio_lope_de"
+			],
+			"entryKeys": [
+				"vega-2021-confirmaciones-i",
+				"cuellar-2022-tesis",
+				"vega-2023-confirmaciones-ii"
+			]
+		},
+		{
+			"id": "claramonte",
+			"authorIds": [
+				"claramonte_y_corroy_andres_de"
+			],
+			"entryKeys": [
+				"cuellar-vega-2023-claramonte"
+			]
+		},
+		{
+			"id": "velez",
+			"authorIds": [
+				"velez_de_guevara_luis"
+			],
+			"entryKeys": [
+				"cuellar-gonzalez-vega-2026-velez"
+			]
+		},
+		{
+			"id": "tirso-segunda-parte",
+			"workIds": [
+				"VERGARA_ReinaDeLosReyes(Transk-IMPR)",
+				"TIRSO_AmorYCelos",
+				"TIRSOdudosa_QuienHabloPago",
+				"TIRSOdudosa_SiempreAyuda",
+				"TIRSOdudosa_AmantesDeTeruel",
+				"TIRSO_PorElSotano",
+				"MIRA_CautelaContraCautela",
+				"TIRSO_MujerPorFuerza",
+				"TIRSOdudosa_CondenadoPorDesconfiado",
+				"MIRAdudosa_ProsperaFortunaDeDonAlvaro",
+				"MIRA_AdversaFortunaDeDonAlvaro",
+				"TIRSO_EstoSiQueEsNegociar"
+			],
+			"entryKeys": [
+				"vega-2025-mas-evidencias-tirso"
+			]
+		},
+		{
+			"id": "pasajes-verificados-cuellar-gonzalez-vega-2026-velez",
+			"workIds": [
+				"BELMONTE_DarlesConLaEntretenida",
+				"CALDERON&ROJAS_PrivilegiosDeLasMujeres",
+				"CALDERON&VELEZ&CANCER_EnfermarConElRemedio",
+				"DESCONOCIDO(3)_DeLaAbarcaALaCorona",
+				"DESCONOCIDO_AventurasDelAlma(Auto)",
+				"DESCONOCIDO_LuceroSerafin(Auto)",
+				"DESCONOCIDO_RolloDeEcija",
+				"LOPEZ_MilagrosoImposible(Transk-MSS)",
+				"LOPE_MadreTeresaDeJesus",
+				"LOPEdudosa_MocedadesDeBernardo",
+				"LOPEdudosa_NoviosDeHornachuelos",
+				"LOPEdudosa_PerdidaHonrosa",
+				"LOPEdudosa_ProdigiosoPrincipe",
+				"LOPEdudosa_TruhanDelCielo",
+				"LOPEdudosa_VargasDeCastilla",
+				"LOPEdudosa_VasoDeEleccion",
+				"MATOS_CosariaCatalana",
+				"MONTALBAN_PuertaMacarena(PrimeraParte)",
+				"MORETO&ALII_MejorLunaAfricana",
+				"ROJAS_JerusalenCastigada",
+				"ROJAS_MasImpropioVerdugo",
+				"SALGADO_AraspasYPantea(Transk-IMPR)",
+				"TIRSOdudosa_AmantesDeTeruel",
+				"TIRSOdudosa_NinfaDelCielo",
+				"TIRSOdudosa_RomeraDeSantiago",
+				"TURIA_BeligeraEspanola",
+				"VELEZ&ROJAS_TambienTieneElSolMenguante",
+				"VELEZ_ALoQueObligaSerElRey",
+				"VELEZ_AgraviosPerdonados",
+				"VELEZ_AmorEsNaturaleza",
+				"VELEZ_AmotinadosDeFlandes",
+				"VELEZ_AsombroDeTurquia",
+				"VELEZ_AtilaAzoteDeDios",
+				"VELEZ_CelosAmorYVenganza",
+				"VELEZ_CercoDeRomaPorElReyDesiderio",
+				"VELEZ_CercoDelPenon",
+				"VELEZ_ComoLaLunaCreciente",
+				"VELEZ_CondeDonSancho",
+				"VELEZ_DevocionDeLaMisa",
+				"VELEZ_EmbusteAcreditado",
+				"VELEZ_GranJorgeCastriotoPrincipeEscanderbey",
+				"VELEZ_JulianoApostata",
+				"VELEZ_LegoDeAlcala",
+				"VELEZ_LuceroDeCastilla",
+				"VELEZ_MasPesaElRey",
+				"VELEZ_MayorDesgraciaDeCarlos",
+				"VELEZ_MayorTriunfoDeCiro",
+				"VELEZ_MejorReyEnRehenes",
+				"VELEZ_NegroDelSerafin",
+				"VELEZ_NinoDiablo",
+				"VELEZ_NoviosDeHornachuelos(VersionManuscrito)",
+				"VELEZ_NuevaIraDeDios",
+				"VELEZ_OlleroDeOcana",
+				"VELEZ_PrimerCondeOrgaz",
+				"VELEZ_ReinarDespuesDeMorir",
+				"VELEZ_ReyMuerto",
+				"VELEZ_SiElCaballo",
+				"VELEZ_SucesosEnOran",
+				"VELEZ_VerdugoDeMalaga",
+				"VELEZdudosa_RenegadoDeJerusalen"
+			],
+			"entryKeys": [
+				"cuellar-gonzalez-vega-2026-velez"
+			]
+		},
+		{
+			"id": "pasajes-verificados-cuellar-vega-2023-claramonte",
+			"workIds": [
+				"CALDERONdudosa_MayorReyDeLosReyes(Transk-IMPR)",
+				"CLARAMONTE_Araucana(Auto)",
+				"CLARAMONTE_AtaudParaElVivo",
+				"CLARAMONTE_CatolicaPrincesa",
+				"CLARAMONTE_DeAlcalaAMadrid(Transk-IMPR)",
+				"CLARAMONTE_DeLoVivo",
+				"CLARAMONTE_DeLosMeritos",
+				"CLARAMONTE_DesteAgua",
+				"CLARAMONTE_DoteDelRosario(Auto)",
+				"CLARAMONTE_EsclavaDelCielo",
+				"CLARAMONTE_GranRey",
+				"CLARAMONTE_Honrado",
+				"CLARAMONTE_HornoDeConstantinopla(Auto)",
+				"CLARAMONTE_Infante(Transk-IMPR)",
+				"CLARAMONTE_InfelizDorotea",
+				"CLARAMONTE_NuevoReyGallinato",
+				"CLARAMONTE_SanCarlos",
+				"CLARAMONTE_SantaTeodora",
+				"CLARAMONTE_SecretoEnLaMujer",
+				"CLARAMONTE_TaoDeSanAnton",
+				"CLARAMONTE_ValienteNegro",
+				"CLARAMONTEdudosa_NinfaDelCielo(Auto)",
+				"CLARAMONTEdudosa_ReyDonPedro",
+				"CUBILLO_ComendadoresDeCordoba(Transk-IMPR)",
+				"DESCONOCIDO_CaballeroDeOlmedo",
+				"DESCONOCIDO_DeUnYerroNacenMil",
+				"DESCONOCIDO_DinerosSonCalidad",
+				"DESCONOCIDO_Escarraman(Auto)(Transk-MSS)",
+				"DESCONOCIDO_EstrellaDeSevilla",
+				"DESCONOCIDO_PacienciaEnLaFortuna",
+				"DESCONOCIDO_PanDeVallecas(Auto)(Transk-MSS)",
+				"DESCONOCIDO_TejedorDeSegovia(PrimeraParte)",
+				"ESPINOSA_DichosoDesdichado(Transk-IMPR)",
+				"HURTADO_PremioDeLaVirtud(Transk-IMPR)",
+				"LOPE_AudienciasDelReyDonPedro",
+				"LOPEdudosa_AlcaldeDeZalamea",
+				"LOPEdudosa_AllaDarasRayo",
+				"LOPEdudosa_DonGilDeLaMancha",
+				"LOPEdudosa_DosBandoleras",
+				"LOPEdudosa_InobedienteCiudadSinDios",
+				"LOPEdudosa_LindonaDeGalicia",
+				"LOPEdudosa_MayorCorona",
+				"LOPEdudosa_MedicoDeSuHonra",
+				"LOPEdudosa_PastoralAlbergue",
+				"LOPEdudosa_PrudenciaEnElCastigo",
+				"LOPEdudosa_VerYNoCreer",
+				"MIRA_HijaDeCarlos",
+				"MIRAdudosa_AdulteraVirtuosa",
+				"MONTALBAN_RigorEnLaInocencia(Transk-IMPR)",
+				"MORETOdudosa_MilagrosaEleccion",
+				"ROJAS_VidaEnElAtaud",
+				"ROJASdudosa_PrudenciaEnElCastigoVersion1678(Transk-IMPR)",
+				"TIRSO_VenganzaDeTamar",
+				"TIRSOdudosa_AmantesDeTeruel",
+				"TIRSOdudosa_BurladorDeSevilla",
+				"TIRSOdudosa_CondenadoPorDesconfiado",
+				"TIRSOdudosa_NinfaDelCielo",
+				"TIRSOdudosa_TanLargoMeLoFiais",
+				"VALDIVIELSO_ArbolDeLaGracia(Auto)"
+			],
+			"entryKeys": [
+				"cuellar-vega-2023-claramonte"
+			]
+		},
+		{
+			"id": "pasajes-verificados-vega-2023-confirmaciones-ii",
+			"workIds": [
+				"BELMONTE_SastreDelCampillo",
+				"BERMUDEZ_YoHeHechoLoQueHePodido",
+				"CALDERON_AmorHonorYPoder",
+				"CALDERON_CruzEnLaSepultura(VersionTemprana)(Transk-IMPR)",
+				"CALDERON_VidaEsSueno",
+				"CASTRO_TragediaPorLosCelos(Transk-IMPR)",
+				"CLARAMONTE_Honrado",
+				"DESCONOCIDO_FrancesaLaura",
+				"DESCONOCIDO_PacienciaEnLaFortuna",
+				"ENRIQUEZdudosa_ConquistaDeMexico",
+				"HURTADO_RiesgosQueTieneUnCoche(Transk-IMPR)",
+				"LOPE_CautivosDeArgel",
+				"LOPE_DevocionDelRosario",
+				"LOPE_MujeresYCriados",
+				"LOPE_TercerosDeSanFrancisco",
+				"LOPE_YoMeEntiendo",
+				"LOPEdudosa_AlcaldeDeZalamea",
+				"LOPEdudosa_AntonioRoca",
+				"LOPEdudosa_ArcaDeNoe",
+				"LOPEdudosa_CercoDeTremecen",
+				"LOPEdudosa_ComediaOtomana",
+				"LOPEdudosa_CreacionDelMundo",
+				"LOPEdudosa_EsclavaDeSuHijo",
+				"LOPEdudosa_GalaDelNadar(Transk-IMPR)",
+				"LOPEdudosa_GranCardenalDeEspana(Mendoza)(Transk-IMPR)",
+				"LOPEdudosa_LeyEjecutada",
+				"LOPEdudosa_LlaveDeLaHonra",
+				"LOPEdudosa_MadrastraMasHonrada",
+				"LOPEdudosa_MasValeSaltoDeMata",
+				"LOPEdudosa_MayorProdigioYPurgatorio",
+				"LOPEdudosa_MedicoDeSuHonra",
+				"LOPEdudosa_NecedadDelDiscreto(Transk-IMPR)",
+				"LOPEdudosa_NuncaMuchoCostoPoco",
+				"LOPEdudosa_OrdenDeRedencion",
+				"LOPEdudosa_PalabraVengada",
+				"LOPEdudosa_PedroDeUrdemalas",
+				"LOPEdudosa_PrudenciaEnElCastigo",
+				"LOPEdudosa_SaberPorNoSaber(Transk-IMPR)",
+				"LOPEdudosa_SilencioAgradecido",
+				"LOPEdudosa_SucesosDelPrincipeLisardo",
+				"LOPEdudosa_VenturaYAtrevimiento",
+				"LOPEdudosa_YerrosPorAmor",
+				"MARTINEZ_PlateroDelCielo",
+				"MIRA_EjemploMayor",
+				"MONTALBAN_DespreciosEnQuienAma(Transk-IMPR)",
+				"MONTALBAN_GravedadEnVillaverde",
+				"MONTALBAN_PalmerinDeOliva",
+				"ROJASdudosa_DonDiegoDeNoche",
+				"ROJASdudosa_NoHayDuelo",
+				"ROJASdudosa_PrudenciaEnElCastigoVersion1678(Transk-IMPR)",
+				"SANCHEZ_IslaBarbara(Transk-IMPR)",
+				"TIRSO_CelosConCelos",
+				"TIRSO_MujerPorFuerza",
+				"TIRSOdudosa_SiempreAyuda",
+				"VELEZ_MasPesaElRey",
+				"VILLEGAS-JUAN_DespreciadaQuerida(Transk-IMPR)"
+			],
+			"entryKeys": [
+				"vega-2023-confirmaciones-ii"
+			]
+		},
+		{
+			"id": "pasajes-verificados-martinez-carro-cuellar-2023-moretiana",
+			"workIds": [
+				"LOPEdudosa_SatisfacerCallando",
+				"MORETO&CANCER&MATOS_FuerzaDelNatural",
+				"MORETO&LANINI_SantaRosa",
+				"MORETO_AmorYObligacion",
+				"MORETO_ComoSeVenganLosNobles",
+				"MORETO_DefensorDeSuAgravio",
+				"MORETO_EsclavoDeSuHijoAzoteDeSuPatria",
+				"MORETO_FingirYAmar",
+				"MORETO_IndustriasContraFinezas",
+				"MORETO_LindoDonDiego",
+				"MORETO_MasIlustreFrances",
+				"MORETO_PrimeroEsLaHonra",
+				"MORETO_SantoCristo",
+				"MORETO_VidaDeSanAlejo",
+				"MORETO_YoPorVos",
+				"MORETOdudosa_AntesMorirQuePecar",
+				"MORETOdudosa_HermanosEncontrados(Transk-IMPR)",
+				"MORETOdudosa_NegraPorElHonor(Transk-IMPR)",
+				"MORETOdudosa_TravesurasDePantoja"
+			],
+			"entryKeys": [
+				"martinez-carro-cuellar-2023-moretiana"
+			]
+		},
+		{
+			"id": "pasajes-verificados-cuellar-vega-2023-francesa-laura-articulo",
+			"workIds": [
+				"DESCONOCIDO_FrancesaLaura"
+			],
+			"entryKeys": [
+				"cuellar-vega-2023-francesa-laura-articulo"
+			]
+		},
+		{
+			"id": "pasajes-verificados-cuellar-vega-2025-bandolero-solposto",
+			"workIds": [
+				"CANCER&ROSETE&ROJAS_BandoleroSolPosto"
+			],
+			"entryKeys": [
+				"cuellar-vega-2025-bandolero-solposto"
+			]
+		},
+		{
+			"id": "pasajes-verificados-vega-2021-confirmaciones-i",
+			"workIds": [
+				"LOPE_BarlaanYJosafat(Autografo)",
+				"LOPE_BarlaanYJosafat(ParteVeinticuatro)",
+				"LOPE_BurlasYEnredos",
+				"LOPE_EnLosIndicios",
+				"LOPE_HechosDeGarcilaso",
+				"LOPE_LacayoFingido",
+				"LOPE_MadreTeresaDeJesus",
+				"LOPE_PrincipeMelancolico",
+				"LOPE_ReinaJuanaDeNapoles",
+				"LOPE_SantoNegroRosambuco",
+				"LOPE_VidaYMuerteDelReyBamba",
+				"LOPEdudosa_Aldehuela",
+				"LOPEdudosa_ReyFingido",
+				"MIRA_AmparoDeLosHombres",
+				"MIRA_NuevosCaballeros"
+			],
+			"entryKeys": [
+				"vega-2021-confirmaciones-i"
+			]
+		},
+		{
+			"id": "pasajes-verificados-vega-2023-colaboradas-calderon",
+			"workIds": [
+				"BELMONTE&ROJAS&CALDERON_MejorAmigoElMuerto(VersionManuscritos)",
+				"BELMONTE&ROJAS&CALDERONdudosa_MejorAmigoElMuerto(VersionImpresos)",
+				"CALDERON&COELLO_ProdigioDeAlemania",
+				"CALDERON&MONTALBAN&ZORRILLA_MonstruoDeLaFortuna",
+				"CALDERON&ROJAS_PrivilegiosDeLasMujeres",
+				"CALDERON&VELEZ&CANCER_EnfermarConElRemedio",
+				"COELLO&CALDERON_YerrosDeLaNaturaleza",
+				"DESCONOCIDO_SacoDeAmberes",
+				"GODINEZ_LagrimasDeDavid",
+				"MIRA&MONTALBAN&CALDERON_PolifemoYCirce",
+				"MORETO&ALII_MejorLunaAfricana",
+				"MORETO&CALDERON_FingidaArcadia",
+				"ROJAS&COELLO&CALDERON_JardinDeFalerina",
+				"SOLIS&COELLO&CALDERON_PastorFido(Transk-IMPR)",
+				"ZABALETA&CALDERON_TroyaAbrasada",
+				"ZABALETA&CANCER&CALDERON_MargaritaPreciosa",
+				"ZABALETA&ROJAS&CALDERON_MasHidalgaHermosura"
+			],
+			"entryKeys": [
+				"vega-2023-colaboradas-calderon"
+			]
+		},
+		{
+			"id": "pasajes-verificados-campion-cuellar-2021-refundicion",
+			"workIds": [
+				"BELMONTE&ROJAS&CALDERON_MejorAmigoElMuerto(VersionManuscritos)",
+				"BELMONTE&ROJAS&CALDERONdudosa_MejorAmigoElMuerto(VersionImpresos)"
+			],
+			"entryKeys": [
+				"campion-cuellar-2021-refundicion"
+			]
+		},
+		{
+			"id": "pasajes-verificados-vega-2022-casamentero",
+			"workIds": [
+				"DESCONOCIDO_Casamentero",
+				"LOPE_YoMeEntiendo",
+				"MONTALBAN_GravedadEnVillaverde",
+				"MONTALBAN_PuertaMacarena(PrimeraParte)",
+				"MONTALBAN_PuertaMacarena(SegundaParte)",
+				"MONTALBANdudosa_MonjaAlferez",
+				"VILLEGAS-JUAN_MaridoDeSuHermanaMentirosaVerdad(Transk-IMPR)"
+			],
+			"entryKeys": [
+				"vega-2022-casamentero"
+			]
+		},
+		{
+			"id": "pasajes-verificados-vega-2021-monja-alferez",
+			"workIds": [
+				"MONTALBANdudosa_MonjaAlferez"
+			],
+			"entryKeys": [
+				"vega-2021-monja-alferez"
+			]
+		},
+		{
+			"id": "pasajes-verificados-vega-2025-mas-evidencias-tirso",
+			"workIds": [
+				"DESCONOCIDO_VirtudConsisteEnMedio(Transk-IMPR)",
+				"MIRA_AdversaFortunaDeDonAlvaro",
+				"MIRA_CautelaContraCautela",
+				"MIRAdudosa_ProsperaFortunaDeDonAlvaro",
+				"TIRSO_AmorYCelos",
+				"TIRSO_EstoSiQueEsNegociar",
+				"TIRSO_MujerPorFuerza",
+				"TIRSO_PorElSotano",
+				"TIRSO_TantoEsLoDeMas",
+				"TIRSOdudosa_AmantesDeTeruel",
+				"TIRSOdudosa_CondenadoPorDesconfiado",
+				"TIRSOdudosa_QuienHabloPago",
+				"TIRSOdudosa_SiempreAyuda",
+				"VERGARA_ReinaDeLosReyes(Transk-IMPR)"
+			],
+			"entryKeys": [
+				"vega-2025-mas-evidencias-tirso"
+			]
+		},
+		{
+			"id": "pasajes-verificados-vega-2026-mujer-fuerza",
+			"workIds": [
+				"TIRSO_MujerPorFuerza"
+			],
+			"entryKeys": [
+				"vega-2026-mujer-fuerza"
+			]
+		},
+		{
+			"id": "pasajes-verificados-vega-2025-solo-piadoso",
+			"workIds": [
+				"AVELLANEDA&MATOS&VILLAVICIOSA_SoloElPiadosoEsMiHijo(Transk-IMPR)"
+			],
+			"entryKeys": [
+				"vega-2025-solo-piadoso"
+			]
+		},
+		{
+			"id": "pasajes-verificados-vega-2025-restitucion-tirso",
+			"workIds": [
+				"LOPE_TercerosDeSanFrancisco"
+			],
+			"entryKeys": [
+				"vega-2025-restitucion-tirso"
+			]
+		},
+		{
+			"id": "pasajes-verificados-vega-2024-lope-colaboracion",
+			"workIds": [
+				"LOPE_DeCuandoAca",
+				"LOPE_DifuntaPleitada",
+				"LOPE_TercerosDeSanFrancisco",
+				"LOPEdudosa_LeyEjecutada",
+				"LOPEdudosa_PastoralAlbergue",
+				"LOPEdudosa_ReyPorSuSemejanza",
+				"MONTALBAN_PalmerinDeOliva"
+			],
+			"entryKeys": [
+				"vega-2024-lope-colaboracion"
+			]
+		},
+		{
+			"id": "pasajes-verificados-vega-2024-cara-oculta-alarcon",
+			"workIds": [
+				"LOPEdudosa_VencidoVencedor"
+			],
+			"entryKeys": [
+				"vega-2024-cara-oculta-alarcon"
+			]
+		}
+	]
+}

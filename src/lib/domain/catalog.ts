@@ -54,6 +54,7 @@ export interface CatalogWork {
 	inAuthorshipExam: boolean;
 	result1?: string;
 	result2?: string;
+	notes?: string;
 	traditionalAttribution: AttributionSet;
 	stylometryAttribution: AttributionSet;
 	textLinks: WorkResourceLink[];

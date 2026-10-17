@@ -1,6 +1,7 @@
 import { error, redirect } from '@sveltejs/kit';
 import { ambitos, type Ambito, type InformeDistanceView } from '$lib/domain/catalog';
 import informeRedirectAliases from '$lib/data/informe-redirect-aliases.json';
+import thesisGraphics from '../../../../data/referencias/graficas-tesis.json';
 import { setPublicCatalogCacheHeaders } from '$lib/server/cache-control';
 import { localizePath } from '$lib/i18n';
 import {
@@ -52,7 +53,7 @@ export const load: PageServerLoad = async ({ locals, params, setHeaders }) => {
 		getAllAuthors()
 	]);
 	const distances = Object.fromEntries(distanceEntries) as Record<Ambito, InformeDistanceView[]>;
-	const bibliography = getInformeBibliographyByInformeId(informe.id);
+	const bibliography = getInformeBibliographyByInformeId(informe.id, work);
 
 	setPublicCatalogCacheHeaders(setHeaders);
 	return {
@@ -60,6 +61,9 @@ export const load: PageServerLoad = async ({ locals, params, setHeaders }) => {
 		work: await withWorkReportResults(work),
 		distances,
 		authors,
-		bibliography
+		bibliography,
+		thesisPages: (thesisGraphics.pages as Record<string, number[]>)[work.id] ?? [],
+		thesisCommentary: (thesisGraphics.commentaries as Record<string, string[]>)[work.id] ?? [],
+		thesisGraphics: (thesisGraphics.works as Record<string, {src: string; kind: string; page: number; width: number; height: number}[]>)[work.id] ?? []
 	};
 };

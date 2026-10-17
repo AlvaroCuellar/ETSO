@@ -755,7 +755,7 @@
 								preserveOptions
 								selectedIds={selectedMainAuthors}
 								disabled={mainAuthorDisabled}
-								helpText="Permite multiselección de autores. Este campo se desactiva si usas Atribución tradicional o estilometría en Más filtros."
+								helpText="Permite multiselección de autores. Este campo se desactiva si usas Atribución tradicional o atribución estilométrica en Más filtros."
 								inputClass="js-author-multiselect"
 								onIntent={() => {
 									void ensureFilterOptionsLoaded();
@@ -831,7 +831,7 @@
 										<div class="flex flex-col gap-4 rounded-[8px] border border-border bg-[var(--color-surface-subtle)] p-4">
 											<TokenMultiSelect
 												name="autor_esto_ids"
-												label="Atribución estilometría"
+												label="Atribución estilométrica"
 												placeholder="Escribe y selecciona autores"
 												options={authorOptions}
 												preserveOptions

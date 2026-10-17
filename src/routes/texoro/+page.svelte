@@ -3631,7 +3631,7 @@
 							<div class="flex flex-col gap-4 rounded-[8px] border border-border bg-[var(--color-surface-subtle)] p-4">
 								<TokenMultiSelect
 									name="texoro-stylometry-attribution"
-									label="Atribución estilometría"
+									label="Atribución estilométrica"
 									placeholder="Escribe y selecciona autores"
 									options={authorOptions}
 									preserveOptions

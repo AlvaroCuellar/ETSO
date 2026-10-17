@@ -788,7 +788,7 @@
 							</div>
 
 							<div class={mobileCardFieldClass}>
-								<span class={mobileCardLabelClass}>Atribución estilometría</span>
+								<span class={mobileCardLabelClass}>Atribución estilométrica</span>
 								{@render stylometryAttribution(row)}
 							</div>
 
@@ -845,7 +845,7 @@
 						}`}
 						scope="col"
 					>
-						Atribución estilometría
+						Atribución estilométrica
 					</th>
 					<th
 						class={`obra-table-col--genre px-3 py-[14px] text-left text-[13px] font-medium tracking-[0.5px] uppercase ${
@@ -914,7 +914,7 @@
 							{@render traditionalAttribution(row)}
 						</td>
 
-						<td class={dataCellClass} data-label="Atribución estilometría">
+						<td class={dataCellClass} data-label="Atribución estilométrica">
 							{@render stylometryAttribution(row)}
 						</td>
 

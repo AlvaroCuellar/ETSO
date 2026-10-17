@@ -102,7 +102,7 @@
 		{#if hasStylometryAttribution(work.stylometryAttribution)}
 			<div class="grid content-start gap-1.5">
 				<dt class="m-0 font-ui text-[0.72rem] font-bold uppercase tracking-[0.05em] text-text-soft">
-					Atribución estilometría
+					Atribución estilométrica
 				</dt>
 				<dd class="m-0 font-ui text-[0.97rem] leading-[1.65] text-text-main">
 					<div class="flex flex-col items-start gap-[0.65rem]">

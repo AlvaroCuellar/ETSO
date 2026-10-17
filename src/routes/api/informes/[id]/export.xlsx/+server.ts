@@ -77,7 +77,7 @@ const addDistanceSheet = (
 		{ header: 'Distancia', key: 'distance', width: 18, style: { numFmt: '0.000000' } },
 		{ header: 'Título', key: 'title', width: 42 },
 		{ header: 'Atribución tradicional', key: 'traditionalAttribution', width: 42 },
-		{ header: 'Atribución estilometría', key: 'stylometryAttribution', width: 42 },
+		{ header: 'Atribución estilométrica', key: 'stylometryAttribution', width: 42 },
 		{ header: 'Género', key: 'genre', width: 22 },
 		{ header: 'Procedencia', key: 'origin', width: 46 },
 		{ header: 'Estado del texto', key: 'textState', width: 24 }

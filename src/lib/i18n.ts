@@ -640,7 +640,6 @@ const esToEn: Record<string, string> = {
 	'Descargar datos del informe en XLSX': 'Download report data as XLSX',
 	'Atribución de autoría': 'Authorship attribution',
 	'Atribución tradicional': 'Traditional attribution',
-	'Atribución estilometría': 'Stylometric attribution',
 	'Atribución estilométrica': 'Stylometric attribution',
 	'Género': 'Genre',
 	'Procedencia': 'Source',
@@ -823,7 +822,7 @@ const esToEn: Record<string, string> = {
 		'Select one or more genres to limit the results.',
 	'Selecciona uno o varios géneros. Puedes escribir para filtrar opciones.':
 		'Select one or more genres. You can type to filter options.',
-	'Permite multiselección de autores. Este campo se desactiva si usas Atribución tradicional o estilometría en Más filtros.':
+	'Permite multiselección de autores. Este campo se desactiva si usas Atribución tradicional o atribución estilométrica en Más filtros.':
 		'Allows multiple author selection. This field is disabled if you use Traditional attribution or stylometry in More filters.',
 	'Autores propuestos por la tradición filológica.': 'Authors proposed by the philological tradition.',
 	'Autores sugeridos por el análisis estilométrico.': 'Authors suggested by the stylometric analysis.',
@@ -1042,7 +1041,6 @@ const esToFr: Record<string, string> = {
 	'Descargar datos del informe en XLSX': 'Télécharger les données du rapport au format XLSX',
 	'Atribución de autoría': "Attribution d'auteur",
 	'Atribución tradicional': 'Attribution traditionnelle',
-	'Atribución estilometría': 'Attribution stylométrique',
 	'Atribución estilométrica': 'Attribution stylométrique',
 	'Género': 'Genre',
 	'Procedencia': 'Source',
@@ -1225,7 +1223,7 @@ const esToFr: Record<string, string> = {
 		'Sélectionnez un ou plusieurs genres pour limiter les résultats.',
 	'Selecciona uno o varios géneros. Puedes escribir para filtrar opciones.':
 		'Sélectionnez un ou plusieurs genres. Vous pouvez saisir du texte pour filtrer les options.',
-	'Permite multiselección de autores. Este campo se desactiva si usas Atribución tradicional o estilometría en Más filtros.':
+	'Permite multiselección de autores. Este campo se desactiva si usas Atribución tradicional o atribución estilométrica en Más filtros.':
 		"Permet la sélection multiple d'auteurs. Ce champ est désactivé si vous utilisez Attribution traditionnelle ou stylométrie dans Plus de filtres.",
 	'Autores propuestos por la tradición filológica.': 'Auteurs proposés par la tradition philologique.',
 	'Autores sugeridos por el análisis estilométrico.': "Auteurs suggérés par l'analyse stylométrique.",

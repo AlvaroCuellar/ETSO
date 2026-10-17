@@ -202,7 +202,7 @@
 
 						{#if hasStylometryAttribution(data.work.stylometryAttribution)}
 							<div class={attributionBlockClass}>
-								<h3 class={attributionHeadingClass}>Atribución estilometría</h3>
+								<h3 class={attributionHeadingClass}>Atribución estilométrica</h3>
 								<div class="text-[0.97rem] leading-[1.6] text-text-main">
 									<div class="flex flex-col items-start gap-[0.65rem]">
 										{#if data.work.stylometryAttribution.unresolved}

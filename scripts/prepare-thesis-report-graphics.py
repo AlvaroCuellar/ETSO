@@ -23,11 +23,22 @@ for entry in manifest['entries']:
         figures.append(dict(src='/graficas/tesis-2022/' + path.name, kind=figure['kind'], page=figure['printedPage'], width=figure['nativeWidth'], height=figure['nativeHeight'], sha256=figure['sha256']))
     if not figures: continue
     paragraphs = []
-    if any(f['kind'] == 'authorship' for f in figures):
-        paragraphs.append('El experimento de autoría emplea aprendizaje automático para clasificar el texto completo, sus dos mitades y sus tres tercios. Las filas de la figura representan esas tres divisiones del texto; el verde corresponde a LOPE y el azul a NOLOPE.')
-    if any(f['kind'] == 'dating' for f in figures):
-        paragraphs.append('El experimento de datación compara el vocabulario con el de 296 obras fechadas de Lope mediante NSC y las 12.000 palabras más frecuentes. El procedimiento por caminos reduce progresivamente el intervalo cronológico descartando un lustro de uno de sus extremos.')
-    paragraphs += result['paragraphs']
+    for kind in ('authorship', 'dating'):
+        if not any(f['kind'] == kind for f in figures):
+            continue
+        prefix = ('El experimento de autoría ' if kind == 'authorship' else
+                  'El experimento de datación por caminos (NSC, 12.000 palabras más frecuentes) ')
+        specific = [p for p in result['paragraphs'] if p.startswith(prefix)]
+        if len(specific) != 1:
+            raise ValueError(f'Missing or ambiguous {kind} commentary: {entry["entryId"]}')
+        if kind == 'authorship':
+            method = ('El análisis de autoría utiliza Support Vector Machine (SVM), un método de aprendizaje automático entrenado con 1030 obras: 280 de Lope de Vega y 750 de otros dramaturgos. A partir de las frecuencias de las palabras, clasifica por separado el texto completo, sus dos mitades y sus tres tercios. ')
+            outcome = 'En esta obra, el experimento ' + specific[0][len(prefix):]
+            legend = ' La figura representa las clasificaciones como LOPE en verde y como NOLOPE en azul.'
+            paragraphs.append(method + outcome + legend)
+        else:
+            method = ('El análisis de datación utiliza Nearest Shrunken Centroids (NSC), un clasificador que compara perfiles de frecuencias léxicas, con las 12.000 palabras más frecuentes de un corpus de 296 obras fechadas de Lope. Mediante un procedimiento por caminos, compara sucesivamente dos grandes periodos y descarta un lustro del extremo contrario al favorecido, reduciendo el intervalo cronológico. ')
+            paragraphs.append(method + 'En este caso, ' + specific[0][len(prefix):])
     for work_id in entry['workIds']:
         if work_id in output['works']: raise ValueError('Two thesis versions mapped to one catalog work: ' + work_id)
         output['works'][work_id] = figures

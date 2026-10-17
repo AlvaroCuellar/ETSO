@@ -1,7 +1,22 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
-import { getRelatedBibliographyKeys, getRemainingBibliographyKeys, deduplicateBibliographySections } from '../src/lib/domain/report-related-bibliography.ts';
+import { getRelatedBibliographyKeys, getRemainingBibliographyKeys, deduplicateBibliographySections, interleaveBibliographyAuthors } from '../src/lib/domain/report-related-bibliography.ts';
+
+test('Más información alterna autores después de excluir los trabajos ya mostrados', () => {
+	const entries = [
+		{ id: 'g1', author: 'Vega García-Luengos, Germán' },
+		{ id: 'g2', author: 'Rucio, José María y Germán Vega García-Luengos' },
+		{ id: 'c1', author: 'Cuéllar, Álvaro' },
+		{ id: 'c2', author: 'Cuéllar, Álvaro y Germán Vega García-Luengos' },
+		{ id: 'c3', author: 'Martínez Carro, Elena y Álvaro Cuéllar' },
+		{ id: 'otro', author: 'Otra persona' }
+	];
+	const remaining = getRemainingBibliographyKeys(entries.map(e => e.id), ['c1']);
+	const filtered = entries.filter(e => remaining.includes(e.id));
+	assert.deepEqual(interleaveBibliographyAuthors(filtered, e => e.author).map(e => e.id), ['c2', 'g1', 'c3', 'g2', 'otro']);
+	assert.deepEqual(interleaveBibliographyAuthors(entries.slice(0, 2), e => e.author), entries.slice(0, 2));
+});
 
 test('la primera lista bibliográfica tiene prioridad y las posteriores no repiten artículos', () => {
 	const sections = [

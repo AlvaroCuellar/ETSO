@@ -58,7 +58,7 @@ import {
 import collaboratorsSource from '../../../data/colaboradores/equipo.json';
 import bibliographySource from '../../../data/referencias/bibliografia.json';
 import relatedBibliographySource from '../../../data/referencias/informes-relacionados.json';
-import { getRelatedBibliographyKeys, getRemainingBibliographyKeys, deduplicateBibliographySections } from '$lib/domain/report-related-bibliography';
+import { getRelatedBibliographyKeys, getRemainingBibliographyKeys, deduplicateBibliographySections, interleaveBibliographyAuthors } from '$lib/domain/report-related-bibliography';
 import impactSource from '../../../data/referencias/repercusion.json';
 
 type SqlArg = string | number | bigint | boolean | null | Uint8Array | Date;
@@ -3850,7 +3850,10 @@ export const getInformeBibliographyByInformeId = (
 		source.comoCitarnos.sections.find((section) => section.id === id)?.entryKeys ?? []
 	);
 	const remainingEntries = resolveBibliographyEntriesByKey(
-		getRemainingBibliographyKeys(allWorkKeys, shownIds), source.entryRawByKey
+		interleaveBibliographyAuthors(
+			getRemainingBibliographyKeys(allWorkKeys, shownIds),
+			(key) => asFieldString(source.entryRawByKey.get(key)?.author) || asFieldString(source.entryRawByKey.get(key)?.authors)
+		), source.entryRawByKey
 	);
 	if (remainingEntries.length > 0) sections.push({
 		id: 'bibliografia-otros-trabajos',

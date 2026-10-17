@@ -37,6 +37,26 @@ export const getRemainingBibliographyKeys = (
 	return [...new Set(allKeys)].filter((key) => !shown.has(key));
 };
 
+/** Alternate both researchers after filtering; joint works belong to Cuéllar's group. */
+export const interleaveBibliographyAuthors = <T>(
+	entries: readonly T[],
+	authorFor: (entry: T) => string
+): T[] => {
+	const cuellar: T[] = [], vega: T[] = [], others: T[] = [];
+	for (const entry of entries) {
+		const author = authorFor(entry).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+		if (author.includes('cuellar')) cuellar.push(entry);
+		else if (author.includes('vega garcia-luengos')) vega.push(entry);
+		else others.push(entry);
+	}
+	const ordered: T[] = [];
+	for (let i = 0; i < Math.max(cuellar.length, vega.length); i++) {
+		if (i < cuellar.length) ordered.push(cuellar[i]);
+		if (i < vega.length) ordered.push(vega[i]);
+	}
+	return [...ordered, ...others];
+};
+
 /** Matches declared attributions, including alternatives and collaborations, never neighbours. */
 export const getRelatedBibliographyKeys = (
 	work: RelatedBibliographyWork,

@@ -3120,23 +3120,38 @@
 	</div>
 {/snippet}
 
-{#snippet resultMetaDisclosure(meta: TexoroWorkMeta | null | undefined, metadataLine: string, docId: number, textLinks: TexoroWorkMeta['textLinks'])}
-	<details class="texoro-result-disclosure group min-w-0 max-w-full">
-		<summary class="flex w-fit max-w-full cursor-pointer list-none items-center gap-1.5 rounded-[8px] px-0 py-0.5 font-['Roboto',sans-serif] text-[0.78rem] font-semibold text-text-soft transition hover:text-brand-blue-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-blue/20">
-			<span class="min-w-0 overflow-hidden text-ellipsis whitespace-nowrap">Metadatos y acceso al texto</span>
-			<ChevronDown class="h-3.5 w-3.5 shrink-0 transition-transform group-open:rotate-180" aria-hidden="true" />
-		</summary>
-		<div class="mt-2 grid min-w-0 max-w-full gap-3">
-			{#if meta}
-				{@render resultMetadataBlock(meta, metadataLine)}
+{#snippet resultMobileMetadata(meta: TexoroWorkMeta | null | undefined, metadataLine: string, textLinks: TexoroWorkMeta['textLinks'])}
+	<div class="texoro-mobile-metadata grid min-w-0 gap-2">
+		{#if meta}
+			<dl class="m-0 grid min-w-0 grid-cols-[8rem_minmax(0,1fr)] items-baseline gap-x-2.5 gap-y-1 font-['Roboto',sans-serif]">
+				<dt class="text-[0.64rem] font-semibold uppercase leading-snug text-text-accent-purple">{meta.collectionSize ? 'Autores de la colección' : 'Atribución tradicional'}</dt>
+				<dd class="m-0 min-w-0 break-words text-[0.83rem] leading-snug text-text-main" data-i18n-skip>{meta.collectionSize && new Set(meta.traditionalAttribution.groups.flatMap((group) => group.members.map((member) => member.authorId))).size > 1 ? t('Varios') : formatCompactAttribution(meta.traditionalAttribution)}</dd>
+				<dt class="text-[0.64rem] font-semibold uppercase leading-snug text-text-accent-purple">Atribución estilométrica</dt>
+				<dd class="m-0 min-w-0 break-words text-[0.83rem] leading-snug text-text-main" data-i18n-skip>{formatCompactAttribution(meta.stylometryAttribution, 'No analizada')}</dd>
+			</dl>
+			<p class="m-0 flex min-w-0 flex-wrap items-baseline gap-x-1.5 gap-y-0.5 font-['Roboto',sans-serif] text-[0.75rem] leading-snug text-text-soft">
+				<span title="Género">{meta.generalGenre || 'Teatro'}</span>
+				<span aria-hidden="true" class="opacity-40">·</span>
+				<span title="Subgénero">{meta.genre.trim() || 'Sin género'}</span>
+				<span aria-hidden="true" class="opacity-40">·</span>
+				<span title="Estado del texto">{meta.textState.trim() || 'Sin estado'}</span>
+			</p>
+		{:else}
+			<p class="m-0 text-[0.8rem] leading-[1.35] text-text-soft">{metadataLine}</p>
+		{/if}
+		<div class="flex min-w-0 flex-wrap items-center gap-1.5 border-t border-brand-blue/10 pt-2">
+			{#each textLinks as link}
+				<a href={link.href} target="_blank" rel="noopener noreferrer"
+					data-sveltekit-preload-data={link.kind === 'biteso' ? 'off' : undefined}
+					class="inline-flex min-h-8 max-w-full items-center gap-1.5 rounded-md border border-border-accent-blue bg-white px-2 py-1 text-[0.76rem] leading-tight text-brand-blue no-underline hover:bg-surface-accent-blue">
+					{#if link.kind === 'biteso'}<BookOpen class="h-3.5 w-3.5 shrink-0" aria-hidden="true" />{:else}<ExternalLink class="h-3.5 w-3.5 shrink-0" aria-hidden="true" />{/if}
+					<span class="min-w-0 break-words">{link.label}</span>
+				</a>
 			{:else}
-				<p class="m-0 text-[0.86rem] leading-[1.35] text-text-soft">{metadataLine}</p>
-			{/if}
-			<div class="flex min-w-0 max-w-full justify-start">
-				{@render resultTextAccessControl(docId, textLinks)}
-			</div>
+				<span class="text-[0.76rem] text-text-soft">Sin acceso al texto</span>
+			{/each}
 		</div>
-	</details>
+	</div>
 {/snippet}
 
 <div class="grid gap-6">
@@ -4086,7 +4101,7 @@
 										</div>
 									</div>
 									<div class="md:hidden">
-										{@render resultMetaDisclosure(result.meta, metadataLine, result.docId, textLinks)}
+										{@render resultMobileMetadata(result.meta, metadataLine, textLinks)}
 									</div>
 
 									<div class="hidden md:block">
@@ -4287,7 +4302,7 @@
 					</span>
 				</div>
 				<div class="md:hidden">
-					{@render resultMetaDisclosure(occurrenceModal.result.meta, resultMetadataLine(occurrenceModal.result), occurrenceModal.result.docId, occurrenceTextLinks)}
+					{@render resultMobileMetadata(occurrenceModal.result.meta, resultMetadataLine(occurrenceModal.result), occurrenceTextLinks)}
 				</div>
 				<div class="hidden md:grid md:grid-cols-[minmax(0,1fr)_auto] md:items-start md:gap-4">
 					<div class="min-w-0">
@@ -4368,9 +4383,6 @@
 		min-height: 7.25rem;
 	}
 
-	.texoro-result-disclosure > summary::-webkit-details-marker {
-		display: none;
-	}
 
 	@media (max-width: 639px) {
 		.texoro-more-button {

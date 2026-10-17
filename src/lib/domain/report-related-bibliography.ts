@@ -13,6 +13,21 @@ interface RelatedBibliographyWork {
 	stylometryAttribution: AttributionSet;
 }
 
+/** Earlier sections take priority; retain each reference only at its first occurrence. */
+export const deduplicateBibliographySections = <T extends { entries: { id: string }[] }>(
+	sections: readonly T[]
+): T[] => {
+	const seen = new Set<string>();
+	return sections.map((section) => ({
+		...section,
+		entries: section.entries.filter((entry) => {
+			if (seen.has(entry.id)) return false;
+			seen.add(entry.id);
+			return true;
+		})
+	})).filter((section) => section.entries.length > 0);
+};
+
 /** Preserve editorial order and remove every entry already displayed in the report. */
 export const getRemainingBibliographyKeys = (
 	allKeys: readonly string[],

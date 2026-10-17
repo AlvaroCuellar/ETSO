@@ -1,7 +1,22 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
-import { getRelatedBibliographyKeys, getRemainingBibliographyKeys } from '../src/lib/domain/report-related-bibliography.ts';
+import { getRelatedBibliographyKeys, getRemainingBibliographyKeys, deduplicateBibliographySections } from '../src/lib/domain/report-related-bibliography.ts';
+
+test('la primera lista bibliográfica tiene prioridad y las posteriores no repiten artículos', () => {
+	const sections = [
+		{ id: 'cita', entries: [{ id: 'etso' }] },
+		{ id: 'relacionados', entries: [{ id: 'lope1' }, { id: 'tesis' }, { id: 'lope2' }] },
+		{ id: 'procesos', entries: [{ id: 'metodo' }, { id: 'lope1' }, { id: 'monja' }, { id: 'lope2' }, { id: 'metodo' }] },
+		{ id: 'mas', entries: [{ id: 'monja' }, { id: 'otro' }, { id: 'tesis' }] },
+		{ id: 'vacia', entries: [{ id: 'etso' }] }
+	];
+	assert.deepEqual(deduplicateBibliographySections(sections).map(s => [s.id, s.entries.map(e => e.id)]), [
+		['cita', ['etso']], ['relacionados', ['lope1', 'tesis', 'lope2']],
+		['procesos', ['metodo', 'monja']], ['mas', ['otro']]
+	]);
+	assert.equal(sections[2].entries.length, 5, 'no modifica las listas de origen');
+});
 import type { AttributionSet } from '../src/lib/domain/catalog.ts';
 
 const { rules } = JSON.parse(readFileSync(new URL('../data/referencias/informes-relacionados.json', import.meta.url), 'utf8'));

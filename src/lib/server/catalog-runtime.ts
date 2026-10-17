@@ -58,7 +58,7 @@ import {
 import collaboratorsSource from '../../../data/colaboradores/equipo.json';
 import bibliographySource from '../../../data/referencias/bibliografia.json';
 import relatedBibliographySource from '../../../data/referencias/informes-relacionados.json';
-import { getRelatedBibliographyKeys, getRemainingBibliographyKeys } from '$lib/domain/report-related-bibliography';
+import { getRelatedBibliographyKeys, getRemainingBibliographyKeys, deduplicateBibliographySections } from '$lib/domain/report-related-bibliography';
 import impactSource from '../../../data/referencias/repercusion.json';
 
 type SqlArg = string | number | bigint | boolean | null | Uint8Array | Date;
@@ -3839,13 +3839,7 @@ export const getInformeBibliographyByInformeId = (
 	const view = resolveInformeBibliographyView(selectedConfig, source.entryRawByKey);
 	const relatedKeys = work ? getRelatedBibliographyKeys(work, relatedBibliographySource.rules) : [];
 	const entries = resolveBibliographyEntriesByKey(relatedKeys, source.entryRawByKey);
-	const relatedIds = new Set(entries.map((entry) => entry.id));
-	const sections = view.sections
-		.map((section) => ({
-			...section,
-			entries: section.entries.filter((entry) => !relatedIds.has(entry.id))
-		}))
-		.filter((section) => section.entries.length > 0);
+	const sections = [...view.sections];
 	if (entries.length > 0) sections.splice(1, 0, {
 		id: 'trabajos-relacionados-informe',
 		lead: 'Trabajos relacionados con este informe',
@@ -3866,7 +3860,7 @@ export const getInformeBibliographyByInformeId = (
 		defaultOpen: false,
 		entries: remainingEntries
 	});
-	return { ...view, sections };
+	return { ...view, sections: deduplicateBibliographySections(sections) };
 };
 
 export const getComoCitarnosBibliography = (): ComoCitarnosBibliographyView => {

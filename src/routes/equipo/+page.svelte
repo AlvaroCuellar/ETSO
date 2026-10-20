@@ -129,7 +129,7 @@
 									<div class="divide-y divide-border-accent-blue">
 										{#each section.items as item}
 											<article class="grid gap-1.5 px-4 py-3 md:px-5">
-												<h3 class="m-0 font-['Roboto',sans-serif] text-[0.98rem] font-semibold leading-[1.35] text-text-soft">{item.title}</h3>
+												<h3 class="m-0 font-['Roboto',sans-serif] text-[0.98rem] font-semibold leading-[1.35] text-text-soft">{#if section.id === 'web-development' && item.links.length > 0}<a href={item.links[0].href} target="_blank" rel="noopener noreferrer" class="underline decoration-border-accent-blue underline-offset-4 transition hover:text-brand-blue">{item.title}</a>{:else}{item.title}{/if}</h3>
 												{#if itemMeta(item)}
 													<p class="m-0 font-['Lora',serif] text-[0.9rem] leading-[1.5] text-text-soft">{itemMeta(item)}</p>
 												{/if}

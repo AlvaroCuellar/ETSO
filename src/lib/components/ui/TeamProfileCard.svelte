@@ -46,8 +46,14 @@
 		></button>
 	{/if}
 
-	<div class="relative">
-		<img src={image} alt={`Imagen de ${title}`} class="block h-auto w-full" loading="lazy" />
+	<div class="relative aspect-[1.3] overflow-hidden bg-[var(--color-surface-soft,#f3f3f4)]">
+		<img
+			src={image}
+			alt={`Imagen de ${title}`}
+			class="absolute left-1/2 top-4 block h-auto max-w-none -translate-x-1/2"
+			style:width={title.startsWith('Germán') ? '65%' : '90%'}
+			loading="lazy"
+		/>
 
 		{#if links.length > 0}
 			<div

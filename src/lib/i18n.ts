@@ -911,8 +911,8 @@ const esToEn: Record<string, string> = {
 	'Panel de informes estilométricos de ETSO': 'ETSO stylometric reports panel',
 	'El proyecto': 'The project',
 	'surge del interés del investigador': 'arises from the interest of researcher',
-	'(Universitat Autònoma de Barcelona) y del catedrático':
-		'(Universitat Autònoma de Barcelona) and professor',
+	'(Università degli Studi di Trento) y del catedrático':
+		'(Università degli Studi di Trento) and professor',
 	'(Universidad de Valladolid) en aplicar las nuevas herramientas informáticas a los numerosos problemas':
 		'(University of Valladolid) in applying new computational tools to the many',
 	'de autoría que presenta el teatro del Siglo de Oro español. Este portal trata de ofrecer análisis que':
@@ -1312,8 +1312,8 @@ const esToFr: Record<string, string> = {
 	'Panel de informes estilométricos de ETSO': 'Panneau des rapports stylométriques d’ETSO',
 	'El proyecto': 'Le projet',
 	'surge del interés del investigador': "naît de l'intérêt du chercheur",
-	'(Universitat Autònoma de Barcelona) y del catedrático':
-		'(Universitat Autònoma de Barcelona) et du professeur',
+	'(Università degli Studi di Trento) y del catedrático':
+		'(Università degli Studi di Trento) et du professeur',
 	'(Universidad de Valladolid) en aplicar las nuevas herramientas informáticas a los numerosos problemas':
 		'(Université de Valladolid) pour appliquer les nouveaux outils informatiques aux nombreux problèmes',
 	'de autoría que presenta el teatro del Siglo de Oro español. Este portal trata de ofrecer análisis que':

@@ -16,7 +16,7 @@
           "year": null,
           "people": [],
           "organizations": [
-            "Universitat Autònoma de Barcelona"
+            "Università degli Studi di Trento"
           ],
           "tags": [],
           "links": [
@@ -29,7 +29,7 @@
               "href": "https://www.alvarocuellar.com/"
             }
           ],
-          "image": "/images/colaboradores/FotoAlvaroCuellar.webp"
+          "image": "/images/colaboradores/AlvaroCuellarSinFondo.png"
         },
         {
           "id": "team-german-vega-garcia-luengos",
@@ -49,7 +49,7 @@
               "href": "mailto:german.vega@uva.es"
             }
           ],
-          "image": "/images/colaboradores/FotoGermanVega.webp"
+          "image": "/images/colaboradores/GermanVegaSinFondo.png"
         }
       ]
     },
@@ -71,7 +71,12 @@
             "Universitat Autònoma de Barcelona"
           ],
           "tags": [],
-          "links": [],
+          "links": [
+            {
+              "label": "Web personal de David Merino Recalde",
+              "href": "https://davidmerinorecalde.com/"
+            }
+          ],
           "image": null
         }
       ]

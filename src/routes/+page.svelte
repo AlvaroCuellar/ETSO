@@ -70,7 +70,7 @@
 			'https://literaturaespanola.uva.es/german-jose-vega-garcia-luengos/',
 			'Germán Vega García-Luengos'
 		);
-		const alvaroWithUniversity = `${alvaro} (Universitat Autònoma de Barcelona)`;
+		const alvaroWithUniversity = `${alvaro} (Università degli Studi di Trento)`;
 		const germanWithUniversity = `${german} (Universidad de Valladolid)`;
 		const worksTraditional = [
 			workLink(locale, '/informes/analisis-estilometrico-la-dama-boba', 'La dama boba'),
@@ -576,9 +576,9 @@
 	const teamMembers: TeamMember[] = [
 		{
 			title: 'Álvaro Cuéllar',
-			organizations: ['Universitat Autònoma de Barcelona'],
+			organizations: ['Università degli Studi di Trento'],
 			summary: '',
-			image: '/images/colaboradores/FotoAlvaroCuellar.webp',
+			image: '/images/colaboradores/AlvaroCuellarSinFondo.png',
 			links: [
 				{
 					label: 'Correo de Álvaro Cuéllar',
@@ -594,7 +594,7 @@
 			title: 'Germán Vega García-Luengos',
 			organizations: ['Universidad de Valladolid'],
 			summary: '',
-			image: '/images/colaboradores/FotoGermanVega.webp',
+			image: '/images/colaboradores/GermanVegaSinFondo.png',
 			links: [
 				{
 					label: 'Correo de Germán Vega García-Luengos',

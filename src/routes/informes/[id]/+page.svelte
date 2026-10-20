@@ -491,7 +491,7 @@
 			</div>
 		</article>
 	{/if}
-	{#if noteParagraphs.length > 0}
+	{#if noteParagraphs.length > 0 || data.belmonteSections.length > 0}
 		<article id="notas" class="grid scroll-mt-24 gap-3 rounded-[8px] border border-border-accent-blue bg-white px-5 py-4 max-md:px-4" aria-label={t('Notas')}>
 			<h3 class="m-0 text-[1.05rem] font-semibold text-brand-blue-dark">{t('Notas')}</h3>
 			{#each noteGroups as group}
@@ -508,15 +508,10 @@
 					{/if}
 				</div>
 			{/each}
-		</article>
-	{/if}
-	{#if data.belmonteSections.length > 0}
-		<article id="notas-belmonte" class="grid scroll-mt-24 gap-5 rounded-[8px] border border-border-accent-blue bg-white px-5 py-5 max-md:px-4" aria-label="Luis de Belmonte Bermúdez: comentario y gráfica">
-			<h3 class="m-0 text-[1.05rem] font-semibold text-brand-blue-dark">Luis de Belmonte Bermúdez</h3>
-			<p class="m-0 break-words text-sm leading-relaxed text-text-main" data-i18n-skip>Cuéllar, Álvaro. (En prensa, 2027). «Estilometría rodante y aprendizaje automático para la restitución del repertorio teatral de Luis de Belmonte Bermúdez». <i>Arte Nuevo. Revista de Estudios Áureos</i>.</p>
+			<div id="notas-belmonte" class="grid scroll-mt-24 gap-4">
 			{#each data.belmonteSections as section}
 				<section class="grid min-w-0 gap-4" aria-label={`Apartado ${section.section}: ${section.title}`}>
-					<p class="m-0 text-sm font-semibold leading-relaxed text-brand-blue-dark" data-i18n-skip>Apartado {section.section}: {@html renderInlineItalicsHtml(section.title)}</p>
+					<p class="m-0 break-words text-sm leading-relaxed text-text-main" data-i18n-skip>Como se apunta en Cuéllar, Álvaro. (2027). «Estilometría rodante y aprendizaje automático para la restitución del repertorio teatral de Luis de Belmonte Bermúdez». <i>Arte Nuevo. Revista de Estudios Áureos</i>. En prensa. Pasaje: apartado {section.section}.</p>
 					<blockquote class="relative mx-3 my-1 grid gap-4 px-7 py-5 sm:mx-6 sm:px-10">
 						<span aria-hidden="true" class="pointer-events-none absolute -left-2 -top-3 font-serif text-[5.5rem] leading-none text-brand-blue-dark opacity-15">“</span>
 					{#each section.content as item}
@@ -533,6 +528,7 @@
 					</blockquote>
 				</section>
 			{/each}
+			</div>
 		</article>
 	{/if}
 	{#if data.thesisGraphics.length > 0}

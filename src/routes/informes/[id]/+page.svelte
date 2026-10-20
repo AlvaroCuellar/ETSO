@@ -510,6 +510,31 @@
 			{/each}
 		</article>
 	{/if}
+	{#if data.belmonteSections.length > 0}
+		<article id="notas-belmonte" class="grid scroll-mt-24 gap-5 rounded-[8px] border border-border-accent-blue bg-white px-5 py-5 max-md:px-4" aria-label="Luis de Belmonte Bermúdez: comentario y gráfica">
+			<h3 class="m-0 text-[1.05rem] font-semibold text-brand-blue-dark">Luis de Belmonte Bermúdez</h3>
+			<p class="m-0 break-words text-sm leading-relaxed text-text-main" data-i18n-skip>Cuéllar, Álvaro. (En prensa, 2027). «Estilometría rodante y aprendizaje automático para la restitución del repertorio teatral de Luis de Belmonte Bermúdez». <i>Arte Nuevo. Revista de Estudios Áureos</i>.</p>
+			{#each data.belmonteSections as section}
+				<section class="grid min-w-0 gap-4" aria-label={`Apartado ${section.section}: ${section.title}`}>
+					<p class="m-0 text-sm font-semibold leading-relaxed text-brand-blue-dark" data-i18n-skip>Apartado {section.section}: {@html renderInlineItalicsHtml(section.title)}</p>
+					<blockquote class="relative mx-3 my-1 grid gap-4 px-7 py-5 sm:mx-6 sm:px-10">
+						<span aria-hidden="true" class="pointer-events-none absolute -left-2 -top-3 font-serif text-[5.5rem] leading-none text-brand-blue-dark opacity-15">“</span>
+					{#each section.content as item}
+						{#if item.type === 'paragraph'}
+								<p class="m-0 whitespace-pre-line break-words text-base leading-[1.72] text-text-main" data-i18n-skip>{@html renderReportNoteHtml(item.html)}</p>
+						{:else}
+							<figure class="mx-auto my-2 grid w-full min-w-0 max-w-[680px] gap-2">
+									<img src={item.src} width={item.width} height={item.height} loading="lazy" class="mx-auto h-auto w-full object-contain" alt={item.alt} />
+								<figcaption class="text-center text-xs leading-relaxed text-text-muted">Estilometría rodante</figcaption>
+							</figure>
+						{/if}
+					{/each}
+						<span aria-hidden="true" class="pointer-events-none absolute -bottom-8 -right-2 font-serif text-[5.5rem] leading-none text-brand-blue-dark opacity-15">”</span>
+					</blockquote>
+				</section>
+			{/each}
+		</article>
+	{/if}
 	{#if data.thesisGraphics.length > 0}
 		<article id="graficas-tesis" class="grid scroll-mt-24 gap-5 rounded-[8px] border border-border-accent-blue bg-white px-5 py-5 max-md:px-4">
 			{#if !noteParagraphs.length}<h3 class="m-0 text-[1.05rem] font-semibold text-brand-blue-dark">{t('Notas')}</h3>{/if}

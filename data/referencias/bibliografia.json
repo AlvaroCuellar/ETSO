@@ -1589,6 +1589,14 @@
 			"journal": "Confluencia: Revista hispánica de cultura y literatura",
 			"details": "38(1), pp. 39-58",
 			"url": "https://uvadoc.uva.es/handle/10324/59524"
+		},
+		"cuellar-2027-belmonte": {
+			"entryType": "article",
+			"author": "Cuéllar, Álvaro",
+			"year": "2027",
+			"title": "«Estilometría rodante y aprendizaje automático para la restitución del repertorio teatral de Luis de Belmonte Bermúdez»",
+			"journal": "Arte Nuevo. Revista de Estudios Áureos",
+			"note": "En prensa"
 		}
 	},
 	"views": {
@@ -1697,7 +1705,8 @@
 						"cuellar-2022-tesis",
 						"campion-cuellar-2021-refundicion",
 						"vega-2021-confirmaciones-i",
-						"vega-2021-monja-alferez"
+						"vega-2021-monja-alferez",
+						"cuellar-2027-belmonte"
 					]
 				},
 				{

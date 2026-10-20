@@ -2,6 +2,7 @@ import { error, redirect } from '@sveltejs/kit';
 import { ambitos, type Ambito, type InformeDistanceView } from '$lib/domain/catalog';
 import informeRedirectAliases from '$lib/data/informe-redirect-aliases.json';
 import thesisGraphics from '../../../../data/referencias/graficas-tesis.json';
+import belmonteNotes from '../../../../data/referencias/notas-belmonte.json';
 import { setPublicCatalogCacheHeaders } from '$lib/server/cache-control';
 import { localizePath } from '$lib/i18n';
 import {
@@ -17,6 +18,13 @@ import {
 } from '$lib/server/catalog-runtime';
 
 import type { PageServerLoad } from './$types';
+
+type BelmonteGraphic = { src: string; alt: string; width: number; height: number };
+type BelmonteSection = {
+	section: string;
+	title: string;
+	content: ({ type: 'paragraph'; html: string } | ({ type: 'graphic' } & BelmonteGraphic))[];
+};
 
 export const load: PageServerLoad = async ({ locals, params, setHeaders }) => {
 	const informe = await getInformeByReportSlug(params.id);
@@ -62,6 +70,7 @@ export const load: PageServerLoad = async ({ locals, params, setHeaders }) => {
 		distances,
 		authors,
 		bibliography,
+		belmonteSections: (belmonteNotes.works as Record<string, BelmonteSection[]>)[work.id] ?? [],
 		thesisPages: (thesisGraphics.pages as Record<string, number[]>)[work.id] ?? [],
 		thesisCommentary: (thesisGraphics.commentaries as Record<string, string[]>)[work.id] ?? [],
 		thesisGraphics: (thesisGraphics.works as Record<string, {src: string; kind: string; page: number; width: number; height: number}[]>)[work.id] ?? []

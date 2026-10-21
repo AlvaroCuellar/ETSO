@@ -305,6 +305,7 @@ export interface BitesoTeiLine {
 	text: string;
 	parts: BitesoTeiLinePart[];
 	unclear?: boolean;
+	kind?: 'verse' | 'prose';
 }
 
 export interface BitesoTeiBlock {

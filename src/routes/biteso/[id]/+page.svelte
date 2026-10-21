@@ -170,6 +170,11 @@
 	};
 
 	type DownloadKind = 'tei' | 'txt-didascalias' | 'txt-verses';
+	const hasTeiProse = $derived(
+		data.biteso.tei?.pages.some((page) =>
+			page.blocks.some((block) => block.lines?.some((line) => line.kind === 'prose'))
+		) ?? false
+	);
 
 	const buildVerseTextFromTei = (): string => {
 		const lines: string[] = [];
@@ -218,7 +223,7 @@
 			kind === 'txt-didascalias'
 				? data.biteso.tei?.downloads?.textWithDidascalias || buildTextWithDidascaliasFromTei()
 				: data.biteso.tei?.downloads?.verseText || buildVerseTextFromTei();
-		const suffix = kind === 'txt-didascalias' ? 'con-didascalias' : 'solo-versos';
+		const suffix = kind === 'txt-didascalias' ? 'con-didascalias' : hasTeiProse ? 'sin-didascalias' : 'solo-versos';
 		downloadBlob(
 			buildDownloadedTxt(text),
 			data.biteso.tei ? `${downloadBaseFilename}_${suffix}.txt` : `${downloadBaseFilename}.txt`,
@@ -646,7 +651,7 @@
 								class="rounded-[6px] px-3 py-2 text-left text-text-main transition hover:bg-surface-soft hover:text-brand-blue-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue"
 								onclick={() => downloadText('txt-verses')}
 							>
-								TXT solo con versos
+								{hasTeiProse ? 'TXT sin didascalias' : 'TXT solo con versos'}
 							</button>
 						</div>
 					{/if}
@@ -892,7 +897,12 @@
 										</div>
 										<div class="grid gap-1.5">
 											{#each block.lines ?? [] as line}
-												<p class="m-0 leading-[1.75]" data-i18n-skip>
+												<p
+													class="m-0 leading-[1.75]"
+													class:mb-3={line.kind === 'prose'}
+													data-text-kind={line.kind ?? 'verse'}
+													data-i18n-skip
+												>
 													{#each line.parts as part}
 														<span class={part.unclear ? 'rounded-[4px] bg-[#fff1f3] px-0.5 text-[#b4233c]' : ''}>
 															{part.text}

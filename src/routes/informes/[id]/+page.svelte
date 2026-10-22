@@ -503,6 +503,10 @@
 							{#each group.paragraphs as paragraph}<p class="relative m-0 whitespace-pre-line break-words text-base leading-[1.72] text-text-main" data-i18n-skip>{@html renderReportNoteHtml(paragraph)}</p>{/each}
 							<span aria-hidden="true" class="pointer-events-none absolute -bottom-8 -right-2 font-serif text-[5.5rem] leading-none text-brand-blue-dark opacity-15">”</span>
 						</blockquote>
+					{:else if group.citation?.startsWith('Resumen del estudio: ')}
+						<div class="mx-3 my-1 grid gap-4 px-7 py-5 sm:mx-6 sm:px-10">
+							{#each group.paragraphs as paragraph}<p class="m-0 whitespace-pre-line break-words text-base leading-[1.72] text-text-main" data-i18n-skip>{@html renderReportNoteHtml(paragraph)}</p>{/each}
+						</div>
 					{:else}
 						{#each group.paragraphs as paragraph}<p class="m-0 whitespace-pre-line break-words text-base leading-[1.72] text-text-main" data-i18n-skip>{@html renderReportNoteHtml(paragraph)}</p>{/each}
 					{/if}

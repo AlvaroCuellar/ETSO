@@ -3,6 +3,7 @@ import { ambitos, type Ambito, type InformeDistanceView } from '$lib/domain/cata
 import informeRedirectAliases from '$lib/data/informe-redirect-aliases.json';
 import thesisGraphics from '../../../../data/referencias/graficas-tesis.json';
 import belmonteNotes from '../../../../data/referencias/notas-belmonte.json';
+import studyNotes from '../../../../data/referencias/notas-estudios.json';
 import { setPublicCatalogCacheHeaders } from '$lib/server/cache-control';
 import { localizePath } from '$lib/i18n';
 import {
@@ -63,10 +64,14 @@ export const load: PageServerLoad = async ({ locals, params, setHeaders }) => {
 	const distances = Object.fromEntries(distanceEntries) as Record<Ambito, InformeDistanceView[]>;
 	const bibliography = getInformeBibliographyByInformeId(informe.id, work);
 
+	const reportWork = await withWorkReportResults(work);
+	const studyNote = (studyNotes.works as Record<string, string>)[work.id];
+	if (studyNote) reportWork.notes = [reportWork.notes, studyNote].filter(Boolean).join("\n\n");
+
 	setPublicCatalogCacheHeaders(setHeaders);
 	return {
 		informe,
-		work: await withWorkReportResults(work),
+		work: reportWork,
 		distances,
 		authors,
 		bibliography,

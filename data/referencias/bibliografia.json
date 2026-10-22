@@ -1597,6 +1597,14 @@
 			"title": "«Estilometría rodante y aprendizaje automático para la restitución del repertorio teatral de Luis de Belmonte Bermúdez»",
 			"journal": "Arte Nuevo. Revista de Estudios Áureos",
 			"note": "En prensa"
+		},
+		"cuellar-ulla-vega-2027-infante-aragon": {
+			"entryType": "article",
+			"author": "Cuéllar, Álvaro, Alejandra Ulla Lorenzo y Germán Vega García-Luengos",
+			"year": "2027",
+			"title": "«El infante de Aragón y sus credenciales para considerarla una nueva comedia de Lope de Vega»",
+			"journal": "Anuario Lope de Vega. Texto, literatura, cultura",
+			"note": "En prensa"
 		}
 	},
 	"views": {
@@ -1706,7 +1714,8 @@
 						"campion-cuellar-2021-refundicion",
 						"vega-2021-confirmaciones-i",
 						"vega-2021-monja-alferez",
-						"cuellar-2027-belmonte"
+						"cuellar-2027-belmonte",
+						"cuellar-ulla-vega-2027-infante-aragon"
 					]
 				},
 				{

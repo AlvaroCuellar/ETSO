@@ -7,6 +7,15 @@
 	},
 	"rules": [
 		{
+			"id": "infante-aragon",
+			"workIds": [
+				"CLARAMONTE_Infante(Transk-IMPR)"
+			],
+			"entryKeys": [
+				"cuellar-ulla-vega-2027-infante-aragon"
+			]
+		},
+		{
 			"id": "francesa-laura",
 			"workIds": [
 				"DESCONOCIDO_FrancesaLaura"

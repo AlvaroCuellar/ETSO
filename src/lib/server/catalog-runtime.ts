@@ -8,6 +8,7 @@ import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { readPrivateTextByTextKey, readPrivateTextByWorkId } from '$lib/server/r2-private';
+import { formatBitesoJornadas, type BitesoJornadas } from '$lib/server/biteso-jornadas';
 import { fetchPublicR2Json, getPublicAssetUrl, getSummariesBaseUrl } from '$lib/server/r2-public';
 import { buildWorkTitleSearchText, formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
 import { REPORT_SLUG_PREFIX } from '$lib/utils/report-slug';
@@ -60,6 +61,7 @@ import bibliographySource from '../../../data/referencias/bibliografia.json';
 import relatedBibliographySource from '../../../data/referencias/informes-relacionados.json';
 import { getRelatedBibliographyKeys, getRemainingBibliographyKeys, deduplicateBibliographySections, interleaveBibliographyAuthors } from '$lib/domain/report-related-bibliography';
 import impactSource from '../../../data/referencias/repercusion.json';
+import bitesoJornadasSource from '../../../data/biteso/jornadas.json';
 
 type SqlArg = string | number | bigint | boolean | null | Uint8Array | Date;
 
@@ -2893,7 +2895,7 @@ const getBitesoForWork = async (
 		bitesoNombre: bitesoCredits.nombre,
 		bitesoRevisores: bitesoCredits.revisores,
 		title: `Texto digital de ${work.title}`,
-		text,
+		text: tei ? text : formatBitesoJornadas(text, (bitesoJornadasSource as Record<string, BitesoJornadas>)[work.id]),
 		tei
 	};
 };

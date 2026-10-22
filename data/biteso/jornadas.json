@@ -1,0 +1,19 @@
+{
+  "ULLOA-LUIS&DAVILA-RODRIGO_PicoYCanente": {
+    "sha256": "79f5da8ef1d11157daeda286f78363fc31651f90b3e5adb612c425ee122f2922",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 1107
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 992
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 938
+      }
+    ]
+  }
+}

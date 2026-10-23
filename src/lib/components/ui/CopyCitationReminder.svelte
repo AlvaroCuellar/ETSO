@@ -11,7 +11,7 @@
 	const minimumCopiedCharacters = 80;
 
 	const reminders: Record<Locale, string> = {
-		es: 'Recordatorio: si reutilizas este texto, consulta la página "Cómo citarnos" para incluir la referencia adecuada',
+		es: 'Recordatorio: si utilizas información de ETSO, consulta la página "Cómo citarnos" para incluir la referencia adecuada',
 		en: 'Reminder: if you reuse this text, please check the "How to cite us" page and include the appropriate reference',
 		fr: 'Rappel : si vous réutilisez ce texte, consultez la page « Comment nous citer » afin d’inclure la référence appropriée',
 		pt: 'Lembrete: se reutilizar este texto, consulte a página "Como nos citar" para incluir a referência adequada',

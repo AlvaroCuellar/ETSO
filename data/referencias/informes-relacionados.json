@@ -108,7 +108,8 @@
 		{
 			"id": "alarcon-nuevas",
 			"workIds": [
-				"LOPEdudosa_VencidoVencedor"
+				"LOPEdudosa_VencidoVencedor",
+				"MONTALBANdudosa_SerPrudenteYSerSufrido"
 			],
 			"entryKeys": [
 				"vega-2024-cara-oculta-alarcon"

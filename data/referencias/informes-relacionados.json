@@ -348,7 +348,8 @@
 				"TIRSOdudosa_CondenadoPorDesconfiado",
 				"TIRSOdudosa_NinfaDelCielo",
 				"TIRSOdudosa_TanLargoMeLoFiais",
-				"VALDIVIELSO_ArbolDeLaGracia(Auto)"
+				"VALDIVIELSO_ArbolDeLaGracia(Auto)",
+				"TIRSO_GallegaMari"
 			],
 			"entryKeys": [
 				"cuellar-vega-2023-claramonte"
@@ -690,6 +691,15 @@
 			],
 			"entryKeys": [
 				"cuellar-2027-belmonte"
+			]
+		},
+		{
+			"id": "comprar-hombre-suerte-vega-1998",
+			"workIds": [
+				"PRADO-JOSE_ComprarUnHombreSuSuerte(Transk-MSS)"
+			],
+			"entryKeys": [
+				"vega-1998-mas-poetas-textos-dramaticos-aureos"
 			]
 		}
 	]

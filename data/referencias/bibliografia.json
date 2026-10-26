@@ -1605,6 +1605,14 @@
 			"title": "«El infante de Aragón y sus credenciales para considerarla una nueva comedia de Lope de Vega»",
 			"journal": "Anuario Lope de Vega. Texto, literatura, cultura",
 			"note": "En prensa"
+		},
+		"vega-1998-mas-poetas-textos-dramaticos-aureos": {
+			"entryType": "incollection",
+			"author": "Vega García-Luengos, Germán",
+			"title": "Más poetas y textos dramáticos áureos",
+			"details": "1998",
+			"publisher": "En María Cruz García de Enterría y Alicia Cordón Mesa (eds.), Actas del IV Congreso Internacional de la Asociación Internacional Siglo de Oro (AISO), II. Alcalá de Henares: Universidad de Alcalá, pp. 1631-1641",
+			"url": "https://cvc.cervantes.es/literatura/aiso/pdf/04/aiso_4_2_077.pdf"
 		}
 	},
 	"views": {
@@ -1715,7 +1723,8 @@
 						"vega-2021-confirmaciones-i",
 						"vega-2021-monja-alferez",
 						"cuellar-2027-belmonte",
-						"cuellar-ulla-vega-2027-infante-aragon"
+						"cuellar-ulla-vega-2027-infante-aragon",
+						"vega-1998-mas-poetas-textos-dramaticos-aureos"
 					]
 				},
 				{

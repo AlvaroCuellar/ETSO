@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getAsodatWorkUrl } from '$lib/domain/asodat';
-	import { formatAttribution, formatAttributionConfidence, isPersonAuthor, type AttributionSet, type Confidence } from '$lib/domain/catalog';
+	import { isPersonAuthor, type AttributionSet } from '$lib/domain/catalog';
 	import { translateText } from '$lib/i18n';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import InfoCard from '$lib/components/ui/InfoCard.svelte';
@@ -49,7 +49,6 @@
 	});
 
 	const t = (value: string): string => translateText(data.locale, value);
-	const connectorLabel = (connector: 'and' | 'or'): string => t(connector === 'and' ? 'y' : 'o');
 
 	const resultAndLabel = (): string => {
 		const labels: Record<string, string> = { es: 'y', en: 'and', fr: 'et', pt: 'e', it: 'e', de: 'und', zh: '和', ja: 'および', ko: '및', ru: 'и', ar: 'و' };
@@ -59,13 +58,6 @@
 		? buildStylometryResultParts({ ...data.work, result2: undefined }, { translate: t, andLabel: resultAndLabel() }, data.resultAuthors)
 		: []);
 
-	const confidenceClass = (confidence?: Confidence): string => {
-		if (confidence === 'segura') return 'bg-[#d4edda] text-[#155724]';
-		if (confidence === 'probable') return 'bg-[#d1ecf1] text-[#0c5460]';
-		if (confidence === 'posible') return 'bg-surface-accent-purple text-text-accent-purple';
-		if (confidence === 'no_concluyente') return 'bg-[#fff3cd] text-[#856404]';
-		return 'bg-surface-accent-purple text-text-accent-purple';
-	};
 
 	const hasTraditionalAttribution = (set: AttributionSet): boolean => !set.unresolved && set.groups.length > 0;
 	const hasStylometryAttribution = (set: AttributionSet): boolean =>
@@ -73,7 +65,7 @@
 
 	const hasAnyAttribution = (): boolean =>
 		hasTraditionalAttribution(data.work.traditionalAttribution) ||
-		hasStylometryAttribution(data.work.stylometryAttribution);
+		(data.work.inAuthorshipExam && hasStylometryAttribution(data.work.stylometryAttribution));
 
 	const hasTextAccess = (): boolean => data.work.textLinks.length > 0;
 	const hasShortSummary = (): boolean => {
@@ -170,71 +162,18 @@
 
 						{#if hasTraditionalAttribution(data.work.traditionalAttribution)}
 							<div class={attributionBlockClass}>
-								<h3 class={attributionHeadingClass}>{data.work.collectionSize ? 'Autores de la colección' : 'Atribución tradicional'}</h3>
+								<h3 class={attributionHeadingClass}>{!data.work.inAuthorshipExam ? 'Autoría' : data.work.collectionSize ? 'Autores de la colección' : 'Atribución tradicional'}</h3>
 								<div class="text-[0.97rem] leading-[1.6] text-text-main">
 									{#if !data.work.traditionalAttribution.reviewedPhrase && data.work.collectionSize && new Set(data.work.traditionalAttribution.groups.flatMap((group) => group.members.map((member) => member.authorId))).size > 1}<span>Varios</span>{:else}<p class="m-0 break-words leading-relaxed" data-i18n-skip>{#each buildTraditionalAttributionParts(data.work.traditionalAttribution) as part}{#if data.work.inAuthorshipExam && part.kind === 'author' && part.authorId && isPersonAuthor(part.authorId)}<a href={`/autores/${part.authorId}`} class="font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline">{part.value}</a>{:else}{part.value}{/if}{/each}</p>{/if}
 								</div>
 							</div>
 						{/if}
 
-						{#if hasStylometryAttribution(data.work.stylometryAttribution) || (data.work.inAuthorshipExam && resultParts.length > 0)}
+						{#if data.work.inAuthorshipExam && (hasStylometryAttribution(data.work.stylometryAttribution) || resultParts.length > 0)}
 							<div class={attributionBlockClass}>
 								<h3 class={attributionHeadingClass}>Atribución estilométrica</h3>
 								<div class="text-[0.97rem] leading-[1.6] text-text-main">
-									{#if !data.work.inAuthorshipExam}
-									<div class="flex flex-col items-start gap-[0.65rem]">
-										{#if data.work.stylometryAttribution.unresolved}
-											<div class="flex flex-wrap items-center gap-3">
-												<span class="font-medium italic text-text-soft">No apunta hacia ningún autor</span>
-												<span
-													class="inline-flex rounded-full px-[0.55rem] py-[0.24rem] text-[0.72rem] font-bold tracking-[0.02em] uppercase {confidenceClass('no_concluyente')}"
-												>
-													No concluyente
-												</span>
-											</div>
-										{/if}
 
-										{#each data.work.stylometryAttribution.groups as group, groupIndex}
-											<div class="flex flex-wrap items-center gap-3">
-												{#each group.members as member, memberIndex}
-													{#if data.work.inAuthorshipExam && isPersonAuthor(member.authorId)}
-														<a
-															href={`/autores/${member.authorId}`}
-															class="inline-flex items-baseline gap-1 font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline"
-														>
-															<span data-i18n-skip={isPersonAuthor(member.authorId) || undefined}>{member.authorName}</span>
-															<span class="hidden flex-none translate-y-[2px] text-text-soft max-md:inline-flex" aria-hidden="true">
-																<ExternalLink class="h-3 w-3" />
-															</span>
-														</a>
-													{:else}
-														<span class="font-medium" data-i18n-skip={isPersonAuthor(member.authorId) || undefined}>{member.authorName}</span>
-													{/if}
-													{#if member.confidence}
-														<span
-															class={`inline-flex rounded-full px-[0.55rem] py-[0.24rem] text-[0.72rem] font-bold tracking-[0.02em] uppercase ${confidenceClass(member.confidence)}`}
-														>
-															{formatAttributionConfidence(member)}
-														</span>
-													{/if}
-													{#if memberIndex < group.members.length - 1}
-														<span
-															class="inline-flex rounded bg-surface-accent-purple px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-text-accent-purple lowercase"
-															data-i18n-skip>{t('y')}</span
-														>
-													{/if}
-												{/each}
-											</div>
-											{#if groupIndex < data.work.stylometryAttribution.groups.length - 1}
-												<span
-													class="inline-flex rounded bg-surface-accent-purple px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-text-accent-purple lowercase"
-												>
-													{connectorLabel(data.work.stylometryAttribution.connector)}
-												</span>
-											{/if}
-										{/each}
-									</div>
-									{/if}
 								{#if data.work.inAuthorshipExam && resultParts.length > 0}
 									<p data-stylometry-result class="m-0 whitespace-pre-line break-words leading-relaxed" data-i18n-skip>{#each resultParts as part}{#if part.kind === 'author' && part.authorId && isPersonAuthor(part.authorId)}<a href={`/autores/${part.authorId}`} class="font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline">{part.value}</a>{:else}{part.value}{/if}{/each}</p>
 								{/if}

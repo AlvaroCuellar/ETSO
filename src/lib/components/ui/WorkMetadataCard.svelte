@@ -4,7 +4,7 @@
 	import ArrowUpRight from 'lucide-svelte/icons/arrow-up-right';
 	import InfoCard from '$lib/components/ui/InfoCard.svelte';
 	import InlineActionButton from '$lib/components/ui/InlineActionButton.svelte';
-	import { formatAttributionConfidence, isPersonAuthor, type CatalogWork, type AttributionSet, type Confidence } from '$lib/domain/catalog';
+	import { isPersonAuthor, type CatalogWork, type AttributionSet } from '$lib/domain/catalog';
 	import { renderInlineItalicsHtml } from '$lib/utils/render-inline-italics-html';
 	import { buildStylometryResultParts } from '$lib/utils/stylometry-result';
 	import { buildTraditionalAttributionParts, type AuthorReference } from '$lib/utils/traditional-attribution-phrase';
@@ -25,7 +25,6 @@
 			.trim();
 
 	const t = (value: string): string => translateText(page.data.locale ?? DEFAULT_LOCALE, value);
-	const connectorLabel = (connector: 'and' | 'or'): string => t(connector === 'and' ? 'y' : 'o');
 
 	const resultAndLabel = (): string => {
 		const labels: Record<string, string> = { es: 'y', en: 'and', fr: 'et', pt: 'e', it: 'e', de: 'und', zh: '和', ja: 'および', ko: '및', ru: 'и', ar: 'و' };
@@ -35,13 +34,6 @@
 		? buildStylometryResultParts({ ...work, result2: undefined }, { translate: t, andLabel: resultAndLabel() }, resultAuthors)
 		: []);
 
-	const confidenceClass = (confidence?: Confidence): string => {
-		if (confidence === 'segura') return 'bg-[#d4edda] text-[#155724]';
-		if (confidence === 'probable') return 'bg-[#d1ecf1] text-[#0c5460]';
-		if (confidence === 'posible') return 'bg-surface-accent-purple text-text-accent-purple';
-		if (confidence === 'no_concluyente') return 'bg-[#fff3cd] text-[#856404]';
-		return 'bg-surface-accent-purple text-text-accent-purple';
-	};
 
 	const hasTraditionalAttribution = (set: AttributionSet): boolean => !set.unresolved && set.groups.length > 0;
 	const hasStylometryAttribution = (set: AttributionSet): boolean =>
@@ -72,7 +64,7 @@
 		{#if hasTraditionalAttribution(work.traditionalAttribution)}
 			<div class="grid content-start gap-1.5">
 				<dt class="m-0 font-ui text-[0.72rem] font-bold uppercase tracking-[0.05em] text-text-soft">
-					{work.collectionSize ? 'Autores de la colección' : 'Atribución tradicional'}
+					{!work.inAuthorshipExam ? 'Autoría' : work.collectionSize ? 'Autores de la colección' : 'Atribución tradicional'}
 				</dt>
 				<dd class="m-0 font-ui text-[0.97rem] leading-[1.65] text-text-main">
 					{#if !work.traditionalAttribution.reviewedPhrase && work.collectionSize && new Set(work.traditionalAttribution.groups.flatMap((group) => group.members.map((member) => member.authorId))).size > 1}<span>Varios</span>{:else}<p class="m-0 break-words leading-relaxed" data-i18n-skip>{#each buildTraditionalAttributionParts(work.traditionalAttribution) as part}{#if work.inAuthorshipExam && part.kind === 'author' && part.authorId && isPersonAuthor(part.authorId)}<a href={`/autores/${part.authorId}`} class="font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline">{part.value}</a>{:else}{part.value}{/if}{/each}</p>{/if}
@@ -80,63 +72,13 @@
 			</div>
 		{/if}
 
-		{#if hasStylometryAttribution(work.stylometryAttribution) || (work.inAuthorshipExam && resultParts.length > 0)}
+		{#if work.inAuthorshipExam && (hasStylometryAttribution(work.stylometryAttribution) || resultParts.length > 0)}
 			<div class="grid content-start gap-1.5">
 				<dt class="m-0 font-ui text-[0.72rem] font-bold uppercase tracking-[0.05em] text-text-soft">
 					Atribución estilométrica
 				</dt>
 				<dd class="m-0 font-ui text-[0.97rem] leading-[1.65] text-text-main">
-					{#if !work.inAuthorshipExam}
-					<div class="flex flex-col items-start gap-[0.65rem]">
-						{#if work.stylometryAttribution.unresolved}
-							<div class="flex flex-wrap items-center gap-3">
-								<span class="font-medium italic text-text-soft">No apunta hacia ningún autor</span>
-								<span
-									class={`inline-flex rounded-full px-[0.55rem] py-[0.24rem] font-ui text-[0.72rem] font-bold leading-none tracking-[0.02em] uppercase ${confidenceClass('no_concluyente')}`}
-								>
-									No concluyente
-								</span>
-							</div>
-						{/if}
 
-						{#each work.stylometryAttribution.groups as group, groupIndex}
-							<div class="flex flex-wrap items-center gap-3">
-								{#each group.members as member, memberIndex}
-									{#if work.inAuthorshipExam && isPersonAuthor(member.authorId)}
-										<a
-											href={`/autores/${member.authorId}`}
-											class="inline-flex items-baseline gap-1 font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline"
-										>
-											<span data-i18n-skip={isPersonAuthor(member.authorId) || undefined}>{member.authorName}</span>
-										</a>
-									{:else}
-										<span class="font-medium" data-i18n-skip={isPersonAuthor(member.authorId) || undefined}>{member.authorName}</span>
-									{/if}
-									{#if member.confidence}
-										<span
-											class={`inline-flex rounded-full px-[0.55rem] py-[0.24rem] font-ui text-[0.72rem] font-bold leading-none tracking-[0.02em] uppercase ${confidenceClass(member.confidence)}`}
-										>
-											{formatAttributionConfidence(member)}
-										</span>
-									{/if}
-									{#if memberIndex < group.members.length - 1}
-										<span
-											class="inline-flex rounded bg-surface-accent-purple px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-text-accent-purple lowercase"
-											data-i18n-skip>{t('y')}</span
-										>
-									{/if}
-								{/each}
-							</div>
-							{#if groupIndex < work.stylometryAttribution.groups.length - 1}
-								<span
-									class="inline-flex rounded bg-surface-accent-purple px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-text-accent-purple lowercase"
-								>
-									{connectorLabel(work.stylometryAttribution.connector)}
-								</span>
-							{/if}
-						{/each}
-					</div>
-					{/if}
 				{#if work.inAuthorshipExam && resultParts.length > 0}
 					<p data-stylometry-result class="m-0 whitespace-pre-line break-words leading-relaxed" data-i18n-skip>{#each resultParts as part}{#if part.kind === 'author' && part.authorId && isPersonAuthor(part.authorId)}<a href={`/autores/${part.authorId}`} class="font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline">{part.value}</a>{:else}{part.value}{/if}{/each}</p>
 				{/if}

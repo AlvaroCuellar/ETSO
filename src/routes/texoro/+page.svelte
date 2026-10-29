@@ -1069,14 +1069,17 @@
 		return set.groups.some((group) => group.members.some((member) => isPersonAuthor(member.authorId))) ? attribution : t(attribution);
 	};
 
+	const resultAuthorshipLabel = (meta: TexoroWorkMeta): string =>
+		!meta.inAuthorshipExam ? 'Autoría' : meta.collectionSize ? 'Autores de la colección' : 'Atribución tradicional';
+
 	const resultMetadataLine = (result: SearchResult): string => {
 		const meta = result.meta;
 		if (!meta) return t('Sin metadatos');
 		const traditional = meta.collectionSize && new Set(meta.traditionalAttribution.groups.flatMap((group) => group.members.map((member) => member.authorId))).size > 1 ? t('Varios') : formatCompactAttribution(meta.traditionalAttribution);
 		const stylometry = formatCompactAttribution(meta.stylometryAttribution, 'No analizada');
 		const genre = t(meta.genre.trim() || 'Sin género');
-		const stylometryLabel = ` · ${t('Atribución estilométrica')} ${stylometry}`;
-		return `${t(meta.collectionSize ? 'Autores de la colección' : 'Atribución tradicional')} ${traditional}${stylometryLabel} · ${t('Género')} ${t(meta.generalGenre || 'Teatro')} · ${t('Subgénero')} ${genre}`;
+		const stylometryLabel = meta.inAuthorshipExam ? ` · ${t('Atribución estilométrica')} ${stylometry}` : '';
+		return `${t(resultAuthorshipLabel(meta))} ${traditional}${stylometryLabel} · ${t('Género')} ${t(meta.generalGenre || 'Teatro')} · ${t('Subgénero')} ${genre}`;
 	};
 
 	const closeTextDropdown = (): void => {
@@ -3013,20 +3016,22 @@
 	>
 		<div class="grid min-w-0 max-w-full content-start">
 			<p class="m-0 text-[0.68rem] leading-[1.2] font-semibold uppercase text-text-accent-purple">
-				{meta.collectionSize ? 'Autores de la colección' : 'Atribución tradicional'}
+				{t(resultAuthorshipLabel(meta))}
 			</p>
 			<p class="m-0 text-[0.86rem] leading-[1.2] text-text-main" data-i18n-skip>
 				{meta.collectionSize && new Set(meta.traditionalAttribution.groups.flatMap((group) => group.members.map((member) => member.authorId))).size > 1 ? t('Varios') : formatCompactAttribution(meta.traditionalAttribution)}
 			</p>
 		</div>
-		<div class="grid min-w-0 max-w-full content-start">
-			<p class="m-0 text-[0.68rem] leading-[1.2] font-semibold uppercase text-text-accent-purple">
-				Atribución estilométrica
-			</p>
-			<p class="m-0 text-[0.86rem] leading-[1.2] text-text-main" data-i18n-skip>
-				{formatCompactAttribution(meta.stylometryAttribution, 'No analizada')}
-			</p>
-		</div>
+		{#if meta.inAuthorshipExam}
+			<div class="grid min-w-0 max-w-full content-start">
+				<p class="m-0 text-[0.68rem] leading-[1.2] font-semibold uppercase text-text-accent-purple">
+					Atribución estilométrica
+				</p>
+				<p class="m-0 text-[0.86rem] leading-[1.2] text-text-main" data-i18n-skip>
+					{formatCompactAttribution(meta.stylometryAttribution, 'No analizada')}
+				</p>
+			</div>
+		{/if}
 		<div class="grid min-w-0 max-w-full content-start">
 			<p class="m-0 text-[0.68rem] leading-[1.2] font-semibold uppercase text-text-accent-purple">Género</p>
 			<p class="m-0 text-[0.86rem] leading-[1.2] text-text-main">{meta.generalGenre || 'Teatro'}</p>
@@ -3124,10 +3129,12 @@
 	<div class="texoro-mobile-metadata grid min-w-0 gap-2">
 		{#if meta}
 			<dl class="m-0 grid min-w-0 grid-cols-[8rem_minmax(0,1fr)] items-baseline gap-x-2.5 gap-y-1 font-['Roboto',sans-serif]">
-				<dt class="text-[0.64rem] font-semibold uppercase leading-snug text-text-accent-purple">{meta.collectionSize ? 'Autores de la colección' : 'Atribución tradicional'}</dt>
+				<dt class="text-[0.64rem] font-semibold uppercase leading-snug text-text-accent-purple">{t(resultAuthorshipLabel(meta))}</dt>
 				<dd class="m-0 min-w-0 break-words text-[0.83rem] leading-snug text-text-main" data-i18n-skip>{meta.collectionSize && new Set(meta.traditionalAttribution.groups.flatMap((group) => group.members.map((member) => member.authorId))).size > 1 ? t('Varios') : formatCompactAttribution(meta.traditionalAttribution)}</dd>
-				<dt class="text-[0.64rem] font-semibold uppercase leading-snug text-text-accent-purple">Atribución estilométrica</dt>
-				<dd class="m-0 min-w-0 break-words text-[0.83rem] leading-snug text-text-main" data-i18n-skip>{formatCompactAttribution(meta.stylometryAttribution, 'No analizada')}</dd>
+				{#if meta.inAuthorshipExam}
+					<dt class="text-[0.64rem] font-semibold uppercase leading-snug text-text-accent-purple">Atribución estilométrica</dt>
+					<dd class="m-0 min-w-0 break-words text-[0.83rem] leading-snug text-text-main" data-i18n-skip>{formatCompactAttribution(meta.stylometryAttribution, 'No analizada')}</dd>
+				{/if}
 			</dl>
 			<p class="m-0 flex min-w-0 flex-wrap items-baseline gap-x-1.5 gap-y-0.5 font-['Roboto',sans-serif] text-[0.75rem] leading-snug text-text-soft">
 				<span title="Género">{meta.generalGenre || 'Teatro'}</span>

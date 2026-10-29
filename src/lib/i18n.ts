@@ -2405,6 +2405,14 @@ for (const locale of SUPPORTED_LOCALES) {
 	});
 }
 
+const authorshipLabels: Record<Exclude<Locale, 'es'>, string> = {
+	en: 'Authorship', fr: 'Auteur', pt: 'Autoria', it: 'Autore', de: 'Autorschaft',
+	zh: '作者', ja: '著者', ko: '저자', ru: 'Авторство', ar: 'التأليف'
+};
+for (const [locale, label] of Object.entries(authorshipLabels)) {
+	literalTranslations[locale as Exclude<Locale, 'es'>]['Autoría'] = label;
+}
+
 const workPaginationLabels: Record<Exclude<Locale, 'es'>, string> = {
 	en: "Works pagination",
 	fr: "Pagination des œuvres",

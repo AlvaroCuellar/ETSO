@@ -70,6 +70,7 @@ const joinUrl = (base: string, path: string): string =>
 
 export const toTexoroWorkMeta = (work: CatalogWork): TexoroWorkMeta => ({
 	id: work.id,
+	inAuthorshipExam: work.inAuthorshipExam,
 	title: work.title,
 	titleVariants: work.titleVariants,
 	slug: work.slug,

@@ -206,6 +206,7 @@ export interface TexoroWildcardLengths {
 
 export interface TexoroWorkMeta {
 	id: string;
+	inAuthorshipExam: boolean;
 	title: string;
 	titleVariants: string[];
 	slug: string;

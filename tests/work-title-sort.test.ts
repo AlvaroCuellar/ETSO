@@ -7,7 +7,7 @@ const titles = ['¿Zorro?', '¡Ay, verdades, que en amor…!', 'Árbol', 'Ñand�
 const results: SearchResult[] = titles.map((title, docId) => ({
 	workId: String(docId), publicId: null, docId, docTokenCount: 0, score: 1, matches: [],
 	meta: {
-		id: String(docId), title, titleVariants: [], slug: String(docId), genre: 'Comedia',
+		id: String(docId), inAuthorshipExam: false, title, titleVariants: [], slug: String(docId), genre: 'Comedia',
 		textState: 'Bueno', shortSummary: '', textLinks: [],
 		traditionalAttribution: { groups: [], connector: 'and' },
 		stylometryAttribution: { groups: [], connector: 'and' }

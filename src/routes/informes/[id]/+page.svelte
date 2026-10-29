@@ -8,7 +8,7 @@
 	import PageHero from '$lib/components/ui/PageHero.svelte';
 	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import informeBg from '$lib/assets/heros/informes.webp';
-	import { ambitoLabels, ambitos, type Ambito, type ObraTableRow } from '$lib/domain/catalog';
+	import { ambitoLabels, ambitos, isPersonAuthor, type Ambito, type ObraTableRow } from '$lib/domain/catalog';
 	import {
 		formatDisplayWorkTitle,
 		formatPrefixedDisplayWorkTitleHtml
@@ -275,7 +275,7 @@
 				</dt>
 				<dd class="m-0 text-base leading-[1.55] text-text-main" data-i18n-skip>
 					{#each traditionalAttributionParts as part}
-						{#if part.kind === 'author' && part.authorId && part.hasAuthorshipExam}
+						{#if data.work.inAuthorshipExam && part.kind === 'author' && part.authorId && isPersonAuthor(part.authorId)}
 							<a href={`/autores/${part.authorId}`} class="font-semibold text-brand-blue underline hover:text-brand-blue-dark focus-visible:text-brand-blue-dark">
 								{part.value}
 							</a>
@@ -393,7 +393,7 @@
 				<div class="grid gap-2">
 					<p class="m-0 text-base leading-[1.62] text-text-main" data-i18n-skip>
 						{#each result1Parts as part}
-							{#if part.kind === 'author' && part.authorId && part.hasAuthorshipExam}
+							{#if data.work.inAuthorshipExam && part.kind === 'author' && part.authorId && isPersonAuthor(part.authorId)}
 								<a href={`/autores/${part.authorId}`} class="font-semibold text-text-main underline hover:text-brand-blue-dark focus-visible:text-brand-blue-dark">
 									{part.value}
 								</a>

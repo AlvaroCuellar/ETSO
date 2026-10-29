@@ -12,7 +12,8 @@ test('compact labels use groups while detailed/API phrases retain the exact appr
 	const reviewed = { ...attribution, reviewedPhrase };
 	assert.equal(formatAttribution(reviewed), reviewedPhrase);
 	assert.equal(formatTraditionalAttributionCompact(reviewed), 'Vargas y Belmonte');
-	assert.deepEqual(buildTraditionalAttributionParts(reviewed), [{ kind: 'text', value: reviewedPhrase }]);
+	assert.equal(buildTraditionalAttributionParts(reviewed).map((part) => part.value).join(''), reviewedPhrase);
+	assert.deepEqual(buildTraditionalAttributionParts(reviewed).filter((part) => part.kind === 'author').map((part) => part.authorId), ['a', 'b']);
 	assert.equal(buildTraditionalAttributionParts(reviewed, { includePhrasePrefix: false }).map((part) => part.value).join(''), reviewedPhrase);
 	assert.equal(reviewed.groups, attribution.groups);
 });

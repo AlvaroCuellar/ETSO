@@ -1,6 +1,6 @@
 import { getAsodatWorkUrl } from '$lib/domain/asodat';
 import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
-import { formatAttribution } from '$lib/domain/catalog';
+import { formatAttribution, isPersonAuthor } from '$lib/domain/catalog';
 import { resolveStylometryResult } from '$lib/utils/stylometry-result';
 import { SITE_URL } from '$lib/seo';
 import {
@@ -126,7 +126,8 @@ const authorPublicIdByKey = (set: AttributionSet): Map<string, number | null> =>
 
 const serializeAttributionPhrase = (
 	parts: AttributionPhrasePart[],
-	publicIdByAuthorKey: Map<string, number | null>
+	publicIdByAuthorKey: Map<string, number | null>,
+	linkAuthors: boolean
 ): PublicAttributionPhrase => {
 	const publicParts: PublicAttributionPhrasePart[] = parts.map((part) =>
 		part.kind === 'author' && part.authorId
@@ -135,7 +136,7 @@ const serializeAttributionPhrase = (
 					value: part.value,
 					authorId: publicIdByAuthorKey.get(part.authorId) ?? null,
 					authorKey: part.authorId,
-					...(part.hasAuthorshipExam ? { href: authorHref(part.authorId), url: authorUrl(part.authorId) } : {}),
+					...(linkAuthors && isPersonAuthor(part.authorId) ? { href: authorHref(part.authorId), url: authorUrl(part.authorId) } : {}),
 				}
 			: {
 					kind: part.kind,
@@ -225,7 +226,8 @@ export const toPublicWorkMetadata = (work: CatalogWork): PublicWorkMetadata => {
 		traditionalAttributionText: formatAttribution(work.traditionalAttribution),
 		traditionalAttributionPhrase: serializeAttributionPhrase(
 			publicTraditionalAttributionParts(work),
-			traditionalAuthorPublicIdByKey
+			traditionalAuthorPublicIdByKey,
+			work.inAuthorshipExam
 		),
 		stylometryAttributionText: formatAttribution(work.stylometryAttribution),
 		traditionalAttribution: toPublicAttributionSet(work.traditionalAttribution),

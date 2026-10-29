@@ -118,11 +118,62 @@ const isUnknownAuthor = (author: AuthorReference): boolean => {
 	return author.authorId === 'desconocido' || author.authorId.startsWith('desconocido_') || normalizedName.startsWith('desconocido');
 };
 
+// Explicit spellings used in the approved prose. Candidates are restricted to
+// the identities already present in this attribution; aliases never add authors.
+const reviewedAuthorAliases: Record<string, string[]> = {
+	calderon_de_la_barca_pedro: ['Calderón'],
+	rojas_zorrilla_francisco_de: ['Rojas Zorrilla'],
+	coello_y_ochoa_antonio: ['Coello'],
+	perez_de_montalban_juan: ['Montalbán'],
+	moreto_y_cavana_agustin: ['Agustín Moreto', 'Moreto'],
+	cancer_jeronimo_de: ['Cáncer'],
+	vega_carpio_lope_de: ['Lope de Vega'],
+	castro_y_bellvis_guillen_de: ['Guillén de Castro'],
+	ulloa_luis: ['Luis de Ulloa Pereira', 'Luis de Ulloa y Pereira'],
+	vera_diego: ['Diego de Vera'],
+	matos_fragoso_juan_de: ['Matos Fragoso'],
+	aguayo_diego_de: ['Diego de Aguayo y Terones']
+};
+
+export const buildReviewedAttributionParts = (set: AttributionSet): AttributionPhrasePart[] => {
+	const phrase = set.reviewedPhrase ?? '';
+	const candidates = new Map<string, AuthorReference | null>();
+	for (const author of attributionGroups(set).flat()) {
+		if (isUnknownAuthor(author)) continue;
+		const names = [author.authorName, author.authorName.replace(/\s+\([^)]*\)$/, ''), ...(reviewedAuthorAliases[author.authorId] ?? [])];
+		for (const name of names) {
+			const key = name.toLocaleLowerCase('es');
+			const previous = candidates.get(key);
+			// An ambiguous spelling must never silently pick one identity.
+			if (previous === null || (previous && previous.authorId !== author.authorId)) candidates.set(key, null);
+			else candidates.set(key, author);
+		}
+	}
+	const matches: { start: number; end: number; author: AuthorReference }[] = [];
+	for (const [name, author] of candidates) {
+		if (!author || !name) continue;
+		const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+		const pattern = new RegExp(`(?<![\\p{L}\\p{N}_])${escaped}(?![\\p{L}\\p{N}_])`, 'giu');
+		for (const match of phrase.matchAll(pattern)) matches.push({ start: match.index!, end: match.index! + match[0].length, author });
+	}
+	matches.sort((a, b) => a.start - b.start || b.end - a.end);
+	const parts: AttributionPhrasePart[] = [];
+	let cursor = 0;
+	for (const match of matches) {
+		if (match.start < cursor) continue;
+		if (match.start > cursor) parts.push({ kind: 'text', value: phrase.slice(cursor, match.start) });
+		parts.push({ kind: 'author', value: phrase.slice(match.start, match.end), authorId: match.author.authorId, hasAuthorshipExam: match.author.hasAuthorshipExam });
+		cursor = match.end;
+	}
+	if (cursor < phrase.length || parts.length === 0) parts.push({ kind: 'text', value: phrase.slice(cursor) });
+	return parts;
+};
+
 export const buildTraditionalAttributionParts = (
 	set: AttributionSet,
 	options: BuildTraditionalAttributionPartsOptions = {}
 ): AttributionPhrasePart[] => {
-	if (set.reviewedPhrase) return [{ kind: 'text', value: set.reviewedPhrase }];
+	if (set.reviewedPhrase) return buildReviewedAttributionParts(set);
 	const includePhrasePrefix = options.includePhrasePrefix ?? true;
 	const translate = options.translate ?? ((value: string) => value);
 	const connectorLabels = options.connectorLabels ?? { and: 'y', or: 'o' };

@@ -13,6 +13,7 @@
 	import {
 		UNRESOLVED_AUTHOR_ID,
 		formatAttributionConfidence,
+		isPersonAuthor,
 		type AttributionSet,
 		type CatalogWork,
 		type Confidence,
@@ -278,7 +279,7 @@
 
 	const connectorLabel = (set: AttributionSet): string => (set.connector === 'and' ? logicOperators.and : logicOperators.or);
 
-	const canLinkAuthor = (authorId: string): boolean => authorId.length > 0 && authorId !== UNRESOLVED_AUTHOR_ID;
+	const canLinkAuthor = (authorId: string): boolean => authorId.length > 0 && isPersonAuthor(authorId);
 
 	const confidenceClass = (confidence?: Confidence): string => {
 		const baseClass =
@@ -376,7 +377,7 @@
 				<span class="autor-group">
 					{#if row.work.traditionalAttribution.groups.length > 1 && group.members.length > 1}<span class="text-text-soft">(</span>{/if}
 					{#each group.members as member, memberIndex}
-						{#if canLinkAuthor(member.authorId) && member.hasAuthorshipExam}
+						{#if row.work.inAuthorshipExam && canLinkAuthor(member.authorId)}
 							<a
 								href={`/autores/${member.authorId}`}
 								class="autor-name inline font-normal text-text-main visited:text-text-main no-underline hover:underline focus:underline focus-visible:underline"
@@ -417,7 +418,7 @@
 			{#each row.work.stylometryAttribution.groups as group, groupIndex}
 				<span class="autor-group">
 					{#each group.members as member, memberIndex}
-						{#if canLinkAuthor(member.authorId) && member.hasAuthorshipExam}
+						{#if row.work.inAuthorshipExam && canLinkAuthor(member.authorId)}
 							<a
 								href={`/autores/${member.authorId}`}
 								class="autor-name inline font-normal text-text-main visited:text-text-main no-underline hover:underline focus:underline focus-visible:underline"

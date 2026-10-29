@@ -6,6 +6,7 @@
 	import InlineActionButton from '$lib/components/ui/InlineActionButton.svelte';
 	import { formatAttributionConfidence, isPersonAuthor, type CatalogWork, type AttributionSet, type Confidence } from '$lib/domain/catalog';
 	import { renderInlineItalicsHtml } from '$lib/utils/render-inline-italics-html';
+	import { buildTraditionalAttributionParts } from '$lib/utils/traditional-attribution-phrase';
 
 	interface Props {
 		work: CatalogWork;
@@ -64,37 +65,7 @@
 					{work.collectionSize ? 'Autores de la colección' : 'Atribución tradicional'}
 				</dt>
 				<dd class="m-0 font-ui text-[0.97rem] leading-[1.65] text-text-main">
-					{#if work.traditionalAttribution.reviewedPhrase}<p class="m-0 break-words leading-relaxed" data-i18n-skip>{work.traditionalAttribution.reviewedPhrase}</p>{:else if work.collectionSize && new Set(work.traditionalAttribution.groups.flatMap((group) => group.members.map((member) => member.authorId))).size > 1}<span>Varios</span>{:else}<div class="flex flex-col items-start gap-[0.65rem]">
-						{#each work.traditionalAttribution.groups as group, groupIndex}
-							<div class="flex flex-wrap items-center gap-3">
-								{#each group.members as member, memberIndex}
-									{#if member.hasAuthorshipExam}
-										<a
-											href={`/autores/${member.authorId}`}
-											class="inline-flex items-baseline gap-1 font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline"
-										>
-											<span data-i18n-skip={isPersonAuthor(member.authorId) || undefined}>{member.authorName}</span>
-										</a>
-									{:else}
-										<span class="font-medium" data-i18n-skip={isPersonAuthor(member.authorId) || undefined}>{member.authorName}</span>
-									{/if}
-									{#if memberIndex < group.members.length - 1}
-										<span
-											class="inline-flex rounded bg-surface-accent-purple px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-text-accent-purple lowercase"
-											data-i18n-skip>{t('y')}</span
-										>
-									{/if}
-								{/each}
-							</div>
-							{#if groupIndex < work.traditionalAttribution.groups.length - 1}
-								<span
-									class="inline-flex rounded bg-surface-accent-purple px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-text-accent-purple lowercase"
-								>
-									{connectorLabel(work.traditionalAttribution.connector)}
-								</span>
-							{/if}
-						{/each}
-					</div>{/if}
+					{#if !work.traditionalAttribution.reviewedPhrase && work.collectionSize && new Set(work.traditionalAttribution.groups.flatMap((group) => group.members.map((member) => member.authorId))).size > 1}<span>Varios</span>{:else}<p class="m-0 break-words leading-relaxed" data-i18n-skip>{#each buildTraditionalAttributionParts(work.traditionalAttribution) as part}{#if work.inAuthorshipExam && part.kind === 'author' && part.authorId && isPersonAuthor(part.authorId)}<a href={`/autores/${part.authorId}`} class="font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline">{part.value}</a>{:else}{part.value}{/if}{/each}</p>{/if}
 				</dd>
 			</div>
 		{/if}
@@ -120,7 +91,7 @@
 						{#each work.stylometryAttribution.groups as group, groupIndex}
 							<div class="flex flex-wrap items-center gap-3">
 								{#each group.members as member, memberIndex}
-									{#if member.hasAuthorshipExam}
+									{#if work.inAuthorshipExam && isPersonAuthor(member.authorId)}
 										<a
 											href={`/autores/${member.authorId}`}
 											class="inline-flex items-baseline gap-1 font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline"

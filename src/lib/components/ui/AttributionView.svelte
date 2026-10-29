@@ -1,21 +1,22 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { DEFAULT_LOCALE, translateText } from '$lib/i18n';
-	import { formatAttributionConfidence, type AttributionSet } from '$lib/domain/catalog';
+	import { formatAttributionConfidence, isPersonAuthor, type AttributionSet } from '$lib/domain/catalog';
+	import { buildTraditionalAttributionParts } from '$lib/utils/traditional-attribution-phrase';
 
 	interface Props {
 		set: AttributionSet;
 		linkAuthors?: boolean;
 	}
 
-	let { set, linkAuthors = true }: Props = $props();
+	let { set, linkAuthors = false }: Props = $props();
 
 	const t = (value: string): string => translateText(page.data.locale ?? DEFAULT_LOCALE, value);
 	const connectorLabel = (connector: 'and' | 'or'): string => t(connector === 'and' ? 'y' : 'o');
 </script>
 
 {#if set.reviewedPhrase}
-	<p class="m-0 leading-relaxed" data-i18n-skip>{set.reviewedPhrase}</p>
+	<p class="reviewed-phrase m-0 leading-relaxed" data-i18n-skip>{#each buildTraditionalAttributionParts(set) as part}{#if linkAuthors && part.kind === 'author' && part.authorId && isPersonAuthor(part.authorId)}<a href={`/autores/${part.authorId}`}>{part.value}</a>{:else}{part.value}{/if}{/each}</p>
 {:else if set.unresolved}
 	<p class="unresolved-copy">El analisis no apunta hacia ningun autor.</p>
 {:else if !set.groups.length}
@@ -25,7 +26,7 @@
 		{#each set.groups as group, groupIndex}
 			<span class="attribution-group">
 				{#each group.members as member, memberIndex}
-					{#if linkAuthors && member.hasAuthorshipExam}
+					{#if linkAuthors && isPersonAuthor(member.authorId)}
 						<a href={`/autores/${member.authorId}`} data-i18n-skip={member.authorId !== 'desconocido' || undefined}>{member.authorName}</a>
 					{:else}
 						<span data-i18n-skip={member.authorId !== 'desconocido' || undefined}>{member.authorName}</span>
@@ -77,13 +78,15 @@
 		gap: 0.28rem;
 	}
 
-	.attribution-group a {
+	.attribution-group a,
+	.reviewed-phrase a {
 		color: var(--color-brand-blue);
 		text-decoration: none;
 		font-weight: 500;
 	}
 
-	.attribution-group a:hover {
+	.attribution-group a:hover,
+	.reviewed-phrase a:hover {
 		text-decoration: underline;
 	}
 

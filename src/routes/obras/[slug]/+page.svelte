@@ -20,6 +20,7 @@
 	import ExternalLink from 'lucide-svelte/icons/external-link';
 	import { formatDisplayWorkTitle, formatDisplayWorkTitleList } from '$lib/utils/format-display-work-title';
 	import { renderInlineItalicsHtml } from '$lib/utils/render-inline-italics-html';
+	import { buildTraditionalAttributionParts } from '$lib/utils/traditional-attribution-phrase';
 
 	import type { PageData } from './$types';
 
@@ -162,40 +163,7 @@
 							<div class={attributionBlockClass}>
 								<h3 class={attributionHeadingClass}>{data.work.collectionSize ? 'Autores de la colección' : 'Atribución tradicional'}</h3>
 								<div class="text-[0.97rem] leading-[1.6] text-text-main">
-									{#if data.work.traditionalAttribution.reviewedPhrase}<p class="m-0 break-words leading-relaxed" data-i18n-skip>{data.work.traditionalAttribution.reviewedPhrase}</p>{:else if data.work.collectionSize && new Set(data.work.traditionalAttribution.groups.flatMap((group) => group.members.map((member) => member.authorId))).size > 1}<span>Varios</span>{:else}<div class="flex flex-col items-start gap-[0.65rem]">
-										{#each data.work.traditionalAttribution.groups as group, groupIndex}
-											<div class="flex flex-wrap items-center gap-3">
-												{#each group.members as member, memberIndex}
-													{#if member.hasAuthorshipExam}
-														<a
-															href={`/autores/${member.authorId}`}
-															class="inline-flex items-baseline gap-1 font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline"
-														>
-															<span data-i18n-skip={isPersonAuthor(member.authorId) || undefined}>{member.authorName}</span>
-															<span class="hidden flex-none translate-y-[2px] text-text-soft max-md:inline-flex" aria-hidden="true">
-																<ExternalLink class="h-3 w-3" />
-															</span>
-														</a>
-													{:else}
-														<span class="font-medium" data-i18n-skip={isPersonAuthor(member.authorId) || undefined}>{member.authorName}</span>
-													{/if}
-													{#if memberIndex < group.members.length - 1}
-														<span
-															class="inline-flex rounded bg-surface-accent-purple px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-text-accent-purple lowercase"
-															data-i18n-skip>{t('y')}</span
-														>
-													{/if}
-												{/each}
-											</div>
-											{#if groupIndex < data.work.traditionalAttribution.groups.length - 1}
-												<span
-													class="inline-flex rounded bg-surface-accent-purple px-[0.45rem] py-[0.2rem] text-[0.72rem] font-bold text-text-accent-purple lowercase"
-												>
-													{connectorLabel(data.work.traditionalAttribution.connector)}
-												</span>
-											{/if}
-										{/each}
-									</div>{/if}
+									{#if !data.work.traditionalAttribution.reviewedPhrase && data.work.collectionSize && new Set(data.work.traditionalAttribution.groups.flatMap((group) => group.members.map((member) => member.authorId))).size > 1}<span>Varios</span>{:else}<p class="m-0 break-words leading-relaxed" data-i18n-skip>{#each buildTraditionalAttributionParts(data.work.traditionalAttribution) as part}{#if data.work.inAuthorshipExam && part.kind === 'author' && part.authorId && isPersonAuthor(part.authorId)}<a href={`/autores/${part.authorId}`} class="font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline">{part.value}</a>{:else}{part.value}{/if}{/each}</p>{/if}
 								</div>
 							</div>
 						{/if}
@@ -219,7 +187,7 @@
 										{#each data.work.stylometryAttribution.groups as group, groupIndex}
 											<div class="flex flex-wrap items-center gap-3">
 												{#each group.members as member, memberIndex}
-													{#if member.hasAuthorshipExam}
+													{#if data.work.inAuthorshipExam && isPersonAuthor(member.authorId)}
 														<a
 															href={`/autores/${member.authorId}`}
 															class="inline-flex items-baseline gap-1 font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline"

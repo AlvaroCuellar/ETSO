@@ -1,0 +1,64 @@
+{
+  "archivo": "TEXORO_gutenberg_lascasas_historia_indias.txt",
+  "titulo": "Historia de las Indias",
+  "resumen_largo": [
+    "Bartolomé de las Casas presenta la historia de las Indias como una investigación de los hechos y, al mismo tiempo, como una responsabilidad moral. Su relato retrocede a los antecedentes de los descubrimientos y a las noticias geográficas que hicieron pensable la navegación hacia Occidente. Desde ese marco introduce a Cristóbal Colón, sus proyectos, las dificultades para conseguir apoyo y los viajes que pusieron en contacto a castellanos y poblaciones americanas. Las descripciones de islas, costas y habitantes permiten seguir la experiencia de los navegantes, pero también contrastar sus primeras impresiones favorables con la violencia que se desarrollará después. La Española ocupa un lugar central: allí se ensayan establecimientos, se imponen tributos y se forman relaciones de dominio cuyos efectos atraviesan toda la obra. Colón aparece como protagonista de una empresa extraordinaria y como gobernante cuyas decisiones el historiador no renuncia a juzgar. Las Casas utiliza relaciones de viajes, cartas y noticias de quienes participaron en los sucesos, distingue lo conocido personalmente de lo recibido y discute las versiones que considera falsas o interesadas. Las digresiones sobre geografía, religión y derecho no interrumpen una simple sucesión de aventuras: ayudan a decidir qué significado tienen los acontecimientos y quién responde por sus consecuencias.",
+    "El avance de la colonización conduce a cambios de gobierno, enfrentamientos entre españoles y nuevas expediciones por las islas y Tierra Firme. La actuación de los Colón, Bobadilla, Ovando y otros responsables se entrelaza con guerras, repartimientos y trabajos impuestos a los indígenas. La obtención de oro y de mano de obra mueve empresas que sus promotores presentan como servicio a la Corona o extensión de la fe. Las Casas insiste en el contraste entre esas razones y los procedimientos utilizados: engaños, capturas, castigos y desplazamientos destruyen comunidades que disponían de autoridades y formas propias de vida. La crónica muestra además cómo las rivalidades entre conquistadores y gobernadores generan denuncias, procesos y cambios de mando sin remediar necesariamente el daño. El Caribe se conecta con el Darién y otras regiones continentales, mientras Castilla aparece como el lugar donde se solicitan cargos, se reciben informaciones y se autorizan medidas cuyos resultados afectan a poblaciones lejanas. A la descripción del territorio y sus recursos acompaña siempre la pregunta por la legitimidad de apropiarse de ellos y de someter a sus habitantes. El narrador atribuye responsabilidad tanto a quienes ejecutan la violencia como a quienes la permiten, la encubren o se benefician de ella.",
+    "En los episodios posteriores adquieren relieve la predicación de los dominicos, las controversias sobre el trato a los indígenas y las gestiones del propio Las Casas. Su presencia introduce recuerdos de conversaciones, peticiones y proyectos que buscan transformar el gobierno de las Indias. Las propuestas de reforma se enfrentan a intereses económicos, resistencias políticas y noticias manipuladas, de modo que el relato de las conquistas se convierte también en historia de las dificultades para corregirlas. La perspectiva cristiana del autor no identifica evangelización y dominio: defiende que la fe debe comunicarse sin coacción y que la diferencia religiosa no anula la libertad ni los señoríos indígenas. Por eso somete a crítica los argumentos que convierten la negativa a obedecer a los españoles en una causa de guerra. Los tres libros concluyen con una censura de los requerimientos pronunciados ante gentes que ni siquiera entienden su lengua. La discusión final de los plazos concedidos para aceptar la sumisión expone, para Las Casas, una ignorancia profunda de la justicia. Su acusación alcanza al Consejo real, origen de aquellas disposiciones, y cierra la obra con el deseo de que esa ceguera haya desaparecido."
+  ],
+  "resumen_breve": [
+    "Bartolomé de las Casas reconstruye los viajes de Colón y las primeras décadas de la presencia española en el Caribe y Tierra Firme. La exploración desemboca en establecimientos, disputas de gobierno, guerras y explotación de las comunidades indígenas.",
+    "El relato combina documentos, testimonios y recuerdos con el examen de las decisiones de conquistadores, autoridades y religiosos. Frente a las justificaciones de la violencia, sostiene la dignidad de los indígenas, la legitimidad de sus señores y su libertad para recibir la fe.",
+    "La crónica incorpora también las gestiones reformadoras del propio Las Casas y termina censurando los requerimientos de sumisión y la responsabilidad del Consejo real en los abusos."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Bartolomé de las Casas",
+      "descripcion": "Historiador, testigo y voz crítica que interpreta las acciones de conquistadores, autoridades y religiosos."
+    },
+    {
+      "nombre": "Cristóbal Colón",
+      "descripcion": "Figura central de los primeros viajes y del gobierno inicial de las islas."
+    },
+    {
+      "nombre": "Pueblos y señores indígenas",
+      "descripcion": "Comunidades afectadas por la conquista, cuya dignidad, jurisdicción y capacidad de gobierno defiende el autor."
+    },
+    {
+      "nombre": "Gobernadores y conquistadores españoles",
+      "descripcion": "Agentes de exploración, colonización y conflictos políticos cuyas actuaciones son sometidas a examen moral y jurídico."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "La Española y el Caribe",
+      "descripcion": "Ámbito principal de los primeros establecimientos, gobiernos y conflictos coloniales."
+    },
+    {
+      "nombre": "Tierra Firme y el Darién",
+      "descripcion": "Espacios de expediciones, conquistas y disputas de autoridad."
+    },
+    {
+      "nombre": "Castilla",
+      "descripcion": "Sede de decisiones monárquicas y de debates sobre la legitimidad de la actuación española en las Indias."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Escritura de la historia",
+      "descripcion": "Reflexión sobre fuentes, verdad y responsabilidad del historiador."
+    },
+    {
+      "tema": "Conquista y justicia",
+      "descripcion": "Examen de la legitimidad de las guerras, la dominación y la esclavización."
+    },
+    {
+      "tema": "Derechos de los pueblos indígenas",
+      "descripcion": "Defensa de sus autoridades, comunidades y capacidad de gobierno."
+    },
+    {
+      "tema": "Evangelización",
+      "descripcion": "Discusión de las obligaciones cristianas y de su incompatibilidad con los abusos coloniales."
+    }
+  ]
+}

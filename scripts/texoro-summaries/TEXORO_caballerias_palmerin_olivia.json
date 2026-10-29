@@ -1,0 +1,52 @@
+{
+  "archivo": "TEXORO_caballerias_palmerin_olivia.txt",
+  "titulo": "Palmerín de Olivia",
+  "resumen_largo": [
+    "Los amores de Griana, hija del emperador de Constantinopla, y Florendos, príncipe de Macedonia, chocan con el matrimonio dispuesto para ella con Tarisio. La separación de los amantes y el nacimiento de un hijo mantenido en secreto dan origen a la historia de Palmerín. Geraldo encuentra al niño en la montaña y lo cría como suyo, de manera que el futuro héroe crece sin conocer su verdadera ascendencia. El descubrimiento de que no pertenece a la familia que lo ha educado y la llamada de la caballería lo impulsan a abandonar aquel ámbito. En Macedonia recibe las armas de manos de Florendos, sin que ambos sepan todavía que son padre e hijo. Entre sus primeras empresas destaca la muerte de una sierpe y la obtención del agua de una fuente custodiada por hadas. El remedio que trae y los combates en defensa de damas amenazadas hacen crecer su reputación. Sus esperanzas amorosas, alentadas por un sueño, encuentran primero objetos equivocados, hasta que llega a la corte del emperador de Alemania y conoce a Polinarda. Los servicios, mensajes y encuentros secretos de ambos establecen una relación que culmina en el compromiso de permanecer unidos a pesar de las separaciones.",
+    "Palmerín se vincula también a Trineo, hijo del emperador alemán, y lo ayuda en sus amores con Agriola. La intervención de los caballeros en la guerra de Inglaterra y la protección prestada a la familia real preparan esa unión. Pero la captura de Trineo, Agriola y otros compañeros por los turcos dispersa al grupo y obliga al héroe a emprender una larga búsqueda. En las cortes musulmanas oculta en ocasiones su identidad y llega a fingirse mudo. La hija del soldán, Alchidiana, lo protege y se enamora de él, mientras él combate a sus acusadores y presta servicios militares sin abandonar su vínculo con Polinarda. Las pretensiones amorosas de otras mujeres introducen engaños y conflictos que la fuerza de las armas no basta para resolver. Paralelamente, los padres del protagonista vuelven a encontrarse: Florendos mata a Tarisio y queda preso junto a Griana. Palmerín interviene en su defensa y el reconocimiento posterior descubre los lazos familiares ignorados. El niño criado en la montaña resulta heredero de un linaje real. La celebración de sus bodas y el reconocimiento público de sus derechos recompensan sus hazañas, pero no lo apartan del deber de recuperar a los amigos que aún siguen desaparecidos.",
+    "La búsqueda lleva al protagonista a nuevos cautiverios y territorios maravillosos. Agriola es liberada del poder del gran turco, pero las peripecias de la isla de Malfado vuelven a separar a los viajeros. Trineo ha sido transformado en perro y permanece junto a la infanta Zerfira; la reparación de ese encantamiento exige que Palmerín supere otras pruebas, afronte criaturas peligrosas y obtenga ayuda de conocedores de las artes mágicas. El castillo de los Diez Padrones forma parte de ese recorrido de liberación y restitución de identidades. El retorno de los compañeros permite recomponer parejas y amistades, mientras los contactos entre soberanos organizan matrimonios y alianzas. Ya como emperador, Palmerín debe seguir atendiendo rescates y amenazas dirigidas contra su persona o sus allegados. La nueva generación de caballeros entra en acción y contribuye a recuperar a Olorique, mostrando que la defensa de la corte no descansa únicamente en su fundador. Las despedidas de Alchidiana y otros visitantes producen soledad en el emperador. Una doncella llega entonces con el anuncio de caballeros todavía más extraordinarios; varios jóvenes salen tras ella para conocer su identidad. La narración se detiene ante esa nueva búsqueda y reserva sus aventuras para la continuación, llamada Primaleón."
+  ],
+  "resumen_breve": [
+    "Palmerín nace de los amores secretos de Griana y Florendos y es criado lejos de la corte por Geraldo. Sin conocer a sus padres, se hace caballero y emprende aventuras que revelan su valor y lo acercan a Polinarda, a quien entrega su amor.",
+    "Las guerras y los viajes lo llevan por cortes cristianas y musulmanas. La pérdida de sus compañeros, especialmente Trineo y Agriola, obliga al héroe a afrontar cautiverios, identidades fingidas y encantamientos para recuperarlos.",
+    "El reconocimiento de su linaje y su matrimonio con Polinarda consolidan su posición como emperador, pero no interrumpen los rescates ni las amenazas contra su corte. Al final, una doncella anuncia la llegada de nuevos caballeros y abre futuras aventuras."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Palmerín",
+      "descripcion": "Caballero protagonista de los viajes y empresas de ayuda."
+    },
+    {
+      "nombre": "Griana",
+      "descripcion": "Infanta cuyos vínculos matrimoniales forman parte del comienzo."
+    },
+    {
+      "nombre": "Estebón",
+      "descripcion": "Personaje al que Palmerín libera junto con sus hijos."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Constantinopla",
+      "descripcion": "Corte imperial vinculada con el linaje del protagonista."
+    },
+    {
+      "nombre": "Isla de Malfado",
+      "descripcion": "Escenario de la separación de Palmerín y sus compañeros."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Linaje y aventura",
+      "descripcion": "Los planes de matrimonio de Griana y los conflictos de la corte imperial introducen la historia de Palmerín."
+    },
+    {
+      "tema": "Cautiverio y liberación",
+      "descripcion": "Palmerín interviene para librar a cautivos y auxiliar a personas amenazadas, y sus aventuras lo acercan a las cortes de distintos soberanos."
+    },
+    {
+      "tema": "Continuidad del ciclo",
+      "descripcion": "La recuperación de compañeros y la organización de los vínculos entre reinos conducen a nuevas despedidas."
+    }
+  ]
+}

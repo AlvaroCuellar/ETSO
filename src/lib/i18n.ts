@@ -150,10 +150,10 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.citation, label: 'Cómo citarnos' }
 			],
 			infoItems: [
+				{ href: navHrefs.team, label: 'Equipo' },
+				{ href: navHrefs.transcriptions, label: 'Transcripciones automáticas' },
 				{ href: navHrefs.impact, label: 'Repercusión' },
 				{ href: navHrefs.api, label: 'API' },
-				{ href: navHrefs.transcriptions, label: 'Transcripciones automáticas' },
-				{ href: navHrefs.team, label: 'Equipo' },
 				{ href: navHrefs.contact, label: 'Contacto' }
 			]
 		},
@@ -192,10 +192,10 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.citation, label: 'How to cite us' }
 			],
 			infoItems: [
+				{ href: navHrefs.team, label: 'Team' },
+				{ href: navHrefs.transcriptions, label: 'Automatic transcriptions' },
 				{ href: navHrefs.impact, label: 'Impact' },
 				{ href: navHrefs.api, label: 'API' },
-				{ href: navHrefs.transcriptions, label: 'Automatic transcriptions' },
-				{ href: navHrefs.team, label: 'Team' },
 				{ href: navHrefs.contact, label: 'Contact' }
 			]
 		},
@@ -234,10 +234,10 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.citation, label: 'Comment nous citer' }
 			],
 			infoItems: [
+				{ href: navHrefs.team, label: 'Équipe' },
+				{ href: navHrefs.transcriptions, label: 'Transcriptions automatiques' },
 				{ href: navHrefs.impact, label: 'Retombées' },
 				{ href: navHrefs.api, label: 'API' },
-				{ href: navHrefs.transcriptions, label: 'Transcriptions automatiques' },
-				{ href: navHrefs.team, label: 'Équipe' },
 				{ href: navHrefs.contact, label: 'Contact' }
 			]
 		},
@@ -276,10 +276,10 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.citation, label: 'Como nos citar' }
 			],
 			infoItems: [
+				{ href: navHrefs.team, label: 'Equipe' },
+				{ href: navHrefs.transcriptions, label: 'Transcrições automáticas' },
 				{ href: navHrefs.impact, label: 'Repercussão' },
 				{ href: navHrefs.api, label: 'API' },
-				{ href: navHrefs.transcriptions, label: 'Transcrições automáticas' },
-				{ href: navHrefs.team, label: 'Equipe' },
 				{ href: navHrefs.contact, label: 'Contato' }
 			]
 		},
@@ -318,10 +318,10 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.citation, label: 'Come citarci' }
 			],
 			infoItems: [
+				{ href: navHrefs.team, label: 'Team' },
+				{ href: navHrefs.transcriptions, label: 'Trascrizioni automatiche' },
 				{ href: navHrefs.impact, label: 'Ripercussione' },
 				{ href: navHrefs.api, label: 'API' },
-				{ href: navHrefs.transcriptions, label: 'Trascrizioni automatiche' },
-				{ href: navHrefs.team, label: 'Team' },
 				{ href: navHrefs.contact, label: 'Contatto' }
 			]
 		},
@@ -360,10 +360,10 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.citation, label: 'Zitierweise' }
 			],
 			infoItems: [
+				{ href: navHrefs.team, label: 'Team' },
+				{ href: navHrefs.transcriptions, label: 'Automatische Transkriptionen' },
 				{ href: navHrefs.impact, label: 'Auswirkung' },
 				{ href: navHrefs.api, label: 'API' },
-				{ href: navHrefs.transcriptions, label: 'Automatische Transkriptionen' },
-				{ href: navHrefs.team, label: 'Team' },
 				{ href: navHrefs.contact, label: 'Kontakt' }
 			]
 		},
@@ -402,10 +402,10 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.citation, label: '引用方式' }
 			],
 			infoItems: [
+				{ href: navHrefs.team, label: '团队' },
+				{ href: navHrefs.transcriptions, label: '自动转录' },
 				{ href: navHrefs.impact, label: '影响' },
 				{ href: navHrefs.api, label: 'API' },
-				{ href: navHrefs.transcriptions, label: '自动转录' },
-				{ href: navHrefs.team, label: '团队' },
 				{ href: navHrefs.contact, label: '联系' }
 			]
 		},
@@ -444,10 +444,10 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.citation, label: '引用方法' }
 			],
 			infoItems: [
+				{ href: navHrefs.team, label: 'チーム' },
+				{ href: navHrefs.transcriptions, label: '自動転写' },
 				{ href: navHrefs.impact, label: '反響' },
 				{ href: navHrefs.api, label: 'API' },
-				{ href: navHrefs.transcriptions, label: '自動転写' },
-				{ href: navHrefs.team, label: 'チーム' },
 				{ href: navHrefs.contact, label: 'お問い合わせ' }
 			]
 		},
@@ -486,10 +486,10 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.citation, label: '인용 방법' }
 			],
 			infoItems: [
+				{ href: navHrefs.team, label: '팀' },
+				{ href: navHrefs.transcriptions, label: '자동 전사' },
 				{ href: navHrefs.impact, label: '반향' },
 				{ href: navHrefs.api, label: 'API' },
-				{ href: navHrefs.transcriptions, label: '자동 전사' },
-				{ href: navHrefs.team, label: '팀' },
 				{ href: navHrefs.contact, label: '문의' }
 			]
 		},
@@ -528,10 +528,10 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.citation, label: 'Как цитировать' }
 			],
 			infoItems: [
+				{ href: navHrefs.team, label: 'Команда' },
+				{ href: navHrefs.transcriptions, label: 'Автоматические транскрипции' },
 				{ href: navHrefs.impact, label: 'Последствия' },
 				{ href: navHrefs.api, label: 'API' },
-				{ href: navHrefs.transcriptions, label: 'Автоматические транскрипции' },
-				{ href: navHrefs.team, label: 'Команда' },
 				{ href: navHrefs.contact, label: 'Контакты' }
 			]
 		},
@@ -570,10 +570,10 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.citation, label: 'كيفية الاستشهاد بنا' }
 			],
 			infoItems: [
+				{ href: navHrefs.team, label: 'الفريق' },
+				{ href: navHrefs.transcriptions, label: 'النسخ الآلي' },
 				{ href: navHrefs.impact, label: 'الأثر' },
 				{ href: navHrefs.api, label: 'API' },
-				{ href: navHrefs.transcriptions, label: 'النسخ الآلي' },
-				{ href: navHrefs.team, label: 'الفريق' },
 				{ href: navHrefs.contact, label: 'التواصل' }
 			]
 		},

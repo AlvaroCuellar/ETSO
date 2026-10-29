@@ -1,0 +1,56 @@
+{
+  "archivo": "TEXORO_impact_1048.txt",
+  "titulo": "El nacimiento de la Verdad",
+  "resumen_largo": [
+    "La Verdad nace en un lugar grande y poco poblado, hija de la Razón y el Desengaño. Su genealogía anuncia que no es una muchacha corriente, sino una figura alegórica capaz de comprender los motivos ocultos de las acciones humanas. Es hermosa, pobre y sabia, pero su compañía pronto resulta incómoda. Quienes se dicen amigos de ella la ayudan muy poco, y los que la desean de nombre no siempre quieren escucharla. Su actividad comienza al entrar en una casa donde un marido soporta las exigencias de su mujer, que reclama vestidos y adornos. La aparición de la suegra refuerza el conflicto doméstico y da ocasión a las primeras respuestas satíricas. La Verdad comenta la distancia entre las declaraciones de amor y los actos que causan tormento, así como los gastos y rivalidades que alimentan las conversaciones. Las iglesias tampoco quedan libres de ese desorden: pueden convertirse en lugares de exhibición y murmuración en vez de recogimiento. El relato no avanza hacia una empresa única, sino mediante encuentros sucesivos en los que la protagonista responde preguntas, escucha disputas o descubre una explicación menos honrosa de lo que parece.",
+    "A lo largo de ese recorrido, distintos oficios y estados sociales ofrecen materia para la crítica. La maledicencia provoca heridas y pleitos; la apariencia de valentía puede ocultar miedo o simple afán de reputación; los médicos y otros profesionales no escapan a los juegos de palabras que ponen en duda sus saberes. La Verdad llega a buscar un oficio con que mantenerse, pues su discreción no impide que padezca soledad y hambre. En cada intervención contrapone los nombres prestigiosos a las prácticas efectivas. Así ocurre con la devoción que sirve para encubrir intereses, con la crianza que facilita tratos deshonestos o con los matrimonios formados sin medios para sostener una casa. La sátira dedica mucho espacio a las relaciones entre hombres y mujeres, a las madres, tías y mediadoras y a la circulación de regalos, vestidos y dinero. También distingue entre la necesidad real, que impide sustentarse, y los deseos superfluos que la costumbre convierte falsamente en obligaciones. Las escenas se desarrollan mediante diálogos, preguntas y respuestas que desmontan refranes, fórmulas respetables y explicaciones interesadas. La crítica no siempre llega a pronunciarse delante de quienes la merecen: en ocasiones la protagonista reflexiona para sí, de modo que el lector conoce lo que las personas retratadas preferirían ignorar.",
+    "El conocimiento de la Verdad la hace famosa, pero no le asegura un sitio en el mundo. Un hidalgo puede invitarla a comer y negarse a recibirla por la noche; otras personas aceptan su conversación mientras no las contradice. Sus desplazamientos por ciudades y aldeas confirman que el rechazo no pertenece a un único grupo. En los lugares pequeños llega a encontrar una resistencia colectiva que la obliga a dormir al descubierto. Decide volver adonde nació y, durante el camino, sigue explicando los dichos y corrigiendo las ideas de sus acompañantes. La última tentativa de acomodo parece ofrecer una solución material: entra en casa de una señora y recibe las tocas propias de una dueña. Sin embargo, cuando declara que se llama Verdad, la señora ordena desvestirla y echarla, porque se reconoce amiga de mentir. Los criados rematan la expulsión afirmando que una casa donde viva la verdad terminará en hambre y desnudez. Desamparada, busca amparo en la iglesia y entra por una puerta que cree apropiada, pero se encuentra entre monjas. La hora avanzada la obliga a pasar allí la noche. Lo que observa, especialmente ciertas devociones, tampoco responde a lo que exige, y antes de amanecer busca salida. El cierre prolonga así la falta de refugio: la Verdad no ha encontrado una comunidad capaz de admitir sin reservas lo que dice y decide acogerse a una iglesia donde no haya monjas."
+  ],
+  "resumen_breve": [
+    "La Verdad, hija de la Razón y el Desengaño, recorre un mundo que elogia su nombre y rechaza su presencia. Dotada de sabiduría y franqueza, interviene en riñas domésticas, negocios, conversaciones y problemas de reputación, descubriendo lo que las apariencias procuran ocultar.",
+    "Sus respuestas desenmascaran la vanidad, la falsa devoción, la codicia y los intereses que gobiernan matrimonios y amistades. Pero decir lo que sabe no le proporciona alimento ni alojamiento: quienes desean oírla cambian de actitud cuando se reconocen en sus críticas.",
+    "Tras pasar por ciudades y aldeas, intenta entrar al servicio de una señora y acaba expulsada. Busca refugio en una iglesia, encuentra una comunidad de monjas que tampoco la satisface y vuelve a marcharse antes del amanecer."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "La Verdad",
+      "descripcion": "Personificación alegórica y protagonista del recorrido satírico."
+    },
+    {
+      "nombre": "La Razón",
+      "descripcion": "Figura presentada como uno de sus progenitores."
+    },
+    {
+      "nombre": "El Desengaño",
+      "descripcion": "Figura que completa la genealogía alegórica de la protagonista."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Ciudades y caminos",
+      "descripcion": "Sucesivos ámbitos del recorrido de la Verdad."
+    },
+    {
+      "nombre": "Portugal y Granada",
+      "descripcion": "Lugares mencionados entre sus desplazamientos."
+    },
+    {
+      "nombre": "Iglesias y comunidad de monjas",
+      "descripcion": "Espacios de la búsqueda final de refugio."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Verdad e hipocresía",
+      "descripcion": "Decir lo que se piensa entra en conflicto con la convivencia interesada."
+    },
+    {
+      "tema": "Sátira social",
+      "descripcion": "Se examinan oficios, matrimonios y prácticas religiosas."
+    },
+    {
+      "tema": "Alegoría",
+      "descripcion": "Conceptos abstractos actúan como personajes de una narración."
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "archivo": "TEXORO_impact_1011.txt",
+  "titulo": "Epistolario espiritual (selección de veintitrés cartas)",
+  "resumen_largo": [
+    "La selección reúne veintitrés cartas en las que Juan de Ávila responde a consultas y noticias sobre la vida espiritual de sus destinatarios. El consejo se adapta a su oficio, condición y estado de ánimo: unas veces anima a quien empieza una tarea religiosa; otras corrige la confianza excesiva en las propias fuerzas o consuela a quien se siente abandonado. Las primeras diez cartas se concentran en predicadores y sacerdotes. La predicación aparece como una paternidad espiritual que exige procurar el bien de los oyentes, sufrir por ellos y atribuir a Dios los frutos obtenidos. No basta poseer conocimientos o facilidad de palabra: el ministro necesita oración, humildad, caridad y coherencia entre doctrina y conducta. La persecución y el desaliento no deben llevarlo a renunciar a su vocación, pero tampoco puede dedicarse al aprovechamiento ajeno olvidando el suyo. Al tratar de la interpretación de la Escritura, el autor insiste en la conformidad con la enseñanza de la Iglesia y con sus doctores, frente a las novedades que pueden extraviar a quienes escuchan. El ejercicio del ministerio se presenta así como una responsabilidad que supera las fuerzas humanas y obliga a pedir ayuda divina.",
+    "La comunión y la celebración de la misa ocupan un lugar central en este primer grupo. Ávila rehúye fijar una regla idéntica para todas las personas sobre la frecuencia de comulgar: importa atender a su disposición y al fruto espiritual que reciben. Al sacerdote que pregunta cómo prepararse para celebrar le propone considerar la presencia de Cristo, verdadero Dios y hombre, y cultivar una reverencia amorosa que alcance al corazón, además de a las palabras y gestos exteriores. Las cartas sobre la vocación sacerdotal reclaman examen, agradecimiento y una vida proporcionada a la dignidad del oficio. A continuación, las cartas dirigidas a señores trasladan ese mismo principio de responsabilidad a la autoridad temporal. Quien gobierna no debe creerse suficiente por su ingenio, rango o experiencia, sino pedir la sabiduría necesaria para juzgar y servir rectamente. El conocimiento de uno mismo descubre las propias limitaciones; el de Dios impide que ese descubrimiento termine en desesperanza. La consideración de los vasallos y de las obligaciones del cargo enlaza el cuidado de la conciencia con las decisiones de gobierno. También la cuaresma, la penitencia, las limosnas y la meditación de la pasión se ofrecen como prácticas que deben transformar la vida efectiva, en vez de limitarse a una devoción ocasional.",
+    "Las enfermedades y las tribulaciones adquieren un protagonismo creciente en las últimas cartas. Ante el dolor corporal, el miedo a la muerte, las tentaciones o la sensación de ausencia de Dios, Ávila reconoce el sufrimiento de la persona a quien escribe y procura modificar el sentido que le atribuye. Dios puede permitir las penas como corrección, prueba o medicina; por eso no deben interpretarse automáticamente como rechazo. El temor nacido del conocimiento de las propias faltas ha de ir acompañado por la confianza en la misericordia, y la conciencia del pecado por la penitencia y el deseo de enmienda. Las cartas a mujeres atribuladas desarrollan especialmente esta pedagogía del consuelo: invitan a perseverar aunque falten los gustos de la oración y a distinguir el amor de Dios de la satisfacción inmediata. Los ejemplos y citas bíblicas presentan a Cristo sufriente como compañía y modelo. La cruz no constituye únicamente un asunto de contemplación, sino una experiencia que puede compartirse mediante paciencia y caridad. La última carta lleva esa identificación hasta una petición de vivir unido a Cristo crucificado, dispuesto a padecer por amor. El recorrido concluye, por tanto, con una esperanza de salvación que se apoya en la gracia y la perseverancia, sin prometer la desaparición inmediata de los trabajos."
+  ],
+  "resumen_breve": [
+    "Juan de Ávila dirige veintitrés cartas a predicadores, sacerdotes, señores y mujeres para orientar su conducta y sostenerlos en sus dificultades. A los ministros religiosos les recuerda la responsabilidad de anunciar la palabra de Dios, preparar la celebración de la misa y acompañar a otras almas sin buscar su propia gloria.",
+    "Las cartas destinadas a gobernantes y nobles aplican la vida cristiana al ejercicio de la autoridad, al trato con los vasallos y al uso de los bienes. Otras aconsejan cómo afrontar enfermedades, tentaciones y temores.",
+    "El conjunto propone reconocer la propia debilidad, confiar en la gracia y seguir a Cristo crucificado. La tribulación puede convertirse así en ocasión de penitencia, amor y esperanza de salvación."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Juan de Ávila",
+      "descripcion": "Voz epistolar que ofrece consejo pastoral y consuelo."
+    },
+    {
+      "nombre": "Destinatarios de las cartas",
+      "descripcion": "Predicadores, sacerdotes, señores y mujeres interpelados según sus circunstancias."
+    },
+    {
+      "nombre": "Cristo",
+      "descripcion": "Modelo espiritual central de las exhortaciones."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Vida pastoral",
+      "descripcion": "Ámbito de la predicación, el consejo y el cuidado de las almas."
+    },
+    {
+      "nombre": "Espacio de enfermedad y tribulación",
+      "descripcion": "Situación de varios destinatarios; no configura un escenario narrativo único."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Dirección espiritual",
+      "descripcion": "Consejos ajustados a estados de vida y dificultades particulares."
+    },
+    {
+      "tema": "Imitación de Cristo",
+      "descripcion": "Fundamento de la vida cristiana y de la aceptación del padecimiento."
+    },
+    {
+      "tema": "Ministerio sacerdotal",
+      "descripcion": "Responsabilidad del predicador y atención a la conducta personal."
+    }
+  ]
+}

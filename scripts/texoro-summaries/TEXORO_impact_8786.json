@@ -1,0 +1,60 @@
+{
+  "archivo": "TEXORO_impact_8786.txt",
+  "titulo": "Las dos doncellas",
+  "resumen_largo": [
+    "Un joven viajero llega a una venta de Castilblanco y despierta la curiosidad de los presentes por su belleza y por el desmayo que sufre. Durante la noche, otro huésped escucha sus quejas y descubre que bajo aquel traje masculino se oculta Teodosia, una doncella que ha abandonado su casa para buscar a Marco Antonio. El joven la ha conquistado con promesas de matrimonio y ha desaparecido después de obtener su confianza. Teodosia teme la deshonra propia y el dolor de sus padres, pero no quiere permanecer inmóvil ante el abandono. Al contar su historia ignora que quien la oye es Rafael, su hermano. El reconocimiento aumenta primero su vergüenza y su miedo; sin embargo, él decide protegerla y ayudarla a encontrar al responsable. Le aconseja conservar el disfraz y adoptar el nombre de Teodoro. Ambos emprenden el camino con un mozo de mulas, y las noticias sobre el rumbo de Marco Antonio los encaminan hacia Barcelona, donde esperan localizarlo entre quienes viajan en las galeras. El auxilio del hermano transforma la huida solitaria en una búsqueda compartida, aunque todavía amenazada por la incertidumbre y por las consecuencias de lo sucedido.",
+    "En el trayecto encuentran a otro muchacho que acaba de padecer un robo y que resulta ser Leocadia. También ella ha salido de su casa vestida de hombre para perseguir a Marco Antonio, de quien conserva una promesa escrita de matrimonio. Su relato suscita los celos de Teodosia, que escucha sin revelar su identidad. Leocadia, sin embargo, explica que el encuentro amoroso concertado nunca llegó a celebrarse y que el joven partió con otra mujer. Las dos búsquedas se unen sin que desaparezca la rivalidad, mientras Rafael se enamora de la recién llegada. En Barcelona, una pelea entre gente de las galeras y habitantes de la ciudad permite reconocer a Marco Antonio, que queda herido de gravedad. Las jóvenes intervienen en medio del peligro y después reclaman el cumplimiento de sus compromisos. Acogido y atendido gracias a la hospitalidad de don Sancho de Cardona, el herido aclara la diferente naturaleza de sus obligaciones: admite el vínculo con Teodosia y se dispone a tomarla por esposa. Leocadia debe afrontar la pérdida de su esperanza, pero encuentra en Rafael a un hombre que conoce su historia y desea casarse con ella. La declaración permite encauzar el segundo matrimonio sin convertir a ninguna de las protagonistas en una figura ajena a su propia decisión.",
+    "La curación de Marco Antonio hace posible cumplir el voto de ir en peregrinación a Santiago, promesa a la que se suman sus compañeros. El viaje, realizado con la ayuda del fiel mozo de mulas, sustituye la persecución angustiosa por una marcha compartida de agradecimiento. No obstante, el conflicto familiar sigue abierto. Al volver a su tierra, los viajeros encuentran a unos caballeros que se baten: los padres de Teodosia y Leocadia han desafiado al de Marco Antonio, al que hacen responsable de los agravios de su hijo. Rafael y Marco Antonio reconocen a los combatientes y se interponen antes de que la disputa termine en muerte. La aparición de las hijas y la noticia de los acuerdos matrimoniales convierten el enfrentamiento en abrazos, explicaciones y reconciliación. El padre de Marco Antonio celebra las dos bodas, y la narración asegura la felicidad duradera de las parejas y la continuidad de su amistad. En las palabras finales, el narrador pide que las decisiones de las doncellas no se juzguen con precipitación. El recorrido ha mostrado su exposición al peligro y la importancia de la honra, pero también la fuerza del amor, la necesidad de actuar y el valor reparador de una respuesta comprensiva."
+  ],
+  "resumen_breve": [
+    "Teodosia abandona su casa familiar disfrazada de hombre para buscar a Marco Antonio, que la ha dejado después de prometerle matrimonio. En una venta confiesa su desgracia a un viajero que resulta ser su hermano Rafael, dispuesto a ayudarla.",
+    "Durante el camino encuentran a Leocadia, también vestida de hombre y enamorada del mismo joven. La rivalidad las conduce hasta Barcelona, donde Marco Antonio queda herido y reconoce su compromiso con Teodosia.",
+    "Rafael, por su parte, ofrece matrimonio a Leocadia. Tras la curación y una peregrinación, los cuatro regresan e impiden que sus padres se maten en un peligroso desafío; las bodas reconcilian a las familias."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Teodosia",
+      "descripcion": "Joven que viaja disfrazada y busca reparar una promesa amorosa."
+    },
+    {
+      "nombre": "Leocadia",
+      "descripcion": "Segunda joven cuya búsqueda converge con la de Teodosia."
+    },
+    {
+      "nombre": "Rafael",
+      "descripcion": "Hermano de Teodosia y participante en el viaje."
+    },
+    {
+      "nombre": "Marco Antonio",
+      "descripcion": "Hombre al que se dirigen las expectativas amorosas de las doncellas."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Castilblanco",
+      "descripcion": "Lugar de la venta donde comienza el relato."
+    },
+    {
+      "nombre": "Caminos y ventas",
+      "descripcion": "Espacios de encuentro y revelación de identidades."
+    },
+    {
+      "nombre": "Barcelona",
+      "descripcion": "Ciudad vinculada a la resolución de la búsqueda."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Disfraz y movilidad",
+      "descripcion": "El cambio de apariencia facilita el viaje de las protagonistas."
+    },
+    {
+      "tema": "Promesa y honra",
+      "descripcion": "El compromiso amoroso exige reconocimiento y reparación."
+    },
+    {
+      "tema": "Juicio del narrador",
+      "descripcion": "El final modera la censura hacia las decisiones de las jóvenes."
+    }
+  ]
+}

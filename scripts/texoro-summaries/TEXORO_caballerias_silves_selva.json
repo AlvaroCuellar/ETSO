@@ -1,0 +1,52 @@
+{
+  "archivo": "TEXORO_caballerias_silves_selva.txt",
+  "titulo": "Silves de la Selva",
+  "resumen_largo": [
+    "Los príncipes reunidos en Constantinopla reciben un desafío que obliga a convocar a sus amigos y aliados. Bultasar, rey de Ruxia, se considera afrentado por Florisel y busca el apoyo de otros soberanos para emprender una gran ofensiva. Mientras se preparan las fuerzas enemigas, la corte celebra torneos vinculados a los matrimonios de los príncipes y recibe demandas que ponen a prueba su valor. Una doncella llega con la aventura de un yelmo, y Filisel de Monte Espín consigue acabarla antes de partir con ella. Los amores de Ajesilao y Diana y las andanzas de Rogel introducen preocupaciones particulares dentro de la movilización general. Las separaciones y los encuentros amorosos no quedan suspendidos por la guerra: determinan viajes, nuevas amistades y obligaciones que después se incorporan a la defensa común. Los mensajeros del rey de Ruxia recorren otras cortes y reúnen un ejército extenso, frente al que los cristianos deben organizar sus propios auxilios. La narración alterna esas preparaciones con los desplazamientos de los caballeros para mostrar cómo los conflictos personales y los intereses de los reinos terminan concentrándose en una misma campaña militar.",
+    "Las guerras ruxianas se desarrollan mediante ataques, consejos y enfrentamientos de los principales jefes de ambos bandos. Los príncipes griegos combaten junto a los héroes de generaciones anteriores, y la victoria permite aliviar la amenaza que pesa sobre Constantinopla. Pero la vuelta a los festejos no asegura una paz duradera. La desaparición y el rapto de princesas hacen salir a los caballeros en distintas direcciones, y el relato pasa de la guerra colectiva a una red de búsquedas por mar. Silves de la Selva adquiere un lugar central en esas empresas. La tormenta lo arroja a la Roca Infernal, donde debe afrontar una serpiente y los peligros del lugar. Otras aventuras lo llevan a defender derechos arrebatados: combate contra Dondrino, lo mata y restituye a una duquesa en su estado antes de marcharse sin despedida. Los viajes se entrelazan con los de Lucendus y otros compañeros, y las torres encantadas de Febo y Diana plantean pruebas que requieren algo más que fuerza militar. Los caballeros deben descubrir el sentido de los prodigios y actuar de acuerdo con las condiciones que permiten acabar cada aventura y liberar a quienes están sometidos a ella.",
+    "Los amores de Silves por Pantasilea y los de Lucendus por Fortuna enlazan las pruebas maravillosas con el porvenir familiar de los protagonistas. Los encuentros de los enamorados y sus promesas de matrimonio no bastan para impedir nuevas separaciones. En Constantinopla se celebran fiestas y torneos, pero la llegada de personajes hostiles introduce otros engaños: Agrián y su hermano intentan apoderarse de las princesas, y más adelante los poderes de las dueñas sabias vuelven a intervenir sobre ellas. Rogel es conducido fuera de la corte por una doncella y queda encantado; Policena es llevada mediante otro ardid, y Fortuna es arrebatada a Lucendus y trasladada al Castillo Dragontino. La alegría de los nacimientos convive, por tanto, con la obligación de buscar a los ausentes. Esferamundi y Amadís de Astra crecen y manifiestan el deseo de recibir la orden de caballería, mientras Fortunián y Astrápolo anuncian otras líneas de continuidad. Argantes llega con la reina de Galdapa, su madre, es armado caballero y vence a un gigante. Después acepta la demanda de una doncella y parte en busca de nuevas empresas. El libro termina con los príncipes que permanecen en Constantinopla rogando por la liberación de los cautivos y con el anuncio de una nueva entrega dedicada a los jóvenes héroes. La sucesión del linaje abre así otra etapa sin resolver todos los peligros heredados."
+  ],
+  "resumen_breve": [
+    "La amenaza del rey de Ruxia reúne en Constantinopla a los príncipes del linaje de Amadís y a sus aliados. Las guerras, los torneos y las relaciones amorosas alternan hasta la derrota de los enemigos.",
+    "Los raptos de las princesas dispersan de nuevo a los caballeros. Silves de la Selva atraviesa islas y castillos encantados, combate por personas agraviadas y desarrolla sus amores con Pantasilea, mientras Lucendus permanece ligado a Fortuna.",
+    "Las reuniones y bodas no impiden nuevos engaños y cautiverios. El nacimiento y la educación de Esferamundi y Amadís de Astra preparan otra generación de héroes. El final presenta sus deseos de recibir la caballería y la partida de Argantes hacia nuevas aventuras."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Silves de la Selva",
+      "descripcion": "Caballero al que se dedican las principales empresas de esta entrega."
+    },
+    {
+      "nombre": "Esferamundi",
+      "descripcion": "Joven príncipe cuya futura caballería se anuncia al final."
+    },
+    {
+      "nombre": "Amadís de Astra",
+      "descripcion": "Príncipe de la nueva generación que desea recibir la orden de caballería."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Constantinopla",
+      "descripcion": "Corte donde se concentran desafíos y alianzas."
+    },
+    {
+      "nombre": "Castillo de la Templanza",
+      "descripcion": "Una de las pruebas vinculadas con las virtudes."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Guerras y alianzas",
+      "descripcion": "Los desafíos dirigidos a los príncipes reunidos en Constantinopla provocan una nueva movilización de aliados."
+    },
+    {
+      "tema": "Virtud caballeresca",
+      "descripcion": "Las fiestas y las bodas no eliminan los peligros: raptos y encantamientos obligan a los caballeros a reanudar sus empresas."
+    },
+    {
+      "tema": "Relevo generacional",
+      "descripcion": "La acción se abre finalmente a una generación más joven."
+    }
+  ]
+}

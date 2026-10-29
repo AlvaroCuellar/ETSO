@@ -1,0 +1,56 @@
+{
+  "archivo": "TEXORO_impact_56.txt",
+  "titulo": "La Lozana andaluza",
+  "resumen_largo": [
+    "El retrato de Lozana comienza con los orígenes y aprendizajes de Aldonza, una andaluza que recuerda los saberes domésticos recibidos de su familia y demuestra pronto facilidad para hablar, observar y desenvolverse. Su relación con Diomedes, un mercader que admira su hermosura, le permite conocer otros lugares y disfrutar una posición que parece prometedora. Él propone llamarla Lozana, nombre que expresa su atractivo y sus expectativas. Sin embargo, la oposición del padre del mercader rompe esa seguridad: Diomedes es apresado y ella queda despojada de sus bienes, expuesta a una violencia que la obliga a recomenzar. Su llegada a Roma abre el espacio principal de la obra. Allí encuentra una población procedente de distintos territorios, con formas de hablar, oficios y costumbres que se mezclan en calles y casas. Para sostenerse necesita averiguar quién puede ayudarla, qué servicios se pagan y cómo responder a las demandas de cada persona. El pasado no desaparece: los recuerdos, las habilidades aprendidas y la experiencia del abandono se convierten en recursos para construir una posición propia en un medio siempre incierto.",
+    "Rampín le sirve de guía y compañero en ese aprendizaje urbano, y la relación entre ambos combina deseo, dependencia, familiaridad e interés. Lozana aprende a circular por una red de mujeres, criados, comerciantes, clérigos y clientes para quienes la apariencia y la información tienen un valor económico. Sus conocimientos de cocina, remedios, cosmética y cuidados del cuerpo amplían su campo de acción; también interviene en encuentros amorosos, transmite noticias y negocia favores. La acción se distribuye en mamotretos dominados por el diálogo, con entradas y salidas que permiten escuchar muchas voces sin reducirlas a una explicación única. Las conversaciones revelan competencia entre mujeres, cálculos sobre el dinero, promesas incumplidas y burlas que convierten la intimidad en asunto público. El cuerpo aparece como fuente de placer, instrumento de trabajo y lugar amenazado por enfermedad, envejecimiento o violencia. Las descripciones de peinados, vestidos y afeites muestran la distancia entre lo que se exhibe y lo que los interlocutores creen conocer. La habilidad de Lozana consiste en aprovechar esas diferencias y presentarse como una persona útil, capaz de resolver necesidades concretas. Su éxito depende de una actividad continua de observación, palabra y negociación, sin que la fortuna quede asegurada de manera definitiva.",
+    "El propio autor entra en el mundo representado, conversa con los personajes y comenta el retrato que está componiendo. Esa presencia hace que la escritura forme parte del mismo intercambio de noticias, miradas y reputaciones que sostiene la vida de Lozana. La obra declara su atención a lo visto y oído y recoge un lenguaje cambiante, lleno de alusiones, dobles sentidos y contactos entre hablas. La multiplicidad de voces ofrece un panorama de Roma que reúne diversión y crítica, abundancia y precariedad, confianza en el ingenio y conciencia de la fragilidad. Hacia el final, el mamotreto de la retirada anuncia que Lozana y Rampín se establecen en la isla de Lípari y vincula la decisión a un sueño inquietante, cargado de presagios de guerra. Los materiales finales prolongan ese horizonte con la destrucción de Roma: una epístola describe el saqueo y advierte a las mujeres que pensaban acudir a la ciudad de que ya no encontrarán el antiguo espacio de oportunidades. Los oficios, las riquezas y los placeres evocados antes aparecen trastornados por la violencia. La despedida y las reflexiones del autor sitúan así el retrato en una memoria de lo perdido, acompañada de deseos de paz y salud."
+  ],
+  "resumen_breve": [
+    "Aldonza, andaluza de origen humilde, adquiere el nombre de Lozana durante su relación con el mercader Diomedes. Separada de él y despojada de sus bienes, llega a Roma y convierte sus conocimientos, su palabra y sus contactos en medios de subsistencia.",
+    "Con Rampín recorre una ciudad de cortesanas, clérigos, comerciantes y criados, donde median el dinero, el deseo y la necesidad.",
+    "Los diálogos de los mamotretos muestran sus negocios, remedios, rivalidades y engaños, e incluyen al autor entre los interlocutores. La retirada de Lozana a Lípari y los materiales sobre el saqueo de Roma sitúan ese mundo bajo el signo de la pérdida y el desengaño."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Lozana o Aldonza",
+      "descripcion": "Protagonista cuyos recorridos y conversaciones forman el retrato."
+    },
+    {
+      "nombre": "Rampín",
+      "descripcion": "Acompañante e interlocutor que ayuda a conocer Roma."
+    },
+    {
+      "nombre": "El autor",
+      "descripcion": "Figura que interviene en el relato y reflexiona sobre su escritura."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Roma",
+      "descripcion": "Ciudad principal del retrato, con diversidad de habitantes y oficios."
+    },
+    {
+      "nombre": "Andalucía",
+      "descripcion": "Ámbito de origen y de referencias de la protagonista."
+    },
+    {
+      "nombre": "Calles, casas y baños",
+      "descripcion": "Espacios de encuentros, trabajo y conversación."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Supervivencia urbana",
+      "descripcion": "El ingenio y las relaciones permiten buscar sustento."
+    },
+    {
+      "tema": "Deseo y mediación",
+      "descripcion": "Las prácticas amorosas y sus intermediarios articulan numerosos episodios."
+    },
+    {
+      "tema": "Retrato y escritura",
+      "descripcion": "La obra reflexiona sobre su representación y circulación."
+    }
+  ]
+}

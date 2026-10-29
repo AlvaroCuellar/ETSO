@@ -1,0 +1,52 @@
+{
+  "archivo": "TEXORO_impact_164.txt",
+  "titulo": "Diálogo de la dignidad del hombre",
+  "resumen_largo": [
+    "Antonio sale de la ciudad para pasear por un valle que frecuenta a solas. Aurelio, que lo ha seguido, admira el paisaje y le pregunta qué lo atrae tanto de aquel lugar. Antonio responde primero como si hablara de una mujer amada, pero descubre después que su amor es la soledad, capaz de devolver la calma y permitir el examen de la propia conducta. La conversación cambia de dirección cuando Aurelio propone una explicación más sombría: los hombres buscan apartarse porque aborrecen su condición, llena de trabajos y miserias. Antonio rechaza esa idea y se ofrece a demostrar que el ser humano es la criatura más excelente y tiene motivos para alegrarse de haber nacido. Ambos acuerdan disputar sobre los males y bienes del hombre y se acercan a una fuente. Allí encuentran al sabio Dinarco con otros estudiosos. Una vez informado del asunto, Dinarco acepta actuar como juez y dispone que Aurelio exponga primero su argumento, para escuchar después la respuesta de Antonio. El marco amistoso y campestre organiza así una discusión en la que dos valoraciones contrarias se someten a examen razonado.",
+    "Aurelio presenta un extenso inventario de las desventajas humanas. Frente a los animales, que nacen provistos de defensas y de un instinto suficiente para vivir, el hombre llega desvalido y necesita prolongados cuidados. Su cuerpo está expuesto a enfermedades, dolor y vejez. Tampoco el alma proporciona una compensación segura: el entendimiento aprende tarde, yerra, duda y divide a los hombres en opiniones opuestas. Además, su capacidad inventiva produce armas, engaños y venenos que multiplican la destrucción. La voluntad aparece acosada por los apetitos, mientras la razón no permanece siempre disponible para defenderla. Los distintos oficios y estados añaden penas particulares: el trabajo, el deseo de riqueza o de honra, las obligaciones del gobierno y las preocupaciones familiares prolongan una inquietud que no desaparece con la prosperidad. La muerte termina por deshacer lo conseguido y convierte la brevedad de la vida en otro motivo de queja. Antonio responde cambiando el criterio de comparación. La dignidad no depende solo de la comodidad corporal, sino de la posición que Dios ha concedido al hombre en el mundo. Creado a su imagen, reúne capacidades que le permiten elevarse sobre lo material. La libertad implica peligro, pero también la posibilidad de escoger la virtud y alcanzar un fin superior. La encarnación y la pasión de Cristo muestran, para Antonio, cuánto vale una naturaleza humana que Dios ha querido asumir y rescatar.",
+    "La defensa continúa con una revisión de los mismos aspectos censurados por Aurelio. El cuerpo manifiesta proporción y orden, y sus miembros sirven a operaciones que los animales no pueden realizar. El entendimiento permite conocer la realidad, prever, recordar y elaborar las artes. Sus invenciones no son malas por sí mismas: las armas, por ejemplo, pueden proteger de las bestias y de los hombres violentos, aunque un mal uso las convierta en instrumentos de daño. La voluntad posee fuerzas para resistir los vicios, y esa lucha da ocasión al mérito. Tampoco el trabajo ha de medirse únicamente por la fatiga, pues el artífice encuentra placer en realizar la obra que ha concebido. Las labores y relaciones sociales pueden entenderse así como manifestaciones de una capacidad creadora, no solo como cargas. Antonio lleva después la discusión hasta la muerte: su apariencia temible protege la vida al disuadir a los afligidos de buscarla, y para quien vive bien abre el paso a una existencia mejor. La verdadera finalidad humana no es la fama terrena, sino la bienaventuranza, el conocimiento de Dios y la resurrección de los cuerpos libres de corrupción. Dinarco aprueba esta interpretación cristiana y agradece que Antonio reconozca los bienes recibidos, sin dejar de elogiar la agudeza con que Aurelio ha defendido la causa contraria. La disputa termina porque se aproxima la noche y deben regresar a la ciudad, después de haber situado las miserias de la vida dentro de una dignidad y un destino que las exceden."
+  ],
+  "resumen_breve": [
+    "Antonio y Aurelio se encuentran en el campo y conversan sobre el amor a la soledad. Aurelio lo explica por el descontento del ser humano con una vida llena de miserias; Antonio sostiene, por el contrario, que ninguna criatura tiene mayor motivo para estimar su condición.",
+    "Ante Dinarco, elegido juez de la disputa, Aurelio expone la fragilidad del cuerpo, los errores del entendimiento, la fuerza de los apetitos y los trabajos de los distintos estados. Antonio responde defendiendo la capacidad de conocer, crear y elegir el bien.",
+    "La discusión culmina en una interpretación cristiana de la dignidad humana: la creación, la encarnación y la esperanza de bienaventuranza muestran el valor que Dios concede al hombre, pese a sus debilidades."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Antonio",
+      "descripcion": "Interlocutor que defiende la dignidad de la condición humana."
+    },
+    {
+      "nombre": "Aurelio",
+      "descripcion": "Interlocutor que desarrolla los argumentos sobre las miserias del hombre."
+    },
+    {
+      "nombre": "Dinarco",
+      "descripcion": "Oyente al que se dirige el juicio final sobre la disputa."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "El campo",
+      "descripcion": "Lugar del paseo y de la conversación filosófica."
+    },
+    {
+      "nombre": "La ciudad",
+      "descripcion": "Destino del regreso al acercarse la noche."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Dignidad humana",
+      "descripcion": "La disputa pregunta por el valor y la excelencia del hombre."
+    },
+    {
+      "tema": "Miseria y fragilidad",
+      "descripcion": "Los trabajos de la vida sustentan la argumentación crítica."
+    },
+    {
+      "tema": "Humanismo cristiano",
+      "descripcion": "Las capacidades humanas se interpretan en relación con Dios."
+    }
+  ]
+}

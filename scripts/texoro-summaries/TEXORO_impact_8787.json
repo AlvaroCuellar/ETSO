@@ -1,0 +1,64 @@
+{
+  "archivo": "TEXORO_impact_8787.txt",
+  "titulo": "La señora Cornelia",
+  "resumen_largo": [
+    "Antonio de Isunza y Juan de Gamboa, dos jóvenes caballeros españoles, viajan por Italia y se establecen en Bolonia para continuar sus estudios. Su amistad, su posición y su conducta les permiten vivir con comodidad y ser estimados. En la ciudad oyen hablar de Cornelia Bentivoglio, una joven de gran hermosura a quien su hermano Lorenzo mantiene cuidadosamente apartada de las miradas. Una noche en que Juan sale solo, una voz lo confunde con un criado y le entrega un bulto desde una puerta. Cuando descubre que lleva un recién nacido, decide ponerlo a salvo en su alojamiento. Poco después interviene en una pelea para proteger a un desconocido, que le entrega como señal de agradecimiento un rico sombrero. Mientras tanto, Antonio acoge a una mujer angustiada que le pide amparo: es Cornelia. La reunión de esos objetos y personas abre una serie de reconocimientos. El sombrero, que pertenece al duque de Ferrara, hace creer a la joven por un momento que su amante ha llegado. Al descubrir el error, cuenta a los españoles el peligro en que se encuentra y les confía su protección.",
+    "Cornelia mantiene una relación amorosa con el duque, que le ha dado palabra de matrimonio, y acaba de tener un hijo. La necesidad de ocultar el parto y el temor a Lorenzo han precipitado una salida nocturna en la que se han cruzado mensajes, criados e identidades. El niño entregado por equivocación a Juan es el suyo, y el desconocido al que este ha defendido es el propio duque. Sin embargo, los personajes no llegan a conocer todos los hechos al mismo tiempo. Lorenzo, convencido de que su hermana ha sido agraviada, busca apoyo para exigir satisfacción. Los dos españoles, comprometidos tanto con la protección de Cornelia como con la conducta honrada que esperan de los demás, acompañan las pesquisas y procuran evitar una violencia nacida de noticias incompletas. La explicación del duque muestra que no pretende abandonar a la joven, aunque la enfermedad de su madre dificulta hacer pública la unión. Cuando parece que el acuerdo está próximo, la desaparición de Cornelia vuelve a inquietar a todos. El ama de los españoles, temerosa por su seguridad, la ha conducido a la casa de un cura fuera de Bolonia. Una decisión concebida para protegerla prolonga así los equívocos y mantiene separados durante un tiempo a quienes desean encontrarse.",
+    "El duque acaba reuniéndose con Cornelia y con el niño en la casa del cura. Allí intercambian sus relatos, reconstruyen las circunstancias del parto y de la huida y reconocen los servicios de quienes los han ayudado. Antes de comunicar el feliz hallazgo a Lorenzo y a los dos amigos, el duque decide prepararles una sorpresa: afirma que, al no aparecer Cornelia, piensa casarse con una labradora a la que había prometido matrimonio antes. La noticia indigna a sus interlocutores, dispuestos a impedir que falte a su palabra. Esa reacción confirma la lealtad de los españoles y el compromiso del hermano, pero el supuesto nuevo enlace es una burla: la mujer presentada por el duque es la propia Cornelia, ricamente ataviada. La aparición convierte el enojo en alegría y permite celebrar los desposorios ante el cura. La unión permanece inicialmente secreta hasta la muerte de la duquesa madre; después Cornelia entra en Ferrara y ocupa públicamente su lugar. El desenlace prolonga la dicha familiar con el nacimiento de otras hijas, el matrimonio de los criados y los regalos a los protectores. Antonio y Juan regresan a España y se casan en su tierra, manteniendo una correspondencia amistosa que conserva los vínculos creados durante la aventura."
+  ],
+  "resumen_breve": [
+    "Dos amigos españoles, Antonio de Isunza y Juan de Gamboa, estudian en Bolonia cuando se ven implicados en una intriga nocturna: reciben un recién nacido, protegen a Cornelia Bentivoglio y auxilian sin reconocerlo al duque de Ferrara. Cornelia acaba de dar a luz al hijo del duque y teme la reacción de su hermano Lorenzo.",
+    "Los equívocos separan a la madre, al niño y al padre, mientras los españoles intentan protegerlos y aclarar las sospechas.",
+    "El reconocimiento y la reunión en casa de un cura permiten cumplir la promesa matrimonial. Después de una burla final, Cornelia y el duque se casan y recompensan a sus protectores."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Cornelia Bentivoglio",
+      "descripcion": "Joven cuya maternidad y relación amorosa están en el centro del conflicto."
+    },
+    {
+      "nombre": "Antonio de Isunza",
+      "descripcion": "Caballero español que participa en la protección de Cornelia."
+    },
+    {
+      "nombre": "Juan de Gamboa",
+      "descripcion": "Amigo de Antonio y colaborador en la resolución."
+    },
+    {
+      "nombre": "Duque de Ferrara",
+      "descripcion": "Amante de Cornelia y padre del niño."
+    },
+    {
+      "nombre": "Lorenzo Bentivoglio",
+      "descripcion": "Hermano de Cornelia, preocupado por la honra familiar."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Bolonia",
+      "descripcion": "Escenario principal de los encuentros nocturnos."
+    },
+    {
+      "nombre": "Ferrara",
+      "descripcion": "Ámbito del duque y de la visita final."
+    },
+    {
+      "nombre": "España",
+      "descripcion": "Lugar de origen y regreso de los dos amigos."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Honra y reconocimiento",
+      "descripcion": "La información correcta desactiva las sospechas."
+    },
+    {
+      "tema": "Amistad y hospitalidad",
+      "descripcion": "La ayuda de los españoles hace posible la resolución."
+    },
+    {
+      "tema": "Identidad y apariencia",
+      "descripcion": "Objetos, encuentros y noticias deben interpretarse con cautela."
+    }
+  ]
+}

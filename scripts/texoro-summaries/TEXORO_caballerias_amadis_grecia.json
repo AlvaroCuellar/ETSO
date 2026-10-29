@@ -1,0 +1,52 @@
+{
+  "archivo": "TEXORO_caballerias_amadis_grecia.txt",
+  "titulo": "Amadís de Grecia",
+  "resumen_largo": [
+    "La historia del Caballero de la Ardiente Espada comienza en un escenario alejado de las cortes donde gobierna su familia. Unos corsarios capturan al muchacho y lo presentan a Magadén, rey de la India, cuyo hijo Fulurtín destaca por sus buenas costumbres. El desconocimiento de su origen no impide que el joven manifieste una fuerza excepcional y empiece a ganar fama en el ejercicio de las armas. Sus encuentros con los caballeros del linaje de Amadís pueden conducir al combate antes de que se descubra quiénes son los contendientes. Incluso Esplandián llega a enfrentarse con él, hasta que Alquifa interrumpe la lucha. Los castillos, las islas y las cortes orientales proporcionan nuevas demandas de socorro, cautivos que liberar y señores con quienes combatir o establecer alianzas. En la isla de Argenes las empresas del héroe confluyen con las de Lisuarte y otros personajes. La recuperación de sus vínculos familiares permite reconocerlo como Amadís de Grecia, hijo de Lisuarte y Onoloria. La aventura individual se incorpora así a una continuidad dinástica, aunque el protagonista seguirá sometido a pruebas que comprometen de manera simultánea su identidad, su fama y sus amores.",
+    "Luscela ocupa primero el centro de su vida amorosa, pero la relación con Niquea introduce una división que el caballero no puede resolver sin dolor y engaño. La princesa le envía mensajes y su imagen lo atrae hacia una belleza que rivaliza con la de su primera señora. Las cartas, los retratos y las mediaciones desplazan el conflicto desde el campo de batalla al interior del amante, obligado a interpretar sus propios sentimientos. Para acercarse a Niquea, Amadís adopta el nombre y la apariencia de Nereida. El disfraz le permite entrar en un espacio vedado al caballero, pero provoca nuevos deseos, celos y confusiones entre quienes desconocen su verdadera identidad. Niquea llega a creer muerto a Amadís y trata a Nereida a la vez como confidente y como rival. Al mismo tiempo, las guerras entre los grandes soberanos prolongan el peligro exterior. Abra y Zahara intervienen en conflictos con Lisuarte, y las relaciones amorosas se cruzan con exigencias de venganza, desafíos y cambios de alianza. Las acciones de los sabios y las pruebas maravillosas, entre ellas la Gloria de Niquea, no se limitan a adornar la trama: separan o reúnen a los amantes y convierten sus afectos en materia visible de aventura.",
+    "La circulación por mares e islas prolonga los encuentros entre Amadís, Niquea, Zahara y sus compañeros. El héroe combate a Mostruofurón y libera a Gradamarte y otros prisioneros; el reconocimiento y la recuperación de los cautivos permiten contar lo sucedido durante las separaciones. Amadís y Niquea son recibidos como soberanos en una de las islas de sus aventuras, mientras las reconciliaciones, conversiones y matrimonios reorganizan también las cortes de la generación anterior. La noticia falsa de la muerte de Amadís conduce a Luscela a ingresar en Miraflores, y la correspondencia posterior mantiene presente el dolor que la nueva unión ha causado. El nacimiento de Florisel, hijo de Amadís y Niquea, anuncia la continuidad del linaje. Urganda, Alquife y Zirfea reúnen después a los grandes personajes bajo un encantamiento en la Torre del Universo, apartándolos del curso ordinario de la acción. El relato desplaza entonces su interés hacia Silvia, criada como pastora, y hacia Darinel, que la ama. Florisel la conoce y adopta también la vida pastoril para permanecer cerca de ella. Tras defenderla de dos caballeros que intentan llevársela, viaja con Silvia y Darinel al Infierno de Anastarax. Florisel y Silvia entran en el castillo y quedan absortos ante el encantado, mientras Darinel permanece fuera, decidido a esperarlos. La resolución se reserva para la entrega siguiente."
+  ],
+  "resumen_breve": [
+    "El Caballero de la Ardiente Espada crece lejos de sus padres y gana fama mediante combates y rescates hasta ser reconocido como Amadís de Grecia, hijo de Lisuarte y Onoloria. Sus aventuras lo vinculan primero a Luscela y después a Niquea.",
+    "El amor por Niquea lo lleva a adoptar la identidad femenina de Nereida para acercarse a ella. Las guerras de los soberanos, los celos y los encantamientos multiplican las separaciones y transforman las relaciones entre las cortes.",
+    "La unión de Amadís y Niquea da paso a la generación de Florisel. Al final, Florisel se hace pastor por Silvia y ambos entran en el castillo encantado de Anastarax, mientras Darinel queda esperando fuera."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Amadís de Grecia",
+      "descripcion": "Caballero protagonista, vinculado al linaje de Lisuarte."
+    },
+    {
+      "nombre": "Lucela",
+      "descripcion": "Princesa que interviene en las relaciones amorosas del héroe."
+    },
+    {
+      "nombre": "Niquea",
+      "descripcion": "Princesa cuya relación con Amadís provoca conflictos en la corte del soldán."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "India",
+      "descripcion": "Territorio con el que comienza la narración."
+    },
+    {
+      "nombre": "Babilonia",
+      "descripcion": "Imperio cuya recuperación motiva una demanda de ayuda."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Amor y rivalidad",
+      "descripcion": "La historia de Amadís de Grecia despliega nuevos linajes y aventuras a partir del mundo de Amadís y Lisuarte."
+    },
+    {
+      "tema": "Expansión del linaje",
+      "descripcion": "Los combates, las demandas de ayuda y las relaciones amorosas entrelazan las trayectorias de varios personajes."
+    },
+    {
+      "tema": "Conflictos de poder",
+      "descripcion": "Las disputas por los vínculos personales afectan a la vida política de los reinos y generan nuevas partidas y búsquedas."
+    }
+  ]
+}

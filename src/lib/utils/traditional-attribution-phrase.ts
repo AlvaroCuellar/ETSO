@@ -7,7 +7,7 @@ export interface AttributionPhrasePart {
 	hasAuthorshipExam?: boolean;
 }
 
-interface AuthorReference {
+export interface AuthorReference {
 	authorId: string;
 	authorName: string;
 	hasAuthorshipExam?: boolean;
@@ -121,32 +121,141 @@ const isUnknownAuthor = (author: AuthorReference): boolean => {
 // Explicit spellings used in the approved prose. Candidates are restricted to
 // the identities already present in this attribution; aliases never add authors.
 const reviewedAuthorAliases: Record<string, string[]> = {
-	calderon_de_la_barca_pedro: ['Calderón'],
-	rojas_zorrilla_francisco_de: ['Rojas Zorrilla'],
-	coello_y_ochoa_antonio: ['Coello'],
-	perez_de_montalban_juan: ['Montalbán'],
-	moreto_y_cavana_agustin: ['Agustín Moreto', 'Moreto'],
-	cancer_jeronimo_de: ['Cáncer'],
-	vega_carpio_lope_de: ['Lope de Vega'],
-	castro_y_bellvis_guillen_de: ['Guillén de Castro'],
-	ulloa_luis: ['Luis de Ulloa Pereira', 'Luis de Ulloa y Pereira'],
-	vera_diego: ['Diego de Vera'],
-	matos_fragoso_juan_de: ['Matos Fragoso'],
-	aguayo_diego_de: ['Diego de Aguayo y Terones']
+  "calderon_de_la_barca_pedro": [
+    "Calderón"
+  ],
+  "rojas_zorrilla_francisco_de": [
+    "Rojas Zorrilla",
+    "Rojas"
+  ],
+  "coello_y_ochoa_antonio": [
+    "Coello",
+    "Antonio Coello"
+  ],
+  "perez_de_montalban_juan": [
+    "Montalbán"
+  ],
+  "moreto_y_cavana_agustin": [
+    "Agustín Moreto",
+    "Moreto"
+  ],
+  "cancer_jeronimo_de": [
+    "Cáncer"
+  ],
+  "vega_carpio_lope_de": [
+    "Lope de Vega",
+    "Lope"
+  ],
+  "castro_y_bellvis_guillen_de": [
+    "Guillén de Castro"
+  ],
+  "ulloa_luis": [
+    "Luis de Ulloa Pereira",
+    "Luis de Ulloa y Pereira"
+  ],
+  "vera_diego": [
+    "Diego de Vera"
+  ],
+  "matos_fragoso_juan_de": [
+    "Matos Fragoso",
+    "Matos"
+  ],
+  "aguayo_diego_de": [
+    "Diego de Aguayo y Terones"
+  ],
+  "belmonte_bermudez_luis_de": [
+    "Belmonte"
+  ],
+  "calleja_diego": [
+    "Calleja"
+  ],
+  "campo_antonio_manuel_del": [
+    "Campo"
+  ],
+  "tarrega_francisco_agustin": [
+    "Tárrega"
+  ],
+  "velez_de_guevara_luis": [
+    "Vélez"
+  ],
+  "leon_marchante_manuel_de": [
+    "León Marchante"
+  ],
+  "haedo_antonio": [
+    "Antonio de Haedo"
+  ],
+  "figueroa_juan_no_identificado": [
+    "Juan Figueroa"
+  ],
+  "siguenza_jose_de": [
+    "Sigüenza"
+  ],
+  "salgado_francisco": [
+    "Salgado"
+  ],
+  "bances_candamo_francisco_antonio_de": [
+    "Bances"
+  ],
+  "villaviciosa_sebastian_de": [
+    "Villaviciosa"
+  ],
+  "alvarez_de_toledo_antonio": [
+    "Álvarez de Toledo"
+  ],
+  "canizares_jose_de": [
+    "Cañizares"
+  ],
+  "hoz_y_mota_juan_claudio_de_la": [
+    "Hoz y Mota"
+  ],
+  "martinez_de_meneses_antonio": [
+    "Martínez de Meneses"
+  ],
+  "zabaleta_juan_de": [
+    "Zabaleta"
+  ],
+  "monroy_y_silva_cristobal_de": [
+    "Monroy"
+  ],
+  "alfaro_alonso_de": [
+    "Alfaro"
+  ],
+  "sigler_de_huerta_antonio": [
+    "Sigler"
+  ],
+  "diamante_juan_bautista": [
+    "Diamante"
+  ],
+  "lanini_y_sagredo_pedro": [
+    "Lanini"
+  ],
+  "torre_y_sevil_francisco_de_la": [
+    "Torre"
+  ],
+  "claramonte_y_corroy_andres_de": [
+    "Andrés de Claramonte"
+  ]
 };
 
-export const buildReviewedAttributionParts = (set: AttributionSet): AttributionPhrasePart[] => {
-	const phrase = set.reviewedPhrase ?? '';
+export const buildAuthorMentionParts = (phrase: string, authors: AuthorReference[], scopedAliases: Record<string, string[]> = {}): AttributionPhrasePart[] => {
 	const candidates = new Map<string, AuthorReference | null>();
-	for (const author of attributionGroups(set).flat()) {
+	const priorities = new Map<string, number>();
+	for (const author of authors) {
 		if (isUnknownAuthor(author)) continue;
-		const names = [author.authorName, author.authorName.replace(/\s+\([^)]*\)$/, ''), ...(reviewedAuthorAliases[author.authorId] ?? [])];
-		for (const name of names) {
+		const names = [
+			{ name: author.authorName, priority: 2 },
+			...[author.authorName.replace(/\s+\([^)]*\)$/, ''), ...(reviewedAuthorAliases[author.authorId] ?? []), ...(scopedAliases[author.authorId] ?? [])].map(name => ({ name, priority: 1 }))
+		];
+		for (const {name, priority} of names) {
 			const key = name.toLocaleLowerCase('es');
 			const previous = candidates.get(key);
-			// An ambiguous spelling must never silently pick one identity.
-			if (previous === null || (previous && previous.authorId !== author.authorId)) candidates.set(key, null);
+			const previousPriority = priorities.get(key) ?? 0;
+			if (priority < previousPriority) continue;
+			// Exact canonical names outrank shortened qualifiers; equal-rank ambiguity stays unresolved.
+			if (priority > previousPriority) candidates.set(key, author);
+			else if (previous === null || (previous && previous.authorId !== author.authorId)) candidates.set(key, null);
 			else candidates.set(key, author);
+			priorities.set(key, priority);
 		}
 	}
 	const matches: { start: number; end: number; author: AuthorReference }[] = [];
@@ -168,6 +277,9 @@ export const buildReviewedAttributionParts = (set: AttributionSet): AttributionP
 	if (cursor < phrase.length || parts.length === 0) parts.push({ kind: 'text', value: phrase.slice(cursor) });
 	return parts;
 };
+
+export const buildReviewedAttributionParts = (set: AttributionSet): AttributionPhrasePart[] =>
+	buildAuthorMentionParts(set.reviewedPhrase ?? '', attributionGroups(set).flat());
 
 export const buildTraditionalAttributionParts = (
 	set: AttributionSet,

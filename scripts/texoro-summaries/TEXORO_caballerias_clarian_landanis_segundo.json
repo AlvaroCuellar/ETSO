@@ -1,0 +1,52 @@
+{
+  "archivo": "TEXORO_caballerias_clarian_landanis_segundo.txt",
+  "titulo": "Clarián de Landanís (libro segundo, Maestre Álvaro)",
+  "resumen_largo": [
+    "La continuación comienza con un peligro que deshace la seguridad de la partida anterior: la nave en la que Clarián y sus compañeros viajaban hacia Suecia se pierde en el mar. El aviso del patrón de que deben prepararse para morir convierte la expedición de socorro en una lucha inmediata por la supervivencia. Después del naufragio, los caballeros se recuperan en la isla Saludable y, una vez restablecidos, deciden reanudar su empresa. El viaje vuelve a ponerlos frente a enemigos armados: capturan las embarcaciones de Lemboaxer y buscan la forma de apoderarse del rey Arcibán. La defensa de Roderín y el abastecimiento de sus habitantes muestran que la victoria depende tanto de la fuerza individual como de la organización de víveres, flotas y refuerzos. A la ayuda de Clarián se suman compañeros y antiguos beneficiarios de sus hazañas, como Argadón, señor de los Siete Castillos, que arriesga la seguridad de su propia tierra para auxiliarlo. La llegada de estos apoyos convierte los deberes de gratitud en recursos efectivos para la guerra. El avance hacia Landanís reúne así el esfuerzo personal del héroe con la fidelidad de una extensa comunidad caballeresca.",
+    "Las campañas entrelazan los intereses de Lantedón, sus hijos y los soberanos aliados. Los encuentros militares dan lugar a cambios de partido y conversiones: algunos príncipes se incorporan al bando cristiano y antiguos adversarios aceptan nuevos vínculos. Riramón de Ganail comparece ante la corte de su padre y es restituido en el reino de Dacia, mientras su madre Lisanda obtiene reconocimiento como reina. La narración amplía después el conflicto hacia el imperio de Vasperaldo. Los desafíos de gigantes durante las treguas y la gran batalla campal combinan la prueba singular de los hermanos con el movimiento de ejércitos enteros. Tras el triunfo, el emperador concede reinos a caballeros que se han distinguido y sus hombres persiguen a los enemigos que huyen. La distribución de territorios convierte el valor demostrado en autoridad política. El retorno hacia Colonia introduce otro ritmo: recepciones, conversaciones amorosas y fiestas en el castillo de Celacunda permiten reencontrar a quienes han quedado lejos de las campañas. Sin embargo, el reposo es provisional. Nuevos desafíos, rivalidades entre servidores de una misma dama y encuentros con grupos armados vuelven a interrumpir los desplazamientos, y Clarián debe seguir respondiendo a solicitudes que no puede desatender sin comprometer su honra.",
+    "La última parte mantiene esa alternancia entre servicio imperial, solidaridad familiar y reparación de agravios. Clarián y sus compañeros combaten contra fuerzas que pretenden detenerlos y afrontan ataques en los caminos, mientras otros personajes buscan recuperar su libertad o asegurar un matrimonio. Una mensajera de Leristela, reina de Tesalia, requiere la ayuda del héroe: su marido Dantesor está herido y el rey Prostolemo de Macedonia se ha apoderado de una de sus ciudades. La llamada pone de nuevo en movimiento a Clarián y a Riramón. Durante el recorrido se enfrentan a ladrones y gigantes, y las historias de las doncellas que encuentran añaden otras obligaciones a la misión principal. La mediación de Clarián contribuye finalmente a reconciliar a los soberanos; el matrimonio de Riramón con la hija del rey macedonio da una salida dinástica al conflicto. La vuelta a Alemania reserva un desenlace distinto de las celebraciones guerreras: Lantedón se encuentra agonizante y recupera la voz al ver llegar a su hijo. Muere después de abrazarlo. La corte participa en el duelo y acompaña su cuerpo a Suecia, donde se celebran solemnes honras. Cumplido este deber, Clarián y los grandes regresan a Alemania, y el relato termina con una imagen de paz y reposo."
+  ],
+  "resumen_breve": [
+    "La nave que lleva a Clarián y sus compañeros naufraga cuando acuden en socorro de Lantedón. Recuperados en la isla Saludable, los caballeros reemprenden la expedición y participan en la defensa de las ciudades y reinos amenazados.",
+    "La guerra reúne a las familias de Clarián y Riramón con los aliados de la corte imperial. Combates, conversiones y restituciones de señoríos alternan con desafíos, cautiverios y demandas de auxilio que prolongan los viajes de los protagonistas.",
+    "La intervención de Clarián permite también componer conflictos entre soberanos y concertar el matrimonio de Riramón con una princesa de Macedonia. Al regresar a Colonia, alcanza a despedirse de Lantedón antes de su muerte; las honras fúnebres cierran la historia familiar."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Clarián de Landanís",
+      "descripcion": "Protagonista de los viajes y empresas de rescate."
+    },
+    {
+      "nombre": "Riramón de Ganayl",
+      "descripcion": "Hermano de Clarián que contrae matrimonio en Macedonia."
+    },
+    {
+      "nombre": "Lantedón",
+      "descripcion": "Padre de Clarián, cuya muerte marca el cierre."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Isla Saludable",
+      "descripcion": "Lugar de recuperación de los caballeros tras el naufragio."
+    },
+    {
+      "nombre": "Macedonia",
+      "descripcion": "Reino asociado con las negociaciones matrimoniales de Riramón."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Peligro y rescate",
+      "descripcion": "La pérdida de la nave en la que viajan Clarián y sus compañeros abre esta continuación."
+    },
+    {
+      "tema": "Alianzas matrimoniales",
+      "descripcion": "Guerras, cautiverios y rescates multiplican los recorridos de Clarián."
+    },
+    {
+      "tema": "Muerte del padre",
+      "descripcion": "El matrimonio de Riramón con la hija del rey de Macedonia precede al regreso de Clarián."
+    }
+  ]
+}

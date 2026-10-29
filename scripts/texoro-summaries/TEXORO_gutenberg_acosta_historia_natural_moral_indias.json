@@ -1,0 +1,68 @@
+{
+  "archivo": "TEXORO_gutenberg_acosta_historia_natural_moral_indias.txt",
+  "titulo": "Historia natural y moral de las Indias",
+  "resumen_largo": [
+    "José de Acosta organiza su investigación de las Indias occidentales en siete libros que pasan del conocimiento del medio natural al de las sociedades humanas. Comienza discutiendo qué dijeron los antiguos sobre el cielo, las tierras desconocidas y la posibilidad de habitar regiones que consideraban excesivamente cálidas. La experiencia americana obliga a contrastar esas opiniones con hechos observables. El paso por la zona equinoccial, las diferencias de temperatura y la presencia de poblaciones estables sirven para revisar explicaciones recibidas sin renunciar al diálogo con sus autores. Acosta compara lugares, propone causas y reconoce dificultades que no puede resolver de manera definitiva. Los viajes y la observación personal tienen un papel importante, pero se acompañan de noticias de otros testigos y de argumentos filosóficos. Su exposición considera también cómo pudieron llegar hombres y animales a un continente separado de Europa por el mar. La pregunta forma parte de una investigación que intenta integrar las Indias en una historia común de la naturaleza y del género humano. El mundo americano no aparece únicamente como conjunto de prodigios: sus particularidades deben describirse, distinguirse y explicarse mediante relaciones que el lector pueda entender.",
+    "Los libros dedicados al medio físico estudian el agua, los vientos, los mares y la disposición de las tierras, con atención a las diferencias entre costas, valles y montañas. La comparación de regiones permite explicar por qué la proximidad a la línea equinoccial no produce siempre el mismo calor y por qué cambian las lluvias y las condiciones de vida. La exposición se amplía después a minerales, plantas y animales. Acosta describe la riqueza de metales y el trabajo de las minas, y examina recursos que intervienen en la alimentación, la medicina, los oficios y el comercio. Frutas, árboles, flores y sustancias aprovechables se presentan mediante formas, propiedades y usos, junto con comparaciones destinadas a lectores europeos. El interés por lo desconocido convive con el examen de productos trasladados entre continentes y de sus resultados en ambientes diferentes. Al pasar a la historia moral, el autor mantiene ese procedimiento comparativo, aunque introduce un juicio religioso más marcado. El quinto libro trata los dioses, templos, ministros, fiestas y sacrificios de los indígenas. Acosta interpreta la idolatría como engaño del demonio y señala semejanzas entre ciertas ceremonias americanas y prácticas cristianas. Las describe dentro de su propio marco de creencias, pero también busca mostrar su organización y la importancia que tenían para las comunidades.",
+    "El sexto libro examina las formas de registrar el tiempo y conservar la memoria, las leyes, las autoridades y la educación de los pueblos del Perú y de México. Contra quienes los consideran faltos de entendimiento, Acosta utiliza sus instituciones y saberes como prueba de capacidad. Los procedimientos de gobierno, la formación de los jóvenes y la organización de la vida común permiten reconocer sociedades complejas, aunque el autor siga censurando sus religiones. El séptimo libro adopta una secuencia histórica y relata los orígenes, desplazamientos y hechos de los mexicanos, el crecimiento de su poder y los acontecimientos que preceden a la llegada de los españoles. Las señales y anuncios de la conquista reciben una interpretación providencial: preparan, según Acosta, la entrada de la fe cristiana. El cierre elogia a los primeros predicadores y atribuye a Dios los frutos obtenidos incluso cuando la actuación humana no siguió medios propiamente cristianos. A la vez, reclama que los indígenas no sean cargados con trabajos excesivos y que su salvación reciba más atención que el provecho extraído de ellos. La obra se detiene en ese umbral religioso, pues su propósito es explicar la naturaleza y la historia de los propios pueblos indígenas, y reserva el desarrollo de la evangelización para otro discurso."
+  ],
+  "resumen_breve": [
+    "José de Acosta examina la naturaleza y las sociedades americanas combinando experiencia, testimonios y discusión de autoridades. Los primeros libros explican climas, mares y territorios, y describen minerales, plantas y animales que obligan a revisar ideas heredadas.",
+    "La exposición pasa después a las religiones, ceremonias, leyes y gobiernos de los pueblos del Perú y México. Acosta reconoce sus capacidades intelectuales y políticas, aunque juzga sus cultos desde una perspectiva cristiana.",
+    "El último libro recorre la historia de los mexicanos hasta la llegada de los españoles. La obra concluye interpretando la expansión del cristianismo como acción providencial y reclamando un trato que favorezca la vida religiosa de las poblaciones indígenas."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "José de Acosta",
+      "descripcion": "Observador y expositor que combina experiencia de viaje, información recibida y examen de autoridades."
+    },
+    {
+      "nombre": "Pueblos del Perú",
+      "descripcion": "Comunidades cuyas prácticas, organización y saberes se describen dentro de la historia moral."
+    },
+    {
+      "nombre": "Pueblos de México",
+      "descripcion": "Protagonistas colectivos de la exposición sobre religión, gobierno e historia mexicana."
+    },
+    {
+      "nombre": "Autoridades antiguas y cristianas",
+      "descripcion": "Autores citados para discutir cuestiones naturales y comparar las prácticas religiosas y políticas."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Indias occidentales",
+      "descripcion": "Marco geográfico general del estudio natural y moral."
+    },
+    {
+      "nombre": "Perú y la cordillera andina",
+      "descripcion": "Territorios de observación de alturas, climas, recursos y formas de vida."
+    },
+    {
+      "nombre": "México",
+      "descripcion": "Ámbito de la descripción de ceremonias, gobierno y narración histórica de los últimos libros."
+    },
+    {
+      "nombre": "Europa",
+      "descripcion": "Término de comparación para los fenómenos naturales y las prácticas sociales americanas."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Historia natural",
+      "descripcion": "Estudio de climas, geografía, minerales, vegetales y animales."
+    },
+    {
+      "tema": "Religión y costumbres",
+      "descripcion": "Descripción comparada y juicio cristiano de las prácticas indígenas."
+    },
+    {
+      "tema": "Gobierno e historia",
+      "descripcion": "Leyes, autoridades, calendarios y memoria de los pueblos americanos."
+    },
+    {
+      "tema": "Conocimiento y evangelización",
+      "descripcion": "Utilidad del saber sobre las Indias para la misión cristiana."
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "archivo": "TEXORO_gutenberg_lascasas_apologetica_seleccion_1876.txt",
+  "titulo": "Apologética historia sumaria (selección de 51 capítulos de la edición de 1876)",
+  "resumen_largo": [
+    "La selección reúne cincuenta y un capítulos de la Apologética historia sumaria en los que Bartolomé de las Casas describe el mundo americano y argumenta en favor de la capacidad de sus habitantes. No forma una narración continua de conquistas: su recorrido sigue cuestiones naturales, religiosas y políticas, con saltos entre distintos lugares de la obra. El comienzo recuerda el viaje de Colón y se concentra después en La Española, territorio que el autor afirma conocer por larga experiencia. Examina su situación, costas, puertos, relieve, ríos y comarcas, así como las condiciones que permiten vivir y cultivar en ella. Las noticias de árboles, frutos, hierbas y otros recursos sirven para presentar una tierra fértil y saludable. La comparación con islas celebradas por los escritores antiguos busca mostrar que las Indias no ocupan un lugar inferior en la naturaleza. Las Casas contrasta observaciones propias, informaciones recibidas y autoridades, y atiende a nombres indígenas y diferencias entre regiones. La abundancia de detalles no es ajena a su propósito: el medio americano proporciona las condiciones que considera favorables para el desarrollo humano y permite cuestionar las imágenes despreciativas difundidas sobre sus pobladores.",
+    "Desde esa descripción, el argumento pasa a las disposiciones que favorecen el entendimiento. Las Casas relaciona clima, constitución corporal, alimentación, dominio de las pasiones y formas de vida con la aptitud para ejercer la razón. Utiliza categorías naturales y morales de su tiempo para defender que las gentes de las Indias poseen capacidades que sus detractores niegan. La templanza, la buena disposición de los cuerpos y la ausencia de ciertas perturbaciones del ánimo se convierten en pruebas dentro de ese razonamiento. Los capítulos posteriores conservados cambian el centro de atención hacia creencias y prácticas religiosas. Se describen los dioses y tradiciones de La Española y otras regiones, las figuras reverenciadas por haber beneficiado a la comunidad, los ministros del culto y diferentes ceremonias. Aparecen noticias de Yucatán, Guatemala y territorios de Tierra Firme, con explicaciones que comparan usos americanos y antiguos. El autor considera erróneas las religiones ajenas al cristianismo, pero no deduce de ese juicio que sus seguidores carezcan de razón. Las diferencias entre pueblos y la presencia de costumbres que censura exigen, en su exposición, distinguir casos y valorar testimonios, en vez de convertir cualquier relato desfavorable en una acusación contra todos los indígenas.",
+    "La defensa se completa mediante noticias sobre gobierno, justicia y vida común. Las Casas sostiene que comunidades numerosas y duraderas no podrían mantenerse sin alguna organización política, y presenta autoridades, normas y relaciones sociales como señales de ella. En La Española describe el trato de los señores con sus súbditos, los matrimonios, los trabajos y otras costumbres, junto con ritos funerarios que no deja de juzgar críticamente. Las prácticas de las islas se conectan con las de provincias de Centroamérica y de las costas continentales. Los últimos capítulos conservados recorren formas de danza y canto, ceremonias, creencias, intercambios y maneras de enterrar a los muertos. El autor refuta además noticias que considera calumniosas y advierte sobre la facilidad con que los españoles atribuyen vicios a las gentes que quieren desacreditar. Su defensa no consiste en afirmar que toda costumbre sea buena, sino en negar que los errores religiosos o las diferencias de vida destruyan la condición humana y política de los pueblos. El recorrido termina con las regiones cercanas al Darién y las noticias de sus autoridades y comercio, antes de anunciar el estudio del gobierno del Perú. Ese anuncio queda como límite de la selección, que permite reconocer la relación entre observación del territorio, comparación de costumbres y reivindicación de la capacidad indígena."
+  ],
+  "resumen_breve": [
+    "Esta selección de la Apologética historia sumaria reúne cincuenta y un capítulos en los que Las Casas describe territorios y costumbres americanos para defender la capacidad racional y política de sus habitantes. La Española ocupa el primer plano por su clima, fertilidad y recursos.",
+    "La descripción natural conduce al examen de las disposiciones corporales y morales que el autor relaciona con el entendimiento. Después se presentan creencias, ceremonias, autoridades y formas de convivencia de distintos pueblos.",
+    "Las comparaciones y observaciones combaten la idea de una inferioridad indígena que legitime su sometimiento. El recorrido conservado termina con costumbres de las regiones próximas al Darién, antes de anunciar el paso al Perú."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Bartolomé de las Casas",
+      "descripcion": "Autor que rebate las imputaciones de irracionalidad e incapacidad política dirigidas contra los pueblos indígenas."
+    },
+    {
+      "nombre": "Pueblos del Caribe y Tierra Firme",
+      "descripcion": "Sujetos de las descripciones naturales, sociales y religiosas utilizadas en la argumentación."
+    },
+    {
+      "nombre": "Autoridades filosóficas",
+      "descripcion": "Fuentes doctrinales empleadas para explicar las facultades humanas y la organización social."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "La Española y Cuba",
+      "descripcion": "Islas cuyas condiciones naturales y costumbres proporcionan ejemplos a la exposición."
+    },
+    {
+      "nombre": "Tierra Firme",
+      "descripcion": "Amplio ámbito de pueblos y prácticas comparadas."
+    },
+    {
+      "nombre": "Paria y las provincias próximas al Darién",
+      "descripcion": "Territorios tratados en las descripciones de los últimos capítulos seleccionados."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Unidad de la naturaleza humana",
+      "descripcion": "Defensa de la racionalidad y sociabilidad de todos los pueblos."
+    },
+    {
+      "tema": "Naturaleza y entendimiento",
+      "descripcion": "Relaciones propuestas entre clima, alimentación, disposición corporal y capacidades humanas."
+    },
+    {
+      "tema": "Diversidad de costumbres",
+      "descripcion": "Comparación de prácticas sociales y religiosas sin reducirlas a una acusación general."
+    },
+    {
+      "tema": "Reputación y justicia",
+      "descripcion": "Refutación de noticias infamantes utilizadas para deslegitimar a las comunidades indígenas."
+    }
+  ]
+}

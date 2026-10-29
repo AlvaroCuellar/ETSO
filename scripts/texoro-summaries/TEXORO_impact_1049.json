@@ -1,0 +1,56 @@
+{
+  "archivo": "TEXORO_impact_1049.txt",
+  "titulo": "Novela de un miserable llamado Gonzalo",
+  "resumen_largo": [
+    "Gonzalo nace en una familia cuya avaricia se presenta desde el principio mediante comparaciones animales. Su padre, también llamado Gonzalo, ha hecho de la privación una forma de vida y muere después de hartarse en un convite ajeno. El hijo lo supera en mezquindad. Aunque posee bienes, impone a su casa una economía que reduce la alimentación y el vestido hasta lo grotesco: aprovecha apenas el sabor de los condimentos, vigila cada bocado y conserva ropas llenas de remiendos. El narrador describe su cuerpo flaco y desmedrado como una manifestación visible del vicio. No todas sus ideas son rechazadas: se ocupa de que los hijos estudien y considera que el esfuerzo merece premio. Pero incluso los aciertos quedan desfigurados por la dureza, la desproporción de los castigos y la escasez de las recompensas. La vida doméstica depende así del capricho de quien puede proporcionar lo necesario y se niega a hacerlo. Las mujeres sufren de modo especial una miseria que no responde a falta de recursos, sino a la incapacidad del dueño de gastarlos. El relato combina esos episodios con intervenciones del narrador sobre la crianza, la justicia del castigo y los límites de la autoridad paterna.",
+    "Gil, llamado también Gilillo, llega a huir del hogar porque no soporta el hambre y los golpes. Busca acomodo con una frutera, donde encuentra la abundancia que se le negaba en su casa. Gonzalo lo recupera y pretende celebrar su vuelta con una comida extraordinaria. Sin embargo, esa fiesta mínima se deshace en una cadena de pérdidas: un perro se apodera de parte de lo comprado y el encargo que lleva el muchacho se mezcla con la basura mientras se entretiene en una pelea. Las desventuras adquieren un tono cómico para el lector, pero renuevan la desesperación de la mujer que esperaba comer. La muerte de las esposas y la dispersión de los hijos dejan al avaro cada vez más solo. Cuando enferma, tiene que buscar una persona que lo atienda. Una mujer llegada de un medio muy distinto al que ella declara consigue ganarse su confianza con cuidados, lágrimas y una historia de honradez desgraciada. Obtiene de él palabra de matrimonio ante un crucifijo y recurre después a la justicia para exigir su cumplimiento. Gonzalo acepta casarse, entre otras razones, para evitar gastos de pleito. El ahorro que parecía dirigir todas sus decisiones lo entrega de este modo a una relación en la que ya no controla la casa. La nueva mujer exige y manda, contrastando con las esposas que habían soportado sus privaciones.",
+    "En esa situación reaparece Gilillo, ahora llamado don Sebastián, bien vestido, con criados y un puesto al servicio de un príncipe. Informado de la enfermedad de su padre y de la marcha de los hermanos, vuelve para verlo y lo trata con respeto. Su presencia introduce nuevos enredos, porque la madrastra se siente atraída por él, mientras otras personas intentan aprovecharse de la casa. El hijo interviene con prudencia y trazas para contener los riesgos; unos lances violentos castigan a quienes prolongan sus negocios deshonestos y llevan a doña Isabel a proponerse una enmienda. Gonzalo recibe durante un tiempo cuidados afectuosos, pero su enfermedad avanza. La inversión final del hambre da sentido moral a toda la historia: ahora se compran capones, perdices y otros alimentos escogidos, y él desea comer, pero no logra tragarlos. Quien había privado de sustento a sus mujeres queda rodeado de viandas inútiles para su propia necesidad. Cuando se acerca la muerte, don Sebastián aclara el origen de un dinero desaparecido, lo restituye y procura que la esposa no quede desamparada en el testamento. La herencia se distribuye y mejora la situación de quienes rodeaban al avaro. El narrador compara entonces a Gonzalo con el cerdo, molesto y sucio mientras vive, pero provechoso después de muerto. Su riqueza solo cumple una función útil cuando deja de estar sometida a la voluntad que había impedido disfrutarla."
+  ],
+  "resumen_breve": [
+    "Gonzalo hereda de su padre una avaricia extrema que convierte la abundancia en hambre para toda la familia. Mezquina alimentos, ropa y gastos, mientras presume de cuidar la educación de sus hijos. Los castigos y las privaciones empujan a Gilillo a abandonar la casa.",
+    "Las muertes de sus mujeres, las fugas de los hijos y su propia enfermedad no corrigen al avaro. Una criada consigue casarse con él y cambia las relaciones de poder dentro del hogar: ahora Gonzalo teme las exigencias y engaños de su esposa.",
+    "Gilillo regresa convertido en don Sebastián e interviene en los conflictos familiares. Gonzalo muere incapaz de comer, aunque lo rodean buenos alimentos. Su herencia da a los demás el provecho que su vida les había negado."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Gonzalo",
+      "descripcion": "Protagonista cuya avaricia organiza la narración."
+    },
+    {
+      "nombre": "Gil",
+      "descripcion": "Hijo de Gonzalo, llamado Gilillo, que abandona la casa y regresa convertido en don Sebastián."
+    },
+    {
+      "nombre": "Don Sebastián",
+      "descripcion": "Nombre que adopta Gilillo al prosperar; interviene para ayudar a su padre y ordenar los conflictos familiares."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Ciudad de los Camaleones",
+      "descripcion": "Designación inicial del lugar de origen."
+    },
+    {
+      "nombre": "Casa de Gonzalo",
+      "descripcion": "Espacio del control de alimentos y gastos."
+    },
+    {
+      "nombre": "La corte",
+      "descripcion": "Ámbito de relaciones y regreso de personajes."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Avaricia",
+      "descripcion": "La acumulación de dinero se opone al bienestar doméstico."
+    },
+    {
+      "tema": "Hambre",
+      "descripcion": "Motor de episodios cómicos y expresión de la tacañería."
+    },
+    {
+      "tema": "Herencia",
+      "descripcion": "La muerte modifica las relaciones y distribuye los bienes acumulados."
+    }
+  ]
+}

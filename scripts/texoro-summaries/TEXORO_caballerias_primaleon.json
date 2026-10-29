@@ -1,0 +1,52 @@
+{
+  "archivo": "TEXORO_caballerias_primaleon.txt",
+  "titulo": "Primaleón",
+  "resumen_largo": [
+    "La continuación de Palmerín de Olivia amplía el mundo de su protagonista mediante las empresas de sus hijos y de los caballeros relacionados con su corte. No sigue desde el principio una sola trayectoria: las aventuras de Belcar, sus compañeros y los aspirantes a superar la prueba de Francelina se alternan con la historia de Polendos. Este descubre que es hijo del emperador Palmerín y obtiene licencia de su madre para salir en su busca. Antes de llegar a Constantinopla demuestra su valor en enfrentamientos con señores de islas y gigantes, libera cautivos y vence obstáculos que le permiten hacerse reconocer por sus obras. Los regalos y noticias que remite a la corte anuncian su llegada y preparan el reconocimiento de su parentesco. La liberación de Francelina, encerrada en una isla, vincula sus pruebas de armas con el amor de una dama cuya belleza atraía a muchos caballeros. La conversión al cristianismo integra después su nueva identidad familiar en el orden religioso del imperio. Otras historias de filiaciones y reencuentros, como la de Rifarán con Trineo, repiten esa importancia del linaje sin eliminar las pruebas individuales. Las fiestas convocadas por Palmerín atraen a caballeros de territorios diversos y crean un escenario donde las justas, los desafíos y las amistades pueden cruzar caminos que hasta entonces habían permanecido separados.",
+    "En ese entramado adquieren relieve los amores de Primaleón y Gridonia y los de don Duardos y Flérida. La atracción entre los protagonistas no elimina las resistencias de sus casas ni las dificultades creadas por identidades encubiertas. Primaleón encuentra en el caballero Giber un colaborador y se compromete en la defensa de la duquesa de Ormedes. La guerra contra sus enemigos da ocasión a grandes victorias, pero el mérito militar debe acompañarse de un acercamiento personal a Gridonia, cuya aceptación no puede darse por supuesta. Don Duardos, por su parte, confía su aflicción amorosa a Olimba y procura mantener su relación con Flérida mediante encuentros secretos en la huerta imperial. Para permanecer cerca de ella, se acoge a los hortelanos con una fingida búsqueda de tesoros que les proporciona dinero y a él una identidad discreta. Sus viajes lo llevan a guerras y aventuras lejos de la corte; un engaño mágico lo hace mantener una relación que lamenta después, porque la juzga contraria a la fidelidad debida a su señora. La recuperación de su voluntad le permite volver a buscarla. A medida que se multiplican estos episodios, los caminos de las parejas convergen: don Duardos sale de la corte con Flérida y más tarde interviene para liberar a Gridonia y Zerfira, raptadas durante una cacería. La ayuda entre los caballeros evita que cada relación quede aislada dentro de su propia historia.",
+    "La resolución de los amores requiere todavía reconciliar a los protagonistas con sus familias. Las bodas de Primaleón con Gridonia y de don Duardos con Flérida se celebran en Constantinopla, pero la llegada de la madre de Gridonia introduce el recuerdo de antiguos agravios. El perdón que concede a Primaleón permite que la fiesta no quede dominada por la enemistad. Las rivalidades continúan en el terreno de las armas: el duque de Normandía quiere probarse con el recién casado y el torneo enfrenta también a los dos protagonistas en bandos distintos. La cortesía posterior y los matrimonios de otros personajes transforman las tensiones en vínculos duraderos. Pasadas las celebraciones, cada pareja retorna a sus tierras y el relato avanza hacia los descendientes. Primaleón tiene cuatro hijos, de los cuales el menor, Platir, abandona la casa imperial encubierto y comienza sus propias aventuras. Su trayectoria y su matrimonio muestran que el relevo caballeresco ya está en marcha. El cierre corresponde, sin embargo, a Palmerín: conocedor de que su muerte se aproxima, se prepara espiritualmente y aconseja a Primaleón sobre el gobierno. Su fallecimiento provoca duelo en la corte y señales extraordinarias, entre ellas la muerte de un ave encantada y la desaparición de un antiguo encantamiento. Con él concluye la vida del fundador, mientras su familia conserva abierto el futuro de la dinastía."
+  ],
+  "resumen_breve": [
+    "En la corte del emperador Palmerín confluyen las aventuras de sus hijos y de numerosos caballeros. Polendos conoce su origen, busca a su padre y se integra en ese mundo mediante hazañas, reconocimientos y conversión al cristianismo.",
+    "Primaleón se enamora de Gridonia, mientras don Duardos sirve a Flérida. Ambas relaciones avanzan entre identidades ocultas, resistencias familiares, guerras y separaciones. Las trayectorias de sus compañeros multiplican los rescates y los vínculos entre las cortes.",
+    "Las parejas logran reunirse y celebrar sus matrimonios; antiguos adversarios reciben perdón y se establecen nuevas alianzas. Los hijos de Primaleón prolongan las aventuras, en particular Platir. La muerte de Palmerín, acompañada de señales maravillosas, marca el relevo de la generación fundadora."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Primaleón",
+      "descripcion": "Caballero que da nombre a la continuación de Palmerín."
+    },
+    {
+      "nombre": "Palmerín",
+      "descripcion": "Emperador cuya familia y muerte articulan la continuidad dinástica."
+    },
+    {
+      "nombre": "Polendos",
+      "descripcion": "Caballero reconocido como hijo del emperador."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Constantinopla",
+      "descripcion": "Centro imperial al que llegan noticias y caballeros."
+    },
+    {
+      "nombre": "Lacedemonia",
+      "descripcion": "Lugar vinculado con Platir y su matrimonio."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Reconocimiento familiar",
+      "descripcion": "Las aventuras de Primaleón se desarrollan en el mundo de la corte del emperador Palmerín, junto con las trayectorias de otros caballeros."
+    },
+    {
+      "tema": "Alianzas y conversión",
+      "descripcion": "Las relaciones de parentesco y los cambios de lealtad afectan al conjunto de la corte."
+    },
+    {
+      "tema": "Relevo generacional",
+      "descripcion": "Los vínculos entre Primaleón, don Duardos y la nueva generación se afianzan mediante visitas y matrimonios."
+    }
+  ]
+}

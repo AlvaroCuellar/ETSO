@@ -1,6 +1,7 @@
+import { buildAuthorMentionParts, type AttributionPhrasePart, type AuthorReference } from './traditional-attribution-phrase.ts';
 import type { AttributionSet, CatalogWork } from '../domain/catalog';
 
-interface ResultOptions {
+export interface ResultOptions {
 	translate?: (value: string) => string;
 	andLabel?: string;
 }
@@ -59,4 +60,42 @@ export const generateStylometryResult = (
 	if (members.length === 1 && allProbable) return `${t('Los análisis de estilometría permiten asociar esta obra con el perfil autorial de')} ${names[0]}, ${t('por cuanto algunas de sus obras aparecen en las primeras posiciones, aunque no de forma concluyente.')}`;
 	if (members.length > 1 && set.groups.length === 1 && allProbable) return `${t('Los análisis de estilometría permiten asociar esta obra con los perfiles autoriales de')} ${list(names, andLabel)}, ${t('por cuanto algunas de sus obras aparecen en las primeras posiciones, aunque no de forma concluyente.')}`;
 	return t('Los resultados estilométricos disponibles requieren revisión antes de formular una conclusión autorial.');
+};
+
+// These four reviewed passages explicitly distinguish the two Figueroa brothers.
+const joseFigueroaWorks = new Set([
+ 'FIGUEROA-DIEGO-Y-JOSE_HijaDelMesonero(Transk-IMPR)',
+ 'FIGUEROA-DIEGO_LealtadEnLasInjurias(Transk-IMPR)',
+ 'FIGUEROA-DIEGO_SirenaDeTinacria(Transk-IMPR)',
+ 'FIGUEROA-DIEGO_TodoEsEnredosAmor(Transk-IMPR)'
+]);
+
+/** Result prose and explicit #author references use the same identities on reports and fichas. */
+export const buildStylometryResultParts = (
+ work: Pick<CatalogWork, 'result1' | 'result2' | 'stylometryAttribution' | 'traditionalAttribution'> & Partial<Pick<CatalogWork, 'id'>>,
+ options: ResultOptions = {},
+ extraAuthors: AuthorReference[] = []
+): AttributionPhrasePart[] => {
+ const value = resolveStylometryResult(work, options) ?? '';
+ if (!value) return [];
+ const authors = [
+  ...work.traditionalAttribution.groups.flatMap(group => group.members),
+  ...work.stylometryAttribution.groups.flatMap(group => group.members),
+  ...extraAuthors
+ ];
+ const byId = new Map(authors.map(author => [author.authorId, author]));
+ const scopedAliases: Record<string, string[]> = work.id && joseFigueroaWorks.has(work.id) ? { figueroa_y_cordova_jose: ['José'] } : {};
+ const mentions = (text: string) => buildAuthorMentionParts(text, authors, scopedAliases);
+ const parts: AttributionPhrasePart[] = [];
+ let cursor = 0;
+ for (const match of value.matchAll(/#([A-Za-z0-9_]+)/g)) {
+  if (match.index! > cursor) parts.push(...mentions(value.slice(cursor, match.index)));
+  const author = byId.get(match[1]);
+  parts.push(author
+   ? { kind: 'author', value: author.authorName, authorId: author.authorId, hasAuthorshipExam: author.hasAuthorshipExam }
+   : { kind: 'text', value: match[0] });
+  cursor = match.index! + match[0].length;
+ }
+ if (cursor < value.length) parts.push(...mentions(value.slice(cursor)));
+ return parts;
 };

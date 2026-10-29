@@ -1,0 +1,52 @@
+{
+  "archivo": "TEXORO_caballerias_lisuarte_grecia_silva.txt",
+  "titulo": "Lisuarte de Grecia (Feliciano de Silva)",
+  "resumen_largo": [
+    "Los descendientes y allegados de los grandes héroes del ciclo comienzan a buscar una fama propia mientras la generación anterior permanece vinculada a los prodigios de Urganda. Perión de Gaula parte de Londres con otros jóvenes hijos de reyes para recibir en Irlanda la orden de caballería del rey Cildadán. La entrada en la vida de las armas abre una sucesión de viajes en los que los nuevos caballeros deben probar su valor sin depender únicamente de la reputación de sus padres. Las aventuras se extienden hacia Trapisonda y Constantinopla, donde los servicios prestados a los soberanos orientales enlazan el reconocimiento personal con la defensa de sus dominios. Florestán y sus compañeros participan en la guerra del duque de Orlitensa, y otras empresas reúnen poco a poco a los miembros del linaje. Lisuarte, hijo de Esplandián, destaca en ese mundo de desafíos y enfrentamientos. Las armas, los nombres adoptados durante el camino y las señales que acompañan a cada caballero permiten que las identidades se oculten y se reconozcan de manera gradual. El avance del relato alterna las trayectorias de los personajes para mostrar cómo distintas empresas acaban convergiendo en los mismos conflictos y cortes.",
+    "La amenaza contra Constantinopla transforma las pruebas individuales en una guerra de gran alcance. La llegada de las flotas enemigas obliga a defender el puerto, organizar las fuerzas y preparar la resistencia de la ciudad. Las deliberaciones de los jefes, los desafíos y los combates singulares se insertan dentro de las operaciones de los ejércitos. El rey Armato y sus aliados movilizan fuerzas frente a los defensores cristianos, mientras los caballeros y personajes llegados de diversas tierras renuevan o ponen a prueba sus alianzas. La resolución de los enfrentamientos deja paso a los recibimientos cortesanos y a las relaciones amorosas. Lisuarte ama a Onoloria, y Perión de Gaula a Gricileria, princesas de Trapisonda. La posibilidad de ver a las damas y hablar con ellas depende de intermediarios, mensajes y ocasiones que la vida pública de la corte ofrece solo de manera limitada. Una falsa noticia sobre la lealtad de Lisuarte provoca una carta airada de Onoloria y lo hace partir lleno de tristeza. Cuando se aclara el engaño, el sufrimiento anterior revela la fuerza del vínculo y la fragilidad de una relación expuesta a testimonios interesados. Gricileria conoce por Perión la inocencia del caballero y comprende el daño causado por la acusación.",
+    "Las empresas posteriores mantienen unidos el servicio de armas y el amor. Perión, conocido como el Caballero de la Espera, interviene en la defensa de la duquesa de Austria contra los parientes que se han alzado con su estado. Las pruebas de los torneos y la aparición de aventuras maravillosas vuelven a reunir a los protagonistas con Amadís y los otros señores. Los viajes entre cortes están sometidos a las tempestades, que desvían a los caballeros y los hacen entrar en nuevos territorios de peligro. En uno de esos recorridos, Lisuarte y sus compañeros liberan a Elisabad y a su sobrino, presos en una galea. La llegada de Fristión con un rey y una reina encantados propone otra prueba, que Lisuarte y Onoloria consiguen acabar: la correspondencia amorosa se convierte así en una cualidad capaz de resolver públicamente lo maravilloso. Pero el reconocimiento y las fiestas no clausuran el relato. Las visitas de los caballeros a sus damas se combinan con nuevos engaños y separaciones. Una doncella conduce al emperador de Trapisonda y a Perión a una isla y allí los hace caer en prisión. El desenlace conserva abierta la búsqueda de los ausentes y deja a otros personajes ante la necesidad de emprender nuevas aventuras para remediar su cautiverio."
+  ],
+  "resumen_breve": [
+    "Lisuarte de Grecia y Perión de Gaula encabezan una nueva generación de caballeros del linaje de Amadís. Sus empresas los llevan a las cortes de Oriente y a la defensa de Constantinopla frente a los ejércitos enemigos.",
+    "La guerra se entrelaza con los amores de Lisuarte y Onoloria y de Perión y Gricileria. Cartas, celos y encuentros secretos condicionan las partidas de los héroes, mientras los torneos y las pruebas extraordinarias afirman su excelencia.",
+    "Después de los combates, los viajes y la resolución de nuevos encantamientos, una doncella engaña al emperador de Trapisonda y a Perión y los conduce a una isla donde quedan presos. La historia termina abriendo nuevas demandas para sus compañeros."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Lisuarte de Grecia",
+      "descripcion": "Caballero protagonista de pruebas militares y amorosas."
+    },
+    {
+      "nombre": "Perión de Gaula",
+      "descripcion": "Caballero del linaje de Amadís que comparte la acción."
+    },
+    {
+      "nombre": "Onoloria",
+      "descripcion": "Princesa relacionada con Lisuarte y con una aventura de encantados."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Irlanda",
+      "descripcion": "Destino de los jóvenes que buscan ser armados caballeros."
+    },
+    {
+      "nombre": "Constantinopla",
+      "descripcion": "Corte imperial vinculada con guerras, fiestas y encuentros amorosos."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Nueva generación caballeresca",
+      "descripcion": "La nueva generación del linaje de Amadís emprende el camino de las armas mientras los grandes señores de la anterior permanecen ligados a los encantamientos de Urganda."
+    },
+    {
+      "tema": "Amor cortesano",
+      "descripcion": "Lisuarte, Perión y sus compañeros participan en guerras, justas y aventuras que enlazan las cortes cristianas con territorios de sus adversarios."
+    },
+    {
+      "tema": "Guerras y encantamientos",
+      "descripcion": "La relación de Lisuarte con Onoloria interviene en las pruebas extraordinarias que llegan a la corte."
+    }
+  ]
+}

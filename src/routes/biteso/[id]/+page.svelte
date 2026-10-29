@@ -547,7 +547,7 @@
 			</p>
 		{/if}
 
-		<WorkMetadataCard work={data.work} />
+		<WorkMetadataCard work={data.work} resultAuthors={data.resultAuthors} />
 
 		<div class="grid w-full grid-cols-1 items-stretch gap-4 min-[980px]:grid-cols-2">
 			<LegalCard label="Aviso">

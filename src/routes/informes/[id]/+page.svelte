@@ -1,6 +1,7 @@
 ﻿<script lang="ts">
 	import ChevronRight from 'lucide-svelte/icons/chevron-right';
 	import Download from 'lucide-svelte/icons/download';
+	import FolderOpen from 'lucide-svelte/icons/folder-open';
 	import WorksTable from '$lib/components/search/WorksTable.svelte';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import CitationSuggestionCard from '$lib/components/ui/CitationSuggestionCard.svelte';
@@ -14,16 +15,14 @@
 		formatPrefixedDisplayWorkTitleHtml
 	} from '$lib/utils/format-display-work-title';
 	import { translateText } from '$lib/i18n';
-	import { resolveStylometryResult } from '$lib/utils/stylometry-result';
+	import { buildStylometryResultParts } from '$lib/utils/stylometry-result';
 	import { renderInlineItalicsHtml, renderReportNoteHtml } from '$lib/utils/render-inline-italics-html';
 	import {
-		buildTraditionalAttributionParts,
-		type AttributionPhrasePart
+		buildTraditionalAttributionParts
 	} from '$lib/utils/traditional-attribution-phrase';
 
 	import type { PageData } from './$types';
 
-	type ResultTextPart = AttributionPhrasePart;
 
 	let { data }: { data: PageData } = $props();
 	const t = (value: string): string => translateText(data.locale, value);
@@ -35,7 +34,6 @@
 
 	let activeAmbito = $state<Ambito>('obracompleta');
 
-	const authorById = $derived.by(() => new Map(data.authors.map((author) => [author.id, author] as const)));
 
 	const availableAmbitos = $derived.by(() =>
 		ambitos.filter((ambito) => (data.distances[ambito] ?? []).length > 0)
@@ -103,49 +101,8 @@
 		return descriptions[data.locale] ?? descriptions.es;
 	});
 
-	const tokenizeResultText = (value: string): ResultTextPart[] => {
-		const parts: ResultTextPart[] = [];
-		const authorKeyPattern = /#([A-Za-z0-9_]+)/g;
-		let lastIndex = 0;
-		let match: RegExpExecArray | null;
 
-		while ((match = authorKeyPattern.exec(value)) !== null) {
-			if (match.index > lastIndex) {
-				parts.push({
-					kind: 'text',
-					value: value.slice(lastIndex, match.index)
-				});
-			}
-
-			const authorId = match[1];
-			const author = authorById.get(authorId);
-			parts.push(
-				author
-					? {
-							kind: 'author',
-							value: author.name,
-							authorId,
-							hasAuthorshipExam: author.hasAuthorshipExam
-						}
-					: {
-							kind: 'text',
-							value: match[0]
-						}
-			);
-			lastIndex = authorKeyPattern.lastIndex;
-		}
-
-		if (lastIndex < value.length) {
-			parts.push({
-				kind: 'text',
-				value: value.slice(lastIndex)
-			});
-		}
-
-		return parts;
-	};
-
-	const result1Parts = $derived.by(() => tokenizeResultText(resolveStylometryResult(data.work, { translate: t, andLabel: localizedListConnector('and') }) ?? ''));
+	const result1Parts = $derived.by(() => buildStylometryResultParts(data.work, { translate: t, andLabel: localizedListConnector('and') }, data.authors.map((author) => ({ authorId: author.id, authorName: author.name, hasAuthorshipExam: author.hasAuthorshipExam }))));
 	const noteParagraphs = $derived.by(() =>
 		(data.work.notes ?? '').trim().split(/\r?\n\s*\r?\n/).filter((paragraph) => paragraph.trim())
 	);
@@ -294,8 +251,29 @@
 			</div>
 
 			<div class="grid min-w-0 basis-full content-start gap-1.5">
-				<dt class="m-0 text-[0.72rem] font-bold uppercase tracking-[0.06em] text-text-accent-purple">
-					Procedencia
+				<dt class="m-0 flex flex-wrap items-center gap-x-4 gap-y-2">
+					<span class="text-[0.72rem] font-bold uppercase tracking-[0.06em] text-text-accent-purple">Procedencia</span>
+					{#if data.work.textLinks.length > 0}
+						<details class="relative font-normal" data-report-text-access>
+							<summary class="flex cursor-pointer list-none items-center gap-2 rounded-lg border border-border-accent-blue bg-white px-3 py-2 text-[0.82rem] text-text-main hover:bg-surface-accent-blue">
+								<FolderOpen class="h-3.5 w-3.5 text-brand-blue-dark" aria-hidden="true" />
+								Acceso al texto
+								<ChevronRight class="h-3 w-3 text-text-soft" aria-hidden="true" />
+							</summary>
+							<div class="absolute left-0 top-[calc(100%+4px)] z-20 grid w-72 max-w-[calc(100vw-3rem)] gap-1 rounded-lg border border-border-accent-blue bg-white p-1.5 shadow-lg">
+								{#each data.work.textLinks as link}
+									<a href={link.href}
+										data-sveltekit-preload-data={link.kind === 'biteso' ? 'off' : undefined}
+										target={link.external ? '_blank' : undefined}
+										rel={link.external ? 'noopener noreferrer' : undefined}
+										class="flex items-start justify-between gap-2 rounded-md px-2.5 py-2 text-[0.82rem] text-text-main no-underline hover:bg-surface-accent-blue focus-visible:bg-surface-accent-blue">
+										<span class="min-w-0 break-words">{link.label}</span>
+										<ChevronRight class="mt-1 h-3 w-3 shrink-0 text-text-soft" aria-hidden="true" />
+									</a>
+								{/each}
+							</div>
+						</details>
+					{/if}
 				</dt>
 				<dd class="m-0 text-base leading-[1.6] text-text-main" data-i18n-skip={procedeValue !== 'No disponible.' || undefined}>
 					{@html renderInlineItalicsHtml(procedeValue)}
@@ -394,7 +372,7 @@
 					<p class="m-0 text-base leading-[1.62] text-text-main" data-i18n-skip>
 						{#each result1Parts as part}
 							{#if data.work.inAuthorshipExam && part.kind === 'author' && part.authorId && isPersonAuthor(part.authorId)}
-								<a href={`/autores/${part.authorId}`} class="font-semibold text-text-main underline hover:text-brand-blue-dark focus-visible:text-brand-blue-dark">
+								<a href={`/autores/${part.authorId}`} class="font-semibold text-brand-blue-dark underline hover:text-brand-blue focus-visible:text-brand-blue">
 									{part.value}
 								</a>
 							{:else}

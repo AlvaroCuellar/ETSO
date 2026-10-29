@@ -1,0 +1,60 @@
+{
+  "archivo": "TEXORO_impact_8789.txt",
+  "titulo": "El coloquio de los perros",
+  "resumen_largo": [
+    "Durante una noche, Cipión y Berganza, perros del hospital de la Resurrección de Valladolid, descubren con asombro que pueden hablar y entenderse mediante razones. Ignoran cuánto durará ese don, de modo que acuerdan aprovecharlo para contar sus vidas. Berganza empieza la suya y Cipión asume el papel de oyente, consejero y crítico de la narración. El primer ámbito recordado es el matadero de Sevilla, donde Berganza sirve a Nicolás el Romo y observa los robos y las violencias de quienes trabajan con la carne. Una peripecia relacionada con un encargo lo obliga a huir. Su incorporación a un rebaño parece ofrecerle una tarea más honrada: proteger a las ovejas. Sin embargo, descubre que quienes se presentan como defensores del ganado participan en su destrucción. La experiencia contradice las imágenes apacibles de la vida pastoril que había oído en los libros. El perro aprende a comparar las palabras con los hechos y a reconocer que el daño puede proceder precisamente de aquellos a quienes se ha confiado la vigilancia. Sus cambios de amo convierten el recorrido vital en una observación de costumbres, trabajos y relaciones de poder.",
+    "De vuelta en Sevilla, Berganza entra al servicio de un mercader rico y conoce el interior de su casa, los estudios de los hijos y los conflictos creados por la conducta de los criados. Más tarde acompaña a un alguacil y descubre nuevas formas de fraude bajo la apariencia del ejercicio de la justicia. Los episodios se enlazan mediante huidas, encuentros y adaptaciones del animal a cada ocupación. La cercanía de un tambor aprovecha sus habilidades para exhibirlo ante el público y obtener provecho de su destreza. En ese recorrido aparece la Cañizares, que lo reconoce como supuesto hijo de la Montiela y explica que una hechicera transformó en perros a dos niños. Su relato mezcla recuerdos, prácticas de brujería y una profecía sobre la recuperación de la forma humana. Berganza presencia los efectos de los ungüentos y las contradicciones de una mujer que combina discursos de arrepentimiento con la persistencia en su conducta. Al contar el episodio, ni él ni Cipión pueden convertir lo referido por ella en una explicación segura de su naturaleza. El prodigio inicial de la palabra permanece abierto a diversas interpretaciones. Los perros discuten qué puede significar la profecía y desconfían de tomar literalmente todo cuanto una testigo interesada les ha contado.",
+    "La vida de Berganza continúa entre nuevos grupos y oficios, incluidos gitanos, un morisco, un poeta y gente de teatro, hasta llegar al hospital. Cada encuentro permite observar modos de ganar el sustento, pretensiones desmedidas y diferencias entre lo que se desea ser y lo que se consigue. En el hospital oye proyectos de hombres que imaginan remedios extraordinarios para su pobreza y para los males públicos. A lo largo del coloquio, Cipión interrumpe cuando su compañero se dispersa, generaliza en exceso o convierte la crítica en murmuración. Pero también él se deja llevar por consejos y reflexiones, de modo que la vigilancia del relato se aplica a ambos interlocutores. Sus comentarios sobre el servicio, la virtud y el menosprecio del pobre acompañan las peripecias sin borrar la comicidad. Cuando la luz anuncia el día, aplazan para la noche siguiente la historia de Cipión, siempre que conserven la facultad de hablar. El texto vuelve entonces a Peralta, que ha terminado de leer, y a Campuzano, que despierta. El licenciado no resuelve si los perros hablaron: aprecia el artificio del coloquio y anima al alférez a continuar. Ambos abandonan la discusión sobre su verdad y salen a pasear al Espolón."
+  ],
+  "resumen_breve": [
+    "Cipión y Berganza, perros del hospital de la Resurrección de Valladolid, descubren una noche que pueden hablar y razonar. Berganza cuenta su vida al sucesivo servicio de distintos amos, desde el violento matadero sevillano y los rebaños hasta las casas de comerciantes, los agentes de justicia y las compañías ambulantes.",
+    "Sus experiencias descubren robos, hipocresías y abusos, mientras Cipión modera las digresiones y cuestiona la murmuración. La hechicera Cañizares propone un origen humano de los perros que ambos examinan con dudas.",
+    "Al amanecer aplazan la historia de Cipión. Terminada la lectura, Peralta elogia ante Campuzano la invención del diálogo sin decidir si los animales hablaron realmente."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Berganza",
+      "descripcion": "Perro que relata su vida y sus experiencias con distintos amos."
+    },
+    {
+      "nombre": "Cipión",
+      "descripcion": "Interlocutor que comenta, pregunta y regula el relato."
+    },
+    {
+      "nombre": "La Cañizares",
+      "descripcion": "Mujer vinculada a las revelaciones sobre la identidad de los perros."
+    },
+    {
+      "nombre": "Campuzano y Peralta",
+      "descripcion": "Figuras del marco narrativo al que vuelve el final."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Hospital de la Resurrección de Valladolid",
+      "descripcion": "Lugar de la conversación y del marco."
+    },
+    {
+      "nombre": "Casas, caminos y oficios de los amos",
+      "descripcion": "Espacios sucesivos de las experiencias de Berganza."
+    },
+    {
+      "nombre": "El Espolón",
+      "descripcion": "Destino del paseo propuesto al regresar al relato marco."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Sátira social",
+      "descripcion": "La mirada animal examina engaños y conductas humanas."
+    },
+    {
+      "tema": "Verdad e invención",
+      "descripcion": "El marco plantea cómo valorar un relato extraordinario."
+    },
+    {
+      "tema": "Arte de narrar",
+      "descripcion": "Los comentarios de Cipión reflexionan sobre la forma del relato."
+    }
+  ]
+}

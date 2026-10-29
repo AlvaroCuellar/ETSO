@@ -1,0 +1,60 @@
+{
+  "archivo": "TEXORO_impact_5414.txt",
+  "titulo": "La Galatea",
+  "resumen_largo": [
+    "La narración comienza en las riberas del Tajo, donde el pastor Elicio canta el dolor que le causa el amor de Galatea. La joven, admirada por su belleza y entendimiento, recibe sus servicios sin declarar una correspondencia que comprometa su libertad. También la ama Erastro, cuya condición distinta no impide que ambos rivales compartan conversaciones y penas. La aparente serenidad del paisaje queda interrumpida cuando presencian una muerte violenta: Lisandro mata a otro pastor y cuenta después las desgracias amorosas que lo han conducido a la venganza. Desde ese comienzo, los prados y las riberas acogen conflictos que exceden el lamento idealizado. Galatea y Florisa escuchan otras experiencias, entre ellas las de Teolinda, cuya búsqueda del amado se complica por equívocos y semejanzas. Los personajes se encuentran, se separan y vuelven a reunirse; cada incorporación abre una historia que modifica lo que los demás saben. La prosa enlaza esos relatos con canciones y poemas en los que el sufrimiento puede expresarse, compartirse o discutirse. El amor organiza la vida de los pastores, pero no produce en todos una misma conducta ni garantiza un mismo desenlace.",
+    "Entre las historias intercaladas destaca la de Silerio y Timbrio, amigos cuya lealtad se ve sometida a viajes, peligros y afectos que pueden enfrentarlos. El relato de Silerio introduce escenarios y aventuras alejados de las riberas del Tajo, y muestra cómo la disposición a sacrificarse por el amigo puede producir nuevos malentendidos. La recuperación de noticias y el reconocimiento permiten transformar parte de ese dolor en alegría. Otras historias mantienen abiertos los conflictos del deseo, los celos, la ausencia y la elección. Los relatos particulares se acompañan de discusiones generales sobre la naturaleza del amor. Lenio, que presume de vivir libre de su poder, censura las ilusiones y tormentos de los enamorados; otros pastores defienden una pasión capaz de elevar y ennoblecer a quien la siente. Las intervenciones no eliminan las diferencias entre experiencia y doctrina: quienes razonan sobre el amor también pueden ser alcanzados por él. Las bodas, los encuentros colectivos y los cantos organizan la convivencia y ofrecen ocasiones para comparar sentimientos. La poesía interviene de manera constante, pues sirve de confesión íntima, respuesta a otro personaje, celebración de la belleza y memoria de quienes ya no están.",
+    "La reunión pastoril alcanza también un sentido de homenaje literario. En las ceremonias vinculadas a la memoria de Meliso, la aparición de Calíope introduce una extensa celebración de poetas, que relaciona el mundo de los pastores con una comunidad más amplia de escritores. Tras esa expansión, el conflicto principal cobra urgencia cuando Elicio conoce que Aurelio, padre de Galatea, quiere entregarla por esposa a un pastor forastero. La amenaza ya no consiste únicamente en la falta de correspondencia: la partida de la joven destruiría la posibilidad misma de verla y servirla. Elicio obtiene el apoyo de sus amigos, mientras Galatea hace llegar noticias y acepta seguir su parecer. Tirsi y Damón preparan las razones con que intentarán convencer a Aurelio. Al amanecer se reúnen los pastores convocados, dispuestos a recurrir a la fuerza si la persuasión fracasa. Incluso Erastro prefiere favorecer a su rival antes que perder a Galatea y verla descontenta. La narración termina cuando el grupo se dirige a la aldea, antes de conocer la respuesta del padre. El cierre anuncia para una segunda parte la resolución de este amor y de otras historias pendientes, de modo que conserva abiertas tanto la elección de Galatea como varias trayectorias del conjunto pastoril."
+  ],
+  "resumen_breve": [
+    "En las riberas del Tajo, Elicio y Erastro aman a Galatea, que conserva su propia libertad sin corresponder claramente a ninguno. Sus encuentros se entrelazan con historias de otros pastores: amores contrariados, separaciones, celos y pruebas de amistad que se cuentan en conversaciones y canciones.",
+    "La violencia, el engaño y el sufrimiento interrumpen la tranquilidad del paisaje, mientras los debates sobre el amor comparan maneras distintas de entenderlo.",
+    "Las ceremonias y el Canto de Calíope amplían el espacio de la poesía. Cuando Aurelio decide casar a Galatea con un forastero, Elicio reúne a sus amigos para impedirlo; la resolución queda aplazada a una continuación anunciada."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Galatea",
+      "descripcion": "Pastora que ocupa el centro de la principal relación amorosa."
+    },
+    {
+      "nombre": "Elicio",
+      "descripcion": "Pastor enamorado que impulsa la reunión final de sus amigos."
+    },
+    {
+      "nombre": "Erastro",
+      "descripcion": "Otro enamorado de Galatea."
+    },
+    {
+      "nombre": "Aurelio",
+      "descripcion": "Padre de Galatea y figura de autoridad en la decisión matrimonial."
+    },
+    {
+      "nombre": "Tirsi y Damón",
+      "descripcion": "Pastores que ayudan a Elicio en el desenlace."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Riberas del Tajo",
+      "descripcion": "Espacio pastoril principal de encuentros y relatos."
+    },
+    {
+      "nombre": "Campos, cabañas y aldeas",
+      "descripcion": "Lugares de conversación, canto y reunión de pastores."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Amor pastoril",
+      "descripcion": "La ficción explora fidelidad, celos y sufrimiento."
+    },
+    {
+      "tema": "Libertad y matrimonio",
+      "descripcion": "Los deseos de Galatea se enfrentan a una decisión familiar."
+    },
+    {
+      "tema": "Prosa y poesía",
+      "descripcion": "Los versos forman parte de la construcción narrativa."
+    }
+  ]
+}

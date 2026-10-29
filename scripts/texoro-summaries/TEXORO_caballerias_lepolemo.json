@@ -1,0 +1,52 @@
+{
+  "archivo": "TEXORO_caballerias_lepolemo.txt",
+  "titulo": "Lepolemo, el Caballero de la Cruz",
+  "resumen_largo": [
+    "El emperador de Alemania y su mujer sufren la pérdida de sus primeros hijos y buscan por medios religiosos el nacimiento de un heredero. La llegada de un niño y una niña parece remediar ese dolor, pero un nuevo infortunio cambia la vida de la familia: durante un viaje del emperador para ser coronado, unos moros capturan al pequeño Lepolemo y a su ama Platina junto al mar. Vendidos en Túnez a un panadero y trasladados después al Cairo, ambos deben adaptarse al cautiverio. Platina conserva el cuidado del niño y procura educarlo en la fe cristiana. La cruz que él se pone sobre el pecho da origen al nombre con el que será conocido. Su crianza incluye la amistad con Caristes, hijo de su ama, y el trato favorable de algunos de quienes los poseen. Muerto su dueño, los muchachos pasan al entorno del soldán. Allí la habilidad, el valor y las buenas costumbres de Lepolemo le abren un lugar que nadie relaciona todavía con su nacimiento imperial. La narración enfrenta así el origen más elevado con una formación entre cautivos, donde el protagonista debe demostrar su condición mediante sus actos y no por un título reconocido.",
+    "La vida caballeresca del joven se desarrolla en estrecho contacto con soberanos y guerreros musulmanes. El servicio al soldán y la amistad con su hijo Culema lo llevan a campañas, desafíos y peligros compartidos. Lepolemo no cambia de religión para hacerse aceptar: conserva la cruz y obtiene estima por su lealtad y sus victorias. El cautiverio de los compañeros ante el rey de Medián y las gestiones para impedir su ejecución ponen a prueba esa red de amistades. Los enfrentamientos tampoco producen siempre una enemistad permanente. Después de vencer a Almoacén, señor de las Torres de Clot, el héroe lo convierte en amigo y colaborador. La defensa de la señora de Lera y de su hija, acusadas por parientes interesados, ofrece una aplicación del combate al amparo de mujeres que no pueden defenderse por sí mismas. Otras empresas afectan al gobierno de reinos: la intervención en Medián desemboca en acuerdos matrimoniales y en el reconocimiento de un nuevo soberano. La expedición contra el gigante Morbón obliga a preparar una fuerza limitada y a combinar cautela y valentía. Las tormentas deshacen el plan inicial y conducen al grupo a una isla desconocida, donde el caballero debe salvar a sus hombres antes de reemprender la navegación y afrontar nuevos encuentros por mar.",
+    "Los rescates conectan progresivamente al protagonista con las cortes cristianas. Entre los cautivos que libera se encuentra el delfín de Francia, y también recupera a personas vinculadas a su propia infancia. La gratitud hacia el panadero y hacia Platina impide que su ascenso borre los años de crianza en cautiverio. Ya en Francia, Lepolemo se enamora de la infanta Andriana; los encuentros y la mediación de los servidores permiten que ambos se prometan por esposos. El desconocimiento de su linaje podría obstaculizar la unión, pero Platina le revela primero la verdad y después la declara ante el emperador y la corte. El padre reconoce al hijo perdido y le confía responsabilidades de gobierno. Los acuerdos entre las familias reales permiten celebrar las bodas, al tiempo que otras uniones refuerzan la alianza. Lepolemo recompensa a su ama con el ducado de Gueldes y casa a Caristes con Germana, servidora de Andriana. El regreso a Alemania culmina con el recibimiento público del heredero recuperado. Desde allí comunica su fortuna al soldán y a sus amigos musulmanes, que responden con regalos y ofrecimientos de ayuda. El nacimiento de Leandro asegura un sucesor y clausura esta historia con la promesa de que el hijo protagonizará nuevas hazañas."
+  ],
+  "resumen_breve": [
+    "Lepolemo, hijo del emperador de Alemania, es capturado de niño junto a su ama Platina y crece como cautivo en tierras musulmanas. La cruz que lleva sobre el pecho le da el nombre con el que comienza a ganar fama caballeresca.",
+    "Al servicio del soldán, defiende a sus amigos, libra combates y remedia agravios sin renunciar al cristianismo. Sus empresas lo llevan por cortes e islas, entre guerras, rescates y encuentros con personas que desconocen su linaje.",
+    "En Francia se enamora de Andriana. La revelación de Platina permite reconocerlo como heredero imperial y preparar su matrimonio con ella. Regresa a Alemania, recompensa a quienes lo criaron y celebra el nacimiento de Leandro, continuador de sus hazañas."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Lepolemo",
+      "descripcion": "Protagonista conocido como Caballero de la Cruz."
+    },
+    {
+      "nombre": "Emperador de Alemania",
+      "descripcion": "Soberano ligado al linaje y los proyectos familiares del héroe."
+    },
+    {
+      "nombre": "Leandro",
+      "descripcion": "Hijo del protagonista cuya historia se anuncia como continuación."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Alemania",
+      "descripcion": "Reino imperial asociado con la familia del caballero."
+    },
+    {
+      "nombre": "Francia",
+      "descripcion": "Corte en la que se celebran torneos y surgen desafíos."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Fama caballeresca",
+      "descripcion": "La historia de Lepolemo se presenta como crónica de las hazañas de un caballero cristiano ligado al emperador de Alemania."
+    },
+    {
+      "tema": "Relaciones entre religiones",
+      "descripcion": "El Caballero de la Cruz interviene en conflictos bélicos y en la liberación de personas amenazadas o cautivas."
+    },
+    {
+      "tema": "Matrimonio y sucesión",
+      "descripcion": "Los vínculos familiares y los proyectos matrimoniales se enlazan con las consecuencias de sus victorias."
+    }
+  ]
+}

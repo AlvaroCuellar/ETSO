@@ -1,0 +1,52 @@
+{
+  "archivo": "TEXORO_caballerias_lisuarte_grecia_diaz.txt",
+  "titulo": "Lisuarte de Grecia (Juan Díaz; libro VIII de Amadís)",
+  "resumen_largo": [
+    "La partida de Esplandián desde la Gran Bretaña hacia Constantinopla abre una historia en la que los grandes miembros del linaje de Amadís continúan desplazándose entre cortes y territorios amenazados. Lisuarte, hijo del emperador, comparte el protagonismo con otros caballeros que emprenden demandas bajo nombres y señales propios. La identidad reservada permite que los encuentros se conviertan en desafíos antes de que los adversarios conozcan su parentesco o sus vínculos de amistad. El Caballero de los Cisnes recorre castillos y caminos, combate con quienes impiden el paso y atiende a las personas que requieren su ayuda. Otros personajes, como Coroneo, enlazan sus viajes con las disputas de reinos orientales y con las decisiones de sus gobernantes. La narración alterna la aventura individual con reuniones de ejércitos, embajadas y treguas, y hace regresar a los caballeros hacia las cortes donde se comparan y cuentan sus servicios. Los nacimientos y los reconocimientos familiares acompañan esa circulación, de modo que cada empresa puede incorporar nuevos parientes a una historia común. El linaje no aparece como una realidad inmóvil: debe recomponerse continuamente mediante noticias, encuentros y acuerdos.",
+    "La trama se amplía con guerras en las que intervienen Amadís y sus aliados, mientras otros caballeros recorren Macedonia, atraviesan el mar o acuden a la Ínsula Firme. Las tempestades alteran sus recorridos y pueden dejarlos en poder de enemigos que dominan islas apartadas. Los episodios de prisión, los desafíos llegados a la corte y los combates contra gigantes mantienen el deber de socorrer al agraviado como una prueba esencial del valor. Lisuarte actúa junto a compañeros como Gualdín de Bristoya y Galeote y debe resolver peligros que afectan tanto a particulares como a los reinos de su familia. El relato se detiene también en las contradicciones de las historias anteriores y discute la forma en que deben entenderse los hechos transmitidos. Dentro de esta continuidad sometida a examen, la muerte de Amadís tiene un peso excepcional. El héroe que había sostenido la fama de la casa deja de ser una presencia activa, y su desaparición obliga a los demás personajes a afrontar el duelo y a ordenar la sucesión. La llegada de familiares, las ceremonias y las conversaciones de la corte quedan marcadas por esa pérdida, que impide celebrar sin reservas incluso los encuentros deseados y las nuevas victorias.",
+    "El tramo final reúne las acciones pendientes con la reorganización de la familia. Lisuarte vence al gigante Bragadán el Bermejo, y el prestigio alcanzado facilita su posición entre los caballeros y soberanos que deliberan sobre los próximos matrimonios. Oriana interviene en esas conversaciones, mientras Esplandián y Leonorina deciden renunciar en su hijo los reinos de la Gran Bretaña, Gaula y Dinamarca. La coronación y el juramento de los principales señores convierten la excelencia caballeresca en una responsabilidad de gobierno. Lisuarte se casa con Elena, y junto a ellos celebran sus bodas otros caballeros y doncellas del entorno. Las fiestas no borran la memoria del fundador del linaje: antes de separarse, los grandes señores trasladan solemnemente los huesos de Amadís a Fenusa y los depositan en una rica sepultura en el monasterio de la Clara Victoria. Después cada familia vuelve a sus dominios. Galaor y Agrajes renuncian también a sus reinos en sus hijos y se retiran a la vida religiosa, mientras sus mujeres ingresan en Miraflores. El cierre presenta a Lisuarte y Elena establecidos en Londres y recuerda su descendencia, tres hijos y una hija. Así, la continuidad queda asegurada mediante nuevas coronas, matrimonios y nacimientos, al tiempo que la vejez y la muerte retiran a la generación anterior."
+  ],
+  "resumen_breve": [
+    "Las aventuras de Lisuarte de Grecia se desarrollan entre viajes, desafíos y guerras que comprometen a los reyes de su familia. El relato entrecruza sus acciones con las de otros caballeros y con los conflictos de diversas cortes.",
+    "La muerte de Amadís introduce una ruptura decisiva en la continuidad del linaje. El duelo, las ceremonias funerarias y las decisiones de sus descendientes desplazan el interés hacia la sucesión y el gobierno de los reinos.",
+    "Lisuarte vence nuevos adversarios, recibe de Esplandián y Leonorina las coronas de Bretaña, Gaula y Dinamarca y se casa con Elena. El traslado de los restos de Amadís y el retiro religioso de otros miembros de la familia acompañan el relevo generacional."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Lisuarte",
+      "descripcion": "Heredero que ocupa el centro del relevo dinástico."
+    },
+    {
+      "nombre": "Amadís",
+      "descripcion": "Rey cuya muerte y memoria marcan la conclusión."
+    },
+    {
+      "nombre": "Elena",
+      "descripcion": "Reina que contrae matrimonio con Lisuarte."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Constantinopla",
+      "descripcion": "Destino imperial del viaje de Esplandián."
+    },
+    {
+      "nombre": "Fenusa",
+      "descripcion": "Espacio asociado con las ceremonias finales y la sepultura de Amadís."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Sucesión dinástica",
+      "descripcion": "La partida de Esplandián hacia Constantinopla introduce una nueva entrega de las historias de Amadís."
+    },
+    {
+      "tema": "Muerte y memoria",
+      "descripcion": "Desafíos, batallas y relaciones amorosas ocupan a caballeros que adoptan nombres y señales propios de la aventura."
+    },
+    {
+      "tema": "Aventura y matrimonio",
+      "descripcion": "La muerte de Amadís y las ceremonias en torno a su memoria conducen a un relevo dinástico."
+    }
+  ]
+}

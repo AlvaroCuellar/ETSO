@@ -20,6 +20,7 @@
 	import ExternalLink from 'lucide-svelte/icons/external-link';
 	import { formatDisplayWorkTitle, formatDisplayWorkTitleList } from '$lib/utils/format-display-work-title';
 	import { renderInlineItalicsHtml } from '$lib/utils/render-inline-italics-html';
+	import { buildStylometryResultParts } from '$lib/utils/stylometry-result';
 	import { buildTraditionalAttributionParts } from '$lib/utils/traditional-attribution-phrase';
 
 	import type { PageData } from './$types';
@@ -49,6 +50,14 @@
 
 	const t = (value: string): string => translateText(data.locale, value);
 	const connectorLabel = (connector: 'and' | 'or'): string => t(connector === 'and' ? 'y' : 'o');
+
+	const resultAndLabel = (): string => {
+		const labels: Record<string, string> = { es: 'y', en: 'and', fr: 'et', pt: 'e', it: 'e', de: 'und', zh: '和', ja: 'および', ko: '및', ru: 'и', ar: 'و' };
+		return labels[data.locale] ?? labels.es;
+	};
+	const resultParts = $derived.by(() => data.work.inAuthorshipExam
+		? buildStylometryResultParts({ ...data.work, result2: undefined }, { translate: t, andLabel: resultAndLabel() }, data.resultAuthors)
+		: []);
 
 	const confidenceClass = (confidence?: Confidence): string => {
 		if (confidence === 'segura') return 'bg-[#d4edda] text-[#155724]';
@@ -168,10 +177,11 @@
 							</div>
 						{/if}
 
-						{#if hasStylometryAttribution(data.work.stylometryAttribution)}
+						{#if hasStylometryAttribution(data.work.stylometryAttribution) || (data.work.inAuthorshipExam && resultParts.length > 0)}
 							<div class={attributionBlockClass}>
 								<h3 class={attributionHeadingClass}>Atribución estilométrica</h3>
 								<div class="text-[0.97rem] leading-[1.6] text-text-main">
+									{#if !data.work.inAuthorshipExam}
 									<div class="flex flex-col items-start gap-[0.65rem]">
 										{#if data.work.stylometryAttribution.unresolved}
 											<div class="flex flex-wrap items-center gap-3">
@@ -224,11 +234,17 @@
 											{/if}
 										{/each}
 									</div>
+									{/if}
+								{#if data.work.inAuthorshipExam && resultParts.length > 0}
+									<p data-stylometry-result class="m-0 whitespace-pre-line break-words leading-relaxed" data-i18n-skip>{#each resultParts as part}{#if part.kind === 'author' && part.authorId && isPersonAuthor(part.authorId)}<a href={`/autores/${part.authorId}`} class="font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline">{part.value}</a>{:else}{part.value}{/if}{/each}</p>
+								{/if}
 								</div>
 							</div>
 						{/if}
 
-						{#if !hasAnyAttribution()}
+
+
+						{#if !hasAnyAttribution() && resultParts.length === 0}
 							<div
 								class="rounded-lg border border-border-accent-blue bg-surface-accent-blue px-4 py-3.5 text-[0.92rem] text-text-main"
 							>

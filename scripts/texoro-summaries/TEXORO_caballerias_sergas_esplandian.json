@@ -1,0 +1,52 @@
+{
+  "archivo": "TEXORO_caballerias_sergas_esplandian.txt",
+  "titulo": "Las sergas de Esplandián",
+  "resumen_largo": [
+    "Esplandián comienza su vida de caballero separado de la corte y conducido por una sucesión de señales extraordinarias. Al despertar en la nave de la gran serpiente, llega al pie de la peña de la Doncella Encantadora y encuentra las armas y pruebas que anuncian la singularidad de su destino. Sus primeras hazañas lo llevan a territorios dominados por adversarios de la cristiandad, donde combate a gigantes y libera a personas que permanecían cautivas. La fuerza física y el arrojo se presentan acompañados de una conciencia religiosa: el héroe debe someter su voluntad a Dios y emplear su valor en una causa que excede la búsqueda de gloria individual. Los consejos y comentarios del narrador insisten en esa orientación moral. La Montaña Defendida se convierte en una posición decisiva para sus empresas. A su alrededor se reúnen caballeros de la generación joven, entre ellos Talanque y Ambor, y también colaboradores que aportan experiencia, consejo o conocimiento de los lugares. Frándalo cobra importancia en las acciones de mar y en los movimientos que permiten sorprender o resistir a los enemigos. Los rescates y pequeñas victorias van preparando un conflicto de dimensiones mucho mayores.",
+    "La llegada a Constantinopla enlaza las hazañas del protagonista con la defensa del imperio y con sus amores por Leonorina, hija del emperador. La princesa recibe noticias de sus victorias antes de que la relación pueda desarrollarse abiertamente. Carmela interviene como mensajera y mediadora, lleva palabras de uno a otro y ayuda a superar los temores, silencios y respuestas que turban al caballero. Los episodios amorosos se alternan con expediciones y combates, de manera que Esplandián debe atender a la vez a la dama y al servicio militar que sostiene su presencia en Oriente. La hostilidad del rey Armato y de sus aliados hace cada vez más urgente el peligro de un ataque contra Constantinopla. El protagonista envía cartas a los grandes reyes cristianos, y el linaje de Amadís moviliza sus recursos para acudir en socorro de la ciudad. La preparación permite reunir a personajes que hasta entonces habían combatido en lugares distintos. Al otro lado se concentra una extensa alianza de adversarios, reforzada por figuras extraordinarias como la reina Calafia. La magnitud de las flotas y de los ejércitos transforma el combate caballeresco en una empresa colectiva que compromete el porvenir del imperio.",
+    "El asedio combina ataques por mar y tierra, defensas de posiciones y enfrentamientos de los principales guerreros. Los cristianos sufren peligros y pérdidas, pero la llegada de sus aliados y la actuación de los capitanes permiten resistir y alcanzar la victoria. Los combates ponen a prueba tanto a Esplandián como a los reyes y compañeros que lo rodean, y el relato da espacio al dolor por los muertos junto a la celebración de los vencedores. Derrotados los enemigos, las conversiones y los matrimonios reorganizan las relaciones entre personajes procedentes de bandos diferentes. El emperador casa a Leonorina con Esplandián, les entrega su dignidad y se retira con la emperatriz a un monasterio. Otros enlaces recompensan también los servicios de los caballeros. El nuevo emperador continúa la expansión militar y toma la gran Tesifante, cuyo gobierno deja a Norandel antes de regresar a Constantinopla. La historia desemboca finalmente en una reunión de los grandes señores y sus mujeres convocada por Urganda en la Ínsula Firme. Allí la sabia hace que el alcázar se hunda con todos ellos y los deja encantados. El retiro maravilloso suspende la actividad de la generación victoriosa y abre la posibilidad de que otros descendientes ocupen su lugar en las aventuras venideras."
+  ],
+  "resumen_breve": [
+    "Esplandián, hijo de Amadís y Oriana, inicia su carrera caballeresca entre prodigios y combates que presenta como un servicio a Dios. La liberación de cautivos y la conquista de posiciones enemigas lo acercan a Constantinopla.",
+    "Su amor por Leonorina, hija del emperador, se desarrolla mediante mensajes y encuentros favorecidos por Carmela. Entretanto, el ataque de una gran coalición obliga a reunir a los reyes y caballeros cristianos para defender la ciudad.",
+    "La victoria permite el matrimonio de Esplandián y Leonorina y la entrega del imperio a los nuevos esposos. Después de otras conquistas, Urganda reúne a los grandes señores y sus mujeres en la Ínsula Firme y los deja encantados."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Esplandián",
+      "descripcion": "Hijo de Amadís y protagonista de las empresas caballerescas."
+    },
+    {
+      "nombre": "Amadís",
+      "descripcion": "Padre del héroe, llamado a colaborar ante las amenazas militares."
+    },
+    {
+      "nombre": "Helisabad",
+      "descripcion": "Maestro que acompaña al caballero en parte de sus viajes."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Ínsula Firme",
+      "descripcion": "Lugar vinculado con la partida y el linaje de los caballeros."
+    },
+    {
+      "nombre": "Constantinopla",
+      "descripcion": "Centro del conflicto imperial y de la defensa cristiana."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Guerra religiosa",
+      "descripcion": "Esplandián emprende sus aventuras después de recibir la orden de caballería y despertar en la nave de la gran serpiente."
+    },
+    {
+      "tema": "Liberación de cautivos",
+      "descripcion": "Los viajes del héroe incluyen combates con gigantes y la liberación de cautivos cristianos."
+    },
+    {
+      "tema": "Herencia caballeresca",
+      "descripcion": "La necesidad de defender la ciudad amenazada reúne fuerzas cristianas y provoca peticiones de ayuda a los reyes del linaje de Amadís."
+    }
+  ]
+}

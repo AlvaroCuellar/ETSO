@@ -1,0 +1,68 @@
+{
+  "archivo": "TEXORO_gutenberg_bernal_historia_conquista_nueva_espana.txt",
+  "titulo": "Verdadera historia de los sucesos de la conquista de la Nueva España",
+  "resumen_largo": [
+    "Bernal Díaz del Castillo comienza recordando su salida de Castilla y los viajes que lo llevaron a las Indias antes de incorporarse a la expedición de Hernán Cortés. Las primeras exploraciones de las costas de Nueva España reúnen encuentros, intercambios y combates que muestran tanto el desconocimiento de los recién llegados como su interés por hallar riquezas y nuevas tierras. El narrador atiende a provisiones, heridas, enfermedades, decisiones de los pilotos y dificultades para conseguir agua: la empresa se explica desde el trabajo cotidiano de quienes participaron en ella. Cuando Cortés asume el mando, el viaje se convierte también en un conflicto de autoridad con Diego Velázquez. La fundación de la Villa Rica y el envío de procuradores a Castilla buscan dar fundamento político a una actuación disputada. Los intérpretes, entre ellos doña Marina, permiten negociar con pueblos distintos y conocer la fuerza de los mexicanos. La alianza con comunidades que rechazan su dominio modifica las posibilidades de los españoles. Bernal presenta así un avance que depende de mediaciones, información y apoyos indígenas, además de las armas. Su relato reivindica desde el principio la experiencia de los soldados frente a historias que atribuyen los hechos casi exclusivamente a la habilidad de su capitán.",
+    "El camino hacia México pasa por enfrentamientos con los tlaxcaltecas y por la posterior alianza con ellos, decisiva para la continuación de la campaña. La entrada en Cholula, la marcha hacia la laguna y el recibimiento de Moctezuma combinan admiración ante ciudades, mercados y edificios con sospechas y preparativos militares. El alojamiento de los españoles y la prisión del gobernante hacen cada vez más frágil la convivencia. Mientras aumentan las tensiones, la llegada de Pánfilo de Narváez obliga a Cortés a salir contra otro ejército español. Su victoria no resuelve la crisis de México: el conflicto abierto en la ciudad conduce a la muerte de Moctezuma y a una retirada en la que los conquistadores sufren grandes pérdidas. Bernal describe la huida, los combates y la reorganización de los supervivientes, que vuelven a apoyarse en sus aliados. La conquista se prepara entonces mediante operaciones alrededor de la laguna, control de poblaciones y construcción de bergantines. El asedio convierte las entradas en la ciudad en una lucha prolongada, con avances, retrocesos, hambre y destrucción. La captura de Guatemuz marca la derrota de la resistencia mexicana, pero el narrador no presenta ese momento como final de todos los peligros ni de las divisiones entre los vencedores.",
+    "Después de la toma de México, la historia sigue otras campañas, entre ellas las de Chiapa y la difícil expedición a las Higueras. Los desplazamientos por regiones poco conocidas, la escasez y los conflictos de mando prolongan los riesgos de la conquista. La ejecución de Guatemuz durante aquella marcha forma parte de un recorrido que el testigo recuerda con sus trabajos y controversias. A estos episodios se suman las rivalidades por el gobierno, los viajes de Cortés y las reclamaciones de mercedes. Bernal examina lo que recibieron los soldados y protesta contra el olvido de quienes habían contribuido a la victoria. La memoria personal se amplía mediante listas de compañeros, noticias de sus muertes y retratos de capitanes. El cronista discute expresamente a López de Gómara y defiende la verdad de una narración que considera apoyada en haber visto y padecido los hechos. También interpreta la conversión cristiana y los beneficios enviados a Castilla como resultados de la empresa. Los capítulos finales enlazan esa justificación colectiva con la defensa de sus propios servicios: enumera batallas, heridas y peligros de los que sobrevivió por ayuda divina. La obra termina reafirmando que su voz merece crédito y que el mérito de la conquista pertenece a muchos hombres cuyos nombres deben conservarse."
+  ],
+  "resumen_breve": [
+    "Bernal Díaz del Castillo narra su participación en las expediciones que condujeron a la conquista de Nueva España. Tras los primeros viajes, acompaña a Cortés en una empresa marcada por alianzas indígenas, combates, negociaciones y conflictos entre españoles.",
+    "La llegada a México, la prisión de Moctezuma, la retirada y el posterior asedio forman el núcleo del relato. La historia continúa con nuevas campañas y con las disputas por el gobierno y las recompensas.",
+    "Desde su condición de testigo, Bernal corrige otras crónicas y reivindica el esfuerzo colectivo de los soldados. Los capítulos finales recuerdan a sus compañeros y defienden sus servicios, bajo una interpretación cristiana de la conquista."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Bernal Díaz del Castillo",
+      "descripcion": "Soldado y narrador que presenta sus recuerdos como testimonio y defensa de sus servicios."
+    },
+    {
+      "nombre": "Hernán Cortés",
+      "descripcion": "Jefe de la expedición y figura central de las decisiones militares y políticas."
+    },
+    {
+      "nombre": "Montezuma",
+      "descripcion": "Gobernante mexicano cuya relación con los españoles ocupa una parte fundamental de la narración."
+    },
+    {
+      "nombre": "Conquistadores y aliados indígenas",
+      "descripcion": "Participantes colectivos de expediciones y combates, cuya intervención el narrador describe y valora."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Cuba y las costas de Yucatán",
+      "descripcion": "Puntos de preparación y primeros recorridos de las expediciones."
+    },
+    {
+      "nombre": "Tlaxcala y el camino a México",
+      "descripcion": "Ámbitos de alianzas, avisos y negociaciones durante el avance."
+    },
+    {
+      "nombre": "México y su laguna",
+      "descripcion": "Centro de los encuentros con el poder mexicano y de los combates y el asedio."
+    },
+    {
+      "nombre": "Guatemala y otras provincias",
+      "descripcion": "Territorios de posteriores campañas y del establecimiento de los conquistadores."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Testimonio y memoria",
+      "descripcion": "Autoridad de la experiencia propia frente a otras narraciones de la conquista."
+    },
+    {
+      "tema": "Guerra y alianzas",
+      "descripcion": "Relaciones militares y políticas entre españoles y pueblos indígenas."
+    },
+    {
+      "tema": "Servicios y reconocimiento",
+      "descripcion": "Reivindicación del trabajo, los peligros y las recompensas de los soldados."
+    },
+    {
+      "tema": "Providencia",
+      "descripcion": "Interpretación cristiana de los éxitos, sufrimientos y supervivencia del cronista."
+    }
+  ]
+}

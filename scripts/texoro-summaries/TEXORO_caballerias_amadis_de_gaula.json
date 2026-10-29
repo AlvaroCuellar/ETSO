@@ -1,0 +1,52 @@
+{
+  "archivo": "TEXORO_caballerias_amadis_de_gaula.txt",
+  "titulo": "Amadís de Gaula (libros I–IV)",
+  "resumen_largo": [
+    "Los amores secretos de Perión, rey de Gaula, y la infanta Elisena dan origen a un niño que debe ser ocultado para preservar la honra de su madre. Abandonado en el mar y recogido por Gandales, crece sin conocer a sus padres y recibe el nombre de Doncel del Mar. En la corte de Languines conoce a Oriana, hija del rey Lisuarte de la Gran Bretaña, y queda ligado a ella por un amor que orientará toda su vida. Armado caballero, comienza a ganar renombre mediante combates y empresas de socorro. La recuperación de sus señales de nacimiento permite reconocerlo como Amadís e integrarlo en su familia. Al mismo tiempo, la narración sigue las aventuras de Galaor y Florestán, sus hermanos, y las de otros caballeros que acaban formando una extensa red de parentesco y amistad. Los encuentros pueden enfrentar a parientes que todavía no se reconocen, mientras el servicio a personas amenazadas convierte los caminos, castillos y cortes en escenarios constantes de prueba. Urganda ayuda al héroe y anticipa su destino; Arcalaus, por el contrario, emplea el engaño y el encantamiento para apresar a Lisuarte y llevarse a Oriana. Amadís y Galaor intervienen en su liberación.",
+    "Los triunfos militares y cortesanos no garantizan la estabilidad del vínculo amoroso. Unas noticias mal entendidas despiertan los celos de Oriana, que envía a Amadís una carta de rechazo. Convencido de haber perdido para siempre a su señora, abandona sus armas y su identidad y se retira con un ermitaño a la Peña Pobre bajo el nombre de Beltenebros. La intervención de la Doncella de Dinamarca restablece la comunicación entre los amantes y hace posible su encuentro en Miraflores. Las pruebas maravillosas permiten después manifestar públicamente una fidelidad que ha pasado por la desesperación y el secreto. La aventura de la Ínsula Firme vincula la excelencia caballeresca con la constancia amorosa y ofrece al héroe un espacio propio. Sin embargo, la envidia de los malos consejeros y la desconfianza del rey Lisuarte provocan la separación entre el monarca y Amadís. Otros caballeros se despiden también de la corte, y el héroe continúa sus viajes y combates bajo nuevas denominaciones. Las aventuras amplían su fama fuera de Bretaña y le proporcionan relaciones que cobrarán importancia cuando el conflicto privado con el rey se transforme en una guerra entre grandes poderes.",
+    "La decisión de Lisuarte de entregar a Oriana al emperador de Roma lleva la crisis a su punto culminante. Amadís y sus compañeros atacan la escolta que conduce a la infanta y la llevan a la Ínsula Firme, donde ella queda protegida frente a un matrimonio que rechaza. Las embajadas y deliberaciones no impiden que los dos bandos movilicen sus ejércitos. Tras los combates, en los que muere el emperador romano, el ermitaño Nasciano trabaja por la reconciliación y revela lo necesario para que el vínculo de Amadís y Oriana sea reconocido. La ayuda que el héroe presta a Lisuarte frente a otros enemigos contribuye a restaurar sus relaciones. El acuerdo permite reunir a las familias y celebrar los matrimonios de los protagonistas y de sus compañeros. Esplandián, hijo de Amadís y Oriana, anuncia ya la continuidad de la estirpe. La paz no significa el fin de la aventura: Amadís parte a nuevas empresas y se enfrenta al gigante Balán. Al concluir el cuarto libro, Lisuarte es apresado por encantamiento, de modo que la felicidad alcanzada por los amantes convive con un nuevo y grave peligro que reclama otras hazañas."
+  ],
+  "resumen_breve": [
+    "Amadís, hijo secreto de Perión y Elisena, crece como el Doncel del Mar hasta descubrir su linaje y alcanzar fama caballeresca. Su amor por Oriana dirige sus hazañas, pero los celos lo llevan a retirarse como Beltenebros a la Peña Pobre.",
+    "La reconciliación de los amantes no resuelve el enfrentamiento con Lisuarte, padre de Oriana, que pretende casarla con el emperador de Roma. Amadís la rescata y reúne a sus aliados en la Ínsula Firme.",
+    "Tras la guerra, la mediación de Nasciano favorece la paz y el reconocimiento del matrimonio de Amadís y Oriana. Las bodas, las nuevas aventuras y el encantamiento final de Lisuarte dejan abierto el porvenir de su linaje."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Amadís",
+      "descripcion": "Caballero en torno al cual se organizan aventuras, vínculos familiares y conflictos amorosos."
+    },
+    {
+      "nombre": "Oriana",
+      "descripcion": "Infanta vinculada amorosamente con Amadís."
+    },
+    {
+      "nombre": "Lisuarte",
+      "descripcion": "Rey cuya corte y decisiones intervienen en los conflictos del relato."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Gaula",
+      "descripcion": "Reino asociado con el linaje de Perión y Amadís."
+    },
+    {
+      "nombre": "Ínsula Firme",
+      "descripcion": "Espacio de reunión, encantamientos y resolución de relaciones dinásticas."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Linaje y reconocimiento",
+      "descripcion": "Los amores de Perión y Elisena abren una historia de linajes y aventuras que sitúa a Amadís en el mundo de la caballería."
+    },
+    {
+      "tema": "Servicio caballeresco",
+      "descripcion": "Amadís y otros caballeros se enfrentan a raptores, desafíos y peligros que exigen socorrer a personas agraviadas."
+    },
+    {
+      "tema": "Amor y poder",
+      "descripcion": "La relación con Oriana y los conflictos que rodean al rey Lisuarte conducen buena parte de la acción hacia la Ínsula Firme."
+    }
+  ]
+}

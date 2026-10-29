@@ -1,0 +1,52 @@
+{
+  "archivo": "TEXORO_caballerias_florisando.txt",
+  "titulo": "Florisando",
+  "resumen_largo": [
+    "Florisando, hijo de Florestán y Corisanda y sobrino de Amadís, nace lejos de la seguridad de la corte. El viaje de su madre y las dificultades que rodean su nacimiento lo sitúan desde el principio en una existencia expuesta a los cambios de fortuna. Su crianza junto a un ermitaño proporciona al futuro caballero una educación religiosa que no queda relegada cuando comienza a combatir. El consejero continúa interviniendo en sus decisiones, y la historia enfrenta repetidamente el impulso de la aventura con las obligaciones de la conciencia cristiana. Antes de desarrollar las hazañas, el relato discute la posibilidad de conocer el futuro y reprueba la confianza en los encantamientos que había permitido retirar de la vida ordinaria a Amadís, Esplandián y los grandes señores de su familia. Esas cuestiones pasan después al interior de la acción. Las primeras empresas de Florisando incluyen desafíos, castillos peligrosos, encuentros con doncellas que piden ayuda y enfrentamientos con caballeros de identidad incierta. Los engaños pueden convertir una petición de socorro en una trampa, mientras los reconocimientos permiten transformar al adversario desconocido en compañero o aliado. El héroe empieza así a integrarse en una red de parentescos, lealtades y obligaciones políticas que amplía el alcance de sus decisiones.",
+    "Los viajes por mar enlazan las aventuras individuales con conflictos de diversos reinos y señoríos. Florisando debe combatir para proteger a los agraviados, recuperar posiciones y atender las demandas que llegan a él o a las cortes con las que se relaciona. Los desplazamientos lo llevan a Cerdeña y a otros territorios, y la adquisición de aliados facilita empresas que ya no pueden resolverse mediante una sola batalla personal. La conquista del principado de Cantaria une su destino a una tierra y a una casa gobernante. Paralelamente, el ermitaño busca una solución para la situación de los grandes personajes encantados. Su gestión ante el pontífice y la intervención de los religiosos convierten el problema en materia de autoridad espiritual, no en una competencia entre poderes mágicos. El monje Enselmo amonesta a los reyes y les recuerda que el poder recibido obliga a actuar con diligencia y justicia. La liberación de los señores no se presenta, por tanto, como una simple restitución de su fuerza: debe ir acompañada de una corrección de las ideas y de las conductas que los habían llevado a confiar en medios censurados por el relato. La enseñanza religiosa penetra también en las decisiones amorosas y en los deberes del gobierno.",
+    "La narración sigue, junto a Florisando, las acciones de otros caballeros y príncipes, entre ellos Arquisil, cuyas batallas y relaciones personales multiplican los vínculos entre las cortes. Embajadas, treguas y desafíos ordenan conflictos en los que cada victoria puede exigir una negociación posterior. Las mujeres intervienen mediante peticiones, consejos y relaciones familiares, y las alianzas matrimoniales ofrecen una salida duradera a rivalidades que las armas por sí solas no resuelven. Los amores de Florisando se encaminan hacia su unión con la princesa de Cantaria, discutida y acordada por los grandes señores de la familia. En el tramo final, los reyes y sus compañías se embarcan de regreso, descansan en la isla de Melixarte y preparan la continuación del viaje. El ermitaño decide quedarse allí: desea fundar un monasterio con otro religioso y entiende que su vida de contemplación debe separarse de la actividad guerrera de los caballeros. Florisando concede la casa solicitada, encomienda al anciano su tierra y ordena al gobernador que cumpla sus instrucciones. La despedida, marcada por las lágrimas, cierra esta entrega sin agotar la vida del protagonista. El narrador anuncia otras hazañas y la muerte de Amadís como materia de una continuación que no desarrolla aquí."
+  ],
+  "resumen_breve": [
+    "Florisando, hijo de Florestán y Corisanda, crece apartado de la corte y recibe del ermitaño una formación cristiana que acompaña su aprendizaje caballeresco. Sus combates lo vinculan a los reyes del linaje de Amadís y a la defensa de personas y territorios amenazados.",
+    "La obra cuestiona los encantamientos y la confianza depositada en ellos. El viaje a Roma y la intervención de los monjes sitúan la liberación de Amadís, Esplandián y los otros señores bajo la autoridad religiosa.",
+    "Las guerras, las reconciliaciones y los acuerdos matrimoniales conducen a la unión de Florisando con la princesa de Cantaria. Al final, el héroe se separa del ermitaño, que permanece en su tierra para fundar un monasterio."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Florisando",
+      "descripcion": "Hijo de Florestán y caballero protagonista."
+    },
+    {
+      "nombre": "Florestán",
+      "descripcion": "Miembro del linaje de Amadís y padre de Florisando."
+    },
+    {
+      "nombre": "Amadís",
+      "descripcion": "Rey cuya situación de encantamiento requiere intervención."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Bretaña",
+      "descripcion": "Tierra a la que llegan los monjes para intervenir en los encantamientos."
+    },
+    {
+      "nombre": "Cantaria",
+      "descripcion": "Principado asociado a Florisando en el título de la obra."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Caballería y doctrina",
+      "descripcion": "Florisando, hijo de Florestán y sobrino de Amadís, ocupa el centro de una nueva serie de hazañas caballerescas."
+    },
+    {
+      "tema": "Encantamiento y liberación",
+      "descripcion": "La discusión acerca de los encantamientos introduce un papel decisivo para las autoridades religiosas."
+    },
+    {
+      "tema": "Gobierno y linaje",
+      "descripcion": "Batallas, negociaciones y vínculos matrimoniales extienden los conflictos a distintas cortes."
+    }
+  ]
+}

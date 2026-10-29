@@ -1,0 +1,56 @@
+{
+  "archivo": "TEXORO_impact_8788.txt",
+  "titulo": "El casamiento engañoso",
+  "resumen_largo": [
+    "El alférez Campuzano sale del hospital de la Resurrección de Valladolid después de someterse a un tratamiento que lo ha dejado débil y con un aspecto muy distinto del que tenía. En la calle encuentra al licenciado Peralta, conocido suyo, que se sorprende al verlo y se interesa por las causas de su estado. La invitación a comer ofrece al convaleciente ocasión de contar una historia de matrimonio, ambición y engaño. Campuzano recuerda que conoció a Estefanía de Caicedo cuando ella hablaba con otro militar y que quedó prendado de sus manos, de su voz y de la expectativa de descubrir su rostro. La visitó en una casa bien amueblada y se esforzó en conquistarla con grandes promesas. Estefanía no se presentó como una mujer sin pasado, sino como alguien que deseaba cambiar de vida y entregar a un marido una hacienda apreciable. Enumeró los bienes domésticos y las atenciones que sabía proporcionar. El alférez vio en la unión la posibilidad de obtener al mismo tiempo placer, comodidad y una posición económica que suponía segura. Su relato deja ver que la apariencia de riqueza intervino decisivamente en la rapidez del acuerdo.",
+    "Después de casarse, Campuzano disfruta por poco tiempo de las comodidades esperadas. La llegada de doña Clementa Bueso y de don Lope obliga a abandonar la casa, con una explicación que Estefanía presenta como un favor hecho a una amiga. Los recién casados se instalan en un alojamiento reducido y comienzan las disputas. Campuzano reprocha a su mujer que haya cedido con tanta facilidad una hacienda que considera ya vinculada a su matrimonio. La huéspeda, al oír sus quejas, le descubre que doña Clementa es la verdadera dueña de la casa y de los muebles: Estefanía había aprovechado su ausencia para hacerse pasar por propietaria. La noticia provoca en el alférez desesperación y deseos de venganza, pero cuando la busca no consigue encontrarla. Ella se ha marchado y ha llevado consigo su equipaje. La pérdida, sin embargo, incluye una ironía que él mismo reconoce ante Peralta: las cadenas y joyas con que había aparentado riqueza eran falsas. El propósito de beneficiarse de la fortuna ajena ha encontrado su correspondencia en otra estrategia semejante. Al quebranto económico y al descrédito se añade la enfermedad, que termina conduciéndolo al hospital y explica su aparición inicial ante el amigo.",
+    "Cuando Peralta cree haber oído la parte más extraordinaria de sus desgracias, Campuzano anuncia una experiencia que, según él, excede lo que puede admitirse por naturaleza. Durante una de las últimas noches del tratamiento, afirma haber escuchado una conversación razonada entre Cipión y Berganza, los perros que acompañan a los hermanos del hospital cuando salen a pedir limosna. El licenciado objeta que esa afirmación desacredita incluso la historia del matrimonio y se resiste a aceptar semejante imposibilidad. Campuzano distingue la mera repetición de palabras, propia de ciertas aves, del discurso concertado que asegura haber oído. Reconoce también que él mismo ha dudado y ha considerado si se trataba de un sueño. No obstante, sostiene que prestó atención y conservó en la memoria el coloquio, hasta ponerlo por escrito sin añadir adornos. Ante la incredulidad de su interlocutor, propone que la lectura se disfrute con independencia de que los perros hablasen realmente. Peralta acepta el escrito por el interés que puede tener su invención y por el ingenio del alférez. Campuzano saca el cartapacio y se acomoda para descansar mientras su amigo lo abre. El relato termina en ese umbral de lectura: la conversación anunciada continúa en el Coloquio de los perros."
+  ],
+  "resumen_breve": [
+    "Al salir del hospital de la Resurrección de Valladolid, el alférez Campuzano encuentra al licenciado Peralta y le cuenta el matrimonio que lo ha dejado enfermo y gravemente empobrecido. Se casó con Estefanía atraído por una supuesta riqueza que pertenecía en realidad a otra mujer; también él había fingido prosperidad con joyas falsas.",
+    "Cuando el engaño se descubre, Estefanía desaparece con su equipaje.",
+    "La conversación pasa después a una experiencia más increíble: durante su convalecencia Campuzano asegura haber oído hablar a dos perros del hospital. Peralta duda, pero acepta leer el diálogo escrito por el alférez, cuya lectura enlaza con el Coloquio de los perros."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Alférez Campuzano",
+      "descripcion": "Soldado convaleciente y narrador de su matrimonio."
+    },
+    {
+      "nombre": "Licenciado Peralta",
+      "descripcion": "Amigo que escucha el relato y recibe el cartapacio."
+    },
+    {
+      "nombre": "Estefanía",
+      "descripcion": "Mujer con quien Campuzano contrae matrimonio."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Valladolid",
+      "descripcion": "Ciudad donde se encuentran Campuzano y Peralta."
+    },
+    {
+      "nombre": "Hospital de la Resurrección",
+      "descripcion": "Lugar de la enfermedad y de la supuesta escucha de los perros."
+    },
+    {
+      "nombre": "Casa del matrimonio",
+      "descripcion": "Espacio de las apariencias y revelaciones económicas."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Engaño recíproco",
+      "descripcion": "La relación matrimonial se apoya en presentaciones interesadas."
+    },
+    {
+      "tema": "Apariencia y riqueza",
+      "descripcion": "Los bienes supuestos condicionan las decisiones."
+    },
+    {
+      "tema": "Marco narrativo",
+      "descripcion": "El encuentro introduce la lectura de otra narración."
+    }
+  ]
+}

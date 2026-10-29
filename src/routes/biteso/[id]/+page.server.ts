@@ -1,6 +1,7 @@
 import { error, fail, redirect } from '@sveltejs/kit';
 import { setPublicCatalogCacheHeaders } from '$lib/server/cache-control';
 import { localizePath } from '$lib/i18n';
+import { getWorkResultPresentation } from '$lib/server/work-result-presentation';
 import {
 	buildBitesoCitation,
 	getBitesoBySlug,
@@ -42,9 +43,11 @@ export const load: PageServerLoad = async ({ locals, params, setHeaders }) => {
 	});
 
 	setPublicCatalogCacheHeaders(setHeaders);
+	const presentation = await getWorkResultPresentation(work);
 	return {
 		biteso,
-		work,
+		work: presentation.work,
+		resultAuthors: presentation.resultAuthors,
 		citation,
 		canonicalUrl,
 		publishedOn: work.bitesoPublishedOn ?? ''

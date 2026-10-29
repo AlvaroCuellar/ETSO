@@ -1,0 +1,52 @@
+{
+  "archivo": "TEXORO_impact_23.txt",
+  "titulo": "Oráculo manual y arte de prudencia",
+  "resumen_largo": [
+    "La obra presenta trescientos aforismos que condensan una enseñanza práctica sobre el juicio y la conducta. Su destinatario debe desenvolverse en un mundo donde las intenciones no siempre coinciden con las palabras, el mérito puede pasar inadvertido y la opinión ajena influye decisivamente en la suerte de cada persona. Las máximas no forman una historia ni avanzan mediante un único argumento: cada una plantea un problema particular y lo explica con contrastes, observaciones y fórmulas breves que obligan a considerar sus consecuencias. Desde los primeros consejos se subraya la necesidad de reunir capacidad y aplicación, conocer las propias fuerzas y reconocer lo que falta. La naturaleza proporciona disposiciones y capacidades iniciales que deben reconocerse y cultivarse mediante el arte, el ejercicio y la experiencia. El saber, por sí solo, resulta insuficiente cuando no va acompañado de buen juicio para emplearlo. Por eso la formación propuesta afecta tanto al entendimiento como a la voluntad, al gusto, a la conversación y al comportamiento visible. La excelencia se construye en las acciones diarias y requiere examinar cuidadosamente las oportunidades, las limitaciones y los efectos de la propia intervención.",
+    "Una parte central de los consejos enseña a relacionarse con los demás sin quedar a merced de sus intereses. Conviene elegir las compañías, distinguir al amigo del adulador, descubrir las pasiones que gobiernan a cada interlocutor y aprender de los aciertos y errores ajenos. La palabra debe adaptarse al momento y a la persona: callar puede ser más eficaz que explicarse, y una razón inoportuna puede malograr una buena causa. El trato exige reserva, atención y flexibilidad, pero también firmeza para no entregar el propio criterio a la presión exterior. La reputación necesita cuidado porque las acciones llegan al público mediante versiones incompletas o interesadas. Gracián recomienda no exhibir de una vez todas las capacidades, evitar la familiaridad que produce desprecio y dejar que los hechos sostengan la estimación. Estos consejos conviven con advertencias contra la vanidad, la afectación y la búsqueda ansiosa de aplausos. Quien quiere parecer extraordinario a cualquier precio revela precisamente su dependencia de los demás. El prudente observa, calcula y se contiene, procurando que la discreción no se vuelva cobardía ni el disimulo termine anulando la integridad que pretende proteger.",
+    "Los aforismos vuelven también sobre la inconstancia de la fortuna, el paso del tiempo y la necesidad de reconocer cuándo debe emprenderse, detenerse o abandonarse una acción. No todas las ocasiones admiten las mismas respuestas, y la madurez consiste en ajustar la decisión a sus circunstancias sin perder el dominio de sí. Moderar los afectos permite juzgar con mayor justicia: antes de condenar al contrario, el lector debe examinar sus motivos y ponerse en su lugar. El buen gusto impide la saturación y aconseja terminar antes de que el agrado se transforme en cansancio. La gravedad se entiende como autoridad serena, no como simple rigidez exterior; las grandes prendas han de manifestarse en obras y razones dignas de ellas. Al final, la acumulación de habilidades prácticas se concentra en una medida moral. El último aforismo propone la santidad como reunión de las perfecciones y presenta la virtud como fundamento de la buena conciencia, de la felicidad y de una memoria perdurable. La grandeza no se mide por la fortuna ni por el brillo de la apariencia, sino por el valor de la persona. Así, el aprendizaje del trato y de la eficacia queda incluido en una aspiración más amplia a vivir con entendimiento, entereza y responsabilidad."
+  ],
+  "resumen_breve": [
+    "El Oráculo manual y arte de prudencia reúne trescientos aforismos destinados a formar un juicio capaz de orientarse entre intereses contrapuestos, engaños y apariencias. Cada máxima presenta una regla de conducta y la desarrolla mediante explicaciones, contrastes o ejemplos.",
+    "El lector encuentra consejos sobre el conocimiento propio, la elección de amigos, el trato con superiores y adversarios, el dominio de las pasiones y la administración de la reputación.",
+    "La prudencia exige atender a las circunstancias, hablar y actuar a tiempo y evitar tanto la ingenuidad como la ostentación. El aforismo final reúne esas capacidades en un ideal de virtud y santidad que da sentido al perfeccionamiento personal."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Voz aforística",
+      "descripcion": "Enunciador que aconseja al lector sin una trama narrativa."
+    },
+    {
+      "nombre": "El prudente",
+      "descripcion": "Modelo de persona que debe formarse mediante juicio y experiencia."
+    },
+    {
+      "nombre": "El lector",
+      "descripcion": "Destinatario de las advertencias sobre el trato social."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Sociedad y trato humano",
+      "descripcion": "Ámbito general de aplicación de las máximas."
+    },
+    {
+      "nombre": "Interior de la persona",
+      "descripcion": "Espacio figurado del juicio, las pasiones y la conciencia."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Prudencia",
+      "descripcion": "Capacidad de elegir acciones y ocasiones adecuadas."
+    },
+    {
+      "tema": "Reputación y apariencia",
+      "descripcion": "Relación entre el valor propio y la opinión de los demás."
+    },
+    {
+      "tema": "Virtud",
+      "descripcion": "Criterio final de la excelencia personal."
+    }
+  ]
+}

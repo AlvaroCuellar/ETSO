@@ -1,0 +1,52 @@
+{
+  "archivo": "TEXORO_caballerias_floriseo.txt",
+  "titulo": "Floriseo",
+  "resumen_largo": [
+    "La historia de Floriseo parte de una familia de Bohemia y de un propósito piadoso que termina sometiendo a sus miembros a una larga separación. La duquesa Primacia hace voto de peregrinar a Jerusalén y su marido Pirineo acepta acompañarla. El nacimiento de Floriseo precede a un viaje que, en lugar de concluir con el regreso seguro al hogar, los expone a tormentas, desembarcos imprevistos y cautiverios. Los padres quedan apartados de su hijo y la narración sigue por un tiempo sus dificultades para sobrevivir en tierra extraña. La duquesa oculta su condición de mujer para protegerse y desempeña trabajos penosos; el duque llega también a Babilonia como cautivo. El encuentro de ambos y el servicio que ella presta a la soldana permiten aliviar su situación, pero no recomponen de inmediato la familia. Floriseo crece en otro ámbito y su futuro queda ligado al aprendizaje de las armas y a la necesidad de salir al mundo. Su aparición como Caballero del Desierto abre una carrera en la que la excelencia militar se acompaña de deberes de gratitud, reconocimiento familiar y protección de quienes se encuentran en peligro. Las identidades separadas al principio se irán acercando a través de viajes y noticias.",
+    "Las hazañas de Floriseo lo llevan de una isla a otra y lo convierten en participante de conflictos que superan el combate individual. En la isla de las Perlas colabora con Solacio, organiza salidas contra los enemigos y afronta desafíos de capitanes y guerreros de gran fuerza. Su fama se consolida al mandar tropas, abastecer posiciones y socorrer lugares amenazados. Las campañas en torno a Alejandría y Babilonia exigen considerar caminos, provisiones y movimientos de ejércitos; las incursiones en territorio del soldán y el regreso para defender ciudades muestran al caballero también como conductor militar. La narración alterna esos movimientos con vínculos personales que modifican el sentido de las victorias. El encuentro con adversarios como Ardileón puede terminar en amistad, y la cortesía prestada a vencidos o aliados contribuye a ampliar su red de apoyos. Al mismo tiempo, el amor por la reina de Bohemia establece una meta que no depende solo de ganar batallas. Las cartas y los presentes mantienen la relación durante las ausencias y dan lugar a esperanzas y temores. Los mensajes deben recorrer el mismo mundo inseguro que atraviesan los caballeros, de modo que una larga falta de noticias puede poner en peligro compromisos que parecían firmes.",
+    "La continuación de los viajes conduce a Floriseo hacia pruebas en las que intervienen los encantamientos. Su ausencia prolongada preocupa a la reina y moviliza a los allegados que salen en su busca. Pirineo y sus compañeros navegan durante meses y llegan a la India Menor; también ellos encuentran islas desconocidas, peligros y artes que amenazan con apartarlos de su propósito. La recuperación de Floriseo permite que las noticias lleguen de nuevo a la corte, donde el duque de Macedonia aspira a casarse con la reina de Bohemia. El regreso del héroe a Constantinopla frustra ese proyecto: vence al duque y obtiene el reconocimiento necesario para hacer público su matrimonio con la soberana. El desenlace no se limita a la unión de los amantes. Floriseo se ocupa de responder a las ayudas recibidas y de restaurar los vínculos familiares quebrados desde su nacimiento. En Bohemia entra acompañado por sus padres, ausentes de su señorío durante treinta años, y dispone acuerdos sobre la herencia de los parientes. La boda de Florisa con Castor ofrece otra salida a esos asuntos domésticos. Tras la muerte de sus padres, Floriseo permanece reinando junto a su mujer. El nacimiento de otros hijos, además de Reimundo, asegura la prolongación de la familia y cierra la historia del caballero con una imagen de gobierno estable, devoción y descendencia."
+  ],
+  "resumen_breve": [
+    "Floriseo nace en una familia noble de Bohemia cuyo viaje de peregrinación termina en separación y cautiverio. Criado lejos de sus padres, se convierte en el Caballero del Desierto y empieza a ganar fama en combates y empresas de socorro.",
+    "Su trayectoria enlaza guerras entre soberanos, rescates y amistades nacidas incluso del enfrentamiento. El amor por la reina de Bohemia orienta sus decisiones, mientras las navegaciones y los encantamientos prolongan la ausencia y hacen temer por su vida.",
+    "La búsqueda emprendida por sus allegados contribuye a la recuperación del héroe. Floriseo regresa a Constantinopla, vence al duque de Macedonia y se casa con la reina. La vuelta a Bohemia reúne a la familia y abre una etapa de gobierno y continuidad dinástica."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Floriseo",
+      "descripcion": "Caballero del Desierto que llega a ser rey de Bohemia."
+    },
+    {
+      "nombre": "Ardileón",
+      "descripcion": "Caballero que se convierte en amigo de Floriseo."
+    },
+    {
+      "nombre": "Reina de Bohemia",
+      "descripcion": "Soberana a la que los señores del reino proponen el matrimonio con Floriseo."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Bohemia",
+      "descripcion": "Reino del linaje y del gobierno final del protagonista."
+    },
+    {
+      "nombre": "Constantinopla",
+      "descripcion": "Corte donde se presentan las solicitudes de los señores de Bohemia."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Caballería y piedad",
+      "descripcion": "La historia de Floriseo comienza con su familia y con los antiguos señores de Bohemia."
+    },
+    {
+      "tema": "Matrimonio y gobierno",
+      "descripcion": "Los combates no impiden que Floriseo establezca amistades con antiguos adversarios, como Ardileón."
+    },
+    {
+      "tema": "Familia y continuidad",
+      "descripcion": "Los señores de Bohemia procuran que la reina tome por esposo a Floriseo."
+    }
+  ]
+}

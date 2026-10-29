@@ -1,0 +1,52 @@
+{
+  "archivo": "TEXORO_caballerias_polindo.txt",
+  "titulo": "Polindo",
+  "resumen_largo": [
+    "Antes de las hazañas de Polindo, la narración presenta los amores de Paciano y Polimira y los peligros que deben superar hasta reunirse en Numidia. El nacimiento de su hijo parece asegurar la felicidad de los nuevos esposos, pero el niño desaparece en el mismo momento en que llega al mundo. Su crianza queda bajo protección de hadas y el reino vive la pérdida del heredero como desgracia colectiva. Cuando el joven se presenta ante su padre y descubre su identidad, la restitución del linaje permite que comience su carrera de caballero. En las primeras aventuras se une a Narciso, descubre traiciones, combate a gigantes y obtiene armas ligadas a pruebas extraordinarias. La llegada a Macedonia determina el centro amoroso de su trayectoria: se enamora de Belisia, hija del rey Naupilio. La empresa de la cueva del Basilisco y la liberación del soberano le permiten mostrar que su servicio no se limita a una declaración de amor. Los torneos de la corte hacen visible su superioridad y, mediante la intervención de su escudero Lavinio y de las doncellas, llega a encontrarse con Belisia y a prometerse con ella. Desde entonces los desplazamientos deben conciliar el deber de ayudar a otros con la fidelidad a la princesa.",
+    "La petición de auxilio del Delfín lleva a Polindo fuera de Macedonia y lo enfrenta a nuevos gigantes y cautiverios. La liberación de Leonisa provoca una dificultad distinta: ella desea retener a su salvador, y recurre al encantamiento para satisfacer un amor que él no corresponde. Recuperada la libertad, el héroe prosigue la búsqueda y rescata al príncipe francés. Los viajes por mar, las tormentas y los encuentros con corsarios prolongan el regreso. Más tarde, la guerra con el reino de Morea permite reunir a Polindo con numerosos compañeros y convertir las victorias en acuerdos entre soberanos. La amistad con Claribeo y el amor de este por Lidama ofrecen una pareja paralela a la del protagonista y Belisia. Las aventuras no se concentran únicamente en ellos: Narciso, Flamizén, Carleseo y otros caballeros se separan y reúnen, vengan muertes y reparan despojos. En Constantinopla mantienen una prueba caballeresca que extiende su fama; en Tesalia ayudan a una reina amenazada por un ejército enemigo. Después de la victoria, Polindo rechaza la posibilidad de recibir a la soberana por esposa y facilita otra solución matrimonial. La fidelidad a Belisia condiciona así tanto los beneficios privados como las recompensas políticas que está dispuesto a aceptar.",
+    "El retorno a Macedonia permite nuevos encuentros amorosos y grandes justas, pero la pasión de Felises por Polindo desencadena otra crisis. La intervención de la sabia Obelia y el encantamiento de Belisia obligan al héroe a abandonar de nuevo la corte en busca de un remedio. La ayuda de la hada que lo ha criado orienta un recorrido lleno de obstáculos, mientras los compañeros salen también tras sus pasos y afrontan sus propias pruebas. Polindo atraviesa castillos de encantadores, combate a gigantes y libera presos sometidos a costumbres crueles. La llegada a la isla de Sernia y la obtención de unas manzanas dotadas de virtud restituyen finalmente la esperanza. Después de nuevos riesgos en el mar, alcanza Macedonia y devuelve a Belisia el acuerdo perdido. La alegría de la corte no impide que otra demanda lo aleje pronto de ella. Sale con una doncella, interviene en la venganza de Teognida y acaba ante el encierro de Dartenisa. La narración explica que la joven había quedado encantada cuando Andarco intentó forzarla. Polindo entra en el recinto y encuentra a la infanta, que no puede hablar y le pide por señas que la saque de allí. El rescate vuelve a poner en primer plano la defensa de una mujer amenazada y prolonga, en el cierre de la obra, la obligación del caballero de responder a nuevos agravios."
+  ],
+  "resumen_breve": [
+    "Polindo, hijo de Paciano y Polimira, es sustraído al nacer y criado bajo protección maravillosa. Tras darse a conocer a sus padres, emprende la vida caballeresca y se enamora de Belisia, princesa de Macedonia, a quien sirve en guerras, torneos y aventuras.",
+    "Sus viajes lo unen a Claribeo, Narciso y otros compañeros. El socorro de cautivos y soberanas amenazadas alterna con ataques, engaños y amores no correspondidos que ponen en riesgo su fidelidad y su libertad.",
+    "El encantamiento de Belisia obliga al héroe a buscar un remedio entre castillos e islas peligrosas. Conseguida su curación, vuelve a partir para reparar nuevos agravios. El último episodio lo lleva a liberar a Dartenisa de un encierro encantado."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Polindo",
+      "descripcion": "Caballero hijo del rey Paciano de Numidia."
+    },
+    {
+      "nombre": "Belisia",
+      "descripcion": "Princesa de Macedonia por cuyo amor actúa Polindo."
+    },
+    {
+      "nombre": "Dartenisa",
+      "descripcion": "Infanta cuya situación motiva una aventura de rescate."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Numidia",
+      "descripcion": "Reino del padre de Polindo."
+    },
+    {
+      "nombre": "Macedonia",
+      "descripcion": "Reino de Belisia y escenario de encuentros caballerescos."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Servicio amoroso",
+      "descripcion": "Los amores de Paciano y Polimira anteceden a la historia de Polindo, hijo del rey de Numidia."
+    },
+    {
+      "tema": "Amistad y reparación del agravio",
+      "descripcion": "Desafíos, engaños y demandas de auxilio conducen a Polindo y a otros caballeros por distintas cortes y castillos."
+    },
+    {
+      "tema": "Engaño y encantamiento",
+      "descripcion": "Los recorridos continúan a través de Macedonia y otros territorios, con rescates, justas y encuentros que desplazan la atención entre varios personajes."
+    }
+  ]
+}

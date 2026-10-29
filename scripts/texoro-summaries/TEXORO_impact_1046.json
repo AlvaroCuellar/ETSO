@@ -1,0 +1,60 @@
+{
+  "archivo": "TEXORO_impact_1046.txt",
+  "titulo": "Novela del licenciado Periquín",
+  "resumen_largo": [
+    "Pedro de la Oliva nace en Segovia, hijo de padres vizcaínos pobres, pero de buena condición. La narración convierte su nacimiento de pies y su temperamento alegre en ocasión para discutir los augurios de fortuna. El niño crece agradable e ingenioso, aunque en la escuela sus burlas le ganan el apodo de Periquín. Muerto su padre, la madre lo coloca con un mercader que le enseña a leer, escribir y contar para emplearlo en la tienda. Pedro, sin embargo, desea seguir el camino de las letras y se marcha a Madrid. Allí sirve y estudia, pasando por experiencias en las que su facilidad de palabra le permite entretener a unos y ofender a otros. Sus respuestas satíricas y sus observaciones sobre la nobleza, las mujeres o la conducta de sus amos interrumpen con frecuencia la acción. La necesidad de buscar acomodo va unida al deseo de mejorar de estado: el protagonista sabe que la buena apariencia y el trato agradable pueden abrirle puertas, pero también que el recuerdo de su antigua dependencia puede cerrarlas. La vida se organiza de este modo como una sucesión de servicios, desplazamientos y proyectos que no siempre producen el resultado esperado.",
+    "En Ciudad Real se coloca con una viuda para acompañar a sus hijos al estudio y repasarles las lecciones. Con algo de dinero y ropa, aspira a casarse con doña Francisca, hija de un boticario. La joven se inclina a favorecerlo y la señora de la casa interviene ante el padre. Cuando parece que el enlace puede prosperar, llega un letrado que había sido amo de Pedro en Madrid y lo reconoce públicamente como Periquín. La información que proporciona deshace el prestigio del pretendiente y el boticario abandona el matrimonio. Pedro se marcha y acaba en Orense, donde gana amistades acomodándose al humor de cada persona. Para evitar la fama de ocioso, lograr reputación y acaso algún provecho, decide escribir un libro titulado Propiedades moralizadas de los animales. El relato incluye extensos pasajes de ese proyecto: las descripciones del perro y de otros animales se transforman en críticas de los comportamientos humanos. La pretensión literaria tampoco queda al margen de la sátira, pues Pedro consulta a un letrado cuya censura descubre sus propias limitaciones de juicio. La trayectoria pasa después al mundo militar. El antiguo estudiante alcanza el nombre de don Pedro y la consideración de capitán, con un prestigio que modifica las oportunidades sociales que antes se le negaban, aunque no borra su pasado ni acaba con los enredos.",
+    "En Sicilia, don Pedro pretende a doña Leonor, hija de don Melchor, y procura obtener la aprobación del padre. La negociación vuelve a depender de las noticias sobre su nacimiento y calidad, pero ahora encuentra una ayuda decisiva en don Lorenzo de la Oliva, dispuesto a sostener su parentesco y favorecer el enlace. Al mismo tiempo, doña Clementa, con quien ha tenido un hijo, intenta retenerlo. Pedro se muestra frío incluso ante el niño y prefiere asegurar el matrimonio que desea. Doña Clementa amenaza entonces con impedir que engañe a otra mujer. Los movimientos del capitán, las resoluciones de ambas enamoradas y una salida por mar conducen a nuevos encuentros y dificultades; el mal tiempo obliga a recogerse en Mesina. La muerte de doña Clementa deja atrás aquella relación y el niño queda al cuidado de otros. De vuelta en Sicilia se conciertan las bodas con doña Leonor, acompañadas por el casamiento de una criada. La alegría pública no elimina las sombras: don Melchor siente el daño sufrido por su honra, el hijo de Clementa muere y el narrador subraya la proximidad entre las muertes y las bodas. A pesar de ello, Pedro vive contento, recibe una renta considerable y tiene cinco hijos y dos hijas. Después de varios años se presenta en la corte para procurar el porvenir de los que no heredan el mayorazgo y recibe honores por sus servicios militares. El ascenso desde la pobreza inicial queda cumplido, aunque las observaciones del narrador impiden confundir la fortuna material con una conducta siempre ejemplar."
+  ],
+  "resumen_breve": [
+    "Pedro de la Oliva, llamado Periquín, nace en una familia pobre de Segovia y muestra desde niño un ingenio burlón. Tras aprender a leer, escribir y contar, abandona el comercio por los estudios y pasa por diversos servicios y ciudades, donde su capacidad de agradar convive con frecuentes tropiezos.",
+    "Una tentativa de matrimonio fracasa al descubrirse su pasado de criado; otra aventura lo lleva a componer unas propiedades moralizadas de los animales. Más tarde alcanza prestigio como soldado y capitán en Sicilia.",
+    "Allí pretende a doña Leonor, mientras doña Clementa reclama su atención para el hijo de ambos. Tras huidas, muertes y arreglos familiares, Pedro consigue casarse y termina rico, con descendencia y reconocimiento cortesano."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Pedro de la Oliva",
+      "descripcion": "Protagonista cuya vida se sigue desde el nacimiento hasta la madurez."
+    },
+    {
+      "nombre": "María de Oceta",
+      "descripcion": "Madre del protagonista."
+    },
+    {
+      "nombre": "Doña Clementa",
+      "descripcion": "Mujer vinculada a la etapa amorosa y familiar de Pedro."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Segovia",
+      "descripcion": "Lugar de nacimiento del protagonista."
+    },
+    {
+      "nombre": "Ciudad Real",
+      "descripcion": "Uno de los ámbitos de servicio y relaciones."
+    },
+    {
+      "nombre": "Sicilia",
+      "descripcion": "Escenario de la carrera y vida familiar de Pedro."
+    },
+    {
+      "nombre": "La corte",
+      "descripcion": "Espacio de reconocimiento y pretensiones finales."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Movilidad social",
+      "descripcion": "El protagonista pasa de la pobreza a una posición reconocida."
+    },
+    {
+      "tema": "Ingenio y experiencia",
+      "descripcion": "La adaptación práctica se forma mediante servicios y dificultades."
+    },
+    {
+      "tema": "Sátira de costumbres",
+      "descripcion": "Digresiones y comparaciones examinan conductas humanas."
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "archivo": "TEXORO_impact_1047.txt",
+  "titulo": "El desgraciado",
+  "resumen_largo": [
+    "Don Eugenio y don Fadrique nacen en Sevilla y se conocen en la escuela, donde su amistad alcanza una intensidad que el narrador compara con la de Orestes y Pílades: cada uno está dispuesto a sufrir para librar al otro de un castigo. Al crecer, siguen compartiendo afectos y estudios. Cuando mueren los padres de Fadrique y lo dejan sin recursos, Eugenio consigue que los suyos lo reciban en casa y costeen su formación en Salamanca. La protección material se acompaña de un conflicto íntimo, pues doña Isabel, prima de Eugenio y destinada por la familia a casarse con él, ama a Fadrique. Este procura apartarse para no perjudicar a su amigo. La marcha, sin embargo, no inaugura una vida mejor. Los accidentes y las dificultades se acumulan, entre ellos una pierna quebrada y una larga necesidad de cuidados. Serrano, su criado, sostiene al enfermo con una fidelidad que contrasta humorísticamente con su constante apetito. La amistad de Eugenio sigue siendo el gran amparo del protagonista, pero también está expuesta a la fatalidad. Una confusión nocturna de vestidos hace que Eugenio sea tomado por otro hombre y muera víctima de la venganza de un marido.",
+    "Privado de ese apoyo, Fadrique intenta reconstruir su vida. La ayuda que le promete un jurista dispuesto a llevarlo a México se frustra cuando el protector es llevado preso a Madrid. Fadrique y Serrano salen de Sevilla, sufren el robo de dinero y ropa y deben buscar auxilio para cubrirse. Incluso una solución caritativa da lugar a nuevas complicaciones: un hábito prestado puede hacer pasar a quien lo lleva por religioso y suscitar sospechas. La narración encadena de ese modo los remedios fallidos, mostrando que el protagonista encuentra un obstáculo donde esperaba alivio. Finalmente entra en casa de don Gregorio, en Jerez, con una recomendación que le procura un trato cercano y honorable. Doña Ángela, esposa de Gregorio, se enamora de él. Fadrique no quiere corresponder a una pasión que compromete la lealtad a su señor. La situación se agrava porque la muerte de un hermano de Ángela, don Francisco, se vincula con Fadrique y se mezcla con los deseos de venganza. Las confidencias imprudentes de Serrano, enamorado de una criada, contribuyen a poner en circulación lo que debía callarse. El rechazo amoroso, los celos y las acusaciones producen persecuciones y prisiones, aunque Fadrique insiste en su inocencia y en el respeto que debe a su protector.",
+    "La coincidencia de los personajes en nuevos lugares renueva las sospechas en vez de aclararlas. Doña Ángela declara que quiere llegar a Roma para conseguir la disolución de un matrimonio contraído por fuerza. Don Gregorio interpreta sus movimientos como prueba de un acuerdo con Fadrique, y este se ve obligado a defenderse. Cuando la prisión amenaza su vida, Ángela consigue sacar a Fadrique y a Serrano, y los tres se embarcan disfrazados de peregrinos. Él acepta la salida por necesidad, pero deja expresamente sentado que no huye para arrebatar la esposa a otro. El navío cae en manos de enemigos y sus pasajeros terminan cautivos. En esa nueva dependencia se repite el conflicto entre protección y deseo: los miembros de la casa que los posee se sienten atraídos por los cristianos, y los celos de unos chocan con los proyectos de los otros. La posibilidad de obtener la libertad aparece ligada al deseo de convertirse y casarse. Al fin, varios se apoderan de riquezas y huyen juntos en un bajel con intención de llegar a España, recibir el bautismo y celebrar los matrimonios. Pero el barco perece cuando el puerto está ya a la vista. La acumulación de infortunios no recibe, por tanto, la reparación mundana esperable. El narrador sitúa la compensación en otro plano: Fadrique bautiza a quienes pretendían hacerse cristianos y su paciencia ante los trabajos permite esperar que también él alcance la salvación."
+  ],
+  "resumen_breve": [
+    "Don Fadrique y don Eugenio crecen en Sevilla unidos por una amistad ejemplar. Cuando Fadrique queda huérfano y pobre, la familia de su amigo lo ampara y facilita sus estudios en Salamanca. Pero una cadena de enfermedades, accidentes y muertes deshace cada posibilidad de estabilidad.",
+    "Acompañado por el fiel Serrano, Fadrique busca nuevos apoyos y entra al servicio de don Gregorio. Doña Ángela, mujer de este, se enamora de él, provocando acusaciones, celos y prisiones que lo obligan a huir.",
+    "El viaje termina en cautiverio y nuevos conflictos amorosos. La fuga hacia España parece ofrecer libertad y bautismo a sus acompañantes, pero el navío naufraga a la vista del puerto. La desgracia culmina en la muerte y en una esperanza religiosa de salvación."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Don Fadrique",
+      "descripcion": "Personaje en quien se concentran los infortunios."
+    },
+    {
+      "nombre": "Don Eugenio",
+      "descripcion": "Amigo del protagonista desde la infancia."
+    },
+    {
+      "nombre": "Serrano",
+      "descripcion": "Servidor que ayuda a Fadrique."
+    },
+    {
+      "nombre": "Doña Ángela",
+      "descripcion": "Figura vinculada a los conflictos amorosos y al desenlace."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Sevilla",
+      "descripcion": "Ciudad donde comienza la amistad."
+    },
+    {
+      "nombre": "Salamanca",
+      "descripcion": "Lugar ligado a episodios de los jóvenes."
+    },
+    {
+      "nombre": "El mar",
+      "descripcion": "Escenario del naufragio final y de la frustración del retorno."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Amistad",
+      "descripcion": "La solidaridad contrasta con la acumulación de desgracias."
+    },
+    {
+      "tema": "Fortuna adversa",
+      "descripcion": "Los reveses se encadenan en la vida de Fadrique."
+    },
+    {
+      "tema": "Salvación",
+      "descripcion": "El narrador dota de sentido cristiano al desenlace trágico."
+    }
+  ]
+}

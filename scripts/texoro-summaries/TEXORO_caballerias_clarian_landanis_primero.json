@@ -1,0 +1,52 @@
+{
+  "archivo": "TEXORO_caballerias_clarian_landanis_primero.txt",
+  "titulo": "Clarián de Landanís (libro primero)",
+  "resumen_largo": [
+    "La historia de Clarián se abre con las hazañas de caballeros de la generación anterior, especialmente Lantedón, hijo del rey de Suecia y futuro padre del protagonista. Sus combates, su paso por torneos y sus relaciones con la nobleza de Noruega y Alemania establecen el marco de familias, rivalidades y servicios militares en el que se formará el nuevo héroe. Clarián emprende su propio camino como caballero y pronto encuentra ocasiones de proteger a personas amenazadas y probar sus fuerzas frente a adversarios desconocidos. Su relación con Manesil, que lo sirve como escudero, introduce un vínculo de confianza que acompaña tanto las aventuras como los asuntos amorosos. Antes de conocer directamente a Gradamisa, hija del emperador Vasperaldo, las noticias de su hermosura despiertan su amor. La llegada a la corte imperial convierte esa inclinación en un compromiso que orienta buena parte de sus decisiones. Las fiestas, las justas y la recepción de príncipes extranjeros permiten que su valor sea conocido públicamente, al tiempo que la cercanía de la princesa hace más difícil cualquier partida. La corte funciona como centro de reunión de los caballeros, lugar de reconocimiento y escenario de promesas que el protagonista debe conciliar con su deseo de buscar nuevas empresas.",
+    "Las demandas de auxilio desplazan después la acción hacia castillos, territorios disputados e islas dominadas por poderes violentos. Clarián toma la defensa de la duquesa de Guncer y de su hija, amenazadas por el conde Quinar, y se enfrenta a Boraldán del Salado. Su servicio no desemboca en la aceptación de un matrimonio ventajoso: cuando se propone que case con Arminda, sus compromisos amorosos limitan la recompensa que puede admitir. Otras aventuras lo llevan contra Dramades de la Floresta y sus parientes y le permiten liberar a los presos del castillo de Ruel. La opresión del gigante Candramón plantea una empresa de mayor alcance. Las súplicas de las doncellas y las advertencias de un ermitaño preceden a un combate en el que Clarián vence al tirano y obtiene su castillo y su caballo. La conquista de la isla de Texón atrae a reyes y ejércitos enemigos y transforma una liberación individual en guerra colectiva. La ayuda enviada por el emperador y las conversiones de antiguos adversarios modifican las alianzas. Tras la victoria, los matrimonios y la distribución de señoríos recompensan a los compañeros y dan estabilidad a los territorios ganados.",
+    "El regreso a la corte no acaba con los peligros ni resuelve todas las tensiones de Clarián. Los mensajes de Leristela, reina de Tesalia, suscitan dificultades que debe tratar con Gradamisa; los engaños de mensajeras y las promesas hechas a doncellas vuelven a separarlo de ella. La entrada en la gruta de Hércules introduce una prueba extraordinaria, en la que el héroe afronta temores y peligros que afectan también a sus acompañantes. A su alrededor continúan las aventuras de don Galián, Leonistán, Florantel y otros caballeros, cuyas historias se cruzan con la suya sin quedar reducidas a simples ayudas ocasionales. La defensa de cautivos y el cumplimiento de dones prometidos obligan a intervenir incluso cuando el agraviado pertenece a un linaje enemigo. Hacia el final, una nueva necesidad familiar reclama a Clarián: su padre Lantedón requiere socorro en Suecia. El héroe parte acompañado por doce caballeros, entre despedidas y muestras de afecto de la corte. Gradamisa contempla con dolor la marcha, mientras él piensa en regresar para servirla. El libro concluye con el embarque de los trece compañeros en Holanda, dejando la expedición sueca como empresa todavía por cumplir."
+  ],
+  "resumen_breve": [
+    "Clarián, hijo del rey Lantedón de Suecia, hereda una tradición de caballeros vinculados al servicio de reyes y emperadores. Sus primeras empresas lo conducen a la corte imperial, donde se enamora de la princesa Gradamisa y alcanza reconocimiento por sus victorias.",
+    "El héroe defiende a damas despojadas, libera cautivos y combate a gigantes y señores violentos. La conquista de la isla de Texón y la guerra contra sus enemigos amplían sus obligaciones y reúnen a numerosos compañeros de armas.",
+    "Entre pruebas maravillosas, rivalidades y mensajes amorosos, Clarián procura mantener su fidelidad a Gradamisa. Finalmente, la necesidad de socorrer a su padre lo obliga a abandonar la corte y embarcar hacia Suecia."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Clarián de Landanís",
+      "descripcion": "Caballero hijo de Lantedón de Suecia."
+    },
+    {
+      "nombre": "Gradamisa",
+      "descripcion": "Princesa amada por Clarián."
+    },
+    {
+      "nombre": "Lantedón",
+      "descripcion": "Rey de Suecia y padre del héroe."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Colonia",
+      "descripcion": "Ciudad de la corte imperial y espacio de despedida."
+    },
+    {
+      "nombre": "Suecia",
+      "descripcion": "Reino al que se dirigen los caballeros para prestar ayuda."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Amor y deber",
+      "descripcion": "Las aventuras de los mayores del linaje preceden a la trayectoria de Clarián de Landanís, hijo de Lantedón de Suecia."
+    },
+    {
+      "tema": "Socorro caballeresco",
+      "descripcion": "Clarián participa en torneos, socorros y encuentros con otros caballeros andantes."
+    },
+    {
+      "tema": "Familia y corte",
+      "descripcion": "La necesidad de acudir en ayuda de Lantedón obliga al héroe a partir con otros caballeros."
+    }
+  ]
+}

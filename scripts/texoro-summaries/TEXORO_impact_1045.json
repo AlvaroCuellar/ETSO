@@ -1,0 +1,60 @@
+{
+  "archivo": "TEXORO_impact_1045.txt",
+  "titulo": "La comadre",
+  "resumen_largo": [
+    "Beatriz, comadre de Jaén, tiene una hija, Felipa, cuya belleza, discreción y trato atraen a numerosos pretendientes. Aunque ambas son de condición humilde, la madre desecha otros matrimonios porque confía en que don Rodrigo, un caballero que ha marchado a México a recoger una herencia, vuelva y cumpla la palabra dada a la joven. Una cédula sirve de garantía de esa promesa. Antes de embarcarse, don Rodrigo ha contado sus amores a un criado llamado Molino, que conoce así el nombre, la casa y las esperanzas de Felipa. Molino decide aprovechar la ausencia de su señor y viaja a Jaén con otro hombre. Allí se convierte en don Gregorio de Guzmán y su compañero se hace llamar Lozano. Para sostenerse y ganar crédito, ambos se presentan además como penitentes dedicados a pedir limosnas para hospitales y cárceles. Bajo los nombres de Pedro Pecador y Juan Miserable, con sayales, rostros alterados y gestos devotos, adquieren fama de santidad. En cambio, cuando se visten de galanes, aparentan riqueza y nobleza. La estafa se funda en esa duplicación: los supuestos religiosos pueden recomendar a los pretendientes sin que nadie advierta que son las mismas personas.",
+    "Don Gregorio se acerca a Felipa, mientras Lozano busca el favor de Beatriz. Las entradas en la iglesia, las conversaciones y la colaboración de la criada Juana facilitan los contactos. Los embaucadores pagan a quienes les sirven y ofrecen regalos que hacen creíble su abundancia. Cuando la fidelidad de Felipa a don Rodrigo estorba el avance del engaño, los falsos penitentes anuncian que el ausente ha caído de un navío y se ha ahogado. La autoridad espiritual que han adquirido da fuerza a la mentira: quienes podrían desear comprobar la noticia la reciben como una revelación de hombres santos. Felipa llora al prometido, pero encuentra abierto el camino hacia don Gregorio. La prima Isabel introduce otra complicación al interesarse también por él y desacreditar a Felipa ante el galán. Don Gregorio aprovecha la rivalidad para mantener a las dos pendientes de sus cartas, alimentar los celos y obtener ventajas. El narrador reproduce los papeles amorosos, mostrando cómo una respuesta puede fingir agravio para aumentar la dependencia de quien la recibe, mientras otra promete preferencia a su competidora. La aparente austeridad de los penitentes encubre así unas maniobras muy atentas al dinero, al deseo y a la reputación.",
+    "Las promesas de casamiento y las cédulas acaban sustituyendo a la seguridad que las mujeres buscan. Don Gregorio alega obstáculos familiares para no casarse inmediatamente con Felipa, pero ofrece una obligación escrita y una suma elevada si incumple. El mismo personaje, vestido de Pedro Pecador, asegura después a la joven que aquel caballero tiene buena conciencia y cumplirá lo prometido. La garantía procede, por tanto, del propio engañador, aunque Felipa la cree independiente. También Beatriz e Isabel se dejan arrastrar por esperanzas semejantes. El desenlace reúne de forma grotesca las consecuencias: madre e hija se encuentran después de haber dado a luz, abandonadas por los hombres que debían volver a auxiliarlas. La gente entra al oír sus gritos y termina por descubrirse que los galanes y los hermanos penitentes eran unos mismos individuos. Las mujeres comparan las cédulas y las cantidades que creían aseguradas, mientras han perdido joyas, honra y expectativas. Beatriz y Felipa resuelven ir a Sevilla a recibir al verdadero don Rodrigo, dando ya por falsa la noticia de su muerte; Isabel queda excluida de esa salida, pobre y con una criatura más que mantener. El narrador atribuye la desgracia a la ambición de Felipa por elevar su condición y cierra con la fábula del perro que pierde la carne por querer apoderarse de su reflejo: las promesas más brillantes han hecho abandonar una seguridad posible."
+  ],
+  "resumen_breve": [
+    "En Jaén, Beatriz, una comadre, espera casar a su hermosa hija Felipa con don Rodrigo, que ha viajado a México. Pero Molino, criado del ausente, aprovecha lo que sabe para engañarla: adopta el nombre de don Gregorio y se presenta como caballero rico, mientras su compañero Lozano prepara otras conquistas.",
+    "Los dos alternan sus galas con disfraces de penitentes, de modo que pueden alabar como santos a sus propias identidades de galanes. Criadas, regalos, cartas y una falsa noticia de muerte les abren las casas.",
+    "Felipa, su madre y su prima Isabel caen en las promesas de matrimonio. Cuando se descubre la doble identidad de los embaucadores, quedan los embarazos, las pérdidas materiales y la vergüenza pública."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Beatriz",
+      "descripcion": "Comadre y madre de Felipa."
+    },
+    {
+      "nombre": "Felipa",
+      "descripcion": "Joven cuyo matrimonio y reputación están en juego."
+    },
+    {
+      "nombre": "Don Gregorio",
+      "descripcion": "Participa en las maniobras de seducción."
+    },
+    {
+      "nombre": "Don Rodrigo",
+      "descripcion": "Pretendiente ausente al que se vincula una promesa de casamiento."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Jaén",
+      "descripcion": "Ciudad de origen de la comadre y su hija."
+    },
+    {
+      "nombre": "México",
+      "descripcion": "Destino atribuido al pretendiente ausente."
+    },
+    {
+      "nombre": "Sevilla",
+      "descripcion": "Lugar asociado al desenlace y a la partida de algunos personajes."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Engaño amoroso",
+      "descripcion": "Promesas y noticias manipuladas alteran las relaciones."
+    },
+    {
+      "tema": "Matrimonio y posición social",
+      "descripcion": "Las expectativas de ascenso intervienen en la elección de pareja."
+    },
+    {
+      "tema": "Ejemplaridad",
+      "descripcion": "El narrador extrae una advertencia del resultado de los hechos."
+    }
+  ]
+}

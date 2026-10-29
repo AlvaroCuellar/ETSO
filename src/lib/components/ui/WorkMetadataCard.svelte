@@ -6,14 +6,16 @@
 	import InlineActionButton from '$lib/components/ui/InlineActionButton.svelte';
 	import { formatAttributionConfidence, isPersonAuthor, type CatalogWork, type AttributionSet, type Confidence } from '$lib/domain/catalog';
 	import { renderInlineItalicsHtml } from '$lib/utils/render-inline-italics-html';
-	import { buildTraditionalAttributionParts } from '$lib/utils/traditional-attribution-phrase';
+	import { buildStylometryResultParts } from '$lib/utils/stylometry-result';
+	import { buildTraditionalAttributionParts, type AuthorReference } from '$lib/utils/traditional-attribution-phrase';
 
 	interface Props {
 		work: CatalogWork;
 		showLink?: boolean;
+		resultAuthors?: AuthorReference[];
 	}
 
-	let { work, showLink = true }: Props = $props();
+	let { work, showLink = true, resultAuthors = [] }: Props = $props();
 
 	const normalizeText = (value: string): string =>
 		value
@@ -24,6 +26,14 @@
 
 	const t = (value: string): string => translateText(page.data.locale ?? DEFAULT_LOCALE, value);
 	const connectorLabel = (connector: 'and' | 'or'): string => t(connector === 'and' ? 'y' : 'o');
+
+	const resultAndLabel = (): string => {
+		const labels: Record<string, string> = { es: 'y', en: 'and', fr: 'et', pt: 'e', it: 'e', de: 'und', zh: '和', ja: 'および', ko: '및', ru: 'и', ar: 'و' };
+		return labels[page.data.locale ?? DEFAULT_LOCALE] ?? labels.es;
+	};
+	const resultParts = $derived.by(() => work.inAuthorshipExam
+		? buildStylometryResultParts({ ...work, result2: undefined }, { translate: t, andLabel: resultAndLabel() }, resultAuthors)
+		: []);
 
 	const confidenceClass = (confidence?: Confidence): string => {
 		if (confidence === 'segura') return 'bg-[#d4edda] text-[#155724]';
@@ -70,12 +80,13 @@
 			</div>
 		{/if}
 
-		{#if hasStylometryAttribution(work.stylometryAttribution)}
+		{#if hasStylometryAttribution(work.stylometryAttribution) || (work.inAuthorshipExam && resultParts.length > 0)}
 			<div class="grid content-start gap-1.5">
 				<dt class="m-0 font-ui text-[0.72rem] font-bold uppercase tracking-[0.05em] text-text-soft">
 					Atribución estilométrica
 				</dt>
 				<dd class="m-0 font-ui text-[0.97rem] leading-[1.65] text-text-main">
+					{#if !work.inAuthorshipExam}
 					<div class="flex flex-col items-start gap-[0.65rem]">
 						{#if work.stylometryAttribution.unresolved}
 							<div class="flex flex-wrap items-center gap-3">
@@ -125,9 +136,15 @@
 							{/if}
 						{/each}
 					</div>
+					{/if}
+				{#if work.inAuthorshipExam && resultParts.length > 0}
+					<p data-stylometry-result class="m-0 whitespace-pre-line break-words leading-relaxed" data-i18n-skip>{#each resultParts as part}{#if part.kind === 'author' && part.authorId && isPersonAuthor(part.authorId)}<a href={`/autores/${part.authorId}`} class="font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline">{part.value}</a>{:else}{part.value}{/if}{/each}</p>
+				{/if}
 				</dd>
 			</div>
 		{/if}
+
+
 
 		{#if !work.inAuthorshipExam}
 		<div class="grid content-start gap-1.5">

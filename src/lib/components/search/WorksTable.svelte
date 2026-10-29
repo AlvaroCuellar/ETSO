@@ -865,7 +865,7 @@
 					</th>
 					<th
 						class={`obra-table-col--resources px-3 py-[14px] text-left text-[13px] font-medium tracking-[0.5px] uppercase ${
-							mode === 'informe' ? 'w-[360px] min-w-[360px]' : 'w-[30%] min-w-[360px]'
+							mode === 'informe' ? 'w-[380px] min-w-[380px]' : 'w-[30%] min-w-[380px]'
 						}`}
 						scope="col"
 					>
@@ -961,21 +961,27 @@
 		padding-right: 10px;
 	}
 
+	.obra-table-shared--informe th,
+	.obra-table-shared--informe td {
+		padding-left: 8px;
+		padding-right: 8px;
+	}
+
 	.obra-table-shared .actions .btn-action {
-		grid-template-columns: auto auto;
+		display: flex;
 		justify-content: center;
-		column-gap: 5px;
+		gap: 5px;
 		padding-left: 6px;
 		padding-right: 6px;
 	}
 
 	.obra-table-shared .actions .btn-left {
-		grid-column: 1;
+		flex: 0 0 auto;
 		gap: 5px;
 	}
 
 	.obra-table-shared .actions .btn-arrow {
-		grid-column: 2;
+		flex: 0 0 10px;
 		width: 10px;
 		height: 10px;
 	}
@@ -988,6 +994,7 @@
 	.obra-table-shared .actions {
 		display: grid;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
+		min-width: max-content;
 		grid-auto-rows: 1fr;
 		align-items: stretch;
 	}

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 104" fill="none">
+  <g stroke="#002681" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Traditional domed lid. -->
+    <path d="M17 48V37c0-17 14-28 32-28h30c18 0 32 11 32 28v11" fill="#EDF2FF"/>
+    <!-- The same simple iron bands continue over the lid and body. -->
+    <path d="M38 10c-7 7-10 16-10 27v11m62-38c7 7 10 16 10 27v11" stroke="#0D3F91"/>
+    <path d="M14 48h100v40a7 7 0 0 1-7 7H21a7 7 0 0 1-7-7z" fill="#F7EEF8"/>
+    <path d="M14 57h100"/>
+    <path d="M29 58v36m70-36v36" stroke="#0D3F91"/>
+    <!-- Central lock plate. -->
+    <path d="M55 47h18v22a4 4 0 0 1-4 4H59a4 4 0 0 1-4-4z" fill="#FFF" stroke="#69005D"/>
+    <circle cx="64" cy="59" r="2.5" fill="#69005D" stroke="none"/>
+    <path d="M64 61v5" stroke="#69005D"/>
+    <!-- Small rivets, rather than decorative motifs. -->
+    <path d="M29 67v1m0 16v1m70-18v1m0 16v1" stroke-width="3.5"/>
+  </g>
+</svg>

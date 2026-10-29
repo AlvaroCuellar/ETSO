@@ -181,6 +181,22 @@
 		]
 	} as const;
 	const texoroIntro = $derived(texoroIntroByLocale[data.locale] ?? texoroIntroByLocale.es);
+
+	const cofreDescriptionByLocale = {
+		es: "reúne las frecuencias de uso de las palabras de todas las obras del corpus. Los datos permiten realizar análisis léxicos, comparar obras, replicar estudios estilométricos y plantear nuevas investigaciones.",
+		en: "brings together word-use frequencies for all works in the corpus. The data support lexical analysis, comparisons between works, replication of stylometric studies and new research.",
+		fr: "rassemble les fréquences d’usage des mots de toutes les œuvres du corpus. Les données permettent de mener des analyses lexicales, de comparer des œuvres, de reproduire des études stylométriques et de proposer de nouvelles recherches.",
+		pt: "reúne as frequências de uso das palavras de todas as obras do corpus. Os dados permitem realizar análises lexicais, comparar obras, replicar estudos estilométricos e propor novas investigações.",
+		it: "raccoglie le frequenze d’uso delle parole di tutte le opere del corpus. I dati consentono di svolgere analisi lessicali, confrontare opere, replicare studi stilometrici e proporre nuove ricerche.",
+		de: "bündelt die Worthäufigkeiten aller Werke des Korpus. Die Daten ermöglichen lexikalische Analysen, Werkvergleiche, die Replikation stilometrischer Studien und neue Forschungsansätze.",
+		zh: "汇集语料库中所有作品的词语使用频率。这些数据可用于词汇分析、作品比较、复现文体计量研究以及开展新的研究。",
+		ja: "は、コーパスに収録されたすべての作品の語彙使用頻度をまとめたものです。これらのデータは、語彙分析、作品間の比較、文体計量研究の再現、新たな研究に活用できます。",
+		ko: "는 코퍼스에 수록된 모든 작품의 단어 사용 빈도를 모은 자료입니다. 이 데이터는 어휘 분석, 작품 비교, 문체계량 연구의 재현과 새로운 연구에 활용할 수 있습니다.",
+		ru: "содержит частоты употребления слов во всех произведениях корпуса. Эти данные позволяют проводить лексический анализ, сравнивать произведения, воспроизводить стилометрические исследования и предлагать новые направления исследований.",
+		ar: "يجمع تكرارات استخدام الكلمات في جميع أعمال المتن. وتتيح هذه البيانات إجراء التحليل المعجمي ومقارنة الأعمال وإعادة إنتاج الدراسات الأسلوبية الإحصائية واقتراح بحوث جديدة."
+	} as const;
+	const cofreDescription = $derived(cofreDescriptionByLocale[data.locale] ?? cofreDescriptionByLocale.es);
+
 	const wildcardConnectorByLocale = {
 		es: 'y',
 		en: 'and',
@@ -3176,6 +3192,12 @@
 				{#each texoroIntro as paragraph, index}
 					<p class={`${index === 0 ? 'mt-[1.8rem]' : 'mt-[1.25rem]'} mb-0 max-w-[64ch] font-['Lora',serif] text-[1.01rem] leading-[1.62] text-text-main`} dir={data.locale === 'ar' ? 'rtl' : undefined}>{paragraph}</p>
 				{/each}
+				<div class="mt-[1.25rem] flex items-start gap-3 border-t border-brand-blue/10 pt-4 sm:gap-4" dir={data.locale === 'ar' ? 'rtl' : undefined}>
+					<img src="/images/texoro/cofre.svg" width="128" height="104" alt="" aria-hidden="true" class="mt-0.5 h-auto w-14 shrink-0 sm:w-20" />
+					<p data-cofre-explanation class="m-0 min-w-0 max-w-[64ch] font-['Lora',serif] text-[1.01rem] leading-[1.62] text-text-main">
+						{data.locale === 'es' ? 'El ' : ''}<a href="https://doi.org/10.5281/zenodo.23771582" target="_blank" rel="noopener noreferrer" class="font-bold text-brand-blue-dark no-underline hover:underline focus-visible:underline">COFRE del TEXORO</a> {cofreDescription}
+					</p>
+				</div>
 			</div>
 		<div class="mt-[1.25rem]">
 			<AppButton

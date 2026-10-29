@@ -95,12 +95,8 @@
 		() =>
 			`${actionButtonBaseClass} cursor-not-allowed border-[rgba(91,111,132,0.22)] bg-[#f8f9fb] text-[rgba(73,90,108,0.62)] opacity-[0.78]`
 	);
-	const actionLabelClass = $derived.by(
-		() =>
-			`btn-label block overflow-hidden text-ellipsis whitespace-nowrap leading-[1.2] ${
-				mode === 'informe' ? 'text-[0.77rem]' : 'text-[0.82rem]'
-			}`
-	);
+	const actionLabelClass = 'btn-label block overflow-hidden text-ellipsis whitespace-nowrap leading-[1.2] text-[0.82rem]';
+
 	const disabledIconClass = 'text-[rgba(114,130,145,0.75)]';
 
 	const mobileViewButtonClass = (view: MobileWorksView): string =>
@@ -468,7 +464,7 @@
 						<ChartLine class="h-[14px] w-[14px] stroke-[2.1]" />
 					</span>
 					<span class={actionLabelClass}>
-						{mode === 'informe' ? 'Informe' : 'Informe estilométrico'}
+						Informe estilométrico
 					</span>
 				</span>
 				<span class="btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center text-text-soft" aria-hidden="true">
@@ -482,7 +478,7 @@
 						<ChartLine class="h-[14px] w-[14px] stroke-[2.1]" />
 					</span>
 					<span class={actionLabelClass}>
-						{mode === 'informe' ? 'Informe' : 'Informe estilométrico'}
+						Informe estilométrico
 					</span>
 				</span>
 				<span class={`btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center ${disabledIconClass}`} aria-hidden="true">
@@ -504,7 +500,7 @@
 						<span class="btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-brand-blue-dark" aria-hidden="true">
 							<FolderOpen class="h-[14px] w-[14px] stroke-[2.1]" />
 						</span>
-						<span class={actionLabelClass}>{mode === 'informe' ? 'Texto' : 'Acceso al texto'}</span>
+						<span class={actionLabelClass}>Acceso al texto</span>
 					</span>
 					<span class="btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center text-text-soft" aria-hidden="true">
 						{#if openDropdownRowId === row.rowId}
@@ -550,7 +546,7 @@
 					<span class={`btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center ${disabledIconClass}`} aria-hidden="true">
 						<FolderOpen class="h-[14px] w-[14px] stroke-[2.1]" />
 					</span>
-					<span class={actionLabelClass}>{mode === 'informe' ? 'Texto' : 'Acceso al texto'}</span>
+					<span class={actionLabelClass}>Acceso al texto</span>
 				</span>
 				<span class={`btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center ${disabledIconClass}`} aria-hidden="true">
 					<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
@@ -564,7 +560,7 @@
 					<span class="btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-brand-blue-dark" aria-hidden="true">
 						<AlignLeft class="h-[14px] w-[14px] stroke-[2.1]" />
 					</span>
-					<span class={actionLabelClass}>{mode === 'informe' ? 'Resumen' : 'Resumen automático'}</span>
+					<span class={actionLabelClass}>Resumen automático</span>
 				</span>
 				<span class="btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center text-text-soft" aria-hidden="true">
 					<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
@@ -576,7 +572,7 @@
 					<span class={`btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center ${disabledIconClass}`} aria-hidden="true">
 						<AlignLeft class="h-[14px] w-[14px] stroke-[2.1]" />
 					</span>
-					<span class={actionLabelClass}>{mode === 'informe' ? 'Resumen' : 'Resumen automático'}</span>
+					<span class={actionLabelClass}>Resumen automático</span>
 				</span>
 				<span class={`btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center ${disabledIconClass}`} aria-hidden="true">
 					<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
@@ -590,7 +586,7 @@
 					<span class="btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center text-brand-blue-dark" aria-hidden="true">
 						<ChartNetwork class="h-[14px] w-[14px] stroke-[2.1]" />
 					</span>
-					<span class={actionLabelClass}>{mode === 'informe' ? 'Red' : 'Red estilométrica'}</span>
+					<span class={actionLabelClass}>Red estilométrica</span>
 				</span>
 				<span class="btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center text-text-soft" aria-hidden="true">
 					<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
@@ -602,7 +598,7 @@
 					<span class={`btn-icon inline-flex h-[14px] w-[14px] flex-none items-center justify-center ${disabledIconClass}`} aria-hidden="true">
 						<ChartNetwork class="h-[14px] w-[14px] stroke-[2.1]" />
 					</span>
-					<span class={actionLabelClass}>{mode === 'informe' ? 'Red' : 'Red estilométrica'}</span>
+					<span class={actionLabelClass}>Red estilométrica</span>
 				</span>
 				<span class={`btn-arrow col-[3] inline-flex h-[13px] w-[13px] items-center justify-center ${disabledIconClass}`} aria-hidden="true">
 					<ChevronRight class="h-[13px] w-[13px] stroke-[2.2]" />
@@ -828,16 +824,16 @@
 			<thead class={tableHeadClass}>
 				<tr>
 					{#if mode === 'informe'}
-						<th class="obra-table-col--position w-[82px] px-3 py-[14px] text-left text-[13px] font-medium tracking-[0.5px] uppercase" scope="col">
+						<th class="obra-table-col--position w-[76px] px-3 py-[14px] text-left text-[13px] font-medium tracking-[0.5px] uppercase" scope="col">
 							Posición
 						</th>
-						<th class="obra-table-col--distance w-[90px] px-3 py-[14px] text-left text-[13px] font-medium tracking-[0.5px] uppercase" scope="col">
+						<th class="obra-table-col--distance w-[76px] px-3 py-[14px] text-left text-[13px] font-medium tracking-[0.5px] uppercase" scope="col">
 							Distancia
 						</th>
 					{/if}
 					<th
 						class={`obra-table-col--title px-3 py-[14px] text-left text-[13px] font-medium tracking-[0.5px] uppercase ${
-							mode === 'standard' ? 'w-[29%]' : ''
+							mode === 'standard' ? 'w-[22%]' : 'w-[24%] min-w-[230px]'
 						}`}
 						scope="col"
 					>
@@ -845,7 +841,7 @@
 					</th>
 					<th
 						class={`obra-table-col--trad px-3 py-[14px] text-left text-[13px] font-medium tracking-[0.5px] uppercase ${
-							mode === 'standard' ? 'w-[21.5%]' : ''
+							mode === 'standard' ? 'w-[18%]' : 'w-[200px]'
 						}`}
 						scope="col"
 					>
@@ -853,7 +849,7 @@
 					</th>
 					<th
 						class={`obra-table-col--etso px-3 py-[14px] text-left text-[13px] font-medium tracking-[0.5px] uppercase ${
-							mode === 'standard' ? 'w-[21.5%]' : ''
+							mode === 'standard' ? 'w-[23%]' : 'w-[210px]'
 						}`}
 						scope="col"
 					>
@@ -861,7 +857,7 @@
 					</th>
 					<th
 						class={`obra-table-col--genre px-3 py-[14px] text-left text-[13px] font-medium tracking-[0.5px] uppercase ${
-							mode === 'informe' ? 'w-[110px]' : 'w-[8%]'
+							mode === 'informe' ? 'w-[70px]' : 'w-[7%]'
 						}`}
 						scope="col"
 					>
@@ -869,7 +865,7 @@
 					</th>
 					<th
 						class={`obra-table-col--resources px-3 py-[14px] text-left text-[13px] font-medium tracking-[0.5px] uppercase ${
-							mode === 'informe' ? 'w-[190px]' : 'w-[20%]'
+							mode === 'informe' ? 'w-[360px] min-w-[360px]' : 'w-[30%] min-w-[360px]'
 						}`}
 						scope="col"
 					>
@@ -954,6 +950,58 @@
 {/if}
 
 <style>
+	.obra-table-shared thead th {
+		text-align: center;
+		white-space: nowrap;
+	}
+
+	.obra-table-shared th,
+	.obra-table-shared td {
+		padding-left: 10px;
+		padding-right: 10px;
+	}
+
+	.obra-table-shared .actions .btn-action {
+		grid-template-columns: auto auto;
+		justify-content: center;
+		column-gap: 5px;
+		padding-left: 6px;
+		padding-right: 6px;
+	}
+
+	.obra-table-shared .actions .btn-left {
+		grid-column: 1;
+		gap: 5px;
+	}
+
+	.obra-table-shared .actions .btn-arrow {
+		grid-column: 2;
+		width: 10px;
+		height: 10px;
+	}
+
+	.obra-table-shared .actions .btn-arrow :global(svg) {
+		width: 10px;
+		height: 10px;
+	}
+
+	.obra-table-shared .actions {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		grid-auto-rows: 1fr;
+		align-items: stretch;
+	}
+
+	.obra-table-shared .actions .btn-action {
+		min-height: 36px;
+		height: 100%;
+	}
+
+	.obra-table-shared .actions .btn-label {
+		overflow: visible;
+		text-overflow: clip;
+	}
+
 	.overflow-wrap-anywhere {
 		overflow-wrap: anywhere;
 	}

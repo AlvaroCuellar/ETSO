@@ -53,6 +53,7 @@ const navHrefs = {
 	biteso: '/biteso',
 	summaries: '/resumenes',
 	network: '/red-obras',
+	openScience: '/open-science',
 	citation: '/como-citarnos',
 	impact: '/repercusion',
 	api: '/api',
@@ -147,6 +148,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.biteso, label: 'BITESO' },
 				{ href: navHrefs.summaries, label: 'Resúmenes' },
 				{ href: navHrefs.network, label: 'Red 3D' },
+				{ href: navHrefs.openScience, label: 'Open Science' },
 				{ href: navHrefs.citation, label: 'Cómo citarnos' }
 			],
 			infoItems: [
@@ -189,6 +191,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.biteso, label: 'BITESO' },
 				{ href: navHrefs.summaries, label: 'Summaries' },
 				{ href: navHrefs.network, label: '3D network' },
+				{ href: navHrefs.openScience, label: 'Open Science' },
 				{ href: navHrefs.citation, label: 'How to cite us' }
 			],
 			infoItems: [
@@ -231,6 +234,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.biteso, label: 'BITESO' },
 				{ href: navHrefs.summaries, label: 'Résumés' },
 				{ href: navHrefs.network, label: 'Réseau 3D' },
+				{ href: navHrefs.openScience, label: 'Open Science' },
 				{ href: navHrefs.citation, label: 'Comment nous citer' }
 			],
 			infoItems: [
@@ -273,6 +277,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.biteso, label: 'BITESO' },
 				{ href: navHrefs.summaries, label: 'Resumos' },
 				{ href: navHrefs.network, label: 'Rede 3D' },
+				{ href: navHrefs.openScience, label: 'Open Science' },
 				{ href: navHrefs.citation, label: 'Como nos citar' }
 			],
 			infoItems: [
@@ -315,6 +320,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.biteso, label: 'BITESO' },
 				{ href: navHrefs.summaries, label: 'Riassunti' },
 				{ href: navHrefs.network, label: 'Rete 3D' },
+				{ href: navHrefs.openScience, label: 'Open Science' },
 				{ href: navHrefs.citation, label: 'Come citarci' }
 			],
 			infoItems: [
@@ -357,6 +363,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.biteso, label: 'BITESO' },
 				{ href: navHrefs.summaries, label: 'Zusammenfassungen' },
 				{ href: navHrefs.network, label: '3D-Netzwerk' },
+				{ href: navHrefs.openScience, label: 'Open Science' },
 				{ href: navHrefs.citation, label: 'Zitierweise' }
 			],
 			infoItems: [
@@ -399,6 +406,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.biteso, label: 'BITESO' },
 				{ href: navHrefs.summaries, label: '摘要' },
 				{ href: navHrefs.network, label: '3D网络' },
+				{ href: navHrefs.openScience, label: 'Open Science' },
 				{ href: navHrefs.citation, label: '引用方式' }
 			],
 			infoItems: [
@@ -441,6 +449,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.biteso, label: 'BITESO' },
 				{ href: navHrefs.summaries, label: '要約' },
 				{ href: navHrefs.network, label: '3Dネットワーク' },
+				{ href: navHrefs.openScience, label: 'Open Science' },
 				{ href: navHrefs.citation, label: '引用方法' }
 			],
 			infoItems: [
@@ -483,6 +492,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.biteso, label: 'BITESO' },
 				{ href: navHrefs.summaries, label: '요약' },
 				{ href: navHrefs.network, label: '3D 네트워크' },
+				{ href: navHrefs.openScience, label: 'Open Science' },
 				{ href: navHrefs.citation, label: '인용 방법' }
 			],
 			infoItems: [
@@ -525,6 +535,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.biteso, label: 'BITESO' },
 				{ href: navHrefs.summaries, label: 'Аннотации' },
 				{ href: navHrefs.network, label: '3D-сеть' },
+				{ href: navHrefs.openScience, label: 'Open Science' },
 				{ href: navHrefs.citation, label: 'Как цитировать' }
 			],
 			infoItems: [
@@ -567,6 +578,7 @@ export const uiTranslations: Record<Locale, UiTranslations> = {
 				{ href: navHrefs.biteso, label: 'BITESO' },
 				{ href: navHrefs.summaries, label: 'الملخصات' },
 				{ href: navHrefs.network, label: 'الشبكة ثلاثية الأبعاد' },
+				{ href: navHrefs.openScience, label: 'Open Science' },
 				{ href: navHrefs.citation, label: 'كيفية الاستشهاد بنا' }
 			],
 			infoItems: [

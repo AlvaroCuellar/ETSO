@@ -70,10 +70,10 @@
 	};
 
 	const navLinkClass = (active: boolean): string =>
-		`inline-flex items-center rounded-card border px-4 py-2 text-[0.9rem] font-ui font-medium text-brand-blue no-underline transition hover:no-underline focus-visible:no-underline ${
+		`inline-flex whitespace-nowrap items-center border-b-2 px-2.5 py-2.5 text-[0.86rem] font-ui font-medium no-underline transition-colors hover:no-underline focus-visible:no-underline ${
 			active
-				? 'border-transparent bg-surface-accent-purple text-brand-purple'
-				: 'border-transparent hover:bg-surface-accent-blue'
+				? 'border-brand-purple text-brand-purple'
+				: 'border-transparent text-brand-blue hover:border-border-accent-blue hover:text-brand-blue-dark'
 		}`;
 
 	const menuLinkClass = (active: boolean): string =>
@@ -161,13 +161,13 @@
 <svelte:window onkeydown={handleWindowKeydown} onclick={handleWindowClick} />
 
 <header class="sticky top-0 z-20 border-b border-border-accent-blue bg-[rgba(255,255,255,0.94)] backdrop-blur-[6px]">
-	<div class="mx-auto w-full max-w-7xl px-4 sm:px-5 lg:px-6">
+	<div class="mx-auto w-full max-w-[1440px] px-4 sm:px-5 lg:px-8">
 		<div class="flex min-h-[4.75rem] items-center justify-between gap-4">
 			<a class="inline-flex items-center" href={localizePath('/', locale)}>
 				<img class="block h-[2.35rem] w-auto" src={logoEtso} alt="ETSO" />
 			</a>
 
-			<nav class="hidden items-center justify-end gap-2 font-ui min-[1180px]:flex" aria-label={translations.nav.primaryLabel}>
+			<nav class="hidden min-w-0 items-center justify-end gap-0.5 font-ui min-[1180px]:flex" aria-label={translations.nav.primaryLabel}>
 				{#each navItems as item}
 					<a
 						class={navLinkClass(isActive(item.href))}

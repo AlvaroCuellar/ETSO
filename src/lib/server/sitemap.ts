@@ -19,6 +19,7 @@ const STATIC_PATHS = [
 	'/resumenes',
 	'/red-obras',
 	'/como-citarnos',
+	'/open-science',
 	'/api',
 	'/transcripciones-automaticas',
 	'/equipo',

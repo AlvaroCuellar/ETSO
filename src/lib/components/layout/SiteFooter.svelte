@@ -15,7 +15,7 @@
 	const primaryNavItems = $derived(translations.nav.items.slice(0, 3).concat(translations.nav.infoItems.slice(0, 1)));
 	const secondaryNavItems = $derived([
 		translations.nav.infoItems[1],
-		translations.nav.items[5],
+		...[...translations.nav.items, ...translations.nav.infoItems].filter((item) => item.href === '/open-science' || item.href === '/como-citarnos'),
 		translations.nav.infoItems[2]
 	].filter(Boolean));
 </script>

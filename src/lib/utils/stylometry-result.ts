@@ -19,9 +19,10 @@ export const resolveStylometryResult = (
 ): string | null => {
 	const result = work.result1?.trim() ?? '';
 	const marker = normalize(result);
-	const automatic = marker === 'no' || /^(automatico|auto)[.!]?$/.test(marker);
+	// A standalone internal marker has no approved prose to display.
+	const needsGeneratedPrimary = marker === 'no' || /^(automatico|auto|manual)[.!]?$/.test(marker);
 	let primary = result;
-	if (automatic) primary = generateStylometryResult(work.stylometryAttribution, work.traditionalAttribution, options);
+	if (needsGeneratedPrimary) primary = generateStylometryResult(work.stylometryAttribution, work.traditionalAttribution, options);
 	const extra = work.result2?.trim() ?? '';
 	const secondary = normalize(extra) === 'no' ? '' : extra;
 	if (!primary) return secondary || null;

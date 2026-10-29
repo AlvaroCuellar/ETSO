@@ -2,6 +2,7 @@ import { IndexedDbCache } from './idb-cache';
 import { buildSnippet, normalizePattern, normalizePlainText, tokenizeWithOffsets } from './normalize';
 import {
 	assignDistinctProximitySpans,
+	orderProximityCandidates,
 	canonicalSpanPairKey,
 	canonicalSpanSetKey
 } from './proximity-assignment';
@@ -1108,14 +1109,13 @@ export class TexoroSearchEngine {
 
 			for (const anchor of anchorSpans) {
 				const candidatesByTerm = group.terms.map((term, index) =>
-					termSpans[index]
+					orderProximityCandidates(anchor, termSpans[index]
 						.map((span) => ({ span, gap: this.#proximityGap(anchor, span, term.order) }))
 						.filter((candidate): candidate is { span: (typeof termSpans)[number][number]; gap: number } =>
 							candidate.gap !== null && candidate.gap <= term.distance &&
 							this.#sameSection(resolvedDocId!, Math.min(anchor.tokenStart, candidate.span.tokenStart) + 1, Math.max(anchor.tokenEnd, candidate.span.tokenEnd) + 1)
 						)
-						.sort((a, b) => a.gap - b.gap || a.span.tokenStart - b.span.tokenStart)
-						.map((candidate) => candidate.span)
+						.map((candidate) => candidate.span))
 				);
 				const selected = assignDistinctProximitySpans(candidatesByTerm);
 				if (!selected) continue;
@@ -1772,11 +1772,11 @@ export class TexoroSearchEngine {
 			const seenGroupOccurrences = new Set<string>();
 			for (const anchor of anchors) {
 				const candidatesByTerm = clause.terms.map((term, index) =>
-					positionsForDoc[index].filter((right) => {
+					orderProximityCandidates(anchor, positionsForDoc[index].filter((right) => {
 						const gap = this.#proximityGap(anchor, right, term.order);
 						return gap !== null && gap <= term.distance &&
 							this.#sameSection(docId, Math.min(anchor.tokenStart, right.tokenStart), Math.max(anchor.tokenEnd, right.tokenEnd));
-					})
+					}))
 				);
 				const selected = assignDistinctProximitySpans(candidatesByTerm);
 				if (!selected) continue;

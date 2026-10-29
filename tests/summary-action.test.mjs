@@ -23,6 +23,7 @@ const fixture = (result) => {
 		getPublicSummaryAssetUrl: (value) => `/public/${value}`,
 		submitCorrectionEmail: async (value) => { submitted = value; return {emailDelivered:true}; },
 		buildSummaryCorrectionText,
+		getCorrectionProposalFormValues: (formData) => ({proposedText:String(formData.get('proposed_text') ?? '')}),
 		loadSummaryDocument: async () => result
 	};
 	const route = new Function(...Object.keys(dependencies), `${compiled}\nreturn {load, action: actions.default};`)(...Object.values(dependencies));
@@ -42,7 +43,7 @@ test('correction original includes the actual brief summary shown in SSR', async
 test('missing or unavailable assets prevent correction submission and empty-page CDN caching', async () => {
 	for (const unavailable of [false, true]) {
 		const {route, submitted} = fixture({document:null,unavailable});
-		const failure = await route.action({params:{slug:'quijote'},fetch});
+		const failure = await route.action({request:{formData:async()=>new FormData()},params:{slug:'quijote'},fetch});
 		assert.equal(failure.status, unavailable ? 503 : 404);
 		assert.equal(submitted(), undefined);
 		let headers;

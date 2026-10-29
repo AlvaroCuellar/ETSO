@@ -56,3 +56,20 @@ export const assignDistinctProximitySpans = <T extends TokenSpan>(
 
 	return assignment.every((span) => span !== undefined) ? (assignment as T[]) : null;
 };
+
+/**
+ * Uses the same nearest-first candidate order for indexed counts and text detail.
+ * Token offsets may be zero- or one-based; relative gaps and tie breaks agree.
+ * Matching may reassign a condition to reserve a span for another condition.
+ */
+export const orderProximityCandidates = <T extends TokenSpan>(
+	anchor: TokenSpan,
+	candidates: ReadonlyArray<T>
+): T[] => {
+	const gap = (span: TokenSpan): number => span.tokenStart > anchor.tokenEnd
+		? span.tokenStart - anchor.tokenEnd - 1
+		: anchor.tokenStart - span.tokenEnd - 1;
+	return [...candidates].sort((left, right) =>
+		gap(left) - gap(right) || left.tokenStart - right.tokenStart || left.tokenEnd - right.tokenEnd
+	);
+};

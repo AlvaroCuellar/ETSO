@@ -6,7 +6,7 @@ import {
 	getWorkBySlug
 } from '$lib/server/catalog-runtime';
 import { getPublicSummaryAssetUrl } from '$lib/server/r2-public';
-import { submitCorrectionEmail } from '$lib/server/biteso-correction-proposals';
+import { CorrectionDeliveryError, getCorrectionProposalFormValues, submitCorrectionEmail } from '$lib/server/biteso-correction-proposals';
 import { buildSummaryCorrectionText } from '$lib/utils/summary-correction-text';
 import { loadSummaryDocument } from '$lib/server/summary-document';
 
@@ -42,17 +42,20 @@ export const actions: Actions = {
 			return fail(404, {
 				summaryCorrectionProposal: {
 					ok: false,
+					values: undefined,
 					message: 'Obra no encontrada.'
 				}
 			});
 		}
 
+		const formData = await request.formData();
 		const result = await loadSummaryDocument(getPublicSummaryAssetUrl(`${work.id}.json`), fetch);
 		const summary = result.document;
 		if (!summary) {
 			return fail(result.unavailable ? 503 : 404, {
 				summaryCorrectionProposal: {
 					ok: false,
+					values: getCorrectionProposalFormValues(formData),
 					message: result.unavailable
 						? 'No se pudo cargar el resumen. Inténtalo de nuevo más tarde.'
 						: 'Resumen no encontrado.'
@@ -67,7 +70,6 @@ export const actions: Actions = {
 			espacios: summary.espacios,
 			tematicas: summary.tematicas
 		});
-		const formData = await request.formData();
 
 		try {
 			const result = await submitCorrectionEmail({
@@ -80,10 +82,14 @@ export const actions: Actions = {
 				sourceUrl: url.toString(),
 				clientAddress: getClientAddress()
 			});
+			if (!result.emailDelivered) {
+				throw new CorrectionDeliveryError('No se ha podido enviar tu propuesta. Conserva el texto e inténtalo de nuevo más tarde.');
+			}
 
 			return {
 				summaryCorrectionProposal: {
 					ok: true,
+					values: undefined,
 					message:
 						'Gracias. Tu propuesta de corrección se ha enviado correctamente y será revisada antes de incorporarse a ETSO.',
 					emailDelivered: result.emailDelivered
@@ -91,10 +97,11 @@ export const actions: Actions = {
 			};
 		} catch (cause) {
 			const message = cause instanceof Error ? cause.message : 'No se pudo enviar la propuesta.';
-			return fail(400, {
+			return fail(cause instanceof CorrectionDeliveryError ? 503 : 400, {
 				summaryCorrectionProposal: {
 					ok: false,
-					message
+					message,
+					values: getCorrectionProposalFormValues(formData)
 				}
 			});
 		}

@@ -29,7 +29,7 @@ interface SubmitCorrectionEmailInput {
 
 export interface SubmitCorrectionEmailResult {
 	ok: true;
-	emailDelivered: boolean;
+	emailDelivered: true;
 }
 
 const normalizeLineEndings = (value: string): string => value.replace(/\r\n?/g, '\n');
@@ -48,6 +48,20 @@ const cleanTextarea = (value: FormDataEntryValue | null): string => {
 		.replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, '')
 		.slice(0, MAX_TEXT_LENGTH + 1);
 };
+
+export class CorrectionDeliveryError extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = 'CorrectionDeliveryError';
+	}
+}
+
+export const getCorrectionProposalFormValues = (formData: FormData) => ({
+	proposedText: cleanTextarea(formData.get('proposed_text')),
+	contributorName: cleanOptionalField(formData.get('contributor_name'), MAX_NAME_LENGTH),
+	contributorEmail: cleanOptionalField(formData.get('contributor_email'), MAX_EMAIL_LENGTH),
+	contributorComment: cleanOptionalField(formData.get('contributor_comment'), MAX_COMMENT_LENGTH)
+});
 
 const escapeHtml = (value: string): string =>
 	value
@@ -198,29 +212,34 @@ export const submitCorrectionEmail = async ({
 		} else {
 			console.warn('No se envió aviso de propuesta: falta RESEND_API_KEY.');
 		}
-		return { ok: true, emailDelivered: false };
+		throw new CorrectionDeliveryError('El envío de propuestas no está disponible en este momento. Tu propuesta no se ha enviado. Conserva el texto e inténtalo más tarde.');
 	}
 
-	const response = await fetch('https://api.resend.com/emails', {
-		method: 'POST',
-		headers: {
-			Authorization: `Bearer ${env.RESEND_API_KEY}`,
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({
-			from: env.FEEDBACK_FROM_EMAIL || 'ETSO <onboarding@resend.dev>',
-			to: [recipient],
-			reply_to: contributorEmail || undefined,
-			subject,
-			text,
-			html
-		})
-	});
+	let response: Response;
+	try {
+		response = await fetch('https://api.resend.com/emails', {
+			method: 'POST',
+			headers: {
+				Authorization: `Bearer ${env.RESEND_API_KEY}`,
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				from: env.FEEDBACK_FROM_EMAIL || 'ETSO <onboarding@resend.dev>',
+				to: [recipient],
+				reply_to: contributorEmail || undefined,
+				subject,
+				text,
+				html
+			})
+		});
+	} catch {
+		throw new CorrectionDeliveryError('No se ha podido enviar tu propuesta. Conserva el texto e inténtalo de nuevo más tarde.');
+	}
 
 	if (!response.ok) {
 		const detail = await response.text().catch(() => '');
 		console.error('No se pudo enviar aviso de propuesta', response.status, detail);
-		return { ok: true, emailDelivered: false };
+		throw new CorrectionDeliveryError('No se ha podido enviar tu propuesta. Conserva el texto e inténtalo de nuevo más tarde.');
 	}
 
 	return { ok: true, emailDelivered: true };

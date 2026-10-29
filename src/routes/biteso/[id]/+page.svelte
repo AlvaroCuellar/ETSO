@@ -725,7 +725,7 @@
 							bind:this={correctionTextarea}
 							class="min-h-[28rem] w-full resize-y rounded-[8px] border border-border bg-white px-3 py-3 font-reading text-[1rem] leading-[1.7] text-text-main outline-none transition focus:border-brand-blue/45 focus:ring-0"
 							data-i18n-skip
-						>{data.biteso.text}</textarea>
+						>{correctionFeedback?.values?.proposedText ?? data.biteso.text}</textarea>
 					</div>
 
 					<div class="grid gap-1.5">
@@ -735,6 +735,7 @@
 						<textarea
 							id="biteso-correction-comment"
 							name="contributor_comment"
+							value={correctionFeedback?.values?.contributorComment ?? ''}
 							rows="4"
 							maxlength="4000"
 							class="w-full resize-y rounded-[8px] border border-border bg-white px-3 py-2 text-[0.95rem] leading-[1.55] text-text-main outline-none transition focus:border-brand-blue/45 focus:ring-0"
@@ -749,6 +750,7 @@
 							<input
 								id="biteso-correction-name"
 								name="contributor_name"
+							value={correctionFeedback?.values?.contributorName ?? ''}
 								type="text"
 								maxlength="160"
 								autocomplete="name"
@@ -762,6 +764,7 @@
 							<input
 								id="biteso-correction-email"
 								name="contributor_email"
+							value={correctionFeedback?.values?.contributorEmail ?? ''}
 								type="email"
 								maxlength="320"
 								autocomplete="email"

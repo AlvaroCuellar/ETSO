@@ -8,7 +8,7 @@ import {
 	getBitesoWorkBySlug,
 	getWorkById
 } from '$lib/server/catalog-runtime';
-import { submitCorrectionEmail } from '$lib/server/biteso-correction-proposals';
+import { CorrectionDeliveryError, getCorrectionProposalFormValues, submitCorrectionEmail } from '$lib/server/biteso-correction-proposals';
 
 import type { Actions, PageServerLoad } from './$types';
 
@@ -61,6 +61,7 @@ export const actions: Actions = {
 			return fail(404, {
 				correctionProposal: {
 					ok: false,
+					values: undefined,
 					message: 'Texto BITESO no encontrado.'
 				}
 			});
@@ -71,6 +72,7 @@ export const actions: Actions = {
 			return fail(500, {
 				correctionProposal: {
 					ok: false,
+					values: undefined,
 					message: 'Obra vinculada no disponible.'
 				}
 			});
@@ -88,10 +90,14 @@ export const actions: Actions = {
 				sourceUrl: url.toString(),
 				clientAddress: getClientAddress()
 			});
+			if (!result.emailDelivered) {
+				throw new CorrectionDeliveryError('No se ha podido enviar tu propuesta. Conserva el texto e inténtalo de nuevo más tarde.');
+			}
 
 			return {
 				correctionProposal: {
 					ok: true,
+					values: undefined,
 					message:
 						'Gracias. Tu propuesta de corrección se ha enviado correctamente y será revisada antes de incorporarse a BITESO.',
 					emailDelivered: result.emailDelivered
@@ -99,10 +105,11 @@ export const actions: Actions = {
 			};
 		} catch (cause) {
 			const message = cause instanceof Error ? cause.message : 'No se pudo enviar la propuesta.';
-			return fail(400, {
+			return fail(cause instanceof CorrectionDeliveryError ? 503 : 400, {
 				correctionProposal: {
 					ok: false,
-					message
+					message,
+					values: getCorrectionProposalFormValues(formData)
 				}
 			});
 		}

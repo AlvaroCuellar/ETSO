@@ -382,6 +382,32 @@ const buildOccurrenceRows = async (results: SearchResult[], matchColumns: Submit
 	return rows;
 };
 
+// Mixed exports keep each kind of record in its own authorship columns.
+// Non-Examen rows never receive a stylometric status inferred from empty data.
+const authorshipColumns = (results: SearchResult[], width: number): Array<{ header: string; key: string; width: number }> => {
+	const hasExam = results.some((result) => result.meta?.inAuthorshipExam);
+	const hasOther = results.length === 0 || results.some((result) => !result.meta?.inAuthorshipExam);
+	return [
+		...(hasOther ? [{ header: 'Autoría', key: 'authorship', width }] : []),
+		...(hasExam ? [
+			{ header: 'Atribución tradicional', key: 'traditionalAttribution', width },
+			{ header: 'Atribución estilométrica', key: 'stylometryAttribution', width }
+		] : [])
+	];
+};
+
+const authorshipValues = (meta: SearchResult['meta']): Record<string, string> => {
+	if (!meta) return { authorship: 'Sin datos', traditionalAttribution: '', stylometryAttribution: '' };
+	const traditional = formatCompactTraditional(meta);
+	return meta.inAuthorshipExam
+		? {
+				authorship: '',
+				traditionalAttribution: traditional,
+				stylometryAttribution: formatCompactAttribution(meta.stylometryAttribution, 'No analizada')
+			}
+		: { authorship: traditional, traditionalAttribution: '', stylometryAttribution: '' };
+};
+
 const addResultsSheet = (
 	workbook: ExcelJS.Workbook,
 	results: SearchResult[],
@@ -396,8 +422,7 @@ const addResultsSheet = (
 		{ header: 'Procedencia', key: 'origin', width: 48 },
 		{ header: 'Poemas en la colección', key: 'collectionSize', width: 22 },
 		{ header: 'Estado textual', key: 'textState', width: 22 },
-		{ header: 'Atribución tradicional', key: 'traditionalAttribution', width: 42 },
-		{ header: 'Atribución estilométrica', key: 'stylometryAttribution', width: 42 },
+		...authorshipColumns(results, 42),
 		{ header: 'Total ocurrencias', key: 'totalOccurrences', width: 20 },
 		{ header: 'Palabras del texto', key: 'tokenCount', width: 18 },
 		...matchColumns.map((term, index) => ({
@@ -418,8 +443,7 @@ const addResultsSheet = (
 			origin: meta?.origin ?? '',
 			collectionSize: meta?.collectionSize ?? '',
 			textState: meta?.textState?.trim() || 'Sin estado',
-			traditionalAttribution: meta ? formatCompactTraditional(meta) : 'Sin datos',
-			stylometryAttribution: meta ? formatCompactAttribution(meta.stylometryAttribution, 'No analizada') : 'Sin datos',
+			...authorshipValues(meta),
 			totalOccurrences: sumResultOccurrences(result),
 			tokenCount: result.docTokenCount
 		};
@@ -431,7 +455,7 @@ const addResultsSheet = (
 	applyReadableCells(worksheet);
 };
 
-const addOccurrencesSheet = (workbook: ExcelJS.Workbook, rows: OccurrenceExportRow[]): void => {
+const addOccurrencesSheet = (workbook: ExcelJS.Workbook, rows: OccurrenceExportRow[], results: SearchResult[]): void => {
 	const worksheet = workbook.addWorksheet('Ocurrencias');
 	setColumns(worksheet, [
 		{ header: 'Orden', key: 'rank', width: 9 },
@@ -444,8 +468,7 @@ const addOccurrencesSheet = (workbook: ExcelJS.Workbook, rows: OccurrenceExportR
 		{ header: 'Subgénero', key: 'genre', width: 20 },
 		{ header: 'Procedencia', key: 'origin', width: 48 },
 		{ header: 'Poemas en la colección', key: 'collectionSize', width: 22 },
-		{ header: 'Atribución tradicional', key: 'traditionalAttribution', width: 38 },
-		{ header: 'Atribución estilométrica', key: 'stylometryAttribution', width: 38 }
+		...authorshipColumns(results, 38)
 	]);
 
 	rows.forEach((row, index) => {
@@ -461,8 +484,7 @@ const addOccurrencesSheet = (workbook: ExcelJS.Workbook, rows: OccurrenceExportR
 			genre: meta?.genre?.trim() || 'Sin subgénero',
 			origin: meta?.origin ?? '',
 			collectionSize: meta?.collectionSize ?? '',
-			traditionalAttribution: meta ? formatCompactTraditional(meta) : 'Sin datos',
-			stylometryAttribution: meta ? formatCompactAttribution(meta.stylometryAttribution, 'No analizada') : 'Sin datos'
+			...authorshipValues(meta)
 		});
 	});
 	applyReadableCells(worksheet);
@@ -541,7 +563,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		workbook.properties.date1904 = false;
 
 		addResultsSheet(workbook, results, matchColumns);
-		addOccurrencesSheet(workbook, occurrenceRows);
+		addOccurrencesSheet(workbook, occurrenceRows, results);
 		addQuerySheet(workbook, payload, execution, indexVersion);
 
 		const buffer = await workbook.xlsx.writeBuffer();

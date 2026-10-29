@@ -1,31 +1,12 @@
-import { json } from '@sveltejs/kit';
-import { dev } from '$app/environment';
-import { env } from '$env/dynamic/private';
-import { readFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { error, json } from '@sveltejs/kit';
+import { getPublicSummaryAssetUrl } from '$lib/server/r2-public';
+import { createSummarySearchIndexLoader } from '$lib/server/summary-search-index';
 import { getWorksForSummaryIndex } from '$lib/server/catalog-runtime';
 import { normalizePlainText } from '$lib/search/normalize';
 import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
 import { formatTraditionalAttributionCompact } from '$lib/utils/traditional-attribution-phrase';
 
 import type { RequestHandler } from './$types';
-
-interface SummaryJson {
-	resumen_breve?: string[];
-	resumen_largo?: string[];
-	personajes_principales?: Array<{
-		nombre?: string;
-		descripcion?: string;
-	}>;
-	espacios_principales?: Array<{
-		nombre?: string;
-		descripcion?: string;
-	}>;
-	tematicas_principales?: Array<{
-		tema?: string;
-		descripcion?: string;
-	}>;
-}
 
 interface SummarySearchEntry {
 	id: string;
@@ -44,13 +25,10 @@ interface SummarySnippet {
 	after: string;
 }
 
-const EMPTY_SHORT_SUMMARY = 'Sin resumen breve disponible.';
 const DEFAULT_LIMIT = 20;
 const MAX_LIMIT = 20;
 const SNIPPET_RADIUS = 145;
-const SUMMARY_INDEX_CONCURRENCY = 12;
-
-let summaryIndexPromise: Promise<SummarySearchEntry[]> | null = null;
+const loadPublishedIndex = createSummarySearchIndexLoader();
 
 const normalizeSearchText = (value: string): string =>
 	normalizePlainText(value, false).replace(/\s+/g, ' ').trim();
@@ -64,59 +42,6 @@ const splitSearchTerms = (value: string): string[] =>
 const formatTraditionalAttribution = (work: Awaited<ReturnType<typeof getWorksForSummaryIndex>>[number]): string => {
 	const authorIds = new Set(work.traditionalAttribution.groups.flatMap((group) => group.members.map((member) => member.authorId)));
 	return work.collectionSize && authorIds.size > 1 ? 'Varios' : formatTraditionalAttributionCompact(work.traditionalAttribution);
-};
-
-const joinSummaryParts = (parts: string[] | undefined): string =>
-	Array.isArray(parts)
-		? parts
-				.map((part) => part.trim())
-				.filter((part) => part.length > 0)
-				.join('\n\n')
-		: '';
-
-const joinNamedItems = (
-	label: string,
-	items: Array<{ nombre?: string; descripcion?: string }> | undefined
-): string => {
-	if (!Array.isArray(items)) return '';
-	const rows = items
-		.map((item) => [item.nombre?.trim(), item.descripcion?.trim()].filter(Boolean).join(': '))
-		.filter((item) => item.length > 0);
-	return rows.length > 0 ? `${label}\n${rows.join('\n')}` : '';
-};
-
-const joinThemeItems = (
-	label: string,
-	items: Array<{ tema?: string; descripcion?: string }> | undefined
-): string => {
-	if (!Array.isArray(items)) return '';
-	const rows = items
-		.map((item) => [item.tema?.trim(), item.descripcion?.trim()].filter(Boolean).join(': '))
-		.filter((item) => item.length > 0);
-	return rows.length > 0 ? `${label}\n${rows.join('\n')}` : '';
-};
-
-const buildSummarySearchText = (summary: SummaryJson | null, shortText: string, longText: string): string =>
-	[
-		shortText.trim().length > 0 && shortText.trim() !== EMPTY_SHORT_SUMMARY
-			? `Resumen automático breve\n${shortText}`
-			: '',
-		longText.trim().length > 0 ? `Resumen automático amplio\n${longText}` : '',
-		joinNamedItems('Personajes principales', summary?.personajes_principales),
-		joinNamedItems('Espacios principales', summary?.espacios_principales),
-		joinThemeItems('Temáticas principales', summary?.tematicas_principales)
-	]
-		.filter((text) => text.trim().length > 0)
-		.join('\n\n');
-
-const loadLocalSummary = async (workId: string): Promise<SummaryJson | null> => {
-	try {
-		const directory = (dev && env.LOCAL_TEXORO_SUMMARIES_PATH?.trim()) || join(process.cwd(), 'data', 'resumenes');
-		const raw = await readFile(join(directory, `${workId}.json`), 'utf8');
-		return JSON.parse(raw) as SummaryJson;
-	} catch {
-		return null;
-	}
 };
 
 const buildNormalizedIndex = (value: string): { normalized: string; originalIndexes: number[] } => {
@@ -168,46 +93,32 @@ const makeSnippets = (rawText: string, terms: string[]): SummarySnippet[] => {
 	return snippets;
 };
 
-const buildSummarySearchIndex = async (): Promise<SummarySearchEntry[]> => {
-	const works = await getWorksForSummaryIndex();
-	const entries: SummarySearchEntry[] = [];
-
-	let nextIndex = 0;
-	const workers = Array.from({ length: Math.min(SUMMARY_INDEX_CONCURRENCY, works.length) }, async () => {
-		while (nextIndex < works.length) {
-			const work = works[nextIndex];
-			nextIndex += 1;
-			if (!work) continue;
-
-			const fullSummary = await loadLocalSummary(work.id);
-			const shortText = joinSummaryParts(fullSummary?.resumen_breve) || work.shortSummary;
-			const longText = joinSummaryParts(fullSummary?.resumen_largo);
-			const summaryText = buildSummarySearchText(fullSummary, shortText, longText);
-			if (!summaryText) continue;
-
-			entries.push({
-				id: work.id,
-				slug: work.slug,
-				title: work.title,
-				displayTitle: formatDisplayWorkTitle(work.title),
-				genre: work.genre.trim() || 'Sin género',
-				traditional: formatTraditionalAttribution(work),
-				summaryText,
-				normalizedSummaryText: normalizeSearchText(summaryText)
-			});
-		}
-	});
-
-	await Promise.all(workers);
-	return entries.sort((a, b) => a.title.localeCompare(b.title, 'es', { sensitivity: 'base', ignorePunctuation: true }));
+const getSummarySearchIndex = async (fetcher: typeof fetch): Promise<SummarySearchEntry[]> => {
+	const [works, publishedEntries] = await Promise.all([
+		getWorksForSummaryIndex(),
+		loadPublishedIndex(getPublicSummaryAssetUrl('search-index.json'), fetcher).catch(() => {
+			throw error(503, 'No se pudo cargar el índice de resúmenes. Inténtalo de nuevo.');
+		})
+	]);
+	const publicWorks = new Map(works.map((work) => [work.id, work]));
+	// The public catalogue controls identity and visibility, even if a cached asset is older.
+	return publishedEntries.flatMap(({ id, summaryText, normalizedSummaryText }) => {
+		const work = publicWorks.get(id);
+		if (!work || !summaryText.trim()) return [];
+		return [{
+			id: work.id,
+			slug: work.slug,
+			title: work.title,
+			displayTitle: formatDisplayWorkTitle(work.title),
+			genre: work.genre.trim() || 'Sin género',
+			traditional: formatTraditionalAttribution(work),
+			summaryText,
+			normalizedSummaryText
+		}];
+	}).sort((a, b) => a.title.localeCompare(b.title, 'es', { sensitivity: 'base', ignorePunctuation: true }));
 };
 
-const getSummarySearchIndex = (): Promise<SummarySearchEntry[]> => {
-	summaryIndexPromise ??= buildSummarySearchIndex();
-	return summaryIndexPromise;
-};
-
-export const GET: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async ({ url, fetch }) => {
 	const warmup = url.searchParams.get('warmup') === '1';
 	const query = url.searchParams.get('q')?.trim() ?? '';
 	const terms = splitSearchTerms(query);
@@ -217,7 +128,7 @@ export const GET: RequestHandler = async ({ url }) => {
 	const offset = Number.isFinite(rawOffset) ? Math.max(0, Math.trunc(rawOffset)) : 0;
 
 	if (warmup) {
-		const index = await getSummarySearchIndex();
+		const index = await getSummarySearchIndex(fetch);
 		return json(
 			{ ready: true, indexed: index.length },
 			{
@@ -232,7 +143,7 @@ export const GET: RequestHandler = async ({ url }) => {
 		return json({ query, total: 0, offset, limit, hasMore: false, results: [] });
 	}
 
-	const index = await getSummarySearchIndex();
+	const index = await getSummarySearchIndex(fetch);
 	const results = [];
 	let matchedCount = 0;
 

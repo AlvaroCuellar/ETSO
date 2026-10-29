@@ -1,4 +1,5 @@
 ﻿<script lang="ts">
+	import { withInlineItalics } from '$lib/utils/inline-italics-parts';
 	import ChevronRight from 'lucide-svelte/icons/chevron-right';
 	import Download from 'lucide-svelte/icons/download';
 	import FolderOpen from 'lucide-svelte/icons/folder-open';
@@ -370,13 +371,13 @@
 			<article class="rounded-[8px] bg-surface-soft px-4 py-3.5 max-md:px-[0.9rem] max-md:py-3">
 				<div class="grid gap-2">
 					<p class="m-0 text-base leading-[1.62] text-text-main" data-i18n-skip>
-						{#each result1Parts as part}
+						{#each withInlineItalics(result1Parts) as part}
 							{#if data.work.inAuthorshipExam && part.kind === 'author' && part.authorId && isPersonAuthor(part.authorId)}
 								<a href={`/autores/${part.authorId}`} class="font-semibold text-brand-blue-dark underline hover:text-brand-blue focus-visible:text-brand-blue">
-									{part.value}
+									{#if part.italic}<i>{part.value}</i>{:else}{part.value}{/if}
 								</a>
 							{:else}
-								{part.value}
+								{#if part.italic}<i>{part.value}</i>{:else}{part.value}{/if}
 							{/if}
 						{/each}
 					</p>

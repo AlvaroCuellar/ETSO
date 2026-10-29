@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { withInlineItalics } from '$lib/utils/inline-italics-parts';
 	import { getAsodatWorkUrl } from '$lib/domain/asodat';
 	import { isPersonAuthor, type AttributionSet } from '$lib/domain/catalog';
 	import { translateText } from '$lib/i18n';
@@ -175,7 +176,7 @@
 								<div class="text-[0.97rem] leading-[1.6] text-text-main">
 
 								{#if data.work.inAuthorshipExam && resultParts.length > 0}
-									<p data-stylometry-result class="m-0 whitespace-pre-line break-words leading-relaxed" data-i18n-skip>{#each resultParts as part}{#if part.kind === 'author' && part.authorId && isPersonAuthor(part.authorId)}<a href={`/autores/${part.authorId}`} class="font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline">{part.value}</a>{:else}{part.value}{/if}{/each}</p>
+									<p data-stylometry-result class="m-0 whitespace-pre-line break-words leading-relaxed" data-i18n-skip>{#each withInlineItalics(resultParts) as part}{#if part.kind === 'author' && part.authorId && isPersonAuthor(part.authorId)}<a href={`/autores/${part.authorId}`} class="font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline">{#if part.italic}<i>{part.value}</i>{:else}{part.value}{/if}</a>{:else}{#if part.italic}<i>{part.value}</i>{:else}{part.value}{/if}{/if}{/each}</p>
 								{/if}
 								</div>
 							</div>

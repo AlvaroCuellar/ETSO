@@ -61,3 +61,26 @@ test('ficha input can omit secondary prose and its authors while report input re
  assert.equal(report.map(p=>p.value).join(''),`${value.result1} ${value.result2}`);
  assert.deepEqual(report.filter(p=>p.kind==='author').map(p=>p.authorId),['correa','aguayo_diego_de']);
 });
+
+
+test('standalone manual marker uses the current attribution without upgrading its confidence', () => {
+ const noAssociation = work('manual', 'No');
+ noAssociation.stylometryAttribution = {groups: [], connector: 'and', rawExpression: 'no_apunta_a_ningun_autor[sin_confianza]'};
+ const expected = 'Los análisis de estilometría no permiten asociar esta obra de forma clara con ningún perfil autorial del corpus.';
+ // Both BERMUDEZ_PrimeroAlReyQueAlHonor and VILLEGAS-DIEGO_NacimientoDeSanJuanBautista(Auto) have this attribution.
+ assert.equal(resolveStylometryResult(noAssociation), expected);
+ for (const marker of ['manual', ' MANUAL ', 'Manual.', 'manual!']) {
+  const value = work(marker, 'Matiz aprobado.', [author('reyes_matias_de_los', 'Matías de los Reyes')]);
+  value.stylometryAttribution = {groups: [{members: [{...author('reyes_matias_de_los', 'Matías de los Reyes'), confidence: 'probable'}]}], connector: 'and'};
+  const primary = 'Los análisis de estilometría permiten asociar esta obra con el perfil autorial de Matías de los Reyes, por cuanto algunas de sus obras aparecen en las primeras posiciones, aunque no de forma concluyente.';
+  assert.equal(resolveStylometryResult({...value, result2: undefined}), primary);
+  assert.equal(resolveStylometryResult(value), `${primary} Matiz aprobado.`);
+  assert.deepEqual(buildStylometryResultParts({...value, result2: undefined}).filter(p => p.kind === 'author').map(p => p.authorId), ['reyes_matias_de_los']);
+ }
+});
+
+test('manual as a word in an approved conclusion is preserved literally', () => {
+ for (const text of ['La revisión manual permite mantener esta conclusión.', 'Manual de atribución: no constituye un marcador.']) {
+  assert.equal(resolveStylometryResult(work(text, 'No')), text);
+ }
+});

@@ -1,5 +1,5 @@
 ﻿<script lang="ts">
-	import { tick } from 'svelte';
+	import { tick, untrack } from 'svelte';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import CitationSuggestionCard from '$lib/components/ui/CitationSuggestionCard.svelte';
 	import InlineActionButton from '$lib/components/ui/InlineActionButton.svelte';
@@ -65,7 +65,7 @@
 	const summaryError = $derived(data.summaryUnavailable ? localizeLiteral('No se pudo cargar el resumen. Inténtalo de nuevo más tarde.') : '');
 	let isSummaryCorrectionFormOpen = $state(false);
 	let summaryCorrectionTextarea = $state<HTMLTextAreaElement | null>(null);
-	let summaryCorrectionText = $state('');
+	let summaryCorrectionText = $state(untrack(() => form?.summaryCorrectionProposal?.values?.proposedText ?? ''));
 	let hasInitializedSummaryCorrectionText = $state(false);
 	let lastSummaryCorrectionAlertMessage = '';
 	let summaryCorrectionWorkId: string | undefined;
@@ -137,6 +137,10 @@
 	$effect(() => {
 		if (!summaryCorrectionFeedback) return;
 		if (!summaryCorrectionFeedback.ok) {
+			if (summaryCorrectionFeedback.values) {
+				summaryCorrectionText = summaryCorrectionFeedback.values.proposedText;
+				hasInitializedSummaryCorrectionText = true;
+			}
 			isSummaryCorrectionFormOpen = true;
 			return;
 		}
@@ -354,6 +358,7 @@
 							<textarea
 								id="summary-correction-comment"
 								name="contributor_comment"
+								value={summaryCorrectionFeedback?.values?.contributorComment ?? ''}
 								rows="4"
 								maxlength="4000"
 								class="w-full resize-y rounded-[8px] border border-border bg-white px-3 py-2 text-[0.95rem] leading-[1.55] text-text-main outline-none transition focus:border-brand-blue/45 focus:ring-0"
@@ -368,6 +373,7 @@
 								<input
 									id="summary-correction-name"
 									name="contributor_name"
+								value={summaryCorrectionFeedback?.values?.contributorName ?? ''}
 									type="text"
 									maxlength="160"
 									autocomplete="name"
@@ -381,6 +387,7 @@
 								<input
 									id="summary-correction-email"
 									name="contributor_email"
+								value={summaryCorrectionFeedback?.values?.contributorEmail ?? ''}
 									type="email"
 									maxlength="320"
 									autocomplete="email"

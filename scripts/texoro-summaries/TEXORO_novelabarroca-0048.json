@@ -1,0 +1,68 @@
+{
+  "archivo": "TEXORO_novelabarroca-0048.txt",
+  "titulo": "El envidioso castigado",
+  "resumen_largo": [
+    "Carlos, hijo segundo del conde Horacio, vive en Sevilla sometido a su hermano mayor Alfredo, que ha heredado el título y la hacienda. Las cualidades de Carlos le atraen simpatías, pero también alimentan la envidia y la hostilidad de Alfredo. Para mejorar su situación, Carlos busca un matrimonio ventajoso y pone su afecto en Estela. Ella corresponde a su amor, mientras Alfredo se convierte en rival. La competencia entre los hermanos transforma el proyecto de unión en una sucesión de vigilancias, engaños y obstáculos.",
+    "Los encuentros secretos de Carlos y Estela quedan expuestos a las intervenciones de quienes los rodean. Alfredo intenta aprovechar una confusión nocturna para ocupar el lugar de su hermano, mientras otros intermediarios contribuyen a agravar los equívocos. El descubrimiento del amor de la joven provoca la persecución de su padre y la intervención de la justicia. Carlos intenta huir, pero termina preso; Estela, creyéndolo ya a salvo, abandona por su parte el lugar del encuentro y se interna sola en el campo, sin saber que el joven no ha logrado escapar.",
+    "Estela recibe ayuda de un pastor y se dirige a Granada, donde cree que encontrará a Carlos. Mientras tanto, los amigos del preso consiguen que el padre de ella se incline a perdonarlos, con la condición de que su hija aparezca. Enterada del nuevo estado de las cosas, Estela avisa de que vive y vuelve para reunirse con su amado. Alfredo no soporta el triunfo de la pareja ni la manifestación de su propia envidia: se abandona a la melancolía y muere. Carlos hereda su posición y vive muchos años junto a Estela."
+  ],
+  "resumen_breve": [
+    "En Sevilla, Carlos busca casarse con Estela para salir de la dependencia de su hermano Alfredo.",
+    "La envidia del hermano y la oposición familiar provocan encuentros frustrados, una prisión y la huida de Estela hacia Granada.",
+    "El reencuentro obtiene el perdón del padre de la joven, mientras Alfredo muere consumido por su resentimiento y Carlos hereda su estado."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Carlos",
+      "descripcion": "Hermano menor, enamorado de Estela, cuya noble conducta contrasta con la de Alfredo."
+    },
+    {
+      "nombre": "Estela",
+      "descripcion": "Joven que corresponde a Carlos y huye para evitar la persecución familiar."
+    },
+    {
+      "nombre": "Alfredo",
+      "descripcion": "Hermano mayor y rival envidioso que intenta impedir la felicidad de Carlos."
+    },
+    {
+      "nombre": "Leonardo",
+      "descripcion": "Amigo que ayuda a Carlos y le aconseja no resistirse temerariamente a la justicia."
+    },
+    {
+      "nombre": "Padre de Estela",
+      "descripcion": "Se opone a la relación y finalmente acepta perdonar a los amantes."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Sevilla",
+      "descripcion": "Ciudad del conflicto familiar y de la prisión de Carlos."
+    },
+    {
+      "nombre": "Quinta y sus accesos",
+      "descripcion": "Espacio de encuentros amorosos y confusiones nocturnas."
+    },
+    {
+      "nombre": "Campo y aldea",
+      "descripcion": "Lugares del extravío de Estela y de su auxilio por un pastor."
+    },
+    {
+      "nombre": "Granada",
+      "descripcion": "Destino de Estela en la búsqueda de Carlos."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Envidia entre hermanos",
+      "descripcion": "Alfredo convierte las virtudes de Carlos en motivos de odio."
+    },
+    {
+      "tema": "Amor y obstáculos familiares",
+      "descripcion": "La unión depende de superar la vigilancia y la cólera del padre."
+    },
+    {
+      "tema": "Herencia y fortuna",
+      "descripcion": "La desigualdad inicial entre los hermanos se invierte tras la muerte de Alfredo."
+    }
+  ]
+}

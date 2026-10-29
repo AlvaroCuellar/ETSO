@@ -4,7 +4,7 @@
 	import ArrowUpRight from 'lucide-svelte/icons/arrow-up-right';
 	import InfoCard from '$lib/components/ui/InfoCard.svelte';
 	import InlineActionButton from '$lib/components/ui/InlineActionButton.svelte';
-	import { formatConfidence, isPersonAuthor, type CatalogWork, type AttributionSet, type Confidence } from '$lib/domain/catalog';
+	import { formatAttributionConfidence, isPersonAuthor, type CatalogWork, type AttributionSet, type Confidence } from '$lib/domain/catalog';
 	import { renderInlineItalicsHtml } from '$lib/utils/render-inline-italics-html';
 
 	interface Props {
@@ -64,7 +64,7 @@
 					{work.collectionSize ? 'Autores de la colección' : 'Atribución tradicional'}
 				</dt>
 				<dd class="m-0 font-ui text-[0.97rem] leading-[1.65] text-text-main">
-					{#if work.collectionSize && new Set(work.traditionalAttribution.groups.flatMap((group) => group.members.map((member) => member.authorId))).size > 1}<span>Varios</span>{:else}<div class="flex flex-col items-start gap-[0.65rem]">
+					{#if work.traditionalAttribution.reviewedPhrase}<p class="m-0 break-words leading-relaxed" data-i18n-skip>{work.traditionalAttribution.reviewedPhrase}</p>{:else if work.collectionSize && new Set(work.traditionalAttribution.groups.flatMap((group) => group.members.map((member) => member.authorId))).size > 1}<span>Varios</span>{:else}<div class="flex flex-col items-start gap-[0.65rem]">
 						{#each work.traditionalAttribution.groups as group, groupIndex}
 							<div class="flex flex-wrap items-center gap-3">
 								{#each group.members as member, memberIndex}
@@ -134,7 +134,7 @@
 										<span
 											class={`inline-flex rounded-full px-[0.55rem] py-[0.24rem] font-ui text-[0.72rem] font-bold leading-none tracking-[0.02em] uppercase ${confidenceClass(member.confidence)}`}
 										>
-											{formatConfidence(member.confidence)}
+											{formatAttributionConfidence(member)}
 										</span>
 									{/if}
 									{#if memberIndex < group.members.length - 1}

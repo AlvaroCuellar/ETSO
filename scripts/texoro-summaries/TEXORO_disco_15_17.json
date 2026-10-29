@@ -1,0 +1,60 @@
+{
+  "archivo": "TEXORO_disco_15_17.txt",
+  "titulo": "DISCO: selección del Siglo de Oro",
+  "resumen_largo": [
+    "Esta selección de DISCO reúne sonetos de numerosos autores y ocasiones. En las piezas amorosas, el hablante expresa el deseo, se dirige a una dama, recuerda su ausencia o convierte un paisaje en reflejo de su pena. El canto de los ruiseñores acompaña las quejas amorosas o refleja los celos del hablante, mientras que un retrato o un gesto sirven para plantear el conflicto entre esperanza y celos. Cada composición desarrolla su propia escena de enunciación y concentra la experiencia en una conclusión breve.",
+    "Una parte visible del conjunto está dedicada al elogio y a la conmemoración. Los poemas celebran escritores, autoridades, obras literarias y figuras religiosas, o lamentan una muerte ante el sepulcro de la persona recordada. Juan Pérez de Montalbán aparece, por ejemplo, como destinatario de homenajes funerarios, en los que su pérdida se enfrenta a la permanencia de sus escritos. Las referencias a las Musas, Apolo y otros personajes de la tradición clásica presentan la poesía como motivo de admiración y memoria.",
+    "Otros sonetos ofrecen reflexiones morales, asuntos devotos y observaciones satíricas. Los destinatarios, las voces y los espacios cambian de un poema a otro: no forman una historia continua ni comparten un desenlace general. La selección permite recorrer situaciones muy distintas en una misma forma poética, desde la intimidad de una queja hasta la intervención pública de un elogio. En cada pieza, la disposición del discurso conduce hacia una súplica, una enseñanza, una comparación o una resolución ingeniosa."
+  ],
+  "resumen_breve": [
+    "La selección de DISCO reúne sonetos de diversos autores, con poemas amorosos, religiosos, morales y de circunstancia.",
+    "Los homenajes a escritores, los elogios y los poemas funerarios conviven con quejas de ausencia, celos y desengaño.",
+    "Las voces y los destinatarios cambian entre composiciones independientes, sin una acción narrativa común."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Voces líricas",
+      "descripcion": "Hablantes independientes que expresan afectos, reflexiones, alabanzas o críticas."
+    },
+    {
+      "nombre": "Personas homenajeadas",
+      "descripcion": "Escritores, autoridades y otros destinatarios celebrados o recordados en poemas de circunstancia."
+    },
+    {
+      "nombre": "Figuras religiosas y mitológicas",
+      "descripcion": "Dios, la Virgen, las Musas y otras figuras que intervienen como destinatarios o referentes del discurso poético."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Sepulcros y monumentos funerarios",
+      "descripcion": "Marcos de poemas que recuerdan a personas fallecidas y relacionan su muerte con su memoria."
+    },
+    {
+      "nombre": "Paisajes y jardines",
+      "descripcion": "Escenarios que acompañan la expresión del amor y el lamento de las voces."
+    },
+    {
+      "nombre": "Ámbitos cortesanos y literarios",
+      "descripcion": "Espacios evocados en elogios, dedicatorias y celebraciones públicas."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Amor y ausencia",
+      "descripcion": "Las voces expresan deseo, sufrimiento y esperanza ante la persona amada."
+    },
+    {
+      "tema": "Elogio y memoria",
+      "descripcion": "Los sonetos celebran a personas y obras, o preservan el recuerdo de los muertos."
+    },
+    {
+      "tema": "Religión y reflexión moral",
+      "descripcion": "La devoción y las advertencias sobre la conducta humana conviven con asuntos seculares."
+    },
+    {
+      "tema": "Poesía y agudeza",
+      "descripcion": "Las comparaciones y los giros finales condensan cada situación en una pieza independiente."
+    }
+  ]
+}

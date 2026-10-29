@@ -1,0 +1,76 @@
+{
+  "archivo": "TEXORO_novelabarroca-0028.txt",
+  "titulo": "Los trabajos de Persiles y Sigismunda: historia septentrional",
+  "resumen_largo": [
+    "Bajo los nombres de Periandro y Auristela, dos jóvenes que se presentan como hermanos atraviesan las tierras septentrionales y buscan llegar a Roma. El relato comienza con el cautiverio de Periandro en una isla de bárbaros y su rescate, seguido por el reencuentro con Auristela. Los acompañan personas reunidas por naufragios, huidas y desgracias amorosas, entre ellas Antonio y su familia. Arnaldo, príncipe de Dinamarca, pretende a Auristela sin conocer el vínculo que realmente la une a su compañero de viaje.",
+    "La navegación expone al grupo a tormentas, cautiverios y a las ambiciones de nuevos pretendientes. En la corte de Policarpo, los deseos del rey y de Sinforosa amenazan con retener a los viajeros, que consiguen continuar. Los relatos que estos y otros personajes cuentan explican pérdidas, separaciones y peligros anteriores. Después de llegar a Lisboa, la marcha se convierte en peregrinación terrestre por Portugal, España y Francia. Nuevos encuentros y conflictos ponen a prueba la constancia de la pareja antes de alcanzar Roma.",
+    "En Roma se acumulan las rivalidades amorosas y Auristela enferma gravemente. La llegada de Seráfido revela que los supuestos hermanos son Persiles y Sigismunda, de origen real, y que huyeron de un matrimonio proyectado con Magsimino, hermano de Persiles. La intención de Sigismunda de dedicarse a la vida religiosa provoca otra separación momentánea. Persiles resulta herido y Magsimino llega enfermo; antes de morir autoriza su unión. Recuperado Persiles, se cumplen los votos de la peregrinación y ambos viven juntos con una larga descendencia."
+  ],
+  "resumen_breve": [
+    "Persiles y Sigismunda viajan como Periandro y Auristela, fingiendo ser hermanos, desde el norte de Europa hasta Roma.",
+    "Naufragios, cautiverios, pretendientes y encuentros con otros peregrinos prueban su amor durante el itinerario marítimo y terrestre.",
+    "La revelación de sus identidades y la muerte de Magsimino permiten el matrimonio y el cumplimiento de la peregrinación."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Persiles / Periandro",
+      "descripcion": "Príncipe que viaja ocultando su identidad y su amor por Sigismunda."
+    },
+    {
+      "nombre": "Sigismunda / Auristela",
+      "descripcion": "Princesa y peregrina, pretendida por varios hombres y vinculada amorosamente a Persiles."
+    },
+    {
+      "nombre": "Arnaldo",
+      "descripcion": "Príncipe de Dinamarca que ayuda a los viajeros y espera casarse con Auristela."
+    },
+    {
+      "nombre": "Antonio y su familia",
+      "descripcion": "Compañeros de la fuga inicial y de una parte importante del viaje."
+    },
+    {
+      "nombre": "Magsimino",
+      "descripcion": "Hermano de Persiles, prometido inicialmente a Sigismunda y responsable de la autorización final."
+    },
+    {
+      "nombre": "Seráfido",
+      "descripcion": "Ayo que descubre al final la identidad y el pasado de los protagonistas."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Islas y mares septentrionales",
+      "descripcion": "Ámbito de cautiverios, rescates y navegación de los primeros libros."
+    },
+    {
+      "nombre": "Corte de Policarpo",
+      "descripcion": "Lugar donde nuevas pretensiones amorosas amenazan la continuidad del viaje."
+    },
+    {
+      "nombre": "Portugal, España y Francia",
+      "descripcion": "Territorios recorridos por tierra tras la llegada a Lisboa."
+    },
+    {
+      "nombre": "Roma",
+      "descripcion": "Meta religiosa de la peregrinación y escenario de la revelación y el matrimonio."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Peregrinación y constancia",
+      "descripcion": "El viaje religioso y los peligros someten a prueba la unión de los protagonistas."
+    },
+    {
+      "tema": "Identidad encubierta",
+      "descripcion": "Los nombres supuestos y la ficción de parentesco protegen un amor amenazado."
+    },
+    {
+      "tema": "Amor y elección religiosa",
+      "descripcion": "Las pretensiones de terceros y la vocación de Sigismunda complican el desenlace matrimonial."
+    },
+    {
+      "tema": "Encuentro y relato",
+      "descripcion": "Las historias de compañeros y desconocidos amplían las experiencias de pérdida y recuperación."
+    }
+  ]
+}

@@ -8,12 +8,13 @@
 	import PageHero from '$lib/components/ui/PageHero.svelte';
 	import SeoHead from '$lib/components/seo/SeoHead.svelte';
 	import informeBg from '$lib/assets/heros/informes.webp';
-	import { ambitoLabels, ambitos, type Ambito, type AttributionSet, type ObraTableRow } from '$lib/domain/catalog';
+	import { ambitoLabels, ambitos, type Ambito, type ObraTableRow } from '$lib/domain/catalog';
 	import {
 		formatDisplayWorkTitle,
 		formatPrefixedDisplayWorkTitleHtml
 	} from '$lib/utils/format-display-work-title';
 	import { translateText } from '$lib/i18n';
+	import { resolveStylometryResult } from '$lib/utils/stylometry-result';
 	import { renderInlineItalicsHtml, renderReportNoteHtml } from '$lib/utils/render-inline-italics-html';
 	import {
 		buildTraditionalAttributionParts,
@@ -53,18 +54,8 @@
 		return '#6c757d';
 	};
 
-	const normalizeText = (value: string): string =>
-		value
-			.normalize('NFD')
-			.replace(/[\u0300-\u036f]/g, '')
-			.toLowerCase()
-			.trim();
-
-	const formatNameList = (names: string[], connector: string): string => {
-		if (names.length <= 1) return names[0] ?? '';
-		if (names.length === 2) return `${names[0]} ${connector} ${names[1]}`;
-		return `${names.slice(0, -1).join(', ')} ${connector} ${names[names.length - 1]}`;
-	};
+	const normalizeText = (value: string): string => value.normalize('NFD')
+		.replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
 
 	const localizedListConnector = (connector: 'and' | 'or'): string => {
 		const connectors = {
@@ -93,54 +84,6 @@
 		})
 	);
 
-	const hasAutomaticMarker = (value: string): boolean => {
-		const normalized = normalizeText(value);
-		return normalized.includes('automatico') || /\bauto\b/.test(normalized);
-	};
-
-	const hasAlternativeTraditionalAttributions = (set: AttributionSet): boolean =>
-		set.groups.filter((group) =>
-			group.members.some((member) => member.authorName.trim().length > 0)
-		).length > 1;
-
-	const stylometryResultSentence = (
-		set: AttributionSet,
-		traditionalAttribution: AttributionSet
-	): string => {
-		const rawExpression = normalizeText(set.rawExpression ?? '');
-		if (rawExpression.includes('no_apunta_a_ningun_autor')) {
-			return t('Los análisis de estilometría no permiten asociar esta obra de forma clara con ningún perfil autorial del corpus.');
-		}
-		if (rawExpression.includes('no_es_posible')) {
-			if (hasAlternativeTraditionalAttributions(traditionalAttribution)) {
-				return t('Los análisis no permiten contrastar de forma concluyente las atribuciones tradicionales, debido a la insuficiencia de perfiles autoriales independientes. Tampoco identifican con claridad una alternativa.');
-			}
-			return t('Los análisis no pueden asociar esta obra con el perfil estilístico del autor tradicional, debido a lo reducido de su corpus. Tampoco identifican de forma clara una alternativa autorial.');
-		}
-		if (rawExpression.includes('no_analizada')) {
-			return t('Esta obra no ha sido analizada estilométricamente, por lo que no es posible valorar su asociación con ningún perfil autorial del corpus.');
-		}
-		if (rawExpression.includes('pendiente_profundidad')) {
-			return t('Los resultados estilométricos disponibles requieren una revisión en profundidad antes de formular una conclusión autorial.');
-		}
-
-		const members = set.groups.flatMap((group) => group.members).filter((member) => member.authorName.trim());
-		const names = members.map((member) => member.authorName.trim());
-		const allProbable = members.length > 0 && members.every((member) => member.confidence === 'probable');
-
-		if (members.length === 1 && members[0].confidence === 'segura') {
-			return `${t('Los análisis de estilometría permiten asociar esta obra de forma clara con el perfil autorial de')} ${names[0]}.`;
-		}
-		if (members.length === 1 && members[0].confidence === 'probable') {
-			return `${t('Los análisis de estilometría permiten asociar esta obra con el perfil autorial de')} ${names[0]}, ${t('por cuanto algunas de sus obras aparecen en las primeras posiciones, aunque no de forma concluyente.')}`;
-		}
-		if (members.length > 1 && set.connector === 'and' && allProbable) {
-			return `${t('Los análisis de estilometría permiten asociar esta obra con los perfiles autoriales de')} ${formatNameList(names, localizedListConnector('and'))}, ${t('por cuanto algunas de sus obras aparecen en las primeras posiciones, aunque no de forma concluyente.')}`;
-		}
-
-		return t('Los resultados estilométricos disponibles requieren revisión antes de formular una conclusión autorial.');
-	};
-
 	const seoDescription = $derived.by(() => {
 		const intro = data.informe.intro?.trim();
 		if (data.locale === 'es' && intro && intro.length >= 50 && intro.split(/\s+/).length >= 6) return intro;
@@ -159,17 +102,6 @@
 		} as const;
 		return descriptions[data.locale] ?? descriptions.es;
 	});
-
-	const resolveResult1Text = (): string => {
-		const result = data.work.result1?.trim() ?? '';
-		if (!result) return '';
-		return hasAutomaticMarker(result)
-			? stylometryResultSentence(
-					data.work.stylometryAttribution,
-					data.work.traditionalAttribution
-				)
-			: result;
-	};
 
 	const tokenizeResultText = (value: string): ResultTextPart[] => {
 		const parts: ResultTextPart[] = [];
@@ -213,8 +145,7 @@
 		return parts;
 	};
 
-	const result1Parts = $derived.by(() => tokenizeResultText(resolveResult1Text()));
-	const result2Parts = $derived.by(() => tokenizeResultText(data.work.result2?.trim() ?? ''));
+	const result1Parts = $derived.by(() => tokenizeResultText(resolveStylometryResult(data.work, { translate: t, andLabel: localizedListConnector('and') }) ?? ''));
 	const noteParagraphs = $derived.by(() =>
 		(data.work.notes ?? '').trim().split(/\r?\n\s*\r?\n/).filter((paragraph) => paragraph.trim())
 	);
@@ -337,8 +268,8 @@
 	/>
 
 	<section class="min-w-0 max-w-full font-ui">
-		<dl class="m-0 grid min-w-0 max-w-full gap-4 rounded-[10px] bg-surface-soft px-4 py-4 md:grid-cols-[minmax(9rem,0.55fr)_minmax(0,1.45fr)] md:px-5">
-			<div class="grid content-start gap-1.5">
+		<dl class="m-0 flex min-w-0 max-w-full flex-col gap-x-8 gap-y-4 rounded-[10px] bg-surface-soft px-4 py-4 md:flex-row md:flex-wrap md:px-5">
+			<div class="grid min-w-0 content-start gap-1.5 md:max-w-[calc(100%-9rem)] md:flex-[0_1_auto]">
 				<dt class="m-0 text-[0.72rem] font-bold uppercase tracking-[0.06em] text-text-accent-purple">
 					Atribución tradicional
 				</dt>
@@ -355,14 +286,14 @@
 				</dd>
 			</div>
 
-			<div class="grid content-start gap-1.5">
+			<div class="grid shrink-0 content-start gap-1.5">
 				<dt class="m-0 text-[0.72rem] font-bold uppercase tracking-[0.06em] text-text-accent-purple">
 					Género
 				</dt>
 				<dd class="m-0 text-base leading-[1.55] text-text-main">{data.work.genre}</dd>
 			</div>
 
-			<div class="grid content-start gap-1.5 md:col-span-2">
+			<div class="grid min-w-0 basis-full content-start gap-1.5">
 				<dt class="m-0 text-[0.72rem] font-bold uppercase tracking-[0.06em] text-text-accent-purple">
 					Procedencia
 				</dt>
@@ -474,23 +405,6 @@
 				</div>
 			</article>
 		{/if}
-	{#if result2Parts.length > 0}
-		<article class="rounded-[8px] bg-surface-accent-blue px-4 py-3.5 max-md:px-[0.9rem] max-md:py-3">
-			<div class="grid gap-2">
-				<p class="m-0 text-base leading-[1.72] text-text-main" data-i18n-skip>
-					{#each result2Parts as part}
-						{#if part.kind === 'author' && part.authorId && part.hasAuthorshipExam}
-							<a href={`/autores/${part.authorId}`} class="font-semibold text-brand-blue underline hover:text-brand-blue-dark focus-visible:text-brand-blue-dark">
-								{part.value}
-							</a>
-						{:else}
-							{part.value}
-						{/if}
-					{/each}
-				</p>
-			</div>
-		</article>
-	{/if}
 	{#if noteParagraphs.length > 0 || data.belmonteSections.length > 0}
 		<article id="notas" class="grid scroll-mt-24 gap-3 rounded-[8px] border border-border-accent-blue bg-white px-5 py-4 max-md:px-4" aria-label={t('Notas')}>
 			<h3 class="m-0 text-[1.05rem] font-semibold text-brand-blue-dark">{t('Notas')}</h3>

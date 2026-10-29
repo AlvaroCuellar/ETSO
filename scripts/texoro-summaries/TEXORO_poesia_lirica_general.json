@@ -1,0 +1,68 @@
+{
+  "archivo": "TEXORO_poesia_lirica_general.txt",
+  "titulo": "Corpus General de Poesía Lírica Castellana del Siglo de Oro",
+  "resumen_largo": [
+    "El Corpus General de Poesía Lírica Castellana del Siglo de Oro reúne composiciones de diversos autores y formas poéticas. Incluye también pasajes de La Araucana, de Alonso de Ercilla, con combates y episodios de la guerra de Chile. El conjunto reúne voces amorosas que celebran la belleza, lamentan la distancia o expresan celos, junto con poemas que presentan escenas pastoriles y paisajes ligados a los afectos. Los hablantes se dirigen a una persona querida, a un compañero o a elementos de la naturaleza. Cada pieza plantea su propia situación, sin que los nombres y las relaciones permanezcan constantes en toda la colección.",
+    "Los textos de devoción y reflexión religiosa ocupan asimismo un lugar importante. Las voces se dirigen a Dios o a la Virgen, piden perdón y amparo, o convierten la experiencia del peligro y la debilidad humana en oración. Otras composiciones reflexionan sobre el retiro, el estudio, la serenidad y las inquietudes del mundo. En ellas, los campos, las aguas y la contemplación del cielo pueden ofrecer un contrapunto a la ambición, al sufrimiento o a la búsqueda de bienes materiales.",
+    "La colección incorpora también humor, sátira y poemas vinculados a ocasiones particulares. La diversidad de formas y destinatarios permite pasar de la expresión íntima a la reflexión moral, del elogio a la burla y de una escena amorosa a una súplica religiosa. No existe una historia conjunta ni un desenlace que reúna a todas las voces. El sentido se desarrolla dentro de cada composición y, al leerlas en conjunto, se reconocen afinidades y diferencias en la representación del deseo, la naturaleza, la conducta y la vida espiritual."
+  ],
+  "resumen_breve": [
+    "Esta colección reúne poesía de distintos autores del Siglo de Oro, con composiciones líricas y pasajes narrativos de La Araucana.",
+    "Las composiciones religiosas y morales presentan súplicas, meditaciones y reflexiones sobre el retiro, la naturaleza y las ambiciones humanas.",
+    "Los poemas satíricos y de ocasión completan un conjunto de piezas independientes, sin personajes ni desenlace compartidos."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Voces líricas",
+      "descripcion": "Hablantes de poemas amorosos, religiosos, morales y satíricos; cada voz pertenece a una composición propia."
+    },
+    {
+      "nombre": "Dios y la Virgen",
+      "descripcion": "Destinatarios de plegarias, alabanzas y peticiones de perdón o amparo."
+    },
+    {
+      "nombre": "Amantes y figuras pastoriles",
+      "descripcion": "Personas queridas y pastores que intervienen en escenas de deseo, celos y ausencia."
+    },
+    {
+      "nombre": "Lautaro, Guacolda y Villagrán",
+      "descripcion": "Figuras de los pasajes de La Araucana, donde la narración presenta combates, afectos y conflictos de la guerra de Chile."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Campos, ríos y paisajes pastoriles",
+      "descripcion": "Marcos de la expresión amorosa y de la búsqueda de sosiego."
+    },
+    {
+      "nombre": "Ámbitos de retiro y contemplación",
+      "descripcion": "Lugares ligados al estudio, la serenidad y la reflexión espiritual."
+    },
+    {
+      "nombre": "Espacios sociales evocados",
+      "descripcion": "Escenarios de elogios, burlas y poemas escritos para ocasiones particulares."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Amor y conflicto afectivo",
+      "descripcion": "El deseo, los celos y la ausencia suscitan distintas respuestas líricas."
+    },
+    {
+      "tema": "Devoción y vida espiritual",
+      "descripcion": "Los poemas religiosos articulan oración, arrepentimiento y esperanza."
+    },
+    {
+      "tema": "Retiro y naturaleza",
+      "descripcion": "La contemplación del paisaje acompaña reflexiones sobre la tranquilidad y la conducta."
+    },
+    {
+      "tema": "Sátira y reflexión moral",
+      "descripcion": "Las voces examinan las ambiciones, las apariencias y las limitaciones humanas."
+    },
+    {
+      "tema": "Guerra y relato heroico",
+      "descripcion": "Los pasajes de Ercilla narran enfrentamientos entre españoles y araucanos y las actuaciones de sus protagonistas."
+    }
+  ]
+}

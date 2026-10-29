@@ -1,0 +1,68 @@
+{
+  "archivo": "TEXORO_novelabarroca-0046.txt",
+  "titulo": "La prudente venganza",
+  "resumen_largo": [
+    "Lisardo ama a Laura en Sevilla y busca su favor con ayuda de los criados que facilitan la comunicación entre ambos. Los obstáculos a su relación y la ausencia prolongada del joven dejan a Laura expuesta a otros proyectos matrimoniales. Ella acaba casándose con Marcelo, que establece una casa acomodada y vive con su esposa en aparente concordia. Cuando Lisardo regresa de Nueva España y descubre la boda, queda abatido; la contemplación de la vida doméstica de Laura aumenta sus celos y su deseo de recobrarla.",
+    "Los antiguos amantes reanudan sus comunicaciones y sostienen una relación que agravia a Marcelo. Fenisa y Antandro intervienen en los intercambios que hacen posible el engaño. El marido descubre lo ocurrido, pero oculta su conocimiento y conserva un trato aparentemente amable. En lugar de actuar de inmediato, prepara una venganza que pretende encubrir ante los demás. Para ello provoca enemistad entre Laura y Zulema, un esclavo de su casa, hasta conseguir que el rechazo mutuo sea conocido por criados y vecinos.",
+    "Marcelo ofrece dinero y la posibilidad de huir a Zulema para que mate a Laura. El esclavo la apuñala y Marcelo lo mata enseguida, evitando que revele quién lo ha instigado. Después envenena a Fenisa y asesina a Antandro. Lisardo permanece largo tiempo retirado por la muerte de Laura; cuando vuelve a bañarse en el río, dos años después, Marcelo lo alcanza y lo ahoga. El narrador llama prudente a esta venganza por su disimulo, pero cuestiona que la defensa de la honra autorice a quitar vidas y advierte expresamente contra su imitación."
+  ],
+  "resumen_breve": [
+    "En Sevilla, la ausencia de Lisardo permite que Laura se case con Marcelo, sin extinguir el afecto de los primeros amantes.",
+    "Marcelo descubre la relación y prepara una venganza disimulada que utiliza a un esclavo y elimina a los intermediarios.",
+    "La muerte de Laura culmina dos años después con el asesinato de Lisardo en el río, mientras el narrador cuestiona la violencia de los maridos agraviados."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Marcelo",
+      "descripcion": "Marido de Laura que planea y ejecuta una venganza encubierta."
+    },
+    {
+      "nombre": "Laura",
+      "descripcion": "Esposa de Marcelo que reanuda su relación con Lisardo."
+    },
+    {
+      "nombre": "Lisardo",
+      "descripcion": "Antiguo enamorado de Laura, ausente en Nueva España y asesinado al final."
+    },
+    {
+      "nombre": "Zulema",
+      "descripcion": "Esclavo inducido por Marcelo a matar a Laura y eliminado inmediatamente después."
+    },
+    {
+      "nombre": "Fenisa y Antandro",
+      "descripcion": "Intermediarios de la relación, también víctimas de Marcelo."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Sevilla",
+      "descripcion": "Ciudad de la relación amorosa y de la vida matrimonial."
+    },
+    {
+      "nombre": "Casa de Marcelo y Laura",
+      "descripcion": "Espacio del engaño y del asesinato de la esposa."
+    },
+    {
+      "nombre": "Río de Sevilla",
+      "descripcion": "Lugar del asesinato final de Lisardo."
+    },
+    {
+      "nombre": "Nueva España",
+      "descripcion": "Destino de la ausencia que altera la suerte de los amantes."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Adulterio y celos",
+      "descripcion": "La continuidad del antiguo amor desencadena la reacción del marido."
+    },
+    {
+      "tema": "Venganza encubierta",
+      "descripcion": "Marcelo manipula a otros y disimula sus crímenes."
+    },
+    {
+      "tema": "Honra y límites de la violencia",
+      "descripcion": "El relato cuestiona el derecho a matar por una ofensa matrimonial."
+    }
+  ]
+}

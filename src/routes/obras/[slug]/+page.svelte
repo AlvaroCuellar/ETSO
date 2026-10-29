@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getAsodatWorkUrl } from '$lib/domain/asodat';
-	import { formatAttribution, formatConfidence, isPersonAuthor, type AttributionSet, type Confidence } from '$lib/domain/catalog';
+	import { formatAttribution, formatAttributionConfidence, isPersonAuthor, type AttributionSet, type Confidence } from '$lib/domain/catalog';
 	import { translateText } from '$lib/i18n';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import InfoCard from '$lib/components/ui/InfoCard.svelte';
@@ -162,7 +162,7 @@
 							<div class={attributionBlockClass}>
 								<h3 class={attributionHeadingClass}>{data.work.collectionSize ? 'Autores de la colección' : 'Atribución tradicional'}</h3>
 								<div class="text-[0.97rem] leading-[1.6] text-text-main">
-									{#if data.work.collectionSize && new Set(data.work.traditionalAttribution.groups.flatMap((group) => group.members.map((member) => member.authorId))).size > 1}<span>Varios</span>{:else}<div class="flex flex-col items-start gap-[0.65rem]">
+									{#if data.work.traditionalAttribution.reviewedPhrase}<p class="m-0 break-words leading-relaxed" data-i18n-skip>{data.work.traditionalAttribution.reviewedPhrase}</p>{:else if data.work.collectionSize && new Set(data.work.traditionalAttribution.groups.flatMap((group) => group.members.map((member) => member.authorId))).size > 1}<span>Varios</span>{:else}<div class="flex flex-col items-start gap-[0.65rem]">
 										{#each data.work.traditionalAttribution.groups as group, groupIndex}
 											<div class="flex flex-wrap items-center gap-3">
 												{#each group.members as member, memberIndex}
@@ -236,7 +236,7 @@
 														<span
 															class={`inline-flex rounded-full px-[0.55rem] py-[0.24rem] text-[0.72rem] font-bold tracking-[0.02em] uppercase ${confidenceClass(member.confidence)}`}
 														>
-															{formatConfidence(member.confidence)}
+															{formatAttributionConfidence(member)}
 														</span>
 													{/if}
 													{#if memberIndex < group.members.length - 1}

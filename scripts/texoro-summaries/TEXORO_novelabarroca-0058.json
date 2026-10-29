@@ -1,0 +1,68 @@
+{
+  "archivo": "TEXORO_novelabarroca-0058.txt",
+  "titulo": "El castigo de la miseria",
+  "resumen_largo": [
+    "Don Marcos, un hidalgo pobre de Navarra, entra desde niño al servicio de un gran señor en Madrid y convierte el ahorro en una obsesión. Apenas come, aprovecha los restos de las mesas y limita hasta el extremo el gasto doméstico, incluso cuando mejora su empleo y reúne una cantidad importante de dinero. Al llegar a la madurez busca una esposa cuya hacienda incremente la suya. Esa ambición lo vuelve vulnerable a doña Isidora, que se presenta con una riqueza aparente y prepara, junto con su supuesto sobrino don Agustín y las criadas, un matrimonio destinado a despojarlo.",
+    "La boda introduce a don Marcos en una casa donde no comprende las relaciones que existen entre sus nuevos allegados. Su temor por los ahorros lo lleva a cerrar puertas y ventanas, pero no le permite descubrir el engaño que ya lo rodea. Doña Isidora y los cómplices desaparecen con su dinero, y el marido queda desconcertado. Marcela aprovecha la pérdida para conducirlo a un supuesto encantador, que promete revelarle el paradero de su hacienda. El fingido hechizo se representa con un libro viejo de caballerías y un gato preparado para parecer un demonio.",
+    "La burla termina con el desmayo de don Marcos y con la intervención de la justicia. Al aclararse el artificio, los alcaldes descubren que el libro de conjuros era Amadís de Gaula y se ríen de la credulidad del avaro. Una carta de doña Isidora le reprocha haberse casado exclusivamente por interés y añade una nueva humillación. Don Marcos enferma y muere. La propia burladora tampoco conserva lo ganado: don Agustín e Inés la abandonan y se llevan la riqueza a Nápoles, mientras ella regresa a Madrid y acaba pidiendo limosna."
+  ],
+  "resumen_breve": [
+    "En Madrid, don Marcos acumula dinero mediante una avaricia extrema y se casa con doña Isidora por interés en su aparente hacienda.",
+    "La esposa y sus cómplices lo despojan, y una segunda burla lo hace víctima de un falso encantador.",
+    "Don Marcos muere tras las humillaciones, mientras doña Isidora termina abandonada y reducida a pedir limosna."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Don Marcos",
+      "descripcion": "Criado avaro que aspira a enriquecerse por matrimonio y queda despojado."
+    },
+    {
+      "nombre": "Doña Isidora",
+      "descripcion": "Burladora que finge una situación ventajosa para casarse y robar los ahorros."
+    },
+    {
+      "nombre": "Don Agustín",
+      "descripcion": "Cómplice presentado como sobrino que después abandona a Isidora."
+    },
+    {
+      "nombre": "Marcela",
+      "descripcion": "Criada que conduce a don Marcos al falso encantador."
+    },
+    {
+      "nombre": "Inés",
+      "descripcion": "Cómplice que huye a Nápoles con don Agustín y el dinero."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Madrid",
+      "descripcion": "Marco del servicio, el matrimonio, las burlas y la pobreza final de Isidora."
+    },
+    {
+      "nombre": "Casa de doña Isidora",
+      "descripcion": "Espacio de la boda y del despojo."
+    },
+    {
+      "nombre": "Casa del falso encantador",
+      "descripcion": "Escenario del supuesto conjuro y de la intervención judicial."
+    },
+    {
+      "nombre": "Barcelona y Nápoles",
+      "descripcion": "Lugares de la huida y del abandono final de la burladora."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Avaricia",
+      "descripcion": "El afán de acumular somete toda la vida de don Marcos y explica su mala elección matrimonial."
+    },
+    {
+      "tema": "Apariencia y credulidad",
+      "descripcion": "La falsa riqueza y la fingida magia permiten manipular al protagonista."
+    },
+    {
+      "tema": "Castigo y engaño",
+      "descripcion": "Tanto el avaro como parte de quienes lo burlan terminan padeciendo pérdidas."
+    }
+  ]
+}

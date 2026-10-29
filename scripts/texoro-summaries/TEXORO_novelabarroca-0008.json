@@ -1,0 +1,64 @@
+{
+  "archivo": "TEXORO_novelabarroca-0008.txt",
+  "titulo": "Quien bien obra, siempre acierta",
+  "resumen_largo": [
+    "Don Alonso de Saavedra vuelve de Flandes y parte de Sevilla hacia Córdoba en pleno invierno. Una tormenta lo obliga a refugiarse con sus servidores en un olivar, donde presencia la llegada de una mujer y unos hombres que preparan su muerte. Decide impedirla, mientras sus acompañantes reducen a los agresores, y escapa con la dama. Ya a salvo, ella cuenta que ama a don Luis de Saavedra, enfrentado con su padre por una disputa en el cabildo cordobés que terminó en heridas y enemistad entre las familias.",
+    "La mujer es doña Esperanza, y su proyecto de huir con Luis había sido descubierto por Leonardo, hijo de su padre y de la esclava Juliana. El padre fingió llevarla a un convento de Sevilla, pero la condujo al olivar para matarla con ayuda de otros hombres. Alonso reconoce en Luis a su propio hermano y ofrece a Esperanza un refugio en las Descalzas Reales de Madrid, donde vive una tía de la joven. Al volver a Córdoba descubre que Luis está preso por una querella que le atribuye el rapto de la joven y la sustracción de sus bienes.",
+    "Alonso informa al corregidor y sus testigos permiten reconstruir el intento de asesinato. El padre de Esperanza y los otros implicados son detenidos, mientras el Consejo recibe las actuaciones y hace tomar declaración a la dama en el convento. Como no se ha producido la muerte, se ordena favorecer la reconciliación mediante su matrimonio con Luis, y el padre retira su querella. Leonardo y el esclavo que intervino reciben condenas; Juliana obtiene la libertad, una dote y un esposo, y sale de Córdoba. La intervención del viajero salva así a la joven y restituye la libertad de su hermano."
+  ],
+  "resumen_breve": [
+    "En un viaje invernal de Sevilla a Córdoba, don Alonso de Saavedra impide el asesinato de una mujer en un olivar.",
+    "La rescatada es Esperanza, amada de su hermano Luis, a quien el padre de ella acusa falsamente mientras pretende vengar su desobediencia.",
+    "La investigación y la intervención del Consejo liberan a Luis y disponen la reconciliación por matrimonio, con castigos para los cómplices."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Don Alonso de Saavedra",
+      "descripcion": "Soldado que rescata a Esperanza y demuestra la inocencia de su hermano."
+    },
+    {
+      "nombre": "Doña Esperanza",
+      "descripcion": "Joven amenazada de muerte por su padre por su relación con Luis."
+    },
+    {
+      "nombre": "Don Luis de Saavedra",
+      "descripcion": "Amado de Esperanza, preso por una acusación injusta."
+    },
+    {
+      "nombre": "Don Álvaro",
+      "descripcion": "Padre de Esperanza, responsable del intento de asesinato y de la querella."
+    },
+    {
+      "nombre": "Leonardo",
+      "descripcion": "Medio hermano de Esperanza que descubre sus cartas y participa en el conflicto."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Olivar cercano a Córdoba",
+      "descripcion": "Refugio de la tormenta y lugar del intento de asesinato."
+    },
+    {
+      "nombre": "Córdoba",
+      "descripcion": "Ciudad de la rivalidad familiar y de la investigación judicial."
+    },
+    {
+      "nombre": "Descalzas Reales, Madrid",
+      "descripcion": "Convento que protege a Esperanza y recibe su declaración."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Violencia familiar",
+      "descripcion": "La oposición del padre al enlace lleva a un intento de matar a su hija."
+    },
+    {
+      "tema": "Auxilio y lealtad",
+      "descripcion": "Alonso arriesga su vida y después actúa para defender a los amantes."
+    },
+    {
+      "tema": "Justicia y reconciliación",
+      "descripcion": "La declaración de los testigos deshace la acusación y encauza la solución matrimonial."
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "archivo": "TEXORO_novelabarroca-0044.txt",
+  "titulo": "Las fortunas de Diana",
+  "resumen_largo": [
+    "En Toledo, Diana vive bajo la autoridad de su madre, Lisena, y se enamora de Celio, amigo de su hermano Otavio. La amistad entre los jóvenes facilita que Diana y Celio se conozcan y se comuniquen en secreto. Su relación desemboca en un embarazo, y los amantes preparan una salida para evitar la reacción familiar. Sin embargo, las dificultades y confusiones de la huida los separan. Diana abandona su casa sin conseguir reunirse con Celio, mientras este empieza a buscarla y su familia intenta averiguar qué ha sucedido.",
+    "Diana atraviesa diversas penalidades y encuentra refugio entre unos labradores, donde da a luz a un niño. Después deja a su hijo al cuidado de quienes la han acogido y se viste de hombre, tomando el nombre de Celio. Bajo esta identidad entra al servicio del rey y alcanza un notable favor por su inteligencia y capacidad. La envidia de quienes rechazan su ascenso mueve al monarca a enviarla como gobernador a las Indias, donde ejerce el cargo con energía y administra justicia entre españoles e indígenas.",
+    "En Cartagena reconoce al verdadero Celio entre los presos. Este ha matado al hombre que le robó unas joyas, entre ellas la primera prenda de amor que recibió de Diana. Ella escucha su historia sin revelar su identidad y, al terminar su gobierno, lo lleva como preso a España. En Sevilla pide al rey el perdón de Celio y el cumplimiento de su promesa de matrimonio; al hacerlo descubre que es Diana. Los amantes se casan, reciben mercedes del monarca y recuperan a su hijo, con lo que concluyen sus separaciones y trabajos."
+  ],
+  "resumen_breve": [
+    "Diana y Celio se enamoran en Toledo, pero una huida para ocultar el embarazo los separa.",
+    "Diana adopta una identidad masculina y, tras servir al rey, gobierna en las Indias, donde encuentra a Celio preso.",
+    "El regreso a Sevilla permite el reconocimiento de los amantes, el perdón real, su boda y el reencuentro con el hijo de ambos."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Diana",
+      "descripcion": "Joven toledana que supera la separación y llega a ejercer un gobierno bajo identidad masculina."
+    },
+    {
+      "nombre": "Celio",
+      "descripcion": "Amado de Diana, que la busca y termina encarcelado por un homicidio."
+    },
+    {
+      "nombre": "Otavio",
+      "descripcion": "Hermano de Diana y amigo de Celio."
+    },
+    {
+      "nombre": "Lisena",
+      "descripcion": "Madre de Diana y Otavio, cuya autoridad condiciona la relación amorosa."
+    },
+    {
+      "nombre": "Rey",
+      "descripcion": "Protector del ascenso de Diana y mediador en el desenlace matrimonial."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Toledo",
+      "descripcion": "Patria de los amantes y origen del conflicto familiar."
+    },
+    {
+      "nombre": "Cortijo de los labradores",
+      "descripcion": "Refugio de Diana y lugar del nacimiento de su hijo."
+    },
+    {
+      "nombre": "Corte e Indias",
+      "descripcion": "Espacios de la transformación pública de Diana y de su gobierno."
+    },
+    {
+      "nombre": "Cartagena y Sevilla",
+      "descripcion": "Lugares del hallazgo de Celio preso y del reconocimiento final."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Separación y constancia",
+      "descripcion": "Los amantes perseveran pese a los errores y penalidades de la huida."
+    },
+    {
+      "tema": "Disfraz e identidad",
+      "descripcion": "La apariencia masculina permite a Diana desempeñar responsabilidades públicas."
+    },
+    {
+      "tema": "Justicia y reconocimiento",
+      "descripcion": "El favor real resuelve el proceso de Celio y legitima la unión de los amantes."
+    }
+  ]
+}

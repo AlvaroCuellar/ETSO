@@ -1,0 +1,64 @@
+{
+  "archivo": "TEXORO_novelabarroca-0043.txt",
+  "titulo": "La desdicha por la honra",
+  "resumen_largo": [
+    "Felisardo, un joven criado en una villa del arzobispado de Toledo, abandona los estudios y entra al servicio de grandes señores. En Italia se enamora de Silvia, que corresponde a su afecto, mientras Alejandro compite por conquistarla. Su situación cambia cuando recibe noticia de que sus padres han sido comprendidos en el decreto de expulsión de los moriscos. Hasta entonces se consideraba hidalgo, y el descubrimiento de su ascendencia le produce tal vergüenza que deja su servicio, pese al apoyo que le ofrece su señor.",
+    "El joven se reúne con sus padres fuera de España y acaba en Constantinopla. Adopta exteriormente la condición de turco y llega a ser bajá, aunque mantiene la intención de volver a la fe cristiana y de realizar una hazaña que le permita recuperar el reconocimiento de su patria. Se aproxima a la favorita del sultán, Sultana, una cristiana de origen español llamada doña María. Ambos establecen una relación de confianza y proyectan escapar juntos aprovechando el mando de Felisardo sobre una escuadra de galeras.",
+    "La fuga comienza de noche, con Sultana disfrazada de soldado, pero una tormenta obliga a las galeras a volver al puerto. Descubierta la ausencia de la favorita, el sultán envía fuerzas para prender a Felisardo. Este se resiste y combate hasta morir, declarando que es cristiano y que quería sacar a doña María de aquella tierra. Sultana regresa al palacio y obtiene el perdón del sultán; Silvia queda criando al hijo de Felisardo. La narración presenta así el final desastroso de una búsqueda de honra dominada por el temor a la infamia."
+  ],
+  "resumen_breve": [
+    "Durante el reinado de Felipe III, Felisardo abandona su servicio en Italia al descubrir que sus padres están afectados por la expulsión de los moriscos.",
+    "En Constantinopla alcanza el puesto de bajá y organiza la fuga de Sultana, una cristiana española favorita del sultán.",
+    "Una tormenta frustra la salida y Felisardo muere combatiendo, víctima del conflicto entre honra, identidad religiosa y pertenencia a su patria."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Felisardo",
+      "descripcion": "Joven de ascendencia morisca que intenta recuperar su honra y termina muerto tras una fuga frustrada."
+    },
+    {
+      "nombre": "Sultana o doña María",
+      "descripcion": "Cristiana española, favorita del sultán, que desea huir con Felisardo."
+    },
+    {
+      "nombre": "Silvia",
+      "descripcion": "Amada de Felisardo en Italia y madre de su hijo."
+    },
+    {
+      "nombre": "Sultán Amath",
+      "descripcion": "Gobernante que ordena capturar a Felisardo y perdona después a su favorita."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Constantinopla",
+      "descripcion": "Lugar del ascenso de Felisardo y del intento de fuga."
+    },
+    {
+      "nombre": "Italia",
+      "descripcion": "Marco del servicio del protagonista y de su relación con Silvia."
+    },
+    {
+      "nombre": "España",
+      "descripcion": "Patria de la que se siente excluido por la noticia de la expulsión."
+    },
+    {
+      "nombre": "Galera capitana",
+      "descripcion": "Escenario de la huida frustrada y de la muerte de Felisardo."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Honra y exclusión",
+      "descripcion": "El miedo a la deshonra por la ascendencia determina las decisiones del protagonista."
+    },
+    {
+      "tema": "Identidad religiosa",
+      "descripcion": "La adopción pública de la condición de turco contrasta con el deseo de morir cristiano."
+    },
+    {
+      "tema": "Amor y libertad",
+      "descripcion": "La relación con Sultana impulsa un proyecto de liberación que termina en tragedia."
+    }
+  ]
+}

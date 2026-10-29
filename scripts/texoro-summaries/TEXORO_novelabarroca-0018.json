@@ -1,0 +1,84 @@
+{
+  "archivo": "TEXORO_novelabarroca-0018.txt",
+  "titulo": "Lisardo enamorado",
+  "resumen_largo": [
+    "Lisardo abandona Madrid con su criado Negrete, perseguido por los celos y por el temor a la justicia tras atacar a un hombre que cree rival suyo. Había conocido a Gerarda al socorrerla en un peligro y consiguió su amor después de vencer su reserva mediante una prueba de celos. Sin embargo, la aparición de la dama cuyo retrato se empleó en aquel ardid produjo nuevas sospechas en Gerarda y quebró la correspondencia. Cuando Lisardo creyó verla favorecer a otro, reaccionó violentamente y huyó hacia Valencia. En el camino encuentra a don Félix, que lo acompaña y comparte con él sus propias preocupaciones amorosas.",
+    "La marcha de los amigos enlaza historias de otras parejas, fugas, venganzas, peligros y cautiverios, mientras las canciones y chistes de Negrete alivian los relatos dolorosos. Don Félix busca la unión con Victoria y los viajeros entran en una red de relaciones entre Madrid, Valencia y Barcelona. La historia de Leandro y Laura incorpora el rescate de cautivos en Argel; Gerarda pasa también por ese cautiverio y es liberada. La llegada a Montserrat ofrece la posibilidad del reencuentro, pero Lisardo, todavía convencido de que ella se ha casado con el navarro al que considera su rival, vuelve a huir y cambia su vestido por un hábito de peregrino.",
+    "En la montaña, un ermitaño conocido lo ayuda a reconsiderar su decisión de apartarse definitivamente de todos. Don Félix lo busca y logra aclarar que el hombre herido era don Rodrigo, hermano de Gerarda, y que ella ha permanecido fiel y lo desea como esposo. Reunidos de nuevo, los amigos se dirigen a Barcelona, donde se resuelven también los obstáculos familiares del matrimonio de Félix y Victoria. Las bodas de Lisardo y Gerarda, Félix y Victoria y Leandro y Laura se celebran juntas y se acompañan de fiestas y una sortija. Terminado el festejo, Lisardo y Félix regresan a Madrid y Leandro a Valencia, y el narrador cierra las historias con la vida feliz y la descendencia de los matrimonios."
+  ],
+  "resumen_breve": [
+    "Durante el reinado de Felipe IV, Lisardo huye de Madrid hacia Valencia después de una ruptura con Gerarda nacida de los celos.",
+    "Sus viajes con Félix enlazan otras historias amorosas y rescates en Argel, hasta un reencuentro todavía frustrado en Montserrat.",
+    "La aclaración de los engaños permite en Barcelona las bodas de Lisardo y Gerarda, Félix y Victoria y Leandro y Laura."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Lisardo",
+      "descripcion": "Caballero madrileño que huye por los celos y finalmente recupera a Gerarda."
+    },
+    {
+      "nombre": "Gerarda",
+      "descripcion": "Amada de Lisardo, separada de él por sospechas y adversidades."
+    },
+    {
+      "nombre": "Don Félix",
+      "descripcion": "Amigo fiel de Lisardo, que busca su propio matrimonio con Victoria."
+    },
+    {
+      "nombre": "Negrete",
+      "descripcion": "Criado de Lisardo, músico y poeta que acompaña y entretiene a los viajeros."
+    },
+    {
+      "nombre": "Don Leandro y doña Laura",
+      "descripcion": "Amantes cuya historia incluye la liberación de la dama cautiva en Argel."
+    },
+    {
+      "nombre": "Doña Victoria",
+      "descripcion": "Amada de Félix, cuyo casamiento exige vencer obstáculos familiares."
+    },
+    {
+      "nombre": "Don Rodrigo",
+      "descripcion": "Hermano de Gerarda que apoya la unión final."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Madrid",
+      "descripcion": "Patria de Lisardo y comienzo de su historia con Gerarda."
+    },
+    {
+      "nombre": "Valencia y los caminos",
+      "descripcion": "Destino de la huida y espacio de encuentros y relatos."
+    },
+    {
+      "nombre": "Argel",
+      "descripcion": "Lugar de cautiverio y rescate de las damas."
+    },
+    {
+      "nombre": "Montserrat",
+      "descripcion": "Santuario y montaña donde se pierde y después se recupera al protagonista."
+    },
+    {
+      "nombre": "Barcelona",
+      "descripcion": "Ciudad de la reunión y de las bodas finales."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Celos y error",
+      "descripcion": "Las sospechas alimentan la ruptura y las decisiones precipitadas de Lisardo."
+    },
+    {
+      "tema": "Amistad y fidelidad",
+      "descripcion": "Félix y Negrete sostienen al protagonista y buscan su reconciliación."
+    },
+    {
+      "tema": "Separación y reencuentro",
+      "descripcion": "Viajes y cautiverios alejan a las parejas hasta la unión final."
+    },
+    {
+      "tema": "Música y relato",
+      "descripcion": "Canciones y narraciones acompañan la marcha y alivian las penas."
+    }
+  ]
+}

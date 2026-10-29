@@ -1,0 +1,68 @@
+{
+  "archivo": "TEXORO_novelabarroca-0013.txt",
+  "titulo": "Las harpías en Madrid y coche de las estafas (estafa segunda)",
+  "resumen_largo": [
+    "Animada por la victoria de Feliciana, Luisa vuelve a Madrid con el coche y sus acompañantes cuidadosamente transformados para no ser reconocidos. Elige como víctima a César Antonio, genovés rico y viudo que ha venido a tratar negocios con la Hacienda real, y alquila un cuarto frente al suyo. Se presenta como doña Ángela de Bolea, viuda principal que espera a un tío rico de las Indias. La madre, la hermana, Bañuelos y Mogrobejo adoptan papeles de dueñas, parienta y escudero para dar autoridad a aquel origen inventado.",
+    "César Antonio se enamora, pero su avaricia lo lleva a limitar los regalos y a eludir una primera petición de dinero para pagar el alquiler. Luisa recurre entonces a la habilidad de Mogrobejo para falsificar letras y presenta una carta y una orden de pago que parecen remitidas por un genovés de Sevilla. El enamorado anticipa parte del importe, creyendo que está asegurado, y se entrega cada vez más al festejo de la dama. Las músicas de Leonardo y las representaciones domésticas acrecientan la intimidad y permiten que Luisa prepare una salida a una quinta con nuevas galas y joyas.",
+    "El día de la fiesta, César Antonio tiene que acudir primero al Consejo de Hacienda, mientras sus criados disponen el banquete en la quinta. Luisa y las cómplices aprovechan la separación para ocultar sus bienes, abandonar la vivienda y ponerse a salvo con el dinero, los vestidos y las joyas recibidas. El genovés espera inútilmente a las damas y recibe una carta que le anuncia su desaparición. Sus averiguaciones descubren la falsedad de la letra, y la intervención de la justicia no consigue encontrarlas. Después de semanas de esperanza perdida, vuelve a Génova con el recuerdo de la burla."
+  ],
+  "resumen_breve": [
+    "En Madrid, Luisa se hace pasar por una viuda aragonesa para conquistar al genovés César Antonio.",
+    "Una letra falsificada vence su avaricia y facilita regalos que aumentan con músicas y representaciones domésticas.",
+    "La invitación a una quinta permite la fuga de las estafadoras y deja al negociante sin dinero, joyas ni reparación judicial."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Luisa o doña Ángela de Bolea",
+      "descripcion": "Estafadora que representa a una viuda y organiza el engaño."
+    },
+    {
+      "nombre": "César Antonio",
+      "descripcion": "Negociante genovés rico y avaro que se enamora de su vecina."
+    },
+    {
+      "nombre": "Mogrobejo",
+      "descripcion": "Escudero que falsifica la firma y la letra necesarias para obtener dinero."
+    },
+    {
+      "nombre": "Teodora",
+      "descripcion": "Madre de Luisa que participa en los disfraces y prepara la retirada."
+    },
+    {
+      "nombre": "Leonardo",
+      "descripcion": "Músico y poeta al servicio del genovés que anima los festejos."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Calle del Sordo, Madrid",
+      "descripcion": "Lugar de las casas enfrentadas y del cortejo entre balcones."
+    },
+    {
+      "nombre": "Consejo de Hacienda",
+      "descripcion": "Obligación profesional que separa al genovés de las damas el día elegido."
+    },
+    {
+      "nombre": "Quinta de recreo",
+      "descripcion": "Espacio del banquete al que no llegan las estafadoras."
+    },
+    {
+      "nombre": "Refugios en Madrid y pueblos cercanos",
+      "descripcion": "Lugares de ocultación del grupo tras la fuga."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Codicia y engaño",
+      "descripcion": "La avaricia del genovés exige una ficción financiera para hacerlo gastar."
+    },
+    {
+      "tema": "Apariencias de estado y riqueza",
+      "descripcion": "La viudez y la supuesta herencia confieren autoridad a Luisa."
+    },
+    {
+      "tema": "Entretenimiento y seducción",
+      "descripcion": "Música y teatro doméstico fortalecen el cortejo que encubre el fraude."
+    }
+  ]
+}

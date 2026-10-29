@@ -1,0 +1,64 @@
+{
+  "archivo": "TEXORO_novelabarroca-0036.txt",
+  "titulo": "De los nombres de Cristo",
+  "resumen_largo": [
+    "Marcelo, Sabino y Juliano se reúnen en una casa de recreo y se sientan en una huerta próxima al Tormes. Sabino lleva un papel de Marcelo con algunos nombres que la Escritura atribuye a Cristo y propone conversar sobre ellos. Antes de examinar cada denominación, Marcelo explica la función de los nombres y la relación entre las palabras y lo que designan. El coloquio se organiza así como una investigación compartida: Sabino introduce los asuntos, Marcelo desarrolla las explicaciones y Juliano interviene con preguntas y observaciones.",
+    "A lo largo de tres libros, los amigos estudian nombres como Pimpollo, Faces de Dios, Camino, Pastor, Monte y Padre del siglo futuro. Mediante pasajes bíblicos, comparaciones naturales y razonamientos, relacionan cada figura con la humanidad de Cristo, su relación con Dios y su acción sobre los hombres. La conversación continúa con denominaciones como Brazo de Dios, Rey de Dios, Príncipe de paz y Esposo. Las pausas, las respuestas entre los interlocutores y los versos que se recitan vinculan la exposición con la convivencia en el jardín.",
+    "El último tramo amplía el examen de la filiación divina, el amor y la salvación para mostrar de qué modo Cristo comunica su vida a quienes se unen a él. Las explicaciones desembocan en recomendaciones sobre el conocimiento religioso y la conducta, advirtiendo contra enseñamientos vacíos que dejan intactas las pasiones. El diálogo termina con versos de alabanza a Dios y con el silencio que cierra las pláticas. No hay una intriga de personajes: el avance consiste en el conocimiento adquirido durante la conversación."
+  ],
+  "resumen_breve": [
+    "Marcelo, Sabino y Juliano conversan en una huerta junto al Tormes sobre los nombres que la Biblia atribuye a Cristo.",
+    "Las denominaciones se explican mediante la Escritura, comparaciones y preguntas que enlazan doctrina y conducta cristiana.",
+    "El coloquio de los tres libros concluye con la reflexión sobre la salvación y una alabanza a Dios."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Marcelo",
+      "descripcion": "Interlocutor que desarrolla la mayor parte de las explicaciones sobre los nombres de Cristo."
+    },
+    {
+      "nombre": "Sabino",
+      "descripcion": "Amigo que aporta el papel con las denominaciones y propone los temas del coloquio."
+    },
+    {
+      "nombre": "Juliano",
+      "descripcion": "Interlocutor que pregunta, completa y contrasta las razones expuestas."
+    },
+    {
+      "nombre": "Cristo",
+      "descripcion": "Figura central de la exposición teológica, estudiada a través de sus nombres bíblicos."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Casa de recreo y huerta",
+      "descripcion": "Marco del encuentro de los tres amigos y de la conversación doctrinal."
+    },
+    {
+      "nombre": "Entorno del río Tormes",
+      "descripcion": "Paisaje próximo que acompaña las pláticas y sus momentos de contemplación."
+    },
+    {
+      "nombre": "La creación evocada en el coloquio",
+      "descripcion": "Ámbito de imágenes y comparaciones mediante las que se explica la doctrina."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Nombres y conocimiento",
+      "descripcion": "La explicación de las palabras bíblicas permite abordar la identidad y las funciones de Cristo."
+    },
+    {
+      "tema": "Redención y vida cristiana",
+      "descripcion": "Los interlocutores relacionan la obra de Cristo con la transformación moral de los creyentes."
+    },
+    {
+      "tema": "Diálogo y enseñanza",
+      "descripcion": "Preguntas, lecturas y respuestas organizan un aprendizaje compartido."
+    },
+    {
+      "tema": "Naturaleza y contemplación",
+      "descripcion": "El paisaje y las imágenes de la creación ayudan a comunicar asuntos espirituales."
+    }
+  ]
+}

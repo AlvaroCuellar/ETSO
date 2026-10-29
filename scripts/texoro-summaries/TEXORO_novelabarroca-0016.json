@@ -1,0 +1,72 @@
+{
+  "archivo": "TEXORO_novelabarroca-0016.txt",
+  "titulo": "La fantasma de Valencia",
+  "resumen_largo": [
+    "Don Juan hereda en Valencia una casa y un mayorazgo gravados por las deudas de su padre, don Diego, cuya conducta disipada ha consumido los bienes libres. Para reducir sus gastos se retira a una aldea y deja la vivienda cerrada. Poco después, ruidos de cadenas, gemidos y una figura espantosa hacen creer a los vecinos que el alma del difunto pena allí. Don Rodrigo, hermano del difunto y tío de don Juan, llega a la ciudad, decide alojarse en la casa pese a las advertencias y se enfrenta físicamente con la aparición, que resulta ser un hombre disfrazado.",
+    "El desconocido es don Gonzalo, caballero sevillano que cuenta cómo conoció en Madrid a doña Luisa. Las cartas enviadas por una puerta de comunicación entre sus habitaciones y las de ella, inicialmente bajo el nombre de una criada, dieron paso a un amor reconocido y a la esperanza de casarse. Su servicio en Flandes lo apartó de la dama justo cuando su familia preparaba un enlace con don Jorge. Luisa acabó trasladada a Valencia, y Gonzalo aprovechó una licencia ocasionada por la grave enfermedad de su hermano para acudir a verla, aunque la vigilancia familiar impedía sus encuentros.",
+    "Para entrar por los terrados vecinos, Gonzalo inventó la fantasma y contó con que Luisa fingiese desmayarse mientras su madre y criadas se encerraban por miedo. Descubierto por Rodrigo, pide que medie para hacer posible el matrimonio y ofrece reparar el perjuicio causado a la fama del difunto. Rodrigo acepta, exige que después publique la verdad y recurre al virrey para vencer la oposición de la madre. La llegada de sus parientes y del hermano de Luisa permite celebrar las bodas. Gonzalo confiesa públicamente haber sido la aparición y restituye así la reputación de don Diego, mientras él y su esposa viven unidos y tienen hijos."
+  ],
+  "resumen_breve": [
+    "En Valencia, una supuesta aparición en la casa del difunto don Diego alarma a los vecinos y perjudica a su familia.",
+    "Don Rodrigo descubre que la fantasma es Gonzalo, un enamorado que usa el miedo para visitar secretamente a Luisa.",
+    "La mediación del virrey permite las bodas, y Gonzalo revela su invención para reparar la fama del muerto."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Don Gonzalo",
+      "descripcion": "Caballero sevillano que inventa la aparición para reunirse con Luisa."
+    },
+    {
+      "nombre": "Doña Luisa",
+      "descripcion": "Dama enamorada de Gonzalo, vigilada por su familia y destinada a otro matrimonio."
+    },
+    {
+      "nombre": "Don Rodrigo",
+      "descripcion": "Hermano del difunto que descubre la estratagema y media en el enlace."
+    },
+    {
+      "nombre": "Don Juan",
+      "descripcion": "Hijo de don Diego, que abandona la casa por las deudas heredadas."
+    },
+    {
+      "nombre": "Doña Vicenta",
+      "descripcion": "Madre de Luisa que se opone inicialmente al matrimonio con Gonzalo."
+    },
+    {
+      "nombre": "Oquendo",
+      "descripcion": "Escudero que transmite papeles y facilita noticias a los amantes."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Casa de don Diego, Valencia",
+      "descripcion": "Vivienda utilizada para simular la aparición y pasar a la casa vecina."
+    },
+    {
+      "nombre": "Madrid",
+      "descripcion": "Ciudad donde Gonzalo y Luisa se conocen y comienzan a escribirse."
+    },
+    {
+      "nombre": "Flandes",
+      "descripcion": "Destino militar que separa al caballero de la dama."
+    },
+    {
+      "nombre": "Casa de doña Vicenta",
+      "descripcion": "Espacio vigilado al que accede Gonzalo gracias a su disfraz."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Engaño amoroso",
+      "descripcion": "La falsa aparición sirve para eludir la vigilancia doméstica."
+    },
+    {
+      "tema": "Reputación y reparación",
+      "descripcion": "Rodrigo exige que se restituya la fama del muerto perjudicado por el ardid."
+    },
+    {
+      "tema": "Autoridad y matrimonio",
+      "descripcion": "La mediación de un pariente y del virrey encauza el conflicto familiar."
+    }
+  ]
+}

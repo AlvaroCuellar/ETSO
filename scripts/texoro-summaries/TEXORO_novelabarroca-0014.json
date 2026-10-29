@@ -1,0 +1,68 @@
+{
+  "archivo": "TEXORO_novelabarroca-0014.txt",
+  "titulo": "Las harpías en Madrid y coche de las estafas (estafa tercera)",
+  "resumen_largo": [
+    "Constanza emprende la tercera estafa después de las victorias de sus compañeras y regresa a Madrid con el coche y sus cómplices bajo nuevas apariencias. Elige a un cura docto y muy avaro, cuya parroquia puede servir a su proyecto, y se presenta como doña Rufina de Monsalve y Saavedra, viuda sevillana. Le cuenta una historia de orfandad y matrimonio que explica una gran herencia y el deseo de fundar una capilla. La promesa de nombrarlo capellán mayor con una renta considerable vence la reserva del sacerdote y lo lleva a cortejar la voluntad de la supuesta bienhechora.",
+    "El cura visita y regala a Constanza, la pone en trato con su hermana y la invita a una academia literaria que celebra en su casa. Mientras versos y músicas ocupan la reunión, la estafadora conserva la apariencia devota y prepara una falsa documentación testamentaria. Mogrobejo busca un hombre que represente al arquitecto de la capilla y unas trazas que hagan creíble la obra. Con las joyas obtenidas por sus compañeras, Constanza manda hacer dos cofrecillos idénticos y plantea la necesidad de un préstamo mientras espera retirar un dinero supuestamente depositado con los Fúcares.",
+    "El cura presta mil quinientos escudos sobre las joyas, que la dama muestra con una tasación convincente. Al entregar la prenda, Constanza cambia el cofrecillo verdadero por otro cuyas cajas contienen piedras, y se retira con sus cómplices a Illescas. El sacerdote descubre el fraude al mostrar el contenido a su hermana y busca a la desaparecida sin obtener noticias. La denuncia solo le ocasiona nuevos gastos y tampoco resuelve el robo. A su pérdida se añade la burla de los poetas, que reaccionan con sátiras cuando encuentran cerrada su academia por el disgusto del anfitrión."
+  ],
+  "resumen_breve": [
+    "Constanza se presenta en Madrid como una viuda sevillana dispuesta a fundar una capilla y beneficiar a un cura avaro.",
+    "La falsa obra y unas joyas prestadas por sus cómplices lo persuaden para adelantar mil quinientos escudos.",
+    "Un cambio de cofrecillos deja al sacerdote con piedras en lugar de prendas, mientras la estafadora se refugia en Illescas."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Constanza o doña Rufina",
+      "descripcion": "Estafadora que simula una fundación piadosa para conseguir un préstamo."
+    },
+    {
+      "nombre": "El cura o doctor",
+      "descripcion": "Sacerdote avaro, de nombre no declarado, que espera ganar una capellanía."
+    },
+    {
+      "nombre": "Mogrobejo",
+      "descripcion": "Cómplice que prepara la documentación y el falso arquitecto."
+    },
+    {
+      "nombre": "Bañuelos",
+      "descripcion": "Dueña que acompaña a Constanza en su representación de viuda."
+    },
+    {
+      "nombre": "La hermana del cura",
+      "descripcion": "Mujer a la que el sacerdote muestra el cofrecillo y con quien descubre el engaño."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Parroquia madrileña",
+      "descripcion": "Lugar donde Constanza presenta la supuesta fundación de una capilla."
+    },
+    {
+      "nombre": "Casa del cura",
+      "descripcion": "Escenario de la academia y del descubrimiento de las falsas prendas."
+    },
+    {
+      "nombre": "Cuarto de Constanza",
+      "descripcion": "Vivienda donde se negocia el préstamo y se cambia el cofrecillo."
+    },
+    {
+      "nombre": "Illescas",
+      "descripcion": "Refugio de la estafadora después del robo."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Hipocresía religiosa",
+      "descripcion": "Una apariencia de devoción encubre la intención de robar."
+    },
+    {
+      "tema": "Avaricia y credulidad",
+      "descripcion": "La esperanza de una renta lleva al cura a confiar en la impostora."
+    },
+    {
+      "tema": "Fraude de objetos",
+      "descripcion": "La sustitución de las joyas por piedras hace posible la fuga con el préstamo."
+    }
+  ]
+}

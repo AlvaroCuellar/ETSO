@@ -1,0 +1,64 @@
+{
+  "archivo": "TEXORO_novelabarroca-0009.txt",
+  "titulo": "La Venus de Ferrara",
+  "resumen_largo": [
+    "Floripa vive recluida por su padre Teobaldo en un castillo de La Montena, mientras su primo Astolfo gobierna Ferrara. Con ayuda de Leucano y Rosenda, sale disfrazada de labradora para ver las fiestas de la corte. Astolfo se interesa por ella sin reconocer su parentesco, y Floripa permite que conozca su identidad, pero desea comprobar la sinceridad de su amor. Leucano facilita un encuentro secreto y las músicas de la joven acrecientan la inclinación del duque. Después de la muerte de Teobaldo, Astolfo se casa con su prima y ambos tienen una hija llamada Venus.",
+    "Venus crece apartada del público junto a Eufrasia, hija de Rosenda y Leucano. Al morir Astolfo, varios príncipes pretenden el matrimonio de la heredera, y Floripa permite que acudan a servirla para que su hija pueda elegir. Alfredo, duque de Módena, viaja intercambiando su identidad con la de su privado Laureano. Por su parte, Floripa hace pasar a Eufrasia por Venus, reservando a su verdadera hija el papel de una dama del palacio. Los festejos, toros, músicas y saraos ofrecen ocasión para observar las intenciones de los visitantes.",
+    "Alfredo se enamora de la verdadera Venus, a quien cree Eufrasia, y en una conversación reservada le ofrece el matrimonio y revela que es el duque de Módena. Floripa escucha el encuentro y manda obtener un retrato que confirme aquella identidad. Una vez comprobada, Venus declara ante los pretendientes que ha elegido a quien la amó sin conocer su condición de heredera, mientras los demás quedan desairados por su interés en el estado. Se celebran las bodas de Venus y Alfredo y, como recompensa al servidor, las de Laureano con Eufrasia; el relato concluye con la descendencia de la pareja ducal."
+  ],
+  "resumen_breve": [
+    "En Ferrara, Floripa conquista a Astolfo mediante un primer disfraz y se convierte en madre de la heredera Venus.",
+    "Cuando la joven debe elegir esposo, ella y Alfredo de Módena se ocultan bajo identidades ajenas durante las fiestas de la corte.",
+    "La prueba distingue el amor del interés político y termina con las bodas de Venus y Alfredo y de Eufrasia y Laureano."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Venus",
+      "descripcion": "Heredera de Ferrara que se hace pasar por dama de palacio para probar a sus pretendientes."
+    },
+    {
+      "nombre": "Alfredo",
+      "descripcion": "Duque de Módena que se presenta como su privado y ama a Venus sin conocer su rango."
+    },
+    {
+      "nombre": "Floripa",
+      "descripcion": "Madre de Venus, cuya propia historia abre la narración y que organiza la prueba."
+    },
+    {
+      "nombre": "Astolfo",
+      "descripcion": "Duque de Ferrara, esposo de Floripa y padre de Venus."
+    },
+    {
+      "nombre": "Eufrasia y Laureano",
+      "descripcion": "Acompañantes que prestan sus identidades a los protagonistas y terminan unidos."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Ferrara",
+      "descripcion": "Corte donde se celebran los festejos y la elección matrimonial."
+    },
+    {
+      "nombre": "Castillo de La Montena",
+      "descripcion": "Retiro de Floripa y lugar de su encuentro secreto con Astolfo."
+    },
+    {
+      "nombre": "Palacio y jardines ducales",
+      "descripcion": "Espacios de conversaciones, representaciones y pruebas amorosas."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Amor frente a interés",
+      "descripcion": "Los disfraces comprueban si la elección depende de la persona o de su estado."
+    },
+    {
+      "tema": "Identidad y apariencia",
+      "descripcion": "Dos generaciones recurren al encubrimiento para conocer a sus amantes."
+    },
+    {
+      "tema": "Elección de esposo",
+      "descripcion": "Las protagonistas participan en la decisión de su matrimonio."
+    }
+  ]
+}

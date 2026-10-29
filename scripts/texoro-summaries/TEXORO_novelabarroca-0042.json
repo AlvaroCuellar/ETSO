@@ -1,0 +1,68 @@
+{
+  "archivo": "TEXORO_novelabarroca-0042.txt",
+  "titulo": "Diálogo de las cosas acaecidas en Roma",
+  "resumen_largo": [
+    "Lactancio, un joven de la corte imperial, reconoce en Valladolid a su amigo, el arcediano del Viso, que vuelve de Roma vestido como soldado. Se retiran al convento de San Francisco para hablar del saqueo de la ciudad y de sus consecuencias. El arcediano presenta los daños y teme que aquellos sucesos desacrediten al emperador y destruyan la religión. Lactancio propone examinar las responsabilidades y separar la dignidad del papa de las decisiones políticas que han llevado al enfrentamiento con el poder imperial.",
+    "En la primera parte, Lactancio reconstruye negociaciones, alianzas y ofertas rechazadas para sostener que el emperador no debe cargar con la culpa del saqueo. El arcediano plantea objeciones y escucha una defensa que atribuye el conflicto a las actuaciones de los adversarios imperiales y de los consejeros del pontífice. La discusión contrasta los deberes del papa y del emperador y cuestiona el uso de las funciones religiosas para fines temporales. El diálogo presenta estos argumentos como razones de Lactancio, sometidas a la respuesta de su amigo.",
+    "La segunda parte aborda el desastre como ocasión de reforma cristiana. Lactancio critica las supersticiones, el interés económico y la confianza exclusiva en reliquias, ceremonias y objetos visibles, sin negar la dignidad de la Iglesia. El arcediano va aceptando que la conducta de los cristianos debe cambiar y reconoce varios de sus errores. Cuando un fraile los apremia a salir, interrumpen la conversación y acuerdan reunirse al día siguiente en San Benito. El cierre conserva la forma de un debate amistoso sobre política y religión."
+  ],
+  "resumen_breve": [
+    "En Valladolid, Lactancio y el arcediano del Viso comentan el saqueo de Roma y la responsabilidad que puede atribuirse al emperador.",
+    "Lactancio defiende la causa imperial y propone entender el desastre como una ocasión para corregir prácticas religiosas interesadas o supersticiosas.",
+    "El arcediano modifica parte de sus opiniones y ambos dejan la conversación pendiente para un nuevo encuentro."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Lactancio",
+      "descripcion": "Joven de la corte que defiende al emperador y propone una reforma de la conducta cristiana."
+    },
+    {
+      "nombre": "Arcediano del Viso",
+      "descripcion": "Amigo que vuelve de Roma, relata el desastre y somete sus juicios a la discusión."
+    },
+    {
+      "nombre": "El emperador",
+      "descripcion": "Figura política cuya responsabilidad es examinada y defendida en la primera parte."
+    },
+    {
+      "nombre": "El papa",
+      "descripcion": "Autoridad cuya dignidad religiosa se distingue de las actuaciones políticas debatidas."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Valladolid",
+      "descripcion": "Ciudad donde se encuentran los interlocutores tras el regreso del arcediano."
+    },
+    {
+      "nombre": "Convento de San Francisco",
+      "descripcion": "Lugar elegido para desarrollar las dos partes de la discusión."
+    },
+    {
+      "nombre": "Roma",
+      "descripcion": "Ciudad saqueada que constituye el objeto histórico y religioso del debate."
+    },
+    {
+      "nombre": "San Benito",
+      "descripcion": "Lugar propuesto para continuar la conversación al día siguiente."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Responsabilidad política",
+      "descripcion": "El diálogo distribuye las culpas del conflicto y defiende la actuación imperial."
+    },
+    {
+      "tema": "Reforma religiosa",
+      "descripcion": "La crítica de abusos y supersticiones propone orientar la vida hacia una práctica cristiana más interior."
+    },
+    {
+      "tema": "Poder espiritual y temporal",
+      "descripcion": "Las funciones del papa y del emperador son contrastadas con sus actuaciones."
+    },
+    {
+      "tema": "Persuasión y amistad",
+      "descripcion": "Las objeciones del arcediano y las respuestas de Lactancio producen un cambio de opinión sin romper el trato amistoso."
+    }
+  ]
+}

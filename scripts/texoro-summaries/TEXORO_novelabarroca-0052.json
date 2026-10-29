@@ -1,0 +1,68 @@
+{
+  "archivo": "TEXORO_novelabarroca-0052.txt",
+  "titulo": "Vida y trabajos de Gerónimo de Pasamonte",
+  "resumen_largo": [
+    "Gerónimo de Pasamonte relata su vida desde los accidentes y enfermedades de la infancia hasta las experiencias que interpreta como signos de protección divina. Tras los conflictos familiares que frustran su deseo de entrar en religión, sale de Aragón hacia Italia y se incorpora a la vida militar. Cuenta su participación en la batalla naval de 1571 y en otras campañas mediterráneas, con frecuentes recaídas de salud y penurias. La caída de la plaza que defiende lo convierte en cautivo de los turcos y abre una larga etapa de trabajos forzados y dependencia de distintos amos.",
+    "Durante dieciocho años de cautiverio soporta golpes, amenazas, navegación forzada y tentativas de conversión, y busca repetidamente medios para obtener el rescate. Los cambios de amo y de lugar lo llevan por diversos territorios del Mediterráneo oriental. Su relato subraya tanto la crueldad de los dueños como el apoyo recibido de otros cautivos y protectores. Recuperada la libertad, vuelve a tierras católicas y procura que se reconozcan sus servicios, pero la pobreza y las dificultades para lograr un sustento o una carrera eclesiástica lo empujan de nuevo hacia Italia y el servicio militar.",
+    "La última parte se centra en su vida doméstica y en una sucesión de enfermedades, conflictos y persecuciones que atribuye a malas artes y a la intervención de espíritus. Pasamonte interpreta sus temores y padecimientos desde su fe, defiende su honra y la de su esposa y pide a autoridades religiosas que remedien los males que denuncia. Cierra afirmando bajo juramento la verdad de lo escrito. Un testimonio final de Domingo Machado informa de la copia del libro y de su examen en Nápoles, tras una acusación de herejía de la que el autor resulta exonerado."
+  ],
+  "resumen_breve": [
+    "Pasamonte reconstruye desde Aragón su infancia, su carrera militar en el Mediterráneo y su participación en la batalla naval de 1571.",
+    "Dieciocho años de cautiverio entre turcos marcan su regreso a tierras católicas y la difícil búsqueda de reconocimiento y sustento.",
+    "El relato concluye en Nápoles con sus padecimientos domésticos y espirituales, la defensa de su testimonio y la noticia del examen religioso del manuscrito."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Gerónimo de Pasamonte",
+      "descripcion": "Autor y protagonista que presenta sus experiencias como testimonio de trabajos y protección divina."
+    },
+    {
+      "nombre": "Amos y compañeros de cautiverio",
+      "descripcion": "Personas que condicionan la supervivencia y el rescate durante los dieciocho años de prisión."
+    },
+    {
+      "nombre": "Esposa de Pasamonte",
+      "descripcion": "Compañera cuya honra defiende en sus conflictos domésticos."
+    },
+    {
+      "nombre": "Jerónimo Javierre y Bartolomé Pérez de Nueros",
+      "descripcion": "Religiosos a quienes dedica el relato y solicita intervención."
+    },
+    {
+      "nombre": "Domingo Machado",
+      "descripcion": "Copista que certifica el examen y la restitución del libro."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Aragón",
+      "descripcion": "Ámbito de la infancia, de los conflictos familiares y de parte del regreso."
+    },
+    {
+      "nombre": "Mediterráneo y dominios otomanos",
+      "descripcion": "Marco de las campañas, las galeras y el cautiverio."
+    },
+    {
+      "nombre": "Italia y Nápoles",
+      "descripcion": "Espacios del servicio militar, de la vida doméstica y de la conclusión del manuscrito."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Cautiverio y supervivencia",
+      "descripcion": "El relato detalla trabajos, violencia y esfuerzos por recuperar la libertad."
+    },
+    {
+      "tema": "Fe y providencia",
+      "descripcion": "Pasamonte interpreta sus salvaciones y experiencias desde una convicción religiosa."
+    },
+    {
+      "tema": "Honra y testimonio",
+      "descripcion": "La escritura sirve para defender su conducta y pedir remedio a las autoridades."
+    },
+    {
+      "tema": "Persecución y padecimiento",
+      "descripcion": "Las enfermedades y conflictos de la vida posterior son presentados por el narrador como efectos de malas artes."
+    }
+  ]
+}

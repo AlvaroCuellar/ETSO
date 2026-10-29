@@ -1,3 +1,5 @@
+import { withLegacyAttributionColumns } from '$lib/server/catalog-schema-compat';
+import { resolveStylometryResult } from '$lib/utils/stylometry-result';
 import { createClient } from '@libsql/client';
 import Graph from 'graphology';
 import louvain from 'graphology-communities-louvain';
@@ -255,6 +257,7 @@ interface WorkRow {
 	fecha_biteso: string | null;
 	fecha_resumen: string | null;
 	resultado1: string | null;
+	resultado2: string | null;
 	examen_autorias: number;
 	biteso: number;
 	biteso_nombre: string | null;
@@ -304,11 +307,13 @@ interface AttributionRow {
 	work_id: string;
 	attribution_type: string;
 	raw_expression: string;
+	reviewed_phrase?: string | null;
 	group_id: number | null;
 	group_order: number | null;
 	author_id: string | null;
 	member_order: number | null;
 	confianza: string | null;
+	scope?: string | null;
 }
 
 interface TextAccessRow {
@@ -383,6 +388,7 @@ interface TempGroup {
 		memberOrder: number;
 		authorId: string;
 		confidence?: string | null;
+		scope?: string | null;
 	}>;
 }
 
@@ -390,6 +396,7 @@ interface TempSet {
 	workId: string;
 	attributionType: string;
 	rawExpression: string;
+	reviewedPhrase?: string | null;
 	groups: Map<number, TempGroup>;
 }
 
@@ -635,14 +642,28 @@ const getRows = async <T>(sql: string, args?: SqlArg[]): Promise<T[]> => {
 		}
 		warnLocalCatalogFallback(cause);
 		dbClient = createLocalFallbackDbClient();
-		result = args ? await dbClient.execute(sql, args) : await dbClient.execute(sql);
+		// The failed SELECT may have been built using schema metadata from the remote DB.
+		// Reconcile only our optional attribution fields before retrying it locally.
+		tableColumnsByName.clear();
+		const [memberInfo, setInfo] = await Promise.all([
+			dbClient.execute('PRAGMA table_info(attribution_members)'),
+			dbClient.execute('PRAGMA table_info(attribution_sets)')
+		]);
+		const memberColumns = new Set(memberInfo.rows.map((row) => String(row.name)));
+		const setColumns = new Set(setInfo.rows.map((row) => String(row.name)));
+		tableColumnsByName.set('attribution_members', memberColumns);
+		tableColumnsByName.set('attribution_sets', setColumns);
+		const localSql = withLegacyAttributionColumns(sql, {
+			memberScope: memberColumns.has('scope'), reviewedPhrase: setColumns.has('reviewed_phrase')
+		});
+		result = args ? await dbClient.execute(localSql, args) : await dbClient.execute(localSql);
 	}
 	const rows = result.rows as unknown as T[];
 	logCatalogQuery(sql, args, Date.now() - startedAt, rows.length);
 	return rows;
 };
 
-const getTableColumnNames = async (tableName: 'authors' | 'works'): Promise<Set<string>> => {
+const getTableColumnNames = async (tableName: 'authors' | 'works' | 'attribution_members' | 'attribution_sets'): Promise<Set<string>> => {
 	const cached = tableColumnsByName.get(tableName);
 	if (cached) return cached;
 
@@ -650,6 +671,16 @@ const getTableColumnNames = async (tableName: 'authors' | 'works'): Promise<Set<
 	const columns = new Set(rows.map((column) => column.name));
 	tableColumnsByName.set(tableName, columns);
 	return columns;
+};
+
+const getAttributionScopeSelect = async (): Promise<string> => {
+	const columns = await getTableColumnNames('attribution_members');
+	return columns.has('scope') ? 'm.scope AS scope' : 'NULL AS scope';
+};
+
+const getReviewedPhraseSelect = async (): Promise<string> => {
+	const columns = await getTableColumnNames('attribution_sets');
+	return columns.has('reviewed_phrase') ? 's.reviewed_phrase AS reviewed_phrase' : 'NULL AS reviewed_phrase';
 };
 
 const createPlaceholders = (values: readonly unknown[]): string => values.map(() => '?').join(', ');
@@ -744,6 +775,7 @@ const normalizeAttributionRows = (
 				workId: row.work_id,
 				attributionType: row.attribution_type,
 				rawExpression: row.raw_expression,
+				reviewedPhrase: row.reviewed_phrase,
 				groups: new Map()
 			});
 		}
@@ -762,7 +794,8 @@ const normalizeAttributionRows = (
 			set.groups.get(row.group_id)!.members.push({
 				memberOrder: row.member_order ?? 0,
 				authorId: row.author_id,
-				confidence: row.confianza
+				confidence: row.confianza,
+				scope: row.scope
 			});
 		}
 	}
@@ -779,7 +812,8 @@ const normalizeAttributionRows = (
 						authorPublicId: memberPublicIdFromId(member.authorId, authorById),
 						authorName: memberNameFromId(member.authorId, authorById),
 						hasAuthorshipExam: authorById.get(member.authorId)?.hasAuthorshipExam === true,
-						confidence: member.authorId === 'no_analizada' ? undefined : normalizeConfidence(member.confidence)
+						confidence: member.authorId === 'no_analizada' ? undefined : normalizeConfidence(member.confidence),
+						...(set.attributionType === 'estilometria' && member.scope === 'participation' ? { scope: 'participation' as const } : {})
 					}));
 				return { members };
 			})
@@ -804,6 +838,9 @@ const normalizeAttributionRows = (
 					rawExpression: set.rawExpression
 				};
 
+		if (set.attributionType === 'tradicional' && set.reviewedPhrase) {
+			normalized.reviewedPhrase = set.reviewedPhrase;
+		}
 		attributionByWorkType.set(`${set.workId}::${set.attributionType}`, normalized);
 	}
 	return attributionByWorkType;
@@ -817,11 +854,13 @@ const loadAttributionRowsByWorkIds = async (workIds: string[]): Promise<Attribut
 			s.work_id,
 			s.attribution_type,
 			s.raw_expression,
+			${await getReviewedPhraseSelect()},
 			g.id AS group_id,
 			g.group_order,
 			m.author_id,
 			m.member_order,
-			m.confianza
+			m.confianza,
+			${await getAttributionScopeSelect()}
 		 FROM attribution_sets s
 		 LEFT JOIN attribution_groups g ON g.attribution_set_id = s.id
 		 LEFT JOIN attribution_members m ON m.attribution_group_id = g.id
@@ -923,6 +962,7 @@ const buildCatalogWorksFromRows = (
 			bitesoPublishedOn: row.fecha_biteso?.trim() || undefined,
 			summaryPublishedOn: row.fecha_resumen?.trim() || undefined,
 			result1: row.resultado1?.trim() || undefined,
+			result2: row.resultado2?.trim() || undefined,
 			shortSummary: EMPTY_SHORT_SUMMARY,
 			hasSummaryFile: hasSummary,
 			inAuthorshipExam,
@@ -977,6 +1017,7 @@ const loadWorkRowsByIds = async (workIds: string[]): Promise<WorkRow[]> => {
 		 ${facsimileLastSelect},
 		 ${summaryPublicationDateSelect},
 		 resultado1,
+		 resultado2,
 		 examen_autorias, biteso, biteso_nombre, tiene_acceso_externo,
 		 procede,
 		 CASE WHEN resultado1 IS NULL AND resultado2 IS NULL THEN 0 ELSE 1 END AS has_report,
@@ -1092,11 +1133,13 @@ const createSnapshot = async (): Promise<Snapshot> => {
 			s.work_id,
 			s.attribution_type,
 			s.raw_expression,
+			${await getReviewedPhraseSelect()},
 			g.id AS group_id,
 			g.group_order,
 			m.author_id,
 			m.member_order,
-			m.confianza
+			m.confianza,
+			${await getAttributionScopeSelect()}
 		 FROM attribution_sets s
 		 LEFT JOIN attribution_groups g ON g.attribution_set_id = s.id
 		 LEFT JOIN attribution_members m ON m.attribution_group_id = g.id
@@ -1110,6 +1153,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 				workId: row.work_id,
 				attributionType: row.attribution_type,
 				rawExpression: row.raw_expression,
+				reviewedPhrase: row.reviewed_phrase,
 				groups: new Map()
 			});
 		}
@@ -1128,7 +1172,8 @@ const createSnapshot = async (): Promise<Snapshot> => {
 			set.groups.get(row.group_id)!.members.push({
 				memberOrder: row.member_order ?? 0,
 				authorId: row.author_id,
-				confidence: row.confianza
+				confidence: row.confianza,
+				scope: row.scope
 			});
 		}
 	}
@@ -1145,7 +1190,8 @@ const createSnapshot = async (): Promise<Snapshot> => {
 						authorPublicId: memberPublicIdFromId(member.authorId, authorById),
 						authorName: memberNameFromId(member.authorId, authorById),
 						hasAuthorshipExam: authorById.get(member.authorId)?.hasAuthorshipExam === true,
-						confidence: member.authorId === 'no_analizada' ? undefined : normalizeConfidence(member.confidence)
+						confidence: member.authorId === 'no_analizada' ? undefined : normalizeConfidence(member.confidence),
+						...(set.attributionType === 'estilometria' && member.scope === 'participation' ? { scope: 'participation' as const } : {})
 					}));
 				return { members };
 			})
@@ -1170,6 +1216,9 @@ const createSnapshot = async (): Promise<Snapshot> => {
 					rawExpression: set.rawExpression
 				};
 
+		if (set.attributionType === 'tradicional' && set.reviewedPhrase) {
+			normalized.reviewedPhrase = set.reviewedPhrase;
+		}
 		attributionByWorkType.set(`${set.workId}::${set.attributionType}`, normalized);
 	}
 
@@ -1231,6 +1280,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 		 ${facsimileLastSelect},
 		 ${summaryPublicationDateSelect},
 		 resultado1,
+		 resultado2,
 		 examen_autorias, biteso, biteso_nombre, tiene_acceso_externo,
 		 procede,
 		 CASE WHEN resultado1 IS NULL AND resultado2 IS NULL THEN 0 ELSE 1 END AS has_report,
@@ -1294,6 +1344,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 			bitesoPublishedOn: row.fecha_biteso?.trim() || undefined,
 			summaryPublishedOn: row.fecha_resumen?.trim() || undefined,
 			result1: row.resultado1?.trim() || undefined,
+			result2: row.resultado2?.trim() || undefined,
 			shortSummary: EMPTY_SHORT_SUMMARY,
 			hasSummaryFile: hasSummary,
 			inAuthorshipExam,
@@ -1868,32 +1919,44 @@ const stylometryUnresolvedSql = `EXISTS (
 		AND wai.author_id = '${UNRESOLVED_AUTHOR_ID}'
 )`;
 
-const addAuthorshipTypeFilter = (conditions: string[], values: string[]): void => {
+const addAuthorshipTypeFilter = async (conditions: string[], values: string[]): Promise<void> => {
 	const selected = normalizeSqlFilterValues(values)
 		.map((value) => asWorkAuthorshipType(value))
 		.filter((value): value is WorkAuthorshipType => value !== null);
 	if (selected.length === 0) return;
-
-	const typeConditions: string[] = [];
-	if (selected.includes('unica')) {
-		typeConditions.push(`(
-			(${stylometryAuthorCountSql} = 1)
-			OR (${stylometryAuthorCountSql} = 0 AND NOT ${stylometryUnresolvedSql} AND ${traditionalAuthorCountSql} = 1)
-		)`);
-	}
-	if (selected.includes('colaboracion')) {
-		typeConditions.push(`(
-			(${stylometryAuthorCountSql} > 1)
-			OR (${stylometryAuthorCountSql} = 0 AND NOT ${stylometryUnresolvedSql} AND ${traditionalAuthorCountSql} > 1)
-		)`);
-	}
-	if (selected.includes('desconocida')) {
-		typeConditions.push(`(${stylometryUnresolvedSql} OR (${stylometryAuthorCountSql} = 0 AND ${traditionalAuthorCountSql} = 0))`);
-	}
-
-	if (typeConditions.length > 0) {
-		conditions.push(`(${typeConditions.join(' OR ')})`);
-	}
+	const memberColumns = await getTableColumnNames('attribution_members');
+	const hasParticipation = memberColumns.has('scope') ? `EXISTS (
+		SELECT 1 FROM attribution_sets ps
+		JOIN attribution_groups pg ON pg.attribution_set_id = ps.id
+		JOIN attribution_members pm ON pm.attribution_group_id = pg.id
+		WHERE ps.work_id = w.id AND ps.attribution_type = 'estilometria' AND pm.scope = 'participation'
+	)` : '0';
+	const hypothesisSizesSql = (attributionType: string): string => `
+		SELECT group_id, SUM(CASE WHEN author_id IN (
+			'desconocido_dos_ingenios', 'desconocido_tres_ingenios', 'desconocido_cuatro_ingenios',
+			'desconocido_cinco_ingenios', 'desconocido_seis_ingenios', 'desconocido_siete_ingenios',
+			'desconocido_ocho_ingenios', 'desconocido_nueve_ingenios', 'desconocido_diez_ingenios'
+		) THEN 2 ELSE 1 END) AS group_size
+		FROM (
+			SELECT DISTINCT g.id AS group_id, m.author_id
+			FROM attribution_sets s
+			JOIN attribution_groups g ON g.attribution_set_id = s.id
+			JOIN attribution_members m ON m.attribution_group_id = g.id
+			WHERE s.work_id = w.id AND s.attribution_type = ${attributionType}
+			AND m.author_id NOT IN (${ANALYSIS_STATUS_AUTHOR_IDS.map((id) => `'${id}'`).join(', ')})
+		) members GROUP BY group_id`;
+	const stylometryIsCollaboration = `COALESCE((SELECT MIN(group_size) > 1
+		FROM (${hypothesisSizesSql("'estilometria'")}) stylometry_hypotheses), 0)`;
+	const chosenType = `CASE WHEN (${hasParticipation} AND NOT ${stylometryIsCollaboration})
+		OR ${stylometryAuthorCountSql} = 0 THEN 'tradicional' ELSE 'estilometria' END`;
+	// Match inferWorkAuthorshipType: an identified team remains collaborative even
+	// when each identification is scoped to participation rather than the whole work.
+	const classification = `(CASE WHEN ${stylometryUnresolvedSql} THEN 'desconocida' ELSE (
+		SELECT CASE WHEN MIN(group_size) = 1 AND MAX(group_size) = 1 THEN 'unica'
+			WHEN MIN(group_size) > 1 THEN 'colaboracion' ELSE 'desconocida' END
+		FROM (${hypothesisSizesSql(chosenType)}) hypotheses
+	) END)`;
+	conditions.push(`${classification} IN (${selected.map((type) => `'${type}'`).join(', ')})`);
 };
 
 const addConfidenceFilter = (conditions: string[], args: SqlArg[], values: string[]): void => {
@@ -1965,7 +2028,7 @@ const buildExamenWhereClause = async (filters: ExamenWorksFilters): Promise<SqlW
 	addAuthorFilter(conditions, args, filters.autor_trad, 'tradicional', filters.autor_trad_match);
 	addAuthorFilter(conditions, args, filters.autor_esto, 'estilometria', filters.autor_esto_match);
 	addConfidenceFilter(conditions, args, filters.confianza);
-	addAuthorshipTypeFilter(conditions, filters.tipo_autoria);
+	await addAuthorshipTypeFilter(conditions, filters.tipo_autoria);
 	addInFilter(conditions, args, "COALESCE(NULLIF(TRIM(w.estado_texto), ''), 'Sin estado')", filters.estado);
 	addDateRangeFilter(conditions, args, filters);
 
@@ -2325,7 +2388,7 @@ export const getInformeById = async (informeId: string): Promise<CatalogInforme 
 		methodology:
 			'Se muestran las distancias cargadas en work_distances desde Turso. En la versión final, esta sección podrá enriquecerse con servicios de cálculo oficiales del proyecto.',
 		conclusion:
-			reportResults.result2 ||
+			resolveStylometryResult({ ...work, ...reportResults }) ||
 			`Lectura preliminar para ${work.title} con perfil ${inferWorkAuthorshipType(work)} y nivel ${confidenceLabel}.`,
 		citation: `ETSO. Análisis estilométrico de ${work.title}. Dataset alojado en Turso.`,
 		distances

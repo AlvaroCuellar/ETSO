@@ -1,0 +1,64 @@
+{
+  "archivo": "TEXORO_novelabarroca-0005.txt",
+  "titulo": "La dicha de Doristea",
+  "resumen_largo": [
+    "Doristea queda huérfana en Sevilla, con una gran fortuna y bajo el cuidado de su tía Estefanía. Claudio, noble empobrecido por sus delitos y disipación, pide su mano, pero la tía lo rechaza. Para vengarse, finge un amor que persuade a la joven y la induce a huir con sus joyas y dinero antes de un matrimonio dispuesto con otro hombre. En un paraje apartado revela que no piensa casarse con ella y pretende deshonrarla. Don Carlos Manrique interviene en su defensa, mata a Claudio y se lleva a la dama y sus bienes a lugar seguro.",
+    "El caballero conduce a Doristea a Madrid, donde la aloja con doña Laura y la sirve con regalos, sin que ella consienta perder su honra. La joven oculta inicialmente su nombre bajo el de Clara de Quirós, temiendo que su fuga la desacredite, aunque acaba apreciando a su protector. Cuando Laura favorece las pretensiones de Carlos, Doristea busca el amparo de doña Inés, religiosa amiga suya, y entra en un convento. Desde allí comunica al caballero su identidad verdadera y deja que una consulta a Sevilla confirme su familia, riqueza y circunstancias.",
+    "Carlos declara a su padre lo sucedido y su deseo de casarse con Doristea. Don Juan, impresionado por la defensa que ella hizo de su honor, acepta el enlace y acude al convento para tratarlo. La joven abandona el retiro al celebrarse las bodas y, poco después, el padre obtiene un título ducal que aumenta la posición familiar. La pareja se instala en Sevilla; un acuerdo económico con los parientes de Claudio resuelve la querella por su muerte. Tras la muerte de Don Juan, Carlos hereda sus estados y el nuevo título, completando la prosperidad de Doristea."
+  ],
+  "resumen_breve": [
+    "Doristea huye de Sevilla engañada por Claudio, pero don Carlos la rescata cuando aquel pretende deshonrarla.",
+    "En Madrid, la joven protege su reputación y entra en un convento antes de revelar quién es a su enamorado.",
+    "Carlos se casa con ella con el consentimiento paterno y la pareja vuelve a Sevilla, donde resuelve la querella y acrecienta su posición."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Doristea o Clara de Quirós",
+      "descripcion": "Joven heredera que huye engañada y defiende su honra."
+    },
+    {
+      "nombre": "Don Carlos Manrique",
+      "descripcion": "Caballero que la rescata y acaba casándose con ella."
+    },
+    {
+      "nombre": "Claudio",
+      "descripcion": "Pretendiente que seduce a Doristea para vengarse y apropiarse de sus bienes."
+    },
+    {
+      "nombre": "Doña Inés",
+      "descripcion": "Religiosa que ofrece amparo y favorece el matrimonio."
+    },
+    {
+      "nombre": "Don Juan Manrique",
+      "descripcion": "Padre de Carlos, que acepta a la joven y obtiene un título ducal."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Sevilla",
+      "descripcion": "Patria de Doristea y lugar del regreso final."
+    },
+    {
+      "nombre": "Monte del rescate",
+      "descripcion": "Paraje donde Claudio revela su engaño y Carlos interviene."
+    },
+    {
+      "nombre": "Madrid y convento de la Magdalena",
+      "descripcion": "Corte donde Doristea recibe alojamiento y después se retira para proteger su honor."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Engaño amoroso",
+      "descripcion": "La falsa pretensión de Claudio causa la fuga y el peligro."
+    },
+    {
+      "tema": "Honor y protección femenina",
+      "descripcion": "Doristea se resiste a la violencia y busca un refugio seguro."
+    },
+    {
+      "tema": "Restitución y fortuna",
+      "descripcion": "El matrimonio y la herencia transforman la desgracia inicial en prosperidad."
+    }
+  ]
+}

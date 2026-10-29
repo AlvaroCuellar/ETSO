@@ -59,8 +59,28 @@ test('conserva los grupos en las etiquetas compactas', () => {
 		formatTraditionalAttributionCompact(
 			attribution(['Calderón'], ['Zabaleta', 'Belmonte', 'Martínez'])
 		),
-		'Calderón o Zabaleta, Belmonte y Martínez'
+		'Calderón o (Zabaleta, Belmonte y Martínez)'
 	);
+});
+
+test('compact labels preserve an author-alone alternative to a collaboration and do not mutate it', () => {
+	const set = { ...attribution(['Matos', 'Villaviciosa'], ['Matos']), reviewedPhrase: 'Obra atribuida a la colaboración de Matos y Villaviciosa o a Matos.' };
+	const before = structuredClone(set);
+	assert.equal(formatTraditionalAttributionCompact(set), '(Matos y Villaviciosa) o Matos');
+	assert.deepEqual(set, before);
+	assert.equal(phrase(set), set.reviewedPhrase);
+});
+
+test('compact outer connectors follow the structured set, including translated labels', () => {
+	const set = { ...attribution(['Calderón'], ['Matos']), connector: 'and' as const };
+	assert.equal(formatTraditionalAttributionCompact(set), 'Calderón y Matos');
+	assert.equal(formatTraditionalAttributionCompact(set, 'Unknown', { and: 'and', or: 'or' }), 'Calderón and Matos');
+});
+
+test('anonymous teams retain their count in compact alternatives', () => {
+	const set = attribution(['Calderón'], ['Desconocido (tres ingenios)']);
+	set.reviewedPhrase = 'Obra atribuida a Calderón o a tres ingenios no identificados.';
+	assert.equal(formatTraditionalAttributionCompact(set), 'Calderón o Desconocido (tres ingenios)');
 });
 
 test('traduce fragmentos de atribuciones alternativas sin alterar los nombres', () => {

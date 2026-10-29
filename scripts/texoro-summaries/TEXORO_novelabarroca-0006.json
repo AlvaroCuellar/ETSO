@@ -1,0 +1,72 @@
+{
+  "archivo": "TEXORO_novelabarroca-0006.txt",
+  "titulo": "El esclavo de su esclavo",
+  "resumen_largo": [
+    "En la Cataluña gobernada por el conde Rodulfo, don Félix Centellas ama a Blanca, hermana del soberano, cuyo matrimonio se impide por razones sucesorias. La correspondencia secreta de los amantes da lugar al nacimiento de Matilde, que confían al secretario Alberto y a una nodriza para ocultarla. La niña crece apartada de sus padres y, durante un paseo marítimo, ella y Alberto son apresados por un corsario. En Argel, Matilde es entregada a la sultana y Alberto queda al servicio de Audalia, guerrero que ama a Jarifa y trata con humanidad a los cristianos.",
+    "Los soberanos argelinos favorecen a Matilde e intentan persuadirla para que abandone su fe y se case con alguno de sus servidores, pero ella se mantiene firme. Entretanto, Feliciano Torrellas, defensor de las costas catalanas, captura a Audalia y lo trata generosamente. Compadecido de la separación de Jarifa, le devuelve la libertad. Cuando Feliciano es apresado a su vez, Audalia lo reconoce en el mercado de esclavos, lo compra y se ofrece a servirlo. El cristiano conoce entonces la historia de Matilde y se enamora de ella, mientras Audalia y Jarifa proyectan convertirse y escapar con los cautivos.",
+    "Feliciano se introduce en palacio con apariencia de moro y recibe el favor de Matilde, que conoce su identidad. Alberto vuelve a Barcelona y avisa a don Félix, ya unido con Blanca después de la muerte del conde. Con la ayuda de unas galeras catalanas, Audalia dispone una salida naval que permite embarcar a Jarifa y Matilde y entregarse a sus amigos. La reunión familiar se celebra en Barcelona y continúa con una visita a Montserrat, donde Audalia y Jarifa reciben el bautismo. Un intercambio de presentes con Argel establece la paz, y las recompensas finales reconocen la fidelidad de los protectores."
+  ],
+  "resumen_breve": [
+    "En una Cataluña anterior a su incorporación a la corona española, Matilde, hija secreta de Blanca y don Félix, cae cautiva en Argel.",
+    "Audalia devuelve a Feliciano la libertad que antes recibió de él y organiza la salida de los cristianos y de Jarifa.",
+    "El rescate permite la reunión familiar en Barcelona, el bautismo de los moros en Montserrat y unas paces con Argel."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Feliciano Torrellas",
+      "descripcion": "Caballero catalán que libera a Audalia y después recibe su ayuda en cautiverio."
+    },
+    {
+      "nombre": "Audalia",
+      "descripcion": "Guerrero argelino que compra a Feliciano para devolverle la libertad."
+    },
+    {
+      "nombre": "Matilde",
+      "descripcion": "Hija de Blanca y don Félix, cautiva que se mantiene cristiana."
+    },
+    {
+      "nombre": "Jarifa",
+      "descripcion": "Amada de Audalia, protectora de Matilde y compañera de la fuga."
+    },
+    {
+      "nombre": "Alberto",
+      "descripcion": "Secretario al que se confía Matilde y que sirve de enlace para su rescate."
+    },
+    {
+      "nombre": "Blanca y don Félix Centellas",
+      "descripcion": "Padres de Matilde, que ocultan su nacimiento y después la recuperan."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Barcelona y costa catalana",
+      "descripcion": "Origen de los protagonistas y lugar de la reunión final."
+    },
+    {
+      "nombre": "Argel",
+      "descripcion": "Ciudad del cautiverio, del cortejo encubierto y del plan de fuga."
+    },
+    {
+      "nombre": "Mar Mediterráneo",
+      "descripcion": "Espacio de las capturas y del rescate naval."
+    },
+    {
+      "nombre": "Montserrat",
+      "descripcion": "Santuario del agradecimiento y del bautismo de Audalia y Jarifa."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Reciprocidad y gratitud",
+      "descripcion": "Audalia responde a la generosidad de Feliciano ayudándolo cuando cambia su fortuna."
+    },
+    {
+      "tema": "Cautiverio y libertad",
+      "descripcion": "Las capturas marinas separan a familias y amantes hasta el rescate."
+    },
+    {
+      "tema": "Firmeza religiosa y conversión",
+      "descripcion": "Matilde conserva su fe y sus protectores reciben el bautismo."
+    }
+  ]
+}

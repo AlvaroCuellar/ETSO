@@ -1,0 +1,76 @@
+{
+  "archivo": "TEXORO_novelabarroca-0038.txt",
+  "titulo": "Guerra de Granada",
+  "resumen_largo": [
+    "La historia comienza exponiendo los antecedentes del conflicto entre la Corona y los moriscos del reino de Granada. El narrador relaciona tensiones de gobierno, agravios y medidas sobre sus costumbres con la preparación del levantamiento. Los conjurados eligen a Fernando de Válor, llamado Aben Humeya, como rey y extienden la rebelión por las Alpujarras. Los ataques y represalias convierten la insurrección en guerra, mientras las autoridades cristianas procuran contenerla desde Granada y asegurar las poblaciones y rutas amenazadas.",
+    "Las campañas de los marqueses de Mondéjar y de los Vélez combinan combates, ocupaciones, negociaciones y castigos. El relato sigue tanto sus decisiones como las divisiones entre mandos y las dificultades de aprovisionamiento. Felipe II encomienda después la empresa a don Juan de Austria y dispone refuerzos y medidas para impedir el apoyo exterior a los rebeldes. La guerra afecta también a los habitantes de Granada, cuyos moriscos son trasladados a otros lugares, y a los poblados de la sierra, sometidos a continuas pérdidas.",
+    "Las disputas internas de los rebeldes terminan con Aben Humeya y dejan a Abenabó al frente de la resistencia. Nuevas operaciones, entre ellas las del duque de Arcos, reducen los espacios donde los sublevados pueden mantenerse. La muerte de Abenabó y la exhibición de su cabeza simbolizan el fin del mando rebelde. Unos moriscos se rinden y otros pasan a Berbería; los restantes sufren la persecución y las condiciones de la sierra. La narración cierra con una tierra devastada y despoblada, repartida entre nuevos pobladores."
+  ],
+  "resumen_breve": [
+    "La historia relata el levantamiento de los moriscos del reino de Granada durante el reinado de Felipe II y sus antecedentes políticos y sociales.",
+    "Las campañas de los mandos cristianos y de don Juan de Austria se enfrentan a la resistencia de Aben Humeya y después de Abenabó.",
+    "La derrota de la rebelión concluye con desplazamientos, destrucción y repoblación de las tierras afectadas."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Don Juan de Austria",
+      "descripcion": "Jefe encargado por Felipe II de dirigir una fase decisiva de la guerra."
+    },
+    {
+      "nombre": "Aben Humeya / Fernando de Válor",
+      "descripcion": "Rey elegido por los rebeldes al comienzo del levantamiento."
+    },
+    {
+      "nombre": "Abenabó",
+      "descripcion": "Sucesor al frente de la resistencia, cuya muerte precede al cierre de la guerra."
+    },
+    {
+      "nombre": "Marqués de Mondéjar",
+      "descripcion": "Mando cristiano cuyas operaciones y negociaciones tienen especial importancia inicial."
+    },
+    {
+      "nombre": "Marqués de los Vélez",
+      "descripcion": "Jefe de campañas que entran en conflicto con otras decisiones y mandos."
+    },
+    {
+      "nombre": "Felipe II",
+      "descripcion": "Monarca que dispone cambios de dirección, refuerzos y medidas sobre los moriscos."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Reino de Granada",
+      "descripcion": "Territorio del conflicto y marco de las tensiones administrativas y religiosas."
+    },
+    {
+      "nombre": "Alpujarras y sierras próximas",
+      "descripcion": "Núcleo del levantamiento y de las campañas militares."
+    },
+    {
+      "nombre": "Ciudad de Granada",
+      "descripcion": "Centro de gobierno y lugar de medidas contra la población morisca."
+    },
+    {
+      "nombre": "Berbería",
+      "descripcion": "Destino de huidas y posible procedencia de apoyos exteriores."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Rebelión y represión",
+      "descripcion": "El levantamiento da lugar a una guerra de ataques, castigos y sometimiento."
+    },
+    {
+      "tema": "Gobierno y rivalidad de mandos",
+      "descripcion": "Las decisiones políticas y las disputas entre autoridades influyen en la marcha del conflicto."
+    },
+    {
+      "tema": "Religión y costumbres",
+      "descripcion": "Las tensiones sobre las prácticas moriscas forman parte de las causas expuestas."
+    },
+    {
+      "tema": "Desplazamiento y devastación",
+      "descripcion": "La guerra termina con pérdidas humanas, expulsiones del territorio y sustitución de pobladores."
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "archivo": "TEXORO_novelabarroca-0047.txt",
+  "titulo": "Guzmán de Alfarache",
+  "resumen_largo": [
+    "Guzmán cuenta retrospectivamente su vida, desde sus orígenes en Sevilla y la historia poco honrosa de sus padres. Abandona el hogar siendo joven y descubre en caminos y ventas la necesidad, el engaño y la fragilidad del dinero. Pasa por diferentes servicios y oficios, aprende a vivir de sus habilidades y acaba encaminándose hacia Italia. En Génova busca apoyo familiar, pero recibe burlas y desprecio; en Roma ejerce la mendicidad y entra al servicio de personajes poderosos. Sus primeras experiencias forman una educación en la astucia, acompañada por continuas reflexiones sobre sus propias faltas y las de la sociedad.",
+    "En la segunda parte prosigue su estancia italiana, el servicio al embajador y los encuentros con Sayavedra, que se convierte en su compañero. Guzmán combina proyectos de enriquecimiento con robos y fraudes, y responde a antiguas humillaciones con nuevos engaños. El regreso a España no estabiliza su vida: interviene en negocios, se casa, atraviesa pérdidas y vuelve a depender de expedientes deshonestos. Incluso el propósito de estudiar y orientarse a una vida distinta queda frustrado por sus relaciones y necesidades. Las narraciones intercaladas y las advertencias morales acompañan esta sucesión de caídas, sin separar la experiencia del pícaro de su examen retrospectivo.",
+    "Los delitos de Guzmán desembocan en una condena a galeras, donde sufre trabajo forzado y malos tratos. Allí presenta una conversión de su conducta y procura soportar las injusticias sin volver a los antiguos engaños. Soto, otro galeote, le tiende trampas e intenta implicarlo en una rebelión. Guzmán aparenta aceptar el plan, pero informa al capitán, que descubre las armas preparadas por los conjurados. Confirmada también su inocencia en una acusación anterior, lo liberan de las cadenas mientras se tramita la decisión real sobre su libertad. La obra cierra las dos partes con ese cambio de fortuna y el anuncio de una continuación."
+  ],
+  "resumen_breve": [
+    "Desde Sevilla hasta Madrid e Italia, Guzmán de Alfarache reconstruye una vida de servicios, mendicidad, fraudes y aspiraciones de ascenso.",
+    "Su regreso a España y sus proyectos domésticos y económicos terminan en nuevos delitos y una condena a galeras.",
+    "En el cautiverio declara su arrepentimiento y denuncia una rebelión, por lo que queda libre de cadenas mientras espera la resolución real."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Guzmán de Alfarache",
+      "descripcion": "Narrador y protagonista que contrapone sus delitos pasados a sus advertencias morales."
+    },
+    {
+      "nombre": "Sayavedra",
+      "descripcion": "Compañero de las aventuras y engaños italianos de Guzmán."
+    },
+    {
+      "nombre": "Soto",
+      "descripcion": "Galeote que acusa falsamente al protagonista y organiza una rebelión."
+    },
+    {
+      "nombre": "Cardenal y embajador",
+      "descripcion": "Señores a cuyo servicio entra Guzmán durante su estancia en Roma."
+    },
+    {
+      "nombre": "Capitán de la galera",
+      "descripcion": "Recibe la denuncia de la conspiración y recompensa a Guzmán."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Sevilla y Alfarache",
+      "descripcion": "Origen familiar del protagonista y punto de partida de su relato."
+    },
+    {
+      "nombre": "Madrid y los caminos españoles",
+      "descripcion": "Marco de sus servicios, privaciones y posteriores negocios."
+    },
+    {
+      "nombre": "Génova, Roma y otras ciudades italianas",
+      "descripcion": "Espacios de mendicidad, servicio, burlas y fraudes."
+    },
+    {
+      "nombre": "Galera",
+      "descripcion": "Lugar de la condena, de la conversión declarada y del cambio final de fortuna."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Pobreza y supervivencia",
+      "descripcion": "La necesidad y el deseo de comodidad impulsan servicios, mendicidad y delitos."
+    },
+    {
+      "tema": "Engaño y ascenso social",
+      "descripcion": "Guzmán busca dinero y reconocimiento mediante expedientes fraudulentos."
+    },
+    {
+      "tema": "Arrepentimiento",
+      "descripcion": "El narrador somete su vida a un examen moral y declara una reforma en las galeras."
+    },
+    {
+      "tema": "Justicia e hipocresía",
+      "descripcion": "Sus peripecias muestran abusos, apariencias y desigualdades en diversos sectores de la sociedad."
+    }
+  ]
+}

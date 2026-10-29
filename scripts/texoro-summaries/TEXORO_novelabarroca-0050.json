@@ -1,0 +1,68 @@
+{
+  "archivo": "TEXORO_novelabarroca-0050.txt",
+  "titulo": "La hermosa Aurora",
+  "resumen_largo": [
+    "Aurora, hija de Dionisio, gobernante de Sicilia, pierde a su madre y sufre la hostilidad de Arminda, nueva esposa de su padre. La madrastra utiliza su influencia para apartarla, y la princesa queda recluida en un castillo, acompañada por Celia. Esa situación de aislamiento la expone a una nueva aventura cuando llega a la isla Ricardo, príncipe de Polonia separado de sus compañeros por una tempestad. El joven permanece inicialmente sin manifestar su alta condición, y su presencia despierta el afecto de Aurora, que desea saber si su linaje permite una unión honrosa.",
+    "Con ayuda de Celia y Liberio, Aurora consigue comunicarse con Ricardo sin poner en peligro su persona. Para ocultar su nombre, hace que Celia escriba los mensajes y se presenta bajo la identidad de esta. La cautela protege a la princesa, pero crea una confusión con Federico, verdadero enamorado de Celia: al ver los papeles cree que ella favorece a otro. También Ricardo interpreta mal los indicios y los celos se añaden a las dificultades de la reclusión. Los desplazamientos del príncipe y el encuentro con sus antiguos compañeros permiten finalmente reconocer su rango.",
+    "Ricardo entra en la corte siciliana como príncipe y descubre que la mujer a la que creía Celia es Aurora. El cambio de nombre le hace sospechar un engaño amoroso y proyecta volver a Polonia. Celia explica lo sucedido a Aurora, y esta encomienda a Federico que aclare ante Ricardo la confusión de las cartas. Deshechos los celos de ambas parejas, Dionisio acepta el matrimonio de su hija con el príncipe; se celebran también las bodas de Celia y Federico. Ricardo y Aurora regresan a Polonia, donde él recibe la corona de su padre y ambos viven unidos."
+  ],
+  "resumen_breve": [
+    "En Sicilia, Aurora es recluida por las maniobras de su madrastra y se enamora de Ricardo, príncipe polaco llegado tras una tempestad.",
+    "Las cartas que envía bajo el nombre de Celia provocan equívocos y celos entre Ricardo y Federico, amado de su acompañante.",
+    "La aclaración de las identidades permite dos matrimonios y el regreso de Ricardo y Aurora a Polonia, donde el príncipe recibe la corona."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Aurora",
+      "descripcion": "Princesa siciliana apartada de la corte que ama a Ricardo."
+    },
+    {
+      "nombre": "Ricardo",
+      "descripcion": "Príncipe de Polonia que llega a Sicilia y se enamora de Aurora sin conocer al principio su identidad."
+    },
+    {
+      "nombre": "Celia",
+      "descripcion": "Compañera de Aurora y autora material de las cartas que originan la confusión."
+    },
+    {
+      "nombre": "Federico",
+      "descripcion": "Amado de Celia que interpreta erróneamente los mensajes."
+    },
+    {
+      "nombre": "Dionisio y Arminda",
+      "descripcion": "Padre y madrastra de Aurora; la influencia de Arminda provoca su reclusión."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Sicilia y su corte",
+      "descripcion": "Reino de Aurora y marco de las decisiones familiares y matrimoniales."
+    },
+    {
+      "nombre": "Castillo de Aurora",
+      "descripcion": "Espacio de reclusión y de las comunicaciones secretas."
+    },
+    {
+      "nombre": "Selva y costa",
+      "descripcion": "Lugares de refugio y de reunión de Ricardo con sus compañeros."
+    },
+    {
+      "nombre": "Polonia",
+      "descripcion": "Destino final de la pareja y de la sucesión real."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Identidad y equívocos",
+      "descripcion": "El intercambio de nombres y escrituras produce sospechas infundadas."
+    },
+    {
+      "tema": "Celos y confianza",
+      "descripcion": "Las parejas necesitan aclarar los indicios antes de consolidar sus relaciones."
+    },
+    {
+      "tema": "Linaje y matrimonio",
+      "descripcion": "La confirmación del rango de Ricardo elimina una dificultad central para Aurora."
+    }
+  ]
+}

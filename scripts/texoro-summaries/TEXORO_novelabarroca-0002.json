@@ -1,0 +1,64 @@
+{
+  "archivo": "TEXORO_novelabarroca-0002.txt",
+  "titulo": "El amante venturoso",
+  "resumen_largo": [
+    "En Zaragoza viven dos familias vecinas, unidas por la amistad de Ricardo Milanés y Octavio Esforcia. Carlos, hijo de Ricardo, sale joven a servir en la guerra y regresa después de años de experiencia militar, de la muerte de su padre y de otros negocios. Su hermana Margarita conserva la amistad con Teodora, hija de Octavio, que ha rechazado los casamientos propuestos. Al acompañar a Margarita a casa del vecino, Carlos conoce la belleza de Teodora y queda enamorado de ella.",
+    "Las visitas al padre enfermo permiten al joven mostrar sus habilidades musicales y su destreza en la danza, que despiertan en Teodora una inclinación semejante. Ambos sufren sin reconocer la correspondencia del otro: ella lo observa protegida por celosías y él organiza entretenimientos para atraer su atención. Carlos decide finalmente darle una música nocturna y expresar su amor en versos. Teodora comprende que las canciones se dirigen a ella y confía a Margarita una carta que declara sus sentimientos y permite abandonar aquel silencio.",
+    "Margarita entrega el papel a su hermano y aconseja recurrir a los parientes para pedir formalmente el casamiento. Antonio Milanés presenta la demanda a Octavio, que teme la habitual resistencia de su hija, pero esta acepta complacida. Se conciertan y celebran unas bodas solemnes en el templo de la Virgen del Pilar, seguidas de banquetes, danzas y una academia de versos. Durante las fiestas se manifiestan otros afectos entre los invitados, mientras Carlos y Teodora alcanzan la unión que antes parecía imposible por la reserva de ambos."
+  ],
+  "resumen_breve": [
+    "En Zaragoza, bajo el reinado de Felipe II, Carlos Milanés regresa de su servicio militar y se enamora de Teodora Esforcia.",
+    "Margarita facilita la declaración de los amantes después de que las visitas y las músicas revelan su correspondencia.",
+    "El consentimiento paterno permite unas bodas solemnes en el Pilar y unas fiestas en las que afloran nuevos afectos."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Carlos Milanés",
+      "descripcion": "Caballero y soldado que pretende la mano de Teodora."
+    },
+    {
+      "nombre": "Teodora Esforcia",
+      "descripcion": "Joven que corresponde a Carlos y acepta casarse con él."
+    },
+    {
+      "nombre": "Margarita Milanés",
+      "descripcion": "Hermana de Carlos y amiga de Teodora, mediadora de los amantes."
+    },
+    {
+      "nombre": "Octavio Esforcia",
+      "descripcion": "Padre de Teodora, que consiente el matrimonio."
+    },
+    {
+      "nombre": "Antonio Milanés",
+      "descripcion": "Tío de Carlos que negocia y organiza las bodas."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Zaragoza",
+      "descripcion": "Ciudad donde viven las familias y transcurre el cortejo."
+    },
+    {
+      "nombre": "Casas de los Milanés y los Esforcia",
+      "descripcion": "Viviendas vecinas que permiten visitas y observaciones desde las ventanas."
+    },
+    {
+      "nombre": "Templo de la Virgen del Pilar",
+      "descripcion": "Lugar de la ceremonia nupcial."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Amor correspondido",
+      "descripcion": "Los protagonistas superan la incertidumbre que produce su reserva."
+    },
+    {
+      "tema": "Amistad y mediación familiar",
+      "descripcion": "La hermana y el tío facilitan la unión."
+    },
+    {
+      "tema": "Música y poesía amorosa",
+      "descripcion": "Canciones, cartas en verso y academias sirven para declarar los afectos."
+    }
+  ]
+}

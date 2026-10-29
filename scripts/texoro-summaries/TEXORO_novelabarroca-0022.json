@@ -1,0 +1,64 @@
+{
+  "archivo": "TEXORO_novelabarroca-0022.txt",
+  "titulo": "La española inglesa",
+  "resumen_largo": [
+    "Durante un ataque inglés a Cádiz, Clotaldo se lleva a Londres a la niña Isabel, llamada allí Isabela. Crece en su hogar, cuyos miembros practican secretamente el catolicismo, y conserva su lengua mientras aprende las costumbres inglesas. Ricaredo, hijo de Clotaldo, se enamora de ella y aspira a casarse. La reina conoce a la joven y condiciona la unión a que Ricaredo pruebe personalmente su valor mediante servicios militares, lo que transforma el matrimonio deseado en una sucesión de pruebas.",
+    "Ricaredo obtiene una importante victoria naval, libera cautivos y regresa acompañado de los padres de Isabela, con quienes esta se reúne. Sin embargo, Arnesto también pretende a la joven y su madre, movida por la rivalidad, la envenena. Isabela sobrevive, pero pierde temporalmente su belleza. Ricaredo mantiene su amor, afirmando que ama sus virtudes. La joven vuelve con sus padres a España y se instala en Sevilla, mientras él emprende un viaje religioso y promete buscarla dentro de un plazo convenido.",
+    "Una noticia de la muerte de Ricaredo conduce a Isabela a prepararse para ingresar en Santa Paula. Cuando está a punto de hacerlo, aparece él con el hábito de los cautivos rescatados. Cuenta que sobrevivió a un ataque de Arnesto, cayó después en poder de corsarios y obtuvo la libertad gracias a los trinitarios. Los documentos y un mercader corroboran el relato. Las bodas se celebran en Sevilla y la familia recupera su prosperidad, cerrando una historia de separación, constancia y reencuentro."
+  ],
+  "resumen_breve": [
+    "Una niña española llevada de Cádiz a Londres crece como Isabela en una familia inglesa que mantiene en secreto la fe católica.",
+    "Su amor con Ricaredo supera el servicio militar impuesto por la reina, un envenenamiento y la separación entre Inglaterra y España.",
+    "En Sevilla, Ricaredo reaparece tras su cautiverio cuando Isabela se dispone a entrar en un monasterio, y ambos se casan."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Isabela",
+      "descripcion": "Joven española criada en Inglaterra que conserva su identidad y permanece fiel a Ricaredo."
+    },
+    {
+      "nombre": "Ricaredo",
+      "descripcion": "Hijo de Clotaldo, enamorado de Isabela y protagonista de pruebas militares y cautiverio."
+    },
+    {
+      "nombre": "Clotaldo",
+      "descripcion": "Capitán inglés que se lleva a la niña de Cádiz y la incorpora a su familia."
+    },
+    {
+      "nombre": "La reina de Inglaterra",
+      "descripcion": "Autoridad que protege a Isabela y exige servicios a Ricaredo antes de autorizar la boda."
+    },
+    {
+      "nombre": "Arnesto y su madre",
+      "descripcion": "Rivales que provocan el envenenamiento de Isabela y ponen en peligro a Ricaredo."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Londres",
+      "descripcion": "Ciudad donde Isabela crece y se enfrenta a las decisiones y rivalidades de la corte."
+    },
+    {
+      "nombre": "Sevilla y Santa Paula",
+      "descripcion": "Destino de Isabela y escenario del reencuentro y matrimonio."
+    },
+    {
+      "nombre": "Atlántico, Mediterráneo y Argel",
+      "descripcion": "La expedición naval llega al estrecho de Gibraltar; el viaje por el Mediterráneo termina en el cautiverio de Ricaredo en Argel."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Constancia amorosa",
+      "descripcion": "El afecto de Ricaredo persiste cuando Isabela pierde la belleza y queda separada de él."
+    },
+    {
+      "tema": "Identidad y religión",
+      "descripcion": "La protagonista reúne educación inglesa, origen español y fe católica."
+    },
+    {
+      "tema": "Cautiverio y reencuentro",
+      "descripcion": "Los desplazamientos y la redención de cautivos permiten recomponer la familia y la pareja."
+    }
+  ]
+}

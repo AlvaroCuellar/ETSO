@@ -1,0 +1,72 @@
+{
+  "archivo": "TEXORO_novelabarroca-0029.txt",
+  "titulo": "El ingenioso hidalgo don Quijote de la Mancha",
+  "resumen_largo": [
+    "Esta primera parte comienza con un hidalgo manchego que pierde el juicio por la lectura de libros de caballerías y decide convertirse en caballero andante. Toma el nombre de don Quijote, llama Rocinante a su caballo y elige como señora a Dulcinea del Toboso. Sale solo, confunde una venta con un castillo y recibe allí una fingida investidura. Sus intentos de reparar agravios producen resultados contrarios a sus propósitos y termina golpeado. Un vecino lo devuelve a su aldea, donde el cura y el barbero examinan su biblioteca para combatir su locura.",
+    "Don Quijote vuelve a salir acompañado por Sancho Panza, labrador al que promete el gobierno de una ínsula. Las aventuras de molinos, rebaños, ventas y galeotes muestran la distancia entre el mundo que imagina y las explicaciones de su escudero. En Sierra Morena conoce la desgracia de Cardenio y realiza una penitencia amorosa. El cura y el barbero, que han salido a buscarlo, encuentran también a Dorotea y preparan una ficción caballeresca para sacarlo de la sierra y conducirlo hacia su casa.",
+    "La reunión de varios personajes en una venta permite resolver los conflictos de Cardenio, Luscinda, Dorotea y don Fernando, mientras se escuchan historias como la del cautivo y se lee la del curioso impertinente. Don Quijote continúa reinterpretando como aventuras caballerescas los sucesos ordinarios y sus amigos lo encierran en una jaula, haciéndole creer que está encantado. Tras nuevos encuentros y una última pelea, lo llevan a su aldea. Sancho vuelve también con su familia y el final deja abierta la posibilidad de otra salida."
+  ],
+  "resumen_breve": [
+    "En la primera parte, un hidalgo de la Mancha se transforma en don Quijote y sale por los caminos para vivir las aventuras de sus libros de caballerías.",
+    "Acompañado en su segunda salida por Sancho Panza, confunde la realidad cotidiana con peligros y prodigios caballerescos.",
+    "El cura y el barbero organizan su regreso mientras se resuelven historias amorosas entre Sierra Morena y una venta."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Don Quijote",
+      "descripcion": "Hidalgo que interpreta la realidad según los libros de caballerías y busca reparar agravios."
+    },
+    {
+      "nombre": "Sancho Panza",
+      "descripcion": "Labrador convertido en escudero, que acompaña al caballero esperando una recompensa."
+    },
+    {
+      "nombre": "Dulcinea del Toboso",
+      "descripcion": "Dama idealizada por don Quijote a partir de una mujer de su entorno."
+    },
+    {
+      "nombre": "El cura y el barbero",
+      "descripcion": "Amigos de la aldea que intentan recuperar a don Quijote y llevarlo a casa."
+    },
+    {
+      "nombre": "Dorotea y Cardenio",
+      "descripcion": "Personajes de historias amorosas que ayudan a organizar la salida de Sierra Morena."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "La Mancha y los caminos",
+      "descripcion": "Origen del protagonista y marco de sus salidas y encuentros."
+    },
+    {
+      "nombre": "Ventas",
+      "descripcion": "Lugares de descanso transformados imaginariamente en castillos y centros de reunión narrativa."
+    },
+    {
+      "nombre": "Sierra Morena",
+      "descripcion": "Espacio de la penitencia de don Quijote y de los conflictos de Cardenio y Dorotea."
+    },
+    {
+      "nombre": "Aldea de don Quijote",
+      "descripcion": "Lugar al que lo devuelven después de cada salida de esta primera parte."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Imaginación y realidad",
+      "descripcion": "Don Quijote transforma experiencias ordinarias mediante un código caballeresco."
+    },
+    {
+      "tema": "Amistad y convivencia",
+      "descripcion": "El diálogo con Sancho y los esfuerzos de sus vecinos articulan el viaje y el regreso."
+    },
+    {
+      "tema": "Justicia y consecuencias",
+      "descripcion": "El deseo de proteger a los débiles produce con frecuencia nuevos daños o fracasos."
+    },
+    {
+      "tema": "Amor y narración",
+      "descripcion": "Los personajes cuentan historias de fidelidad, celos y desengaño que se cruzan con la aventura principal."
+    }
+  ]
+}

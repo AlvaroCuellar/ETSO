@@ -1,0 +1,64 @@
+{
+  "archivo": "TEXORO_novelabarroca-0004.txt",
+  "titulo": "Celos vengan desprecios",
+  "resumen_largo": [
+    "Narcisa, noble dama de Milán, rechaza a sus pretendientes y sufre especialmente el acoso del duque Arnaldo y del conde Leonido. Ambos reaccionan a sus desdenes con amenazas o ataques contra su fama, sin que la queja al virrey proporcione una defensa eficaz. Don Duarte, caballero español enamorado de ella, teme importunarla y prefiere seguirla discretamente. Al saber que saldrá a su quinta con otras damas, se presenta allí vestido de forma humilde y consigue alojarse en el jardín.",
+    "Cuando Leonido provoca un conflicto en la quinta, Duarte interviene y lo hiere, dejando a Narcisa intrigada por el valor de aquel desconocido. Más tarde expresa su afecto mediante una música, pero Arnaldo lo ataca y recibe nuevos golpes. El duque se apodera después de un guante de Narcisa para ofenderla, y el español lo desafía, recupera la prenda y se la devuelve sin darse a conocer. La dama, acompañada por su prima Clori, se retira a una aldea para evitar los peligros que la competencia ocasiona y averiguar quién la protege.",
+    "La perseverancia de Duarte y su intervención contra nuevas violencias permiten finalmente que Narcisa conozca y favorezca a su defensor. Arnaldo abandona la pretensión, se casa con una prima y celebra fiestas que Narcisa presencia como señal de su alivio; los celos del duque hacen que su propia esposa promueva su alejamiento de Milán. Libre de esa amenaza, Narcisa da la mano a Duarte. Leonido, al volver y conocer los hechos, busca la reconciliación por otro matrimonio, con Clori, y las dos uniones ponen término a las rivalidades."
+  ],
+  "resumen_breve": [
+    "En Milán, Narcisa sufre el acoso de dos nobles y recibe la protección de un caballero español que oculta su identidad.",
+    "Don Duarte vence en varios enfrentamientos y recupera un guante arrebatado a la dama, despertando su amor.",
+    "La retirada de Arnaldo permite las bodas de Narcisa con Duarte y las de Clori con Leonido."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Narcisa",
+      "descripcion": "Noble dama que rechaza el acoso de sus pretendientes y elige a Duarte."
+    },
+    {
+      "nombre": "Don Duarte",
+      "descripcion": "Caballero español que protege a Narcisa sin identificarse al principio."
+    },
+    {
+      "nombre": "Arnaldo",
+      "descripcion": "Duque que hostiga a la dama y se enfrenta a su defensor."
+    },
+    {
+      "nombre": "Leonido",
+      "descripcion": "Conde rival que ataca su reputación y termina casándose con Clori."
+    },
+    {
+      "nombre": "Clori",
+      "descripcion": "Prima y confidente de Narcisa."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Milán",
+      "descripcion": "Ciudad donde se desarrolla la rivalidad amorosa."
+    },
+    {
+      "nombre": "Quinta y jardines de Narcisa",
+      "descripcion": "Espacios del primer rescate y del cortejo encubierto."
+    },
+    {
+      "nombre": "Aldea cercana",
+      "descripcion": "Retiro al que acuden las primas para evitar los conflictos."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Amor y servicio discreto",
+      "descripcion": "Duarte gana la confianza de la dama con acciones protectoras."
+    },
+    {
+      "tema": "Celos y violencia",
+      "descripcion": "Los rivales convierten el rechazo en agresiones."
+    },
+    {
+      "tema": "Libertad matrimonial",
+      "descripcion": "La protagonista consigue elegir esposo después de librarse del acoso."
+    }
+  ]
+}

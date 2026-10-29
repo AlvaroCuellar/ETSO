@@ -1,0 +1,72 @@
+{
+  "archivo": "TEXORO_novelabarroca-0060.txt",
+  "titulo": "Estragos que causa el vicio",
+  "resumen_largo": [
+    "En Lisboa, durante la estancia de Felipe III en 1619, don Gaspar sale de una visita nocturna y encuentra a una mujer gravemente herida. La lleva a su alojamiento, solicita ayuda y avisa a la autoridad. La inspección de la casa indicada por la joven descubre numerosos cadáveres y al dueño muerto sobre su propia espada. Cuando la superviviente, Florentina, puede hablar, refiere su historia. Había crecido con doña Madalena como si fueran hermanas, aunque al morir sus padres conocieron que no lo eran; las dos quedaron bajo una misma tutela y muy unidas por el afecto.",
+    "La amistad se altera cuando don Dionís ama a Madalena y se casa con ella, mientras Florentina se enamora también de él. Los celos y la convivencia hacen posible una relación clandestina que agravia a la esposa. Una criada persuade a Florentina de que eliminar a Madalena permitirá conseguir el matrimonio que desea. Ambas preparan una falsa acusación: la criada hace creer a don Dionís que su esposa tiene relaciones con el joven Fernando y lo llama de noche al dormitorio de la señora. El marido interpreta su presencia como prueba del adulterio, lo mata y apuñala a Madalena; después extiende su furia a otros miembros de la casa.",
+    "La criada confiesa el engaño, pero don Dionís la mata y se vuelve después contra Florentina. Hiere a su amante, mata a la esclava que trata de interponerse y se suicida. Florentina logra salir y cae en la calle, donde la encuentra don Gaspar. Este renuncia a convertir la ayuda en una relación amorosa y se ocupa de su curación y del problema judicial. Florentina acepta retirarse a un convento, y el rey perdona su responsabilidad en lo sucedido. Vive después en religión y mantiene el agradecimiento a su protector; don Gaspar regresa con el monarca a Madrid y acaba casándose en Toledo."
+  ],
+  "resumen_breve": [
+    "En Lisboa, en 1619, don Gaspar socorre a Florentina, superviviente de una matanza en la casa de don Dionís.",
+    "Ella cuenta cómo el amor por el marido de Madalena transformó una amistad de infancia en adulterio, celos y violencia.",
+    "Curada y perdonada por el rey, Florentina entra en un convento para hacer penitencia, mientras su protector vuelve a España."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Florentina",
+      "descripcion": "Superviviente y narradora cuya relación con don Dionís contribuye a la catástrofe."
+    },
+    {
+      "nombre": "Don Gaspar",
+      "descripcion": "Gentilhombre que la socorre y consigue ayuda médica y protección."
+    },
+    {
+      "nombre": "Don Dionís",
+      "descripcion": "Marido de Madalena y amante de Florentina, autor de la matanza y de su propio suicidio."
+    },
+    {
+      "nombre": "Doña Madalena",
+      "descripcion": "Compañera de infancia de Florentina y esposa agraviada."
+    },
+    {
+      "nombre": "Criada de Florentina",
+      "descripcion": "Consejera que propone eliminar a Madalena como salida al conflicto."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Lisboa",
+      "descripcion": "Ciudad donde la presencia de Felipe III fecha y enmarca el relato."
+    },
+    {
+      "nombre": "Casa de don Dionís",
+      "descripcion": "Espacio de la convivencia, el adulterio y la matanza."
+    },
+    {
+      "nombre": "Alojamiento de don Gaspar",
+      "descripcion": "Lugar del rescate, la curación y la narración de Florentina."
+    },
+    {
+      "nombre": "Convento lisboeta",
+      "descripcion": "Destino de penitencia de la superviviente."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Adulterio y celos",
+      "descripcion": "El deseo por el marido de la compañera destruye la confianza familiar."
+    },
+    {
+      "tema": "Violencia doméstica",
+      "descripcion": "La furia de don Dionís mata a distintas personas de su casa."
+    },
+    {
+      "tema": "Culpa y penitencia",
+      "descripcion": "Florentina interpreta su supervivencia como ocasión de arrepentimiento."
+    },
+    {
+      "tema": "Socorro y compasión",
+      "descripcion": "La ayuda de don Gaspar permite que la herida sobreviva y rehaga su vida."
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "archivo": "TEXORO_novelabarroca-0030.txt",
+  "titulo": "Segunda parte del ingenioso caballero don Quijote de la Mancha",
+  "resumen_largo": [
+    "Esta segunda parte comienza con don Quijote recuperándose en su aldea, pero su conversación con Sancho y Sansón Carrasco reaviva el deseo de salir. Ambos conocen que sus primeras aventuras circulan impresas y emprenden una tercera marcha. Al buscar a Dulcinea, Sancho presenta a una labradora como si fuese la dama encantada, y el caballero intenta explicar así la diferencia entre su ideal y lo que ve. Carrasco, disfrazado como Caballero de los Espejos, procura vencerlo para obligarlo a regresar, aunque esta primera tentativa fracasa.",
+    "El viaje incluye el encuentro con el Caballero del Verde Gabán, la aventura de los leones, las bodas de Camacho y la cueva de Montesinos. Unos duques que han leído su historia los alojan y organizan burlas adaptadas a sus creencias, como el desencanto de Dulcinea y el vuelo de Clavileño. Sancho recibe el gobierno fingido de Barataria, donde demuestra capacidad para juzgar, pero las restricciones y una agresión preparada lo llevan a renunciar. Reunidos otra vez, los compañeros abandonan aquel mundo de ficciones impuestas por otros.",
+    "Después de enterarse de una continuación que no reconocen como propia, cambian su ruta y llegan a Barcelona. Allí Sansón Carrasco, ahora Caballero de la Blanca Luna, vence a don Quijote y le impone permanecer un año en su aldea. Durante el regreso aún atraviesan nuevas burlas y proyectan una vida pastoril. Ya en casa, el protagonista enferma, recupera el juicio y se reconoce como Alonso Quijano. Reniega de los libros de caballerías, dispone su testamento y muere entre sus allegados, pese a los intentos de Sancho de animarlo."
+  ],
+  "resumen_breve": [
+    "En la segunda parte, don Quijote y Sancho emprenden una tercera salida cuando ya son conocidos por el libro que cuenta sus aventuras anteriores.",
+    "Entre encuentros y burlas de los duques, Sancho gobierna Barataria y ambos llegan a Barcelona, donde el Caballero de la Blanca Luna derrota al protagonista.",
+    "De regreso en su aldea, don Quijote recobra el juicio como Alonso Quijano, hace testamento y muere."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Don Quijote / Alonso Quijano",
+      "descripcion": "Caballero cuya última salida concluye con derrota, recuperación del juicio y muerte."
+    },
+    {
+      "nombre": "Sancho Panza",
+      "descripcion": "Escudero que ejerce el gobierno de Barataria y procura sostener a su amo hasta el final."
+    },
+    {
+      "nombre": "Sansón Carrasco",
+      "descripcion": "Bachiller que se disfraza de caballero para imponer a don Quijote el regreso."
+    },
+    {
+      "nombre": "Los duques",
+      "descripcion": "Anfitriones que convierten a los protagonistas en objeto de burlas organizadas."
+    },
+    {
+      "nombre": "Dulcinea del Toboso",
+      "descripcion": "Figura ideal cuya supuesta transformación y desencanto guían varias aventuras."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Caminos de la Mancha y Aragón",
+      "descripcion": "Itinerario de encuentros durante la tercera salida."
+    },
+    {
+      "nombre": "Casa de los duques",
+      "descripcion": "Escenario de espectáculos y engaños destinados a don Quijote y Sancho."
+    },
+    {
+      "nombre": "Barataria",
+      "descripcion": "Población presentada a Sancho como ínsula donde ejerce un gobierno sometido a burlas."
+    },
+    {
+      "nombre": "Barcelona",
+      "descripcion": "Lugar de la derrota ante el Caballero de la Blanca Luna."
+    },
+    {
+      "nombre": "Aldea de don Quijote",
+      "descripcion": "Espacio del retorno, el testamento y la muerte."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Fama y ficción",
+      "descripcion": "La circulación del primer libro y de otra continuación influye sobre lo que los personajes viven."
+    },
+    {
+      "tema": "Burla y poder",
+      "descripcion": "Los duques explotan la credulidad de sus huéspedes para su propio entretenimiento."
+    },
+    {
+      "tema": "Gobierno y justicia",
+      "descripcion": "Sancho muestra buen juicio y acaba prefiriendo su libertad a las obligaciones del poder."
+    },
+    {
+      "tema": "Desengaño y muerte",
+      "descripcion": "La derrota conduce al regreso y culmina en la renuncia a la identidad caballeresca."
+    }
+  ]
+}

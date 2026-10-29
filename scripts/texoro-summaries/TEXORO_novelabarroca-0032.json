@@ -1,0 +1,56 @@
+{
+  "archivo": "TEXORO_novelabarroca-0032.txt",
+  "titulo": "Diálogo entre Cilenia y Selanio sobre la vida del campo",
+  "resumen_largo": [
+    "Selanio conversa con Cilenia sobre su relación con la verdad y elogia la disposición de ella a acogerla. La interlocutora modera las alabanzas y subraya que la verdad no pertenece a una sola persona, sino que puede ser compartida. El diálogo pasa de estos cumplidos a la ausencia de Cilenia y a la experiencia de vivir fuera de la ciudad. Selanio lamenta no haber podido disfrutar de su compañía, mientras ella presenta esa falta como una razón para no apreciar la vida solitaria.",
+    "Cilenia sostiene que vivir en la ciudad ofrece mejores ocasiones de trato y que una compañía agradable no basta para convertir el campo en el mejor lugar de residencia. Invita a Selanio a defender su opinión. Él distingue formas de vida y enumera las preocupaciones de quienes buscan riquezas, cargos, favor cortesano o fama. La codicia y la ambición, sostiene, alteran la justicia, las amistades y el sosiego, y no constituyen modelos adecuados para quien desea vivir con tranquilidad.",
+    "Selanio contrapone a esos cuidados una vida rural moderada, atenta a los trabajos y placeres sencillos de la naturaleza. Describe prados, ríos, aves y estaciones, y relaciona su contemplación con el conocimiento del orden de la creación y de la fragilidad humana. Su defensa del campo permanece ligada al deseo de gozar de la compañía de Cilenia. Ella agradece las razones, pero declara que no ha cambiado de opinión. Como se hace tarde, ambos aplazan el debate hasta otro encuentro."
+  ],
+  "resumen_breve": [
+    "Cilenia y Selanio conversan sobre la verdad y sobre las ventajas de vivir en el campo o en la ciudad.",
+    "Él critica la codicia y la ambición y propone una vida rural moderada, mientras ella prefiere la compañía y las oportunidades urbanas.",
+    "La conversación concluye al caer la tarde sin acuerdo, con el propósito de continuar la discusión otro día."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Cilenia",
+      "descripcion": "Interlocutora que defiende la vida urbana y mantiene su opinión después de escuchar a Selanio."
+    },
+    {
+      "nombre": "Selanio",
+      "descripcion": "Interlocutor que elogia a Cilenia y desarrolla una defensa moral y afectiva de la vida del campo."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "El campo",
+      "descripcion": "Espacio debatido como posible ámbito de sosiego, moderación y contemplación."
+    },
+    {
+      "nombre": "La ciudad y la corte",
+      "descripcion": "Contrapunto del campo, relacionado tanto con la compañía como con la ambición."
+    },
+    {
+      "nombre": "Lugar de la conversación",
+      "descripcion": "Marco del encuentro, sin localización concreta precisada, donde la tarde limita el debate."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Campo y ciudad",
+      "descripcion": "Los interlocutores contrastan modos de vivir sin alcanzar una conclusión compartida."
+    },
+    {
+      "tema": "Codicia y sosiego",
+      "descripcion": "Selanio opone la ambición de riqueza y poder a la suficiencia y la tranquilidad."
+    },
+    {
+      "tema": "Amistad y compañía",
+      "descripcion": "La preferencia por un espacio depende también de la posibilidad de convivir con la persona querida."
+    },
+    {
+      "tema": "Verdad y diálogo",
+      "descripcion": "La conversación reconoce el valor de escuchar razones aun cuando persista la diferencia de opiniones."
+    }
+  ]
+}

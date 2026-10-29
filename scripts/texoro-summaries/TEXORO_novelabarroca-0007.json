@@ -1,0 +1,68 @@
+{
+  "archivo": "TEXORO_novelabarroca-0007.txt",
+  "titulo": "La industria vence desdenes",
+  "resumen_largo": [
+    "Don Pedro de Medrano, natural de Úbeda, se marcha a Roma después de asegurar el casamiento de su hermana Jacinta con don Alonso. Al servicio del cardenal Zapata, sus conocimientos, pintura y predicación le procuran una posición eclesiástica favorable. A su regreso a España recibe a su sobrino Jacinto y lo lleva consigo a Toledo, donde puede ofrecerle una educación y un acomodo superiores a los de su familia, empobrecida por el juego. En la casa vecina viven Guiomar y su hija Beatriz, nobles portuguesas que se mantienen con labores de bordado.",
+    "Jacinto se enamora de Beatriz, pero ella, aunque inclinada a él, se muestra severa por su pobreza y por la rivalidad de Leonor, una viuda que lo galantea con desenvoltura. Las visitas, músicas y reuniones permiten que el joven declare su amor, sin que sus cartas o regalos venzan la resistencia de la dama. Los celos producen sucesivos desprecios y enferman a Jacinto, que mejora cuando Beatriz lo visita y vuelve a recaer cuando cree perdido su favor. Finalmente comprende que las reacciones de la joven pueden revelar amor y decide provocar celos para que ella se declare.",
+    "Una carta deliberadamente áspera provoca en Beatriz un desmayo y hace que Jacinto se arrepienta de haber llevado tan lejos la prueba. El joven confía al tío todo lo ocurrido y obtiene su promesa de favorecer el matrimonio, sin exigir riqueza a la futura esposa. Don Pedro media con Guiomar, prepara joyas y vestidos y llama a los padres de Jacinto para las bodas. Leonor se aleja de Toledo ocultando su disgusto, y los amantes se casan con fiestas, dejando atrás las incertidumbres y los enfrentamientos nacidos de sus celos."
+  ],
+  "resumen_breve": [
+    "En Toledo, Jacinto de Medrano, protegido por su tío sacerdote, se enamora de la noble y pobre Beatriz de Almeida.",
+    "La reserva de la dama y las atenciones de Leonor desencadenan celos, desprecios y enfermedades que ponen a prueba la relación.",
+    "La intervención de don Pedro permite las bodas sin que la falta de dote impida la unión."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Don Jacinto",
+      "descripcion": "Joven que ama a Beatriz y trata de vencer sus desdenes."
+    },
+    {
+      "nombre": "Doña Beatriz de Almeida",
+      "descripcion": "Dama portuguesa que encubre su amor por reserva y celos."
+    },
+    {
+      "nombre": "Don Pedro de Medrano",
+      "descripcion": "Tío de Jacinto, sacerdote y protector que negocia las bodas."
+    },
+    {
+      "nombre": "Doña Guiomar de Meneses",
+      "descripcion": "Madre de Beatriz y vecina de don Pedro."
+    },
+    {
+      "nombre": "Doña Leonor",
+      "descripcion": "Viuda que galantea a Jacinto y provoca los celos de Beatriz."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Toledo",
+      "descripcion": "Ciudad donde se desarrolla el conflicto amoroso."
+    },
+    {
+      "nombre": "Casas vecinas de don Pedro y Guiomar",
+      "descripcion": "Espacios de visitas, cartas, vigilancia y cuidados al enfermo."
+    },
+    {
+      "nombre": "Lugar de recreo y cacería",
+      "descripcion": "Marco de una reunión festiva que agrava la rivalidad."
+    },
+    {
+      "nombre": "Roma",
+      "descripcion": "Lugar donde don Pedro obtiene la posición que le permite ayudar a su familia."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Celos y declaración amorosa",
+      "descripcion": "El protagonista emplea los celos para interpretar la voluntad de Beatriz."
+    },
+    {
+      "tema": "Virtud y pobreza",
+      "descripcion": "El matrimonio se acepta por la calidad y la conducta de la dama."
+    },
+    {
+      "tema": "Protección familiar",
+      "descripcion": "La intervención del tío encauza el conflicto hacia una solución."
+    }
+  ]
+}

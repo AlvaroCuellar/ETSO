@@ -1,0 +1,68 @@
+{
+  "archivo": "TEXORO_novelabarroca-0011.txt",
+  "titulo": "Las dos dichas sin pensar",
+  "resumen_largo": [
+    "Unos pastores encuentran en las montañas de Jaca a una dama herida y a un hombre muerto. Doña Dorotea, dueña de una granja cercana, la recibe y procura su curación hasta que la joven, Emerenciana, puede contar su historia. En Zaragoza se había enamorado de don Gastón, a quien conoció al salir de una comedia, y se había unido con él en secreto frente a la oposición paterna. Su padre descubrió las visitas, apresó al caballero y ordenó a Claudio, un criado de confianza, que lo envenenara. Claudio fingió cumplir la orden y facilitó la huida de Gastón y de la dama.",
+    "Cuando Emerenciana quedó en poder del criado, este desvió el camino e intentó abusar de ella. La joven se defendió con un cuchillo, lo mató y quedó malherida, sin llegar a reunirse con su esposo. Dorotea le ofrece acompañarla a Barcelona y también le revela su propia pena: ama a don Luis, que huyó después de matar a un capitán que los perseguía por celos. La falta prolongada de cartas desde Nápoles la ha llevado a creer posible su muerte y a vivir retirada, rechazando otros casamientos mientras desconoce su destino.",
+    "Las dos mujeres viajan a Barcelona y a Montserrat, pero no consiguen al principio noticias de Gastón. En una posada al pie de la montaña presencian una disputa por unas joyas ganadas al juego que contienen un retrato: los contendientes resultan ser Gastón y Luis. Don Fernando, hermano de Gastón, los reconoce y evita que continúen el combate, y las damas pueden reencontrarse con sus amantes. Luis explica su silencio por una grave enfermedad, mientras Gastón da cuenta de su espera. Se resuelve la causa por la muerte del capitán, se conoce la muerte del padre de Emerenciana y ambos enlaces reciben una conclusión feliz en Barcelona."
+  ],
+  "resumen_breve": [
+    "Emerenciana, herida cerca de Jaca al defenderse de un criado, encuentra refugio en la granja de Dorotea.",
+    "Las dos damas comparten historias de amor interrumpidas por la violencia y viajan a Barcelona y Montserrat en busca de sus enamorados.",
+    "Una disputa por joyas permite reconocer a Gastón y Luis y termina en reconciliación y bodas."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Doña Emerenciana",
+      "descripcion": "Dama zaragozana que huye de su padre y se defiende del criado Claudio."
+    },
+    {
+      "nombre": "Doña Dorotea",
+      "descripcion": "Señora de una granja que protege a Emerenciana y espera noticias de Luis."
+    },
+    {
+      "nombre": "Don Gastón",
+      "descripcion": "Amado de Emerenciana, liberado de la prisión que dispuso su padre."
+    },
+    {
+      "nombre": "Don Luis",
+      "descripcion": "Amado de Dorotea, ausente por haber matado a un rival."
+    },
+    {
+      "nombre": "Claudio",
+      "descripcion": "Criado que primero facilita una fuga y después intenta abusar de Emerenciana."
+    },
+    {
+      "nombre": "Don Fernando",
+      "descripcion": "Hermano de Gastón que ayuda al reconocimiento final."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Montañas y granja de Jaca",
+      "descripcion": "Espacios del hallazgo, la curación y las confidencias de las damas."
+    },
+    {
+      "nombre": "Zaragoza",
+      "descripcion": "Ciudad de los amores de Emerenciana y de la persecución paterna."
+    },
+    {
+      "nombre": "Barcelona y Montserrat",
+      "descripcion": "Destino del viaje y ámbito del reencuentro de las parejas."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Amparo y amistad entre mujeres",
+      "descripcion": "Dorotea ofrece protección y compañía a la joven herida."
+    },
+    {
+      "tema": "Violencia y resistencia",
+      "descripcion": "La oposición familiar y el intento de abuso separan a los amantes."
+    },
+    {
+      "tema": "Ausencia y reconocimiento",
+      "descripcion": "La incertidumbre se resuelve por un encuentro imprevisto."
+    }
+  ]
+}

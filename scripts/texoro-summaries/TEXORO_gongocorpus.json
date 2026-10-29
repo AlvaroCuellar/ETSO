@@ -1,0 +1,68 @@
+{
+  "archivo": "TEXORO_gongocorpus.txt",
+  "titulo": "Gongocorpus",
+  "resumen_largo": [
+    "Gongocorpus reúne composiciones poéticas de Luis de Góngora de diversa extensión y forma. En los poemas amorosos, las voces describen la belleza de la persona querida, lamentan su ausencia o expresan su dolor ante un paisaje que parece escuchar la queja. Los sonetos pueden contraponer la juventud y su esplendor a la desaparición futura de la belleza, mientras otras piezas narran encuentros, separaciones y escenas de ambiente pastoril. Figuran también las Soledades y la Fábula de Polifemo y Galatea, que narran el recorrido de un peregrino y el conflicto de Acis, Galatea y el cíclope. La voz y la situación cambian entre composiciones.",
+    "El conjunto incorpora también poemas satíricos y burlescos. En ellos se contraponen el bienestar cotidiano y las pretensiones de honra, se representa el poder del dinero o se transforma un asunto familiar en ocasión de agudeza. La mitología permite contar historias y construir comparaciones, pero también introducir tratamientos jocosos, como ocurre con Píramo y Tisbe. Estas piezas alternan con poemas dirigidos a personas concretas, elogios, asuntos religiosos y composiciones de circunstancia vinculadas con acontecimientos o intercambios sociales.",
+    "Los paisajes, los objetos y las referencias cultas adquieren funciones diferentes según la pieza: pueden sostener una queja, engrandecer un destinatario o provocar un efecto cómico. La colección no desarrolla una intriga única ni conduce a un desenlace compartido. Cada poema organiza su propio recorrido, desde la presentación de una imagen o una situación hasta su cierre. La variedad del conjunto permite leer conjuntamente el lamento amoroso, la celebración, la reflexión sobre el tiempo y la observación satírica de la vida cotidiana."
+  ],
+  "resumen_breve": [
+    "Gongocorpus reúne poemas de Luis de Góngora en los que se alternan el amor, la belleza, la ausencia y la conciencia del paso del tiempo.",
+    "Las composiciones incluyen también sátira, asuntos mitológicos, elogios, escenas pastoriles y poemas de circunstancia.",
+    "Cada pieza tiene su propia voz y situación, de modo que la colección presenta distintos recorridos poéticos sin una trama común."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Voces líricas y narradores poéticos",
+      "descripcion": "Hablantes que lamentan, celebran, describen o narran situaciones distintas en cada composición."
+    },
+    {
+      "nombre": "Amantes, damas y pastores",
+      "descripcion": "Figuras de los poemas amorosos y pastoriles, con relaciones variables entre deseo, ausencia y desengaño."
+    },
+    {
+      "nombre": "Píramo y Tisbe y otras figuras clásicas",
+      "descripcion": "Personajes mitológicos que proporcionan relatos, comparaciones y posibilidades de tratamiento burlesco."
+    },
+    {
+      "nombre": "Destinatarios de elogios y sátiras",
+      "descripcion": "Personas y tipos sociales que reciben alabanzas, regalos verbales o críticas ingeniosas."
+    },
+    {
+      "nombre": "El peregrino, Acis, Galatea y Polifemo",
+      "descripcion": "Protagonistas de las Soledades y de la Fábula de Polifemo y Galatea, dos poemas narrativos incluidos en la colección."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Paisajes pastoriles",
+      "descripcion": "Montes, ríos y campos que acogen el lamento, la descripción y las escenas de pastores."
+    },
+    {
+      "nombre": "Ámbitos urbanos y cortesanos",
+      "descripcion": "Marcos de poemas de circunstancia y de observación satírica."
+    },
+    {
+      "nombre": "Espacios mitológicos",
+      "descripcion": "Lugares evocados en relatos y comparaciones procedentes de la tradición clásica."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Amor, belleza y fugacidad",
+      "descripcion": "La admiración y el deseo se enfrentan a la ausencia y al desgaste del tiempo."
+    },
+    {
+      "tema": "Sátira y vida cotidiana",
+      "descripcion": "Los poemas cuestionan las pretensiones sociales y representan con humor el dinero, los intercambios y las costumbres."
+    },
+    {
+      "tema": "Mitología y transformación burlesca",
+      "descripcion": "Las historias clásicas se emplean tanto para engrandecer situaciones como para tratarlas de forma jocosa."
+    },
+    {
+      "tema": "Celebración y circunstancia",
+      "descripcion": "El poema responde a personas, ocasiones y acontecimientos mediante el elogio o la agudeza."
+    }
+  ]
+}

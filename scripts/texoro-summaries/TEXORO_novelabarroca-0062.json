@@ -1,0 +1,76 @@
+{
+  "archivo": "TEXORO_novelabarroca-0062.txt",
+  "titulo": "La inocencia castigada",
+  "resumen_largo": [
+    "Doña Inés se casa en una ciudad andaluza próxima a Sevilla, dejando la casa de su hermano don Francisco y de una cuñada cruel. Don Diego, que la desea sin ser correspondido, recurre a una intermediaria. Esta pide prestado un vestido de Inés y lo utiliza para hacer pasar a otra mujer por ella. Cuando el galán cree haber obtenido sus favores, la verdadera Inés descubre el engaño y lo denuncia ante la autoridad. Queda demostrada su inocencia, pero la frustración de don Diego no pone fin a sus pretensiones.",
+    "Don Diego consulta entonces a un nigromántico, que fabrica una figura y una vela para obligar a Inés a salir de noche y acudir a su cama sin voluntad ni memoria de lo sucedido. La revelación de esas visitas vuelve a ponerla bajo sospecha, pese al conocimiento de los encantamientos. Su marido don Alonso, su hermano y su cuñada deciden castigarla por su cuenta. La emparedan en un hueco estrecho de la casa y le dan apenas sustento. Durante seis años Inés vive encerrada, sin poder hacer oír públicamente su defensa y sometida a un deterioro extremo.",
+    "Una vecina escucha finalmente sus lamentos y, mediante otras mujeres, el caso llega al arzobispo y al asistente. La autoridad registra la casa, prende a los responsables y derriba el tabique. Inés sale viva, pero ha perdido la vista y presenta las huellas del abandono. Una señora se hace cargo de su curación, mientras el proceso acaba con la condena y ejecución del marido, el hermano y la cuñada. La protagonista recupera la salud, aunque permanece ciega, y pasa a vivir en un convento con criadas y recursos de las haciendas de quienes la habían castigado."
+  ],
+  "resumen_breve": [
+    "En Andalucía, doña Inés es víctima primero de una suplantación y después de un hechizo que la lleva sin voluntad a la casa de don Diego.",
+    "Su marido, su hermano y su cuñada la emparedan durante seis años, castigando a una mujer inocente.",
+    "El aviso de unas vecinas permite rescatarla y ejecutar a los responsables, aunque Inés queda ciega y vive después en un convento."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Doña Inés",
+      "descripcion": "Mujer inocente sometida a engaños, encantamiento y un encierro que le hace perder la vista."
+    },
+    {
+      "nombre": "Don Diego",
+      "descripcion": "Pretendiente rechazado que utiliza intermediarios y magia para forzar sus deseos."
+    },
+    {
+      "nombre": "Don Alonso",
+      "descripcion": "Marido de Inés y partícipe del castigo."
+    },
+    {
+      "nombre": "Don Francisco y su esposa",
+      "descripcion": "Hermano y cuñada que colaboran en el emparedamiento."
+    },
+    {
+      "nombre": "Vecinas y señora protectora",
+      "descripcion": "Mujeres que descubren el encierro, dan el aviso y cuidan de Inés."
+    },
+    {
+      "nombre": "Arzobispo y asistente",
+      "descripcion": "Autoridades que ordenan el rescate y el proceso contra los culpables."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Ciudad andaluza próxima a Sevilla",
+      "descripcion": "Marco inicial del matrimonio y de los engaños."
+    },
+    {
+      "nombre": "Casa de don Diego",
+      "descripcion": "Lugar de la suplantación y de las visitas impuestas por el encantamiento."
+    },
+    {
+      "nombre": "Hueco emparedado de la casa familiar",
+      "descripcion": "Espacio de los seis años de encierro."
+    },
+    {
+      "nombre": "Casa protectora y convento",
+      "descripcion": "Lugares de curación y de seguridad posterior."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Inocencia y violencia",
+      "descripcion": "Inés padece castigos por actos que no ha cometido voluntariamente."
+    },
+    {
+      "tema": "Deseo y coacción",
+      "descripcion": "El pretendiente busca imponerse mediante engaño y magia."
+    },
+    {
+      "tema": "Crueldad familiar",
+      "descripcion": "La defensa del honor se convierte en una larga tortura doméstica."
+    },
+    {
+      "tema": "Socorro y justicia",
+      "descripcion": "El aviso de otras mujeres desencadena el rescate y el castigo legal."
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "archivo": "TEXORO_novelabarroca-0031.txt",
+  "titulo": "Rinconete y Cortadillo",
+  "resumen_largo": [
+    "Dos muchachos se encuentran en la venta del Molinillo, camino de Andalucía, y comparten las circunstancias que los han apartado de sus familias. Pedro del Rincón sabe utilizar los naipes para obtener dinero y Diego Cortado se ha especializado en cortar bolsas. Se reconocen como compañeros de oficio y emprenden juntos el viaje hacia Sevilla. Allí intentan ganarse la vida como mozos de carga, pero continúan los hurtos y descubren que el ejercicio del robo está sometido a una organización local.",
+    "Un muchacho los conduce a casa de Monipodio, que examina sus habilidades, los incorpora a su comunidad y los llama Rinconete y Cortadillo. En el patio conocen a ladrones, prostitutas, intermediarios y vigilantes, todos unidos por reglas de reparto y obediencia. La reunión muestra sus devociones religiosas, sus preocupaciones por los encargos criminales y sus relaciones con agentes de justicia. También asisten al conflicto entre Cariharta y Repolido, que acaba reconciliado dentro de la convivencia del grupo.",
+    "Monipodio consulta la memoria de los trabajos pendientes, distribuye responsabilidades y asigna a los nuevos miembros zonas en las que actuar. Después de despedirse, Rinconete comenta con Cortadillo lo que han visto y se admira de los errores de lenguaje y de la confianza con que aquellos delincuentes creen que sus prácticas religiosas compensan sus delitos. Se propone apartarse de una vida tan desordenada, pero la edad y la falta de experiencia hacen que ambos permanezcan todavía en ella, sin que el relato cierre su trayectoria."
+  ],
+  "resumen_breve": [
+    "Pedro del Rincón y Diego Cortado se conocen en una venta y llegan juntos a Sevilla para vivir de sus habilidades y de pequeños hurtos.",
+    "Ingresan como Rinconete y Cortadillo en la organización de Monipodio y observan su mezcla de disciplina criminal y devoción religiosa.",
+    "Rinconete reconoce las contradicciones del grupo y desea salir de él, aunque los dos muchachos prolongan aquella vida."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Rinconete",
+      "descripcion": "Pedro del Rincón, joven jugador y observador crítico de la comunidad de Monipodio."
+    },
+    {
+      "nombre": "Cortadillo",
+      "descripcion": "Diego Cortado, compañero de Rinconete y hábil en cortar y robar bolsas."
+    },
+    {
+      "nombre": "Monipodio",
+      "descripcion": "Jefe que organiza los robos, reparte encargos y regula la convivencia del grupo."
+    },
+    {
+      "nombre": "Cariharta y Repolido",
+      "descripcion": "Pareja cuyo conflicto revela la violencia y los mecanismos de conciliación de la comunidad."
+    },
+    {
+      "nombre": "Ganchoso",
+      "descripcion": "Miembro de la comunidad que enseña a Rinconete y Cortadillo las zonas asignadas para actuar en Sevilla."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Venta del Molinillo",
+      "descripcion": "Lugar del encuentro y del pacto inicial entre los dos jóvenes."
+    },
+    {
+      "nombre": "Calles de Sevilla",
+      "descripcion": "Ámbito de los hurtos y de los trabajos asignados a la comunidad."
+    },
+    {
+      "nombre": "Casa y patio de Monipodio",
+      "descripcion": "Centro de reunión, examen e incorporación de los nuevos ladrones."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Aprendizaje delictivo",
+      "descripcion": "La amistad de los muchachos desemboca en el conocimiento de una estructura organizada del robo."
+    },
+    {
+      "tema": "Religión y contradicción moral",
+      "descripcion": "Los delincuentes combinan sus delitos con devociones que consideran garantías de salvación."
+    },
+    {
+      "tema": "Lenguaje y observación",
+      "descripcion": "Rinconete percibe en las palabras y conductas del grupo su ignorancia y sus incoherencias."
+    }
+  ]
+}

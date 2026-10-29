@@ -1,0 +1,76 @@
+{
+  "archivo": "TEXORO_novelabarroca-0010.txt",
+  "titulo": "Aventuras del bachiller Trapaza",
+  "resumen_largo": [
+    "Hernando, apodado Trapaza, nace en Zamarramala y crece en Segovia al cuidado de su madre viuda y de su abuelo. Su inteligencia le permite aprender con facilidad, pero las travesuras y el juego impiden aprovechar la educación que recibe. Enviado a estudiar a Salamanca, adopta un apellido prestigioso y una apariencia de caballero para obtener crédito y favores. Pronto convierte las burlas y las relaciones amorosas en su ocupación principal, y otros estudiantes lo engañan también a él, mostrando la fragilidad de la posición que ha inventado.",
+    "La salida de Salamanca abre una sucesión de viajes y mudanzas de fortuna junto a Estefanía y Varguillas, y después con otros compañeros. Pasa por prisiones, robos y servicios domésticos en su recorrido hacia Andalucía, donde alterna la necesidad con los beneficios de nuevas estafas. Los relatos de otros viajeros interrumpen el trayecto, mientras Trapaza aprende a explotar la credulidad de quienes encuentra. En Jaén pretende alcanzar un matrimonio ventajoso con Serafina mediante otra identidad fingida, pero alguien que lo conoció en Salamanca descubre el enredo y hace fracasar su proyecto.",
+    "Ya en Madrid, Trapaza vuelve a presentarse como caballero y utiliza el nombre de Vasco Mascareñas y un hábito de la orden de Cristo para sostener sus pretensiones. Mantiene a Estefanía en la esperanza del matrimonio mientras corteja a doña María, pero la primera encuentra sus cartas y descubre el engaño. Movida por los celos, lo denuncia ante los consejeros de Portugal, y las pesquisas revelan la falsedad de su nombre y de su hábito. Confiesa bajo amenaza de tormento y es condenado a doscientos azotes y seis años de galeras, aunque consigue que no se ejecuten los azotes. La historia termina con su incorporación a una galera y remite nuevas aventuras a otra parte."
+  ],
+  "resumen_breve": [
+    "Trapaza pasa de una infancia turbulenta en Zamarramala y Segovia a unas burlas estudiantiles que arruinan sus estudios en Salamanca.",
+    "Durante sus viajes por Andalucía y su instalación en Madrid adopta identidades de caballero para conseguir dinero, crédito y matrimonios.",
+    "La denuncia de Estefanía descubre su falsa condición y lo lleva a una condena de seis años de galeras."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Hernando o bachiller Trapaza",
+      "descripcion": "Joven ingenioso que se entrega al juego y a las estafas mediante identidades falsas."
+    },
+    {
+      "nombre": "Estefanía",
+      "descripcion": "Compañera y enamorada que acaba denunciándolo al descubrir su doble cortejo."
+    },
+    {
+      "nombre": "Varguillas",
+      "descripcion": "Compañero de la marcha desde Salamanca hacia Andalucía."
+    },
+    {
+      "nombre": "Doña María",
+      "descripcion": "Dama cortejada en Madrid que ignora la verdadera condición de Trapaza."
+    },
+    {
+      "nombre": "El abuelo de Trapaza",
+      "descripcion": "Protector que financia sus estudios y trata de corregir su conducta."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Zamarramala y Segovia",
+      "descripcion": "Lugares del nacimiento, crianza y educación del protagonista."
+    },
+    {
+      "nombre": "Salamanca",
+      "descripcion": "Universidad donde las burlas sustituyen a los estudios."
+    },
+    {
+      "nombre": "Caminos y ciudades de Andalucía",
+      "descripcion": "Espacios de viajes, servicios y sucesivas estafas."
+    },
+    {
+      "nombre": "Madrid",
+      "descripcion": "Corte de la última identidad fingida y de la denuncia."
+    },
+    {
+      "nombre": "Galeras de España",
+      "descripcion": "Destino penal con el que se cierra esta parte de la vida de Trapaza."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Ascenso por apariencia",
+      "descripcion": "Los apellidos y hábitos fingidos sirven para simular nobleza."
+    },
+    {
+      "tema": "Juego y engaño",
+      "descripcion": "La necesidad de dinero alimenta burlas y estafas."
+    },
+    {
+      "tema": "Celos y descubrimiento",
+      "descripcion": "La infidelidad provoca una denuncia que deshace sus ficciones."
+    },
+    {
+      "tema": "Educación y castigo",
+      "descripcion": "Los consejos y la enseñanza no corrigen al protagonista, que termina castigado."
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "archivo": "TEXORO_novelabarroca-0001.txt",
+  "titulo": "Segundo tomo del ingenioso hidalgo don Quijote de la Mancha",
+  "resumen_largo": [
+    "En esta continuación de Alonso Fernández de Avellaneda, martín Quijada parece haber recuperado el juicio en Argamesilla, donde las lecturas religiosas sustituyen temporalmente a los libros de caballerías. La conversación con Sancho y la llegada de don Álvaro Tarfe y otros caballeros que se encaminan a unas justas de Zaragoza reavivan, sin embargo, sus antiguas imaginaciones. Vuelve a llamarse don Quijote y prepara una nueva salida con su escudero, convencido de que podrá mostrar su valor en aquellas fiestas. En el camino interpreta ventas, personas y contratiempos según las aventuras que ha leído, mientras Sancho busca comida, provecho y acomodo.",
+    "En Zaragoza, sus desafíos y disparates lo ponen en peligro y lo convierten en objeto de diversión para los caballeros, que intervienen para protegerlo y prolongar sus extravagancias. La marcha continúa entre encuentros con viajeros y relatos que estos cuentan sobre amores, delitos, arrepentimientos y castigos. Don Quijote recoge a Bárbara, una mujer cuya desgracia transforma en asunto caballeresco, y le atribuye una dignidad imaginaria. Con ella y Sancho pasa por Sigüenza y Alcalá, donde sus intervenciones entre estudiantes y representantes vuelven a confundir la ficción con la vida cotidiana.",
+    "La llegada a Madrid amplía las burlas de personajes de la corte, que inventan títulos, adversarios y ceremonias para mantenerlo en su engaño. Sancho encuentra protección y una posibilidad de establecerse allí, mientras Bárbara es recogida en las Arrepentidas. Don Álvaro dispone finalmente el traslado del hidalgo a Toledo, donde lo ingresan en la Casa del Nuncio para procurar su curación. El narrador deja incierto el resto de su vida y transmite como noticias no plenamente confirmadas una salida del establecimiento y nuevas aventuras, sin cerrar la historia con la muerte del protagonista."
+  ],
+  "resumen_breve": [
+    "En la continuación de Alonso Fernández de Avellaneda, don Quijote vuelve a salir de Argamesilla con Sancho para acudir a las justas de Zaragoza.",
+    "Por los caminos, Alcalá y Madrid, su imaginación caballeresca provoca conflictos y burlas, y Bárbara se incorpora a su compañía.",
+    "Sancho logra protección en la corte y el caballero acaba internado en la Casa del Nuncio de Toledo, con su destino posterior presentado como incierto."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Don Quijote o Martín Quijada",
+      "descripcion": "Hidalgo que recae en la locura caballeresca y protagoniza una nueva salida."
+    },
+    {
+      "nombre": "Sancho Panza",
+      "descripcion": "Escudero que acompaña al hidalgo y busca provecho y estabilidad."
+    },
+    {
+      "nombre": "Don Álvaro Tarfe",
+      "descripcion": "Caballero que protege al protagonista y organiza su internamiento."
+    },
+    {
+      "nombre": "Bárbara",
+      "descripcion": "Mujer recogida durante el viaje, a quien don Quijote atribuye una identidad elevada."
+    },
+    {
+      "nombre": "El Archipámpano",
+      "descripcion": "Señor de la corte que participa en las burlas y favorece a Sancho."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Argamesilla de la Mancha",
+      "descripcion": "Punto de partida de la nueva salida."
+    },
+    {
+      "nombre": "Zaragoza",
+      "descripcion": "Ciudad de las justas y de los primeros encuentros con caballeros burladores."
+    },
+    {
+      "nombre": "Madrid",
+      "descripcion": "Corte donde se multiplican las ficciones y Sancho encuentra protección."
+    },
+    {
+      "nombre": "Casa del Nuncio, Toledo",
+      "descripcion": "Establecimiento en el que se interna al caballero para procurar su curación."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Locura y ficción caballeresca",
+      "descripcion": "Las lecturas llevan al hidalgo a interpretar erróneamente la realidad."
+    },
+    {
+      "tema": "Burla y dependencia social",
+      "descripcion": "Los poderosos se divierten con los protagonistas y deciden su acomodo."
+    },
+    {
+      "tema": "Arrepentimiento y castigo",
+      "descripcion": "Los relatos interpolados y el final introducen respuestas morales a distintas conductas."
+    }
+  ]
+}

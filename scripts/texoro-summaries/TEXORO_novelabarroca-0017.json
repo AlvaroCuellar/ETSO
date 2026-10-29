@@ -1,0 +1,72 @@
+{
+  "archivo": "TEXORO_novelabarroca-0017.txt",
+  "titulo": "La fuerza castigada",
+  "resumen_largo": [
+    "Ladislao hereda el reino de Hungría y comienza gobernando con acierto, pero los aduladores y sus relaciones amorosas lo apartan de la prudencia. Ama a Flor de Lis, de quien tiene un hijo criado secretamente por orden del conde Anselmo, y se casa después con una princesa de Bohemia a la que acaba repudiando. Su intento de entrar de noche en el aposento de Alfreda provoca la respuesta de su padre, el duque Alberto, y de su tío Guillermo, que matan al rey. Cuando varios príncipes disputan la sucesión, Anselmo presenta al hijo de Ladislao, Wenceslao, con los documentos que prueban sus derechos.",
+    "El nuevo rey acepta la advertencia de aprender del destino paterno, investiga el asesinato y manda ejecutar a los responsables, aunque permite que sus hijos conserven provisionalmente los estados. Después envía a Anselmo a traer a su futura esposa de Dinamarca. En ausencia del padre, Estela, hija del conde, conoce durante la caza a Enrique y corresponde a su amor. Rodolfo, hijo de Guillermo, pretende casarse con ella para ganar favor en la corte, pero el rechazo de la dama y la preferencia por Enrique lo llevan a los celos y a un desafío que el rey intenta resolver mediante una reconciliación.",
+    "Rodolfo no respeta las amistades y rapta a los dos amantes: encierra a Enrique y viola a Estela, esperando que el agravio la obligue a casarse con él. La joven finge haberse serenado para salir de la quinta y pide justicia públicamente ante los reyes, junto a su padre. Wenceslao escucha la denuncia y averigua la prisión de Enrique antes de mandar casar a Estela con su agresor; inmediatamente después de la ceremonia, hace detener y decapitar a Rodolfo. Viuda, Estela se casa con Enrique y recibe los estados de Rodolfo como arras. El castigo confirma la autoridad del monarca y cierra la narración con la unión de los amantes."
+  ],
+  "resumen_breve": [
+    "En una Hungría de marco monárquico, la conducta de Ladislao provoca su muerte y la proclamación de su hijo Wenceslao.",
+    "El nuevo rey castiga a los homicidas, pero Rodolfo, hijo de uno de ellos, rapta a Estela y Enrique y agrede a la dama.",
+    "La denuncia de Estela obtiene una sentencia contra Rodolfo y permite que los amantes se casen bajo la protección real."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Estela",
+      "descripcion": "Hija de Anselmo que ama a Enrique, sufre el rapto y reclama justicia."
+    },
+    {
+      "nombre": "Rodolfo",
+      "descripcion": "Marqués que convierte sus celos en rapto y violencia contra Estela."
+    },
+    {
+      "nombre": "Wenceslao",
+      "descripcion": "Rey que investiga la muerte de su padre y castiga el delito de Rodolfo."
+    },
+    {
+      "nombre": "Enrique",
+      "descripcion": "Conde amado por Estela, apresado por su rival."
+    },
+    {
+      "nombre": "Anselmo",
+      "descripcion": "Protector del joven rey y padre de Estela."
+    },
+    {
+      "nombre": "Ladislao",
+      "descripcion": "Padre de Wenceslao, cuya conducta y muerte abren la historia."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Belgrado, corte de Hungría",
+      "descripcion": "Centro del gobierno, las sucesiones y las reclamaciones de justicia."
+    },
+    {
+      "nombre": "Floralba y montes cercanos",
+      "descripcion": "Retiro de Anselmo y espacio del encuentro de Estela con Enrique."
+    },
+    {
+      "nombre": "Quinta de Rodolfo",
+      "descripcion": "Lugar del encierro de los amantes y de la agresión."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Abuso de poder y violencia sexual",
+      "descripcion": "La imposición de los deseos provoca delitos y graves daños a las mujeres."
+    },
+    {
+      "tema": "Justicia real",
+      "descripcion": "Wenceslao investiga y castiga los actos que amenazan su autoridad y el honor de sus vasallos."
+    },
+    {
+      "tema": "Celos y libertad amorosa",
+      "descripcion": "Rodolfo no acepta la elección de Estela y trata de sustituirla por la fuerza."
+    },
+    {
+      "tema": "Escarmiento político",
+      "descripcion": "La muerte de Ladislao orienta al hijo hacia un gobierno prudente."
+    }
+  ]
+}

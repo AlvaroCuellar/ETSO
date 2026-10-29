@@ -1,0 +1,64 @@
+{
+  "archivo": "TEXORO_novelabarroca-0021.txt",
+  "titulo": "El celoso extremeño",
+  "resumen_largo": [
+    "Felipo de Carrizales abandona España después de dilapidar su patrimonio y logra enriquecerse en las Indias. Ya anciano, vuelve a Sevilla y se casa con Leonora, una muchacha mucho más joven. Sus celos lo llevan a organizar una casa cerrada al contacto con los hombres, vigilada por el esclavo Luis y atendida únicamente por mujeres. Pretende garantizar la fidelidad mediante el aislamiento, las cerraduras y un control constante de la vida doméstica, aunque proporciona abundantes bienes a su esposa y sus criadas.",
+    "Loaysa, un joven interesado en penetrar en aquella casa, descubre que puede ganarse a Luis ofreciéndole lecciones de música. Logra entrar y atrae también a las criadas, mientras la dueña Marialonso promueve su encuentro con Leonora. Un ungüento adormece al marido y permite que la joven salga del lecho. Pese a la presión de la dueña y los intentos de Loaysa, Leonora resiste la consumación del encuentro. Ambos terminan dormidos, y Carrizales los encuentra juntos cuando despierta antes de lo previsto.",
+    "Convencido de que ha sido traicionado, Carrizales primero piensa en vengarse, pero el dolor lo derriba y acaba reconociendo su responsabilidad por haber sometido a una muchacha a un encierro desmesurado. Hace testamento, beneficia a Leonora y a los servidores y pide que su esposa se case con Loaysa. La turbación impide que ella explique a tiempo lo sucedido y el anciano muere. Leonora, lejos de seguir aquella petición, entra en un monasterio; Loaysa, frustrado, parte hacia las Indias."
+  ],
+  "resumen_breve": [
+    "En Sevilla, el rico y anciano Carrizales encierra a su joven esposa Leonora para protegerla de unos celos que gobiernan su vida.",
+    "La música de Loaysa y la colaboración de los criados burlan las precauciones del marido, que interpreta como adulterio un encuentro no consumado.",
+    "Carrizales muere después de reconocer su culpa, Leonora se hace monja y Loaysa abandona España."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Carrizales",
+      "descripcion": "Anciano enriquecido en las Indias que intenta asegurar el matrimonio mediante el encierro."
+    },
+    {
+      "nombre": "Leonora",
+      "descripcion": "Joven esposa que sufre el aislamiento y resiste el intento de Loaysa."
+    },
+    {
+      "nombre": "Loaysa",
+      "descripcion": "Músico y seductor que aprovecha su habilidad para entrar en la casa."
+    },
+    {
+      "nombre": "Marialonso",
+      "descripcion": "Dueña que facilita el encuentro entre Leonora y Loaysa."
+    },
+    {
+      "nombre": "Luis",
+      "descripcion": "Esclavo encargado de la entrada, cuya afición musical permite burlar la vigilancia."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Casa de Carrizales en Sevilla",
+      "descripcion": "Recinto cerrado que concentra el matrimonio, la vigilancia y la intrusión de Loaysa."
+    },
+    {
+      "nombre": "Las Indias",
+      "descripcion": "Lugar de la fortuna inicial de Carrizales y destino final de Loaysa."
+    },
+    {
+      "nombre": "Monasterio sevillano",
+      "descripcion": "Retiro elegido por Leonora después de enviudar."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Celos y control",
+      "descripcion": "Carrizales confunde la seguridad matrimonial con la privación de libertad."
+    },
+    {
+      "tema": "Apariencias y error",
+      "descripcion": "La escena descubierta lleva al marido a una conclusión que no coincide con lo narrado."
+    },
+    {
+      "tema": "Responsabilidad y elección",
+      "descripcion": "El reconocimiento del anciano y la decisión final de Leonora alteran el desenlace esperado."
+    }
+  ]
+}

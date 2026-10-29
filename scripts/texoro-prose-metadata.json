@@ -1,0 +1,703 @@
+{
+  "novelabarroca-0001": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0001.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/AVELLANEDA__Quijote.txt",
+      "https://cervantes.bne.es/es/su-biblioteca/avellaneda-alonso-fernandez-segundo-tomo-ingenioso-hidalgo-don",
+      "https://cervantesvirtual.com/obra/segundo-tomo-del-ingenioso-hidalgo-don-quijote-de-la-mancha--0/"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "Segundo tomo del ingenioso hidalgo don Quijote de la Mancha",
+    "titleNote": "Continuación de Avellaneda, publicada en 1614, identificada por autor, texto fuente y catálogos BNE/BVMC. Se mantiene el título bibliográfico habitual, distinto de la segunda parte cervantina de 1615."
+  },
+  "novelabarroca-0002": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0002.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/CARVAJAL__Amante-venturoso.txt",
+      "provenance/frozen/manifest.jsonl",
+      "https://wpd.ugr.es/~agamizv/?page_id=1527",
+      "https://www.bibliotecadigitaldeandalucia.es/catalogo/es/consulta/registro.do?id=1044737"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "El amante venturoso",
+    "titleNote": "Título de la novela en Navidades de Madrid y noches entretenidas, cotejado con el índice y encabezamiento de la edición digital de la Universidad de Granada. El texto fuente confirma el comienzo del relato; se conserva el título individual, no el de la colección."
+  },
+  "novelabarroca-0003": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0003.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/CARVAJAL__Amar-sin-saber-a-quien.txt",
+      "provenance/frozen/manifest.jsonl",
+      "https://wpd.ugr.es/~agamizv/?page_id=1527",
+      "https://www.bibliotecadigitaldeandalucia.es/catalogo/es/consulta/registro.do?id=1044737"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "Amar sin saber a quién",
+    "titleNote": "Título de la novela en Navidades de Madrid y noches entretenidas, cotejado con el índice y encabezamiento de la edición digital de la Universidad de Granada. El texto fuente confirma el comienzo del relato; se conserva el título individual, no el de la colección."
+  },
+  "novelabarroca-0004": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0004.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/CARVAJAL__Celos-vengan-desprecios.txt",
+      "provenance/frozen/manifest.jsonl",
+      "https://wpd.ugr.es/~agamizv/?page_id=1527",
+      "https://www.bibliotecadigitaldeandalucia.es/catalogo/es/consulta/registro.do?id=1044737"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "Celos vengan desprecios",
+    "titleNote": "Título de la novela en Navidades de Madrid y noches entretenidas, cotejado con el índice y encabezamiento de la edición digital de la Universidad de Granada. El texto fuente confirma el comienzo del relato; se conserva el título individual, no el de la colección."
+  },
+  "novelabarroca-0005": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0005.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/CARVAJAL__Dicha-de-Doristea.txt",
+      "provenance/frozen/manifest.jsonl",
+      "https://wpd.ugr.es/~agamizv/?page_id=1527",
+      "https://www.bibliotecadigitaldeandalucia.es/catalogo/es/consulta/registro.do?id=1044737"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "La dicha de Doristea",
+    "titleNote": "Título de la novela en Navidades de Madrid y noches entretenidas, cotejado con el índice y encabezamiento de la edición digital de la Universidad de Granada. El texto fuente confirma el comienzo del relato; se conserva el título individual, no el de la colección."
+  },
+  "novelabarroca-0006": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0006.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/CARVAJAL__Esclavo-de-su-esclavo.txt",
+      "provenance/frozen/manifest.jsonl",
+      "https://wpd.ugr.es/~agamizv/?page_id=1527",
+      "https://www.bibliotecadigitaldeandalucia.es/catalogo/es/consulta/registro.do?id=1044737"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "El esclavo de su esclavo",
+    "titleNote": "Título de la novela en Navidades de Madrid y noches entretenidas, cotejado con el índice y encabezamiento de la edición digital de la Universidad de Granada. El texto fuente confirma el comienzo del relato; se conserva el título individual, no el de la colección."
+  },
+  "novelabarroca-0007": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0007.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/CARVAJAL__Industria-vence-desdenes.txt",
+      "provenance/frozen/manifest.jsonl",
+      "https://wpd.ugr.es/~agamizv/?page_id=1527",
+      "https://www.bibliotecadigitaldeandalucia.es/catalogo/es/consulta/registro.do?id=1044737"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "La industria vence desdenes",
+    "titleNote": "Título de la novela en Navidades de Madrid y noches entretenidas, cotejado con el índice y encabezamiento de la edición digital de la Universidad de Granada. El texto fuente confirma el comienzo del relato; se conserva el título individual, no el de la colección."
+  },
+  "novelabarroca-0008": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0008.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/CARVAJAL__Quien-bien-obra.txt",
+      "provenance/frozen/manifest.jsonl",
+      "https://wpd.ugr.es/~agamizv/?page_id=1527",
+      "https://www.bibliotecadigitaldeandalucia.es/catalogo/es/consulta/registro.do?id=1044737"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "Quien bien obra, siempre acierta",
+    "titleNote": "Título de la novela en Navidades de Madrid y noches entretenidas, cotejado con el índice y encabezamiento de la edición digital de la Universidad de Granada. El texto fuente confirma el comienzo del relato; se conserva el título individual, no el de la colección."
+  },
+  "novelabarroca-0009": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0009.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/CARVAJAL__Venus-de-Ferrara.txt",
+      "provenance/frozen/manifest.jsonl",
+      "https://wpd.ugr.es/~agamizv/?page_id=1527",
+      "https://www.bibliotecadigitaldeandalucia.es/catalogo/es/consulta/registro.do?id=1044737"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "La Venus de Ferrara",
+    "titleNote": "Título de la novela en Navidades de Madrid y noches entretenidas, cotejado con el índice y encabezamiento de la edición digital de la Universidad de Granada. El texto fuente confirma el comienzo del relato; se conserva el título individual, no el de la colección."
+  },
+  "novelabarroca-0010": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0010.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/CASTILLO__Bachiller-Trapaza-1-6.txt",
+      "provenance/frozen/manifest.jsonl",
+      "https://cervantesvirtual.com/obra-visor/aventuras-del-bachiller-trapaza--0/html/fedda824-82b1-11df-acc7-002185ce6064_2.html",
+      "https://cervantesvirtual.com/obra-visor/aventuras-del-bachiller-trapaza--0/html/"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "Aventuras del bachiller Trapaza (capítulos I–V)",
+    "titleNote": "El archivo se llama Bachiller-Trapaza-1-6, pero el texto termina exactamente en el cierre del capítulo V de BVMC (huida de Salamanca con Estefanía). Empieza en el capítulo I; no contiene el VI ni toda la obra. El rango se determina por el texto, no por el código del archivo."
+  },
+  "novelabarroca-0011": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0011.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/CASTILLO__Dos-dichas-sin-pensar.txt",
+      "provenance/frozen/manifest.jsonl",
+      "https://openlibrary.org/works/OL4523561W?edition=nochesdeplacern00morigoog",
+      "https://helvia.uco.es/xmlui/handle/10396/11040"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "Las dos dichas sin pensar",
+    "titleNote": "Se restaura el artículo del título de la novela de Noches de placer, confirmado en el índice de la edición de 1906 y el estudio/edición crítico de Giulia Giorgi."
+  },
+  "novelabarroca-0012": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0012.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/CASTILLO__Estafa-1.txt",
+      "provenance/frozen/manifest.jsonl",
+      "https://www.cervantesvirtual.com/obra-visor/las-harpias-en-madrid-y-coche-de-las-estafas--0/html/"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "Las harpías en Madrid y coche de las estafas (estafa primera)",
+    "titleNote": "El archivo contiene la Estafa primera, una sección de la obra Las harpías en Madrid y coche de las estafas, no una obra íntegra titulada Estafa 1. El índice de BVMC confirma el título de la obra y los cuatro encabezamientos."
+  },
+  "novelabarroca-0013": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0013.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/CASTILLO__Estafa-2.txt",
+      "provenance/frozen/manifest.jsonl",
+      "https://www.cervantesvirtual.com/obra-visor/las-harpias-en-madrid-y-coche-de-las-estafas--0/html/"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "Las harpías en Madrid y coche de las estafas (estafa segunda)",
+    "titleNote": "El archivo contiene la Estafa segunda, una sección de la obra Las harpías en Madrid y coche de las estafas, no una obra íntegra titulada Estafa 2. El índice de BVMC confirma el título de la obra y los cuatro encabezamientos."
+  },
+  "novelabarroca-0014": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0014.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/CASTILLO__Estafa-3.txt",
+      "provenance/frozen/manifest.jsonl",
+      "https://www.cervantesvirtual.com/obra-visor/las-harpias-en-madrid-y-coche-de-las-estafas--0/html/"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "Las harpías en Madrid y coche de las estafas (estafa tercera)",
+    "titleNote": "El archivo contiene la Estafa tercera, una sección de la obra Las harpías en Madrid y coche de las estafas, no una obra íntegra titulada Estafa 3. El índice de BVMC confirma el título de la obra y los cuatro encabezamientos."
+  },
+  "novelabarroca-0015": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0015.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/CASTILLO__Estafa-4.txt",
+      "provenance/frozen/manifest.jsonl",
+      "https://www.cervantesvirtual.com/obra-visor/las-harpias-en-madrid-y-coche-de-las-estafas--0/html/"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "Las harpías en Madrid y coche de las estafas (estafa cuarta)",
+    "titleNote": "El archivo contiene la Estafa cuarta, una sección de la obra Las harpías en Madrid y coche de las estafas, no una obra íntegra titulada Estafa 4. El índice de BVMC confirma el título de la obra y los cuatro encabezamientos."
+  },
+  "novelabarroca-0016": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0016.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/CASTILLO__Fantasma-de-Valencia.txt",
+      "provenance/frozen/manifest.jsonl",
+      "https://cervantesvirtual.com/obra/la-fantasma-de-valencia--0/"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "La fantasma de Valencia",
+    "titleNote": "Título de la novela, no de la comedia homónima. La ficha BVMC la identifica como relato de Tardes entretenidas (1625), pp. 54–85. Se conserva el femenino fantasma usado en el título original."
+  },
+  "novelabarroca-0017": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0017.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/CASTILLO__Fuerza-castigada.txt",
+      "provenance/frozen/manifest.jsonl",
+      "https://openlibrary.org/works/OL4523561W?edition=nochesdeplacern00morigoog",
+      "https://helvia.uco.es/xmlui/handle/10396/11040"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "La fuerza castigada",
+    "titleNote": "Se restaura el artículo del título de la novela de Noches de placer, confirmado en el índice de la edición de 1906 y el estudio/edición crítico de Giulia Giorgi."
+  },
+  "novelabarroca-0018": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0018.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/CASTILLO__Lisardo-enamorado-1.txt",
+      "provenance/frozen/manifest.jsonl",
+      "https://www.cervantesvirtual.com/obra-visor/lisardo-enamorado--0/html/fef07dbe-82b1-11df-acc7-002185ce6064_2.html"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "Lisardo enamorado (libro primero)",
+    "titleNote": "El comienzo coincide con el Libro primero de BVMC y el cierre con su último párrafo, justo antes de Libro segundo. El 1 del nombre de archivo designa un libro real de la obra; no se presenta como texto íntegro."
+  },
+  "novelabarroca-0019": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0019.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/CASTILLO__Proteo-de-Madrid.txt",
+      "provenance/frozen/manifest.jsonl",
+      "https://www.madrid.org/bvirtual/BVCM000852.pdf"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "El Proteo de Madrid",
+    "titleNote": "Se restaura el artículo del título de la novela de Tardes entretenidas. Confirmado por la edición literaria oficial Relatos de Madrid (Comunidad de Madrid), que identifica el relato y su procedencia en 1625."
+  },
+  "novelabarroca-0020": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0020.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/CERVANTES__Amante-liberal.txt",
+      "https://cervantesvirtual.com/obra/novelas-ejemplares--0/"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "El amante liberal",
+    "titleNote": "Título de la novela ejemplar individual contrastado con el registro bibliográfico BVMC; artículos, ñ y mayúscula de Vidriera restituidos según título habitual."
+  },
+  "novelabarroca-0021": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0021.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/CERVANTES__Celoso-extremeno.txt",
+      "https://cervantesvirtual.com/obra/novelas-ejemplares--0/"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "El celoso extremeño",
+    "titleNote": "Título de la novela ejemplar individual contrastado con el registro bibliográfico BVMC; artículos, ñ y mayúscula de Vidriera restituidos según título habitual."
+  },
+  "novelabarroca-0022": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0022.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/CERVANTES__Espanola-inglesa.txt",
+      "https://cervantesvirtual.com/obra/novelas-ejemplares--0/"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "La española inglesa",
+    "titleNote": "Título de la novela ejemplar individual contrastado con el registro bibliográfico BVMC; artículos, ñ y mayúscula de Vidriera restituidos según título habitual."
+  },
+  "novelabarroca-0023": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0023.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/CERVANTES__Fuerza-de-la-sangre.txt",
+      "https://cervantesvirtual.com/obra/novelas-ejemplares--0/"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "La fuerza de la sangre",
+    "titleNote": "Título de la novela ejemplar individual contrastado con el registro bibliográfico BVMC; artículos, ñ y mayúscula de Vidriera restituidos según título habitual."
+  },
+  "novelabarroca-0025": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0025.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/CERVANTES__Gitanilla.txt",
+      "https://cervantesvirtual.com/obra/novelas-ejemplares--0/"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "La gitanilla",
+    "titleNote": "Título de la novela ejemplar individual contrastado con el registro bibliográfico BVMC; artículos, ñ y mayúscula de Vidriera restituidos según título habitual."
+  },
+  "novelabarroca-0026": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0026.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/CERVANTES__Ilustre-fregona.txt",
+      "https://cervantesvirtual.com/obra/novelas-ejemplares--0/"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "La ilustre fregona",
+    "titleNote": "Título de la novela ejemplar individual contrastado con el registro bibliográfico BVMC; artículos, ñ y mayúscula de Vidriera restituidos según título habitual."
+  },
+  "novelabarroca-0027": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0027.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/CERVANTES__Licenciado-Vidriera.txt",
+      "https://cervantesvirtual.com/obra/novelas-ejemplares--0/"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "El licenciado Vidriera",
+    "titleNote": "Título de la novela ejemplar individual contrastado con el registro bibliográfico BVMC; artículos, ñ y mayúscula de Vidriera restituidos según título habitual."
+  },
+  "novelabarroca-0028": {
+    "title": "Los trabajos de Persiles y Sigismunda: historia septentrional",
+    "note": "Título en tasa/fe de erratas, líneas 2 y 6.",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0028.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/CERVANTES__Persiles.txt",
+      "https://cervantesvirtual.com/obra/los-trabajos-de-persiles-y-sigismunda-historia-septentrional-929207/"
+    ],
+    "subgenre": "Novela",
+    "titleNote": "Título y subtítulo bibliográficos corroborados; el archivo comienza con preliminares y termina en el cierre de la novela."
+  },
+  "novelabarroca-0029": {
+    "title": "El ingenioso hidalgo don Quijote de la Mancha",
+    "note": "Título en líneas 1–2; primera parte, edición de 1605 según source filename Quijote05.",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0029.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/CERVANTES__Quijote05.txt",
+      "https://cvc.cervantes.es/literatura/clasicos/quijote/indice.htm"
+    ],
+    "subgenre": "Novela",
+    "titleNote": "Primera parte de 1605: título literal inicial y contraste CVC. No corresponde al Quijote de Avellaneda de 1614."
+  },
+  "novelabarroca-0030": {
+    "title": "Segunda parte del ingenioso caballero don Quijote de la Mancha",
+    "note": "Título en líneas 1–4; source filename Quijote15.",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0030.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/CERVANTES__Quijote15.txt",
+      "https://cvc.cervantes.es/literatura/clasicos/quijote/indice.htm"
+    ],
+    "subgenre": "Novela",
+    "titleNote": "Segunda parte de Cervantes de 1615: título literal inicial y contraste CVC."
+  },
+  "novelabarroca-0031": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0031.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/CERVANTES__Rinconete-y-Cortadillo.txt",
+      "https://cervantesvirtual.com/obra/novelas-ejemplares--0/"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "Rinconete y Cortadillo",
+    "titleNote": "Título de la novela ejemplar individual contrastado con el registro bibliográfico BVMC; artículos, ñ y mayúscula de Vidriera restituidos según título habitual."
+  },
+  "novelabarroca-0032": {
+    "subgenre": "Diálogo",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0032.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/CileniaSelanio.txt",
+      "https://www.cervantesvirtual.com/obra-visor/un-fragmento-de-las-semanas-del-jardin-de-cervantes--0/html/ffd6eaa6-82b1-11df-acc7-002185ce6064_1.html"
+    ],
+    "note": "Intercambio entre Cilenia y Selanio en el texto; se clasifica por su forma dialogada, sin resolver la autoría.",
+    "title": "Diálogo entre Cilenia y Selanio sobre la vida del campo",
+    "titleNote": "Título descriptivo que figura en el colofón de la edición BVMC. Se evita presentarlo como Las semanas del jardín completas o atribuirlo a Cervantes; se conserva autor Desconocido."
+  },
+  "novelabarroca-0034": {
+    "title": "La vida de Lazarillo de Tormes y de sus fortunas y adversidades",
+    "note": "Título explícito en línea 1.",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0034.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/LAZARILLO/Lazarillo_Original.txt",
+      "https://www.cervantesvirtual.com/obra-visor/la-vida-de-lazarillo-de-tormes-y-de-sus-fortunas-y-adversidades--0/html/"
+    ],
+    "subgenre": "Novela",
+    "titleNote": "Título literal inicial y registro BVMC; se elimina Original, que era indicación de archivo."
+  },
+  "novelabarroca-0036": {
+    "title": "De los nombres de Cristo",
+    "note": "Título explícito en línea 2; obra dedicada a los nombres de Cristo.",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0036.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/LAZARILLO/Leon_NCristo.txt",
+      "https://www.cervantesvirtual.com/obra-visor/de-los-nombres-de-cristo--2/html/fedb9fc0-82b1-11df-acc7-002185ce6064_4.html"
+    ],
+    "subgenre": "Prosa religiosa",
+    "titleNote": "Título literal inicial De los nombres de Cristo, no Los nombres de Cristo."
+  },
+  "novelabarroca-0037": {
+    "title": "La perfecta casada",
+    "note": "Título explícito en línea 1; exposición bíblica del estado matrimonial.",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0037.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/LAZARILLO/Leon_PCasada.txt",
+      "https://www.cervantesvirtual.com/obra-visor/la-perfecta-casada--0/html/"
+    ],
+    "subgenre": "Prosa religiosa",
+    "titleNote": "Título literal inicial y edición BVMC."
+  },
+  "novelabarroca-0038": {
+    "title": "Guerra de Granada",
+    "note": "Incipit identifica relato histórico de la rebelión granadina; título corroborado en BVMC, Obras de D. Diego Hurtado de Mendoza.",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0038.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/LAZARILLO/Mendoza_GGranada.txt",
+      "https://www.cervantesvirtual.com/obra-visor/obras-de-d-diego-hurtado-de-mendoza--0/html/?indice=1",
+      "https://datos.bne.es/obra/XX2962317.html?digital=true&version=XX2962317spa"
+    ],
+    "subgenre": "Crónica",
+    "titleNote": "Título breve habitual confirmado en registro de obra BNE; el archivo contiene libros primero a cuarto."
+  },
+  "novelabarroca-0041": {
+    "title": "Diálogo de Mercurio y Carón",
+    "note": "Proemio línea 2 identifica el diálogo y sus interlocutores; título y mismo incipit cotejados en BVMC.",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0041.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/LAZARILLO/Valdes_Mercurio.txt",
+      "https://www.cervantesvirtual.com/obra-visor/dialogo-de-mercurio-y-caron--0/html/fedf5b9c-82b1-11df-acc7-002185ce6064_2.html",
+      "https://cervantesvirtual.com/obra/dialogo-de-mercurio-y-caron--0/"
+    ],
+    "subgenre": "Diálogo",
+    "titleNote": "Título bibliográfico corroborado con BVMC y comienzo Proemio al lector coincidente."
+  },
+  "novelabarroca-0042": {
+    "title": "Diálogo de las cosas acaecidas en Roma",
+    "note": "Texto identifica la forma diálogo y el asunto Roma; título corroborado en edición BVMC.",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0042.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/LAZARILLO/Valdes_Roma.txt",
+      "https://www.cervantesvirtual.com/obra-visor/dialogo-de-las-cosas-acaecidas-en-roma--0/html/fede2498-82b1-11df-acc7-002185ce6064_2.html",
+      "https://www.cervantesvirtual.com/obra/dialogo-de-las-cosas-acaecidas-en-roma--0/"
+    ],
+    "subgenre": "Diálogo",
+    "titleNote": "Título bibliográfico corroborado con BVMC y comienzo de la advertencia coincidente."
+  },
+  "novelabarroca-0043": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0043.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/LOPE__Desdicha-por-la-honra.txt",
+      "https://www.cervantesvirtual.com/obra-visor/novelas-a-marcia-leonarda--0/html/001e48c4-82b2-11df-acc7-002185ce6064_1.html"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "La desdicha por la honra",
+    "titleNote": "Título verificado en el índice de Novelas a Marcia Leonarda de la BVMC. Se restituye el artículo o la tilde ausente; no se añaden palabras de variantes editoriales ajenas al texto."
+  },
+  "novelabarroca-0044": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0044.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/LOPE__Fortunas-de-Diana.txt",
+      "https://www.cervantesvirtual.com/obra-visor/novelas-a-marcia-leonarda--0/html/001e48c4-82b2-11df-acc7-002185ce6064_1.html"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "Las fortunas de Diana",
+    "titleNote": "Título verificado en el índice de Novelas a Marcia Leonarda de la BVMC. Se restituye el artículo o la tilde ausente; no se añaden palabras de variantes editoriales ajenas al texto."
+  },
+  "novelabarroca-0045": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0045.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/LOPE__Guzman-el-Bravo.txt",
+      "https://www.cervantesvirtual.com/obra-visor/novelas-a-marcia-leonarda--0/html/001e48c4-82b2-11df-acc7-002185ce6064_1.html"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "Guzmán el Bravo",
+    "titleNote": "Título verificado en el índice de Novelas a Marcia Leonarda de la BVMC. Se restituye el artículo o la tilde ausente; no se añaden palabras de variantes editoriales ajenas al texto."
+  },
+  "novelabarroca-0046": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0046.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/LOPE__Prudente-venganza.txt",
+      "https://www.cervantesvirtual.com/obra-visor/novelas-a-marcia-leonarda--0/html/001e48c4-82b2-11df-acc7-002185ce6064_1.html"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "La prudente venganza",
+    "titleNote": "Título verificado en el índice de Novelas a Marcia Leonarda de la BVMC. Se restituye el artículo o la tilde ausente; no se añaden palabras de variantes editoriales ajenas al texto."
+  },
+  "novelabarroca-0047": {
+    "title": "Primera parte de Guzmán de Alfarache",
+    "note": "Nombre del libro explícito en aprobación línea 3; no se afirma completitud del archivo.",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0047.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/MATEO__GuzmanAlfarache.txt",
+      "https://www.cervantesvirtual.com/obra-visor/de-la-intencin-y-valor-del-guzmn-de-alfarache-0/html/021a3804-82b2-11df-acc7-002185ce6064_6.html"
+    ],
+    "subgenre": "Novela",
+    "titleNote": "El archivo contiene exclusivamente primera parte, tres libros; cierre invita a leer la segunda parte. Se explicita Primera parte para no presentar la novela entera. Título breve habitual de la edición original, sin Atalaya de la vida humana de 1604."
+  },
+  "novelabarroca-0048": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0048.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/MONTALBAN__Envidioso-castigado.txt",
+      "https://parnaseo.uv.es/lemir/Revista/Revista18/Textos/05_Montalban_Prodigios_de_Amor.pdf#page=8"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "El envidioso castigado",
+    "titleNote": "Título verificado en la tabla de Sucesos y prodigios de amor, edición de Enrique Suárez Figaredo, Lemir 18 (2014), p. 618; incipit cotejado con el archivo importado."
+  },
+  "novelabarroca-0049": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0049.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/MONTALBAN__Fuerza-del-desengano.txt",
+      "https://parnaseo.uv.es/lemir/Revista/Revista18/Textos/05_Montalban_Prodigios_de_Amor.pdf#page=8"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "La fuerza del desengaño",
+    "titleNote": "Título verificado en la tabla de Sucesos y prodigios de amor, edición de Enrique Suárez Figaredo, Lemir 18 (2014), p. 618; incipit cotejado con el archivo importado."
+  },
+  "novelabarroca-0050": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0050.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/MONTALBAN__La-hermosa-Aurora.txt",
+      "https://parnaseo.uv.es/lemir/Revista/Revista18/Textos/05_Montalban_Prodigios_de_Amor.pdf#page=8"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "La hermosa Aurora",
+    "titleNote": "Título verificado en la tabla de Sucesos y prodigios de amor, edición de Enrique Suárez Figaredo, Lemir 18 (2014), p. 618; incipit cotejado con el archivo importado."
+  },
+  "novelabarroca-0051": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0051.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/MONTALBAN__Mayor-confusion.txt",
+      "https://parnaseo.uv.es/lemir/Revista/Revista18/Textos/05_Montalban_Prodigios_de_Amor.pdf#page=8"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "La mayor confusión",
+    "titleNote": "Título verificado en la tabla de Sucesos y prodigios de amor, edición de Enrique Suárez Figaredo, Lemir 18 (2014), p. 618; incipit cotejado con el archivo importado."
+  },
+  "novelabarroca-0052": {
+    "title": "Vida y trabajos de Gerónimo de Pasamonte",
+    "note": "Título explícito línea 1; dedicatoria autobiográfica dice que ha escrito toda su vida.",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0052.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/PASAMONTE_VidaTrabajos.txt",
+      "https://www.cervantesvirtual.com/obra/vida-y-trabajos-de-geronimo-de-pasamonte--0/"
+    ],
+    "subgenre": "Memorias",
+    "titleNote": "Título literal inicial y registro BVMC: conserva la variante Gerónimo dentro del título; el nombre de autor no cambia."
+  },
+  "novelabarroca-0053": {
+    "title": "El pasajero",
+    "note": "Introdución al Pasajero línea 1; interlocutores Doctor, Maestro, don Luis, Isidro línea 2 y conversación posterior. Título corroborado en edición de Enrique Suárez Figaredo, Lemir 22 (2018).",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0053.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/SUAREZ-FIGUEROA__Pasajero.txt",
+      "https://parnaseo.uv.es/lemir/Revista/Revista22/Textos/4_El_Pasajero.pdf",
+      "https://rodrick.uv.es/items/1c7d9746-1f66-40fc-ae47-4a90524e2571"
+    ],
+    "subgenre": "Diálogo",
+    "titleNote": "Título habitual bibliográfico universitario; el texto abre Introdución al Pasajero y contiene los diez alivios."
+  },
+  "novelabarroca-0054": {
+    "title": "Cigarrales de Toledo",
+    "note": "Título explícito y colección de formas literarias diversas; clasificación amplia como miscelánea.",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0054.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/TIRSO-MOLINA__CigarralesToledo.txt",
+      "https://www.cervantesvirtual.com/s3/BVMC_OBRAS/fef/7c9/f28/2b1/11d/fac/c70/021/85c/e60/64/mimes/fef7c9f2-82b1-11df-acc7-002185ce6064_52.html",
+      "https://www.cervantesvirtual.com/portales/tirso_de_molina/cronologia/"
+    ],
+    "subgenre": "Miscelánea",
+    "titleNote": "Título tradicional Cigarrales de Toledo; contiene cinco cigarrales y termina Fin de la primera parte de los Cigarrales de Toledo; esa primera parte es la obra publicada, sin añadir una inexistente continuación."
+  },
+  "novelabarroca-0055": {
+    "title": "Libro de entretenimiento de la pícara Justina (texto parcial)",
+    "note": "Nombre explícito en encabezamiento del prólogo línea 2; no se afirma completitud de tomos.",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0055.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/UBEDA__PicaraJustina.txt",
+      "https://cervantesvirtual.com/portales/benito_perez_galdos/obra/libro-de-entretenimiento-de-la-picara-justina--0/",
+      "https://www.cervantesvirtual.com/obra-visor/libro-de-entretenimiento-de-la-picara-justina--0/html/fefa850c-82b1-11df-acc7-002185ce6064_3.htm"
+    ],
+    "subgenre": "Novela",
+    "titleNote": "Título bibliográfico BVMC. El archivo conserva prólogos e introducción, luego pasa directamente al libro segundo; no contiene el libro primero: faltan sus encabezados y los pasajes Nació Justina Díez y Perlícaro del primer capítulo contrastado con BVMC. Continúa con libros segundo, tercero y cuarto. Se indica texto parcial para no presentarlo como obra completa. No se cambia autoría ni se completa el corpus."
+  },
+  "novelabarroca-0056": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0056.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/ZAYAS__Aventurarse-perdiendo.txt",
+      "https://www.cervantesvirtual.com/obra/novelas-exemplares-y-amorosas-de-dona-maria-de-zayas-y-sotomayor-natural-de-madrid-primera-y-segunda-parte-1204279/",
+      "https://parnaseo.uv.es/lemir/revista/revista16/textos/04_zayas.pdf"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "Aventurarse perdiendo",
+    "titleNote": "Título verificado en la relación de contenido de la edición de 1814 conservada en la BNE y catalogada por la BVMC; se restituyen artículos y tildes sin alterar la obra. Contraste adicional con Novelas amorosas y ejemplares, edición de Enrique Suárez Figaredo, Lemir 16 (2012)."
+  },
+  "novelabarroca-0057": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0057.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/ZAYAS__Burlada-Aminta.txt",
+      "https://www.cervantesvirtual.com/obra/novelas-exemplares-y-amorosas-de-dona-maria-de-zayas-y-sotomayor-natural-de-madrid-primera-y-segunda-parte-1204279/",
+      "https://parnaseo.uv.es/lemir/revista/revista16/textos/04_zayas.pdf"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "La burlada Aminta y venganza del honor",
+    "titleNote": "Título verificado en la relación de contenido de la edición de 1814 conservada en la BNE y catalogada por la BVMC; se restituyen artículos y tildes sin alterar la obra. Contraste adicional con Novelas amorosas y ejemplares, edición de Enrique Suárez Figaredo, Lemir 16 (2012). Se desarrolla la abreviatura Burlada Aminta al título completo del encabezamiento, sin la coma histórica anterior a y."
+  },
+  "novelabarroca-0058": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0058.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/ZAYAS__Castigo-de-la-miseria.txt",
+      "https://www.cervantesvirtual.com/obra/novelas-exemplares-y-amorosas-de-dona-maria-de-zayas-y-sotomayor-natural-de-madrid-primera-y-segunda-parte-1204279/",
+      "https://parnaseo.uv.es/lemir/revista/revista16/textos/04_zayas.pdf"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "El castigo de la miseria",
+    "titleNote": "Título verificado en la relación de contenido de la edición de 1814 conservada en la BNE y catalogada por la BVMC; se restituyen artículos y tildes sin alterar la obra. Contraste adicional con Novelas amorosas y ejemplares, edición de Enrique Suárez Figaredo, Lemir 16 (2012)."
+  },
+  "novelabarroca-0059": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0059.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/ZAYAS__Esclava-de-su-amante.txt",
+      "https://www.cervantesvirtual.com/obra/novelas-exemplares-y-amorosas-de-dona-maria-de-zayas-y-sotomayor-natural-de-madrid-primera-y-segunda-parte-1204279/"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "La esclava de su amante",
+    "titleNote": "Título verificado en la relación de contenido de la edición de 1814 conservada en la BNE y catalogada por la BVMC; se restituyen artículos y tildes sin alterar la obra."
+  },
+  "novelabarroca-0060": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0060.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/ZAYAS__Estragos-que-causa-el-vicio.txt",
+      "https://www.cervantesvirtual.com/obra/novelas-exemplares-y-amorosas-de-dona-maria-de-zayas-y-sotomayor-natural-de-madrid-primera-y-segunda-parte-1204279/"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "Estragos que causa el vicio",
+    "titleNote": "Título verificado en la relación de contenido de la edición de 1814 conservada en la BNE y catalogada por la BVMC; se restituyen artículos y tildes sin alterar la obra."
+  },
+  "novelabarroca-0061": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0061.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/ZAYAS__Fuerza-del-amor.txt",
+      "https://www.cervantesvirtual.com/obra/novelas-exemplares-y-amorosas-de-dona-maria-de-zayas-y-sotomayor-natural-de-madrid-primera-y-segunda-parte-1204279/",
+      "https://parnaseo.uv.es/lemir/revista/revista16/textos/04_zayas.pdf"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "La fuerza del amor",
+    "titleNote": "Título verificado en la relación de contenido de la edición de 1814 conservada en la BNE y catalogada por la BVMC; se restituyen artículos y tildes sin alterar la obra. Contraste adicional con Novelas amorosas y ejemplares, edición de Enrique Suárez Figaredo, Lemir 16 (2012)."
+  },
+  "novelabarroca-0062": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0062.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/ZAYAS__Inocencia-castigada.txt",
+      "https://www.cervantesvirtual.com/obra/novelas-exemplares-y-amorosas-de-dona-maria-de-zayas-y-sotomayor-natural-de-madrid-primera-y-segunda-parte-1204279/"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "La inocencia castigada",
+    "titleNote": "Título verificado en la relación de contenido de la edición de 1814 conservada en la BNE y catalogada por la BVMC; se restituyen artículos y tildes sin alterar la obra."
+  },
+  "novelabarroca-0063": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0063.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/ZAYAS__Prevenido-enganado.txt",
+      "https://www.cervantesvirtual.com/obra/novelas-exemplares-y-amorosas-de-dona-maria-de-zayas-y-sotomayor-natural-de-madrid-primera-y-segunda-parte-1204279/",
+      "https://parnaseo.uv.es/lemir/revista/revista16/textos/04_zayas.pdf"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "El prevenido engañado",
+    "titleNote": "Título verificado en la relación de contenido de la edición de 1814 conservada en la BNE y catalogada por la BVMC; se restituyen artículos y tildes sin alterar la obra. Contraste adicional con Novelas amorosas y ejemplares, edición de Enrique Suárez Figaredo, Lemir 16 (2012)."
+  },
+  "novelabarroca-0064": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0064.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/ZAYAS__Tarde-llega-el-desengano.txt",
+      "https://www.cervantesvirtual.com/obra/novelas-exemplares-y-amorosas-de-dona-maria-de-zayas-y-sotomayor-natural-de-madrid-primera-y-segunda-parte-1204279/"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "Tarde llega el desengaño",
+    "titleNote": "Título verificado en la relación de contenido de la edición de 1814 conservada en la BNE y catalogada por la BVMC; se restituyen artículos y tildes sin alterar la obra."
+  },
+  "novelabarroca-0065": {
+    "subgenre": "Novela",
+    "sources": [
+      "texts/novelabarroca/novelabarroca-0065.txt",
+      "https://github.com/7PartidasDigital/NovelaBarroca/blob/d7db4b6feca504bbc92dc21f7157725320c2ee75/ZAYAS__Verdugo-de-su-esposa.txt",
+      "https://www.cervantesvirtual.com/obra/novelas-exemplares-y-amorosas-de-dona-maria-de-zayas-y-sotomayor-natural-de-madrid-primera-y-segunda-parte-1204279/"
+    ],
+    "note": "Narración de ficción en el texto fuente. Se emplea Novela como categoría amplia, sin distinguir novela corta, cortesana, picaresca o pastoril.",
+    "title": "El verdugo de su esposa",
+    "titleNote": "Título verificado en la relación de contenido de la edición de 1814 conservada en la BNE y catalogada por la BVMC; se restituyen artículos y tildes sin alterar la obra."
+  }
+}

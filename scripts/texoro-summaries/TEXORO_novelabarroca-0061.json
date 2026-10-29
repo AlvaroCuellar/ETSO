@@ -1,0 +1,72 @@
+{
+  "archivo": "TEXORO_novelabarroca-0061.txt",
+  "titulo": "La fuerza del amor",
+  "resumen_largo": [
+    "Laura crece en una familia noble de Nápoles, protegida por su padre don Antonio y por sus hermanos, especialmente don Carlos. Se casa con don Diego Pinatelo, pero el marido vuelve a relacionarse con Nise, una antigua amante, y abandona el afecto conyugal. Cuando Laura se queja, él la insulta, la arrastra por los cabellos, la golpea y saca una daga. Don Carlos lo desarma y la propia Laura impide que su hermano lo mate. Don Antonio retira a la familia a Piedra Blanca para evitar nuevos enfrentamientos, dejando a su hija con el marido. Desesperada por recuperar su amor, Laura acepta consejos peligrosos.",
+    "Una mujer que se presenta como capaz de remediar el mal amoroso pide a Laura elementos de una sepultura para preparar un hechizo. Alega que la propia interesada debe buscarlos, con lo que evita tener que demostrar su poder y prolonga la explotación de su angustia. Laura, movida por la desesperación, sale de noche hacia un humilladero donde se encuentran cuerpos de ajusticiados y una fosa. Allí se expone a caerse y a nuevas desgracias mientras cumple una tarea que repugna a su condición y a sus primeras convicciones, sin conseguir ningún remedio para el desamor.",
+    "En ese mismo momento don Carlos despierta sobresaltado, siente que su hermana está en peligro y cabalga hacia Nápoles. La detención extraordinaria de su caballo ante el humilladero lo conduce hasta Laura, que acaba confesando quién es y qué ha hecho. Él la devuelve a Piedra Blanca y la familia lleva el caso ante el virrey. Don Diego promete corregirse y pide que Laura vuelva a su lado, pero ella rechaza la reconciliación y entra en el convento de la Concepción. El marido abandona la ciudad y muere después en la guerra contra el duque de Saboya."
+  ],
+  "resumen_breve": [
+    "En Nápoles, Laura sufre la infidelidad y los maltratos de su marido don Diego Pinatelo y busca un remedio para recuperar su afecto.",
+    "El consejo de una hechicera la lleva de noche a un humilladero, donde su hermano don Carlos la encuentra en peligro.",
+    "Ante el virrey, Laura rechaza la reconciliación y entra en religión, mientras el marido acaba muriendo en la guerra."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Laura",
+      "descripcion": "Esposa que padece abandono y violencia y decide finalmente dejar la convivencia matrimonial."
+    },
+    {
+      "nombre": "Don Diego Pinatelo",
+      "descripcion": "Marido infiel y violento que promete enmendarse cuando Laura decide abandonarlo."
+    },
+    {
+      "nombre": "Don Carlos",
+      "descripcion": "Hermano que la rescata del humilladero."
+    },
+    {
+      "nombre": "Don Antonio",
+      "descripcion": "Padre que presenta el caso al virrey."
+    },
+    {
+      "nombre": "Hechicera",
+      "descripcion": "Mujer que explota el dolor de Laura mediante una propuesta de remedio mágico."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Nápoles",
+      "descripcion": "Ciudad del matrimonio y del conflicto."
+    },
+    {
+      "nombre": "Humilladero y sepultura de ajusticiados",
+      "descripcion": "Espacio de la peligrosa búsqueda nocturna de Laura."
+    },
+    {
+      "nombre": "Piedra Blanca",
+      "descripcion": "Residencia familiar y primer refugio tras el rescate."
+    },
+    {
+      "nombre": "Palacio del virrey y convento de la Concepción",
+      "descripcion": "Lugares de la exposición del caso y de la retirada definitiva."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Violencia y desamor matrimonial",
+      "descripcion": "La infidelidad, los golpes y las amenazas del marido llevan a Laura a la desesperación."
+    },
+    {
+      "tema": "Desesperación y engaño",
+      "descripcion": "La búsqueda de remedios conduce a aceptar consejos fraudulentos."
+    },
+    {
+      "tema": "Amparo familiar",
+      "descripcion": "La intervención del hermano evita una desgracia y facilita que Laura decida su futuro."
+    },
+    {
+      "tema": "Desengaño y retiro",
+      "descripcion": "La protagonista prefiere la seguridad religiosa a volver al matrimonio."
+    }
+  ]
+}

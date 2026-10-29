@@ -1,0 +1,64 @@
+{
+  "archivo": "TEXORO_novelabarroca-0003.txt",
+  "titulo": "Amar sin saber a quién",
+  "resumen_largo": [
+    "Lisena, hija de Ludovico, rey de Escocia, prefiere la caza al matrimonio y vive cuidadosamente apartada de sus pretendientes. Enrico, rey de Navarra, se enamora de ella por las noticias de su belleza y viaja encubierto a la corte escocesa. Allí presencia el segundo matrimonio de Ludovico con Clorinarda y conoce a la princesa. Los celos de la nueva reina hacen que Lisena proponga retirarse a La Isla para devolver la tranquilidad a su padre, y Enrico decide seguirla con un disfraz que le permita acercarse sin revelar su rango.",
+    "Con el nombre de Rústico Amador, el rey finge simpleza y entra al servicio de Alberto, encargado de los bosques. Su dinero, donaires y disponibilidad le granjean la confianza de los habitantes y de los servidores de la princesa. Al mismo tiempo, canta de noche junto a sus ventanas y le envía un papel amoroso, provocando en Lisena el deseo de identificar al músico. Los juegos y fiestas de La Isla prolongan el trato equívoco. Cuando la princesa cae al agua, Enrico la rescata y dirige los cuidados que permiten su recuperación, aumentando la sospecha de que su aparente rusticidad oculta otras cualidades.",
+    "El nacimiento de un príncipe permite que Lisena vuelva a Escocia, y la próxima separación obliga al amante a entregarle un retrato que revela su identidad. La princesa pide al almirante que favorezca su casamiento y, cuando Ludovico le muestra los retratos de los pretendientes, elige al rey de Navarra. Se formaliza la unión y se hacen las entregas en Estella, donde Enrico recibe a su esposa con magnificencia. Las fiestas y mercedes finales resuelven el cortejo secreto, y el narrador afirma que Lisena reina durante muchos años y tiene descendencia."
+  ],
+  "resumen_breve": [
+    "Una princesa escocesa se retira a La Isla por los celos de su madrastra y es seguida por Enrico, rey de Navarra.",
+    "El rey se disfraza de criado simple y conquista su confianza mediante músicas, fiestas y un rescate en el río.",
+    "Un retrato revela su identidad y permite que Lisena lo elija como esposo, con unas entregas solemnes en Estella."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Lisena",
+      "descripcion": "Princesa de Escocia que se enamora sin conocer inicialmente la identidad de su servidor."
+    },
+    {
+      "nombre": "Enrico o Rústico Amador",
+      "descripcion": "Rey de Navarra que corteja a Lisena disfrazado de hombre simple."
+    },
+    {
+      "nombre": "Ludovico",
+      "descripcion": "Rey de Escocia y padre de Lisena."
+    },
+    {
+      "nombre": "Clorinarda",
+      "descripcion": "Segunda esposa de Ludovico, cuyos celos provocan el retiro de la princesa."
+    },
+    {
+      "nombre": "El almirante",
+      "descripcion": "Servidor que acompaña a Lisena y favorece la solución matrimonial."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Corte de Escocia",
+      "descripcion": "Lugar de la vida familiar de Lisena y de la negociación de sus bodas."
+    },
+    {
+      "nombre": "La Isla",
+      "descripcion": "Ciudad de bosques y puerto donde se desarrolla el cortejo encubierto."
+    },
+    {
+      "nombre": "Estella y Navarra",
+      "descripcion": "Espacios de las entregas y del recibimiento de la princesa."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Identidad encubierta",
+      "descripcion": "El rey oculta su condición para acercarse a la princesa."
+    },
+    {
+      "tema": "Celos familiares",
+      "descripcion": "La envidia de la madrastra determina la separación inicial."
+    },
+    {
+      "tema": "Elección matrimonial",
+      "descripcion": "Lisena reconoce y elige al hombre que ha llegado a amar."
+    }
+  ]
+}

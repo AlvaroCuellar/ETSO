@@ -1,0 +1,68 @@
+{
+  "archivo": "TEXORO_novelabarroca-0054.txt",
+  "titulo": "Cigarrales de Toledo",
+  "resumen_largo": [
+    "La narración reúne a damas y caballeros en torno a los amores de don García, Irene, Serafina y don Alejo, cuyas inclinaciones inicialmente desiguales amenazan con separar a los amigos. Las conversaciones y noticias que circulan entre ellos conducen a nuevas correspondencias y a la celebración de matrimonios. La llegada de don Juan de Salcedo amplía el grupo y ofrece ocasión para contar experiencias y aventuras. En lugar de concluir con las bodas, la obra prolonga la reunión festiva en los cigarrales próximos a Toledo, donde la compañía organiza una serie de entretenimientos.",
+    "Los cinco cigarrales se suceden bajo el gobierno temporal de distintos participantes, que disponen comidas, músicas, juegos, relatos y representaciones. Las historias contadas incluyen viajes, encuentros amorosos, obstáculos y burlas, mientras los versos y las conversaciones acompañan los cambios de anfitrión. Entre los relatos figura el de tres mujeres de Madrid que ponen a prueba el juicio de sus maridos mediante ingeniosos engaños. La miscelánea enlaza así la vida del grupo con narraciones particulares, sin convertir todas las aventuras en una sola acción ni atribuir a los anfitriones los hechos que se cuentan para entretenerlos.",
+    "El último cigarral ofrece una nueva jornada de fiestas, un debate sobre el valor de la comedia y una representación anunciada como El celoso prudente. Los asistentes elogian el entretenimiento por su capacidad de enseñar mediante el deleite, y después de la cena el gobierno pasa a Anarda. La llegada de Carrillo con noticias de otros amigos lleva a la compañía a salir de Toledo para recibirlos. El cierre anuncia una segunda parte que contaría nuevas fiestas y narraciones. La unidad de lo transmitido reside en esta reunión cortesana y en la alternancia de amores, conversación y recreo."
+  ],
+  "resumen_breve": [
+    "Damas y caballeros vinculados por sus amores y amistades se reúnen en los cigarrales de Toledo para celebrar bodas y compartir fiestas.",
+    "Cinco cigarrales enlazan conversaciones, poemas, narraciones de aventuras y burlas con juegos, banquetes y anuncios de representaciones.",
+    "La compañía termina saliendo a recibir a nuevos amigos, mientras se promete una continuación de sus entretenimientos."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Don García",
+      "descripcion": "Caballero cuyo conflicto amoroso participa en la formación del grupo festivo."
+    },
+    {
+      "nombre": "Serafina",
+      "descripcion": "Dama enamorada de don García y participante en la resolución matrimonial."
+    },
+    {
+      "nombre": "Irene y don Alejo",
+      "descripcion": "Pareja cuya relación se cruza con los primeros conflictos amorosos."
+    },
+    {
+      "nombre": "Don Juan de Salcedo",
+      "descripcion": "Amigo y narrador de aventuras que interviene en los entretenimientos."
+    },
+    {
+      "nombre": "Damas y caballeros de los cigarrales",
+      "descripcion": "Compañía que alterna el gobierno de las fiestas y escucha las narraciones."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Cigarrales de Toledo",
+      "descripcion": "Fincas de recreo que dan marco a las cinco secciones de la obra."
+    },
+    {
+      "nombre": "Toledo",
+      "descripcion": "Ciudad de origen del grupo y referencia de sus relaciones sociales."
+    },
+    {
+      "nombre": "Madrid y otros lugares de los relatos",
+      "descripcion": "Escenarios particulares de las historias insertas, diferentes del marco de la reunión."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Amor y sociabilidad",
+      "descripcion": "Los conflictos sentimentales desembocan en matrimonios y convivencia festiva."
+    },
+    {
+      "tema": "Entretenimiento compartido",
+      "descripcion": "Relatos, poemas y juegos sostienen la vida de la compañía."
+    },
+    {
+      "tema": "Burlas y apariencias",
+      "descripcion": "Algunas historias muestran engaños y errores de juicio, como los de los maridos burlados."
+    },
+    {
+      "tema": "Utilidad de la comedia",
+      "descripcion": "Los asistentes defienden la enseñanza moral mediante una representación agradable."
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "archivo": "TEXORO_sonetos_siglo_oro.txt",
+  "titulo": "Corpus de Sonetos del Siglo de Oro",
+  "resumen_largo": [
+    "La colección reúne sonetos de diversos autores del Siglo de Oro, entre ellos Lope de Vega, Quevedo, Fernando de Herrera y Gutierre de Cetina. Cada poema presenta una situación propia: una voz declara su amor, lamenta la ausencia de la persona querida, describe su belleza o enfrenta los celos y el desengaño. Las imágenes de fuego, luz, heridas y cautiverio expresan el deseo y sus contradicciones. La secuencia de textos permite observar cómo distintos hablantes recurren a un mismo repertorio de imágenes para formular experiencias y respuestas diferentes.",
+    "Junto a los poemas amorosos aparecen composiciones religiosas, morales, funerarias y de circunstancia. Unas voces se dirigen a Dios o a la Virgen; otras recuerdan a los muertos, celebran personas y acontecimientos o advierten sobre la fragilidad de la vida. Las referencias a personajes de la mitología y de la historia sirven para comparar conductas, representar conflictos y construir elogios. También hay sonetos satíricos y burlescos, en los que la agudeza verbal se aplica a las apariencias, las ambiciones o las contradicciones del comportamiento humano.",
+    "El conjunto incluye asimismo sonetos insertos en obras teatrales, donde el hablante pertenece a una situación dramática particular. Por ello no existe un argumento que avance desde el primer poema hasta el último, ni un reparto compartido por toda la colección. El cierre de cada pieza puede adoptar la forma de una queja, una conclusión moral, una súplica o un giro ingenioso. La lectura del corpus muestra la variedad de usos del soneto: confesión amorosa, oración, homenaje, reflexión sobre el tiempo y expresión de un personaje dramático."
+  ],
+  "resumen_breve": [
+    "Esta colección reúne sonetos de distintos autores del Siglo de Oro, con voces que expresan amor, ausencia, celos y desengaño.",
+    "Los poemas incorporan también devoción religiosa, reflexión moral, elogios, sátiras y recuerdos de personas fallecidas.",
+    "Cada soneto constituye una pieza propia, y algunos proceden de situaciones teatrales, por lo que el conjunto no presenta una trama ni un reparto únicos."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Voces amorosas",
+      "descripcion": "Hablantes que declaran su deseo, evocan a la persona amada y expresan celos, ausencia o desengaño."
+    },
+    {
+      "nombre": "Personas amadas y personajes dramáticos",
+      "descripcion": "Destinatarios de los poemas y figuras que hablan en los sonetos procedentes del teatro; cambian de una pieza a otra."
+    },
+    {
+      "nombre": "Dios, la Virgen y figuras mitológicas",
+      "descripcion": "Destinatarios de la devoción o referentes que permiten representar sentimientos, ejemplos y comparaciones."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Paisajes naturales y pastoriles",
+      "descripcion": "Ríos, campos y otros lugares donde las voces proyectan sus afectos y describen encuentros o ausencias."
+    },
+    {
+      "nombre": "Espacios urbanos y cortesanos",
+      "descripcion": "Marcos de homenajes, sátiras y composiciones de circunstancia."
+    },
+    {
+      "nombre": "Sepulcros y ámbitos religiosos",
+      "descripcion": "Lugares asociados a la memoria de los muertos, la oración y la reflexión sobre la vida."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Amor y desengaño",
+      "descripcion": "El deseo, la belleza, la ausencia y los celos articulan numerosos conflictos líricos."
+    },
+    {
+      "tema": "Muerte y paso del tiempo",
+      "descripcion": "Los poemas funerarios y morales recuerdan la fragilidad de la vida y la pérdida de los bienes humanos."
+    },
+    {
+      "tema": "Religión y devoción",
+      "descripcion": "Las voces formulan alabanzas, súplicas y meditaciones cristianas."
+    },
+    {
+      "tema": "Elogio, sátira y agudeza",
+      "descripcion": "El soneto sirve tanto para celebrar personas como para cuestionar apariencias y conductas."
+    }
+  ]
+}

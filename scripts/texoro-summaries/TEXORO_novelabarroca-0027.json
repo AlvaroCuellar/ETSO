@@ -1,0 +1,64 @@
+{
+  "archivo": "TEXORO_novelabarroca-0027.txt",
+  "titulo": "El licenciado Vidriera",
+  "resumen_largo": [
+    "Unos estudiantes encuentran junto al Tormes a un muchacho que quiere servir para poder estudiar y lo llevan consigo a Salamanca. Tomás Rodaja destaca por su inteligencia y dedicación. Más tarde conoce al capitán Valdivia, con quien recorre Italia y llega a Flandes, observando ciudades, costumbres y la vida militar. Regresa a los estudios y obtiene la licenciatura. Una mujer se enamora de él y, al no ser correspondida, intenta atraerlo mediante un membrillo preparado con un supuesto hechizo.",
+    "El alimento le provoca una enfermedad grave y, al recuperarse, Tomás queda convencido de que su cuerpo es de vidrio y puede romperse. Evita el contacto y adopta modos de vida condicionados por ese temor, pero conserva una extraordinaria agudeza para responder a preguntas. Conocido como el licenciado Vidriera, atrae multitudes y alcanza fama por sus dichos sobre profesiones, conductas y tipos sociales. La admiración pública se mezcla con las molestias y burlas de quienes lo siguen y buscan respuestas entretenidas.",
+    "Un religioso consigue que recupere el juicio. Tomás adopta entonces el nombre de licenciado Rueda y acude a la corte para ejercer su profesión, pero descubre que las personas interesadas en su locura no quieren aprovechar su saber cuando está cuerdo. Sus discursos no le proporcionan sustento y se ve amenazado por el hambre. Decide volver a Flandes con Valdivia y emplear las armas ante el fracaso de las letras. Allí termina su vida como soldado, reconocido por su prudencia y valor."
+  ],
+  "resumen_breve": [
+    "Tomás Rodaja estudia en Salamanca y conoce Italia y Flandes antes de sufrir una enfermedad causada por un supuesto filtro amoroso.",
+    "Convencido de que es de vidrio, se vuelve célebre como Vidriera por sus respuestas agudas y su crítica de costumbres.",
+    "Tras curarse pierde la atención del público, no logra vivir de su profesión y acaba su vida como soldado en Flandes."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Tomás Rodaja / Vidriera / Rueda",
+      "descripcion": "Estudiante, enfermo célebre y después licenciado que fracasa en su intento de ejercer."
+    },
+    {
+      "nombre": "Capitán Valdivia",
+      "descripcion": "Militar que acompaña a Tomás en sus viajes y lo recibe en su etapa final."
+    },
+    {
+      "nombre": "La mujer enamorada",
+      "descripcion": "Pretendiente rechazada que le da el membrillo causante de su enfermedad."
+    },
+    {
+      "nombre": "El religioso",
+      "descripcion": "Persona que consigue curar la creencia de Tomás en su fragilidad de vidrio."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Salamanca",
+      "descripcion": "Lugar de formación y del regreso de Tomás a sus estudios."
+    },
+    {
+      "nombre": "Italia",
+      "descripcion": "Ámbito de viajes y aprendizaje por observación de ciudades y costumbres."
+    },
+    {
+      "nombre": "La corte",
+      "descripcion": "Escenario de su celebridad y del posterior fracaso profesional."
+    },
+    {
+      "nombre": "Flandes",
+      "descripcion": "Destino militar de los viajes y de su vida final."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Locura y lucidez",
+      "descripcion": "La falsa convicción de ser de vidrio coexiste con respuestas socialmente perspicaces."
+    },
+    {
+      "tema": "Fama y utilidad del saber",
+      "descripcion": "El público aprecia la extravagancia y abandona al hombre que pretende trabajar con juicio."
+    },
+    {
+      "tema": "Letras y armas",
+      "descripcion": "La frustración profesional conduce a Tomás de los estudios a la carrera militar."
+    }
+  ]
+}

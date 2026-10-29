@@ -1,0 +1,80 @@
+{
+  "archivo": "TEXORO_novelabarroca-0019.txt",
+  "titulo": "El Proteo de Madrid",
+  "resumen_largo": [
+    "Dominga y Marcos dejan Ponferrada para buscar mejores condiciones en Madrid, donde nace su hijo Domingo. Por su pobreza lo abandonan a una puerta y un soldado de la guarda tudesca lo recoge, lo cría y le da su propio nombre. El muchacho aprende con rapidez, pero se muestra inclinado a las burlas y a apropiarse de lo ajeno. Al morir su protector entra como paje al servicio del conde de Oñate. Allí utiliza un disfraz de mujer para engañar a un compañero y recibe un castigo que lo impulsa a vengarse del maestresala, don Cosme.",
+    "Domingo se alía con Teodora para hacer creer a Cosme que una dama principal corresponde a sus pretensiones. El dinero que consigue mediante esta ficción permite que huya con la criada, pero, después de que la golpee en una venta, ella escapa con otro hombre y con buena parte de los bienes. En Lisboa se hace soldado y se une a Carranza, con quien roba a un clérigo aprovechando su afición a unos perros. Ambos continúan sus fraudes mediante falsos indicios inquisitoriales y, en Évora, Domingo se hace pasar por comisario del Santo Oficio para apoderarse del dinero de un mercader.",
+    "Los dos ladrones vuelven a Castilla y llaman la atención en Toledo por el oro que pierden en el juego. Tras una nueva fuga, llegan a Madrid, donde Domingo reconoce el peligro de encontrar a Cosme; poco después, Carranza lo abandona y se lleva la moneda guardada en su jubón. Domingo recurre entonces a un disfraz de viuda para pedir limosna, pero la ronda descubre su voz y su barba y lo conduce a la cárcel. Allí Cosme lo reconoce y denuncia el robo anterior. La prueba judicial produce una condena de doscientos azotes y seis años de galeras, donde el narrador afirma que todavía continúa haciendo burlas a sus compañeros."
+  ],
+  "resumen_breve": [
+    "Domingo, hijo de dos emigrantes de Ponferrada y criado en Madrid por un soldado, se convierte en paje burlador.",
+    "Sus disfraces y robos lo llevan de la corte a Lisboa y Évora, donde explota el miedo a la Inquisición.",
+    "De vuelta en Madrid pierde su dinero, es descubierto y denunciado por Cosme y termina condenado a azotes y galeras."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Domingo Alberto Estrianquer",
+      "descripcion": "Pícaro que adopta distintos papeles y disfraces para robar y engañar."
+    },
+    {
+      "nombre": "Don Cosme",
+      "descripcion": "Maestresala burlado y robado que reconoce a Domingo y lo denuncia."
+    },
+    {
+      "nombre": "Teodora",
+      "descripcion": "Criada que colabora en el engaño a Cosme y después huye con el dinero."
+    },
+    {
+      "nombre": "Carranza",
+      "descripcion": "Soldado y cómplice de los robos en Portugal que termina estafando a Domingo."
+    },
+    {
+      "nombre": "Dominga y Marcos",
+      "descripcion": "Padres naturales que abandonan al niño por su pobreza."
+    },
+    {
+      "nombre": "El soldado de la guarda tudesca",
+      "descripcion": "Padre adoptivo que cría y educa al protagonista."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Madrid",
+      "descripcion": "Ciudad de la crianza, del servicio como paje y de la captura final."
+    },
+    {
+      "nombre": "Caminos y venta",
+      "descripcion": "Espacios de la fuga con Teodora y de la separación de los amantes."
+    },
+    {
+      "nombre": "Lisboa",
+      "descripcion": "Ciudad de la vida militar y del robo al sacerdote."
+    },
+    {
+      "nombre": "Évora",
+      "descripcion": "Lugar donde el falso comisario se apodera del dinero del mercader."
+    },
+    {
+      "nombre": "Galeras de España",
+      "descripcion": "Destino de la condena con el que termina su trayectoria."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Disfraz y suplantación",
+      "descripcion": "El protagonista cambia de género y condición aparente para engañar."
+    },
+    {
+      "tema": "Delito y castigo",
+      "descripcion": "La sucesión de fraudes termina con una denuncia probada y una condena."
+    },
+    {
+      "tema": "Deslealtad entre cómplices",
+      "descripcion": "Teodora y Carranza se apropian de lo que Domingo había robado."
+    },
+    {
+      "tema": "Abuso del temor institucional",
+      "descripcion": "Los falsos procedimientos inquisitoriales intimidan a los mercaderes."
+    }
+  ]
+}

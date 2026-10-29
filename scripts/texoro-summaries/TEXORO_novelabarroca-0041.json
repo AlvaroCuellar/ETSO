@@ -1,0 +1,72 @@
+{
+  "archivo": "TEXORO_novelabarroca-0041.txt",
+  "titulo": "Diálogo de Mercurio y Carón",
+  "resumen_largo": [
+    "Mercurio busca a Carón, el barquero encargado de transportar a las almas al infierno, y le comunica nuevas diferencias entre el emperador y los reyes de Francia e Inglaterra. Carón considera las guerras desde el beneficio que le producen las muertes, de modo que la expectativa de paz amenaza su oficio. Mercurio desarrolla un relato que defiende la actuación del emperador y censura a sus adversarios. La conversación política se interrumpe con la llegada de almas que cuentan cómo vivieron y pretenden justificar sus conductas.",
+    "Los interrogatorios a las almas revelan el contraste entre la apariencia social y la práctica moral. Clérigos, gobernantes y personas de otros estados muestran ambición, abuso o confianza en formas externas de religión, y sus respuestas exponen por qué les corresponde el destino infernal. Frente a ellos aparece el ejemplo de un casado cuya conducta cristiana le permite dirigirse al cielo. Los relatos de vida convierten la discusión en un examen de responsabilidades personales, mientras Carón y Mercurio comentan las contradicciones con humor y preguntas incisivas.",
+    "En el segundo libro prosiguen las noticias sobre el enfrentamiento político y se amplía la presentación de conductas cristianas que reciben un destino favorable. El rey Polidoro explica cómo comprendió que debía ser pastor de sus vasallos y no dueño de ellos; otros ejemplos desarrollan obligaciones de distintos estados. El coloquio contrapone así la religiosidad efectiva a los títulos o ceremonias que no transforman la vida. Al hacerse tarde, los interlocutores dejan pasar a una monja sin interrogarla y se marchan a reunirse con Proserpina."
+  ],
+  "resumen_breve": [
+    "Mercurio y Carón discuten en un marco infernal las guerras entre el emperador y los monarcas de Francia e Inglaterra.",
+    "Las almas que llegan relatan sus vidas y permiten confrontar la apariencia religiosa con las obligaciones morales de cada estado.",
+    "Los ejemplos de condenación y salvación unen crítica social, defensa imperial y enseñanza cristiana antes de que los interlocutores se retiren."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Mercurio",
+      "descripcion": "Interlocutor que comunica los acontecimientos políticos e interroga a las almas."
+    },
+    {
+      "nombre": "Carón",
+      "descripcion": "Barquero del infierno, interesado en las guerras por el número de muertos que le proporcionan."
+    },
+    {
+      "nombre": "Las almas interrogadas",
+      "descripcion": "Figuras de distintos estados que exponen sus vidas y el resultado moral de sus acciones."
+    },
+    {
+      "nombre": "Polidoro",
+      "descripcion": "Rey cuya alma explica un gobierno reformado al comprender su deber hacia los vasallos."
+    },
+    {
+      "nombre": "El alma del casado",
+      "descripcion": "Ejemplo de salvación mediante la conducta cristiana en la vida matrimonial."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Ribera y paso hacia el infierno",
+      "descripcion": "Marco del diálogo y de la llegada de almas ante el barquero."
+    },
+    {
+      "nombre": "Montaña del segundo libro",
+      "descripcion": "Lugar donde Mercurio vuelve a encontrar a Carón."
+    },
+    {
+      "nombre": "Europa y las cortes cristianas evocadas",
+      "descripcion": "Ámbito de los hechos políticos referidos en la conversación."
+    },
+    {
+      "nombre": "Infierno y cielo",
+      "descripcion": "Destinos que organizan el contraste entre las vidas condenadas y las salvadas."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Religión y conducta",
+      "descripcion": "La salvación se relaciona con la práctica moral y no solo con ceremonias o posiciones sociales."
+    },
+    {
+      "tema": "Guerra y paz",
+      "descripcion": "La defensa del emperador se acompaña de la denuncia de los daños que sufren los pueblos."
+    },
+    {
+      "tema": "Poder y responsabilidad",
+      "descripcion": "Los ejemplos de gobernantes y autoridades confrontan privilegio y obligación de servicio."
+    },
+    {
+      "tema": "Sátira de los estados",
+      "descripcion": "Las declaraciones de las almas permiten criticar ambición, hipocresía y abusos."
+    }
+  ]
+}

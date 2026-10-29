@@ -88,9 +88,15 @@ export const formatTraditionalAttributionCompact = (
 	if (set.unresolved) return fallback;
 	const groups = attributionGroups(set);
 	if (groups.length === 0) return fallback;
+	// Compact contexts use the structured hypotheses. Approved prose belongs to
+	// the detailed phrase builder, even when both are shown on the same page.
+	const connector = set.connector === 'and' ? connectorLabels.and : connectorLabels.or;
 	return groups
-		.map((group) => formatAuthorListParts(group, connectorLabels.and).map((part) => part.value).join(''))
-		.join(` ${connectorLabels.or} `);
+		.map((group) => {
+			const label = formatAuthorListParts(group, connectorLabels.and).map((part) => part.value).join('');
+			return groups.length > 1 && group.length > 1 ? `(${label})` : label;
+		})
+		.join(` ${connector} `);
 };
 
 const resolveUnknownIngeniosLabel = (author: AuthorReference): string | null => {
@@ -116,6 +122,7 @@ export const buildTraditionalAttributionParts = (
 	set: AttributionSet,
 	options: BuildTraditionalAttributionPartsOptions = {}
 ): AttributionPhrasePart[] => {
+	if (set.reviewedPhrase) return [{ kind: 'text', value: set.reviewedPhrase }];
 	const includePhrasePrefix = options.includePhrasePrefix ?? true;
 	const translate = options.translate ?? ((value: string) => value);
 	const connectorLabels = options.connectorLabels ?? { and: 'y', or: 'o' };
@@ -146,6 +153,22 @@ export const buildTraditionalAttributionParts = (
 					: translate('Sin atribución tradicional determinada')
 			}
 		];
+	}
+
+	// The same named author, either alone or with an anonymous team: retain both
+	// hypotheses without displaying a pseudoauthor as a person or repeating the name.
+	if (groups.length === 2 && groups[0].length === 1 && groups[1].length === 2) {
+		const named = groups[0][0];
+		const partner = groups[1].find((member) => member.authorId !== named.authorId);
+		const count = partner && resolveUnknownIngeniosLabel(partner);
+		if (count && groups[1].some((member) => member.authorId === named.authorId)) {
+			return [
+				...(includePhrasePrefix ? [{ kind: 'text' as const, value: `${translate('Obra atribuida a')} ` }] : []),
+				...formatAuthorListParts([named], connectorLabels.and),
+				{ kind: 'text', value: ` ${connectorLabels.or} ${translate('a su colaboración con')} ${translate(`otros ${count} no identificados`)}` },
+				...(includePhrasePrefix ? [{ kind: 'text' as const, value: '.' }] : [])
+			];
+		}
 	}
 
 	if (!includePhrasePrefix) {

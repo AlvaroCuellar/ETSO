@@ -1,0 +1,64 @@
+{
+  "archivo": "TEXORO_novelabarroca-0020.txt",
+  "titulo": "El amante liberal",
+  "resumen_largo": [
+    "Ricardo, un cristiano cautivo en Chipre, lamenta ante las ruinas de Nicosia la pérdida de su libertad y de Leonisa, la mujer que ama. Su amigo Mahamut, convertido al islam, le pide que relate su desgracia. Ricardo recuerda sus celos de Cornelio, favorecido por los padres de Leonisa, y el ataque de unos corsarios que los apresaron en la costa de Sicilia. Separado de la joven, cree que ha muerto, hasta que vuelve a verla ofrecida en venta ante las autoridades turcas.",
+    "Alí y Hazán compiten por poseer a Leonisa, que queda confiada a un cadí. También este desea aprovecharse de ella, mientras su esposa Halima se enamora de Ricardo. Mahamut facilita el reencuentro de los cautivos y ambos acuerdan fingir que favorecen estos deseos para preparar su salida. El traslado por mar abre la posibilidad de escapar, pero las rivalidades desembocan en un enfrentamiento entre embarcaciones. Ricardo y sus compañeros aprovechan la lucha para tomar el control y recuperar la libertad.",
+    "Los supervivientes llegan a Trápana, donde Leonisa vuelve a encontrar a sus padres. Ricardo intenta mostrar su generosidad ofreciendo su hacienda y aceptando que ella se case con Cornelio, pero reconoce que no puede disponer de una mujer que es dueña de su voluntad. Leonisa declara entonces que lo elige por esposo. Se celebra el matrimonio; Mahamut y Halima regresan a la fe cristiana y se casan entre sí. Ricardo comparte las riquezas obtenidas y alcanza fama por su liberalidad."
+  ],
+  "resumen_breve": [
+    "En el Mediterráneo, Ricardo y Leonisa pasan del cautiverio corsario a las disputas de varias autoridades turcas en Chipre.",
+    "Con la ayuda de Mahamut y mediante una estrategia de fingimientos, aprovechan un combate naval para recobrar la libertad.",
+    "De regreso en Sicilia, Leonisa elige casarse con Ricardo, cuya generosidad acaba por reconocer la autonomía de la amada."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Ricardo",
+      "descripcion": "Cautivo siciliano enamorado de Leonisa, cuya conducta conduce de los celos a la generosidad."
+    },
+    {
+      "nombre": "Leonisa",
+      "descripcion": "Joven cautiva que resiste las pretensiones de sus compradores y decide con quién casarse."
+    },
+    {
+      "nombre": "Mahamut",
+      "descripcion": "Amigo de Ricardo que favorece la comunicación entre los cautivos y su liberación."
+    },
+    {
+      "nombre": "Halima",
+      "descripcion": "Esposa del cadí, enamorada de Ricardo y colaboradora en el proyecto de salida."
+    },
+    {
+      "nombre": "Alí, Hazán y el cadí",
+      "descripcion": "Autoridades que rivalizan por Leonisa y provocan el conflicto que facilita la fuga."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Nicosia y su entorno",
+      "descripcion": "Lugar del cautiverio de Ricardo y del reencuentro con Leonisa."
+    },
+    {
+      "nombre": "Mar Mediterráneo",
+      "descripcion": "Escenario del apresamiento, los traslados y el combate que permite escapar."
+    },
+    {
+      "nombre": "Trápana",
+      "descripcion": "Ciudad siciliana donde los cautivos recuperan sus vínculos familiares y se celebran las bodas."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Libertad y cautiverio",
+      "descripcion": "Los personajes buscan escapar de la captura y de la compraventa de personas."
+    },
+    {
+      "tema": "Liberalidad amorosa",
+      "descripcion": "Ricardo aprende a renunciar a la posesión y a respetar la voluntad de Leonisa."
+    },
+    {
+      "tema": "Fingimiento y cooperación",
+      "descripcion": "La confianza entre los cautivos convierte los deseos de sus amos en una oportunidad de salvación."
+    }
+  ]
+}

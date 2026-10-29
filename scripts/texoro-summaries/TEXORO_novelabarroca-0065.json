@@ -1,0 +1,76 @@
+{
+  "archivo": "TEXORO_novelabarroca-0065.txt",
+  "titulo": "El verdugo de su esposa",
+  "resumen_largo": [
+    "Don Juan y don Pedro, dos caballeros de Palermo, mantienen desde niños una amistad muy estrecha. Don Pedro se casa con la hermosa Roseleta y desea conservar la presencia de su amigo en casa. Don Juan, que primero procura evitar murmuraciones, acaba enamorándose de la esposa y la solicita por escrito. Roseleta rechaza sus pretensiones y comunica al marido lo ocurrido. Ambos organizan una cita fingida en una quinta para castigar al galán, que abandona la ciudad creyendo que va a recibir por fin el favor de la mujer de su amigo.",
+    "En el camino, después de rezar a la Virgen, don Juan oye que lo llama uno de los hombres colgados de una horca. Lo baja y el extraño lo acompaña hasta la quinta, donde le ordena permanecer oculto mientras entra en su lugar. Don Pedro y sus criados disparan y apuñalan al recién llegado, creyéndolo don Juan, y lo arrojan a un pozo. El ahorcado vuelve después y explica que ha sido enviado para librarlo en atención a su devoción mariana. Don Juan pide perdón a los esposos y entra en religión, dando por terminadas sus pretensiones.",
+    "La demostración de la honradez de Roseleta no asegura su felicidad. Don Pedro se deja arrastrar por las murmuraciones y se enamora de Angeliana, antigua amante de don Juan. Esta inventa que Roseleta había correspondido al galán y obtiene del marido el propósito de vengarse. Don Pedro finge volver al afecto conyugal y espera hasta que su esposa está enferma y ha sido sangrada; de noche le destapa la vena y la deja morir. Simula después un duelo extremo y se casa con Angeliana. La muerte inocente de Roseleta cierra una denuncia de la crueldad de los hombres y de la inseguridad del honor femenino."
+  ],
+  "resumen_breve": [
+    "En Palermo, Roseleta rechaza a don Juan y avisa a su marido don Pedro, que prepara una emboscada contra su amigo.",
+    "La intervención sobrenatural de un ahorcado salva al pretendiente y lo lleva al arrepentimiento y a la vida religiosa.",
+    "Pese a su inocencia, Roseleta muere asesinada por don Pedro, que cree la calumnia de Angeliana y acaba casándose con ella."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Roseleta",
+      "descripcion": "Esposa honesta que rechaza al galán y termina asesinada por su marido."
+    },
+    {
+      "nombre": "Don Pedro",
+      "descripcion": "Marido que pasa de castigar al amigo a creer una calumnia contra su esposa."
+    },
+    {
+      "nombre": "Don Juan",
+      "descripcion": "Amigo y pretendiente de Roseleta, salvado por una intervención milagrosa."
+    },
+    {
+      "nombre": "Angeliana",
+      "descripcion": "Antigua amante de don Juan que provoca la muerte de Roseleta mediante una acusación falsa."
+    },
+    {
+      "nombre": "Ahorcado",
+      "descripcion": "Muerto enviado para sustituir a don Juan en la emboscada y advertirle que se enmiende."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Palermo",
+      "descripcion": "Ciudad de la amistad, el matrimonio y el desenlace."
+    },
+    {
+      "nombre": "Camino y horca",
+      "descripcion": "Espacios de la intervención sobrenatural."
+    },
+    {
+      "nombre": "Quinta",
+      "descripcion": "Lugar de la emboscada preparada para don Juan."
+    },
+    {
+      "nombre": "Casa matrimonial",
+      "descripcion": "Escenario del asesinato disimulado de Roseleta."
+    },
+    {
+      "nombre": "Convento carmelita",
+      "descripcion": "Destino del arrepentimiento de don Juan."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Inocencia y calumnia",
+      "descripcion": "La conducta honesta de Roseleta no evita una acusación falsa ni la muerte."
+    },
+    {
+      "tema": "Amistad y traición",
+      "descripcion": "La pretensión de don Juan quebranta la confianza entre los dos amigos."
+    },
+    {
+      "tema": "Violencia matrimonial",
+      "descripcion": "El marido utiliza el disimulo para matar a una esposa que no lo ha ofendido."
+    },
+    {
+      "tema": "Devoción y arrepentimiento",
+      "descripcion": "El socorro milagroso de don Juan desencadena su cambio de vida."
+    }
+  ]
+}

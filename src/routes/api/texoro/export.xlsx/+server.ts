@@ -1,6 +1,7 @@
 import ExcelJS from 'exceljs';
 import { error } from '@sveltejs/kit';
 import { formatAttribution, type AttributionSet } from '$lib/domain/catalog';
+import { formatTraditionalAttributionCompact } from '$lib/utils/traditional-attribution-phrase';
 import { getServerTexoroEngine, searchTexoro } from '$lib/server/texoro-runtime';
 import { buildWorkTitleSearchText, formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
 import {
@@ -180,6 +181,13 @@ const formatCompactAttribution = (set: AttributionSet, emptyLabel = 'Sin datos')
 	if (!label || label === 'Sin datos') return emptyLabel;
 	if (label === 'No apunta hacia ningún autor' || label === 'No apunta hacia ningún autor') return UNRESOLVED_ATTRIBUTION_LABEL;
 	return label;
+};
+
+const formatCompactTraditional = (meta: NonNullable<SearchResult['meta']>): string => {
+	if (meta.collectionSize && new Set(meta.traditionalAttribution.groups.flatMap((group) => group.members.map((member) => member.authorId))).size > 1) {
+		return 'Varios';
+	}
+	return formatTraditionalAttributionCompact(meta.traditionalAttribution, 'Sin datos');
 };
 
 const collectAuthorIds = (set: AttributionSet): Set<string> => {
@@ -410,7 +418,7 @@ const addResultsSheet = (
 			origin: meta?.origin ?? '',
 			collectionSize: meta?.collectionSize ?? '',
 			textState: meta?.textState?.trim() || 'Sin estado',
-			traditionalAttribution: meta ? formatCompactAttribution(meta.traditionalAttribution) : 'Sin datos',
+			traditionalAttribution: meta ? formatCompactTraditional(meta) : 'Sin datos',
 			stylometryAttribution: meta ? formatCompactAttribution(meta.stylometryAttribution, 'No analizada') : 'Sin datos',
 			totalOccurrences: sumResultOccurrences(result),
 			tokenCount: result.docTokenCount
@@ -453,7 +461,7 @@ const addOccurrencesSheet = (workbook: ExcelJS.Workbook, rows: OccurrenceExportR
 			genre: meta?.genre?.trim() || 'Sin subgénero',
 			origin: meta?.origin ?? '',
 			collectionSize: meta?.collectionSize ?? '',
-			traditionalAttribution: meta ? formatCompactAttribution(meta.traditionalAttribution) : 'Sin datos',
+			traditionalAttribution: meta ? formatCompactTraditional(meta) : 'Sin datos',
 			stylometryAttribution: meta ? formatCompactAttribution(meta.stylometryAttribution, 'No analizada') : 'Sin datos'
 		});
 	});

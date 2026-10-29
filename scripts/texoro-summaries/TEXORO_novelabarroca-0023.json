@@ -1,0 +1,64 @@
+{
+  "archivo": "TEXORO_novelabarroca-0023.txt",
+  "titulo": "La fuerza de la sangre",
+  "resumen_largo": [
+    "Una familia de hidalgos vuelve de noche del río a Toledo cuando Rodolfo y sus compañeros la asaltan y se llevan a Leocadia. El joven la viola mientras está inconsciente y luego la mantiene encerrada en su habitación. Cuando ella despierta, observa cuanto puede del aposento y toma un crucifijo como testimonio de lo ocurrido. Rodolfo la devuelve a las inmediaciones de su casa sin revelar su identidad. Leocadia cuenta la agresión a sus padres, que la amparan y guardan el secreto.",
+    "Rodolfo parte a Italia y Leocadia tiene un hijo, Luisico, criado bajo la protección de sus abuelos. Años después, el niño resulta herido por un caballo en una calle de Toledo. Un caballero lo recoge movido por el parecido con su propio hijo y lo lleva a su casa. Allí Leocadia reconoce la habitación de su agresor. Revela a Estefanía, madre de Rodolfo, lo sucedido y muestra el crucifijo; los dueños de la casa aceptan que el pequeño es su nieto.",
+    "Los padres de Rodolfo lo hacen volver de Italia con la promesa de un matrimonio. Estefanía prepara el encuentro para que la belleza de Leocadia atraiga al joven antes de descubrirle la verdad. La madre y su hijo aparecen ante la familia reunida, y una nueva pérdida de conocimiento permite enlazar el reconocimiento con la escena inicial. Se celebra el enlace y Rodolfo acepta a Leocadia y a Luisico. El relato presenta la descendencia y la convivencia posterior como cierre favorable de la desgracia sufrida."
+  ],
+  "resumen_breve": [
+    "En Toledo, Leocadia es secuestrada y violada por Rodolfo, de cuya habitación conserva un crucifijo como prueba.",
+    "El accidente de Luisico, hijo nacido de la agresión, la conduce años después a la casa de los abuelos paternos y permite revelar lo ocurrido.",
+    "La familia organiza el retorno de Rodolfo y su matrimonio con Leocadia, que el relato ofrece como reparación de la desgracia inicial."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Leocadia",
+      "descripcion": "Joven agredida que conserva indicios y consigue el reconocimiento de su hijo."
+    },
+    {
+      "nombre": "Rodolfo",
+      "descripcion": "Caballero responsable del secuestro y la violación, llamado después a aceptar el matrimonio."
+    },
+    {
+      "nombre": "Luisico",
+      "descripcion": "Hijo de Leocadia y Rodolfo, cuyo accidente desencadena el reconocimiento familiar."
+    },
+    {
+      "nombre": "Estefanía",
+      "descripcion": "Madre de Rodolfo, escucha a Leocadia y dispone el encuentro final."
+    },
+    {
+      "nombre": "Los padres de Leocadia",
+      "descripcion": "Protegen a su hija y crían al niño mientras se oculta la identidad del agresor."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Toledo",
+      "descripcion": "Ciudad donde transcurren la agresión, la crianza de Luisico y el reconocimiento."
+    },
+    {
+      "nombre": "Casa de Rodolfo y sus padres",
+      "descripcion": "La habitación del crimen se convierte años después en lugar de revelación familiar."
+    },
+    {
+      "nombre": "Casa de los padres de Leocadia",
+      "descripcion": "Refugio de la joven y espacio de crianza de su hijo."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Violencia y deshonra",
+      "descripcion": "La agresión impone a Leocadia un sufrimiento que su familia intenta proteger del juicio público."
+    },
+    {
+      "tema": "Prueba y reconocimiento",
+      "descripcion": "El crucifijo, la memoria del aposento y el parecido del niño hacen visible la filiación."
+    },
+    {
+      "tema": "Reparación familiar",
+      "descripcion": "El matrimonio y el reconocimiento del hijo constituyen la solución que adopta el relato."
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "archivo": "TEXORO_novelabarroca-0053.txt",
+  "titulo": "El pasajero",
+  "resumen_largo": [
+    "Cuatro viajeros parten de Madrid hacia Barcelona para embarcarse rumbo a Italia y entablan amistad durante el camino. Son un doctor experimentado en viajes, un maestro de artes y teología, el joven soldado don Luis y el orífice Isidro. Cada uno deja atrás obligaciones o personas queridas y lleva un proyecto distinto: servicio, estudios, herencia o búsqueda de una vida mejor. Para evitar el calor viajan de noche y descansan de día, pero la incomodidad de las posadas convierte las horas de reposo en ocasión de conversaciones que alivian la fatiga.",
+    "A lo largo de diez alivios los compañeros preguntan, discuten y cuentan experiencias sobre el trato humano, la elección de oficios y el uso de las letras. La conversación pasa por la escritura de libros y comedias, la predicación, la poesía, la guerra y la justicia. El doctor aporta recuerdos de Italia y ejemplos que permiten examinar ambiciones, engaños y comportamientos de diferentes grupos. No hay una sola intriga que resolver: el viaje reúne las historias y opiniones, y cada nuevo descanso da ocasión a otro asunto elegido según la inclinación o la necesidad de los interlocutores.",
+    "En los últimos intercambios aumentan las advertencias prácticas sobre la prudencia, la convivencia y el gobierno de la propia conducta. Los viajeros comparan la experiencia personal con sentencias y relatos ejemplares, señalando peligros del interés, de la obstinación y de la búsqueda de honores. El texto acaba recomendando evitar disputas inútiles, respetar al que enseña y practicar la modestia y la humildad. La proximidad de la partida obliga a dar término a la conversación, de manera que el cierre mantiene el marco itinerante y presenta las advertencias como un aprendizaje compartido entre compañeros de camino."
+  ],
+  "resumen_breve": [
+    "Cuatro hombres que viajan de Madrid a Barcelona para pasar a Italia se entretienen conversando durante sus descansos.",
+    "Diez alivios reúnen experiencias y debates sobre oficios, literatura, predicación, guerra, justicia y relaciones sociales.",
+    "El cierre ofrece consejos de prudencia, modestia y humildad antes de reanudar la marcha."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Doctor",
+      "descripcion": "Viajero de amplia experiencia que aporta numerosos relatos y advertencias."
+    },
+    {
+      "nombre": "Maestro",
+      "descripcion": "Profesor de artes y teología que se dirige a Roma y participa en los debates."
+    },
+    {
+      "nombre": "Don Luis",
+      "descripcion": "Joven soldado que va al reino de Nápoles."
+    },
+    {
+      "nombre": "Isidro",
+      "descripcion": "Orífice que viaja a Milán por una herencia y consulta sobre su oficio."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Camino de Madrid a Barcelona",
+      "descripcion": "Marco que reúne a los interlocutores y ordena las conversaciones."
+    },
+    {
+      "nombre": "Posadas y lugares de descanso",
+      "descripcion": "Espacios de los diez alivios dialogados."
+    },
+    {
+      "nombre": "Italia",
+      "descripcion": "Destino de los viajeros y referente de numerosos recuerdos y ejemplos."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Experiencia y aprendizaje",
+      "descripcion": "Los relatos de viajes sirven para orientar decisiones y conductas."
+    },
+    {
+      "tema": "Letras y representación",
+      "descripcion": "Los interlocutores debaten sobre libros, poesía, comedia y predicación."
+    },
+    {
+      "tema": "Prudencia social",
+      "descripcion": "Se aconseja cómo evitar engaños, disputas y pretensiones perjudiciales."
+    },
+    {
+      "tema": "Justicia y buen gobierno",
+      "descripcion": "Las conversaciones examinan obligaciones militares, jurídicas y civiles."
+    }
+  ]
+}

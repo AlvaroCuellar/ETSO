@@ -1,0 +1,76 @@
+{
+  "archivo": "TEXORO_novelabarroca-0059.txt",
+  "titulo": "La esclava de su amante",
+  "resumen_largo": [
+    "Ante Lisis y su compañía, la esclava Zelima revela que es doña Isabel Fajardo, una noble cristiana de Murcia, y se quita las señales fingidas de esclavitud del rostro. Cuenta cómo, al trasladarse su familia a Zaragoza, conoce a don Manuel y se enamora de él. Este la encierra en su aposento y la viola mientras está desmayada; después promete casarse, pero evita cumplir su palabra. Los celos y las intrigas agravan la dependencia de Isabel. Cuando el galán parte a Sicilia al servicio del virrey, ella abandona la protección familiar para seguirlo y reclamar la reparación de su honor.",
+    "Isabel toma el nombre de Zelima, finge ser mora y se hace vender como esclava para permanecer cerca de don Manuel. Ni sus recursos ni su entrega corrigen su ingratitud. El cautiverio real en Argel complica la situación: Zaida, hija de su nuevo dueño, se enamora de don Manuel, mientras Isabel procura su rescate. De vuelta a Zaragoza, el galán declara que se casará con Zaida cuando sea cristiana. Don Felipe, antiguo pretendiente de Isabel que la sirve bajo el nombre de Luis, mata a don Manuel para vengarla. Zaida se clava una daga en el corazón y muere sobre él.",
+    "Isabel huyó con ayuda de Octavio y, en vez de volver a su familia o buscar otro matrimonio, insistió en vivir bajo la condición fingida de esclava. Fue comprada y pasó por una casa donde sufrió nuevas pretensiones, hasta ser enviada a Lisis, cuya benevolencia le proporcionó un refugio. Al terminar su relato, pide permiso para entrar en religión junto a doña Estefanía. Desea avisar a su madre y dedicar a Dios la fidelidad que antes había ofrecido a un amante ingrato. El desenlace transforma así el nombre de esclava de su amante en una elección de vida religiosa."
+  ],
+  "resumen_breve": [
+    "Zelima descubre ante Lisis que es Isabel Fajardo, una noble de Murcia que fingió ser esclava para seguir a don Manuel.",
+    "Tras la agresión y las promesas incumplidas de don Manuel, Isabel lo sigue por Sicilia, Argel y España hasta que don Felipe mata al galán y Zaida se suicida.",
+    "Amparada por Lisis, Isabel rechaza nuevas dependencias amorosas y pide entrar en religión para ofrecer a Dios su constancia."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Doña Isabel Fajardo o Zelima",
+      "descripcion": "Narradora de sus desdichas, que adopta voluntariamente una identidad de esclava."
+    },
+    {
+      "nombre": "Don Manuel",
+      "descripcion": "Galán que viola a Isabel, promete casarse con ella y luego la abandona; muere a manos de don Felipe."
+    },
+    {
+      "nombre": "Lisis",
+      "descripcion": "Señora que ampara a Isabel y escucha la revelación de su identidad."
+    },
+    {
+      "nombre": "Don Felipe o Luis",
+      "descripcion": "Pretendiente de Isabel que la sirve con el nombre de Luis y mata a don Manuel para vengarla."
+    },
+    {
+      "nombre": "Zaida",
+      "descripcion": "Hija del dueño en Argel, enamorada de don Manuel, que se suicida tras la muerte del galán."
+    },
+    {
+      "nombre": "Octavio",
+      "descripcion": "Auxiliar de las fugas y ventas bajo la identidad fingida de esclava."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Murcia",
+      "descripcion": "Ciudad de origen de Isabel y del primer amor."
+    },
+    {
+      "nombre": "Sicilia",
+      "descripcion": "Destino al que sigue a don Manuel."
+    },
+    {
+      "nombre": "Argel",
+      "descripcion": "Lugar del cautiverio y de la rivalidad con Zaida."
+    },
+    {
+      "nombre": "Zaragoza, Valencia y Madrid",
+      "descripcion": "Espacios de las crisis posteriores, de sus desplazamientos y del amparo final."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Dependencia amorosa",
+      "descripcion": "La agresión sexual y las promesas de reparación atan a Isabel a un hombre que la desprecia y abandona."
+    },
+    {
+      "tema": "Identidad y esclavitud",
+      "descripcion": "La protagonista convierte una condición fingida en medio de acompañar al amado."
+    },
+    {
+      "tema": "Desengaño y retiro",
+      "descripcion": "La narración de sus pérdidas conduce a rechazar nuevos amores y elegir la religión."
+    },
+    {
+      "tema": "Amparo entre mujeres",
+      "descripcion": "Lisis ofrece la seguridad que falta en las relaciones anteriores."
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "archivo": "TEXORO_novelabarroca-0012.txt",
+  "titulo": "Las harpías en Madrid y coche de las estafas (estafa primera)",
+  "resumen_largo": [
+    "Feliciana prepara en Madrid una estafa contra Horacio, joven milanés que ha heredado una fortuna y conoce poco la lengua y las costumbres de la corte. Con ayuda de la vieja Bañuelos y del escudero Mogrobejo, hace detener un coche junto a su casa y representa el conflicto de una doncella a la que quieren llevar por fuerza a casarse. El extranjero, atraído por su belleza y compadecido de la supuesta persecución, la recibe en su vivienda. La joven adopta el nombre de Blanca y deja que su acompañante confirme una historia familiar inventada.",
+    "El alojamiento permite que Horacio se enamore y dé a la huéspeda regalos y vestidos, mientras Feliciana mantiene una apariencia de recato y agradecimiento. Para afianzar el engaño, hace que su madre Teodora represente a una tía, bajo otro nombre, y reciba al milanés como si ignorase el paradero de la sobrina. La falsa tristeza de la madre, las visitas y las alusiones a unos primos dispuestos a intervenir vuelven creíble el peligro. Horacio llega a ofrecer a Blanca la salida hacia Milán, donde podría casarse con él o con su hermano según el estado de sus propios compromisos.",
+    "La amenaza de los supuestos parientes precipita los preparativos de viaje y pone a Feliciana en disposición de apropiarse de bienes de valor. Cuando Horacio sale a despedirse de un religioso, deja a la dama un cofrecillo de joyas y dinero: ella lo toma y abandona la casa con sus cómplices. El extranjero busca a la desaparecida sin obtener noticias y, al recibir una nueva visita que interpreta como la llegada de los primos, huye a Alcalá por miedo al conflicto. La estafa concluye con la pérdida del tesoro y de las esperanzas amorosas del milanés, y con la retirada segura de la fingida doncella."
+  ],
+  "resumen_breve": [
+    "En una noche de julio en Madrid, Feliciana finge una persecución matrimonial para alojarse con el rico milanés Horacio.",
+    "Su madre, una dueña y un escudero sostienen las falsas identidades y consiguen vestidos, regalos y un proyecto de viaje.",
+    "La joven huye con un cofrecillo de joyas y dinero, mientras el extranjero abandona la corte temiendo a los parientes inventados."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Feliciana o doña Blanca",
+      "descripcion": "Estafadora que finge ser una doncella amenazada por un matrimonio impuesto."
+    },
+    {
+      "nombre": "Horacio",
+      "descripcion": "Joven milanés rico que la hospeda y se enamora de ella."
+    },
+    {
+      "nombre": "Teodora",
+      "descripcion": "Madre de Feliciana que representa a una tía para confirmar el engaño."
+    },
+    {
+      "nombre": "Mogrobejo",
+      "descripcion": "Escudero que actúa como cómplice y mensajero."
+    },
+    {
+      "nombre": "Bañuelos",
+      "descripcion": "Dueña que acompaña a Feliciana y apoya su historia."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Madrid",
+      "descripcion": "Corte donde la desconocida puede construir una identidad ficticia."
+    },
+    {
+      "nombre": "Casa de Horacio, calle de Alcalá",
+      "descripcion": "Lugar del alojamiento, el cortejo y la apropiación del cofrecillo."
+    },
+    {
+      "nombre": "Casa de Teodora",
+      "descripcion": "Escenario de la entrevista con la falsa tía."
+    },
+    {
+      "nombre": "Alcalá",
+      "descripcion": "Destino al que huye Horacio al final."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Fraude y falsa identidad",
+      "descripcion": "Las apariencias de nobleza y virtud sirven para ganar la confianza."
+    },
+    {
+      "tema": "Amor y credulidad",
+      "descripcion": "La atracción impide al extranjero reconocer la estafa."
+    },
+    {
+      "tema": "Complicidad organizada",
+      "descripcion": "Los distintos papeles familiares sostienen una misma ficción."
+    }
+  ]
+}

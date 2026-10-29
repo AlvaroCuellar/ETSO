@@ -1,0 +1,56 @@
+{
+  "archivo": "TEXORO_novelabarroca-0037.txt",
+  "titulo": "La perfecta casada",
+  "resumen_largo": [
+    "Fray Luis de León dirige a María Varela Osorio una guía para el estado matrimonial que acaba de asumir. Le advierte que el matrimonio exige cuidados y obligaciones y que no debe entenderse como una liberación de las tareas anteriores. El tratado toma como hilo conductor el elogio de la mujer virtuosa en los Proverbios y comenta sus versículos. A partir de ese modelo, presenta las responsabilidades de la esposa en la casa, en la relación con el marido y en la educación de los hijos.",
+    "Los comentarios desarrollan un ideal de diligencia doméstica: administrar bienes, evitar el derroche, trabajar y cuidar de los miembros de la familia. El autor insiste en que ese ejemplo no se limita a las mujeres de condición humilde, sino que también debe orientar a las de posición elevada. Examina asimismo la ayuda a los pobres, la moderación del vestido, la crítica del adorno y la vigilancia de la conducta. Sus prescripciones vinculan la virtud religiosa a una organización del hogar basada en la jerarquía matrimonial.",
+    "La exposición avanza hacia el gobierno de la palabra y la atención constante a lo que ocurre en la propia casa. Fray Luis reúne argumentos bíblicos y autoridades cristianas para sostener que el valor de la esposa depende de sus obras, y no de su apariencia o de una vida ociosa. El cierre comenta la recompensa de sus trabajos: bienes espirituales, esperanza de vida eterna y reconocimiento público. La obra concluye exaltando el modelo prescrito, sin narrar una trayectoria particular de la destinataria."
+  ],
+  "resumen_breve": [
+    "Fray Luis de León ofrece a María Varela Osorio una guía de conducta matrimonial basada en el elogio bíblico de la mujer virtuosa.",
+    "El tratado prescribe trabajo, administración del hogar, caridad y moderación dentro de una concepción jerárquica de la familia.",
+    "Su conclusión vincula las buenas obras de la esposa con la recompensa espiritual y la alabanza pública."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "María Varela Osorio",
+      "descripcion": "Destinataria recién casada a quien se ofrecen consejos sobre sus obligaciones matrimoniales."
+    },
+    {
+      "nombre": "Fray Luis de León",
+      "descripcion": "Voz que interpreta los Proverbios y formula el modelo de conducta."
+    },
+    {
+      "nombre": "La mujer virtuosa de los Proverbios",
+      "descripcion": "Figura ejemplar sobre la que se organiza la exposición, sin convertirse en personaje de una trama."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Casa y familia",
+      "descripcion": "Ámbito principal de las tareas, responsabilidades y relaciones que regula el tratado."
+    },
+    {
+      "nombre": "Calles y plazas",
+      "descripcion": "Espacios exteriores contrastados con el hogar y evocados también para la alabanza pública de las obras."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Matrimonio y jerarquía",
+      "descripcion": "La esposa recibe responsabilidades dentro de un modelo que la somete a la autoridad marital."
+    },
+    {
+      "tema": "Trabajo y administración",
+      "descripcion": "La diligencia y el uso ordenado de los bienes se presentan como virtudes domésticas."
+    },
+    {
+      "tema": "Conducta y apariencia",
+      "descripcion": "Las obras, la moderación y el gobierno de la palabra se oponen al lujo y la ociosidad."
+    },
+    {
+      "tema": "Virtud y recompensa",
+      "descripcion": "La conducta prescrita se relaciona con la caridad, la vida eterna y la honra pública."
+    }
+  ]
+}

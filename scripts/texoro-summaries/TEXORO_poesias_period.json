@@ -1,0 +1,60 @@
+{
+  "archivo": "TEXORO_poesias_period.txt",
+  "titulo": "Poesi.as: selección del Siglo de Oro",
+  "resumen_largo": [
+    "La selección del Siglo de Oro de Poesi.as reúne composiciones de diversos autores, entre ellos Gutierre de Cetina, Quevedo, Góngora, Lope de Vega y Sor Juana Inés de la Cruz. En los poemas amorosos, las voces evocan a la persona querida, examinan su propia esperanza o se quejan de los celos y de la falta de correspondencia. Un paisaje, una mirada o el recuerdo de un tiempo feliz pueden servir como punto de partida del discurso. Las composiciones presentan experiencias independientes y no forman el relato de una sola relación amorosa.",
+    "El conjunto reúne también poemas morales, religiosos y satíricos. Las voces meditan sobre la brevedad de la vida, la muerte y el engaño de los bienes del mundo, o formulan expresiones de fe y entrega espiritual. En las piezas burlescas, el lenguaje ingenioso permite cuestionar costumbres, apariencias y jerarquías; la representación del dinero muestra cómo la riqueza altera el reconocimiento social. Estas situaciones conviven con elogios, recuerdos de personas fallecidas y otras respuestas poéticas a ocasiones concretas.",
+    "La diversidad de sonetos, romances, letrillas y otras composiciones permite observar distintos modos de organizar la expresión y el relato poéticos. Algunas piezas concentran una reflexión en su cierre; otras encadenan escenas o repiten un estribillo para insistir en una crítica o un sentimiento. Los espacios naturales, urbanos y religiosos cambian con cada texto, como también sus voces y destinatarios. La colección ofrece así un recorrido por asuntos y formas diferentes, sin un reparto permanente ni un desenlace común."
+  ],
+  "resumen_breve": [
+    "La selección de Poesi.as reúne poemas de diversos autores del Siglo de Oro, con sonetos, romances, letrillas y otras formas.",
+    "El amor y el desengaño conviven con reflexiones sobre la muerte, devoción religiosa, sátira y crítica del poder del dinero.",
+    "Las voces, los destinatarios y los espacios pertenecen a piezas independientes, por lo que el conjunto carece de una trama única."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Voces líricas",
+      "descripcion": "Hablantes que expresan deseo, queja, reflexión moral, devoción o sátira en composiciones distintas."
+    },
+    {
+      "nombre": "Personas amadas y destinatarios de ocasión",
+      "descripcion": "Figuras a quienes se dirigen declaraciones, elogios, recuerdos y críticas."
+    },
+    {
+      "nombre": "Tipos sociales y figuras religiosas",
+      "descripcion": "Sujetos de la observación burlesca o destinatarios de la oración y la meditación espiritual."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Paisajes naturales",
+      "descripcion": "Campos, ríos y otros lugares evocados en las escenas amorosas y las reflexiones de las voces."
+    },
+    {
+      "nombre": "Ámbitos urbanos y sociales",
+      "descripcion": "Marcos de sátiras, elogios y observaciones sobre las costumbres y la riqueza."
+    },
+    {
+      "nombre": "Espacios religiosos y de contemplación",
+      "descripcion": "Lugares asociados a la devoción y a la reflexión sobre la vida y la muerte."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Amor y desengaño",
+      "descripcion": "Los poemas expresan esperanza, celos, ausencia y conciencia de la fragilidad de los afectos."
+    },
+    {
+      "tema": "Tiempo, muerte y vanidad",
+      "descripcion": "Las voces confrontan la brevedad de la existencia con las ambiciones humanas."
+    },
+    {
+      "tema": "Sátira y dinero",
+      "descripcion": "La burla cuestiona apariencias, costumbres y relaciones de poder ligadas a la riqueza."
+    },
+    {
+      "tema": "Religión y entrega espiritual",
+      "descripcion": "La expresión de fe y la búsqueda de amparo conviven con los asuntos seculares."
+    }
+  ]
+}

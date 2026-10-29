@@ -1,0 +1,68 @@
+{
+  "archivo": "TEXORO_novelabarroca-0026.txt",
+  "titulo": "La ilustre fregona",
+  "resumen_largo": [
+    "Diego de Carriazo, hijo de un caballero de Burgos, vuelve a su casa después de disfrutar voluntariamente de la vida picaresca en las almadrabas. Convence a su amigo Tomás de Avendaño para salir de nuevo, fingiendo que van a estudiar. De camino oyen hablar de la belleza de Costanza, muchacha que sirve en un mesón de Toledo. Avendaño se enamora de ella y decide permanecer allí; ambos ocultan sus nombres y se incorporan al trabajo humilde para sostener su estancia.",
+    "Avendaño sirve en el mesón como Tomás Pedro y procura expresar su amor a Costanza, que mantiene una conducta reservada. Carriazo, llamado Lope Asturiano, se hace aguador y protagoniza disputas, juegos y burlas callejeras que contrastan con el enamoramiento de su compañero. La fama de la joven atrae también al hijo del corregidor. Mientras tanto, la vida de los dos amigos queda suspendida entre sus identidades nobles y las ocupaciones adoptadas, y el origen de Costanza permanece oculto para los pretendientes.",
+    "Los padres de los jóvenes llegan a Toledo y se esclarece la procedencia de Costanza mediante una cadena y un pergamino. Don Diego de Carriazo, padre del aguador, reconoce que la muchacha es hija suya y de una dama a la que violó años atrás. La madre había dispuesto que la niña fuese criada en el mesón y había dejado una dote. Costanza se casa con Avendaño y se conciertan otros enlaces entre las familias. Regresan a Burgos, mientras la memoria de las aventuras humildes sigue acompañando a Carriazo."
+  ],
+  "resumen_breve": [
+    "Dos jóvenes nobles de Burgos llegan a Toledo bajo identidades fingidas y Avendaño se enamora de Costanza, criada en un mesón.",
+    "Mientras él trabaja cerca de la joven, Carriazo vive como aguador y ambos prolongan una experiencia alejada de sus familias.",
+    "La revelación del origen de Costanza permite su boda con Avendaño y el retorno de los amigos a la vida noble."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Costanza",
+      "descripcion": "Joven del mesón cuya ascendencia desconocida se revela al final."
+    },
+    {
+      "nombre": "Tomás de Avendaño / Tomás Pedro",
+      "descripcion": "Noble que sirve en el mesón para permanecer cerca de Costanza."
+    },
+    {
+      "nombre": "Diego de Carriazo / Lope Asturiano",
+      "descripcion": "Amigo de Avendaño atraído por la vida picaresca y dedicado al oficio de aguador."
+    },
+    {
+      "nombre": "Don Diego de Carriazo",
+      "descripcion": "Padre del joven y de Costanza, reconoce la violencia de la que nació la muchacha."
+    },
+    {
+      "nombre": "El Sevillano y su mujer",
+      "descripcion": "Mesoneros que han criado y protegido a Costanza."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Mesón del Sevillano en Toledo",
+      "descripcion": "Centro del amor de Avendaño, la crianza de Costanza y la revelación final."
+    },
+    {
+      "nombre": "Calles de Toledo",
+      "descripcion": "Escenario del trabajo y de las disputas del aguador."
+    },
+    {
+      "nombre": "Burgos",
+      "descripcion": "Origen familiar de los jóvenes y destino tras la resolución de los matrimonios."
+    },
+    {
+      "nombre": "Almadrabas",
+      "descripcion": "Ámbito de la vida picaresca que atrae a Carriazo y motiva la salida."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Identidad y apariencia social",
+      "descripcion": "Los jóvenes adoptan trabajos humildes y Costanza parece criada antes de conocerse su ascendencia."
+    },
+    {
+      "tema": "Amor y reconocimiento",
+      "descripcion": "La constancia de Avendaño se une a la restitución familiar de la muchacha."
+    },
+    {
+      "tema": "Vida picaresca y regreso",
+      "descripcion": "La aventura voluntaria de Carriazo termina en la reintegración familiar, aunque deja una memoria cómica."
+    }
+  ]
+}

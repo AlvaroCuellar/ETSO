@@ -1,0 +1,72 @@
+{
+  "archivo": "TEXORO_novelabarroca-0064.txt",
+  "titulo": "Tarde llega el desengaño",
+  "resumen_largo": [
+    "Don Martín vuelve de servir en Flandes hacia España para reunirse con su prima y casarse, pero un naufragio lo lleva a Gran Canaria. Él y un compañero encuentran acogida en el castillo de don Jaime de Aragón, donde presencian una escena perturbadora: mientras una esclava disfruta del trato de señora, Elena, la esposa, aparece vestida con una tela áspera, lleva una calavera y recibe los restos de la comida. Don Jaime explica aquel castigo contando primero sus amores secretos con madama Lucrecia en Flandes, de donde salió herido y amenazado. Después, ya en Gran Canaria, conoció a Elena y se casó con ella.",
+    "La vida matrimonial había sido feliz hasta que don Jaime acogió al primo de Elena y una esclava acusó a ambos de mantener una relación. Sin escuchar otras defensas, el marido dio crédito al testimonio, mató al primo y conservó su cabeza para obligar a Elena a beber en ella. Desde entonces la tiene encerrada, sometida a privaciones y humillaciones, mientras recompensa a la acusadora con las joyas y el lugar de su esposa. Don Martín escucha esta explicación y contempla los efectos del castigo, sin que la apariencia de certeza del dueño elimine la crueldad de lo que ve.",
+    "Esa noche la esclava cae mortalmente enferma y confiesa que inventó la acusación tras ser rechazada por el primo de Elena y castigada por ambos. Don Jaime la apuñala, pero la revelación no permite salvar a su esposa: al abrir el encierro, don Martín encuentra a Elena muerta, vencida por el sufrimiento y por escuchar de nuevo la historia de su condena. Don Jaime intenta quitarse la vida y pierde el juicio. Su primo don Alejandro se hace cargo de él y dispone el entierro de Elena. Don Martín regresa a España y se casa, escarmentado para no aceptar testimonios de criados sin examinarlos."
+  ],
+  "resumen_breve": [
+    "Desviado por una tormenta cuando vuelve de Flandes, don Martín presencia en un castillo el castigo que don Jaime impone a su esposa Elena.",
+    "La confesión de una esclava demuestra que la acusación de adulterio era falsa y que el primo de Elena murió inocente.",
+    "El descubrimiento llega después de la muerte de Elena y provoca la locura del marido, dejando a don Martín una advertencia contra los celos y la calumnia."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Elena",
+      "descripcion": "Esposa inocente que muere después de un largo castigo por una acusación falsa."
+    },
+    {
+      "nombre": "Don Jaime de Aragón",
+      "descripcion": "Marido que cree la calumnia y castiga sin comprobarla."
+    },
+    {
+      "nombre": "Don Martín",
+      "descripcion": "Viajero y testigo que escucha la historia e interviene al descubrirse la verdad."
+    },
+    {
+      "nombre": "Esclava acusadora",
+      "descripcion": "Mujer que inventa el adulterio y, al confesar mientras está enferma, es apuñalada por don Jaime."
+    },
+    {
+      "nombre": "Primo de Elena",
+      "descripcion": "Joven acogido en la casa y asesinado por la acusación."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Castillo de don Jaime en Gran Canaria",
+      "descripcion": "Marco del encierro y de la humillación de Elena, presenciados por los viajeros."
+    },
+    {
+      "nombre": "Flandes",
+      "descripcion": "Escenario de los anteriores amores de don Jaime con madama Lucrecia, distinta de su esposa Elena."
+    },
+    {
+      "nombre": "Mar y costa",
+      "descripcion": "Lugares de la tormenta que conduce a don Martín hasta el castillo."
+    },
+    {
+      "nombre": "Toledo y corte española",
+      "descripcion": "Destinos finales de don Martín, que regresa y se casa."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Calumnia y credulidad",
+      "descripcion": "Una mentira interesada provoca condenas sin investigación."
+    },
+    {
+      "tema": "Crueldad matrimonial",
+      "descripcion": "Don Jaime transforma la sospecha en un castigo continuado contra Elena."
+    },
+    {
+      "tema": "Desengaño tardío",
+      "descripcion": "La confesión demuestra la inocencia cuando ya no es posible restituir la vida."
+    },
+    {
+      "tema": "Prudencia y testimonio",
+      "descripcion": "El visitante aprende a no resolver asuntos de honor por rumores o apariencias."
+    }
+  ]
+}

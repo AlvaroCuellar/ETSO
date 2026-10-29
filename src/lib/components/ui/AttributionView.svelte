@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { DEFAULT_LOCALE, translateText } from '$lib/i18n';
-	import { formatConfidence, type AttributionSet } from '$lib/domain/catalog';
+	import { formatAttributionConfidence, type AttributionSet } from '$lib/domain/catalog';
 
 	interface Props {
 		set: AttributionSet;
@@ -14,7 +14,9 @@
 	const connectorLabel = (connector: 'and' | 'or'): string => t(connector === 'and' ? 'y' : 'o');
 </script>
 
-{#if set.unresolved}
+{#if set.reviewedPhrase}
+	<p class="m-0 leading-relaxed" data-i18n-skip>{set.reviewedPhrase}</p>
+{:else if set.unresolved}
 	<p class="unresolved-copy">El analisis no apunta hacia ningun autor.</p>
 {:else if !set.groups.length}
 	<p class="unresolved-copy">Sin datos de atribucion.</p>
@@ -34,7 +36,7 @@
 							class:confidence-chip--probable={member.confidence === 'probable'}
 							class:confidence-chip--posible={member.confidence === 'posible'}
 							class:confidence-chip--no_concluyente={member.confidence === 'no_concluyente'}>
-							{formatConfidence(member.confidence)}
+							{formatAttributionConfidence(member)}
 						</span>
 					{/if}
 

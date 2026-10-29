@@ -1,0 +1,68 @@
+{
+  "archivo": "TEXORO_novelabarroca-0049.txt",
+  "titulo": "La fuerza del desengaño",
+  "resumen_largo": [
+    "Teodoro llega a estudiar a Alcalá y se enamora de Narcisa, que corresponde a su afecto con recato. Compite con él Valerio, un pretendiente rico que procura ganar a las criadas mediante regalos. La rivalidad genera enfrentamientos y una intrusión nocturna en la casa de Narcisa. Los equívocos y las presiones que siguen a estos episodios alteran la relación entre los amantes y favorecen a Valerio. Narcisa termina casándose con este, mientras Teodoro contempla la boda y queda dominado por el dolor, los celos y el sentimiento de haber perdido su esperanza.",
+    "Teodoro busca después nuevas distracciones y se vincula con Lucrecia, que ya mantiene una relación con Andronio. El descubrimiento de los papeles de Teodoro provoca los celos del primer amante. Cuando Andronio agrede a Lucrecia ante el joven, Teodoro lo hiere mortalmente. Las aventuras y encuentros posteriores no le proporcionan sosiego, y su vida va acumulando peligros y gastos. Lucrecia, incapaz de recobrar su afecto, busca medios para hacerse querer y llega a consultar a una mujer que le propone utilizar el corazón del difunto Andronio como ingrediente de un hechizo.",
+    "Lucrecia entra de noche en la iglesia donde yace Andronio para extraerle el corazón, pero ve levantarse al cadáver, que le reprocha no respetarlo ni después de muerto. Teodoro interviene cuando ella está aterrada y escucha su confesión de lo ocurrido. La experiencia lo obliga a revisar su vida y a interpretar sus peligros como advertencias que debe atender. Tras confesarse, entra en un convento de franciscanos descalzos fuera de Alcalá. Narcisa agradece su cambio y Lucrecia abandona igualmente su vida anterior para abrazar una clausura, cerrándose el relato con el apartamiento de los amores mundanos."
+  ],
+  "resumen_breve": [
+    "En Alcalá, Teodoro pierde a Narcisa, que se casa con su rival Valerio, y busca nuevas relaciones para aliviar sus celos.",
+    "Su vínculo con Lucrecia desemboca en la muerte de Andronio y en un intento de hechicería que profana la sepultura del difunto.",
+    "La aparición del cadáver produce un desengaño decisivo y lleva a Teodoro y Lucrecia a abandonar su vida amorosa y entrar en religión."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Teodoro",
+      "descripcion": "Estudiante que pasa de la frustración amorosa y la violencia al arrepentimiento religioso."
+    },
+    {
+      "nombre": "Narcisa",
+      "descripcion": "Primer amor de Teodoro, que acaba casándose con Valerio."
+    },
+    {
+      "nombre": "Lucrecia",
+      "descripcion": "Amante de Teodoro que intenta recuperarlo mediante un hechizo."
+    },
+    {
+      "nombre": "Andronio",
+      "descripcion": "Anterior amante de Lucrecia, muerto por Teodoro y aparecido después en su sepultura."
+    },
+    {
+      "nombre": "Valerio",
+      "descripcion": "Rival rico que consigue casarse con Narcisa."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Alcalá de Henares",
+      "descripcion": "Ciudad universitaria donde se desarrollan los amores y conflictos."
+    },
+    {
+      "nombre": "Ermita de Santa María del Val",
+      "descripcion": "Lugar de la boda de Narcisa y Valerio."
+    },
+    {
+      "nombre": "Iglesia y sepultura de Andronio",
+      "descripcion": "Escenario de la profanación y de la aparición que desencadena el desengaño."
+    },
+    {
+      "nombre": "Conventos",
+      "descripcion": "Destinos del retiro de Teodoro y Lucrecia."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Amor y celos",
+      "descripcion": "Los deseos contrariados provocan rivalidades y nuevas relaciones destructivas."
+    },
+    {
+      "tema": "Hechicería y profanación",
+      "descripcion": "La búsqueda de un remedio amoroso conduce a un acto contra el cuerpo de un muerto."
+    },
+    {
+      "tema": "Desengaño y conversión",
+      "descripcion": "El miedo y el examen de la propia conducta llevan al retiro religioso."
+    }
+  ]
+}

@@ -14,6 +14,8 @@ export interface AttributionMember {
 	authorName: string;
 	hasAuthorshipExam?: boolean;
 	confidence?: Confidence;
+	/** Scope is independent of confidence; omitted means no reviewed scope override. */
+	scope?: 'participation';
 }
 
 export interface AttributionGroup {
@@ -25,6 +27,8 @@ export interface AttributionSet {
 	connector: 'and' | 'or';
 	unresolved?: boolean;
 	rawExpression?: string;
+	/** Exact reviewed traditional prose, independent of structured filter groups. */
+	reviewedPhrase?: string;
 }
 
 export interface WorkResourceLink {
@@ -464,7 +468,15 @@ export const formatConfidence = (confidence?: Confidence): string => {
 	return 'No concluyente';
 };
 
+export const formatAttributionConfidence = (member: AttributionMember): string => {
+	const confidence = formatConfidence(member.confidence);
+	return member.scope === 'participation'
+		? `Participación${confidence ? ` ${confidence.toLowerCase()}` : ''}`
+		: confidence;
+};
+
 export const formatAttribution = (set: AttributionSet): string => {
+	if (set.reviewedPhrase) return set.reviewedPhrase;
 	if (set.unresolved) return 'No apunta hacia ningún autor';
 	if (!set.groups.length) return 'Sin datos';
 
@@ -473,7 +485,7 @@ export const formatAttribution = (set: AttributionSet): string => {
 		group.members
 			.map((member) =>
 				member.confidence
-					? `${member.authorName} [${formatConfidence(member.confidence)}]`
+					? `${member.authorName} [${formatAttributionConfidence(member)}]`
 					: member.authorName
 			)
 			.join(' y ')
@@ -484,25 +496,26 @@ export const formatAttribution = (set: AttributionSet): string => {
 
 export const inferWorkAuthorshipType = (work: CatalogWork): WorkAuthorshipType => {
 	if (work.stylometryAttribution.unresolved) return 'desconocida';
-
-	const stylometryAuthors = new Set(
-		work.stylometryAttribution.groups.flatMap((group) =>
-			group.members
-				.map((member) => member.authorId)
-				.filter((authorId) => authorId && isPersonAuthor(authorId))
-		)
-	);
-	if (stylometryAuthors.size > 0) {
-		return stylometryAuthors.size > 1 ? 'colaboracion' : 'unica';
+	const classify = (set: AttributionSet): WorkAuthorshipType => {
+		const sizes = set.groups.map((group) => {
+			const ids = new Set(group.members.filter((member) => member.authorId && isPersonAuthor(member.authorId))
+				.map((member) => member.authorId));
+			// Anonymous teams are multiple people even though they have one catalog key.
+			return [...ids].reduce((size, id) => size + (/^desconocido_(dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez)_ingenios$/.test(id) ? 2 : 1), 0);
+		}).filter((size) => size > 0);
+		if (!sizes.length) return 'desconocida';
+		// Alternatives are separate hypotheses, never a flattened team of coauthors.
+		if (sizes.every((size) => size === 1)) return 'unica';
+		if (sizes.every((size) => size > 1)) return 'colaboracion';
+		return 'desconocida';
+	};
+	const members = work.stylometryAttribution.groups.flatMap((group) => group.members)
+		.filter((member) => member.authorId && isPersonAuthor(member.authorId));
+	const stylometryType = classify(work.stylometryAttribution);
+	if (members.some((member) => member.scope === 'participation') && stylometryType !== 'colaboracion') {
+		// One participant does not establish sole authorship; several identified
+		// participants in a team do establish collaboration, despite partial scope.
+		return classify(work.traditionalAttribution);
 	}
-
-	const traditionalAuthors = new Set(
-		work.traditionalAttribution.groups.flatMap((group) =>
-			group.members
-				.map((member) => member.authorId)
-				.filter((authorId) => authorId && isPersonAuthor(authorId))
-		)
-	);
-	if (traditionalAuthors.size === 0) return 'desconocida';
-	return traditionalAuthors.size > 1 ? 'colaboracion' : 'unica';
+	return members.length ? stylometryType : classify(work.traditionalAttribution);
 };

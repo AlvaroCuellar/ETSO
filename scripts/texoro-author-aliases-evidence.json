@@ -1,0 +1,362 @@
+{
+  "scope": "Aliases apply only to authors in the frozen BERTvantes prose and poetry manifest; original provenance fields remain unchanged.",
+  "manifest": "BERTvantes-corpus/provenance/frozen/manifest.jsonl",
+  "record_overrides": {
+    "file": "texoro-record-author-overrides.json",
+    "raw_author": "Argensola",
+    "Bartolomé Leonardo de Argensola": {
+      "records": 157,
+      "original_file_prefix": "ArgensolaBartolome/ArgensolaBartolome_"
+    },
+    "Lupercio Leonardo de Argensola": {
+      "records": 59,
+      "original_file_prefix": "ArgensolaLupercio/ArgensolaLupercio_"
+    },
+    "reason": "Resolve each canonical_id from its own original source filename, without applying a raw-name alias."
+  },
+  "source_specific": {
+    "Fcode Borja": {
+      "canonical": "Francisco de Borja y Aragón",
+      "records": 141,
+      "original_file_prefix": "FcodeBorja/FcodeBorjaYAragonPrincipeEsquilache_",
+      "authority": "https://datos.bne.es/resource/XX1147238",
+      "source_text": "https://www.cervantesvirtual.com/obra-visor/sonetos--1/html/000917e2-82b2-11df-acc7-002185ce6064_1.html"
+    }
+  },
+  "unresolved": {
+    "Lope de Zarate": "Preserve original name: source filenames do not establish identification with Francisco López de Zárate.",
+    "Francisco Medrano": "Preserve separately from Sebastián Francisco de Medrano."
+  },
+  "reconciliation_review": [
+    {
+      "alias": "Juan Boscán Almogáver",
+      "canonical": "Juan Boscán",
+      "evidence": "Catálogo Biblioteca Braidense SBL0378866 registra Boscán, Juan como variante de Boscán Almogáver, Juan. Manifiesto: JuanBoscan/*.xml frente poesias_period jb*.htm.",
+      "sources": [
+        "https://opac.bibliotecabraidense.org/opac_braidense/opaclib?db=solr_braidense&do_cmd=search_show_cmd&fname=none&format=unimarc&from=29&nentries=1&resultForward=opac%2Fbraidense%2Ffull_simili.jsp&rpnlabel=+Codice+Classificazione+Dewey+%3D+861.3+&rpnquery=%40attrset+bib-1++%40attr+4%3D1+%22861.3%22&searchForm=opac%2Fbraidense%2Ferror.jsp&select_db=solr_braidense&simili_id=SBL0378866&totalResult=38"
+      ]
+    },
+    {
+      "alias": "John of the Cross",
+      "canonical": "San Juan de la Cruz",
+      "evidence": "Único registro inglés poesias-period-001320: ¡Qué bien sé yo la fonte que mana y corre, original_file sjc09.htm; traducción del nombre del mismo poeta español, no poema inglés.",
+      "sources": []
+    },
+    {
+      "alias": "Teresa de Jesús",
+      "canonical": "Santa Teresa de Jesús",
+      "evidence": "Manifiesto identifica los originales de esta variante con carpeta SantaTeresaDeJesus/teresaDeJesus_*.xml; la identidad es explícita en procedencia.",
+      "sources": []
+    },
+    {
+      "alias": "Teresa of Ávila",
+      "canonical": "Santa Teresa de Jesús",
+      "evidence": "33 registros de poesias_period, archivos stj*.htm, incluyendo Vivo sin vivir en mí y Ya toda me entregué y di; mismo autor identificado por nombre inglés y repertorio. No afecta Teresa Verecundia.",
+      "sources": []
+    },
+    {
+      "alias": "Pedro Laynez",
+      "canonical": "Pedro Laínez",
+      "evidence": "Laínez y Laynez son variantes documentadas del poeta; BNE identifica Pedro Laínez. CSIC Anales Cervantinos usa Laínez en título y referencia Pedro Laynez.",
+      "sources": [
+        "https://cervantes.bne.es/es/exposicion/obras/cancionero3",
+        "https://analescervantinos.revistas.csic.es/index.php/analescervantinos/article/view/533"
+      ]
+    },
+    {
+      "alias": "Pedro Lainez",
+      "canonical": "Pedro Laínez",
+      "evidence": "Misma forma con tilde normalizada; alias Laynez reconciliado con autoridad Laínez.",
+      "sources": [
+        "https://cervantes.bne.es/es/exposicion/obras/cancionero3"
+      ]
+    },
+    {
+      "alias": "Damián de Vegas",
+      "canonical": "Fray Damián de Vegas",
+      "evidence": "Manifiesto disco_15_17-000675 reproduce Si está de sol vestida y adornada, mismo soneto publicado bajo Fray Damián de Vegas en página8 BVMC. Identidad apoyada en mismo texto, no solo nombre.",
+      "sources": [
+        "https://www.cervantesvirtual.com/obra-visor/sonetos-del-siglo-xv-al-xvii--0/html/001213e2-82b2-11df-acc7-002185ce6064_8.html"
+      ]
+    },
+    {
+      "alias": "Francisco Medrano",
+      "canonical": "Francisco de Medrano",
+      "evidence": "Registros poesias-period-000120 y sonetos_siglo_oro-001297 son variantes ortográficas del mismo soneto Estos de pan llevar campos ahora (Itálica). BVMC autoridad de Francisco de Medrano 1570-1607 reúne sonetos y poesías; mantenerlo distinto de Sebastián Francisco de Medrano del catálogo base.",
+      "sources": [
+        "https://data.cervantesvirtual.com/person/518"
+      ]
+    },
+    {
+      "alias": "Juan de Salinas y Castro",
+      "canonical": "Juan de Salinas",
+      "evidence": "Autoridad CiNii DA03643186 registra Salinas, Juan de y Salinas y Castro, Juan de para misma persona; corpus remite a repertorio sevillano de Juan de Salinas.",
+      "sources": [
+        "https://ci.nii.ac.jp/author/DA03643186"
+      ]
+    },
+    {
+      "alias": "Pedro de Castro Anaya",
+      "canonical": "Pedro Castro y Anaya",
+      "evidence": "BVMC Biblioteca hispano-latina clásica atribuye Auroras de Diana a Pedro de Castro y Anaya y encabeza CASTRO Y ANAYA, Pedro. UCO PRESOLO confirma Pedro de Castro Anaya como autor de Auroras.",
+      "sources": [
+        "https://www.cervantesvirtual.com/descargaPdf/bibliografia-hispanolatina-clasica-acciocaton--0/",
+        "https://www.uco.es/presolo/recursos/buscador/visualizar-titulo/?filtro=LOP0366.PAR0976.1634.LOPE"
+      ]
+    },
+    {
+      "alias": "Diego MejÍa",
+      "canonical": "Diego Mejía",
+      "evidence": "Corrección de mayúscula interna accidental, no reinterpretación de identidad.",
+      "sources": []
+    },
+    {
+      "alias": "Jacinta MarÍa de Morales",
+      "canonical": "Jacinta María de Morales",
+      "evidence": "Corrección de mayúscula interna accidental, no reinterpretación de identidad.",
+      "sources": []
+    },
+    {
+      "alias": "Fermín de la Puente y APechea",
+      "canonical": "Fermín de la Puente y Apechea",
+      "evidence": "Corrección de mayúscula interna accidental, no reinterpretación de identidad.",
+      "sources": []
+    },
+    {
+      "alias": "juan Martín del Barrio",
+      "canonical": "Juan Martín del Barrio",
+      "evidence": "Mayúscula inicial ordinaria, nombre original conserva resto.",
+      "sources": []
+    },
+    {
+      "alias": "Anónimo",
+      "canonical": "Desconocido",
+      "evidence": "Sin autor identificado: reutilizar el marcador existente del catálogo para el Lazarillo; no convertirlo en una persona nueva.",
+      "sources": []
+    }
+  ],
+  "existing_catalogue_reconciliation": {
+    "safeExistingMappings": [
+      {
+        "sourceName": "Francisco de la Torre Sevil",
+        "sourceId": "bertvantes_author_219c7f752fc262b5",
+        "targetId": "torre_y_sevil_francisco_de_la",
+        "targetName": "Francisco de la Torre y Sevil",
+        "targetPublicId": 345,
+        "evidence": "Variante sin conjunción del nombre completo; existe autor distinto Francisco de la Torre que se conserva.",
+        "sources": [
+          "https://www.cervantesvirtual.com/s3/BVMC_OBRAS/fef/7c9/f28/2b1/11d/fac/c70/021/85c/e60/64/mimes/fef7c9f2-82b1-11df-acc7-002185ce6064_53.html"
+        ]
+      },
+      {
+        "sourceName": "Guillén de Castro",
+        "sourceId": "bertvantes_author_4a64df6e1756ccda",
+        "targetId": "castro_y_bellvis_guillen_de",
+        "targetName": "Guillén de Castro y Bellvís",
+        "targetPublicId": 66,
+        "evidence": "Nombre abreviado convencional del dramaturgo.",
+        "sources": []
+      },
+      {
+        "sourceName": "Jerónimo de Barrionuevo",
+        "sourceId": "bertvantes_author_dc45a5ae9676dc3b",
+        "targetId": "barrionuevo_de_peralta_jeronimo",
+        "targetName": "Jerónimo Barrionuevo de Peralta",
+        "targetPublicId": 31,
+        "evidence": "Nombre abreviado del poeta y dramaturgo Jerónimo Barrionuevo de Peralta.",
+        "sources": []
+      },
+      {
+        "sourceName": "Miguel Botello",
+        "sourceId": "bertvantes_author_e1188fe8a1467566",
+        "targetId": "botello_de_carvallo_miguel",
+        "targetName": "Miguel Botello de Carvallo",
+        "targetPublicId": 465,
+        "evidence": "Guía de autores UCM identifica Miguel Botello como Miguel Botello de Carvallo y sus Prosas y versos del pastor de Clenarda.",
+        "sources": [
+          "https://webs.ucm.es/info/guias/botello/automenu.htm"
+        ]
+      },
+      {
+        "sourceName": "Gaspar Dávila",
+        "sourceId": "bertvantes_author_73935a9153493e0f",
+        "targetId": "avila_gaspar_de",
+        "targetName": "Gaspar de Ávila",
+        "targetPublicId": 396,
+        "evidence": "BVMC La Barrera usa Gaspar de Ávila y cita elogio de 1627 a Gaspar Dávila en la misma biografía.",
+        "sources": [
+          "https://www.cervantesvirtual.com/s3/BVMC_OBRAS/fef/7c9/f28/2b1/11d/fac/c70/021/85c/e60/64/mimes/fef7c9f2-82b1-11df-acc7-002185ce6064_39.html"
+        ]
+      },
+      {
+        "sourceName": "Felipe Codínez",
+        "sourceId": "bertvantes_author_9ea2241d0204f8bd",
+        "targetId": "godinez_felipe",
+        "targetName": "Felipe Godínez",
+        "targetPublicId": 145,
+        "evidence": "Errata de apellido: poema procede de San Mateo en Etiopía, comedia de Felipe Godínez.",
+        "sources": [
+          "https://www.cervantesvirtual.com/portales/felipe_godinez/biografia/"
+        ]
+      },
+      {
+        "sourceName": "Juan de Piña",
+        "sourceId": "bertvantes_author_f4871a8802bb7801",
+        "targetId": "pina_juan_izquierdo_de",
+        "targetName": "Juan Izquierdo de Piña",
+        "targetPublicId": 274,
+        "evidence": "CLEMIT ficha Juan de Piña identifica PIÑA Juan Izquierdo de y sus poemas de Fama póstuma.",
+        "sources": [
+          "https://clemit.uv.es/consulta/mostraCensor.php?id=177"
+        ]
+      },
+      {
+        "sourceName": "Sebastián Rodríguez de Villaviciosa",
+        "sourceId": "bertvantes_author_b48fc1d4027fda8b",
+        "targetId": "villaviciosa_sebastian_de",
+        "targetName": "Sebastián de Villaviciosa",
+        "targetPublicId": 377,
+        "evidence": "Nombre completo del dramaturgo; edición crítica BVMC Vida y muerte de San Cayetano lo confirma.",
+        "sources": [
+          "https://www.cervantesvirtual.com/descargaPdf/vida-y-muerte-de-san-cayetano-989632/"
+        ]
+      },
+      {
+        "sourceName": "Francisco Agustín Talega",
+        "sourceId": "bertvantes_author_646ef282170babf6",
+        "targetId": "tarrega_francisco_agustin",
+        "targetName": "Francisco Agustín Tárrega",
+        "targetPublicId": 351,
+        "evidence": "Errata de la antología fuente: mismas fechas Segorbe1553/55-Valencia1602, canónigo1584 y extracto de El prado de Valencia de Tárrega.",
+        "sources": [
+          "https://www.cervantesvirtual.com/obra-visor/sonetos-del-siglo-xv-al-xvii--0/html/001213e2-82b2-11df-acc7-002185ce6064_18.html"
+        ]
+      },
+      {
+        "sourceName": "Luis de Ulloa y Pereira",
+        "sourceId": "bertvantes_author_2f61b62dd695701e",
+        "targetId": "ulloa_luis",
+        "targetName": "Luis Ulloa",
+        "targetPublicId": 354,
+        "evidence": "Nombre completo del poeta y dramaturgo; Porcia y Tancredo atribuida a Luis Ulloa en ETSO y edición de Matas.",
+        "sources": [
+          "https://www.revistahipogrifo.com/index.php/hipogrifo/article/download/1560/2343/11400"
+        ]
+      },
+      {
+        "sourceName": "Francisco Manuel",
+        "sourceId": "bertvantes_author_b3cba1090a8b17ab",
+        "targetId": "melo_francisco_manuel_de",
+        "targetName": "Francisco Manuel de Melo",
+        "targetPublicId": 441,
+        "evidence": "El soneto importado No es tiranía Fabio se coteja con la edición manuscrita de Melo de Estruch Tobella, con variante impresa documentada Fabio.",
+        "sources": [
+          "https://cvc.cervantes.es/literatura/criticon/PDF/061/061_007.pdf"
+        ]
+      },
+      {
+        "sourceName": "Francisco de la Cueva",
+        "sourceId": "bertvantes_author_e8e13d5e82143a5f",
+        "targetId": "cueva_y_silva_francisco_de_la",
+        "targetName": "Francisco de la Cueva y Silva",
+        "targetPublicId": 91,
+        "evidence": "Soneto importado Porcia después que del famoso Bruto identificado como obra de Cueva y Silva por estudio de Catalán y estudio sobre Quevedo.",
+        "sources": [
+          "https://repositorio.colmex.mx/downloads/b5644s319?locale=en",
+          "https://idus.us.es/bitstreams/c1639aa6-144b-4432-8ba1-d61252931766/download"
+        ]
+      }
+    ],
+    "pendingOrRejected": [
+      {
+        "sourceName": "Antonio Martínez",
+        "possibleTarget": "martinez_de_meneses_antonio",
+        "reason": "Antología separa Martínez, preceptor de Nuevas Artes, de Martínez de Meneses; no consta identidad."
+      },
+      {
+        "sourceName": "Jerónimo González de Villanueva",
+        "possibleTarget": "villanueva_jeronimo_de",
+        "reason": "Fuentes distinguen varios homónimos; poeta sevillano no identificado con autor teatral."
+      },
+      {
+        "sourceName": "Francisco Zapata",
+        "possibleTarget": "zapata_pimentel_de_herrera_francisco",
+        "reason": "Soneto fuente solo indica poeta del siglo XVII, insuficiente para identificar."
+      },
+      {
+        "sourceName": "Juan de Quiroga",
+        "possibleTarget": "quiroga_fajardo_juan_de",
+        "reason": "Nombre abreviado sin dato biográfico suficiente."
+      },
+      {
+        "sourceName": "Pablo de Sotomayor",
+        "possibleTarget": "bravo_de_sotomayor_pablo",
+        "reason": "Nombre breve sin información suficiente para afirmar identidad."
+      },
+      {
+        "sourceName": "Juan de Villegas",
+        "possibleTarget": "villegas_juan_bautista",
+        "reason": "Nombre y contexto incompletos, no fusionar automáticamente."
+      },
+      {
+        "sourceName": "Francisco Medrano",
+        "possibleTarget": "medrano_sebastian_francisco_de",
+        "reason": "Francisco de Medrano y Sebastián Francisco de Medrano son personas distintas."
+      },
+      {
+        "sourceName": "Alonso Pérez de Montalbán",
+        "possibleTarget": "perez_de_montalban_juan",
+        "reason": "Personas distintas; el nombre de pila no coincide."
+      },
+      {
+        "sourceName": "Luis Tejada y Guzmán",
+        "possibleTarget": "guzman_luis_de",
+        "reason": "Apellidos parciales no bastan para identificar."
+      },
+      {
+        "sourceName": "Rodrigo de Robles de Carvajal",
+        "possibleTarget": "Rodrigo Carvajal Robles",
+        "reason": "La variante de apellidos no basta: no se ha cotejado la atribución de los dos sonetos de la fuente."
+      }
+    ],
+    "newToNewHandledBy": "audit_author_sources"
+  },
+  "unmerged_source_names": [
+    {
+      "names": [
+        "Pedro de Soto",
+        "Pedro Soto de Rojas"
+      ],
+      "reason": "La BVMC identifica a Pedro de Soto como catedrático de Filosofía de México, distinto de Soto de Rojas."
+    },
+    {
+      "names": [
+        "Francisco Borges Pacheco",
+        "Francisco Pacheco"
+      ],
+      "reason": "La fuente UCO SILEM documenta al primero como portugués; no es el poeta sevillano."
+    },
+    {
+      "names": [
+        "Fernando de Soto",
+        "Hernando de Soto",
+        "Fernando Soto y Berrio"
+      ],
+      "reason": "La fuente presenta los nombres separados y no establece equivalencia."
+    },
+    {
+      "names": [
+        "Pedro Marañón",
+        "Pedro Fernández Marañón"
+      ],
+      "reason": "Identidad no comprobada."
+    },
+    {
+      "names": [
+        "Francisco del Castillo",
+        "Francisco Santos del Castillo"
+      ],
+      "reason": "Identidad no comprobada."
+    }
+  ]
+}

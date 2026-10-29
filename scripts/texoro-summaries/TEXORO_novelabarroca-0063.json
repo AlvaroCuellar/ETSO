@@ -1,0 +1,68 @@
+{
+  "archivo": "TEXORO_novelabarroca-0063.txt",
+  "titulo": "El prevenido engañado",
+  "resumen_largo": [
+    "Don Fadrique, un rico caballero de Granada, pretende a Serafina, aunque ella ama a don Vicente. Al descubrir los secretos que la joven le oculta, empieza a formarse una opinión desconfiada sobre la discreción de las mujeres. Sus viajes y encuentros con otras damas no corrigen ese juicio: diversas experiencias de deseo, disimulo y burla refuerzan su idea de que una mujer instruida sabrá engañarlo. Al mismo tiempo se hace cargo de Gracia, hija de Serafina, que es criada en un convento y recibe una educación deliberadamente limitada para apartarla del mundo.",
+    "Después de recorrer otras ciudades y de escuchar opiniones contrarias a las suyas, don Fadrique vuelve a Granada y escoge a Gracia como esposa por su ignorancia. Cree que la falta de conocimiento garantizará su fidelidad y le enseña una versión absurda de la vida conyugal: debe permanecer armada haciendo guardia mientras él duerme. Cuando viaja a la corte, mantiene a la joven encerrada en esa falsa obligación, pero su ausencia da ocasión a don Álvaro y a una intermediaria para acercarse a ella. Gracia acepta la visita sin comprender sus implicaciones.",
+    "Don Álvaro descubre la ignorancia de Gracia, la persuade de que existe otra vida de casados y mantiene relaciones con ella. Al regresar, don Fadrique escucha de boca de su esposa lo ocurrido, contado sin disimulo porque ella no entiende haberlo ofendido. Comprende entonces que su prevención ha producido el peligro que quería evitar y revisa su desprecio por las mujeres discretas. Disimula el agravio y vive todavía con Gracia. A su muerte le deja la hacienda con la condición de que entre en el convento de Serafina, donde madre e hija se reconocen y viven juntas."
+  ],
+  "resumen_breve": [
+    "Don Fadrique viaja desde Granada y acumula experiencias que lo llevan a identificar la discreción femenina con el engaño.",
+    "Para asegurar su honor se casa con la ignorante Gracia, cuya falta de educación permite que don Álvaro la seduzca durante su ausencia.",
+    "El marido reconoce el error de su prevención y, tras su muerte, Gracia entra en el convento donde vive su madre Serafina."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Don Fadrique",
+      "descripcion": "Caballero que busca una esposa ignorante y descubre el error de esa elección."
+    },
+    {
+      "nombre": "Gracia",
+      "descripcion": "Joven criada sin conocimiento del mundo que no comprende la burla de don Álvaro."
+    },
+    {
+      "nombre": "Serafina",
+      "descripcion": "Primer amor de don Fadrique y madre de Gracia."
+    },
+    {
+      "nombre": "Don Álvaro",
+      "descripcion": "Caballero que aprovecha la ausencia del marido y la ignorancia de Gracia."
+    },
+    {
+      "nombre": "Intermediaria",
+      "descripcion": "Mujer que obtiene el acceso de don Álvaro a la casa."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Granada",
+      "descripcion": "Patria de don Fadrique y escenario de su matrimonio con Gracia."
+    },
+    {
+      "nombre": "Ciudades del viaje",
+      "descripcion": "Marco de experiencias que alimentan sus prejuicios sobre las mujeres."
+    },
+    {
+      "nombre": "Casa matrimonial y jardín",
+      "descripcion": "Espacios de la vigilancia y del acceso del seductor."
+    },
+    {
+      "nombre": "Conventos de Gracia y Serafina",
+      "descripcion": "Ámbito de la crianza de Gracia y, al final, del reencuentro con su madre y de su vida religiosa."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Educación y virtud",
+      "descripcion": "La historia niega que la ignorancia asegure la fidelidad o la conducta honesta."
+    },
+    {
+      "tema": "Celos y prevención",
+      "descripcion": "El afán de controlar a la esposa termina creando la vulnerabilidad que teme el marido."
+    },
+    {
+      "tema": "Engaño y aprendizaje",
+      "descripcion": "La burla obliga a don Fadrique a revisar su juicio sobre la discreción femenina."
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "archivo": "TEXORO_novelabarroca-0034.txt",
+  "titulo": "La vida de Lazarillo de Tormes y de sus fortunas y adversidades",
+  "resumen_largo": [
+    "Lázaro de Tormes responde a Vuestra Merced narrando su vida para explicar el caso por el que se le pregunta. Nacido junto al río Tormes y criado en la pobreza, entra al servicio de un ciego que lo inicia mediante golpes y engaños en la necesidad de valerse por sí mismo. La lucha por conseguir comida lo obliga a inventar trucos que su amo descubre y castiga. Finalmente se venga haciéndolo saltar contra un poste y lo abandona para buscar otra forma de subsistencia.",
+    "Con un clérigo de Maqueda, Lázaro encuentra una escasez aún mayor y roba pan de un arca hasta que su astucia queda descubierta. En Toledo sirve a un escudero cuyo aspecto digno oculta una pobreza extrema: el criado tiene que alimentar a quien debería mantenerlo. Tras la huida del amo pasa por otros servicios, entre ellos el de un fraile y el de un buldero, cuyas maniobras muestran nuevas formas de engaño. Su experiencia convierte el hambre y la apariencia social en claves para entender a los adultos.",
+    "Un capellán le permite trabajar como aguador, ahorrar y vestirse de manera más respetable. Lázaro acaba obteniendo el oficio de pregonero en Toledo y, con el apoyo del arcipreste de San Salvador, se casa con una criada de este. Circulan rumores sobre la relación de su mujer con el arcipreste, pero Lázaro rechaza que se hable del asunto y se declara satisfecho de su situación. Su relato termina proclamando prosperidad y paz doméstica, sostenidas por la decisión de no cuestionar una protección de la que depende."
+  ],
+  "resumen_breve": [
+    "En la Castilla del relato, Lázaro cuenta a Vuestra Merced cómo el hambre lo obligó a aprender engaños al servicio de varios amos.",
+    "El ciego, el clérigo y el escudero le enseñan la distancia entre apariencia, autoridad y medios reales de subsistencia.",
+    "Como pregonero en Toledo, acepta la protección del arcipreste y silencia los rumores sobre su matrimonio para conservar la prosperidad alcanzada."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Lázaro de Tormes",
+      "descripcion": "Narrador que reconstruye su aprendizaje desde la pobreza hasta un oficio y matrimonio estables."
+    },
+    {
+      "nombre": "El ciego",
+      "descripcion": "Primer amo, cruel y astuto, que le enseña a defenderse mediante engaños."
+    },
+    {
+      "nombre": "El clérigo de Maqueda",
+      "descripcion": "Amo cuya avaricia intensifica el hambre de Lázaro."
+    },
+    {
+      "nombre": "El escudero",
+      "descripcion": "Amo de apariencia honorable al que Lázaro tiene que alimentar."
+    },
+    {
+      "nombre": "El arcipreste de San Salvador",
+      "descripcion": "Protector que facilita el matrimonio y la posición final de Lázaro."
+    },
+    {
+      "nombre": "La mujer de Lázaro",
+      "descripcion": "Criada del arcipreste, objeto de rumores que su marido se niega a discutir."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Tormes y Salamanca",
+      "descripcion": "Ámbito del nacimiento y de la primera formación del protagonista."
+    },
+    {
+      "nombre": "Maqueda",
+      "descripcion": "Lugar del servicio al clérigo y del conflicto por el pan."
+    },
+    {
+      "nombre": "Toledo",
+      "descripcion": "Escenario del escudero, del trabajo de aguador y de la posición final como pregonero."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Hambre y supervivencia",
+      "descripcion": "La búsqueda de alimento obliga al protagonista a aprender recursos de engaño."
+    },
+    {
+      "tema": "Honra y apariencia",
+      "descripcion": "El prestigio del escudero contrasta con su pobreza, y la reputación final de Lázaro depende del silencio."
+    },
+    {
+      "tema": "Crítica de la autoridad",
+      "descripcion": "Los sucesivos amos muestran abusos, avaricia y usos interesados de la religión."
+    },
+    {
+      "tema": "Ascenso y dependencia",
+      "descripcion": "La mejora material de Lázaro queda vinculada a aceptar la protección del arcipreste."
+    }
+  ]
+}

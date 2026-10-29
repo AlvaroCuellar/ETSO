@@ -1,0 +1,68 @@
+{
+  "archivo": "TEXORO_novelabarroca-0057.txt",
+  "titulo": "La burlada Aminta y venganza del honor",
+  "resumen_largo": [
+    "Aminta queda huérfana y pasa a vivir en Segovia bajo la protección de su tío, el capitán don Pedro, que piensa casarla con su propio hijo. La joven atrae la atención de don Jacinto, en realidad llamado don Francisco y ya casado, que se presenta como disponible para conseguirla. Su amante Flora se hace pasar por hermana suya. Flora conoce la dificultad de seducir a una mujer que solo aceptará una relación matrimonial y propone sostener el engaño. Entre ambos y con ayuda de intermediarios crean las condiciones para que Aminta crea verdaderas las promesas de don Jacinto y se aparte de la seguridad de su familia.",
+    "Don Jacinto consigue gozar de Aminta mediante una falsa unión y después la deja en casa de doña Luisa, con nombre de doña Vitoria, mientras huye con Flora. Allí don Martín, hijo de la anfitriona, conoce a la joven y se interesa por ella. Cuando Aminta descubre la burla y que su seductor se llama don Francisco, tiene esposa en Madrid y no es hermano de Flora, su dolor se convierte en propósito de venganza. Don Martín ofrece ayuda y matrimonio, pero ella decide actuar por sí misma. Se disfraza de muchacho y entra al servicio de don Jacinto para alcanzar de cerca a los responsables del engaño.",
+    "Una noche, Aminta entra en el dormitorio y mata con una daga a don Jacinto y a Flora. Sale sin ser reconocida y se reúne con don Martín, que la ayuda a ponerse a salvo. La justicia busca a un criado y a su acompañante, pero no sospecha de la pareja cuando vuelve a encontrarla con apariencia y acompañamiento de caballeros. Ambos llegan a Madrid, celebran un matrimonio efectivo y reciben a doña Luisa. Aminta continúa llamándose doña Vitoria y renuncia a reclamar su patrimonio de origen para preservar el secreto de la venganza y de su nueva vida."
+  ],
+  "resumen_breve": [
+    "En Segovia, Aminta confía en las promesas matrimoniales de don Jacinto, que la engaña con ayuda de Flora.",
+    "Al descubrir la burla, adopta un disfraz masculino y mata a ambos para vengar su honor.",
+    "Con ayuda de don Martín huye a Madrid, se casa realmente con él y mantiene oculta su identidad anterior."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Aminta o doña Vitoria",
+      "descripcion": "Joven engañada que ejecuta la venganza y forma una nueva vida bajo otro nombre."
+    },
+    {
+      "nombre": "Don Jacinto o don Francisco",
+      "descripcion": "Hombre ya casado que, bajo un nombre falso, engaña a Aminta con promesas de matrimonio."
+    },
+    {
+      "nombre": "Flora",
+      "descripcion": "Compañera de don Jacinto que idea y sostiene la burla."
+    },
+    {
+      "nombre": "Don Martín",
+      "descripcion": "Joven que ampara a Aminta y se convierte en su esposo."
+    },
+    {
+      "nombre": "Don Pedro y doña Luisa",
+      "descripcion": "Tío protector de Aminta y madre de don Martín, respectivamente."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Segovia",
+      "descripcion": "Ciudad de la tutela de Aminta y de su engaño."
+    },
+    {
+      "nombre": "Casa de doña Luisa",
+      "descripcion": "Refugio donde conoce a don Martín."
+    },
+    {
+      "nombre": "Casa de don Jacinto",
+      "descripcion": "Lugar al que vuelve disfrazada y donde ejecuta la venganza."
+    },
+    {
+      "nombre": "Madrid",
+      "descripcion": "Destino del matrimonio verdadero y de la vida final bajo identidad nueva."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Engaño matrimonial",
+      "descripcion": "La promesa de boda sirve para vulnerar la confianza de la joven."
+    },
+    {
+      "tema": "Venganza del honor",
+      "descripcion": "Aminta decide castigar personalmente a quienes la han burlado."
+    },
+    {
+      "tema": "Disfraz y secreto",
+      "descripcion": "La apariencia masculina y el cambio de nombre permiten ejecutar el plan y proteger la vida posterior."
+    }
+  ]
+}

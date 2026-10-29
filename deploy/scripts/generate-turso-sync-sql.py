@@ -39,6 +39,12 @@ ADDITIVE_WORK_COLUMNS = {
     "collection_size": ("INTEGER", "NULL"),
 }
 
+ADDITIVE_COLUMNS = {
+    "works": ADDITIVE_WORK_COLUMNS,
+    "attribution_sets": {"reviewed_phrase": ("TEXT", "NULL")},
+    "attribution_members": {"scope": ("TEXT", "NULL")},
+}
+
 DEPENDENT_TABLES = (
     "attribution_sets",
     "attribution_groups",
@@ -116,12 +122,18 @@ def validate_schema(
             if "tipo_transcripcion" in remote_columns and "tipo_transcripcion" not in local_columns:
                 schema_migrations.append('ALTER TABLE "works" DROP COLUMN "tipo_transcripcion";')
                 effective_remote_columns.remove("tipo_transcripcion")
-            for column, (declaration, _) in ADDITIVE_WORK_COLUMNS.items():
-                if column in local_columns and column not in remote_columns:
-                    schema_migrations.append(
-                        f'ALTER TABLE "works" ADD COLUMN {quote_identifier(column)} {declaration};'
-                    )
-                    effective_remote_columns.append(column)
+        for column, (declaration, _) in ADDITIVE_COLUMNS.get(table, {}).items():
+            if column in local_columns and column not in remote_columns:
+                if table != "works":
+                    info = next(row for row in local.execute(
+                        f"PRAGMA table_info({quote_identifier(table)})"
+                    ) if row["name"] == column)
+                    if str(info["type"]).upper() != "TEXT" or info["notnull"] or info["dflt_value"] is not None:
+                        raise SystemExit(f"Columna aditiva no compatible: {table}.{column}; se espera TEXT nullable sin default.")
+                schema_migrations.append(
+                    f'ALTER TABLE {quote_identifier(table)} ADD COLUMN {quote_identifier(column)} {declaration};'
+                )
+                effective_remote_columns.append(column)
         if set(local_columns) != set(effective_remote_columns):
             raise SystemExit(
                 "Esquema Turso distinto del SQLite local en "
@@ -146,9 +158,10 @@ def normalize_row(row: sqlite3.Row, columns: list[str]) -> tuple[Any, ...]:
 
 def rows_by_id(connection: sqlite3.Connection, table: str, columns: list[str]) -> dict[str, tuple[Any, ...]]:
     existing_columns = set(get_columns(connection, table))
+    additive = ADDITIVE_COLUMNS.get(table, {})
     select_columns = [
-        f'{ADDITIVE_WORK_COLUMNS[column][1]} AS {quote_identifier(column)}'
-        if table == "works" and column in ADDITIVE_WORK_COLUMNS and column not in existing_columns
+        f'{additive[column][1]} AS {quote_identifier(column)}'
+        if column in additive and column not in existing_columns
         else quote_identifier(column)
         for column in columns
     ]
@@ -172,6 +185,9 @@ def grouped_rows(
 
 
 def dependent_signatures(connection: sqlite3.Connection) -> dict[str, tuple[Any, ...]]:
+    # Missing optional legacy fields have exactly their ALTER TABLE default.
+    reviewed_phrase = "s.reviewed_phrase" if "reviewed_phrase" in get_columns(connection, "attribution_sets") else "NULL"
+    member_scope = "m.scope" if "scope" in get_columns(connection, "attribution_members") else "NULL"
     text_access = grouped_rows(
         connection,
         """
@@ -198,15 +214,17 @@ def dependent_signatures(connection: sqlite3.Connection) -> dict[str, tuple[Any,
     )
     attribution = grouped_rows(
         connection,
-        """
+        f"""
         SELECT
             s.work_id,
             s.attribution_type,
             s.raw_expression,
+            {reviewed_phrase} AS reviewed_phrase,
             g.group_order,
             m.member_order,
             m.author_id,
-            m.confianza
+            m.confianza,
+            {member_scope} AS scope
         FROM attribution_sets s
         LEFT JOIN attribution_groups g ON g.attribution_set_id = s.id
         LEFT JOIN attribution_members m ON m.attribution_group_id = g.id
@@ -309,9 +327,15 @@ def append_attribution_inserts(sql_lines: list[str], local: sqlite3.Connection, 
     if not work_ids:
         return
     placeholders = ", ".join("?" for _ in work_ids)
+    set_columns = ["work_id", "attribution_type", "raw_expression"]
+    if "reviewed_phrase" in get_columns(local, "attribution_sets"):
+        set_columns.append("reviewed_phrase")
+    member_columns = ["author_id", "confianza", "member_order"]
+    if "scope" in get_columns(local, "attribution_members"):
+        member_columns.append("scope")
     set_rows = local.execute(
         f"""
-        SELECT id, work_id, attribution_type, raw_expression
+        SELECT id, {', '.join(quote_identifier(column) for column in set_columns)}
         FROM attribution_sets
         WHERE work_id IN ({placeholders})
         ORDER BY work_id, attribution_type, id
@@ -345,7 +369,7 @@ def append_attribution_inserts(sql_lines: list[str], local: sqlite3.Connection, 
         member_placeholders = ", ".join("?" for _ in group_ids)
         member_rows = local.execute(
             f"""
-            SELECT attribution_group_id, author_id, confianza, member_order
+            SELECT attribution_group_id, {', '.join(quote_identifier(column) for column in member_columns)}
             FROM attribution_members
             WHERE attribution_group_id IN ({member_placeholders})
             ORDER BY attribution_group_id, member_order, author_id
@@ -357,9 +381,8 @@ def append_attribution_inserts(sql_lines: list[str], local: sqlite3.Connection, 
 
     for set_row in set_rows:
         sql_lines.append(
-            "INSERT INTO attribution_sets (work_id, attribution_type, raw_expression) VALUES "
-            f"({sql_literal(set_row['work_id'])}, {sql_literal(set_row['attribution_type'])}, "
-            f"{sql_literal(set_row['raw_expression'])});"
+            f"INSERT INTO attribution_sets ({', '.join(quote_identifier(column) for column in set_columns)}) VALUES "
+            f"({', '.join(sql_literal(set_row[column]) for column in set_columns)});"
         )
         for group_row in group_rows_by_set.get(int(set_row["id"]), []):
             sql_lines.append(
@@ -369,9 +392,9 @@ def append_attribution_inserts(sql_lines: list[str], local: sqlite3.Connection, 
             for member_row in member_rows_by_group.get(int(group_row["id"]), []):
                 sql_lines.append(
                     "INSERT INTO attribution_members "
-                    "(attribution_group_id, author_id, confianza, member_order) VALUES "
-                    f"((SELECT max(id) FROM attribution_groups), {sql_literal(member_row['author_id'])}, "
-                    f"{sql_literal(member_row['confianza'])}, {sql_literal(member_row['member_order'])});"
+                    f"(attribution_group_id, {', '.join(quote_identifier(column) for column in member_columns)}) VALUES "
+                    "((SELECT max(id) FROM attribution_groups), "
+                    f"{', '.join(sql_literal(member_row[column]) for column in member_columns)});"
                 )
 
 

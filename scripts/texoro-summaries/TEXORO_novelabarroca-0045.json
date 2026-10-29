@@ -1,0 +1,68 @@
+{
+  "archivo": "TEXORO_novelabarroca-0045.txt",
+  "titulo": "Guzmán el Bravo",
+  "resumen_largo": [
+    "Don Felis de Guzmán destaca desde sus estudios por su inteligencia y valentía. Acompaña a su amigo Leonelo en sus visitas a Felicia, pero ella se enamora de él. Don Felis la rechaza para no traicionar a Leonelo. Ofendida, Felicia le hace creer a este que su amigo la solicita. Cuando Leonelo ataca a don Felis, este lo mata de una estocada y abandona su ciudad para buscar fortuna en las armas. Su fama de hombre bravo combina sus hechos militares con una defensa de la honra que también provoca violencia.",
+    "Tras distinguirse en Lepanto y resultar herido al rendir una galera, don Felis cae cautivo junto a Mendoza y sirve en Túnez a David. Susana, hija de este, se enamora de Mendoza, sin saber que bajo aquella apariencia masculina se oculta Felicia. Al defender a su amo de un agresor, don Felis atrae la atención del rey de Túnez, que le pide ayuda en un combate por la mano de Fátima. La victoria obtiene el favor del rey, regalos y libertad para volver a España. Allí Felicia abandona su disfraz y don Felis facilita su matrimonio con un hidalgo.",
+    "De regreso, don Felis se enamora de Isbella y se casa con ella, pese a la prevención de su hermano Leonardo. Su popularidad provoca la envidia de otros caballeros, que lo atacan y lo dejan gravemente herido. Después de recuperarse, el protagonista publica un desafío que nadie se atreve a aceptar. Sus enemigos convierten el episodio en acusación política y consiguen una condena de muerte. La intervención del almirante de Castilla y el testimonio de sus servicios militares obtienen su perdón; tras un alejamiento de su ciudad, acaba recuperando la libertad de residir en ella."
+  ],
+  "resumen_breve": [
+    "Don Felis de Guzmán rechaza a Felicia por lealtad a Leonelo, pero el engaño de ella provoca un enfrentamiento en el que mata a su amigo y abandona su ciudad.",
+    "Su cautiverio en Túnez junto a Mendoza reúne aventuras, identidades encubiertas y hechos de valor antes del regreso a España.",
+    "Casado con Isbella, sobrevive a una agresión y a una condena de muerte gracias a la protección del almirante de Castilla."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Don Felis de Guzmán",
+      "descripcion": "Caballero cuya valentía y lealtad articulan las aventuras."
+    },
+    {
+      "nombre": "Felicia o Mendoza",
+      "descripcion": "Mujer que acompaña a don Felis bajo apariencia masculina durante el cautiverio."
+    },
+    {
+      "nombre": "Susana",
+      "descripcion": "Hija de David, enamorada de Mendoza."
+    },
+    {
+      "nombre": "Isbella",
+      "descripcion": "Mujer con la que se casa don Felis a su regreso."
+    },
+    {
+      "nombre": "Almirante de Castilla",
+      "descripcion": "Protector que consigue salvarlo de la condena de muerte."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Ciudad española no nombrada",
+      "descripcion": "Patria del protagonista y escenario de los conflictos que lo obligan a salir y después amenazan su vida."
+    },
+    {
+      "nombre": "Túnez",
+      "descripcion": "Marco del cautiverio y de la servidumbre en casa de David."
+    },
+    {
+      "nombre": "Galera",
+      "descripcion": "Espacio de una acción militar que acredita el valor del protagonista."
+    },
+    {
+      "nombre": "Corte",
+      "descripcion": "Lugar de la condena y de la intervención que obtiene el perdón."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Valor y lealtad",
+      "descripcion": "La lealtad de don Felis a Leonelo queda atrapada en un engaño que acaba en homicidio; las aventuras posteriores destacan su valor militar."
+    },
+    {
+      "tema": "Cautiverio y libertad",
+      "descripcion": "La servidumbre somete a los personajes a dependencias y peligros que buscan superar."
+    },
+    {
+      "tema": "Envidia y protección",
+      "descripcion": "La fama provoca ataques y acusaciones, contrarrestados por el patrocinio de un gran señor."
+    }
+  ]
+}

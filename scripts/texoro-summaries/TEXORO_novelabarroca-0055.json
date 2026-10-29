@@ -1,0 +1,72 @@
+{
+  "archivo": "TEXORO_novelabarroca-0055.txt",
+  "titulo": "Libro de entretenimiento de la pícara Justina",
+  "resumen_largo": [
+    "Justina Díez cuenta en primera persona su vida y hace de sus orígenes familiares una extensa materia de burlas, recuerdos y comentarios. El primer libro presenta su nacimiento, sus padres, sus antepasados y el aprendizaje que recibe en el ambiente del mesón. La narradora no se limita a recordar sucesos: interrumpe el relato para discutir con el lector, interpretar costumbres y mostrar su ingenio mediante versos, juegos de palabras y comparaciones. Esa educación entre huéspedes, tratos y engaños explica las habilidades con que afronta después las ocasiones de su vida itinerante.",
+    "En el segundo libro, las salidas y romerías la llevan por pueblos y ciudades, con encuentros que se convierten en pruebas de astucia. Justina se enfrenta a grupos de hombres, huéspedes, fulleros y falsos devotos, y procura salir de las situaciones comprometidas sin perder su ventaja. Su estancia en León da lugar a observaciones sobre la ciudad y a nuevos episodios de engaño, como la burla del ermitaño Martín Pavón. El regreso a Mansilla abre otra fase, centrada en su hacienda, en los conflictos con otras personas y en el reconocimiento que sus recursos le proporcionan dentro de su comunidad.",
+    "El último libro se ocupa de los pretendientes y del matrimonio de Justina. La narradora examina y rechaza diversos tipos de galanes antes de explicar por qué elige a Lozano, concediendo especial importancia al interés económico. La boda en el mesón reúne comidas, vino, música y burlas, y no suprime la sátira de las apariencias ni las reservas respecto del marido jugador. Al despedirse, Justina anuncia otros matrimonios y episodios que corresponderían a un segundo tomo; distingue así su estado de narradora de la etapa alcanzada por estos cuatro libros y pide al lector que pague por sus historias."
+  ],
+  "resumen_breve": [
+    "Justina Díez reconstruye su nacimiento y aprendizaje en un mesón antes de contar sus salidas, romerías y burlas en torno a Mansilla y León.",
+    "Los cuatro libros la presentan como narradora ingeniosa que enfrenta a fulleros, falsos devotos y pretendientes mientras defiende sus intereses.",
+    "La boda con Lozano cierra la etapa narrada y da paso al anuncio de otras aventuras, sin abandonar la sátira del dinero y del matrimonio."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Justina Díez",
+      "descripcion": "Narradora y protagonista que cuenta sus orígenes, viajes, burlas y matrimonio."
+    },
+    {
+      "nombre": "Padres y antepasados de Justina",
+      "descripcion": "Figuras de la historia familiar y del aprendizaje en el mesón."
+    },
+    {
+      "nombre": "Lozano",
+      "descripcion": "Pretendiente elegido por Justina y marido en la boda del último libro."
+    },
+    {
+      "nombre": "Martín Pavón",
+      "descripcion": "Falso ermitaño cuya hipocresía y dinero lo convierten en objeto de una burla."
+    },
+    {
+      "nombre": "Pretendientes y compañeros de camino",
+      "descripcion": "Personas frente a las que Justina ejercita su astucia y juzga distintas conductas."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Mansilla",
+      "descripcion": "Lugar del mesón familiar, del regreso de Justina y de la boda."
+    },
+    {
+      "nombre": "León",
+      "descripcion": "Ciudad visitada y descrita durante las aventuras."
+    },
+    {
+      "nombre": "Mesones y caminos",
+      "descripcion": "Espacios de trato, romería y engaños."
+    },
+    {
+      "nombre": "Casa y ámbito de la hacienda",
+      "descripcion": "Marco de los intereses y conflictos de la etapa de propietaria."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Astucia y supervivencia",
+      "descripcion": "Justina aprovecha su ingenio para responder a engaños y obtener ventajas."
+    },
+    {
+      "tema": "Dinero y matrimonio",
+      "descripcion": "La elección del esposo y los tratos se vinculan repetidamente con el interés."
+    },
+    {
+      "tema": "Hipocresía y apariencias",
+      "descripcion": "Las burlas descubren falsos devotos, galanes afectados y respetabilidades dudosas."
+    },
+    {
+      "tema": "Relato de la propia vida",
+      "descripcion": "La narradora disputa con el lector y convierte su experiencia en espectáculo verbal."
+    }
+  ]
+}

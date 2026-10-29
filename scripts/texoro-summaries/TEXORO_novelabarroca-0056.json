@@ -1,0 +1,68 @@
+{
+  "archivo": "TEXORO_novelabarroca-0056.txt",
+  "titulo": "Aventurarse perdiendo",
+  "resumen_largo": [
+    "Fabio, un joven madrileño que visita el santuario y las ermitas de Monserrate, escucha en el monte el canto doloroso de una persona retirada del mundo. Al acercarse descubre a Jacinta, vestida de pastor, y le pregunta por la causa de sus penas. Ella le cuenta su historia desde Baeza, donde se enamoró de don Felis y sostuvo con él una relación contrariada por la autoridad de su padre. Los encuentros secretos y la violencia del conflicto familiar llevaron a la muerte del hermano de Jacinta y obligaron a don Felis a buscar refugio y partir hacia Flandes.",
+    "La falsa noticia de que don Felis ha muerto lleva a Jacinta a profesar como religiosa, pero el joven regresa vivo y ambos reanudan su relación. Viajan a Roma, obtienen la absolución y se casan con la condición de permanecer separados durante un año. Cuando don Felis parte a la expedición de la Mámora, muere realmente en un naufragio. Viuda y establecida en Madrid, Jacinta se enamora después de Celio, que rechaza casarse y acaba tratándola con desdén. Los celos y la falta de correspondencia la llevan a retirarse a Monserrate, disfrazada de pastor, sin que la distancia extinga su amor.",
+    "Fabio escucha el relato y rechaza dejarla abandonada en aquel lugar. Le propone volver con él a Madrid y vivir en un monasterio, donde podrá recuperar la seguridad sin exponerse a nuevos peligros. Jacinta acepta su ayuda, aunque no quiere prometer ni matrimonio ni profesión religiosa mientras conserve el amor por Celio. Fabio se compromete a ampararla como a una hermana y a procurar que Celio la visite de manera honesta. Ambos regresan a la corte, donde Jacinta vive recogida y protegida, sin que el desenlace transforme su constancia amorosa en una nueva boda."
+  ],
+  "resumen_breve": [
+    "En las montañas de Monserrate, Fabio encuentra a Jacinta disfrazada de pastor y escucha sus desdichas amorosas.",
+    "La historia recuerda el conflicto por don Felis en Baeza y el posterior afecto no correspondido por Celio.",
+    "Fabio la lleva de vuelta a Madrid y le ofrece amparo en un monasterio, donde permanece sin renunciar todavía a su amor."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Jacinta",
+      "descripcion": "Protagonista que cuenta dos experiencias amorosas desgraciadas y conserva su constancia."
+    },
+    {
+      "nombre": "Fabio",
+      "descripcion": "Viajero que escucha su relato y facilita una salida al aislamiento."
+    },
+    {
+      "nombre": "Don Felis",
+      "descripcion": "Primer amado y después esposo de Jacinta, muerto en un naufragio durante la expedición de la Mámora."
+    },
+    {
+      "nombre": "Celio",
+      "descripcion": "Hombre al que Jacinta sigue amando pese a sus desdenes."
+    },
+    {
+      "nombre": "Padre y hermano de Jacinta",
+      "descripcion": "Figuras familiares que intervienen en los obstáculos del primer amor."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Monserrate",
+      "descripcion": "Marco del encuentro entre Fabio y Jacinta y de su retiro como pastor."
+    },
+    {
+      "nombre": "Baeza",
+      "descripcion": "Ciudad del primer amor y del conflicto con la familia."
+    },
+    {
+      "nombre": "Flandes",
+      "descripcion": "Destino de la ausencia de don Felis."
+    },
+    {
+      "nombre": "Madrid y monasterio",
+      "descripcion": "Espacios de la vida posterior y de la protección ofrecida por Fabio."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Constancia amorosa",
+      "descripcion": "Jacinta mantiene su afecto pese a las pérdidas y a la ingratitud."
+    },
+    {
+      "tema": "Violencia y autoridad familiar",
+      "descripcion": "La oposición a la relación desencadena un conflicto mortal."
+    },
+    {
+      "tema": "Amparo y autonomía",
+      "descripcion": "La intervención de Fabio permite que Jacinta viva protegida sin imponerle un nuevo estado."
+    }
+  ]
+}

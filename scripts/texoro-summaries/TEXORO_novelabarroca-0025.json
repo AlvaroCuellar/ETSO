@@ -1,0 +1,64 @@
+{
+  "archivo": "TEXORO_novelabarroca-0025.txt",
+  "titulo": "La gitanilla",
+  "resumen_largo": [
+    "Preciosa crece con una gitana que se presenta como su abuela y destaca en Madrid por su belleza, discreción y habilidad para cantar y bailar. Un joven noble, don Juan de Cárcamo, se enamora de ella. Preciosa exige que pruebe la firmeza de sus sentimientos conviviendo con los gitanos antes de casarse. Él abandona su posición, adopta el nombre de Andrés y se integra en el grupo, aunque rechaza el robo y procura preservar su conducta mientras sigue a la muchacha.",
+    "La vida itinerante de los amantes se complica con la llegada de Clemente, vinculado a unos versos que habían suscitado celos en Andrés. Más tarde, en un mesón próximo a Murcia, Juana Carducha se enamora del joven y le propone matrimonio. Ante su negativa, esconde objetos propios entre sus pertenencias y lo acusa de hurto. Durante la detención, Andrés mata a un hombre que lo golpea e insulta. La acusación y la muerte colocan a los jóvenes ante una amenaza judicial que parece impedir su unión.",
+    "La gitana revela ante el corregidor y su esposa que robó a Preciosa cuando era niña y presenta las prendas que conservó. Los padres reconocen a su hija, doña Constanza de Azevedo y de Meneses, y Andrés declara a su vez su identidad noble. Se negocia el perdón de la familia del muerto y se dispone el matrimonio con el consentimiento de ambas familias. Juana confiesa el falso hurto y la alegría del reencuentro favorece la clemencia, mientras Preciosa conserva junto a sí a quien la crió."
+  ],
+  "resumen_breve": [
+    "En la España del relato, Preciosa, criada como gitana, exige a don Juan de Cárcamo que conviva con su grupo para probar su amor.",
+    "Una falsa acusación de robo y la muerte de un hombre durante la detención amenazan al joven, que se hace llamar Andrés.",
+    "En Murcia se descubre que Preciosa es la hija robada del corregidor y se resuelven los obstáculos mediante reconocimiento, perdón y matrimonio."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Preciosa / Constanza",
+      "descripcion": "Joven criada entre gitanos que defiende su libertad y resulta ser hija del corregidor."
+    },
+    {
+      "nombre": "Don Juan de Cárcamo / Andrés",
+      "descripcion": "Noble enamorado que acepta la vida gitana y afronta una acusación y un homicidio."
+    },
+    {
+      "nombre": "La gitana vieja",
+      "descripcion": "Criadora de Preciosa y responsable del robo de la niña, cuya confesión resuelve la identidad."
+    },
+    {
+      "nombre": "Juana Carducha",
+      "descripcion": "Hija de la mesonera que acusa falsamente a Andrés tras ser rechazada."
+    },
+    {
+      "nombre": "Don Fernando de Azevedo y doña Guiomar",
+      "descripcion": "Padres de Preciosa que reconocen a su hija y promueven el desenlace matrimonial."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Madrid",
+      "descripcion": "Primer ámbito de actuación de Preciosa y del encuentro con don Juan."
+    },
+    {
+      "nombre": "Caminos y campamentos gitanos",
+      "descripcion": "Espacios de convivencia itinerante y de la prueba amorosa."
+    },
+    {
+      "nombre": "Murcia y su entorno",
+      "descripcion": "Lugar de la acusación, el reconocimiento familiar y las bodas."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Libertad y constancia amorosa",
+      "descripcion": "Preciosa impone condiciones propias y el enamorado debe demostrarse mediante la convivencia."
+    },
+    {
+      "tema": "Identidad y posición social",
+      "descripcion": "Los nombres adoptados y la ascendencia oculta transforman las relaciones entre los personajes."
+    },
+    {
+      "tema": "Justicia y clemencia",
+      "descripcion": "El hurto fingido y la muerte desembocan en confesiones, negociación y perdón."
+    }
+  ]
+}

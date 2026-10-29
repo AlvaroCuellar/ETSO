@@ -1,6 +1,7 @@
 import ExcelJS from 'exceljs';
 import { error } from '@sveltejs/kit';
 import { ambitos, formatAttribution, type Ambito, type InformeDistanceView } from '$lib/domain/catalog';
+import { formatTraditionalAttributionCompact } from '$lib/utils/traditional-attribution-phrase';
 import {
 	getInformeById,
 	getInformeByReportSlug,
@@ -9,6 +10,7 @@ import {
 	getWorkById,
 	getWorkByPublicId
 } from '$lib/server/catalog-runtime';
+import { resolveStylometryResult } from '$lib/utils/stylometry-result';
 import { formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
 import { buildCanonicalUrl } from '$lib/seo';
 
@@ -89,7 +91,7 @@ const addDistanceSheet = (
 			position: row.rank,
 			distance: row.distancia,
 			title: formatDisplayWorkTitle(work.title),
-			traditionalAttribution: formatAttribution(work.traditionalAttribution),
+			traditionalAttribution: formatTraditionalAttributionCompact(work.traditionalAttribution),
 			stylometryAttribution: formatAttribution(work.stylometryAttribution),
 			genre: work.genre,
 			origin: work.origin,
@@ -126,7 +128,10 @@ export const GET: RequestHandler = async ({ params }) => {
 			{ field: 'Obra analizada', value: formatDisplayWorkTitle(work.title) },
 			{ field: 'Identificador público', value: work.publicId ?? '' },
 			{ field: 'Informe', value: buildCanonicalUrl(`/informes/${informe.slug}`) },
-			{ field: 'Fecha de exportación', value: workbook.created.toISOString() }
+			{ field: 'Fecha de exportación', value: workbook.created.toISOString() },
+			{ field: 'Atribución tradicional', value: formatAttribution(work.traditionalAttribution) },
+			{ field: 'Atribución estilométrica', value: formatAttribution(work.stylometryAttribution) },
+			{ field: 'Resultado estilométrico', value: resolveStylometryResult(work) ?? '' }
 		]);
 		addHeaderStyle(metadata);
 		applyReadableCells(metadata);

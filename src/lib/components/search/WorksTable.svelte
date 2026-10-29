@@ -12,7 +12,7 @@
 	import FolderOpen from 'lucide-svelte/icons/folder-open';
 	import {
 		UNRESOLVED_AUTHOR_ID,
-		formatConfidence,
+		formatAttributionConfidence,
 		type AttributionSet,
 		type CatalogWork,
 		type Confidence,
@@ -269,6 +269,13 @@
 
 	const hasAuthorLinks = (set: AttributionSet): boolean => !set.unresolved && set.groups.length > 0;
 
+	const collectionAuthors = (work: CatalogWork): string[] =>
+		[...new Map(work.traditionalAttribution.groups.flatMap((group) => group.members)
+			.map((member) => [member.authorId, member.authorName] as const)).values()];
+
+	const isMultiAuthorCollection = (work: CatalogWork): boolean =>
+		typeof work.collectionSize === 'number' && work.collectionSize > 0 && collectionAuthors(work).length > 1;
+
 	const connectorLabel = (set: AttributionSet): string => (set.connector === 'and' ? logicOperators.and : logicOperators.or);
 
 	const canLinkAuthor = (authorId: string): boolean => authorId.length > 0 && authorId !== UNRESOLVED_AUTHOR_ID;
@@ -361,10 +368,13 @@
 {/snippet}
 
 {#snippet traditionalAttribution(row: ObraTableRow)}
-	{#if hasAuthorLinks(row.work.traditionalAttribution)}
+	{#if isMultiAuthorCollection(row.work)}
+		<span class="font-normal text-text-main">{t('Varios')}</span>
+	{:else if hasAuthorLinks(row.work.traditionalAttribution)}
 		<div class="autor-list min-w-0 leading-[1.6]">
 			{#each row.work.traditionalAttribution.groups as group, groupIndex}
 				<span class="autor-group">
+					{#if row.work.traditionalAttribution.groups.length > 1 && group.members.length > 1}<span class="text-text-soft">(</span>{/if}
 					{#each group.members as member, memberIndex}
 						{#if canLinkAuthor(member.authorId) && member.hasAuthorshipExam}
 							<a
@@ -385,6 +395,7 @@
 							</span>
 						{/if}
 					{/each}
+					{#if row.work.traditionalAttribution.groups.length > 1 && group.members.length > 1}<span class="text-text-soft">)</span>{/if}
 				</span>
 				{#if groupIndex < row.work.traditionalAttribution.groups.length - 1}
 					<span class="logic-operator mx-1 inline-block rounded-[3px] bg-surface-accent-purple px-1.5 py-[1px] align-middle text-[10px] font-semibold text-text-accent-purple uppercase">
@@ -421,7 +432,7 @@
 						{/if}
 						{#if member.confidence}
 							<span class={confidenceClass(member.confidence)}>
-								{formatConfidence(member.confidence)}
+								{formatAttributionConfidence(member)}
 							</span>
 						{/if}
 						{#if memberIndex < group.members.length - 1}

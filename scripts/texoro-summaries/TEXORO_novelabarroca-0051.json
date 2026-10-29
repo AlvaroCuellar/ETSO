@@ -1,0 +1,68 @@
+{
+  "archivo": "TEXORO_novelabarroca-0051.txt",
+  "titulo": "La mayor confusión",
+  "resumen_largo": [
+    "Casandra, una joven rica criada con gran libertad en Madrid durante el reinado de Felipe IV, se casa con su primo Gerardo. De su matrimonio nace don Félix, pero la inclinación de Casandra no se detiene dentro de los límites familiares. Cuando el hijo alcanza la juventud, ella se enamora de él y aprovecha su interés por una criada llamada Lisena. Mediante un intercambio secreto ocupa el lugar de la muchacha y consigue que don Félix, ignorando la identidad de la mujer, tenga relaciones con su propia madre.",
+    "Casandra queda embarazada y organiza la ausencia de don Félix y la suya para ocultar lo ocurrido. Nace Diana, a la vez hija y hermana del joven, sin que este conozca la verdad. Años después don Félix se enamora de Diana y desea casarse con ella. Casandra trata de impedirlo y lleva a la muchacha a un convento, donde intenta orientar su destino hacia la profesión religiosa. El dolor del enamorado y la persistencia de su afecto vencen los obstáculos: don Félix y Diana acaban uniéndose en matrimonio sin saber el parentesco que los vincula.",
+    "Al acercarse la muerte, Casandra entrega a don Félix una carta que debe leer después de su entierro. En ella confiesa el engaño y le revela que Diana es su hija y su hermana. El joven destruye el escrito y queda sumido en angustia, incapaz de tratar a su esposa como antes y tampoco dispuesto a abandonarla. Finalmente consulta a un religioso, que recaba pareceres de otros doctos. La respuesta que ofrece el relato autoriza a los cónyuges a continuar juntos por su ignorancia y falta de culpa. Don Félix recupera así la convivencia con Diana, que desconoce el motivo de su crisis."
+  ],
+  "resumen_breve": [
+    "En el Madrid de Felipe IV, Casandra engaña a su hijo don Félix ocupando el lugar de una criada y da a luz a Diana.",
+    "Don Félix se enamora y se casa con Diana sin saber que ella es simultáneamente su hija y su hermana.",
+    "La confesión póstuma de Casandra lo enfrenta a un conflicto de conciencia que el relato resuelve mediante la consulta a religiosos y doctos."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Don Félix",
+      "descripcion": "Hijo de Casandra que ignora el engaño materno y se casa con Diana."
+    },
+    {
+      "nombre": "Casandra",
+      "descripcion": "Madre que provoca y oculta la relación incestuosa, confesada al final en una carta."
+    },
+    {
+      "nombre": "Diana",
+      "descripcion": "Hija de Casandra y don Félix, criada sin conocer su origen y convertida en esposa de este."
+    },
+    {
+      "nombre": "Lisena",
+      "descripcion": "Criada utilizada para facilitar el engaño de Casandra."
+    },
+    {
+      "nombre": "Religioso de la Compañía de Jesús",
+      "descripcion": "Consejero que reúne pareceres para resolver la angustia de don Félix."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Madrid",
+      "descripcion": "Ciudad donde se desarrolla la historia de Casandra y su familia."
+    },
+    {
+      "nombre": "Casa familiar",
+      "descripcion": "Marco de las relaciones ocultas y de la convivencia final."
+    },
+    {
+      "nombre": "Convento de Diana",
+      "descripcion": "Lugar al que Casandra la lleva para impedir el matrimonio."
+    },
+    {
+      "nombre": "Ámbito de consulta religiosa",
+      "descripcion": "Espacio de la resolución doctrinal del conflicto de don Félix."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Incesto involuntario y engaño",
+      "descripcion": "Los actos de Casandra hacen que don Félix y Diana desconozcan su parentesco."
+    },
+    {
+      "tema": "Secreto familiar",
+      "descripcion": "La ocultación del nacimiento condiciona las decisiones de la siguiente generación."
+    },
+    {
+      "tema": "Conciencia y responsabilidad",
+      "descripcion": "La revelación exige distinguir entre la culpa de Casandra y la ignorancia de los cónyuges."
+    }
+  ]
+}

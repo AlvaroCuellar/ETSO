@@ -1,0 +1,68 @@
+{
+  "archivo": "TEXORO_novelabarroca-0015.txt",
+  "titulo": "Las harpías en Madrid y coche de las estafas (estafa cuarta)",
+  "resumen_largo": [
+    "Dorotea, deseosa de igualar las estafas de su hermana y sus amigas, espera varios meses y vuelve a Madrid con nuevas apariencias y alojamiento. En una tienda de la puerta de Guadalajara atrae a don Tadeo de Silva, joven andaluz rico que ha acudido a la corte por unos pleitos. El caballero le ofrece galas al primer encuentro y continúa visitándola, mientras ella finge ser esposa de un hombre retenido en las Indias. La información sobre su fortuna y su afición al juego confirma a Dorotea que ha escogido una víctima provechosa.",
+    "El cortejo prosigue entre regalos, músicas y muestras de ingenio. Don Tadeo se precia de poeta y músico, y la dama lo mantiene esperanzado sin concederle el favor que desea. El texto intercala la historia del caballero Rugero y su silencio amoroso, antes de volver a la burla madrileña. Don Basilio, estudiante que había amado a Dorotea en Illescas, hace cantar una sátira contra el nuevo galán, pero acaba aliado con la joven para ejecutar una presa mayor. Una boda proporciona la ocasión: Tadeo acude adornado con valiosas joyas y gana una suma considerable al juego antes de ir a cenar con ella.",
+    "Dorotea lo invita a quedarse y hace poner en su bebida unos polvos que le provocan un sueño profundo. Con ayuda de Basilio y del cochero se apodera de sus joyas y dinero, mientras el estudiante lo envuelve como una criatura y lo deja colgado de un balcón con unos versos burlescos. Al despertar, Tadeo conoce su deshonra y no consigue encontrar a la dama, por lo que abandona Madrid hacia Flandes. Dorotea vuelve triunfante a Illescas y, reunida con sus compañeras, decide mudarse a Granada y dejar por entonces los engaños, concluyendo así la serie de estafas."
+  ],
+  "resumen_breve": [
+    "En Madrid, Dorotea atrae al rico don Tadeo de Silva y prepara la cuarta estafa con su familia y un estudiante.",
+    "Después de una boda y de una gran ganancia al juego, el galán cena en su casa y recibe una bebida que lo adormece.",
+    "La joven huye con sus bienes, él queda expuesto a una burla pública y las compañeras se trasladan a Granada."
+  ],
+  "personajes_principales": [
+    {
+      "nombre": "Dorotea",
+      "descripcion": "Estafadora que busca una presa tan ventajosa como las de sus compañeras."
+    },
+    {
+      "nombre": "Don Tadeo de Silva",
+      "descripcion": "Joven andaluz rico, jugador, poeta y músico que se enamora de ella."
+    },
+    {
+      "nombre": "Don Basilio",
+      "descripcion": "Estudiante y antiguo enamorado de Dorotea que colabora en la burla final."
+    },
+    {
+      "nombre": "Bañuelos y la madre de Dorotea",
+      "descripcion": "Cómplices que representan el servicio doméstico de la dama."
+    },
+    {
+      "nombre": "Rugero",
+      "descripcion": "Caballero protagonista del relato interpolado sobre una prueba de silencio amoroso."
+    }
+  ],
+  "espacios_principales": [
+    {
+      "nombre": "Madrid y puerta de Guadalajara",
+      "descripcion": "Corte y zona comercial donde se conocen Dorotea y Tadeo."
+    },
+    {
+      "nombre": "Casa de Dorotea, barrio de Antón Martín",
+      "descripcion": "Lugar de la cena y de la apropiación de los bienes."
+    },
+    {
+      "nombre": "Balcón de un indiano",
+      "descripcion": "Escenario de la exposición burlesca del galán dormido."
+    },
+    {
+      "nombre": "Illescas y Granada",
+      "descripcion": "Espacios de la reunión de las compañeras y de su retiro final."
+    }
+  ],
+  "tematicas_principales": [
+    {
+      "tema": "Seducción y estafa",
+      "descripcion": "La promesa de intimidad facilita el robo de los bienes del galán."
+    },
+    {
+      "tema": "Vanidad y burla pública",
+      "descripcion": "Las pretensiones poéticas y amorosas de Tadeo terminan en humillación."
+    },
+    {
+      "tema": "Competencia entre cómplices",
+      "descripcion": "Dorotea actúa para igualar los éxitos de las otras mujeres."
+    }
+  ]
+}

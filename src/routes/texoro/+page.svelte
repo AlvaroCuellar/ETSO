@@ -183,7 +183,7 @@
 	const texoroIntro = $derived(texoroIntroByLocale[data.locale] ?? texoroIntroByLocale.es);
 
 	const cofreDescriptionByLocale = {
-		es: "reúne las frecuencias de uso de las palabras de todas las obras del corpus. Los datos permiten realizar análisis léxicos, comparar obras, replicar estudios estilométricos y plantear nuevas investigaciones.",
+		es: "reúne el corpus de frecuencias léxicas de todas las obras de TEXORO. Sus datos permiten realizar análisis léxicos, comparar obras, replicar estudios estilométricos y plantear nuevas investigaciones.",
 		en: "brings together word-use frequencies for all works in the corpus. The data support lexical analysis, comparisons between works, replication of stylometric studies and new research.",
 		fr: "rassemble les fréquences d’usage des mots de toutes les œuvres du corpus. Les données permettent de mener des analyses lexicales, de comparer des œuvres, de reproduire des études stylométriques et de proposer de nouvelles recherches.",
 		pt: "reúne as frequências de uso das palavras de todas as obras do corpus. Os dados permitem realizar análises lexicais, comparar obras, replicar estudos estilométricos e propor novas investigações.",

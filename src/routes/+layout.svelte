@@ -5,6 +5,7 @@
 	import '../app.css';
 
 	import favicon from '$lib/assets/favicon.svg';
+	import LanguageSuggestion from '$lib/components/i18n/LanguageSuggestion.svelte';
 	import LocalizationRuntime from '$lib/components/i18n/LocalizationRuntime.svelte';
 	import SiteFooter from '$lib/components/layout/SiteFooter.svelte';
 	import SiteHeader from '$lib/components/layout/SiteHeader.svelte';
@@ -63,6 +64,7 @@
 	{#key locale}
 		<LocalizationRuntime {locale} translations={runtimeTranslations} attrs={runtimeAttrs} />
 		<SiteHeader {locale} />
+		<LanguageSuggestion {locale} />
 		<main class="min-w-0 flex-1 py-8 lg:py-12">
 			<div class="mx-auto w-full min-w-0 max-w-7xl px-3 sm:px-5 lg:px-6">
 				{@render children()}

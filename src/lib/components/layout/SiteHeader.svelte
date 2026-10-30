@@ -12,6 +12,7 @@
 		SUPPORTED_LOCALES,
 		type Locale
 	} from '$lib/i18n';
+	import { rememberLocale } from '$lib/utils/language-preference';
 	import { loadClientMemoryCache } from '$lib/utils/client-memory-cache';
 
 	interface Props {
@@ -237,6 +238,7 @@
 								aria-current={option.locale === locale ? 'true' : undefined}
 								aria-label={`${translations.nav.switchToLanguage} ${option.name}`}
 								onclick={() => {
+									rememberLocale(option.locale);
 									closeLanguageMenu();
 								}}
 							>

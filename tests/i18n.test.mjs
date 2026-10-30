@@ -266,3 +266,41 @@ test('interpreted TEXORO queries translate filters and variable proximity distan
 		assert.notEqual(t('Busca en teatro, prosa y poesía del Siglo de Oro: más de 3000 obras y más de 42 millones de palabras'), '', locale);
 	}
 });
+
+const preference = loadSourceModule(resolve(projectRoot, 'src/lib/utils/language-preference.ts'));
+test('manual language takes precedence; browser fallback respects order and regional codes', () => {
+ assert.equal(preference.resolvePreferredLocale('fr', ['es-ES']), 'fr');
+ assert.equal(preference.resolvePreferredLocale(null, ['ca-ES', 'es-ES', 'en-US']), 'es');
+ assert.equal(preference.resolvePreferredLocale('invalid', ['EN_us', 'es']), 'en');
+ assert.equal(preference.resolvePreferredLocale(null, ['ca', 'nl']), null);
+ assert.equal(preference.readPreferredLocale(), null);
+});
+test('language choice survives blocked storage and cleared storage restores browser preference', () => {
+ const oldWindow = globalThis.window;
+ const oldNavigator = Object.getOwnPropertyDescriptor(globalThis, 'navigator');
+ const oldEvent = globalThis.CustomEvent;
+ let stored = null;
+ let blocked = false;
+ let events = 0;
+ globalThis.window = {localStorage: {
+  getItem() {if (blocked) throw new Error('denied'); return stored;},
+  setItem(key, value) {if (blocked) throw new Error('denied'); stored = value;}
+ }, dispatchEvent() {events++;}};
+ Object.defineProperty(globalThis, 'navigator', {configurable:true, value:{languages:['es-ES'],language:'es-ES'}});
+ globalThis.CustomEvent = class {constructor(type) {this.type=type;}};
+ try {
+  preference.rememberLocale('fr');
+  assert.equal(preference.readPreferredLocale(), 'fr');
+  stored = null;
+  assert.equal(preference.readPreferredLocale(), 'es');
+  blocked = true;
+  preference.rememberLocale('en');
+  assert.equal(preference.readPreferredLocale(), 'en');
+  assert.equal(events, 2);
+ } finally {
+  globalThis.window = oldWindow;
+  if (oldNavigator) Object.defineProperty(globalThis, 'navigator', oldNavigator);
+  else delete globalThis.navigator;
+  globalThis.CustomEvent = oldEvent;
+ }
+});

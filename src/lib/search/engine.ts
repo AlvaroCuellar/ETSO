@@ -1,3 +1,4 @@
+import { limitOccurrenceContext } from './limit-occurrence-context';
 import { IndexedDbCache } from './idb-cache';
 import { buildSnippet, normalizePattern, normalizePlainText, tokenizeWithOffsets } from './normalize';
 import {
@@ -442,10 +443,10 @@ const buildLineSnippetWithHighlights = (
 
 	localHighlights.sort((a, b) => a.start - b.start || a.end - b.end);
 
-	return {
+	return limitOccurrenceContext({
 		snippet,
 		highlights: localHighlights
-	};
+	});
 };
 
 const buildSnippetWithHighlights = (

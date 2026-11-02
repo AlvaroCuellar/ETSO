@@ -299,16 +299,39 @@
 		return segments;
 	};
 
-	const formatTeiPageLabel = (
-		_page: {
-			n?: string;
-			folio?: string;
-		},
-		index: number,
-		_compact = false
-	): string => {
-		return `Pag. ${index + 1}`;
+	type TeiPageLocation = {
+		n?: string;
+		folio?: string;
+		facs?: string;
+		pdfPage?: string;
+		image?: string;
+		jornada?: { label?: string; n?: string } | null;
 	};
+	const isLogicalTeiSegment = (page: TeiPageLocation): boolean =>
+		!page.n && !page.folio && !page.facs && !page.pdfPage && !page.image;
+	const formatTeiPageLabel = (page: TeiPageLocation, index: number, _compact = false): string => {
+		if (isLogicalTeiSegment(page)) {
+			return page.jornada?.label || (page.jornada?.n ? `Jornada ${page.jornada.n}` : 'Texto');
+		}
+		return `Pag. ${page.n || page.folio || index + 1}`;
+	};
+	const teiPageAnchorIds = $derived.by(() => {
+		const pages = data.biteso.tei?.pages ?? [];
+		const bases = pages.map((page, index) => `tei-page-${page.n || index + 1}`);
+		const reserved = new Set(bases);
+		const used = new Set<string>();
+		return bases.map((base, index) => {
+			let anchor = base;
+			if (used.has(anchor)) {
+				anchor = `${base}-slice-${index + 1}`;
+				while (reserved.has(anchor) || used.has(anchor)) anchor += '-slice';
+			}
+			used.add(anchor);
+			return anchor;
+		});
+	});
+	const formatTeiPageAnchorId = (_page: TeiPageLocation, index: number): string =>
+		teiPageAnchorIds[index];
 	const formatJornadaAnchorId = (page: { jornada?: { id?: string; n?: string } }, index: number): string =>
 		`tei-jornada-${page.jornada?.id || page.jornada?.n || index + 1}`;
 	const isFirstTeiPageOfJornada = (index: number): boolean => {
@@ -339,7 +362,7 @@
 			let lastJornadaId = '';
 
 			for (const [index, page] of data.biteso.tei?.pages.entries() ?? []) {
-				const pageId = `tei-page-${page.n || index + 1}`;
+				const pageId = formatTeiPageAnchorId(page, index);
 				const jornadaId = page.jornada?.id || page.jornada?.n || '';
 				if (jornadaId && jornadaId !== lastJornadaId) {
 					marks.push({
@@ -365,7 +388,7 @@
 
 		for (const [index, page] of data.biteso.tei?.pages.entries() ?? []) {
 			const pageMark: NavigationMark = {
-				id: `tei-page-${page.n || index + 1}`,
+				id: formatTeiPageAnchorId(page, index),
 				label: formatTeiPageLabel(page, index, true),
 				type: 'page'
 			};
@@ -376,7 +399,7 @@
 					currentGroup = {
 						id: 'tei-pages-without-jornada',
 						anchorId: pageMark.id,
-						label: 'Páginas',
+						label: isLogicalTeiSegment(page) ? 'Texto' : 'Páginas',
 						pages: []
 					};
 					groups.push(currentGroup);
@@ -875,7 +898,7 @@
 								{page.jornada?.label}
 							</h2>
 						{/if}
-						<section id={`tei-page-${page.n || pageIndex + 1}`} class="grid scroll-mt-28 gap-3">
+						<section id={formatTeiPageAnchorId(page, pageIndex)} class="grid scroll-mt-28 gap-3">
 							<h3 class="mt-8 mb-1 font-ui text-[0.82rem] font-bold uppercase tracking-[0.08em] text-text-accent-purple">
 								{formatTeiPageLabel(page, pageIndex)}
 							</h3>

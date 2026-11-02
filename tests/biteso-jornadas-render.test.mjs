@@ -17,9 +17,15 @@ const parts = await Promise.all(['Primera', 'Segunda', 'Tercera'].map((name) =>
 const display = formatBitesoJornadas(source, divisions[id]);
 
 test('Pico preserves every received line and the exact three jornada boundaries', () => {
-	assert.equal(parts.join(''), source);
-	assert.equal(display.replace(/^--Jornada (primera|segunda|tercera)--\n/gm, ''), source);
-	assert.deepEqual(display.split(/^--Jornada (?:primera|segunda|tercera)--\n/m).slice(1), parts);
+	// Sources may already contain editorial jornada headings. Only their case and
+	// presence differ from the analysis parts; preserve every other byte.
+	const headingPattern = /^--Jornada (primera|segunda|tercera)--\r?\n/gim;
+	const withoutHeadings = (text) => text.replace(headingPattern, '');
+	assert.equal(parts.join(''), withoutHeadings(source));
+	assert.equal(withoutHeadings(display), withoutHeadings(source));
+	assert.deepEqual(Array.from(display.matchAll(headingPattern), (match) => match[1].toLowerCase()),
+		['primera', 'segunda', 'tercera']);
+	assert.deepEqual(display.split(/^--Jornada (?:primera|segunda|tercera)--\r?\n/im).slice(1), parts);
 	assert.equal(formatBitesoJornadas(source), source);
 });
 
@@ -51,7 +57,7 @@ test('BITESO renders three distinct headings and working navigation anchors', as
 		const html = render(Page, { props: { data }, context: new Map([['__request__', request]]) }).body;
 		const $ = load(html);
 		for (const [index, label] of ['primera', 'segunda', 'tercera'].entries()) {
-			assert.equal($(`#jornada-${index + 1}`).text().trim(), `Jornada ${label}`);
+			assert.equal($(`#jornada-${index + 1}`).text().trim().toLocaleLowerCase('es'), `jornada ${label}`);
 			assert.ok($(`a[href="#jornada-${index + 1}"]`).length > 0);
 		}
 		assert.ok($.text().includes('Rodríguez Nicolás, Sergio. Texto digital de Pico y Canente. BITESO, 2026.'));

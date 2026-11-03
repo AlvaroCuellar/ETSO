@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 
 export interface BitesoJornadas {
 	sha256: string;
+	sourceHeadings?: { line: number; text: string }[];
 	jornadas: { label: string; lineCount: number }[];
 }
 
@@ -18,9 +19,19 @@ export const formatBitesoJornadas = (text: string, division?: BitesoJornadas): s
 		console.warn('[BITESO] La división en jornadas no coincide con el texto; se conserva íntegro.');
 		return text;
 	}
+	const sourceHeadings = new Map<number, string>();
+	for (const heading of division.sourceHeadings ?? []) {
+		const index = heading.line - 1;
+		if (sourceHeadings.has(index) || !Number.isInteger(index) || lines[index] !== heading.text) {
+			console.warn('[BITESO] Los rótulos originales no coinciden; se conserva el texto íntegro.');
+			return text;
+		}
+		sourceHeadings.set(index, heading.text);
+	}
 	let offset = 0;
 	return division.jornadas.map(({ label, lineCount }) => {
-		const section = lines.slice(offset, offset + lineCount).join('\n');
+		const section = lines.slice(offset, offset + lineCount)
+			.filter((_line, index) => !sourceHeadings.has(offset + index)).join('\n');
 		offset += lineCount;
 		return `--${label}--\n${section}`;
 	}).join('\n') + '\n';

@@ -15,5 +15,887 @@
         "lineCount": 938
       }
     ]
+  },
+  "MATOS_SabioEnSuRetiro(Transk-IMPR)": {
+    "sha256": "e2c742db890ef1b2a07d6f26e1786a8b28394850586b489d19799640e6af2220",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 1024
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 1099
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 1202
+      }
+    ]
+  },
+  "LOPE_AusenteEnElLugar": {
+    "sha256": "d5aed54d8dc48c96e2288954bff4a5db13f1a62e600566c88767ce337ffd1f86",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 1282
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 1241
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 1189
+      }
+    ]
+  },
+  "SALAZAR_MeritoEsLaCorona": {
+    "sha256": "21e00975dae852efcedb72b584417ebbbda159bf6547b0427020bf4e5bc34899",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 1207
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 1051
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 1251
+      }
+    ],
+    "sourceHeadings": [
+      {
+        "line": 1208,
+        "text": "JORNADA SEGUNDA"
+      },
+      {
+        "line": 2259,
+        "text": "JORNADA TERCERA"
+      }
+    ]
+  },
+  "VALDIVIELSO_NacimientoDeLaMejor(Auto)(Modern-Aut)": {
+    "sha256": "930004f8efdb6ad4d225ce35c14eacbe1b807a230252f5b1eabe42c19b69e34d",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 898
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 940
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 573
+      }
+    ],
+    "sourceHeadings": [
+      {
+        "line": 1,
+        "text": "--JORNADA PRIMERA--"
+      },
+      {
+        "line": 899,
+        "text": "--JORNADA SEGUNDA--"
+      },
+      {
+        "line": 1839,
+        "text": "--JORNADA TERCERA--"
+      }
+    ]
+  },
+  "CALDERON_AguaMansa(PrimeraVersion)": {
+    "sha256": "ea3383a7f1040efeceb7b8bd260bd72ad763052cc92826d32607a776b0f5cb50",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 888
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 981
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 1374
+      }
+    ],
+    "sourceHeadings": [
+      {
+        "line": 1,
+        "text": "--JORNADA PRIMERA--"
+      },
+      {
+        "line": 889,
+        "text": "--JORNADA SEGUNDA--"
+      },
+      {
+        "line": 1870,
+        "text": "--JORNADA TERCERA--"
+      }
+    ]
+  },
+  "SALAS_SagazEstacio": {
+    "sha256": "5198d689866bf8f6388ebd10a562659c234201eeda16c352d974c0a74b151a96",
+    "jornadas": [
+      {
+        "label": "Acto primera",
+        "lineCount": 215
+      },
+      {
+        "label": "Acto segunda",
+        "lineCount": 191
+      },
+      {
+        "label": "Acto tercera",
+        "lineCount": 176
+      }
+    ],
+    "sourceHeadings": [
+      {
+        "line": 1,
+        "text": "--ACTO PRIMERO--"
+      },
+      {
+        "line": 216,
+        "text": "--ACTO SEGUNDO--"
+      },
+      {
+        "line": 407,
+        "text": "--ACTO TERCERO--"
+      }
+    ]
+  },
+  "LOPE_SanSegundo": {
+    "sha256": "aeaa61e95b607ce6b4aac27cec853fe0f423472eb6cdf9cba977a770ab31b1ad",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 1044
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 979
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 1007
+      }
+    ],
+    "sourceHeadings": [
+      {
+        "line": 2,
+        "text": "JORNADA PRIMERA."
+      },
+      {
+        "line": 1045,
+        "text": "JORNADA SEGUNDA."
+      },
+      {
+        "line": 2024,
+        "text": "JORNADA TERCERA."
+      }
+    ]
+  },
+  "CASTRO_MejorEsposo": {
+    "sha256": "6db49c6babc5c5f13df3e3087141096d694d44e751115e58983861bdd807e539",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 1243
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 1096
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 1034
+      }
+    ]
+  },
+  "LOPEdudosa_BernardoDelCarpio(SegundaParte)": {
+    "sha256": "ead23efe92b87d11e4ed8862996cc9453289aa5165e8c96e436d4ad4094427b2",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 1026
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 937
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 1229
+      }
+    ],
+    "sourceHeadings": [
+      {
+        "line": 1027,
+        "text": "ACTO SEGUNDO"
+      },
+      {
+        "line": 1964,
+        "text": "ACTO TERCERO"
+      }
+    ]
+  },
+  "LOPE_SinSecretoNoHayAmor": {
+    "sha256": "834b3c8628c102173322e864eeb65016ecd0db285a43a2a2f6a7ee724fdd1217",
+    "jornadas": [
+      {
+        "label": "Acto primera",
+        "lineCount": 1094
+      },
+      {
+        "label": "Acto segunda",
+        "lineCount": 1061
+      },
+      {
+        "label": "Acto tercera",
+        "lineCount": 1066
+      }
+    ],
+    "sourceHeadings": [
+      {
+        "line": 1,
+        "text": "ACTO PRIMERO"
+      },
+      {
+        "line": 1095,
+        "text": "ACTO SEGUNDO"
+      },
+      {
+        "line": 2156,
+        "text": "ACTO TERCERO"
+      }
+    ]
+  },
+  "LOPEZ_CondicionesSonTerribles(Transk-IMPR)": {
+    "sha256": "47fefe1c0de1ea8c9cdebde467d3fdd0bbe9abd577938e081489f4e2bee4cfc9",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 1323
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 1506
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 1777
+      }
+    ],
+    "sourceHeadings": [
+      {
+        "line": 1324,
+        "text": "JORNADA SEGUNDA"
+      }
+    ]
+  },
+  "VELEZ_CelosAmorYVenganza": {
+    "sha256": "f5ee3d0f4a65fa51f8cdc4c5d61e86b976358559d5f0a6e89bea120d1f6b8885",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 1309
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 1078
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 1492
+      }
+    ],
+    "sourceHeadings": [
+      {
+        "line": 1,
+        "text": "--JORNADA PRIMERA--"
+      },
+      {
+        "line": 1310,
+        "text": "--JORNADA SEGUNDA--"
+      },
+      {
+        "line": 2388,
+        "text": "--JORNADA TERCERA--"
+      }
+    ]
+  },
+  "VELEZ_CercoDelPenon": {
+    "sha256": "e7818aa1664e4b72e5cba370362b9046f320765b79fbded552caeed89f82675c",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 1001
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 986
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 1042
+      }
+    ],
+    "sourceHeadings": [
+      {
+        "line": 1,
+        "text": "--JORNADA PRIMERA--"
+      },
+      {
+        "line": 1002,
+        "text": "--JORNADA SEGUNDA--"
+      },
+      {
+        "line": 1988,
+        "text": "--JORNADA TERCERA--"
+      }
+    ]
+  },
+  "LOPEdudosa_ContrariosDeAmor": {
+    "sha256": "88d64fc63974adb637ffd895935dc6500b94a117327163c53b18ba946bd7c0ba",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 1292
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 1299
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 1527
+      }
+    ],
+    "sourceHeadings": [
+      {
+        "line": 1,
+        "text": "PRIMERA JORNADA"
+      },
+      {
+        "line": 1293,
+        "text": "JORNADA SEGUNDA"
+      },
+      {
+        "line": 2592,
+        "text": "JORNADA TERCERA"
+      }
+    ]
+  },
+  "QUEVEDOdudosa_PrivanzaDesleal": {
+    "sha256": "bc17633d326e292791b500d16d01e1a14539a0b12216b437f15a218633be259b",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 754
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 703
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 608
+      }
+    ]
+  },
+  "LOBO-LASSO_HonraDeDido(Modern-Aut)": {
+    "sha256": "adabf5ca9f73e1e88b5a17db7cff7e0ecced340b0639ba8ce3edf82b21f9fee4",
+    "jornadas": [
+      {
+        "label": "Introyto",
+        "lineCount": 58
+      },
+      {
+        "label": "Jornada primera",
+        "lineCount": 546
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 522
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 713
+      }
+    ]
+  },
+  "LOPE_NinezDeSanIsidro(Transk-IMPR)": {
+    "sha256": "6876c203f77db9fb52146480f8ccd03c59a8cca33406570c680736e8d735d2a8",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 993
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 908
+      }
+    ]
+  },
+  "LANINI_SolDelOriente(Transk-IMPR)": {
+    "sha256": "c95a6c528bec999283234ab4ac7681e50f898bdb92947ead20e0d5ae287d92f4",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 1124
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 1029
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 1099
+      }
+    ],
+    "sourceHeadings": [
+      {
+        "line": 1125,
+        "text": "JORNADA SEGUNDA"
+      }
+    ]
+  },
+  "VELEZ_Creaciondelmundo": {
+    "sha256": "d6deb745c16d088f08f8bfbcdb98949ead1e1b8659d72688ab8270c414318a38",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 781
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 967
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 587
+      }
+    ],
+    "sourceHeadings": [
+      {
+        "line": 1,
+        "text": "--JORNADA PRIMERA--"
+      },
+      {
+        "line": 782,
+        "text": "--JORNADA SEGUNDA--"
+      },
+      {
+        "line": 1749,
+        "text": "--JORNADA TERCERA--"
+      }
+    ]
+  },
+  "LANINI_DarloTodoYNoDarNada(Burlesca)": {
+    "sha256": "5694d844f5b9015210693a05da8aaefb3cca778ae7a79472819aedf3ed529e72",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 1038
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 987
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 856
+      }
+    ]
+  },
+  "DESCONOCIDO_TriunfoDelAveMaria(Transk-IMPR)": {
+    "sha256": "5f985cb9f1920c0891883246eb235d07cdf6fbb4ea72e9deacefd42aa49ac56a",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 1114
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 1198
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 1102
+      }
+    ],
+    "sourceHeadings": [
+      {
+        "line": 2313,
+        "text": "JORNAD"
+      },
+      {
+        "line": 2314,
+        "text": "TERCERA"
+      }
+    ]
+  },
+  "VELEZ_DevocionDeLaMisa": {
+    "sha256": "a39c6733da21017cd462c799182f299929b2184982fdbf0991b9e90f2f7c64d0",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 1078
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 1051
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 1116
+      }
+    ],
+    "sourceHeadings": [
+      {
+        "line": 1,
+        "text": "﻿--JORNADA PRIMERA--"
+      },
+      {
+        "line": 1079,
+        "text": "--JORNADA SEGUNDA--"
+      },
+      {
+        "line": 2130,
+        "text": "--JORNADA TERCERA--"
+      }
+    ]
+  },
+  "LOPE_AmistadYObligacion": {
+    "sha256": "80591c36b15fd3b032b70a23268e50849db5cb3ae37641e7b81e4654157794f7",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 1013
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 944
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 924
+      }
+    ]
+  },
+  "GONGORA_DoctorCarlino": {
+    "sha256": "af61906f3af84d4a2ae71114729b252e797860ca8dee29cde3641cb07af4b07a",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 1290
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 860
+      }
+    ]
+  },
+  "LOPEdudosa_EsclavoDeVenecia": {
+    "sha256": "aae7e6bf7963e74f960d4bd64eeac3ef40b461efe5c244d61e870b4cd157ad86",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 1117
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 1136
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 1431
+      }
+    ],
+    "sourceHeadings": [
+      {
+        "line": 1,
+        "text": "JORNADA PRIMERA"
+      },
+      {
+        "line": 1118,
+        "text": "JORNADA SEGUNDA"
+      },
+      {
+        "line": 2254,
+        "text": "JORNADA TERCERA"
+      }
+    ]
+  },
+  "CUBILLO_BandoleroDeFlandes(Transk-IMPR)": {
+    "sha256": "5108de1981c1e2d1a7029aad290da1a81b7e5697c0b94facb6b3c279c951964a",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 967
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 960
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 1104
+      }
+    ],
+    "sourceHeadings": [
+      {
+        "line": 968,
+        "text": "R JORNADA SEGUNDA"
+      },
+      {
+        "line": 1928,
+        "text": "C JORNADA TERCERA ("
+      }
+    ]
+  },
+  "DESCONOCIDO_NuestraSenoraDeLapa": {
+    "sha256": "c7fc4d301e99d821b357544ae7ec9925e1e323c0ae8d5adbcb4f65d6e699d640",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 223
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 275
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 234
+      },
+      {
+        "label": "Jornada cuarta",
+        "lineCount": 285
+      }
+    ]
+  },
+  "MESA_LaDeLosLindosCabellosSantaInes": {
+    "sha256": "176232e4e9c080b1f57a9e80779d77a4e192e4cb85ce2d5fd867b99a1fe97c7c",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 886
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 218
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 267
+      }
+    ],
+    "sourceHeadings": [
+      {
+        "line": 887,
+        "text": "JORNADA SEGUNDA"
+      },
+      {
+        "line": 1105,
+        "text": "JORNADA TERCERA"
+      }
+    ]
+  },
+  "DESCONOCIDO_NuevoEspejoEnLaCorte": {
+    "sha256": "fb43bc4f1e186070277fd63b021d12d428cd4eedd492ff4cb8e206971900bf54",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 1154
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 1323
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 1236
+      }
+    ]
+  },
+  "VALDIVIELSO_LocoDelDesierto": {
+    "sha256": "aa3f302f432fe72b3ee23c3fce91cba83f7ab140d9a5f69bedef16a2f677a761",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 1186
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 1111
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 1194
+      }
+    ]
+  },
+  "DESCONOCIDO_FingirPorConservar": {
+    "sha256": "5b1a06cdda7e8865374594a263d691e9cff00e8c3fafebc76388356b77563da2",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 830
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 934
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 846
+      }
+    ]
+  },
+  "MEDRANO_LuceroEclipsado": {
+    "sha256": "12860d5adc33da63150df6bc275d68857ceb49b6a57f619a5d1341bdb42cea21",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 336
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 308
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 325
+      },
+      {
+        "label": "Jornada cuarta",
+        "lineCount": 319
+      },
+      {
+        "label": "Jornada quinta",
+        "lineCount": 344
+      }
+    ],
+    "sourceHeadings": [
+      {
+        "line": 337,
+        "text": "\t  ACTO SEGUNDO"
+      },
+      {
+        "line": 645,
+        "text": "                         ACTO TERCERO"
+      },
+      {
+        "line": 970,
+        "text": "\t  ACTO CUARTO"
+      },
+      {
+        "line": 1289,
+        "text": "   ACTO QUINTO"
+      }
+    ]
+  },
+  "LOPEdudosa_MayorDichaEnElMonte": {
+    "sha256": "cd2f2b75cb4075aa641a4108316e20fb514ee0d74630f198f05bbd3a5ea640d9",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 825
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 868
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 1083
+      }
+    ],
+    "sourceHeadings": [
+      {
+        "line": 1,
+        "text": "JORNADA PRIMERA"
+      },
+      {
+        "line": 826,
+        "text": "SEGUNDA JORNADA"
+      },
+      {
+        "line": 1694,
+        "text": "JORNADA TERCERA"
+      }
+    ]
+  },
+  "LOPE_CelosDeRodamonte": {
+    "sha256": "d3c0bd4b2aa1b29a6c64e94ad34ddd7de0aa494a9f74ab671a651fac41b220ef",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 1057
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 1021
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 1183
+      }
+    ]
+  },
+  "SALAZAR_MejorFlorDeSicilia": {
+    "sha256": "e081c7bfcdfb8532cafd04cd9fb5f57ec8253cc52070e49eb83560dd82e80c51",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 1279
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 1406
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 1214
+      }
+    ],
+    "sourceHeadings": [
+      {
+        "line": 1280,
+        "text": "JORNADA SEGUNDA"
+      },
+      {
+        "line": 2686,
+        "text": "JORNADA TERCERA"
+      }
+    ]
+  },
+  "LOYOLA_Miseno": {
+    "sha256": "842b2dcc254bf46fc853971684bcce26e3ec06b4d72f8dd447fcf985952a4836",
+    "jornadas": [
+      {
+        "label": "Jornada primera",
+        "lineCount": 166
+      },
+      {
+        "label": "Jornada segunda",
+        "lineCount": 166
+      },
+      {
+        "label": "Jornada tercera",
+        "lineCount": 280
+      },
+      {
+        "label": "Jornada cuarta",
+        "lineCount": 196
+      }
+    ]
   }
 }

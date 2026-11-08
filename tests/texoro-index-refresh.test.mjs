@@ -7,7 +7,7 @@ const compile = (source) => ts.transpileModule(source, {
   compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 }
 }).outputText;
 const serverSource = await readFile(new URL('../src/lib/server/texoro-runtime.ts', import.meta.url), 'utf8');
-const serverFunction = serverSource.slice(serverSource.indexOf('export const getServerTexoroEngine'));
+const serverFunction = serverSource.slice(serverSource.indexOf('const getServerTexoroEngineOnce'));
 const catalogueRefresh = serverSource.slice(serverSource.indexOf('let refreshedCatalogIndexVersion'), serverSource.indexOf('export const toTexoroWorkMeta'));
 const metadataFunction = serverSource.slice(serverSource.indexOf('export const getTexoroWorkMeta'), serverSource.indexOf('export const getTexoroOptions'));
 const checkInterval = serverSource.match(/const ENGINE_VERSION_CHECK_MS = ([\d_]+);/)[1];
@@ -18,8 +18,20 @@ ${catalogueRefresh}
 ${metadataFunction}
 ${serverFunction}`);
 
+class TexoroIndexReleaseMissingError extends Error {
+  constructor(indexVersion) {
+    super('missing index file');
+    this.indexVersion = indexVersion;
+  }
+}
+
 const serverFixture = () => {
-  const state = { now: 1000, version: 'v1', creations: 0, initializations: 0, manifestLoads: 0, searches: 0, failInitialize: false, failCatalogRefresh: false, catalogReads: 0, textCacheClears: 0, publishedWorks: [{id:'one'}], snapshotWorks: [{id:'one'}] };
+  const state = {
+    now: 1000, version: 'v1', creations: 0, initializations: 0, manifestLoads: 0, searches: 0,
+    failInitialize: false, versionDuringInitialize: null, retiredVersions: new Set(),
+    failCatalogRefresh: false, catalogReads: 0, textCacheClears: 0, manifestGate: null, searchGate: null,
+    publishedWorks: [{id:'one'}], snapshotWorks: [{id:'one'}]
+  };
   const makeManifest = () => ({
     indexVersion: state.version,
     normalization: { preserveEnie: state.version === 'v1' },
@@ -33,9 +45,18 @@ const serverFixture = () => {
       await Promise.resolve();
       if (state.failInitialize) throw new Error('publication incomplete');
       this.manifest = makeManifest();
+      if (state.versionDuringInitialize) {
+        state.version = state.versionDuringInitialize;
+        state.versionDuringInitialize = null;
+        throw new TexoroIndexReleaseMissingError(this.manifest.indexVersion);
+      }
     }
     async search(query, metadata, options) {
       state.searches++;
+      await state.searchGate;
+      if (state.retiredVersions.has(this.manifest.indexVersion)) {
+        throw new TexoroIndexReleaseMissingError(this.manifest.indexVersion);
+      }
       const results = Array.from(metadata.keys());
       return {
         results,
@@ -45,9 +66,9 @@ const serverFixture = () => {
     }
   }
   const exports = {};
-  new Function('exports', 'Date', 'TexoroSearchEngine', 'fetchIndexManifest', 'readPrivateTexoroIndexJson', 'readPrivateTextByTextKey', 'process', 'refreshCatalogSnapshot', 'getAllWorks', 'toTexoroWorkMeta', 'buildWorkMetaMap', 'clearPrivateTextCache', serverFactory)(
-    exports, { now: () => state.now }, Engine,
-    async () => { state.manifestLoads++; await Promise.resolve(); return makeManifest(); },
+  new Function('exports', 'Date', 'TexoroSearchEngine', 'TexoroIndexReleaseMissingError', 'fetchIndexManifest', 'readPrivateTexoroIndexJson', 'readPrivateTextByTextKey', 'process', 'refreshCatalogSnapshot', 'getAllWorks', 'toTexoroWorkMeta', 'buildWorkMetaMap', 'clearPrivateTextCache', serverFactory)(
+    exports, { now: () => state.now }, Engine, TexoroIndexReleaseMissingError,
+    async () => { state.manifestLoads++; const manifest = makeManifest(); await state.manifestGate; return manifest; },
     async () => { throw new Error('No index access allowed'); }, () => {}, { env: {} },
     async () => { state.catalogReads++; await Promise.resolve(); if (state.failCatalogRefresh) throw new Error('Turso temporarily unavailable'); state.snapshotWorks = state.publishedWorks.slice(); },
     async () => state.snapshotWorks, (work) => work, (works) => new Map(works.map((w) => [w.id, w])), () => { state.textCacheClears++; }
@@ -89,6 +110,59 @@ test('failed server refresh releases its promise for the next request', async ()
   await assert.rejects(get(), /publication incomplete/);
   state.failInitialize = false;
   assert.equal((await get()).manifest.indexVersion, 'v2');
+});
+
+test('initialization retries against the active release when its pinned release is removed', async () => {
+  const { state, get } = serverFixture();
+  state.versionDuringInitialize = 'v2';
+  assert.equal((await get()).manifest.indexVersion, 'v2');
+  assert.equal(state.initializations, 2);
+  assert.equal(state.manifestLoads, 1);
+  assert.equal(state.catalogReads, 1);
+});
+
+test('searches missing shards share recovery and only retry against a different release', async () => {
+  const { state, get, search } = serverFixture();
+  await get();
+  state.retiredVersions.add('v1');
+  state.version = 'v2';
+  const results = await Promise.all([search('amor'), search('luz')]);
+  assert.deepEqual(results.map((result) => result.indexVersion), ['v2', 'v2']);
+  assert.equal(state.manifestLoads, 1);
+  assert.equal(state.creations, 2);
+  assert.equal(state.searches, 4);
+
+  state.retiredVersions.add('v2');
+  await assert.rejects(search('noche'), TexoroIndexReleaseMissingError);
+  assert.equal(state.manifestLoads, 2);
+  assert.equal(state.creations, 2);
+  assert.equal(state.searches, 5);
+});
+
+test('recovery rechecks a version check that began before the release was removed', async () => {
+  const { state, get, search } = serverFixture();
+  await get();
+  let resumeSearch;
+  state.searchGate = new Promise((resolve) => { resumeSearch = resolve; });
+  const pendingSearch = search('amor');
+  await new Promise(setImmediate);
+  assert.equal(state.searches, 1);
+
+  state.now += 60_000;
+  let finishCheck;
+  state.manifestGate = new Promise((resolve) => { finishCheck = resolve; });
+  const checkingOldVersion = get();
+  assert.equal(state.manifestLoads, 1);
+
+  state.retiredVersions.add('v1');
+  state.version = 'v2';
+  resumeSearch();
+  await new Promise(setImmediate);
+  finishCheck();
+  assert.equal((await checkingOldVersion).manifest.indexVersion, 'v1');
+  assert.equal((await pendingSearch).indexVersion, 'v2');
+  assert.equal(state.manifestLoads, 2);
+  assert.equal(state.searches, 2);
 });
 
 test('exact search reuse expires and follows catalogue snapshots and index versions', async () => {

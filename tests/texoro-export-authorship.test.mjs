@@ -28,8 +28,10 @@ const exportWorkbook = async (results) => {
   ExcelJS, formatAttribution, formatTraditionalAttributionCompact, buildWorkTitleSearchText, formatDisplayWorkTitle,
   normalizeResultSort, normalizeResultSortDirection, resultSortDirectionLabel, resultSortLabel, sortSearchResults,
   error:(status,message) => {throw new Error(`${status}: ${message}`);},
-  searchTexoro:async () => ({allResults:results,parsed:{warnings:[]}}),
-  getServerTexoroEngine:async () => ({manifest:{indexVersion:'fixture'},getOccurrencesForMatch:async () => ({items:[{tokenIndex:1,tokenEndIndex:1,tokenCount:10,snippet:'un amor verdadero'}]})})
+  searchTexoroWithEngine:async () => ({
+   execution:{allResults:results,parsed:{warnings:[]},indexVersion:'fixture'},
+   engine:{getOccurrencesForMatch:async () => ({items:[{tokenIndex:1,tokenEndIndex:1,tokenCount:10,snippet:'un amor verdadero'}]})}
+  })
  };
  const post = new Function(...Object.keys(dependencies),`${compiled}\nreturn POST;`)(...Object.values(dependencies));
  const response = await post({request:new Request('https://local.test/export',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({query:'amor',sort:'title'})})});

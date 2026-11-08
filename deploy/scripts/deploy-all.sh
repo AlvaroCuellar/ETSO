@@ -17,6 +17,16 @@ if [ -f "$ENV_FILE" ]; then
   fi
 fi
 
+DEPLOY_LOCK_DIR="$ROOT_DIR/deploy/tmp/.deploy-all.lock"
+mkdir -p "$(dirname "$DEPLOY_LOCK_DIR")"
+if ! mkdir "$DEPLOY_LOCK_DIR" 2>/dev/null; then
+  echo "Ya hay un despliegue en curso en este checkout de ETSO." >&2
+  exit 1
+fi
+trap 'rmdir "$DEPLOY_LOCK_DIR"' EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
 echo "==> Iniciando despliegue completo"
 # Must run before any remote mutation. Refresh the versioned identifier snapshot
 # only after validating the bibliography against the freshly prepared catalogue.
@@ -177,6 +187,7 @@ fi
 
 if [ "$R2_ACTIVATION_PENDING" -eq 1 ]; then
   bash "$ROOT_DIR/deploy/scripts/sync-r2.sh" activate
+  bash "$ROOT_DIR/deploy/scripts/sync-r2.sh" prune
   if [ "${DRY_RUN:-false}" != "true" ]; then
     cache_mark "${R2_CACHE_ARGS[@]}"
     DEPLOY_CHANGED=1

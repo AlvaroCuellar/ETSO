@@ -171,11 +171,20 @@ queda excluido de la sincronización de TXT. La web elige la versión pública a
 partir de la versión activa del índice privado.
 
 En un despliegue de corpus, `deploy-all.sh` activa el manifiesto privado tras
-sincronizar Turso. Para recuperar un índice previamente publicado y compatible
-con los TXT y el catálogo activos, usar `sync-r2.sh activate <indexVersion>`.
-Este comando no modifica los archivos de una versión anterior ni el bucket
-público. Para recuperar una compilación de la web, usar un despliegue de Vercel
-que siga leyendo el índice privado. Los sincronizadores anteriores a esta
+sincronizar Turso. Después verifica que la nueva versión esté completa en ambos
+destinos y retira las versiones anteriores de sus respectivos prefijos
+`releases/`. La publicación habitual conserva una sola versión del índice en R2.
+`sync-r2.sh activate <indexVersion>` permite activar manualmente una versión
+preparada y compatible con los TXT y el catálogo. Para recuperar una versión
+retirada hace falta volver a preparar sus datos y su índice. Para recuperar una
+compilación de la web, usar un despliegue de Vercel que siga leyendo el índice
+privado.
+
+`deploy-all.sh` impide dos ejecuciones simultáneas en el mismo checkout. Las
+publicaciones desde otros equipos y las activaciones manuales deben
+coordinarse con el despliegue habitual. Si se interrumpe el proceso dejando
+`deploy/tmp/.deploy-all.lock`, retirar esa carpeta solo tras comprobar que
+ningún despliegue sigue en ejecución. Los sincronizadores anteriores a la
 protección del prefijo no deben usarse contra `etso-textos`.
 
 El indice de busqueda de resumenes se genera automaticamente desde:

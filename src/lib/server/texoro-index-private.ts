@@ -6,6 +6,12 @@ import { readPrivateR2Object } from '$lib/server/r2-private';
 
 const indexPathSegment = /^[A-Za-z0-9_][A-Za-z0-9_.-]*$/;
 
+export class TexoroIndexReleaseMissingError extends Error {
+	constructor(readonly indexVersion: string) {
+		super('No se pudo leer el índice privado de TEXORO: 404.');
+	}
+}
+
 const assertIndexPath = (path: string): void => {
 	if (!path.endsWith('.json') || !path.split('/').every((part) => indexPathSegment.test(part))) {
 		throw new Error('Ruta del índice de TEXORO no válida.');
@@ -60,11 +66,14 @@ export const readPrivateTexoroIndexJson = async (
 	}
 
 	// Manifest at the active prefix is switched only after the complete release is uploaded.
-	// Readers that are still using an old manifest keep reading its immutable release.
+	// Pin every read to the release selected by the manifest.
 	const releasePath = indexVersion ? `releases/${indexVersion}/${relativePath}` : relativePath;
 	const key = prefix ? `${prefix}/${releasePath}` : releasePath;
 	const host = resolveIndexHost(accountId, env.R2_TEXORO_INDEX_ENDPOINT_URL?.trim());
 	const response = await readPrivateR2Object({ accountId, accessKeyId, secretAccessKey, bucket, host }, key);
+	if (response.status === 404 && indexVersion !== null) {
+		throw new TexoroIndexReleaseMissingError(indexVersion);
+	}
 	if (!response.ok) throw new Error(`No se pudo leer el índice privado de TEXORO: ${response.status}.`);
 	return response.json() as Promise<unknown>;
 };

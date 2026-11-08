@@ -2,7 +2,7 @@ import ExcelJS from 'exceljs';
 import { error } from '@sveltejs/kit';
 import { formatAttribution, type AttributionSet } from '$lib/domain/catalog';
 import { formatTraditionalAttributionCompact } from '$lib/utils/traditional-attribution-phrase';
-import { getServerTexoroEngine, searchTexoro } from '$lib/server/texoro-runtime';
+import { searchTexoroWithEngine } from '$lib/server/texoro-runtime';
 import { buildWorkTitleSearchText, formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
 import {
 	normalizeResultSort,
@@ -24,7 +24,8 @@ import type {
 	SearchProximityOrder,
 	SearchResult,
 	SearchResultMatch,
-	StructuredSearchQuery
+	StructuredSearchQuery,
+	TexoroSearchEngine
 } from '$lib/search';
 
 const CONTEXT_EXPORT_LIMIT_PER_WORK = 100;
@@ -336,8 +337,11 @@ const occurrencePosition = (item: SearchMatchOccurrence): string => {
 	return start === end ? `palabra ${start} de ${total}` : `palabras ${start}-${end} de ${total}`;
 };
 
-const buildOccurrenceRows = async (results: SearchResult[], matchColumns: SubmittedTermPayload[]): Promise<OccurrenceExportRow[]> => {
-	const engine = await getServerTexoroEngine();
+const buildOccurrenceRows = async (
+	engine: TexoroSearchEngine,
+	results: SearchResult[],
+	matchColumns: SubmittedTermPayload[]
+): Promise<OccurrenceExportRow[]> => {
 	const rows: OccurrenceExportRow[] = [];
 	const labelByKey = new Map(matchColumns.map((term) => [term.key, term.label]));
 
@@ -549,12 +553,10 @@ export const POST: RequestHandler = async ({ request }) => {
 	};
 
 	try {
-		const execution = await searchTexoro(payload.query, options);
-		const engine = await getServerTexoroEngine();
-		const indexVersion = engine.manifest?.indexVersion ?? 'n/d';
+		const { engine, execution } = await searchTexoroWithEngine(payload.query, options);
 		const results = filterResults(execution, payload.filters, payload.sort, payload.sortDirection);
 		const matchColumns = buildMatchColumns(payload.terms, results);
-		const occurrenceRows = await buildOccurrenceRows(results, matchColumns);
+		const occurrenceRows = await buildOccurrenceRows(engine, results, matchColumns);
 
 		const workbook = new ExcelJS.Workbook();
 		workbook.creator = 'ETSO TEXORO';
@@ -564,7 +566,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		addResultsSheet(workbook, results, matchColumns);
 		addOccurrencesSheet(workbook, occurrenceRows, results);
-		addQuerySheet(workbook, payload, execution, indexVersion);
+		addQuerySheet(workbook, payload, execution, execution.indexVersion);
 
 		const buffer = await workbook.xlsx.writeBuffer();
 		const elapsed = Date.now() - startedAt;

@@ -479,6 +479,8 @@
 	const MAX_QUERY_TERMS = 10;
 	const RESULTS_PAGE_SIZE = 20;
 	const TEXORO_PRIME_DEBOUNCE_MS = 500;
+	const TEXORO_STATS_REFRESH_MS = 10 * 60 * 1000;
+	const TEXORO_STATS_RETRY_MS = 30_000;
 	const QUERY_ALLOWED_PATTERN = /^[\p{L}\p{N}*?\s]+$/u;
 	const SHOW_AUTOMATIC_CHARTS = false;
 	const RESULT_PREVIEW_OCCURRENCE_LIMIT = 10;
@@ -526,6 +528,8 @@
 	let resultsRegion = $state<HTMLElement | null>(null);
 	let resultsPaginationRegion = $state<HTMLElement | null>(null);
 	let statsPayload = $state<TexoroStatsPayload | null>(null);
+	let serverFrequencyIndex = $state<Pick<TexoroStatsPayload, 'indexVersion' | 'preserveEnie'> | null>(null);
+	let nextStatsRefreshAt = 0;
 	let isStatsLoading = $state(true);
 	const preserveEnieForHighlight = $derived(searchExecution?.preserveEnie ?? statsPayload?.preserveEnie ?? true);
 	let occurrenceModal = $state<OccurrenceModalState | null>(null);
@@ -1986,16 +1990,23 @@
 
 	const loadTexoroStats = async (): Promise<void> => {
 		if (statsLoadPromise) return statsLoadPromise;
+		if (Date.now() < nextStatsRefreshAt) return;
 		statsLoadPromise = (async () => {
 			try {
 				const response = await fetch('/api/texoro/stats', { cache: dev ? 'no-store' : 'no-cache' });
 				if (!response.ok) throw new Error(`No se pudieron cargar los indicadores de TEXORO: ${response.status}`);
-				statsPayload = (await response.json()) as TexoroStatsPayload;
+				const stats = (await response.json()) as TexoroStatsPayload;
+				if (statsPayload && stats.indexVersion !== statsPayload.indexVersion) {
+					serverFrequencyIndex = null;
+				}
+				statsPayload = stats;
+				nextStatsRefreshAt = Date.now() + TEXORO_STATS_REFRESH_MS;
 			} catch (cause) {
 				console.warn('[texoro] stats load failed', cause);
-				statsPayload = null;
+				nextStatsRefreshAt = Date.now() + TEXORO_STATS_RETRY_MS;
 			} finally {
 				isStatsLoading = false;
+				statsLoadPromise = null;
 			}
 		})();
 		return statsLoadPromise;
@@ -2031,16 +2042,28 @@
 		return (await response.json()) as TexoroFullWorkMeta[];
 	};
 
+	const getFrequencyIndex = () => serverFrequencyIndex ?? statsPayload;
+	const isCurrentFrequencyIndex = (manifest: TexoroIndexManifest): boolean => {
+		const index = getFrequencyIndex();
+		return !index || manifest.indexVersion === index.indexVersion;
+	};
+
 	const initializeFrequencyWorker = async (): Promise<TexoroIndexManifest | null> => {
 		if (!data.frequencyIndexBaseUrl || !frequencyWorkerInUse) return null;
-		if (isTexoroClientWorkerReady()) return getTexoroClientWorkerManifest();
+		if (data.frequencyIndexVersioned) await loadTexoroStats();
+		if (!frequencyWorkerInUse) return null;
+		if (isTexoroClientWorkerReady()) {
+			const manifest = getTexoroClientWorkerManifest();
+			if (manifest && isCurrentFrequencyIndex(manifest)) return manifest;
+			terminateTexoroClientWorker('El índice de frecuencias de TEXORO se ha actualizado');
+		}
 		if (!frequencyWorkerInitPromise) {
 			frequencyWorkerInitPromise = (async () => {
 				let baseUrl = data.frequencyIndexBaseUrl;
 				if (data.frequencyIndexVersioned) {
-					await loadTexoroStats();
-					if (!statsPayload) return null;
-					baseUrl = `${baseUrl}/${encodeURIComponent(statsPayload.indexVersion)}`;
+					const index = getFrequencyIndex();
+					if (!index) return null;
+					baseUrl = `${baseUrl}/${encodeURIComponent(index.indexVersion)}`;
 				}
 				const worksMeta = await fetchWorksMeta();
 				if (!frequencyWorkerInUse) return null;
@@ -2058,7 +2081,7 @@
 
 	const canUseFrequencyWorker = (query: StructuredSearchQuery, filters: TexoroSearchFilters): boolean =>
 		Boolean(data.frequencyIndexBaseUrl) &&
-		canSearchWithFrequencies(query, filters.traditionalAuthorIds, statsPayload?.preserveEnie);
+		canSearchWithFrequencies(query, filters.traditionalAuthorIds, getFrequencyIndex()?.preserveEnie);
 
 	const runSearch = async (
 		query: string,
@@ -2076,7 +2099,7 @@
 		if (canUseFrequencyWorker(structuredQuery, filters)) {
 			try {
 				const manifest = await initializeFrequencyWorker();
-				if (manifest && (!statsPayload || manifest.indexVersion === statsPayload.indexVersion)) {
+				if (manifest && isCurrentFrequencyIndex(manifest)) {
 					const { execution } = await requestTexoroClientWorker<{ execution?: SearchExecution }>({
 						action: 'search',
 						query,
@@ -2084,8 +2107,7 @@
 						options
 					});
 					const effectiveManifest = getTexoroClientWorkerManifest();
-					if (execution && effectiveManifest &&
-						(!statsPayload || effectiveManifest.indexVersion === statsPayload.indexVersion)) {
+					if (execution && effectiveManifest && isCurrentFrequencyIndex(effectiveManifest)) {
 						return {
 							...execution,
 							indexVersion: effectiveManifest.indexVersion,
@@ -2099,11 +2121,22 @@
 			}
 		}
 
-		return postJson<SearchUiExecution>('/api/texoro/search-ui', {
+		const execution = await postJson<SearchUiExecution>('/api/texoro/search-ui', {
 			query,
 			structuredQuery,
 			options
 		});
+		const knownVersion = getFrequencyIndex()?.indexVersion;
+		// Releases use a timestamp. A warm server may still answer with an older one.
+		if (data.frequencyIndexVersioned && (!knownVersion ||
+			execution.indexVersion.slice(execution.indexVersion.indexOf('-') + 1) >
+			knownVersion.slice(knownVersion.indexOf('-') + 1))) {
+			serverFrequencyIndex = {
+				indexVersion: execution.indexVersion,
+				preserveEnie: execution.preserveEnie
+			};
+		}
+		return execution;
 	};
 
 	const buildOccurrencePreviewMap = async (
@@ -2698,7 +2731,7 @@
 		let cancelled = false;
 		const timer = window.setTimeout(() => {
 			void initializeFrequencyWorker().then((manifest) => {
-				if (cancelled || !manifest || (statsPayload && manifest.indexVersion !== statsPayload.indexVersion)) return;
+				if (cancelled || !manifest || !isCurrentFrequencyIndex(manifest)) return;
 				return requestTexoroClientWorker<void>({
 					action: 'prime',
 					query,

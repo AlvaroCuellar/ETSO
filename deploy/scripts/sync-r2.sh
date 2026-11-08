@@ -18,8 +18,8 @@ fi
 DRY_RUN="${DRY_RUN:-false}"
 PHASE="${1:-all}"
 case "$PHASE" in
-  all|stage|stage-index|activate) ;;
-  *) echo "Uso: sync-r2.sh [all|stage|stage-index|activate [version]]" >&2; exit 1 ;;
+  all|stage|stage-index|activate|prune) ;;
+  *) echo "Uso: sync-r2.sh [all|stage|stage-index|activate [version]|prune]" >&2; exit 1 ;;
 esac
 ACTIVATION_VERSION="${2:-}"
 if [ "$#" -gt 2 ] || { [ "$#" -eq 2 ] && { [ "$PHASE" != "activate" ] || [ -z "$ACTIVATION_VERSION" ]; }; }; then
@@ -79,6 +79,7 @@ require_local_dir() {
 
 INDEX_DIR="$ROOT_DIR/$PRIVATE_INDEX_DIR"
 INDEX_MANIFEST="$INDEX_DIR/manifest.json"
+RELEASE_VERSION_PATTERN='^v[0-9]+-[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}-[0-9]{2}-[0-9]{2}-[0-9]{3}Z$'
 if [ -n "$ACTIVATION_VERSION" ]; then
   if [[ ! "$ACTIVATION_VERSION" =~ ^v[0-9]+-[a-zA-Z0-9-]+$ ]]; then
     echo "Versión de TEXORO no válida." >&2
@@ -99,7 +100,7 @@ if [ "$PHASE" = "all" ] || [ "$PHASE" = "stage" ]; then
   require_local_dir "deploy/input/private-assets/texts"
 fi
 
-if [ "$PHASE" != "activate" ]; then
+if [ "$PHASE" != "activate" ] && [ "$PHASE" != "prune" ]; then
   if [ -n "$(find "$INDEX_DIR" -type l -print -quit)" ] ||
      ! INDEX_FILES="$(jq -er '[.files[], .shards[][] .file] | unique | .[] |
        if type == "string" and test("^[a-zA-Z0-9_-]+(/[a-zA-Z0-9_-]+)*\\.json$") then .
@@ -208,7 +209,33 @@ run_index_aws() (
   aws "$@"
 )
 
-if [ "$PHASE" != "activate" ]; then
+read_active_manifest() {
+  run_index_aws s3 cp "$INDEX_REMOTE/manifest.json" - \
+    --endpoint-url "$INDEX_ENDPOINT_URL" --only-show-errors
+}
+
+check_activation_order() {
+  local root_key="$PRIVATE_INDEX_PREFIX/manifest.json" existing current
+  if [[ ! "$INDEX_VERSION" =~ $RELEASE_VERSION_PATTERN ]]; then
+    echo "No se puede determinar la fecha de la versión preparada de TEXORO." >&2
+    return 1
+  fi
+  existing="$(run_index_aws s3api list-objects-v2 --bucket "$PRIVATE_INDEX_BUCKET" --prefix "$root_key" \
+    --endpoint-url "$INDEX_ENDPOINT_URL" --region auto --output json |
+    jq -er --arg key "$root_key" 'if type == "object" then any(.Contents[]?; .Key == $key) else error("Inventario R2 inválido") end | tostring')"
+  if [ "$existing" = "false" ]; then return; fi
+  current="$(read_active_manifest | jq -er '.indexVersion | strings')"
+  if [[ ! "$current" =~ $RELEASE_VERSION_PATTERN || "${current#*-}" > "${INDEX_VERSION#*-}" ]]; then
+    echo "La actualización de TEXORO no puede retroceder desde $current a $INDEX_VERSION." >&2
+    return 1
+  fi
+}
+
+if [ "$DRY_RUN" != "true" ] && [ -z "$ACTIVATION_VERSION" ]; then
+  case "$PHASE" in all|stage|activate) check_activation_order ;; esac
+fi
+
+if [ "$PHASE" != "activate" ] && [ "$PHASE" != "prune" ]; then
   echo "==> Preparando la versión privada del índice TEXORO"
   run_index_aws s3 sync "$INDEX_DIR" "$INDEX_RELEASE/" \
     --endpoint-url "$INDEX_ENDPOINT_URL" --only-show-errors --no-follow-symlinks --exclude manifest.json
@@ -244,11 +271,97 @@ if [ "$PHASE" = "all" ] || [ "$PHASE" = "stage" ]; then
   done <<< "$TARGETS"
 fi
 
+release_manifest() {
+  local bucket="$1" key="$2" endpoint="$3" aws_command="$4" output="$5"
+  "$aws_command" s3 cp "s3://$bucket/$key/manifest.json" "$output" \
+    --endpoint-url "$endpoint" --only-show-errors
+}
+
+check_release_inventory() {
+  local bucket="$1" prefix="$2" endpoint="$3" aws_command="$4" manifest="$5"
+  if ! "$aws_command" s3api list-objects-v2 --bucket "$bucket" --prefix "$prefix/" \
+    --endpoint-url "$endpoint" --region auto --output json |
+    jq -e --arg prefix "$prefix/" --slurpfile manifest "$manifest" '
+      ($manifest[0] | [.files[], .shards[][] .file] | unique) as $paths
+      | ($paths | length > 0 and all(type == "string" and test("^[a-zA-Z0-9_-]+(/[a-zA-Z0-9_-]+)*\\.json$")))
+        and ((($paths | map($prefix + .)) - [.Contents[] | select(.Size > 0) | .Key]) | length == 0)
+    ' >/dev/null; then
+    echo "La versión activa de TEXORO está incompleta en $bucket/$prefix. Se conserva la anterior." >&2
+    return 1
+  fi
+}
+
+list_old_releases() {
+  local bucket="$1" prefix="$2" endpoint="$3" aws_command="$4"
+  "$aws_command" s3api list-objects-v2 --bucket "$bucket" --prefix "$prefix/" --delimiter / \
+    --endpoint-url "$endpoint" --region auto --output json |
+    jq -er --arg prefix "$prefix/" --arg pattern "$RELEASE_VERSION_PATTERN" --arg active_date "${INDEX_VERSION#*-}" '
+      if type != "object" then error("Inventario R2 inválido") else
+        [.CommonPrefixes[]?.Prefix
+          | select(startswith($prefix) and endswith("/"))
+          | ltrimstr($prefix) | rtrimstr("/")
+          | select(test($pattern) and (sub("^v[0-9]+-"; "") < $active_date))]
+        | unique | join("\n")
+      end
+    '
+}
+
+prune_releases() {
+  local bucket="$1" prefix="$2" endpoint="$3" aws_command="$4" old_versions="$5" version
+  while IFS= read -r version; do
+    if [ -z "$version" ]; then continue; fi
+    if [ "$(read_active_manifest | jq -er '.indexVersion | strings')" != "$INDEX_VERSION" ]; then
+      echo "Cambió la versión activa de TEXORO durante la limpieza. Se detiene la retirada." >&2
+      return 1
+    fi
+    echo "   - Retirando $bucket/$prefix/$version/"
+    "$aws_command" s3 rm "s3://$bucket/$prefix/$version/" --recursive \
+      --endpoint-url "$endpoint" --only-show-errors
+  done <<< "$old_versions"
+}
+
 if [ "$PHASE" = "all" ] || [ "$PHASE" = "activate" ]; then
   echo "==> Activando la versión privada del índice TEXORO"
   run_index_aws s3 cp "$INDEX_RELEASE/manifest.json" "$INDEX_REMOTE/manifest.json" \
     --endpoint-url "$INDEX_ENDPOINT_URL" --only-show-errors --metadata-directive REPLACE \
     --content-type application/json --cache-control no-store
+fi
+
+if [ "$PHASE" = "prune" ]; then
+  if [[ ! "$INDEX_VERSION" =~ $RELEASE_VERSION_PATTERN ]]; then
+    echo "No se puede determinar la fecha de la versión activa de TEXORO." >&2
+    exit 1
+  fi
+  echo "==> Conservando la versión activa de TEXORO: $INDEX_VERSION"
+  if [ "$DRY_RUN" = "true" ]; then
+    echo "   DRY_RUN: validar la versión activa y sus archivos en ambos destinos."
+    echo "   DRY_RUN: retirar versiones anteriores solo de $INDEX_REMOTE/releases/ y s3://$FREQUENCY_INDEX_BUCKET/$FREQUENCY_INDEX_PREFIX/releases/."
+  else
+    PRUNE_STAGE="$(mktemp -d "$ROOT_DIR/deploy/input/.retention.XXXXXX")"
+    trap 'rm -rf "$PRUNE_STAGE"' EXIT
+    PRIVATE_RELEASE_KEY="$PRIVATE_INDEX_PREFIX/releases/$INDEX_VERSION"
+    FREQUENCY_RELEASE_KEY="$FREQUENCY_INDEX_PREFIX/releases/$INDEX_VERSION"
+    read_active_manifest > "$PRUNE_STAGE/active.json"
+    release_manifest "$PRIVATE_INDEX_BUCKET" "$PRIVATE_RELEASE_KEY" "$INDEX_ENDPOINT_URL" run_index_aws "$PRUNE_STAGE/private.json"
+    release_manifest "$FREQUENCY_INDEX_BUCKET" "$FREQUENCY_RELEASE_KEY" "$ENDPOINT_URL" run_aws "$PRUNE_STAGE/frequency.json"
+    if ! cmp -s "$PRUNE_STAGE/active.json" "$PRUNE_STAGE/private.json" ||
+       ! jq -e --arg version "$INDEX_VERSION" '.indexVersion == $version and .features.positions == true' "$PRUNE_STAGE/private.json" >/dev/null ||
+       ! jq -e --arg version "$INDEX_VERSION" '
+         .indexVersion == $version and .features.positions == false and
+         .features.proximity == false and .features.byteOffsets == false and
+         (.shards | keys) == ["kgrams", "postings", "vocab"]
+       ' "$PRUNE_STAGE/frequency.json" >/dev/null; then
+      echo "Los manifiestos de TEXORO no coinciden con la versión activa. Se conserva la anterior." >&2
+      exit 1
+    fi
+
+    check_release_inventory "$PRIVATE_INDEX_BUCKET" "$PRIVATE_RELEASE_KEY" "$INDEX_ENDPOINT_URL" run_index_aws "$PRUNE_STAGE/private.json"
+    check_release_inventory "$FREQUENCY_INDEX_BUCKET" "$FREQUENCY_RELEASE_KEY" "$ENDPOINT_URL" run_aws "$PRUNE_STAGE/frequency.json"
+    OLD_PRIVATE_RELEASES="$(list_old_releases "$PRIVATE_INDEX_BUCKET" "$PRIVATE_INDEX_PREFIX/releases" "$INDEX_ENDPOINT_URL" run_index_aws)"
+    OLD_FREQUENCY_RELEASES="$(list_old_releases "$FREQUENCY_INDEX_BUCKET" "$FREQUENCY_INDEX_PREFIX/releases" "$ENDPOINT_URL" run_aws)"
+    prune_releases "$PRIVATE_INDEX_BUCKET" "$PRIVATE_INDEX_PREFIX/releases" "$INDEX_ENDPOINT_URL" run_index_aws "$OLD_PRIVATE_RELEASES"
+    prune_releases "$FREQUENCY_INDEX_BUCKET" "$FREQUENCY_INDEX_PREFIX/releases" "$ENDPOINT_URL" run_aws "$OLD_FREQUENCY_RELEASES"
+  fi
 fi
 
 echo "==> R2 sincronizado"

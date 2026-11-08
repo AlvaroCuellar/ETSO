@@ -2,7 +2,7 @@ import { isPersonAuthor } from '$lib/domain/catalog';
 import { TexoroSearchEngine, buildWorkMetaMap } from '$lib/search';
 import { getAllWorks, refreshCatalogSnapshot } from '$lib/server/catalog-runtime';
 import { clearPrivateTextCache, readPrivateTextByTextKey } from '$lib/server/r2-private';
-import { readPrivateTexoroIndexJson } from '$lib/server/texoro-index-private';
+import { readPrivateTexoroIndexJson, TexoroIndexReleaseMissingError } from '$lib/server/texoro-index-private';
 import { buildWorkTitleSearchText, formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
 
 import type { AttributionSet, CatalogWork } from '$lib/domain/catalog';
@@ -190,13 +190,19 @@ export const getTexoroStats = async (): Promise<TexoroStats> => {
 	return value;
 };
 
-export const getServerTexoroEngine = async (): Promise<TexoroSearchEngine> => {
-	if (engine && Date.now() - engineVersionCheckedAt < ENGINE_VERSION_CHECK_MS) return engine;
+const getServerTexoroEngineOnce = async (
+	missingRelease?: TexoroIndexReleaseMissingError
+): Promise<TexoroSearchEngine> => {
+	// An earlier version check may have started before the release was retired.
+	if (missingRelease && enginePromise) await enginePromise;
+	if (engine && engine.manifest?.indexVersion !== missingRelease?.indexVersion &&
+		Date.now() - engineVersionCheckedAt < ENGINE_VERSION_CHECK_MS) return engine;
 	if (!enginePromise) {
 		enginePromise = (async () => {
-			if (engine) {
+			if (engine || missingRelease) {
 				const manifest = await fetchIndexManifest();
-				if (manifest.indexVersion === engine.manifest?.indexVersion) {
+				if (missingRelease && manifest.indexVersion === missingRelease.indexVersion) throw missingRelease;
+				if (engine && manifest.indexVersion === engine.manifest?.indexVersion) {
 					engineVersionCheckedAt = Date.now();
 					return engine;
 				}
@@ -224,6 +230,22 @@ export const getServerTexoroEngine = async (): Promise<TexoroSearchEngine> => {
 
 	return enginePromise;
 };
+
+const withServerTexoroEngine = async <T>(
+	run: (searchEngine: TexoroSearchEngine) => T | Promise<T>
+): Promise<T> => {
+	try {
+		return await run(await getServerTexoroEngineOnce());
+	} catch (cause) {
+		if (!(cause instanceof TexoroIndexReleaseMissingError)) throw cause;
+		const latest = await getServerTexoroEngineOnce(cause);
+		if (latest.manifest?.indexVersion === cause.indexVersion) throw cause;
+		return run(latest);
+	}
+};
+
+export const getServerTexoroEngine = (): Promise<TexoroSearchEngine> =>
+	withServerTexoroEngine((searchEngine) => searchEngine);
 
 const workMetaByCatalog = new WeakMap<CatalogWork[], Map<string, TexoroWorkMeta>>();
 
@@ -286,8 +308,11 @@ const storeSearchResult = (cache: SearchResultCache, key: string, value: Version
 	}
 };
 
-export const searchTexoro = async (query: string, options: SearchOptions = {}) => {
-	const searchEngine = await getServerTexoroEngine();
+const searchWithTexoroEngine = async (
+	searchEngine: TexoroSearchEngine,
+	query: string,
+	options: SearchOptions
+) => {
 	const works = await getAllWorks();
 	const manifest = searchEngine.manifest!;
 	const key = options.includeSnippets === true || query.length > 2048 ? '' : JSON.stringify([query, options]);
@@ -315,3 +340,12 @@ export const searchTexoro = async (query: string, options: SearchOptions = {}) =
 	if (cache) storeSearchResult(cache, key, value);
 	return value;
 };
+
+export const searchTexoroWithEngine = (query: string, options: SearchOptions = {}) =>
+	withServerTexoroEngine(async (searchEngine) => ({
+		engine: searchEngine,
+		execution: await searchWithTexoroEngine(searchEngine, query, options)
+	}));
+
+export const searchTexoro = async (query: string, options: SearchOptions = {}) =>
+	(await searchTexoroWithEngine(query, options)).execution;

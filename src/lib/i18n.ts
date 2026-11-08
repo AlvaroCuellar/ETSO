@@ -1641,6 +1641,8 @@ Object.assign(esToEn, {
 	'Obras conectadas (se indican las 3 más próximas)': 'Connected works (the 3 closest are shown)',
 	'Calculando red de fuerzas...': 'Calculating force network...',
 	'No se pudo cargar el grafo': 'The graph could not be loaded',
+	'La vista 3D requiere WebGL. Puedes buscar una obra y consultar sus conexiones en el listado de esta página.':
+		'The 3D view requires WebGL. You can search for a work and see its connections in the list on this page.',
 	'Listado de obras indexadas en TEXORO, con acceso a sus fichas y metadatos.':
 		'List of works indexed in TEXORO, with access to their records and metadata.',
 	'Listado alfabético de las obras indexadas en TEXORO. Usa el buscador para localizar una obra y entrar directamente en su ficha.':
@@ -1937,6 +1939,8 @@ Object.assign(esToFr, {
 	'Obras conectadas (se indican las 3 más próximas)': 'Œuvres connectées (les 3 plus proches sont indiquées)',
 	'Calculando red de fuerzas...': 'Calcul du réseau de forces...',
 	'No se pudo cargar el grafo': "Le graphe n'a pas pu être chargé",
+	'La vista 3D requiere WebGL. Puedes buscar una obra y consultar sus conexiones en el listado de esta página.':
+		'La vue 3D nécessite WebGL. Vous pouvez rechercher une œuvre et consulter ses liens avec les autres œuvres dans la liste de cette page.',
 	'Listado de obras indexadas en TEXORO, con acceso a sus fichas y metadatos.':
 		'Liste des œuvres indexées dans TEXORO, avec accès à leurs fiches et métadonnées.',
 	'Listado alfabético de las obras indexadas en TEXORO. Usa el buscador para localizar una obra y entrar directamente en su ficha.':

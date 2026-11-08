@@ -42,6 +42,7 @@
 	}: Props = $props();
 
 	let wrapperElement = $state<HTMLDivElement | null>(null);
+	let listboxElement = $state<HTMLDivElement | null>(null);
 	let query = $state('');
 	let isOpen = $state(false);
 	let activeIndex = $state(-1);
@@ -58,6 +59,8 @@
 		return `token-${name || fallback}`;
 	});
 	const helpId = $derived.by(() => `${inputId}-help`);
+	const listboxId = $derived(`${inputId}-options`);
+	const optionId = (index: number): string => `${listboxId}-${index}`;
 	const selectedSet = $derived.by(() => new Set(selectedIds));
 	const optionMap = $derived.by(() => new Map(options.map((option) => [option.id, option.label] as const)));
 	const normalizedQuery = $derived.by(() => normalizeForSearch(query));
@@ -69,6 +72,7 @@
 			.filter((option) => normalizeForSearch(option.searchText ?? option.label).includes(normalizedQuery))
 			.slice(0, 80);
 	});
+	const showListbox = $derived(isOpen && filteredOptions.length > 0);
 
 	$effect(() => {
 		if (!disabled) return;
@@ -143,6 +147,20 @@
 		activeIndex = -1;
 	};
 
+	const activateOption = (index: number): void => {
+		activeIndex = index;
+		const option = listboxElement?.children[index];
+		if (!listboxElement || !(option instanceof HTMLElement)) return;
+
+		const top = option.offsetTop;
+		const bottom = top + option.offsetHeight;
+		if (top < listboxElement.scrollTop) {
+			listboxElement.scrollTop = top;
+		} else if (bottom > listboxElement.scrollTop + listboxElement.clientHeight) {
+			listboxElement.scrollTop = bottom - listboxElement.clientHeight;
+		}
+	};
+
 	const handleKeyDown = (event: KeyboardEvent): void => {
 		if (disabled) return;
 
@@ -159,17 +177,24 @@
 			return;
 		}
 
-		if (!isOpen || filteredOptions.length === 0) return;
+		if (event.key === 'Escape' && isOpen) {
+			event.preventDefault();
+			event.stopPropagation();
+			closeDropdown();
+			return;
+		}
+
+		if (!showListbox) return;
 
 		if (event.key === 'ArrowDown') {
 			event.preventDefault();
-			activeIndex = (activeIndex + 1) % filteredOptions.length;
+			activateOption((activeIndex + 1) % filteredOptions.length);
 			return;
 		}
 
 		if (event.key === 'ArrowUp') {
 			event.preventDefault();
-			activeIndex = activeIndex <= 0 ? filteredOptions.length - 1 : activeIndex - 1;
+			activateOption(activeIndex <= 0 ? filteredOptions.length - 1 : activeIndex - 1);
 			return;
 		}
 
@@ -177,11 +202,6 @@
 			if (activeIndex < 0 || activeIndex >= filteredOptions.length) return;
 			event.preventDefault();
 			addOption(filteredOptions[activeIndex]);
-			return;
-		}
-
-		if (event.key === 'Escape') {
-			closeDropdown();
 		}
 	};
 </script>
@@ -199,11 +219,11 @@
 		class:is-disabled={disabled} 
 		bind:this={wrapperElement}
 		onclick={focusInput}
-		onkeydown={(e) => {
-			if (e.key === 'Enter') focusInput();
+		onfocusout={(event) => {
+			const next = event.relatedTarget;
+			if (!(next instanceof Node) || !wrapperElement?.contains(next)) closeDropdown();
 		}}
-		role="button"
-		tabindex="0"
+		role="presentation"
 	>
 		<div class="author-chips">
 			{#each selectedIds as selectedId}
@@ -241,6 +261,11 @@
 			<input
 				id={inputId}
 				type="text"
+				role="combobox"
+				aria-autocomplete="list"
+				aria-expanded={showListbox}
+				aria-controls={showListbox ? listboxId : undefined}
+				aria-activedescendant={showListbox && filteredOptions[activeIndex] ? optionId(activeIndex) : undefined}
 				class={inputClass}
 				placeholder={selectedIds.length > 0 ? '' : placeholder}
 				value={query}
@@ -254,17 +279,28 @@
 			/>
 		</div>
 
-		{#if isOpen && filteredOptions.length > 0}
-			<div class="autocomplete-dropdown">
-				{#each filteredOptions as option, index}
+		{#if showListbox}
+			<div
+				id={listboxId}
+				class="autocomplete-dropdown"
+				bind:this={listboxElement}
+				role="listbox"
+				aria-label={label}
+			>
+				{#each filteredOptions as option, index (option.id)}
 					<button
 						type="button"
+						id={optionId(index)}
+						role="option"
+						tabindex="-1"
+						aria-selected={index === activeIndex}
 						class="autocomplete-item"
 						data-i18n-skip={(preserveOptions && isPersonAuthor(option.id)) || undefined}
 						class:active={index === activeIndex}
 						onmouseenter={() => {
 							activeIndex = index;
 						}}
+						onmousedown={(event) => event.preventDefault()}
 						onclick={(event) => {
 							event.stopPropagation();
 							addOption(option);

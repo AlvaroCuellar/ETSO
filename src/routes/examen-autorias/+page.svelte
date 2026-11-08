@@ -1,7 +1,7 @@
 ﻿<script lang="ts">
 	import { isPersonAuthor } from '$lib/domain/catalog';
 	import { onMount, tick } from 'svelte';
-	import { goto } from '$app/navigation';
+	import { afterNavigate, goto } from '$app/navigation';
 	import HelpBubble from '$lib/components/search/HelpBubble.svelte';
 	import MatchToggle from '$lib/components/search/MatchToggle.svelte';
 	import TokenMultiSelect from '$lib/components/search/TokenMultiSelect.svelte';
@@ -559,6 +559,13 @@
 		}
 	};
 
+	afterNavigate(({ from, to, type }) => {
+		if (type === 'goto' || !from || !to || from.route.id !== to.route.id) return;
+		if (from.url.search !== to.url.search) {
+			void loadResultsForParams(to.url.searchParams);
+		}
+	});
+
 	const scrollToResults = async (): Promise<void> => {
 		await tick();
 		(paginationRegion ?? resultsRegion)?.scrollIntoView({ block: 'start', behavior: 'smooth' });
@@ -569,12 +576,13 @@
 		options: { scrollToTable?: boolean; searching?: boolean; clearBeforeLoad?: boolean } = {}
 	): Promise<void> => {
 		const { scrollToTable = true, searching = true, clearBeforeLoad = true } = options;
+		const nextUrl = new URL(url, window.location.origin);
 		if (searching) isSearching = true;
 		try {
 			await goto(url, { noScroll: true, keepFocus: true });
-			const nextUrl = new URL(url, window.location.origin);
+			if (window.location.href !== nextUrl.href) return;
 			await loadResultsForParams(nextUrl.searchParams, { clearBeforeLoad });
-			if (scrollToTable) {
+			if (scrollToTable && window.location.href === nextUrl.href) {
 				await scrollToResults();
 			}
 		} finally {

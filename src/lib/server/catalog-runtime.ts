@@ -12,7 +12,11 @@ import { resolve } from 'node:path';
 import { readPrivateTextByTextKey, readPrivateTextByWorkId } from '$lib/server/r2-private';
 import { formatBitesoJornadas, type BitesoJornadas } from '$lib/server/biteso-jornadas';
 import { fetchPublicR2Json, getPublicAssetUrl, getSummariesBaseUrl } from '$lib/server/r2-public';
-import { buildWorkTitleSearchText, formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
+import {
+	buildWorkTitleSearchText,
+	formatDisplayWorkTitle,
+	getWorkTitleSearchTerms
+} from '$lib/utils/format-display-work-title';
 import { REPORT_SLUG_PREFIX } from '$lib/utils/report-slug';
 import { buildAuthorWorkPublicIdsByAuthor, type AuthorWorkPublicIds } from '$lib/domain/author-work-public-ids';
 import {
@@ -1751,7 +1755,7 @@ const createExamenFilterSignature = (filters: ExamenWorksFilters): string => {
 	const autorEsto = normalizeFilterValues(filters.autor_esto);
 
 	return JSON.stringify({
-		titulo: normalizeText(filters.titulo),
+		titulo: getWorkTitleSearchTerms(filters.titulo).sort(),
 		genero: normalizeFilterValues(filters.genero),
 		autor: normalizeFilterValues(filters.autor),
 		tipo_autoria: normalizeFilterValues(filters.tipo_autoria),
@@ -1780,8 +1784,9 @@ const getCachedExamenFilteredRecords = (
 	const cached = filteredRecordsBySignature.get(signature);
 	if (cached) return cached;
 
+	const titleTerms = getWorkTitleSearchTerms(filters.titulo);
 	const records = getExamenSearchRecords(snapshot).filter((record) =>
-		matchesExamenFilters(record, filters)
+		matchesExamenFilters(record, filters, titleTerms)
 	);
 
 	if (filteredRecordsBySignature.size >= EXAMEN_FILTER_CACHE_LIMIT) {
@@ -1816,9 +1821,9 @@ const matchesDateRangeFilter = (
 
 const matchesExamenFilters = (
 	record: ExamenWorkSearchRecord,
-	filters: ExamenWorksFilters
+	filters: ExamenWorksFilters,
+	titleTerms: string[]
 ): boolean => {
-	const normalizedTitle = normalizeText(filters.titulo);
 	const mainAuthorDisabled = filters.autor_trad.length > 0 || filters.autor_esto.length > 0;
 	const effectiveMainAuthors = mainAuthorDisabled ? [] : filters.autor;
 	const selectedAuthorshipValues = filters.tipo_autoria
@@ -1826,7 +1831,7 @@ const matchesExamenFilters = (
 		.filter((value): value is WorkAuthorshipType => value !== null);
 	const hasValidDateRange = !filters.desde || !filters.hasta || filters.desde <= filters.hasta;
 
-	if (normalizedTitle && !record.titleSearch.includes(normalizedTitle)) return false;
+	if (!titleTerms.every((term) => record.titleSearch.includes(term))) return false;
 	if (filters.genero.length > 0 && !filters.genero.includes(record.work.genre)) return false;
 	if (!matchesByMode(record.allAuthorIds, effectiveMainAuthors, 'or')) return false;
 	if (!matchesByMode(record.traditionalAuthorIds, filters.autor_trad, filters.autor_trad_match)) return false;
@@ -2004,22 +2009,20 @@ const normalizeTitleSql = (expression: string): string => {
 	);
 };
 
-const escapeSqlLikeLiteral = (value: string): string => value.replace(/[\\%_]/g, '\\$&');
-
 const buildExamenWhereClause = async (filters: ExamenWorksFilters): Promise<SqlWhereClause> => {
 	const conditions = ['w.examen_autorias = 1'];
 	const args: SqlArg[] = [];
-	const normalizedTitle = normalizeText(filters.titulo);
+	const titleTerms = getWorkTitleSearchTerms(filters.titulo);
 
-	if (normalizedTitle) {
+	if (titleTerms.length > 0) {
 		const titleFilterExpressions = await getTitleSearchFilterExpressions();
-		const likeValue = `%${escapeSqlLikeLiteral(normalizedTitle)}%`;
+		const termMatchesTitle = titleFilterExpressions
+			.map((expression) => `INSTR(${normalizeTitleSql(expression)}, term.value) > 0`)
+			.join(' OR ');
 		conditions.push(
-			`(${titleFilterExpressions
-				.map((expression) => `${normalizeTitleSql(expression)} LIKE ? ESCAPE '\\'`)
-				.join(' OR ')})`
+			`NOT EXISTS (SELECT 1 FROM json_each(?) AS term WHERE NOT (${termMatchesTitle}))`
 		);
-		args.push(...titleFilterExpressions.map(() => likeValue));
+		args.push(JSON.stringify(titleTerms));
 	}
 
 	addInFilter(conditions, args, "COALESCE(NULLIF(TRIM(w.genero), ''), 'Sin genero')", filters.genero);

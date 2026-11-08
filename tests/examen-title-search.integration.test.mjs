@@ -26,10 +26,24 @@ test('title searches ignore Spanish accents in either cache population order', {
 	}
 });
 
-test('title searches treat SQL LIKE wildcards as literal characters', { skip: !baseUrl }, async () => {
-	for (const title of ['%', '_', 'El_%', '\\']) {
+test('title searches treat wildcard characters as literal characters', { skip: !baseUrl }, async () => {
+	for (const title of ['%', '_', 'El_%', '\\', 'vida %']) {
 		const result = await search(title);
 		assert.equal(result.totalResults, 0, title);
 		assert.deepEqual(result.works, []);
 	}
+});
+
+test('title searches require all terms without requiring consecutive words', { skip: !baseUrl }, async () => {
+	for (const [title, slug] of [
+		['vida sueño', 'la-vida-es-sueno'],
+		['SUENO   VIDA', 'la-vida-es-sueno'],
+		['¿vid-sueñ?', 'la-vida-es-sueno'],
+		['cada paso peligro', 'cada-paso-un-peligro-0'],
+		['verdades, amor', 'ay-verdades-que-en-amor']
+	]) {
+		const result = await search(title);
+		assert.ok(result.works.some((work) => work.slug === slug), title);
+	}
+	assert.equal((await search('vida terminosincoincidencia')).totalResults, 0);
 });

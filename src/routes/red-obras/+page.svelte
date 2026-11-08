@@ -2,7 +2,7 @@
 	import { browser } from '$app/environment';
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
-	import { DEFAULT_LOCALE, translateText } from '$lib/i18n';
+	import { DEFAULT_LOCALE, localizePath, translateText } from '$lib/i18n';
 	import HelpBubble from '$lib/components/search/HelpBubble.svelte';
 	import TokenMultiSelect from '$lib/components/search/TokenMultiSelect.svelte';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
@@ -48,10 +48,13 @@
 		active: boolean;
 	}
 
-	let canvasElement: HTMLCanvasElement | null = null;
+	let canvasElement = $state<HTMLCanvasElement | null>(null);
+	let focusGraphNode: ((nodeId: string) => void) | undefined;
+	let resetGraphView: (() => void) | undefined;
 	let graph = $state<WorkNetworkGraph>(emptyGraph);
 	let graphLoading = $state(true);
 	let graphError = $state('');
+	let graphUnavailable = $state(false);
 	let query = $state('');
 	let selectedId = $state('');
 	let hoveredId = $state('');
@@ -69,7 +72,8 @@
 	const normalizeFilterText = (value: string): string =>
 		normalizePlainText(value, false).replace(/\s+/g, ' ').trim();
 
-	const t = (value: string): string => translateText(page.data.locale ?? DEFAULT_LOCALE, value);
+	const locale = $derived(page.data.locale ?? DEFAULT_LOCALE);
+	const t = (value: string): string => translateText(locale, value);
 	const formatPeople = (people: string[]): string => people.length > 0
 		? people.map((name) => name === 'Desconocido' ? t(name) : name).join(', ')
 		: t('No apunta hacia ningún autor');
@@ -143,11 +147,24 @@
 			.slice(0, MAX_DISPLAYED_CONNECTED_WORKS);
 	});
 
+	const selectWork = (nodeId: string): void => {
+		if (graphUnavailable) {
+			query = '';
+			selectedId = nodeId;
+		} else {
+			focusGraphNode?.(nodeId);
+		}
+	};
+
 	onMount(() => {
 		if (!browser || !canvasElement) return;
+		const canvas = canvasElement;
+		const abortController = new AbortController();
 
 		let disposed = false;
 		let frameId = 0;
+		let cleanupEvents: (() => void) | undefined;
+		let stopEffects: (() => void) | undefined;
 		let scene: import('three').Scene;
 		let camera: import('three').PerspectiveCamera;
 		let renderer: import('three').WebGLRenderer;
@@ -176,21 +193,31 @@
 		};
 
 		const init = async () => {
-			graphLoading = true;
-			graphError = '';
+			const response = await fetch('/data/red-obras.json', {
+				cache: 'force-cache',
+				signal: abortController.signal
+			});
+			if (!response.ok) throw new Error(`No se pudo cargar el grafo: ${response.status}`);
+			const networkGraph = (await response.json()) as WorkNetworkGraph;
+			if (disposed) return;
+			graph = networkGraph;
+
+			const requestedSlug = new URL(window.location.href).searchParams.get('obra');
+			const requestedNode = graph.nodes.find((node) => node.slug === requestedSlug);
+			const [THREE, { OrbitControls }] = await Promise.all([
+				import('three'),
+				import('three/examples/jsm/controls/OrbitControls.js')
+			]);
+			if (disposed) return;
+
 			try {
-				const response = await fetch('/data/red-obras.json', { cache: 'force-cache' });
-				if (!response.ok) throw new Error(`No se pudo cargar el grafo: ${response.status}`);
-				graph = (await response.json()) as WorkNetworkGraph;
-			} catch (cause) {
-				graphError = cause instanceof Error ? cause.message : 'No se pudo cargar el grafo';
+				renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+			} catch {
+				selectedId = requestedNode?.id ?? '';
+				graphUnavailable = true;
 				graphLoading = false;
 				return;
 			}
-
-			const THREE = await import('three');
-			const { OrbitControls } = await import('three/examples/jsm/controls/OrbitControls.js');
-			if (disposed || !canvasElement) return;
 
 			const degree = new Map<string, number>();
 			for (const link of graph.links) {
@@ -215,10 +242,9 @@
 			scene.fog = new THREE.Fog('#fbfcff', 560, 1250);
 			camera = new THREE.PerspectiveCamera(52, 1, 0.1, 1000);
 			camera.position.set(0, 0, 720);
-			renderer = new THREE.WebGLRenderer({ canvas: canvasElement, antialias: true, alpha: false });
 			renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 
-			controls = new OrbitControls(camera, canvasElement);
+			controls = new OrbitControls(camera, canvas);
 			controls.enableDamping = true;
 			controls.dampingFactor = 0.075;
 			controls.minDistance = 28;
@@ -642,9 +668,14 @@
 				focusNode(hoveredId);
 			};
 
-			canvasElement.addEventListener('pointermove', handlePointerMove);
-			canvasElement.addEventListener('click', handleClick);
-			canvasElement.addEventListener('dblclick', handleDoubleClick);
+			canvas.addEventListener('pointermove', handlePointerMove);
+			canvas.addEventListener('click', handleClick);
+			canvas.addEventListener('dblclick', handleDoubleClick);
+			cleanupEvents = () => {
+				canvas.removeEventListener('pointermove', handlePointerMove);
+				canvas.removeEventListener('click', handleClick);
+				canvas.removeEventListener('dblclick', handleDoubleClick);
+			};
 
 			const resize = () => {
 				if (!canvasElement) return;
@@ -656,22 +687,17 @@
 				renderer.setSize(width, height, false);
 			};
 			resizeObserver = new ResizeObserver(resize);
-			resizeObserver.observe(canvasElement);
+			resizeObserver.observe(canvas);
 			resize();
 			initialCameraPosition = camera.position.clone();
 			initialControlTarget = controls.target.clone();
-			const requestedSlug = new URL(window.location.href).searchParams.get('obra');
-			if (requestedSlug) {
-				const requestedNode = graph.nodes.find((node) => node.slug === requestedSlug);
-				if (requestedNode) {
-					initialFocusTimeout = window.setTimeout(() => {
-						focusNode(requestedNode.id, 110);
-						initialFocusTimeout = null;
-					}, 1800);
-				}
+			if (requestedNode) {
+				initialFocusTimeout = window.setTimeout(() => {
+					focusNode(requestedNode.id, 110);
+					initialFocusTimeout = null;
+				}, 1800);
 			}
 			updateHighlight();
-			graphLoading = false;
 
 			const animate = () => {
 				if (disposed) return;
@@ -707,7 +733,7 @@
 			};
 			animate();
 
-			const stopEffects = $effect.root(() => {
+			stopEffects = $effect.root(() => {
 				$effect(() => {
 					visibleNodeIds;
 					hoveredId;
@@ -721,56 +747,29 @@
 				});
 			});
 
-			(
-				window as Window & {
-					centerSelectedWorkNode?: (nodeId?: string) => void;
-					resetWorkNetworkView?: () => void;
-				}
-			).centerSelectedWorkNode = centerSelected;
-			(
-				window as Window & {
-					centerSelectedWorkNode?: (nodeId?: string) => void;
-					resetWorkNetworkView?: () => void;
-				}
-			).resetWorkNetworkView = resetView;
-
-			return () => {
-				stopEffects();
-				delete (
-					window as Window & {
-						centerSelectedWorkNode?: (nodeId?: string) => void;
-						resetWorkNetworkView?: () => void;
-					}
-				).centerSelectedWorkNode;
-				delete (
-					window as Window & {
-						centerSelectedWorkNode?: (nodeId?: string) => void;
-						resetWorkNetworkView?: () => void;
-					}
-				).resetWorkNetworkView;
-				canvasElement?.removeEventListener('pointermove', handlePointerMove);
-				canvasElement?.removeEventListener('click', handleClick);
-				canvasElement?.removeEventListener('dblclick', handleDoubleClick);
-			};
+			focusGraphNode = centerSelected;
+			resetGraphView = resetView;
+			graphLoading = false;
 		};
 
-		let cleanupEvents: (() => void) | undefined;
-		void init().then((cleanup) => {
-			cleanupEvents = cleanup;
-		});
-
-		return () => {
+		const dispose = () => {
+			if (disposed) return;
 			disposed = true;
+			abortController.abort();
+			focusGraphNode = undefined;
+			resetGraphView = undefined;
 			labels = [];
 			authorMarkers = [];
 			if (frameId) cancelAnimationFrame(frameId);
 			if (initialFocusTimeout) window.clearTimeout(initialFocusTimeout);
 			cleanupEvents?.();
+			stopEffects?.();
 			resizeObserver?.disconnect();
 			controls?.dispose();
+			nodesMesh?.dispose();
+			adjacentNodesMesh?.dispose();
 			nodesMesh?.geometry.dispose();
 			(nodesMesh?.material as import('three').Material | undefined)?.dispose();
-			adjacentNodesMesh?.geometry.dispose();
 			(adjacentNodesMesh?.material as import('three').Material | undefined)?.dispose();
 			selectedNodeMesh?.geometry.dispose();
 			(selectedNodeMesh?.material as import('three').Material | undefined)?.dispose();
@@ -780,6 +779,15 @@
 			(highlightLines?.material as import('three').Material | undefined)?.dispose();
 			renderer?.dispose();
 		};
+
+		void init().catch((cause) => {
+			if (disposed) return;
+			dispose();
+			console.error('No se pudo cargar el grafo', cause);
+			graphError = 'No se pudo cargar el grafo';
+			graphLoading = false;
+		});
+		return dispose;
 	});
 </script>
 
@@ -801,8 +809,19 @@
 		</p>
 	</section>
 
+	{#if graphUnavailable || graphError}
+		<div role="status" class="mx-auto grid w-full max-w-7xl gap-2 rounded-lg border border-border bg-surface-subtle px-4 py-3 text-text-main">
+			<p class="m-0">
+				{graphUnavailable
+					? t('La vista 3D requiere WebGL. Puedes buscar una obra y consultar sus conexiones en el listado de esta página.')
+					: t(graphError)}
+			</p>
+			<a href={localizePath('/examen-autorias/obras', locale)} class="w-fit font-semibold text-brand-blue underline">Ver listado de obras</a>
+		</div>
+	{/if}
+
 	<div class="mx-auto grid w-full max-w-7xl gap-4">
-		<div class="grid gap-5 rounded-[10px] border border-border/70 bg-[var(--color-surface-subtle)] p-4 shadow-[0_8px_24px_rgba(25,46,80,0.06)]">
+		<div class="grid gap-5 rounded-[10px] border border-border/70 bg-[var(--color-surface-subtle)] p-4 shadow-[0_8px_24px_rgba(25,46,80,0.06)]" class:hidden={Boolean(graphError)}>
 			<div class="grid gap-5 min-[960px]:grid-cols-[minmax(0,1fr)_auto] min-[960px]:items-end">
 				<div class="relative flex flex-col">
 					<div class="relative mb-[6px] inline-flex w-full items-center gap-1 font-['Roboto',sans-serif] text-[14px] font-semibold text-text-soft">
@@ -837,19 +856,19 @@
 					>
 						Limpiar
 					</button>
-					<button
-						type="button"
-						class="h-[46px] rounded-[10px] border border-border bg-white px-4 font-['Roboto',sans-serif] text-[0.9rem] font-semibold text-brand-blue transition hover:bg-surface-accent-blue"
-						onclick={() => {
-							(window as Window & { resetWorkNetworkView?: () => void }).resetWorkNetworkView?.();
-						}}
-					>
-						Reset
-					</button>
+					{#if !graphUnavailable}
+						<button
+							type="button"
+							class="h-[46px] rounded-[10px] border border-border bg-white px-4 font-['Roboto',sans-serif] text-[0.9rem] font-semibold text-brand-blue transition hover:bg-surface-accent-blue"
+							onclick={() => resetGraphView?.()}
+						>
+							Reset
+						</button>
+					{/if}
 				</div>
 			</div>
 
-			<div class="grid gap-5 min-[760px]:grid-cols-[minmax(12rem,16rem)_minmax(0,1fr)] min-[760px]:items-start">
+			<div class="grid gap-5 min-[760px]:grid-cols-[minmax(12rem,16rem)_minmax(0,1fr)] min-[760px]:items-start" class:hidden={graphUnavailable}>
 				<div class="relative flex flex-col">
 					<div class="relative mb-[6px] inline-flex w-full items-center gap-1 font-['Roboto',sans-serif] text-[14px] font-semibold text-text-soft">
 						<label for="author-mode">Tipo de atribución</label>
@@ -912,15 +931,13 @@
 				</div>
 		{/if}
 
-		{#if query && visibleResults.length > 0}
+		{#if !graphError && query && visibleResults.length > 0}
 			<div class="max-h-64 overflow-auto rounded-[10px] border border-border/70 bg-white shadow-[0_8px_24px_rgba(25,46,80,0.06)]">
 				{#each visibleResults as node}
 					<button
 						type="button"
 						class="grid w-full gap-1 border-0 border-b border-border bg-transparent px-4 py-3 text-left transition last:border-b-0 hover:bg-surface-accent-blue focus:bg-surface-accent-blue focus:outline-none"
-						onclick={() => {
-							(window as Window & { centerSelectedWorkNode?: (nodeId?: string) => void }).centerSelectedWorkNode?.(node.id);
-						}}
+						onclick={() => selectWork(node.id)}
 					>
 						<span class="block text-[0.95rem] font-semibold leading-[1.35] text-brand-blue-dark" data-i18n-skip>
 							{formatDisplayWorkTitle(node.title)}
@@ -939,7 +956,7 @@
 			</div>
 		{/if}
 
-		{#if selectedNode}
+		{#if !graphError && selectedNode}
 			<section class="rounded-md border border-[#b45f06]/22 bg-[#fffdfa] p-4 shadow-soft">
 				<div class="grid gap-3 md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] md:items-start">
 					<div class="grid gap-2">
@@ -965,24 +982,22 @@
 							>
 								Limpiar
 							</button>
-							<button
-								type="button"
-								class="network-panel-action rounded-md border border-border bg-white px-3 py-2 text-brand-blue"
-								onclick={() => {
-									(window as Window & { resetWorkNetworkView?: () => void }).resetWorkNetworkView?.();
-								}}
-							>
-								Reset
-							</button>
-							<button
-								type="button"
-								class="network-panel-action rounded-md border border-border bg-white px-3 py-2 text-brand-blue"
-								onclick={() => {
-									(window as Window & { centerSelectedWorkNode?: (nodeId?: string) => void }).centerSelectedWorkNode?.();
-								}}
-							>
-								Centrar
-							</button>
+							{#if !graphUnavailable}
+								<button
+									type="button"
+									class="network-panel-action rounded-md border border-border bg-white px-3 py-2 text-brand-blue"
+									onclick={() => resetGraphView?.()}
+								>
+									Reset
+								</button>
+								<button
+									type="button"
+									class="network-panel-action rounded-md border border-border bg-white px-3 py-2 text-brand-blue"
+									onclick={() => focusGraphNode?.(selectedNode.id)}
+								>
+									Centrar
+								</button>
+							{/if}
 							<a
 								href={`/obras/${selectedNode.slug}`}
 								class="network-panel-action rounded-md border border-border bg-white px-3 py-2 text-brand-blue no-underline hover:bg-surface-accent-blue hover:no-underline"
@@ -1008,9 +1023,7 @@
 									<button
 										type="button"
 										class="grid rounded-md border border-border/80 bg-white/70 px-3 py-2 text-left text-[0.78rem] leading-[1.25] text-brand-blue hover:bg-surface-accent-blue"
-										onclick={() => {
-											(window as Window & { centerSelectedWorkNode?: (nodeId?: string) => void }).centerSelectedWorkNode?.(entry.node.id);
-										}}
+										onclick={() => selectWork(entry.node.id)}
 									>
 										<span data-i18n-skip class="font-semibold">{formatDisplayWorkTitle(entry.node.title)}</span>
 										<span class="text-text-soft">{entry.node.genre} · distancia {entry.link.distance.toFixed(3)}</span>
@@ -1026,8 +1039,10 @@
 		{/if}
 	</div>
 
-	<section class="relative mx-auto h-[calc(100dvh-24rem)] min-h-[31rem] w-full max-w-7xl overflow-hidden rounded-lg border border-border/70 bg-[#fbfcff] shadow-soft md:h-[calc(100dvh-22rem)] md:min-h-[35rem] md:max-h-[42rem]">
-		<canvas bind:this={canvasElement} class="absolute inset-0 h-full w-full touch-none"></canvas>
+	<section class="relative mx-auto h-[calc(100dvh-24rem)] min-h-[31rem] w-full max-w-7xl overflow-hidden rounded-lg border border-border/70 bg-[#fbfcff] shadow-soft md:h-[calc(100dvh-22rem)] md:min-h-[35rem] md:max-h-[42rem]" class:hidden={graphUnavailable || Boolean(graphError)}>
+		{#if !graphUnavailable && !graphError}
+			<canvas bind:this={canvasElement} class="absolute inset-0 h-full w-full touch-none"></canvas>
+		{/if}
 
 		<div class="pointer-events-none absolute inset-0 z-[5]">
 			<svg class="absolute inset-0 h-full w-full overflow-visible" aria-hidden="true">
@@ -1093,10 +1108,6 @@
 		{#if graphLoading}
 			<div class="absolute inset-0 z-20 grid place-items-center bg-[#fbfcff] text-[0.95rem] font-medium text-text-soft">
 				Calculando red de fuerzas...
-			</div>
-		{:else if graphError}
-			<div class="absolute inset-0 z-20 grid place-items-center bg-[#fbfcff] px-4 text-center text-[0.95rem] font-medium text-text-soft">
-				{graphError}
 			</div>
 		{/if}
 

@@ -1,3 +1,5 @@
+import { normalizePlainText } from '../search/normalize.ts';
+
 const TRAILING_ARTICLE_PATTERN =
 	/^(?<body>.+?),\s*(?<article>El|La|Los|Las)(?<suffix>\s+\([^()]+\))?$/u;
 const LEADING_ARTICLE_PATTERN =
@@ -80,6 +82,13 @@ const buildTitleSearchVariants = (value: string): string[] => {
 
 export const buildWorkTitleSearchText = (title: string, titleVariants: string[] = []): string =>
 	[title, ...titleVariants].flatMap(buildTitleSearchVariants).join(' ');
+
+export const getWorkTitleSearchTerms = (query: string): string[] => {
+	const normalized = normalizePlainText(query, false);
+	// Keep SQL wildcard characters literal while accepting punctuation around words.
+	const terms = normalized.match(/[\p{L}\p{N}%_\\]+/gu) ?? normalized.match(/\S+/g) ?? [];
+	return [...new Set(terms)];
+};
 
 export const formatPrefixedDisplayWorkTitleHtml = (prefix: string, title: string): string =>
 	`${escapeHtml(prefix)} <i>${escapeHtml(formatDisplayWorkTitle(title))}</i>`;

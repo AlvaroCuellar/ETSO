@@ -5,7 +5,8 @@
 	import { normalizePlainText } from '$lib/search/normalize';
 	import {
 		buildWorkTitleSearchText,
-		formatDisplayWorkTitle
+		formatDisplayWorkTitle,
+		getWorkTitleSearchTerms
 	} from '$lib/utils/format-display-work-title';
 	import { formatTraditionalAttributionCompact } from '$lib/utils/traditional-attribution-phrase';
 
@@ -18,9 +19,6 @@
 
 	let query = $state('');
 
-	const normalizeFilterText = (value: string): string =>
-		normalizePlainText(value, false).replace(/\s+/g, ' ').trim();
-
 	const t = (value: string): string => translateText(data.locale, value);
 	const formatTraditionalAttribution = (set: AttributionSet): string => {
 		const attribution = formatTraditionalAttributionCompact(set, t('Desconocido'), { and: t('y'), or: t('o') });
@@ -30,12 +28,12 @@
 	const formatGenre = (genre: string): string => genre.trim() || 'Sin género';
 
 	const filteredWorks = $derived.by(() => {
-		const normalizedQuery = normalizeFilterText(query);
-		if (!normalizedQuery) return data.works;
+		const terms = getWorkTitleSearchTerms(query);
+		if (terms.length === 0) return data.works;
 
 		return data.works.filter((work) => {
-			const haystack = normalizeFilterText(buildWorkTitleSearchText(work.title, work.titleVariants));
-			return haystack.includes(normalizedQuery);
+			const title = normalizePlainText(buildWorkTitleSearchText(work.title, work.titleVariants), false);
+			return terms.every((term) => title.includes(term));
 		});
 	});
 </script>

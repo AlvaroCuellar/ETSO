@@ -12,12 +12,6 @@
 	let { locale = 'es' }: Props = $props();
 	const humanitalisUrl = (env.PUBLIC_HUMANITALIS_URL || 'https://www.humanitalis.com').replace(/\/$/, '');
 	const translations = $derived(getUiTranslations(locale));
-	const primaryNavItems = $derived(translations.nav.items.slice(0, 3).concat(translations.nav.infoItems.slice(0, 1)));
-	const secondaryNavItems = $derived([
-		translations.nav.infoItems[1],
-		...[...translations.nav.items, ...translations.nav.infoItems].filter((item) => item.href === '/open-science' || item.href === '/como-citarnos'),
-		translations.nav.infoItems[2]
-	].filter(Boolean));
 </script>
 
 <footer class="mt-12 border-t border-brand-purple/20 bg-brand-blue font-ui text-white">
@@ -38,7 +32,7 @@
 						<p class="m-0 text-[0.8rem] font-ui font-semibold tracking-[0.04em] text-white/72 uppercase">
 							{translations.footer.navigation}
 						</p>
-						{#each primaryNavItems as item}
+						{#each translations.nav.items as item}
 							<a
 								class="text-[0.94rem] text-white/90 no-underline transition hover:text-white hover:no-underline"
 								href={localizePath(item.href, locale)}
@@ -50,9 +44,9 @@
 
 					<div class="grid content-start gap-3">
 						<p class="m-0 text-[0.8rem] font-ui font-semibold tracking-[0.04em] text-white/72 uppercase">
-							{translations.footer.information}
+							{translations.nav.moreInfo}
 						</p>
-						{#each secondaryNavItems as item}
+						{#each translations.nav.infoItems as item}
 							<a
 								class="text-[0.94rem] text-white/90 no-underline transition hover:text-white hover:no-underline"
 								href={localizePath(item.href, locale)}

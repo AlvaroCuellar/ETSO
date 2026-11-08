@@ -36,6 +36,7 @@
 	let languageMenuOpen = $state(false);
 	let mobileMenuOpen = $state(false);
 	let mobileMoreInfoOpen = $state(false);
+	let mobileMenuButton: HTMLButtonElement | null = null;
 	let desktopMoreInfoElement: HTMLDetailsElement | null = null;
 	let languageMenuElement: HTMLDetailsElement | null = null;
 
@@ -92,7 +93,7 @@
 		}`;
 
 	const mobileMoreInfoButtonClass = (active: boolean): string =>
-		`mobile-header-tap-reset appearance-none flex w-full items-center justify-between rounded-card border px-4 py-2.5 text-left text-[0.94rem] font-ui font-medium text-brand-blue no-underline transition hover:no-underline focus:outline-none focus:ring-0 focus-visible:no-underline focus-visible:outline-none focus-visible:ring-0 ${
+		`mobile-header-tap-reset appearance-none flex w-full items-center justify-between rounded-card border px-4 py-2.5 text-left text-[0.94rem] font-ui font-medium text-brand-blue no-underline transition hover:no-underline focus-visible:no-underline ${
 			active
 				? 'border-transparent bg-surface-accent-purple text-brand-purple'
 				: 'border-border-accent-blue bg-white hover:bg-surface-accent-blue focus:bg-white'
@@ -135,6 +136,7 @@
 		if (!desktopMoreInfoOpen && !languageMenuOpen && !mobileMenuOpen && !mobileMoreInfoOpen) return;
 		closeDesktopDropdown();
 		closeLanguageMenu();
+		if (mobileMenuOpen) mobileMenuButton?.focus({ preventScroll: true });
 		closeMobileMenu();
 	}
 
@@ -163,7 +165,7 @@
 
 <header class="sticky top-0 z-20 border-b border-border-accent-blue bg-[rgba(255,255,255,0.94)] backdrop-blur-[6px]">
 	<div class="mx-auto w-full max-w-[1440px] px-4 sm:px-5 lg:px-8">
-		<div class="flex min-h-[4.75rem] items-center justify-between gap-4">
+		<div class="flex min-h-[var(--site-header-bar-height)] items-center justify-between gap-4">
 			<a class="inline-flex items-center" href={localizePath('/', locale)}>
 				<img class="block h-[2.35rem] w-auto" src={logoEtso} alt="ETSO" />
 			</a>
@@ -251,6 +253,7 @@
 
 				<button
 					type="button"
+					bind:this={mobileMenuButton}
 					class="mobile-header-tap-reset appearance-none inline-flex h-10 w-10 items-center justify-center rounded-card border border-border-accent-blue bg-white text-brand-blue transition hover:bg-surface-accent-blue focus-visible:outline-2 focus-visible:outline-brand-blue/25 min-[1180px]:hidden"
 					aria-controls="mobile-primary-nav"
 					aria-expanded={mobileMenuOpen ? 'true' : 'false'}
@@ -272,7 +275,7 @@
 		</div>
 
 		{#if mobileMenuOpen}
-			<div id="mobile-primary-nav" class="border-t border-border-accent-blue py-3 min-[1180px]:hidden">
+			<div id="mobile-primary-nav" class="mobile-nav-panel border-t border-border-accent-blue py-3 min-[1180px]:hidden">
 				<nav class="grid gap-2 font-ui" aria-label={translations.nav.mobileLabel}>
 					{#each navItems as item}
 						<a
@@ -337,6 +340,22 @@
 </header>
 
 <style>
+	header {
+		--site-header-bar-height: 4.75rem;
+	}
+
+	.mobile-nav-panel {
+		max-height: calc(100vh - var(--site-header-bar-height) - 1px);
+		max-height: calc(100dvh - var(--site-header-bar-height) - 1px);
+		overflow-y: auto;
+		overscroll-behavior-y: contain;
+	}
+
+	.mobile-header-tap-reset:focus-visible {
+		outline: 2px solid var(--color-brand-blue);
+		outline-offset: -2px;
+	}
+
 	@media (hover: none) and (pointer: coarse) {
 		.mobile-header-tap-reset {
 			-webkit-tap-highlight-color: transparent;
@@ -345,9 +364,8 @@
 			-webkit-touch-callout: none;
 		}
 
-		.mobile-header-tap-reset:focus,
-		.mobile-header-tap-reset:focus-visible,
-		.mobile-header-tap-reset:active {
+		.mobile-header-tap-reset:focus:not(:focus-visible),
+		.mobile-header-tap-reset:active:not(:focus-visible) {
 			outline: none;
 			box-shadow: none;
 		}

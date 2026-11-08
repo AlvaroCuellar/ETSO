@@ -2,6 +2,7 @@ import { error, redirect } from '@sveltejs/kit';
 import { setPublicCatalogCacheHeaders } from '$lib/server/cache-control';
 import { localizePath } from '$lib/i18n';
 import { getWorkResultPresentation } from '$lib/server/work-result-presentation';
+import autesoWorkPaths from '$lib/server/auteso-work-paths.json';
 import {
 	getWorkByPublicId,
 	getWorkBySlug,
@@ -9,6 +10,8 @@ import {
 } from '$lib/server/catalog-runtime';
 
 import type { PageServerLoad } from './$types';
+
+const autesoPaths: Readonly<Record<number, string | undefined>> = autesoWorkPaths;
 
 export const load: PageServerLoad = async ({ locals, params, setHeaders }) => {
 	const work = await getWorkBySlug(params.slug);
@@ -23,8 +26,10 @@ export const load: PageServerLoad = async ({ locals, params, setHeaders }) => {
 
 	setPublicCatalogCacheHeaders(setHeaders);
 	const presentation = await getWorkResultPresentation(await withWorkShortSummary(work));
+	const autesoPath = work.publicId == null ? undefined : autesoPaths[work.publicId];
 	return {
 		work: presentation.work,
+		autesoUrl: autesoPath ? `https://theatheor-fe.netseven.it${autesoPath}/datos-bibliograficos` : undefined,
 		resultAuthors: presentation.resultAuthors,
 		// The work snapshot already tells us whether a public report exists and
 		// contains its canonical slug. Loading the complete report here used to

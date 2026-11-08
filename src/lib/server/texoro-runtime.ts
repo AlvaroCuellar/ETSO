@@ -1,13 +1,12 @@
 import { isPersonAuthor } from '$lib/domain/catalog';
-import { env as publicEnv } from '$env/dynamic/public';
 import { TexoroSearchEngine, buildWorkMetaMap } from '$lib/search';
 import { getAllWorks, refreshCatalogSnapshot } from '$lib/server/catalog-runtime';
 import { clearPrivateTextCache, readPrivateTextByTextKey } from '$lib/server/r2-private';
-import { getTexoroIndexBaseUrl } from '$lib/server/r2-public';
+import { readPrivateTexoroIndexJson } from '$lib/server/texoro-index-private';
 import { buildWorkTitleSearchText, formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
 
 import type { AttributionSet, CatalogWork } from '$lib/domain/catalog';
-import type { SearchOptions, TexoroIndexManifest, TexoroWorkMeta } from '$lib/search';
+import type { SearchExecution, SearchOptions, TexoroIndexManifest, TexoroWorkMeta } from '$lib/search';
 
 interface TexoroTokenOption {
 	id: string;
@@ -63,10 +62,6 @@ const refreshCatalogForIndexVersion = async (indexVersion: string): Promise<void
 	catalogVersionRefreshPromise = nextRefreshPromise;
 	await nextRefreshPromise;
 };
-
-const stripTrailingSlash = (value: string): string => value.replace(/\/+$/, '');
-const joinUrl = (base: string, path: string): string =>
-	`${stripTrailingSlash(base)}/${path.replace(/^\/+/, '')}`;
 
 export const toTexoroWorkMeta = (work: CatalogWork): TexoroWorkMeta => ({
 	id: work.id,
@@ -135,31 +130,14 @@ const countAttributedAuthors = (works: CatalogWork[]): number => {
 	return ids.size;
 };
 
-const resolveTexoroIndexBaseUrl = (): string => {
-	const publicAssetsBaseUrl = stripTrailingSlash(
-		publicEnv.PUBLIC_R2_PUBLIC_ASSETS_BASE_URL || publicEnv.PUBLIC_R2_BASE_URL || ''
-	);
-	return stripTrailingSlash(
-		publicEnv.PUBLIC_TEXORO_INDEX_BASE_URL ||
-			(publicAssetsBaseUrl ? joinUrl(publicAssetsBaseUrl, 'search') : '')
-	);
-};
-
-const fetchIndexManifest = async (fetch: typeof globalThis.fetch): Promise<TexoroIndexManifest | null> => {
-	const baseUrl = resolveTexoroIndexBaseUrl();
-	if (!baseUrl) return null;
-	const manifestUrl = new URL(joinUrl(baseUrl, 'manifest.json'));
-	manifestUrl.searchParams.set('t', String(Date.now()));
-	const response = await fetch(manifestUrl, { cache: 'no-store' });
-	if (!response.ok) return null;
-	return (await response.json()) as TexoroIndexManifest;
-};
+const fetchIndexManifest = async (): Promise<TexoroIndexManifest> =>
+	(await readPrivateTexoroIndexJson('manifest.json', null)) as TexoroIndexManifest;
 
 export const getTexoroWorkMeta = async (expectedIndexVersion?: string): Promise<TexoroWorkMeta[]> => {
 	if (expectedIndexVersion) {
-		const manifest = await fetchIndexManifest(globalThis.fetch);
+		const manifest = await fetchIndexManifest();
 		// An arbitrary caller-supplied version must never force another Turso read.
-		if (manifest?.indexVersion === expectedIndexVersion) {
+		if (manifest.indexVersion === expectedIndexVersion) {
 			// Equal counts can still conceal replaced work IDs. An explicit request
 			// for the verified version refreshes once, shared with server updates.
 			await refreshCatalogForIndexVersion(manifest.indexVersion);
@@ -193,20 +171,20 @@ export const getTexoroOptions = async (): Promise<TexoroOptions> => {
 	return value;
 };
 
-export const getTexoroStats = async (fetch: typeof globalThis.fetch): Promise<TexoroStats> => {
+export const getTexoroStats = async (): Promise<TexoroStats> => {
 	const now = Date.now();
 	if (cachedTexoroStats && now - cachedTexoroStats.cachedAt < TEXORO_GLOBAL_CACHE_MS) {
 		return cachedTexoroStats.value;
 	}
 
-	const [works, manifest] = await Promise.all([getAllWorks(), fetchIndexManifest(fetch)]);
+	const [works, manifest] = await Promise.all([getAllWorks(), fetchIndexManifest()]);
 	const value = {
-		works: manifest?.stats.works ?? works.length,
+		works: manifest.stats.works,
 		authors: countAttributedAuthors(works),
-		tokens: manifest?.stats.tokens ?? 0,
-		vocabSize: manifest?.stats.vocabSize ?? 0,
-		indexVersion: manifest?.indexVersion ?? 'n/d',
-		preserveEnie: manifest?.normalization.preserveEnie ?? true
+		tokens: manifest.stats.tokens,
+		vocabSize: manifest.stats.vocabSize,
+		indexVersion: manifest.indexVersion,
+		preserveEnie: manifest.normalization.preserveEnie
 	};
 	cachedTexoroStats = { cachedAt: Date.now(), value };
 	return value;
@@ -217,15 +195,14 @@ export const getServerTexoroEngine = async (): Promise<TexoroSearchEngine> => {
 	if (!enginePromise) {
 		enginePromise = (async () => {
 			if (engine) {
-				const manifest = await fetchIndexManifest(globalThis.fetch);
-				if (!manifest) throw new Error('No se pudo comprobar la versión del índice de TEXORO.');
+				const manifest = await fetchIndexManifest();
 				if (manifest.indexVersion === engine.manifest?.indexVersion) {
 					engineVersionCheckedAt = Date.now();
 					return engine;
 				}
 			}
 			const created = new TexoroSearchEngine({
-				indexBaseUrl: getTexoroIndexBaseUrl(),
+				indexLoader: readPrivateTexoroIndexJson,
 				textLoader: readPrivateTextByTextKey,
 				cacheInIndexedDb: false,
 				preparedTextCacheMaxDocs: Number.parseInt(process.env.TEXORO_PREPARED_TEXT_CACHE_MAX_DOCS ?? '64', 10)
@@ -235,6 +212,7 @@ export const getServerTexoroEngine = async (): Promise<TexoroSearchEngine> => {
 			// before publication by another page. Adopt one coherent version.
 			await refreshCatalogForIndexVersion(created.manifest!.indexVersion);
 			clearPrivateTextCache();
+			clearSearchResultCache();
 			engine = created;
 			engineVersionCheckedAt = Date.now();
 			cachedTexoroStats = null;
@@ -247,9 +225,93 @@ export const getServerTexoroEngine = async (): Promise<TexoroSearchEngine> => {
 	return enginePromise;
 };
 
+const workMetaByCatalog = new WeakMap<CatalogWork[], Map<string, TexoroWorkMeta>>();
+
+type VersionedSearchExecution = SearchExecution & { indexVersion: string; preserveEnie: boolean };
+
+interface SearchResultCache {
+	engine: TexoroSearchEngine;
+	works: CatalogWork[];
+	indexVersion: string;
+	entries: Map<string, { value: VersionedSearchExecution; bytes: number }>;
+	bytes: number;
+	expiresAt: number;
+	timer?: ReturnType<typeof setTimeout>;
+}
+
+const SEARCH_RESULT_CACHE_MS = 20_000;
+const SEARCH_RESULT_CACHE_BYTES = 4 * 1024 * 1024;
+const SEARCH_RESULT_ENTRY_BYTES = 128 * 1024;
+const SEARCH_RESULT_ENTRY_ROWS = 96;
+let searchResultCache: SearchResultCache | undefined;
+
+const clearSearchResultCache = (): void => {
+	if (searchResultCache?.timer) clearTimeout(searchResultCache.timer);
+	searchResultCache = undefined;
+};
+
+const getSearchResultCache = (
+	searchEngine: TexoroSearchEngine,
+	works: CatalogWork[],
+	indexVersion: string
+): SearchResultCache => {
+	if (searchResultCache && (
+		searchResultCache.engine !== searchEngine || searchResultCache.works !== works ||
+		searchResultCache.indexVersion !== indexVersion ||
+		(searchResultCache.expiresAt !== 0 && searchResultCache.expiresAt <= Date.now())
+	)) clearSearchResultCache();
+	return searchResultCache ??= {
+		engine: searchEngine, works, indexVersion, entries: new Map(), bytes: 0, expiresAt: 0
+	};
+};
+
+const storeSearchResult = (cache: SearchResultCache, key: string, value: VersionedSearchExecution): void => {
+	// Bypass broad results before serializing them. Concordance text is never cached here.
+	if (cache !== searchResultCache || cache.entries.has(key) ||
+		value.allResults.length > SEARCH_RESULT_ENTRY_ROWS || value.allResults.some((result) => result.snippet)) return;
+	const bytes = Buffer.byteLength(key) + Buffer.byteLength(JSON.stringify(value));
+	if (bytes > SEARCH_RESULT_ENTRY_BYTES) return;
+	while (cache.bytes + bytes > SEARCH_RESULT_CACHE_BYTES) {
+		const oldest = cache.entries.keys().next().value!;
+		cache.bytes -= cache.entries.get(oldest)!.bytes;
+		cache.entries.delete(oldest);
+	}
+	cache.entries.set(key, { value, bytes });
+	cache.bytes += bytes;
+	if (!cache.timer) {
+		cache.expiresAt = Date.now() + SEARCH_RESULT_CACHE_MS;
+		cache.timer = setTimeout(() => {
+			if (cache === searchResultCache) clearSearchResultCache();
+		}, SEARCH_RESULT_CACHE_MS).unref();
+	}
+};
+
 export const searchTexoro = async (query: string, options: SearchOptions = {}) => {
 	const searchEngine = await getServerTexoroEngine();
 	const works = await getAllWorks();
-	const workMeta = buildWorkMetaMap(works.map(toTexoroWorkMeta));
-	return searchEngine.search(query, workMeta, options);
+	const manifest = searchEngine.manifest!;
+	const key = options.includeSnippets === true || query.length > 2048 ? '' : JSON.stringify([query, options]);
+	const cache = searchEngine === engine && key && key.length <= 8192
+		? getSearchResultCache(searchEngine, works, manifest.indexVersion)
+		: undefined;
+	const hit = cache?.entries.get(key);
+	if (cache && hit) {
+		cache.entries.delete(key);
+		cache.entries.set(key, hit);
+		return { ...hit.value, elapsedMs: 0, positionsShardLoads: 0, textLoads: 0 };
+	}
+
+	let workMeta = workMetaByCatalog.get(works);
+	if (!workMeta) {
+		workMeta = buildWorkMetaMap(works.map(toTexoroWorkMeta));
+		workMetaByCatalog.set(works, workMeta);
+	}
+	const execution = await searchEngine.search(query, workMeta, options);
+	const value = {
+		...execution,
+		indexVersion: manifest.indexVersion,
+		preserveEnie: manifest.normalization.preserveEnie
+	};
+	if (cache) storeSearchResult(cache, key, value);
+	return value;
 };

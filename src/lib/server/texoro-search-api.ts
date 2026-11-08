@@ -3,6 +3,8 @@ import { searchTexoro } from '$lib/server/texoro-runtime';
 
 import type { SearchOptions } from '$lib/search';
 
+const MAX_UI_SEARCH_TERMS = 10;
+
 const asPositiveNumber = (value: unknown, fallback: number, max: number): number => {
 	if (typeof value !== 'number' || !Number.isFinite(value) || value <= 0) return fallback;
 	return Math.min(Math.floor(value), max);
@@ -17,12 +19,53 @@ const normalizeStringList = (value: unknown, max = 5_000): string[] =>
 
 const normalizeMatchMode = (value: unknown): 'or' | 'and' => (value === 'and' ? 'and' : 'or');
 
-export const executeTexoroSearchRequest = async (request: Request) => {
+const isObject = (value: unknown): value is Record<string, unknown> =>
+	value !== null && typeof value === 'object' && !Array.isArray(value);
+
+const isString = (value: unknown): value is string => typeof value === 'string';
+
+const isOptionalArrayOf = (value: unknown, matches: (item: unknown) => boolean): boolean =>
+	value == null || (Array.isArray(value) && value.every(matches));
+
+const isQueryValue = (value: unknown): boolean => isObject(value) && isString(value.value);
+
+const readStructuredQuery = (value: unknown): SearchOptions['structuredQuery'] => {
+	if (value == null) return undefined;
+	if (
+		!isObject(value) ||
+		!isString(value.main) ||
+		!isOptionalArrayOf(value.additionalTerms, isString) ||
+		!isOptionalArrayOf(value.proximityTerms, isQueryValue)
+	) {
+		throw error(400, 'Consulta estructurada no válida');
+	}
+	return value as unknown as SearchOptions['structuredQuery'];
+};
+
+const readStructuredClauses = (value: unknown): SearchOptions['structuredClauses'] => {
+	if (value == null) return undefined;
+	if (!Array.isArray(value) || !value.every(isQueryValue)) {
+		throw error(400, 'Condiciones de búsqueda no válidas');
+	}
+	return value;
+};
+
+export const executeTexoroSearchRequest = async (request: Request, { fromUi = false } = {}) => {
 	const body = (await request.json().catch(() => null)) as
 		| { query?: unknown; structuredQuery?: unknown; structuredClauses?: unknown; options?: Record<string, unknown> }
 		| null;
 	const query = typeof body?.query === 'string' ? body.query : '';
 	if (!query.trim()) throw error(400, 'Consulta vacia');
+	const structuredQuery = readStructuredQuery(body?.structuredQuery);
+	const structuredClauses = structuredQuery ? undefined : readStructuredClauses(body?.structuredClauses);
+	if (fromUi) {
+		const termCount = structuredQuery
+			? 1 + (structuredQuery.additionalTerms?.length ?? 0) + (structuredQuery.proximityTerms?.length ?? 0)
+			: (structuredClauses?.length ?? 0);
+		if (termCount > MAX_UI_SEARCH_TERMS) {
+			throw error(400, `La consulta admite un máximo de ${MAX_UI_SEARCH_TERMS} términos en total.`);
+		}
+	}
 
 	const rawOptions = body?.options ?? {};
 	const options: SearchOptions = {
@@ -38,13 +81,8 @@ export const executeTexoroSearchRequest = async (request: Request) => {
 		traditionalMatch: normalizeMatchMode(rawOptions.traditionalMatch),
 		stylometryAuthorIds: normalizeStringList(rawOptions.stylometryAuthorIds),
 		stylometryMatch: normalizeMatchMode(rawOptions.stylometryMatch),
-		structuredQuery:
-			body?.structuredQuery && typeof body.structuredQuery === 'object'
-				? (body.structuredQuery as SearchOptions['structuredQuery'])
-				: undefined,
-		structuredClauses: Array.isArray(body?.structuredClauses)
-			? (body.structuredClauses as SearchOptions['structuredClauses'])
-			: undefined
+		structuredQuery,
+		structuredClauses
 	};
 
 	return searchTexoro(query, options);

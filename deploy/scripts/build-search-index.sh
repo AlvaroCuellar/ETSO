@@ -15,7 +15,7 @@ if [ -f "$ENV_FILE" ]; then
 fi
 
 SEARCH_INDEX_INPUT_PATH="${SEARCH_INDEX_INPUT_PATH:-deploy/input/private-assets/texts}"
-SEARCH_INDEX_OUTPUT_PATH="${SEARCH_INDEX_OUTPUT_PATH:-deploy/input/public-assets/search}"
+SEARCH_INDEX_OUTPUT_PATH="${SEARCH_INDEX_OUTPUT_PATH:-deploy/input/private-assets/search}"
 SEARCH_INDEX_METADATA_SQLITE_PATH="${SEARCH_INDEX_METADATA_SQLITE_PATH:-deploy/input/turso/etso.sqlite}"
 SEARCH_INDEX_COMPACT="${SEARCH_INDEX_COMPACT:-true}"
 SEARCH_INDEX_NODE_MAX_OLD_SPACE_SIZE="${SEARCH_INDEX_NODE_MAX_OLD_SPACE_SIZE:-8192}"
@@ -23,6 +23,11 @@ SEARCH_INDEX_NODE_MAX_OLD_SPACE_SIZE="${SEARCH_INDEX_NODE_MAX_OLD_SPACE_SIZE:-81
 INPUT_DIR="$ROOT_DIR/$SEARCH_INDEX_INPUT_PATH"
 OUTPUT_DIR="$ROOT_DIR/$SEARCH_INDEX_OUTPUT_PATH"
 METADATA_SQLITE="$ROOT_DIR/$SEARCH_INDEX_METADATA_SQLITE_PATH"
+
+if [ "$SEARCH_INDEX_OUTPUT_PATH" != "deploy/input/private-assets/search" ]; then
+  echo "El índice TEXORO debe generarse en deploy/input/private-assets/search." >&2
+  exit 1
+fi
 
 command -v node >/dev/null || { echo "Falta node"; exit 1; }
 

@@ -21,6 +21,10 @@ const TEXORO_API_RATE_LIMIT = {
 	windowMs: 10 * 60 * 1000,
 	max: 140
 };
+const TEXORO_SEARCH_UI_RATE_LIMIT = {
+	...TEXORO_API_RATE_LIMIT,
+	name: 'texoro-search-ui'
+};
 
 const getClientRateLimitKey = (event: Parameters<Handle>[0]['event']): string => {
 	try {
@@ -124,7 +128,8 @@ const applyPublicResponseCache = (
 const checkTexoroRateLimit = (event: Parameters<Handle>[0]['event'], internalPathname: string): Response | null => {
 	if (!isTexoroDataRoute(internalPathname)) return null;
 
-	const result = checkRateLimit(getClientRateLimitKey(event), TEXORO_API_RATE_LIMIT);
+	const rule = internalPathname === '/api/texoro/search-ui' ? TEXORO_SEARCH_UI_RATE_LIMIT : TEXORO_API_RATE_LIMIT;
+	const result = checkRateLimit(getClientRateLimitKey(event), rule);
 	return result.limited ? buildRateLimitResponse(result.retryAfterSeconds) : null;
 };
 

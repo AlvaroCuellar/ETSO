@@ -318,6 +318,17 @@ export interface SearchExecution {
 	elapsedMs: number;
 }
 
+export type TexoroSearchUiWorkMeta = Omit<TexoroWorkMeta, 'id' | 'titleVariants' | 'origin' | 'shortSummary'>;
+
+export type SearchUiResult = Omit<SearchResult, 'meta'> & { meta?: TexoroSearchUiWorkMeta };
+
+export interface SearchUiExecution extends Omit<SearchExecution, 'results' | 'allResults'> {
+	results: SearchUiResult[];
+	allResults: SearchUiResult[];
+	indexVersion: string;
+	preserveEnie: boolean;
+}
+
 export type SearchBooleanMode = 'all' | 'any';
 export type AdditionalSearchMode = SearchBooleanMode | 'globalAny';
 export type SearchProximityOrder = 'any' | 'after' | 'before';

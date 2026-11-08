@@ -1,5 +1,5 @@
 import type { AttributionSet } from '$lib/domain/catalog';
-import type { SearchResult } from '$lib/search/types';
+import type { SearchUiResult } from '$lib/search/types';
 
 export type ResultSort = 'occurrences' | 'title' | 'traditional' | 'stylometry' | 'generalGenre' | 'genre' | 'state';
 export type ResultSortDirection = 'asc' | 'desc';
@@ -44,7 +44,7 @@ export const resultSortDirectionLabel = (
 	return direction === 'asc' ? 'A–Z' : 'Z–A';
 };
 
-const sumOccurrences = (result: SearchResult): number =>
+const sumOccurrences = (result: SearchUiResult): number =>
 	result.matches.reduce((sum, match) => sum + (match.occurrences ?? 0), 0);
 
 const attributionSortValue = (set: AttributionSet | undefined, collator: Intl.Collator): string | null => {
@@ -74,12 +74,12 @@ const compareOptionalText = (
 	return collator.compare(leftValue, rightValue) * (direction === 'asc' ? 1 : -1);
 };
 
-export const sortSearchResults = (
-	results: readonly SearchResult[],
+export const sortSearchResults = <Result extends SearchUiResult>(
+	results: readonly Result[],
 	sort: ResultSort,
 	direction: ResultSortDirection,
 	locale = 'es'
-): SearchResult[] => {
+): Result[] => {
 	const collator = new Intl.Collator(locale, { sensitivity: 'base', numeric: true });
 	const titleCollator = new Intl.Collator(locale, {
 		sensitivity: 'base', numeric: true, ignorePunctuation: true

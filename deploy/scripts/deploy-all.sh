@@ -74,7 +74,7 @@ fi
 
 echo "==> Paso 3/6: generacion del indice de busqueda"
 SEARCH_INPUT="$ROOT_DIR/${SEARCH_INDEX_INPUT_PATH:-deploy/input/private-assets/texts}"
-SEARCH_OUTPUT="$ROOT_DIR/${SEARCH_INDEX_OUTPUT_PATH:-deploy/input/public-assets/search}"
+SEARCH_OUTPUT="$ROOT_DIR/${SEARCH_INDEX_OUTPUT_PATH:-deploy/input/private-assets/search}"
 SEARCH_METADATA_SQLITE="$ROOT_DIR/${SEARCH_INDEX_METADATA_SQLITE_PATH:-deploy/input/turso/etso.sqlite}"
 SEARCH_CACHE_ARGS=(
   --key "search-index"
@@ -123,20 +123,21 @@ fi
 echo "==> Paso 5/6: sincronizacion R2"
 R2_CACHE_ARGS=(
   --key "r2-sync"
-  --path "$ROOT_DIR/deploy/input/public-assets/search"
+  --path "$SEARCH_OUTPUT"
   --path "$ROOT_DIR/deploy/input/public-assets/resumenes"
   --path "$ROOT_DIR/deploy/input/private-assets/texts"
   --path "$ROOT_DIR/deploy/config/r2-targets.json"
   --path "$ROOT_DIR/deploy/scripts/sync-r2.sh"
+  --path "$ROOT_DIR/deploy/scripts/build-frequency-index.mjs"
+  --path "$ROOT_DIR/src/lib/server/texoro-frequency-index.ts"
+  --path "$ROOT_DIR/src/lib/search/frequency-index.ts"
 )
+R2_ACTIVATION_PENDING=0
 if cache_check "${R2_CACHE_ARGS[@]}" >/dev/null; then
   echo "==> R2 sin cambios: se omite sincronizacion"
 else
-  bash "$ROOT_DIR/deploy/scripts/sync-r2.sh"
-  if [ "${DRY_RUN:-false}" != "true" ]; then
-    cache_mark "${R2_CACHE_ARGS[@]}"
-    DEPLOY_CHANGED=1
-  fi
+  bash "$ROOT_DIR/deploy/scripts/sync-r2.sh" stage
+  R2_ACTIVATION_PENDING=1
 fi
 
 echo "==> Paso 6/6: sincronizacion Turso"
@@ -172,6 +173,14 @@ else
     fi
   fi
   cache_mark "${TURSO_CACHE_ARGS[@]}"
+fi
+
+if [ "$R2_ACTIVATION_PENDING" -eq 1 ]; then
+  bash "$ROOT_DIR/deploy/scripts/sync-r2.sh" activate
+  if [ "${DRY_RUN:-false}" != "true" ]; then
+    cache_mark "${R2_CACHE_ARGS[@]}"
+    DEPLOY_CHANGED=1
+  fi
 fi
 
 if [ "$DEPLOY_CHANGED" -eq 0 ]; then

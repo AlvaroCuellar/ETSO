@@ -25,9 +25,6 @@ export const getPublicR2BaseUrl = (): string => {
 	return baseUrl;
 };
 
-export const getTexoroIndexBaseUrl = (): string =>
-	stripTrailingSlash(publicEnv.PUBLIC_TEXORO_INDEX_BASE_URL || joinUrl(getPublicR2BaseUrl(), 'search'));
-
 export const getSummariesBaseUrl = (): string =>
 	stripTrailingSlash(publicEnv.PUBLIC_SUMMARIES_BASE_URL || joinUrl(getPublicR2BaseUrl(), 'resumenes'));
 

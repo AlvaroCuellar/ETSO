@@ -125,9 +125,19 @@ const uniqueTextPrefixes = (preferredPrefix: string): string[] => {
 	return Array.from(new Set(prefixes));
 };
 
-const signedR2Get = async (key: string, range?: string): Promise<Response> => {
-	const { accountId, accessKeyId, secretAccessKey, bucket } = assertR2Config();
-	const host = `${accountId}.r2.cloudflarestorage.com`;
+interface PrivateR2Credentials {
+	accountId: string;
+	accessKeyId: string;
+	secretAccessKey: string;
+	bucket: string;
+	host?: string;
+}
+
+export const readPrivateR2Object = async (
+	{ accountId, accessKeyId, secretAccessKey, bucket, host = `${accountId}.r2.cloudflarestorage.com` }: PrivateR2Credentials,
+	key: string,
+	range?: string
+): Promise<Response> => {
 	const canonicalUri = `/${encodeRfc3986(bucket)}/${encodePath(key)}`;
 	const { amzDate, dateStamp } = toAmzDate(new Date());
 	const credentialScope = `${dateStamp}/${R2_REGION}/${R2_SERVICE}/aws4_request`;
@@ -161,6 +171,9 @@ const signedR2Get = async (key: string, range?: string): Promise<Response> => {
 		headers
 	});
 };
+
+const signedR2Get = (key: string, range?: string): Promise<Response> =>
+	readPrivateR2Object(assertR2Config(), key, range);
 
 const loadPrivateTextByFileName = async (fileName: string): Promise<string | null> => {
 	const { textPrefix } = assertR2Config();

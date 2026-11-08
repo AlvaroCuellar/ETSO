@@ -1,5 +1,6 @@
 import { limitOccurrenceContext } from './limit-occurrence-context';
 import { IndexedDbCache } from './idb-cache';
+import { isFrequencyIndexFile } from './frequency-index';
 import { buildSnippet, normalizePattern, normalizePlainText, tokenizeWithOffsets } from './normalize';
 import {
 	assignDistinctProximitySpans,
@@ -34,11 +35,14 @@ import type {
 
 interface SearchEngineConfig {
 	indexBaseUrl?: string;
+	indexLoader?: (relativePath: string, indexVersion: string | null) => Promise<unknown>;
+	frequencyOnly?: boolean;
 	textsBaseUrl?: string;
 	textLoader?: (textKey: string) => Promise<string | null>;
 	preserveEnie?: boolean;
 	cacheInIndexedDb?: boolean;
 	preparedTextCacheMaxDocs?: number;
+	shardCacheMaxBytes?: number;
 }
 
 interface MatchOccurrencesOptions {
@@ -505,10 +509,13 @@ const buildSnippetWithHighlights = (
 	}
 	snippet += suffix;
 
-	return {
-		snippet,
-		highlights: localHighlights.filter((highlight) => highlight.start >= 0 && highlight.end > highlight.start)
-	};
+	return limitOccurrenceContext(
+		{
+			snippet,
+			highlights: localHighlights.filter((highlight) => highlight.start >= 0 && highlight.end > highlight.start)
+		},
+		null
+	);
 };
 
 const rangeIntersectsPrefix = (termMin: string, termMax: string, prefix: string): boolean => {
@@ -564,14 +571,62 @@ const runWithConcurrency = async <T>(
 	);
 };
 
+const DEFAULT_SERVER_SHARD_CACHE_BYTES = 128 * 1024 * 1024;
+const MAX_PATTERN_CACHE_BYTES = 8 * 1024 * 1024;
+
+class WeightedLruCache<Value> {
+	readonly #entries = new Map<string, { value: Value; bytes: number }>();
+	readonly #budgetBytes: number;
+	#totalBytes = 0;
+
+	constructor(budgetBytes: number) {
+		this.#budgetBytes = budgetBytes;
+	}
+
+	get(key: string): Value | undefined {
+		const entry = this.#entries.get(key);
+		if (entry && this.#budgetBytes !== Infinity) {
+			this.#entries.delete(key);
+			this.#entries.set(key, entry);
+		}
+		return entry?.value;
+	}
+
+	set(key: string, value: Value, bytes: number): void {
+		if (this.#budgetBytes === Infinity) {
+			this.#entries.set(key, { value, bytes: 0 });
+			return;
+		}
+		if (!Number.isFinite(bytes) || bytes <= 0 || bytes > this.#budgetBytes) return;
+		const previous = this.#entries.get(key);
+		if (previous) {
+			this.#entries.delete(key);
+			this.#totalBytes -= previous.bytes;
+		}
+		for (const [oldest, entry] of this.#entries) {
+			if (this.#totalBytes + bytes <= this.#budgetBytes) break;
+			this.#entries.delete(oldest);
+			this.#totalBytes -= entry.bytes;
+		}
+		this.#entries.set(key, { value, bytes });
+		this.#totalBytes += bytes;
+	}
+}
+
+type PostingsMap = Map<number, Array<[number, number]>>;
+type PositionsMap = Map<number, TexoroPositionsDoc[]>;
+type OtherIndexShard = TexoroVocabShard | TexoroKgramShard | PostingsMap;
+
 export class TexoroSearchEngine {
 	readonly #indexBaseUrl: string;
+	readonly #indexLoader?: SearchEngineConfig['indexLoader'];
+	readonly #frequencyOnly: boolean;
 	readonly #textsBaseUrl: string;
 	readonly #textLoader?: (textKey: string) => Promise<string | null>;
 	readonly #preserveEnie: boolean;
 	readonly #cacheInIndexedDb: boolean;
 	readonly #preparedTextCacheMaxDocs: number;
-	readonly #cache = new IndexedDbCache();
+	readonly #cache: IndexedDbCache;
 
 	#initialized = false;
 	#manifest: TexoroIndexManifest | null = null;
@@ -580,18 +635,16 @@ export class TexoroSearchEngine {
 	#kgramsRoot: TexoroKgramsRoot | null = null;
 	#wildcardLengths: TexoroWildcardLengths | null = null;
 
-	#vocabShards = new Map<string, TexoroVocabShard>();
-	#kgramShards = new Map<string, TexoroKgramShard>();
-	#postingsShards = new Map<string, Map<number, Array<[number, number]>>>();
-	#positionsShards = new Map<string, Map<number, TexoroPositionsDoc[]>>();
+	readonly #otherIndexShards: WeightedLruCache<OtherIndexShard>;
+	readonly #positionsShards: WeightedLruCache<PositionsMap>;
 	#termMetaById = new Map<number, TermMeta>();
-	#patternTermIds = new Map<string, number[]>();
+	readonly #patternTermIds: WeightedLruCache<number[]>;
 	#preparedTexts = new Map<number, PreparedText>();
 	#preparedTextLoads = new Map<number, Promise<PreparedText | null>>();
 	#vocabShardLoads = new Map<string, Promise<TexoroVocabShard>>();
 	#kgramShardLoads = new Map<string, Promise<TexoroKgramShard>>();
-	#postingsShardLoads = new Map<string, Promise<Map<number, Array<[number, number]>>>>();
-	#positionsShardLoads = new Map<string, Promise<Map<number, TexoroPositionsDoc[]>>>();
+	#postingsShardLoads = new Map<string, Promise<PostingsMap>>();
+	#positionsShardLoads = new Map<string, Promise<PositionsMap>>();
 	#firstSearchWarmupPromise: Promise<void> | null = null;
 	#wildcardWarmupPromise: Promise<void> | null = null;
 	#wildcardSupportPromise: Promise<void> | null = null;
@@ -607,11 +660,25 @@ export class TexoroSearchEngine {
 
 	constructor(config: SearchEngineConfig = {}) {
 		this.#indexBaseUrl = stripTrailingSlash(config.indexBaseUrl || '');
+		this.#indexLoader = config.indexLoader;
+		this.#frequencyOnly = config.frequencyOnly === true;
+		this.#cache = new IndexedDbCache(this.#frequencyOnly ? 'etso-texoro-frequencies' : undefined);
 		this.#textsBaseUrl = stripTrailingSlash(config.textsBaseUrl || '');
 		this.#textLoader = config.textLoader;
 		this.#preserveEnie = config.preserveEnie ?? true;
 		this.#cacheInIndexedDb = config.cacheInIndexedDb ?? true;
 		this.#preparedTextCacheMaxDocs = Math.max(1, Math.floor(config.preparedTextCacheMaxDocs ?? 64));
+		const defaultBudget = config.indexLoader ? DEFAULT_SERVER_SHARD_CACHE_BYTES : Infinity;
+		const configuredBudget = config.shardCacheMaxBytes;
+		const budget = configuredBudget !== undefined && Number.isFinite(configuredBudget)
+			? Math.max(0, Math.floor(configuredBudget))
+			: defaultBudget;
+		// A burst of large positional loads must not evict the hot vocabulary and frequencies.
+		this.#positionsShards = new WeightedLruCache(Math.floor(budget * 0.75));
+		this.#otherIndexShards = new WeightedLruCache(Math.floor(budget * 0.25));
+		this.#patternTermIds = new WeightedLruCache(
+			budget === Infinity ? Infinity : Math.min(MAX_PATTERN_CACHE_BYTES, Math.floor(budget / 16))
+		);
 	}
 
 	get manifest(): TexoroIndexManifest | null {
@@ -744,13 +811,16 @@ export class TexoroSearchEngine {
 
 	async initialize(): Promise<void> {
 		if (this.#initialized) return;
-		if (!this.#indexBaseUrl) {
+		if (!this.#indexBaseUrl && !this.#indexLoader) {
 			throw new Error(
 				'Falta PUBLIC_R2_PUBLIC_ASSETS_BASE_URL o PUBLIC_TEXORO_INDEX_BASE_URL para inicializar TEXORO.'
 			);
 		}
 
 		const manifest = await this.#fetchJson<TexoroIndexManifest>('manifest.json', null);
+		if (this.#frequencyOnly && (manifest.features?.positions !== false || manifest.shards.positions?.length)) {
+			throw new Error('El navegador requiere un índice de TEXORO sin posiciones.');
+		}
 		this.#manifest = manifest;
 
 		if (this.#cacheInIndexedDb) {
@@ -1484,6 +1554,7 @@ export class TexoroSearchEngine {
 	}
 
 	async #getPreparedText(docId: number): Promise<PreparedText | null> {
+		if (this.#frequencyOnly) throw new Error('El índice de frecuencias no admite acceso al texto.');
 		const memory = this.#preparedTexts.get(docId);
 		if (memory) return memory;
 		const pending = this.#preparedTextLoads.get(docId);
@@ -1867,7 +1938,7 @@ export class TexoroSearchEngine {
 
 		const normalizedPattern = normalizePattern(pattern, this.#preserveEnie);
 		if (!normalizedPattern) {
-			this.#patternTermIds.set(pattern, []);
+			this.#patternTermIds.set(pattern, [], 64 + 2 * pattern.length);
 			return [];
 		}
 
@@ -1875,7 +1946,7 @@ export class TexoroSearchEngine {
 			? await this.#resolveWildcardPattern(normalizedPattern)
 			: await this.#resolveExactPattern(normalizedPattern);
 
-		this.#patternTermIds.set(pattern, termIds);
+		this.#patternTermIds.set(pattern, termIds, 64 + 2 * pattern.length + 8 * termIds.length);
 		return termIds;
 	}
 
@@ -1909,7 +1980,6 @@ export class TexoroSearchEngine {
 			for (const gram of requiredKgrams) {
 				const ids = await this.#getTermIdsForKgram(gram);
 				if (ids.length === 0) {
-					this.#patternTermIds.set(pattern, []);
 					return [];
 				}
 				gramCandidates.push(ids);
@@ -2037,6 +2107,7 @@ export class TexoroSearchEngine {
 	}
 
 	async #getPositionsForTerm(termId: number): Promise<TexoroPositionsDoc[]> {
+		if (this.#frequencyOnly) throw new Error('La consulta requiere el índice privado de posiciones.');
 		const term = await this.#getTermMeta(termId);
 		if (!term?.positionsShard) return [];
 		const shardMap = await this.#loadPositionsShard(term.positionsShard);
@@ -2044,7 +2115,8 @@ export class TexoroSearchEngine {
 	}
 
 	async #loadVocabShard(shardId: string): Promise<TexoroVocabShard> {
-		const cached = this.#vocabShards.get(shardId);
+		const cacheKey = `vocab:${shardId}`;
+		const cached = this.#otherIndexShards.get(cacheKey) as TexoroVocabShard | undefined;
 		if (cached) return cached;
 		const pending = this.#vocabShardLoads.get(shardId);
 		if (pending) return pending;
@@ -2054,7 +2126,7 @@ export class TexoroSearchEngine {
 		}
 		const loadPromise = (async () => {
 			const shard = await this.#fetchJson<TexoroVocabShard>(shardMeta.file, this.#manifest?.indexVersion ?? null);
-			this.#vocabShards.set(shardId, shard);
+			this.#otherIndexShards.set(cacheKey, shard, shardMeta.estimatedBytes);
 			return shard;
 		})();
 		this.#vocabShardLoads.set(shardId, loadPromise);
@@ -2066,7 +2138,8 @@ export class TexoroSearchEngine {
 	}
 
 	async #loadKgramShard(shardId: string): Promise<TexoroKgramShard> {
-		const cached = this.#kgramShards.get(shardId);
+		const cacheKey = `kgram:${shardId}`;
+		const cached = this.#otherIndexShards.get(cacheKey) as TexoroKgramShard | undefined;
 		if (cached) return cached;
 		const pending = this.#kgramShardLoads.get(shardId);
 		if (pending) return pending;
@@ -2076,7 +2149,7 @@ export class TexoroSearchEngine {
 		}
 		const loadPromise = (async () => {
 			const shard = await this.#fetchJson<TexoroKgramShard>(shardMeta.file, this.#manifest?.indexVersion ?? null);
-			this.#kgramShards.set(shardId, shard);
+			this.#otherIndexShards.set(cacheKey, shard, shardMeta.estimatedBytes);
 			return shard;
 		})();
 		this.#kgramShardLoads.set(shardId, loadPromise);
@@ -2087,8 +2160,9 @@ export class TexoroSearchEngine {
 		}
 	}
 
-	async #loadPostingsShard(shardId: string): Promise<Map<number, Array<[number, number]>>> {
-		const cached = this.#postingsShards.get(shardId);
+	async #loadPostingsShard(shardId: string): Promise<PostingsMap> {
+		const cacheKey = `postings:${shardId}`;
+		const cached = this.#otherIndexShards.get(cacheKey) as PostingsMap | undefined;
 		if (cached) return cached;
 		const pending = this.#postingsShardLoads.get(shardId);
 		if (pending) return pending;
@@ -2099,7 +2173,7 @@ export class TexoroSearchEngine {
 		const loadPromise = (async () => {
 			const shard = await this.#fetchJson<TexoroPostingsShard>(shardMeta.file, this.#manifest?.indexVersion ?? null);
 			const map = new Map<number, Array<[number, number]>>(shard.postings);
-			this.#postingsShards.set(shardId, map);
+			this.#otherIndexShards.set(cacheKey, map, shardMeta.estimatedBytes);
 			return map;
 		})();
 		this.#postingsShardLoads.set(shardId, loadPromise);
@@ -2110,7 +2184,7 @@ export class TexoroSearchEngine {
 		}
 	}
 
-	async #loadPositionsShard(shardId: string): Promise<Map<number, TexoroPositionsDoc[]>> {
+	async #loadPositionsShard(shardId: string): Promise<PositionsMap> {
 		const cached = this.#positionsShards.get(shardId);
 		if (cached) return cached;
 		const pending = this.#positionsShardLoads.get(shardId);
@@ -2122,7 +2196,7 @@ export class TexoroSearchEngine {
 		const loadPromise = (async () => {
 			const shard = await this.#fetchJson<TexoroPositionsShard>(shardMeta.file, this.#manifest?.indexVersion ?? null);
 			const map = new Map<number, TexoroPositionsDoc[]>(shard.positions);
-			this.#positionsShards.set(shardId, map);
+			this.#positionsShards.set(shardId, map, shardMeta.estimatedBytes);
 			this.#positionsShardLoadCount += 1;
 			return map;
 		})();
@@ -2179,6 +2253,9 @@ export class TexoroSearchEngine {
 	}
 
 	async #fetchJson<T>(relativePath: string, indexVersion: string | null): Promise<T> {
+		if (this.#frequencyOnly && !isFrequencyIndexFile(relativePath)) {
+			throw new Error('Archivo fuera del índice público de frecuencias de TEXORO.');
+		}
 		const cacheKey = `json:${relativePath}`;
 		if (indexVersion && this.#cacheInIndexedDb) {
 			const cached = await this.#cache.getJson<T>(cacheKey, indexVersion);
@@ -2188,6 +2265,7 @@ export class TexoroSearchEngine {
 		const isManifest = relativePath === 'manifest.json';
 		const requestUrl = joinUrl(this.#indexBaseUrl, relativePath);
 		const fetchJsonFromUrl = async (url: string, init?: RequestInit): Promise<T> => {
+			if (this.#indexLoader) return (await this.#indexLoader(relativePath, indexVersion)) as T;
 			const response = await fetch(url, init);
 			if (!response.ok) {
 				throw new Error(`Unable to fetch ${relativePath}: ${response.status}`);

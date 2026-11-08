@@ -7,7 +7,7 @@ import { getPublicR2BaseUrl } from '$lib/server/r2-public';
 
 import type { RequestHandler } from './$types';
 
-const PUBLIC_PREFIXES = new Set(['resumenes', 'search', 'facsimiles']);
+const PUBLIC_PREFIXES = new Set(['resumenes', 'facsimiles']);
 const LOCAL_PUBLIC_ASSETS_DIR = resolve(process.cwd(), 'deploy', 'input', 'public-assets');
 
 const stripTrailingSlash = (value: string): string => value.replace(/\/+$/, '');
@@ -27,9 +27,10 @@ const contentTypeForPath = (path: string): string => {
 const resolvePublicPath = (rawPath: string): string => {
 	const decoded = decodeURIComponent(rawPath).replace(/^\/+/, '');
 	const parts = decoded.split('/').filter(Boolean);
-	if (parts.length < 2 || !PUBLIC_PREFIXES.has(parts[0]) || parts.some((part) => part === '..')) {
+	if (parts.length < 2 || parts.some((part) => part === '..' || part.includes('\\'))) {
 		throw error(400, 'Ruta publica R2 invalida');
 	}
+	if (!PUBLIC_PREFIXES.has(parts[0])) throw error(404, 'Artefacto publico R2 no encontrado');
 	return parts.join('/');
 };
 

@@ -25,7 +25,7 @@ test('short verses preserve their line breaks and punctuation unchanged', () => 
 });
 
 test('a proximity match spanning many words remains complete with both highlights', () => {
- const middle = 'primero ' + words(120) + ' último';
+ const middle = 'primero ' + words(25) + ' último';
  const value = sample(words(60) + '\n', middle, '\n' + words(60));
  value.highlights = [
   { start: value.highlights[0].start, end: value.highlights[0].start + 7, tokenIndex: 0 },
@@ -34,6 +34,42 @@ test('a proximity match spanning many words remains complete with both highlight
  const result = limitOccurrenceContext(value);
  assert.ok(result.snippet.includes(middle));
  assert.deepEqual(result.highlights!.map(h => result.snippet.slice(h.start, h.end)), ['primero', 'último']);
+});
+
+test('an oversized proximity omits the middle while retaining both endpoint highlights', () => {
+ const match = 'primero ' + words(160) + ' último';
+ const value = sample('Verso anterior.\n', match, '\nVerso posterior.');
+ const hit = value.highlights[0];
+ value.highlights = [
+  { start: hit.start, end: hit.start + 7, tokenIndex: 1 },
+  { start: hit.end - 6, end: hit.end, tokenIndex: 162 }
+ ];
+ const result = limitOccurrenceContext(value);
+ assert.ok(result.snippet.length <= 800);
+ assert.ok(result.snippet.includes('\n…\n'));
+ assert.deepEqual(result.highlights!.map(h => result.snippet.slice(h.start, h.end)), ['primero', 'último']);
+ assert.deepEqual(result.highlights!.map(h => h.tokenIndex), [1, 162]);
+});
+
+test('the highlighted phrase itself is capped in both context modes', () => {
+ const phrase = Array.from({ length: 160 }, (_, index) => `término${index}`).join(' ');
+ const value = sample('', phrase, '');
+ for (const wordsPerSide of [40, null]) {
+  const result = limitOccurrenceContext(value, wordsPerSide);
+  assert.ok(result.snippet.length <= 800);
+  assert.ok(result.snippet.includes('…'));
+  assert.ok(result.snippet.startsWith('término0 '));
+  assert.ok(result.snippet.endsWith(' término159'));
+  assert.equal(result.highlights!.length, 2);
+  assert.ok(result.highlights!.every(h => !result.snippet.slice(h.start, h.end).includes('…')));
+ }
+});
+
+test('ordinary character snippets are unchanged, and truncation does not split Unicode pairs', () => {
+ const value = sample('Antes ', 'palabra', ' después.');
+ assert.equal(limitOccurrenceContext(value, null), value);
+ const long = sample('', '😀'.repeat(500), '');
+ assert.ok(limitOccurrenceContext(long, null).snippet.isWellFormed());
 });
 
 test('beginning and end of a work do not acquire a false omission marker', () => {

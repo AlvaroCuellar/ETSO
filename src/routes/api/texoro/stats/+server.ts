@@ -3,8 +3,8 @@ import { getTexoroStats } from '$lib/server/texoro-runtime';
 
 import type { RequestHandler } from './$types';
 
-export const GET: RequestHandler = async ({ fetch }) => {
-	const stats = await getTexoroStats(fetch);
+export const GET: RequestHandler = async () => {
+	const stats = await getTexoroStats();
 
 	return json(stats, {
 		headers: {

@@ -1,10 +1,17 @@
 [
   {
     "name": "search",
-    "local": "deploy/input/public-assets/search",
+    "local": "deploy/input/private-assets/search",
+    "bucket": "etso-textos",
+    "prefix": "texoro-search",
+    "delete": false
+  },
+  {
+    "name": "frecuencias",
+    "local": "deploy/input/public-assets/search-frequencies",
     "bucket": "etso-public-assets",
-    "prefix": "search",
-    "delete": true
+    "prefix": "search-frequencies",
+    "delete": false
   },
   {
     "name": "resumenes",

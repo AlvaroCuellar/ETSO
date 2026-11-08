@@ -8,7 +8,7 @@ const compile = (source) => ts.transpileModule(source, {
 }).outputText;
 const serverSource = await readFile(new URL('../src/lib/server/texoro-runtime.ts', import.meta.url), 'utf8');
 const serverFunction = serverSource.slice(serverSource.indexOf('export const getServerTexoroEngine'));
-const catalogueRefresh = serverSource.slice(serverSource.indexOf('let refreshedCatalogIndexVersion'), serverSource.indexOf('const stripTrailingSlash'));
+const catalogueRefresh = serverSource.slice(serverSource.indexOf('let refreshedCatalogIndexVersion'), serverSource.indexOf('export const toTexoroWorkMeta'));
 const metadataFunction = serverSource.slice(serverSource.indexOf('export const getTexoroWorkMeta'), serverSource.indexOf('export const getTexoroOptions'));
 const checkInterval = serverSource.match(/const ENGINE_VERSION_CHECK_MS = ([\d_]+);/)[1];
 const serverFactory = compile(`let engine = null; let enginePromise = null; let engineVersionCheckedAt = 0;
@@ -19,7 +19,12 @@ ${metadataFunction}
 ${serverFunction}`);
 
 const serverFixture = () => {
-  const state = { now: 1000, version: 'v1', creations: 0, initializations: 0, manifestLoads: 0, failInitialize: false, failCatalogRefresh: false, catalogReads: 0, textCacheClears: 0, publishedWorks: [{id:'one'}], snapshotWorks: [{id:'one'}] };
+  const state = { now: 1000, version: 'v1', creations: 0, initializations: 0, manifestLoads: 0, searches: 0, failInitialize: false, failCatalogRefresh: false, catalogReads: 0, textCacheClears: 0, publishedWorks: [{id:'one'}], snapshotWorks: [{id:'one'}] };
+  const makeManifest = () => ({
+    indexVersion: state.version,
+    normalization: { preserveEnie: state.version === 'v1' },
+    stats: { works: state.publishedWorks.length }
+  });
   class Engine {
     manifest = null;
     constructor() { state.creations++; }
@@ -27,16 +32,23 @@ const serverFixture = () => {
       state.initializations++;
       await Promise.resolve();
       if (state.failInitialize) throw new Error('publication incomplete');
-      this.manifest = { indexVersion: state.version };
+      this.manifest = makeManifest();
     }
-    async search(query, metadata) { return Array.from(metadata.keys()); }
+    async search(query, metadata, options) {
+      state.searches++;
+      const results = Array.from(metadata.keys());
+      return {
+        results,
+        allResults: results.map((workId) => ({ workId, snippet: options.includeSnippets ? 'texto' : undefined })),
+        elapsedMs: 12
+      };
+    }
   }
   const exports = {};
-  new Function('exports', 'Date', 'TexoroSearchEngine', 'fetchIndexManifest', 'globalThis', 'getTexoroIndexBaseUrl', 'readPrivateTextByTextKey', 'process', 'refreshCatalogSnapshot', 'getAllWorks', 'toTexoroWorkMeta', 'buildWorkMetaMap', 'clearPrivateTextCache', serverFactory)(
+  new Function('exports', 'Date', 'TexoroSearchEngine', 'fetchIndexManifest', 'readPrivateTexoroIndexJson', 'readPrivateTextByTextKey', 'process', 'refreshCatalogSnapshot', 'getAllWorks', 'toTexoroWorkMeta', 'buildWorkMetaMap', 'clearPrivateTextCache', serverFactory)(
     exports, { now: () => state.now }, Engine,
-    async () => { state.manifestLoads++; await Promise.resolve(); return { indexVersion: state.version, stats: { works: state.publishedWorks.length } }; },
-    { fetch: () => { throw new Error('No network allowed'); } },
-    () => 'https://test.invalid/search', () => {}, { env: {} },
+    async () => { state.manifestLoads++; await Promise.resolve(); return makeManifest(); },
+    async () => { throw new Error('No index access allowed'); }, () => {}, { env: {} },
     async () => { state.catalogReads++; await Promise.resolve(); if (state.failCatalogRefresh) throw new Error('Turso temporarily unavailable'); state.snapshotWorks = state.publishedWorks.slice(); },
     async () => state.snapshotWorks, (work) => work, (works) => new Map(works.map((w) => [w.id, w])), () => { state.textCacheClears++; }
   );
@@ -77,6 +89,43 @@ test('failed server refresh releases its promise for the next request', async ()
   await assert.rejects(get(), /publication incomplete/);
   state.failInitialize = false;
   assert.equal((await get()).manifest.indexVersion, 'v2');
+});
+
+test('exact search reuse expires and follows catalogue snapshots and index versions', async () => {
+  const { state, search } = serverFixture();
+  assert.equal((await search('amor')).elapsedMs, 12);
+  assert.equal((await search('amor')).elapsedMs, 0);
+  assert.equal((await search('amor', { genres: ['Comedia'] })).elapsedMs, 12);
+  assert.equal(state.searches, 2);
+
+  state.now += 20_001;
+  assert.equal((await search('amor')).elapsedMs, 12);
+  state.snapshotWorks = [{ id: 'two' }];
+  assert.deepEqual((await search('amor')).results, ['two']);
+
+  state.now = 60_999;
+  assert.equal((await search('amor')).indexVersion, 'v1');
+  assert.equal((await search('amor')).elapsedMs, 0);
+  state.version = 'v2';
+  state.publishedWorks = [{ id: 'three' }];
+  state.now++;
+  const refreshed = await search('amor');
+  assert.equal(refreshed.indexVersion, 'v2');
+  assert.deepEqual(refreshed.results, ['three']);
+  assert.equal(refreshed.elapsedMs, 12);
+});
+
+test('responses with text snippets and broad result lists bypass response caching', async () => {
+  const narrow = serverFixture();
+  await narrow.search('amor', { includeSnippets: true });
+  await narrow.search('amor', { includeSnippets: true });
+  assert.equal(narrow.state.searches, 2);
+
+  const broad = serverFixture();
+  broad.state.publishedWorks = Array.from({ length: 97 }, (_, index) => ({ id: String(index) }));
+  assert.equal((await broad.search('amor')).allResults.length, 97);
+  await broad.search('amor');
+  assert.equal(broad.state.searches, 2);
 });
 
 const clientSource = await readFile(new URL('../src/lib/search/texoro-client-worker.ts', import.meta.url), 'utf8');
@@ -161,7 +210,8 @@ test('new-version search waits for one shared catalogue refresh and includes the
   state.publishedWorks = [{ id: 'one' }, { id: 'two' }];
   state.now += 60_000;
   const results = await Promise.all([search('amor'), search('muerte')]);
-  assert.ok(results.every((ids) => ids.includes('two')));
+  assert.ok(results.every((result) => result.results.includes('two')));
+  assert.ok(results.every((result) => result.indexVersion === 'v2' && result.preserveEnie === false));
   assert.equal(state.catalogReads, 2);
   assert.deepEqual(await metadata(), state.publishedWorks);
   state.now += 60_000;
@@ -221,7 +271,7 @@ test('first server engine refreshes a catalogue loaded before publication by ano
   state.version = 'v2';
   state.publishedWorks = [{id:'two'}];
   const results = await Promise.all([search('amor'),search('muerte')]);
-  assert.ok(results.every((ids) => ids.length === 1 && ids[0] === 'two'));
+  assert.ok(results.every((result) => result.results.length === 1 && result.results[0] === 'two'));
   assert.deepEqual(await metadata(), [{id:'two'}]);
   assert.equal(state.catalogReads, 1);
   assert.equal(state.textCacheClears, 1);

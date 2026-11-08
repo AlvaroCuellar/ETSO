@@ -162,7 +162,21 @@ contenido de esa carpeta en su cache: un cambio solo de imagen tambien obliga a
 ejecutar el Deploy Hook de Vercel.
 
 El Ã­ndice de bÃºsqueda se genera automÃ¡ticamente desde los TXT en:
-`deploy/input/public-assets/search/`.
+`deploy/input/private-assets/search/`.
+
+`sync-r2.sh stage-index` prepara solo el índice privado y la proyección pública
+de frecuencias. Cada conjunto se sube a `releases/<indexVersion>/` y su
+manifiesto se escribe al final. El prefijo `texoro-search/` de `etso-textos`
+queda excluido de la sincronización de TXT. La web elige la versión pública a
+partir de la versión activa del índice privado.
+
+En un despliegue de corpus, `deploy-all.sh` activa el manifiesto privado tras
+sincronizar Turso. Para recuperar un índice previamente publicado y compatible
+con los TXT y el catálogo activos, usar `sync-r2.sh activate <indexVersion>`.
+Este comando no modifica los archivos de una versión anterior ni el bucket
+público. Para recuperar una compilación de la web, usar un despliegue de Vercel
+que siga leyendo el índice privado. Los sincronizadores anteriores a esta
+protección del prefijo no deben usarse contra `etso-textos`.
 
 El indice de busqueda de resumenes se genera automaticamente desde:
 

@@ -1,4 +1,5 @@
 import { TexoroSearchEngine, buildWorkMetaMap } from '$lib/search';
+import { canSearchWithFrequencies } from '$lib/search/frequency-query';
 
 import type { SearchOptions, TexoroWorkMeta } from '$lib/search';
 import type { TexoroWorkerRequest, TexoroWorkerResponse } from '$lib/search/worker-protocol';
@@ -21,6 +22,7 @@ const handleRequest = async (request: TexoroWorkerRequest): Promise<void> => {
 	if (request.action === 'init') {
 		engine = new TexoroSearchEngine({
 			indexBaseUrl: request.indexBaseUrl,
+			frequencyOnly: true,
 			cacheInIndexedDb: true
 		});
 		workMetaById = buildWorkMetaMap(request.worksMeta);
@@ -50,15 +52,20 @@ const handleRequest = async (request: TexoroWorkerRequest): Promise<void> => {
 		return;
 	}
 
+	const structuredQuery = request.structuredQuery ?? request.options?.structuredQuery;
+	if (!structuredQuery || !canSearchWithFrequencies(
+		structuredQuery,
+		request.options?.traditionalAuthorIds ?? [],
+		searchEngine.manifest?.normalization.preserveEnie
+	)) {
+		throw new Error('La consulta no se puede resolver con el índice público de frecuencias.');
+	}
 	if (request.action === 'prime') {
 		await Promise.all([
 			searchEngine.primeQuery(request.query, {
 				...(request.options ?? {}),
-				structuredQuery: request.structuredQuery,
-				structuredClauses: request.structuredClauses,
-				prefetchTexts: request.prefetchTexts,
-				textLimit: request.textLimit,
-				workMetaById
+				structuredQuery,
+				prefetchTexts: false
 			}),
 			request.wildcard ? searchEngine.warmupWildcardSupport() : Promise.resolve()
 		]);
@@ -68,8 +75,8 @@ const handleRequest = async (request: TexoroWorkerRequest): Promise<void> => {
 
 	const options: SearchOptions = {
 		...(request.options ?? {}),
-		structuredQuery: request.structuredQuery ?? request.options?.structuredQuery,
-		structuredClauses: request.structuredClauses ?? request.options?.structuredClauses
+		structuredQuery,
+		includeSnippets: false
 	};
 	const execution = await searchEngine.search(request.query, workMetaById, options);
 	postResponse({

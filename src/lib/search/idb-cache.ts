@@ -10,11 +10,11 @@ const DB_VERSION = 1;
 const JSON_STORE = 'json';
 const TEXT_STORE = 'texts';
 
-const openDatabase = async (): Promise<IDBDatabase | null> => {
+const openDatabase = async (name: string): Promise<IDBDatabase | null> => {
 	if (typeof indexedDB === 'undefined') return null;
 
 	return new Promise((resolve, reject) => {
-		const request = indexedDB.open(DB_NAME, DB_VERSION);
+		const request = indexedDB.open(name, DB_VERSION);
 		request.onerror = () => reject(request.error ?? new Error('IndexedDB open error'));
 		request.onupgradeneeded = () => {
 			const db = request.result;
@@ -39,8 +39,8 @@ const txDone = async (tx: IDBTransaction): Promise<void> =>
 export class IndexedDbCache {
 	#dbPromise: Promise<IDBDatabase | null>;
 
-	constructor() {
-		this.#dbPromise = openDatabase();
+	constructor(name = DB_NAME) {
+		this.#dbPromise = openDatabase(name);
 	}
 
 	async getJson<T>(key: string, indexVersion: string): Promise<T | null> {

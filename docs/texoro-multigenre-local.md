@@ -142,7 +142,7 @@ LOCAL_CATALOG_ONLY=true \
   LOCAL_TEXORO_TEXTS_PATH="$PWD/.local/texoro-multigenre/texts" \
   LOCAL_TEXORO_INDEX_PATH="$PWD/.local/texoro-multigenre/search" \
   LOCAL_TEXORO_SUMMARIES_PATH="$PWD/.local/texoro-multigenre/resumenes" \
-  PUBLIC_TEXORO_INDEX_BASE_URL=http://127.0.0.1:5174/api/local-texoro/index \
+  PUBLIC_TEXORO_FREQUENCY_INDEX_BASE_URL=http://127.0.0.1:5174/api/local-texoro/frequencies \
   npm run dev -- --host 127.0.0.1 --port 5174 --strictPort
 ```
 

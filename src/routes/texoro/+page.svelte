@@ -42,13 +42,7 @@
 	import X from 'lucide-svelte/icons/x';
 
 	import { normalizePattern, normalizePlainText } from '$lib/search';
-	import {
-		resultSortDirectionLabel,
-		resultSortLabel,
-		sortSearchResults,
-		type ResultSort,
-		type ResultSortDirection
-	} from '$lib/search/result-sort';
+	import { canSearchWithFrequencies } from '$lib/search/frequency-query';
 	import {
 		getTexoroClientWorkerManifest,
 		initializeTexoroClientWorker,
@@ -57,20 +51,28 @@
 		requestTexoroClientWorker,
 		terminateTexoroClientWorker
 	} from '$lib/search/texoro-client-worker';
-
+	import {
+		resultSortDirectionLabel,
+		resultSortLabel,
+		sortSearchResults,
+		type ResultSort,
+		type ResultSortDirection
+	} from '$lib/search/result-sort';
 	import type {
 		AdditionalSearchMode,
 		SearchExecution,
 		SearchMatchOccurrence,
 		SearchMatchOccurrences,
 		SearchOptions,
-		SearchResult,
 		SearchResultMatch,
 		SearchBooleanMode,
 		SearchProximityOrder,
+		SearchUiExecution,
+		SearchUiResult as SearchResult,
 		StructuredSearchQuery,
 		TexoroIndexManifest,
-		TexoroWorkMeta
+		TexoroWorkMeta as TexoroFullWorkMeta,
+		TexoroSearchUiWorkMeta as TexoroWorkMeta
 	} from '$lib/search';
 	import type { PageData } from './$types';
 
@@ -476,6 +478,7 @@
 	const exportTextStrong = '#243b63';
 	const MAX_QUERY_TERMS = 10;
 	const RESULTS_PAGE_SIZE = 20;
+	const TEXORO_PRIME_DEBOUNCE_MS = 500;
 	const QUERY_ALLOWED_PATTERN = /^[\p{L}\p{N}*?\s]+$/u;
 	const SHOW_AUTOMATIC_CHARTS = false;
 	const RESULT_PREVIEW_OCCURRENCE_LIMIT = 10;
@@ -485,22 +488,6 @@
 	const RESULT_PREVIEW_VISIBLE_RADIUS = 70;
 	const OCCURRENCE_DETAILS_CACHE_LIMIT = 24;
 	const OCCURRENCE_MODAL_MAX_ITEMS = 100;
-	const TEXORO_PRIME_DEBOUNCE_MS = 500;
-
-	const stripTrailingSlash = (value: string): string => value.replace(/\/+$/, '');
-	const joinUrl = (base: string, path: string): string =>
-		`${stripTrailingSlash(base)}/${path.replace(/^\/+/, '')}`;
-	const withCacheBuster = (url: string): string => {
-		const separator = url.includes('?') ? '&' : '?';
-		return `${url}${separator}t=${Date.now()}`;
-	};
-	const manifestRequest = (url: string): { url: string; init: RequestInit } => ({
-		url: withCacheBuster(url),
-		init: { cache: 'no-store' }
-	});
-	const texoroIndexBaseUrl = $derived(stripTrailingSlash(data.texoroIndexBaseUrl ?? ''));
-
-	let isEngineReady = $state(false);
 	let mainQuery = $state('');
 	let advancedSearchOpen = $state(false);
 	let filtersOpen = $state(false);
@@ -532,23 +519,15 @@
 	let isExporting = $state(false);
 	let searchError = $state('');
 	let exportError = $state('');
-	let searchExecution = $state<SearchExecution | null>(null);
+	let searchExecution = $state<SearchUiExecution | null>(null);
 	let resultsPage = $state(1);
 	let resultSort = $derived<ResultSort>(data.resultSort);
 	let resultSortDirection = $derived<ResultSortDirection>(data.resultSortDirection);
 	let resultsRegion = $state<HTMLElement | null>(null);
 	let resultsPaginationRegion = $state<HTMLElement | null>(null);
-	let indexStats = $state<{ works: number; tokens: number; vocabSize: number } | null>(null);
 	let statsPayload = $state<TexoroStatsPayload | null>(null);
 	let isStatsLoading = $state(true);
-	const displayIndexStats = $derived(
-		indexStats ??
-			(statsPayload
-				? { works: statsPayload.works, tokens: statsPayload.tokens, vocabSize: statsPayload.vocabSize }
-				: null)
-	);
-	let loadedPreserveEnieForHighlight = $state<boolean | null>(null);
-	const preserveEnieForHighlight = $derived(loadedPreserveEnieForHighlight ?? statsPayload?.preserveEnie ?? true);
+	const preserveEnieForHighlight = $derived(searchExecution?.preserveEnie ?? statsPayload?.preserveEnie ?? true);
 	let occurrenceModal = $state<OccurrenceModalState | null>(null);
 	let occurrenceModalOpener = $state<HTMLElement | null>(null);
 	let openTextDropdownDocId = $state<number | null>(null);
@@ -567,11 +546,9 @@
 	let authorChartRef = $state<TexoroLiveChart | null>(null);
 	let genreChartRef = $state<TexoroLiveChart | null>(null);
 	let infoModalOpen = $state(false);
-	let loadedIndexVersion = $state<string | null>(null);
-	const indexVersion = $derived(loadedIndexVersion ?? statsPayload?.indexVersion ?? 'n/d');
-	let worksMeta = $state<TexoroWorkMeta[] | null>(null);
-	let worksMetaLoadPromise: Promise<TexoroWorkMeta[]> | null = null;
-	let texoroWorkerInitPromise: Promise<void> | null = null;
+	const indexVersion = $derived(searchExecution?.indexVersion ?? statsPayload?.indexVersion ?? 'n/d');
+	let frequencyWorkerInitPromise: Promise<TexoroIndexManifest | null> | null = null;
+	let frequencyWorkerInUse = false;
 	let statsLoadPromise: Promise<void> | null = null;
 	let optionsLoadPromise: Promise<void> | null = null;
 	let titleOptionItems = $state<TokenOption[]>([]);
@@ -1565,69 +1542,39 @@
 		};
 	};
 
-	const buildEffectiveQuery = (): {
-		query: string;
-		terms: SubmittedQueryTerm[];
-		structuredQuery: StructuredSearchQuery;
-	} => {
-		const terms: SubmittedQueryTerm[] = [];
-		const normalizedMain = normalizeSearchValue(mainQuery);
-		terms.push(buildTermDescriptor(normalizedMain, normalizedMain, null));
-
-		const cleanAdditionalTerms = additionalTerms.map((term) => normalizeSearchValue(term.value)).filter(Boolean);
-		for (const term of cleanAdditionalTerms) {
-			terms.push(buildTermDescriptor(term, term, additionalMode));
-		}
-		const proximityBaseTerms = uniqueSearchValues([normalizedMain]);
-
-		const cleanProximityTerms = proximityTerms
+	const buildCurrentStructuredQuery = (): StructuredSearchQuery => ({
+		main: normalizeSearchValue(mainQuery),
+		additionalMode,
+		additionalTerms: additionalTerms.map((term) => normalizeSearchValue(term.value)).filter(Boolean),
+		proximityMode,
+		proximityTerms: proximityTerms
 			.map((term) => ({
 				value: normalizeSearchValue(term.value),
 				distance: term.distance,
 				order: term.order
 			}))
-			.filter((term) => term.value);
-		for (const term of cleanProximityTerms) {
-			for (const baseTerm of proximityBaseTerms) {
-				terms.push({
-					key: `proximity:${formatProximitySourceForValue(baseTerm, term)}`,
-					label: formatProximityDisplayLabel(baseTerm, term),
-					operator: proximityMode
-				});
-			}
+			.filter((term) => term.value)
+	});
+
+	const describeSubmittedTerms = (query: StructuredSearchQuery): SubmittedQueryTerm[] => {
+		const terms = [buildTermDescriptor(query.main, query.main, null)];
+		for (const term of query.additionalTerms ?? []) {
+			terms.push(buildTermDescriptor(term, term, query.additionalMode ?? 'all'));
 		}
-
-		const structuredQuery: StructuredSearchQuery = {
-			main: normalizedMain,
-			additionalMode,
-			additionalTerms: cleanAdditionalTerms,
-			proximityMode,
-			proximityTerms: cleanProximityTerms
-		};
-
-		return {
-			query: buildTechnicalFormula(structuredQuery),
-			terms,
-			structuredQuery
-		};
+		for (const term of query.proximityTerms ?? []) {
+			const orderedTerm = { ...term, order: term.order ?? 'any' };
+			terms.push({
+				key: `proximity:${formatProximitySourceForValue(query.main, orderedTerm)}`,
+				label: formatProximityDisplayLabel(query.main, orderedTerm),
+				operator: query.proximityMode ?? 'all'
+			});
+		}
+		return terms;
 	};
 
 	const interpretedQuery = $derived.by(() => {
-		const main = normalizeSearchValue(mainQuery);
-		if (!main) return null as InterpretedQueryView | null;
-		const structuredQuery: StructuredSearchQuery = {
-			main,
-			additionalMode,
-			additionalTerms: additionalTerms.map((term) => normalizeSearchValue(term.value)).filter(Boolean),
-			proximityMode,
-			proximityTerms: proximityTerms
-				.map((term) => ({
-					value: normalizeSearchValue(term.value),
-					distance: term.distance,
-					order: term.order
-				}))
-				.filter((term) => term.value)
-		};
+		const structuredQuery = buildCurrentStructuredQuery();
+		if (!structuredQuery.main) return null as InterpretedQueryView | null;
 		const interpretedFilters: InterpretedFilterView = {
 			titles: resolveFilterLabels(selectedTitleIds, titleLabelById),
 			generalGenres: resolveFilterLabels(selectedGeneralGenres, generalGenreLabelById).map(t),
@@ -2075,136 +2022,88 @@
 		return optionsLoadPromise;
 	};
 
-	const fetchWorksMeta = async (indexVersion?: string): Promise<TexoroWorkMeta[]> => {
-		const url = indexVersion ? `/api/texoro/work-meta?indexVersion=${encodeURIComponent(indexVersion)}` : '/api/texoro/work-meta';
-		const response = await fetch(url, { cache: dev ? 'no-store' : 'no-cache' });
-		if (!response.ok) {
-			throw new Error(`No se pudieron cargar los metadatos de TEXORO: ${response.status}`);
-		}
-		return (await response.json()) as TexoroWorkMeta[];
+	const fetchWorksMeta = async (version?: string): Promise<TexoroFullWorkMeta[]> => {
+		const suffix = version ? `?indexVersion=${encodeURIComponent(version)}` : '';
+		const response = await fetch(`/api/texoro/work-meta${suffix}`, {
+			cache: dev ? 'no-store' : 'no-cache'
+		});
+		if (!response.ok) throw new Error(`No se pudieron cargar los metadatos de TEXORO: ${response.status}`);
+		return (await response.json()) as TexoroFullWorkMeta[];
 	};
 
-	const loadWorksMeta = async (): Promise<TexoroWorkMeta[]> => {
-		if (worksMeta) return worksMeta;
-		if (!worksMetaLoadPromise) {
-			worksMetaLoadPromise = fetchWorksMeta()
-				.then((items) => {
-					worksMeta = items;
-					return items;
-				})
-				.finally(() => {
-					worksMetaLoadPromise = null;
-				});
-		}
-		return worksMetaLoadPromise;
-	};
-
-	const fetchIndexManifest = async (): Promise<TexoroIndexManifest> => {
-		if (!texoroIndexBaseUrl) {
-			throw new Error('Falta PUBLIC_R2_PUBLIC_ASSETS_BASE_URL para inicializar TEXORO.');
-		}
-		const request = manifestRequest(joinUrl(texoroIndexBaseUrl, 'manifest.json'));
-		const response = await fetch(request.url, request.init);
-		if (!response.ok) {
-			throw new Error(`No se pudo inicializar TEXORO: ${response.status}`);
-		}
-		return (await response.json()) as TexoroIndexManifest;
-	};
-
-	const applyIndexManifest = (manifest: TexoroIndexManifest): void => {
-		isEngineReady = true;
-		indexStats = {
-			works: manifest.stats.works,
-			tokens: manifest.stats.tokens,
-			vocabSize: manifest.stats.vocabSize
-		};
-		loadedIndexVersion = manifest.indexVersion;
-		loadedPreserveEnieForHighlight = manifest.normalization.preserveEnie;
-	};
-
-	const initializeTexoroWorker = async (): Promise<void> => {
-		if (isEngineReady && isTexoroClientWorkerReady()) return;
-		if (texoroWorkerInitPromise) return texoroWorkerInitPromise;
-
-		texoroWorkerInitPromise = (async () => {
-			try {
-				const [loadedWorksMeta, currentManifest] = await Promise.all([loadWorksMeta(), fetchIndexManifest()]);
-				const manifest = await initializeTexoroClientWorker({
-					indexBaseUrl: texoroIndexBaseUrl,
-					worksMeta: loadedWorksMeta,
-					indexVersion: currentManifest.indexVersion,
-					refreshWorksMeta: async (version) => {
-						const freshMeta = await fetchWorksMeta(version);
-						worksMeta = freshMeta;
-						return freshMeta;
-					}
-				});
-				applyIndexManifest(manifest);
-			} catch (cause) {
-				console.warn('[texoro] using server search fallback', cause);
-				terminateTexoroClientWorker('Worker TEXORO no disponible');
-				try {
-					applyIndexManifest(await fetchIndexManifest());
-				} catch (manifestCause) {
-					searchError =
-						manifestCause instanceof Error ? manifestCause.message : 'No se pudo inicializar TEXORO';
+	const initializeFrequencyWorker = async (): Promise<TexoroIndexManifest | null> => {
+		if (!data.frequencyIndexBaseUrl || !frequencyWorkerInUse) return null;
+		if (isTexoroClientWorkerReady()) return getTexoroClientWorkerManifest();
+		if (!frequencyWorkerInitPromise) {
+			frequencyWorkerInitPromise = (async () => {
+				let baseUrl = data.frequencyIndexBaseUrl;
+				if (data.frequencyIndexVersioned) {
+					await loadTexoroStats();
+					if (!statsPayload) return null;
+					baseUrl = `${baseUrl}/${encodeURIComponent(statsPayload.indexVersion)}`;
 				}
-			} finally {
-				texoroWorkerInitPromise = null;
-			}
-		})();
-
-		return texoroWorkerInitPromise;
+				const worksMeta = await fetchWorksMeta();
+				if (!frequencyWorkerInUse) return null;
+				return initializeTexoroClientWorker({
+					indexBaseUrl: new URL(baseUrl, window.location.origin).href,
+					worksMeta,
+					refreshWorksMeta: fetchWorksMeta
+				});
+			})().finally(() => {
+				frequencyWorkerInitPromise = null;
+			});
+		}
+		return frequencyWorkerInitPromise;
 	};
 
-	const runServerSearch = async (
+	const canUseFrequencyWorker = (query: StructuredSearchQuery, filters: TexoroSearchFilters): boolean =>
+		Boolean(data.frequencyIndexBaseUrl) &&
+		canSearchWithFrequencies(query, filters.traditionalAuthorIds, statsPayload?.preserveEnie);
+
+	const runSearch = async (
 		query: string,
 		structuredQuery: StructuredSearchQuery,
 		filters: TexoroSearchFilters
-	): Promise<SearchExecution> =>
-		postJson<SearchExecution>('/api/texoro/search-ui', {
+	): Promise<SearchUiExecution> => {
+		const options: SearchOptions = {
+			limit: RESULTS_PAGE_SIZE,
+			maxPhraseVerificationDocs: 220,
+			snippetRadius: 115,
+			includeSnippets: false,
+			...buildSearchFilterOptions(filters)
+		};
+
+		if (canUseFrequencyWorker(structuredQuery, filters)) {
+			try {
+				const manifest = await initializeFrequencyWorker();
+				if (manifest && (!statsPayload || manifest.indexVersion === statsPayload.indexVersion)) {
+					const { execution } = await requestTexoroClientWorker<{ execution?: SearchExecution }>({
+						action: 'search',
+						query,
+						structuredQuery,
+						options
+					});
+					const effectiveManifest = getTexoroClientWorkerManifest();
+					if (execution && effectiveManifest &&
+						(!statsPayload || effectiveManifest.indexVersion === statsPayload.indexVersion)) {
+						return {
+							...execution,
+							indexVersion: effectiveManifest.indexVersion,
+							preserveEnie: effectiveManifest.normalization.preserveEnie
+						};
+					}
+				}
+			} catch (cause) {
+				console.warn('[texoro] frequency search failed; using server search', cause);
+				terminateTexoroClientWorker('Índice de frecuencias de TEXORO no disponible');
+			}
+		}
+
+		return postJson<SearchUiExecution>('/api/texoro/search-ui', {
 			query,
 			structuredQuery,
-			options: {
-				limit: RESULTS_PAGE_SIZE,
-				maxPhraseVerificationDocs: 220,
-				snippetRadius: 115,
-				includeSnippets: false,
-				...buildSearchFilterOptions(filters)
-			}
+			options
 		});
-
-	const runBrowserFirstSearch = async (
-		query: string,
-		structuredQuery: StructuredSearchQuery,
-		filters: TexoroSearchFilters
-	): Promise<SearchExecution> => {
-		if (isEngineReady && isTexoroClientWorkerReady()) {
-			try {
-				const response = await requestTexoroClientWorker<{ execution?: SearchExecution }>({
-					action: 'search',
-					query,
-					structuredQuery,
-					options: {
-						limit: RESULTS_PAGE_SIZE,
-						maxPhraseVerificationDocs: 220,
-						snippetRadius: 115,
-						includeSnippets: false,
-						...buildSearchFilterOptions(filters)
-					}
-				});
-				if (response.execution) {
-					const currentManifest = getTexoroClientWorkerManifest();
-					if (currentManifest) applyIndexManifest(currentManifest);
-					return response.execution;
-				}
-			} catch (cause) {
-				console.warn('[texoro] browser search failed; using server fallback', cause);
-				terminateTexoroClientWorker('Worker TEXORO desactivado tras error de busqueda');
-			}
-		}
-
-		return runServerSearch(query, structuredQuery, filters);
 	};
 
 	const buildOccurrencePreviewMap = async (
@@ -2777,21 +2676,6 @@
 		}
 	};
 
-	const canPrimeCurrentQuery = (): boolean => {
-		const trimmedMain = mainQuery.trim();
-		if (!trimmedMain || !QUERY_ALLOWED_PATTERN.test(trimmedMain)) return false;
-		if (trimmedMain.replace(/[*?\s]/g, '').length < 3) return false;
-		for (const term of additionalTerms) {
-			const trimmed = term.value.trim();
-			if (trimmed && !QUERY_ALLOWED_PATTERN.test(trimmed)) return false;
-		}
-		for (const term of proximityTerms) {
-			const trimmed = term.value.trim();
-			if (trimmed && !QUERY_ALLOWED_PATTERN.test(trimmed)) return false;
-		}
-		return true;
-	};
-
 	$effect(() => {
 		const signature = visiblePreviewSignature;
 		if (!searchExecution || isSearching || !signature || visibleResults.length === 0) {
@@ -2801,55 +2685,33 @@
 	});
 
 	$effect(() => {
+		if (isSearching || !data.frequencyIndexBaseUrl) return;
+		const structuredQuery = buildCurrentStructuredQuery();
 		const filters = buildCurrentSearchFilters();
-		const primeSignature = [
-			mainQuery,
-			additionalMode,
-			...additionalTerms.map((term) => term.value),
-			proximityMode,
-			...proximityTerms.map((term) => `${term.order}:${term.distance}:${term.value}`),
-			...filters.titleIds,
-			...filters.generalGenres,
-			...filters.genres,
-			...filters.traditionalAuthorIds,
-			filters.traditionalMatch,
-			...filters.stylometryAuthorIds,
-			filters.stylometryMatch,
-			...filters.states
-		].join('\u0001');
-		if (
-			!primeSignature ||
-			isSearching ||
-			!canPrimeCurrentQuery()
-		) {
-			return;
-		}
+		const terms = [structuredQuery.main, ...(structuredQuery.additionalTerms ?? [])];
+		if (structuredQuery.main.replace(/[*?\s]/g, '').length < 3 ||
+			terms.length > MAX_QUERY_TERMS ||
+			terms.some((term) => !QUERY_ALLOWED_PATTERN.test(term)) ||
+			!canUseFrequencyWorker(structuredQuery, filters)) return;
 
+		const query = buildTechnicalFormula(structuredQuery);
+		let cancelled = false;
 		const timer = window.setTimeout(() => {
-			const { query, structuredQuery } = buildEffectiveQuery();
-			const shouldPrefetchTexts =
-				/\s/.test(mainQuery.trim()) ||
-				additionalTerms.some((term) => term.value.trim()) ||
-				proximityTerms.some((term) => term.value.trim());
-			void initializeTexoroWorker()
-				.then(() => {
-					if (!isTexoroClientWorkerReady()) return;
-					return requestTexoroClientWorker<void>({
-						action: 'prime',
-						query,
-						structuredQuery,
-						options: buildSearchFilterOptions(filters),
-						wildcard: /[*?]/.test(query),
-						prefetchTexts: shouldPrefetchTexts,
-						textLimit: shouldPrefetchTexts ? 8 : undefined
-					});
-				})
-				.catch((cause) => {
-					console.warn('[texoro] prime failed', cause);
+			void initializeFrequencyWorker().then((manifest) => {
+				if (cancelled || !manifest || (statsPayload && manifest.indexVersion !== statsPayload.indexVersion)) return;
+				return requestTexoroClientWorker<void>({
+					action: 'prime',
+					query,
+					structuredQuery,
+					options: buildSearchFilterOptions(filters),
+					wildcard: /[*?]/.test(query),
+					prefetchTexts: false
 				});
+			}).catch((cause) => console.warn('[texoro] frequency prime failed', cause));
 		}, TEXORO_PRIME_DEBOUNCE_MS);
 
 		return () => {
+			cancelled = true;
 			window.clearTimeout(timer);
 		};
 	});
@@ -2870,27 +2732,18 @@
 	});
 
 	onMount(() => {
-		let initDelayTimer = 0;
-		let initIdleHandle = 0;
-		let warmupIdleHandle = 0;
-		const idleWindow = window as Window & {
-			requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
-			cancelIdleCallback?: (handle: number) => void;
-		};
-		const scheduleIdle = (callback: () => void, timeout = 2000): number => {
-			if (idleWindow.requestIdleCallback) {
-				return idleWindow.requestIdleCallback(callback, { timeout });
-			}
-			return window.setTimeout(callback, 0);
-		};
-		const cancelIdle = (handle: number): void => {
-			if (!handle) return;
-			if (idleWindow.cancelIdleCallback) {
-				idleWindow.cancelIdleCallback(handle);
-				return;
-			}
-			globalThis.clearTimeout(handle);
-		};
+		frequencyWorkerInUse = true;
+		const frequencyWarmupTimer = data.frequencyIndexBaseUrl
+			? window.setTimeout(() => {
+				void initializeFrequencyWorker()
+					.then((manifest) => {
+						if (manifest && frequencyWorkerInUse && !isSearching) {
+							return requestTexoroClientWorker<void>({ action: 'warmup' });
+						}
+					})
+					.catch((cause) => console.warn('[texoro] frequency warmup failed', cause));
+			}, 2500)
+			: undefined;
 		const handleResize = (): void => {
 			void updateAdditionalModePill();
 			void updateProximityModePill();
@@ -2916,27 +2769,13 @@
 		void updateAdditionalModePill();
 		void updateProximityModePill();
 		void loadTexoroStats();
-		initDelayTimer = window.setTimeout(() => {
-			initIdleHandle = scheduleIdle(() => {
-				void initializeTexoroWorker().then(() => {
-					if (!isTexoroClientWorkerReady()) return;
-					warmupIdleHandle = scheduleIdle(() => {
-						void requestTexoroClientWorker<void>({ action: 'warmup' }).catch((cause) => {
-							console.warn('[texoro] warmup failed', cause);
-						});
-					}, 2500);
-				});
-			}, 2500);
-		}, 2500);
-
 		return () => {
+			frequencyWorkerInUse = false;
+			window.clearTimeout(frequencyWarmupTimer);
+			releaseTexoroClientWorker();
 			window.removeEventListener('resize', handleResize);
 			document.removeEventListener('click', onDocumentClick);
 			document.removeEventListener('keydown', onEscape);
-			if (initDelayTimer) window.clearTimeout(initDelayTimer);
-			cancelIdle(initIdleHandle);
-			cancelIdle(warmupIdleHandle);
-			releaseTexoroClientWorker();
 		};
 	});
 
@@ -2993,18 +2832,20 @@
 			return;
 		}
 
-		const { query, terms, structuredQuery } = buildEffectiveQuery();
+		const structuredQuery = buildCurrentStructuredQuery();
+		const query = buildTechnicalFormula(structuredQuery);
 		const filters = buildCurrentSearchFilters();
 		const requestId = ++searchRequestId;
 		visiblePreviewRequestId += 1;
 		isSearching = true;
 		isPreparingResults = false;
 		try {
-			const execution = await runBrowserFirstSearch(query, structuredQuery, filters);
+			const execution = await runSearch(query, structuredQuery, filters);
 			if (requestId !== searchRequestId) return;
+			searchExecution = execution;
+			const terms = describeSubmittedTerms(structuredQuery);
 			submittedTerms = terms;
 			lastSubmittedSearch = { query, structuredQuery, terms, filters };
-			searchExecution = execution;
 			void tick().then(() => {
 				if (requestId !== searchRequestId) return;
 				prefetchResultsPage(1, 'top');
@@ -3215,18 +3056,18 @@
 				Icon={BookOpen}
 				href="/texoro/obras"
 				ariaLabel="Ver listado de obras indexadas"
-				value={numberFormatter.format(displayIndexStats?.works ?? 0)}
+				value={numberFormatter.format(statsPayload?.works ?? 0)}
 				label="Obras indexadas"
 				desktopOffset="up"
-				loading={isStatsLoading || !displayIndexStats}
+				loading={isStatsLoading || !statsPayload}
 			/>
 
 			<HeroStatCard
 				Icon={Search}
-				value={numberFormatter.format(displayIndexStats?.tokens ?? 0)}
+				value={numberFormatter.format(statsPayload?.tokens ?? 0)}
 				label="Palabras indexadas"
 				desktopOffset="down"
-				loading={isStatsLoading || !displayIndexStats}
+				loading={isStatsLoading || !statsPayload}
 			/>
 
 			<HeroStatCard

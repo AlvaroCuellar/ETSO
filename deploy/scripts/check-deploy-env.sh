@@ -57,7 +57,16 @@ require_command node
 require_command python3
 require_command aws
 require_command jq
+if [ "${SEARCH_INDEX_OUTPUT_PATH:-deploy/input/private-assets/search}" != "deploy/input/private-assets/search" ]; then
+  echo "El índice TEXORO debe generarse en deploy/input/private-assets/search." >&2
+  missing=1
+fi
 if [ "${DRY_RUN:-false}" != "true" ]; then
+  if [ "${R2_TEXORO_INDEX_BUCKET:-etso-textos}" != "etso-textos" ] ||
+     [ -n "${R2_TEXORO_INDEX_PUBLISH_ACCESS_KEY_ID:-}${R2_TEXORO_INDEX_PUBLISH_SECRET_ACCESS_KEY:-}" ]; then
+    : "${R2_TEXORO_INDEX_PUBLISH_ACCESS_KEY_ID:?Falta R2_TEXORO_INDEX_PUBLISH_ACCESS_KEY_ID en .env.deploy}"
+    : "${R2_TEXORO_INDEX_PUBLISH_SECRET_ACCESS_KEY:?Falta R2_TEXORO_INDEX_PUBLISH_SECRET_ACCESS_KEY en .env.deploy}"
+  fi
   require_command sqlite3
   if TURSO_MODE="$(detect_turso_mode)"; then
     export TURSO_MODE

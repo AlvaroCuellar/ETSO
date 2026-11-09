@@ -15,3 +15,8 @@ test('citation punctuation stays outside link and balanced DOI parentheses stay 
  assert.match(renderReportNoteHtml('(https://doi.org/10.1/abc(12)).'), /href="https:\/\/doi.org\/10\.1\/abc\(12\)"[^>]*>[^<]+<\/a>\)\./);
  assert.equal(renderReportNoteHtml('Uno\nVerso\n\nOtro <i>título</i>.'), 'Uno\nVerso\n\nOtro <i>título</i>.');
 });
+test('labeled links escape their labels and accept only HTTP or HTTPS destinations', () => {
+ const html = renderReportNoteHtml('[AUTESO <img src=x>](https://example.org/ficha(12)?a=1&b=2).');
+ assert.match(html, /href="https:\/\/example\.org\/ficha\(12\)\?a=1&amp;b=2"[^>]*>AUTESO &lt;img src=x&gt;<\/a>\.$/);
+ assert.equal(renderReportNoteHtml('[AUTESO](javascript:alert(1))'), '[AUTESO](javascript:alert(1))');
+});

@@ -378,3 +378,77 @@ export const buildTraditionalAttributionParts = (
 	parts.push({ kind: 'text', value: '.' });
 	return parts;
 };
+
+export const buildTraditionalAttributionDisplayParts = (
+	set: AttributionSet,
+	options: Omit<BuildTraditionalAttributionPartsOptions, 'includePhrasePrefix'> = {}
+): AttributionPhrasePart[] => {
+	const groups = attributionGroups(set);
+	const translate = options.translate ?? ((value: string) => value);
+	const connectors = options.connectorLabels ?? { and: 'y', or: 'o' };
+
+	if (set.reviewedPhrase) {
+		const phrase = set.reviewedPhrase.replace(
+			/^Obra atribuida (?:alternativamente )?a (la colaboración de )?/,
+			(_, collaboration) => collaboration && groups.length > 1 ? 'Colaboración de ' : ''
+		);
+		const display = phrase === set.reviewedPhrase ? phrase : phrase
+			.replace(/(,|;|\bo) a la de /g, '$1 la colaboración de ')
+			.replace(/(,|;|\bo) a /g, '$1 ')
+			.replace(/^([^,.;]+) o su colaboración con ([^.;]+)\.$/, '$1, solo o en colaboración con $2');
+		const parts = buildAuthorMentionParts(
+			display.charAt(0).toLocaleUpperCase('es') + display.slice(1),
+			groups.flat()
+		);
+		for (const [index, part] of parts.entries()) {
+			if (part.kind !== 'text' || part.value !== ' y ') continue;
+			const first = parts[index - 1]?.authorId;
+			const second = parts[index + 1]?.authorId;
+			if (first && second && first !== second && groups.some((group) =>
+				group.some((author) => author.authorId === first) &&
+				group.some((author) => author.authorId === second)
+			)) part.value = ' & ';
+		}
+		return parts;
+	}
+
+	if (set.unresolved || groups.length === 0) {
+		return [{ kind: 'text', value: translate('Sin atribución tradicional determinada') }];
+	}
+
+	const groupParts = (group: AuthorGroup, collaborators = group.length > 1): AttributionPhrasePart[] => {
+		const members = group.map((author) => {
+			const count = resolveUnknownIngeniosLabel(author);
+			const name = count ? `${translate(count)} ${translate('no identificados')}`
+				: isUnknownAuthor(author) ? translate(collaborators ? 'un ingenio no identificado' : 'Desconocido')
+				: author.authorName
+					.replace(/ \(Fernando de Zárate\)$/, ', alias Fernando de Zárate')
+					.replace(/^Diego Calleja \(Otro\)$/, 'Otro Diego Calleja')
+					.replace(/ +\(([^()]+)\)$/, ', $1');
+			return { ...author, authorName: name };
+		});
+		return formatAuthorListParts(members, '&');
+	};
+
+	if (groups.length === 2 && set.connector !== 'and') {
+		const individual = groups.find((group) => group.length === 1)?.[0];
+		const team = groups.find((group) => group.length > 1);
+		if (individual && !isUnknownAuthor(individual) && team?.some((member) => member.authorId === individual.authorId)) {
+			return [
+				...groupParts([individual]),
+				{ kind: 'text', value: `, ${translate('solo o en colaboración con')} ` },
+				...groupParts(team.filter((member) => member.authorId !== individual.authorId), true)
+			];
+		}
+	}
+
+	const connector = set.connector === 'and' ? connectors.and : connectors.or;
+	return groups.flatMap((group, index) => {
+		const parts = groupParts(group);
+		if (index > 0) return [{ kind: 'text' as const, value: ` ${connector} ` }, ...parts];
+		if (parts[0] && isUnknownAuthor(group[0])) {
+			parts[0].value = parts[0].value.charAt(0).toLocaleUpperCase() + parts[0].value.slice(1);
+		}
+		return parts;
+	});
+};

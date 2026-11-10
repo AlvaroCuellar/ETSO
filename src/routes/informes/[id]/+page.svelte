@@ -19,7 +19,7 @@
 	import { buildStylometryResultParts } from '$lib/utils/stylometry-result';
 	import { renderInlineItalicsHtml, renderReportNoteHtml } from '$lib/utils/render-inline-italics-html';
 	import {
-		buildTraditionalAttributionParts
+		buildTraditionalAttributionDisplayParts
 	} from '$lib/utils/traditional-attribution-phrase';
 
 	import type { PageData } from './$types';
@@ -74,7 +74,7 @@
 	};
 
 	const traditionalAttributionParts = $derived.by(() =>
-		buildTraditionalAttributionParts(data.work.traditionalAttribution, {
+		buildTraditionalAttributionDisplayParts(data.work.traditionalAttribution, {
 			translate: t,
 			connectorLabels: {
 				and: localizedListConnector('and'),

@@ -8,7 +8,7 @@
 	import { isPersonAuthor, type CatalogWork, type AttributionSet } from '$lib/domain/catalog';
 	import { renderInlineItalicsHtml } from '$lib/utils/render-inline-italics-html';
 	import { buildStylometryResultParts } from '$lib/utils/stylometry-result';
-	import { buildTraditionalAttributionParts, type AuthorReference } from '$lib/utils/traditional-attribution-phrase';
+	import { buildTraditionalAttributionDisplayParts, type AuthorReference } from '$lib/utils/traditional-attribution-phrase';
 
 	interface Props {
 		work: CatalogWork;
@@ -68,7 +68,7 @@
 					{!work.inAuthorshipExam ? 'Autoría' : work.collectionSize ? 'Autores de la colección' : 'Atribución tradicional'}
 				</dt>
 				<dd class="m-0 font-ui text-[0.97rem] leading-[1.65] text-text-main">
-					{#if !work.traditionalAttribution.reviewedPhrase && work.collectionSize && new Set(work.traditionalAttribution.groups.flatMap((group) => group.members.map((member) => member.authorId))).size > 1}<span>Varios</span>{:else}<p class="m-0 break-words leading-relaxed" data-i18n-skip>{#each buildTraditionalAttributionParts(work.traditionalAttribution) as part}{#if work.inAuthorshipExam && part.kind === 'author' && part.authorId && isPersonAuthor(part.authorId)}<a href={`/autores/${part.authorId}`} class="font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline">{part.value}</a>{:else}{part.value}{/if}{/each}</p>{/if}
+					{#if !work.traditionalAttribution.reviewedPhrase && work.collectionSize && new Set(work.traditionalAttribution.groups.flatMap((group) => group.members.map((member) => member.authorId))).size > 1}<span>Varios</span>{:else}<p class="m-0 break-words leading-relaxed" data-i18n-skip>{#each buildTraditionalAttributionDisplayParts(work.traditionalAttribution, { translate: t, connectorLabels: { and: resultAndLabel(), or: t('o') } }) as part}{#if work.inAuthorshipExam && part.kind === 'author' && part.authorId && isPersonAuthor(part.authorId)}<a href={`/autores/${part.authorId}`} class="font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline">{part.value}</a>{:else}{part.value}{/if}{/each}</p>{/if}
 				</dd>
 			</div>
 		{/if}

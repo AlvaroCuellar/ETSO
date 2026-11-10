@@ -2447,16 +2447,16 @@ for (const [locale, label] of Object.entries(workPaginationLabels)) {
 
 // Attribution fragments are translated explicitly, never by the document runtime.
 const explicitOnlyTranslations: Record<Exclude<Locale, 'es'>, Record<string, string>> = {
-	en: { a: 'to', y: 'and', o: 'or' },
-	fr: { a: 'à', y: 'et', o: 'ou' },
-	pt: { a: 'a', y: 'e', o: 'ou' },
-	it: { a: 'a', y: 'e', o: 'o' },
-	de: { a: 'an', y: 'und', o: 'oder' },
-	zh: { a: '归于', y: '和', o: '或' },
-	ja: { a: '帰属先：', y: 'および', o: 'または' },
-	ko: { a: '귀속 대상:', y: '및', o: '또는' },
-	ru: { a: '', y: 'и', o: 'или' },
-	ar: { a: 'إلى', y: 'و', o: 'أو' }
+	en: { 'no identificados': 'unidentified', 'un ingenio no identificado': 'one unidentified author', 'solo o en colaboración con': 'alone or in collaboration with',  a: 'to', y: 'and', o: 'or' },
+	fr: { 'no identificados': 'non identifiés', 'un ingenio no identificado': 'un auteur non identifié', 'solo o en colaboración con': 'seul ou en collaboration avec',  a: 'à', y: 'et', o: 'ou' },
+	pt: { 'no identificados': 'não identificados', 'un ingenio no identificado': 'um autor não identificado', 'solo o en colaboración con': 'só ou em colaboração com',  a: 'a', y: 'e', o: 'ou' },
+	it: { 'no identificados': 'non identificati', 'un ingenio no identificado': 'un autore non identificato', 'solo o en colaboración con': 'da solo o in collaborazione con',  a: 'a', y: 'e', o: 'o' },
+	de: { 'no identificados': 'nicht identifiziert', 'un ingenio no identificado': 'ein nicht identifizierter Autor', 'solo o en colaboración con': 'allein oder in Zusammenarbeit mit',  a: 'an', y: 'und', o: 'oder' },
+	zh: { 'no identificados': '身份不明', 'un ingenio no identificado': '一位身份不明的作者', 'solo o en colaboración con': '独立创作或与以下作者合作',  a: '归于', y: '和', o: '或' },
+	ja: { 'no identificados': '身元不明', 'un ingenio no identificado': '身元不明の作者一人', 'solo o en colaboración con': '単独または次の作者との共作',  a: '帰属先：', y: 'および', o: 'または' },
+	ko: { 'no identificados': '신원 미상', 'un ingenio no identificado': '신원 미상의 작가 한 명', 'solo o en colaboración con': '단독 또는 다음 작가와 공동 집필',  a: '귀속 대상:', y: '및', o: '또는' },
+	ru: { 'no identificados': 'не установлены', 'un ingenio no identificado': 'один неустановленный автор', 'solo o en colaboración con': 'единолично или в соавторстве с',  a: '', y: 'и', o: 'или' },
+	ar: { 'no identificados': 'غير معروفين', 'un ingenio no identificado': 'مؤلف واحد غير معروف', 'solo o en colaboración con': 'منفردًا أو بالتعاون مع',  a: 'إلى', y: 'و', o: 'أو' }
 };
 
 export const isSupportedLocale = (value: string): value is Locale =>

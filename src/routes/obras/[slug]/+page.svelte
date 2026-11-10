@@ -22,7 +22,7 @@
 	import { formatDisplayWorkTitle, formatDisplayWorkTitleList } from '$lib/utils/format-display-work-title';
 	import { renderInlineItalicsHtml } from '$lib/utils/render-inline-italics-html';
 	import { buildStylometryResultParts } from '$lib/utils/stylometry-result';
-	import { buildTraditionalAttributionParts } from '$lib/utils/traditional-attribution-phrase';
+	import { buildTraditionalAttributionDisplayParts } from '$lib/utils/traditional-attribution-phrase';
 
 	import type { PageData } from './$types';
 
@@ -165,7 +165,7 @@
 							<div class={attributionBlockClass}>
 								<h3 class={attributionHeadingClass}>{!data.work.inAuthorshipExam ? 'Autoría' : data.work.collectionSize ? 'Autores de la colección' : 'Atribución tradicional'}</h3>
 								<div class="text-[0.97rem] leading-[1.6] text-text-main">
-									{#if !data.work.traditionalAttribution.reviewedPhrase && data.work.collectionSize && new Set(data.work.traditionalAttribution.groups.flatMap((group) => group.members.map((member) => member.authorId))).size > 1}<span>Varios</span>{:else}<p class="m-0 break-words leading-relaxed" data-i18n-skip>{#each buildTraditionalAttributionParts(data.work.traditionalAttribution) as part}{#if data.work.inAuthorshipExam && part.kind === 'author' && part.authorId && isPersonAuthor(part.authorId)}<a href={`/autores/${part.authorId}`} class="font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline">{part.value}</a>{:else}{part.value}{/if}{/each}</p>{/if}
+									{#if !data.work.traditionalAttribution.reviewedPhrase && data.work.collectionSize && new Set(data.work.traditionalAttribution.groups.flatMap((group) => group.members.map((member) => member.authorId))).size > 1}<span>Varios</span>{:else}<p class="m-0 break-words leading-relaxed" data-i18n-skip>{#each buildTraditionalAttributionDisplayParts(data.work.traditionalAttribution, { translate: t, connectorLabels: { and: resultAndLabel(), or: t('o') } }) as part}{#if data.work.inAuthorshipExam && part.kind === 'author' && part.authorId && isPersonAuthor(part.authorId)}<a href={`/autores/${part.authorId}`} class="font-medium text-brand-blue-dark no-underline hover:text-brand-blue hover:underline">{part.value}</a>{:else}{part.value}{/if}{/each}</p>{/if}
 								</div>
 							</div>
 						{/if}

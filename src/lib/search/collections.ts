@@ -25,7 +25,7 @@ export const TEXORO_COLLECTIONS = [
 	...AUTHOR_COLLECTIONS.map(({ id, label }) => ({
 		id,
 		label,
-		description: 'Obras con atribución estilométrica segura o probable a este autor, incluidas participaciones y colaboraciones.'
+		description: 'Obras teatrales con atribución estilométrica segura o probable a este autor, incluidas participaciones y colaboraciones.'
 	})),
 	CHIVALRY_COLLECTION
 ];

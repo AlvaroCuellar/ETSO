@@ -4,6 +4,7 @@ import { formatAttribution, type AttributionSet } from '$lib/domain/catalog';
 import { formatTraditionalAttributionCompact } from '$lib/utils/traditional-attribution-phrase';
 import { searchTexoroWithEngine } from '$lib/server/texoro-runtime';
 import { buildWorkTitleSearchText, formatDisplayWorkTitle } from '$lib/utils/format-display-work-title';
+import { TEXORO_COLLECTIONS } from '$lib/search/collections';
 import {
 	normalizeResultSort,
 	normalizeResultSortDirection,
@@ -48,6 +49,7 @@ interface TexoroExportFilters {
 	titleIds: string[];
 	titleLabels: string[];
 	generalGenres: string[];
+	collectionId: string;
 	genres: string[];
 	traditionalAuthorIds: string[];
 	traditionalMatch: 'or' | 'and';
@@ -139,11 +141,15 @@ const normalizeTerms = (value: unknown): SubmittedTermPayload[] =>
 
 const normalizeFilters = (value: unknown): TexoroExportFilters => {
 	const raw = value && typeof value === 'object' ? (value as Record<string, unknown>) : {};
+	if (raw.collectionId !== undefined && typeof raw.collectionId !== 'string') {
+		throw error(400, 'Colección no válida');
+	}
 	return {
 		title: normalizeString(raw.title),
 		titleIds: normalizeStringList(raw.titleIds, 5_000),
 		titleLabels: normalizeStringList(raw.titleLabels, 5_000),
 		generalGenres: normalizeStringList(raw.generalGenres),
+		collectionId: normalizeString(raw.collectionId),
 		genres: normalizeStringList(raw.genres),
 		traditionalAuthorIds: normalizeStringList(raw.traditionalAuthorIds),
 		traditionalMatch: raw.traditionalMatch === 'and' ? 'and' : 'or',
@@ -236,6 +242,7 @@ const filterResults = (
 				if (!haystack.includes(normalizedTitle)) return false;
 			}
 			if (filters.generalGenres.length > 0 && !filters.generalGenres.includes(meta.generalGenre?.trim() || 'Teatro')) return false;
+			if (filters.collectionId && !meta.collectionIds?.includes(filters.collectionId)) return false;
 			if (filters.genres.length > 0 && !filters.genres.includes(meta.genre)) return false;
 			if (
 				!matchesByMode(
@@ -516,6 +523,9 @@ const addQuerySheet = (
 		['Modo proximidad', query?.proximityMode === 'any' ? 'Basta con una' : 'Todas junto a la principal'],
 		['Filtro título', formatTitleFilter(payload.filters)],
 		['Filtro género', payload.filters.generalGenres.join('; ') || 'Sin filtro'],
+		['Filtro colección', payload.filters.collectionId
+			? (TEXORO_COLLECTIONS.find(({ id }) => id === payload.filters.collectionId)?.label ?? payload.filters.collectionId)
+			: 'Sin filtro'],
 		['Filtro subgéneros', payload.filters.genres.join('; ') || 'Sin filtro'],
 		['Filtro autoría tradicional', payload.filters.traditionalAuthorIds.join('; ') || 'Sin filtro'],
 		['Modo autoría tradicional', payload.filters.traditionalMatch],
@@ -544,6 +554,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		structuredQuery: payload.structuredQuery,
 		workIds: payload.filters.titleIds,
 		generalGenres: payload.filters.generalGenres,
+		collectionId: payload.filters.collectionId,
 		genres: payload.filters.genres,
 		states: payload.filters.states,
 		traditionalAuthorIds: payload.filters.traditionalAuthorIds,

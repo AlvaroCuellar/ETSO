@@ -48,6 +48,7 @@ export interface CatalogWork {
 	genre: string;
 	generalGenre?: string;
 	collectionSize?: number;
+	collection?: string;
 	origin: string;
 	textState: string;
 	addedOn: string;

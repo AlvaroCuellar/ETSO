@@ -263,6 +263,7 @@ interface WorkRow {
 	resultado1: string | null;
 	resultado2: string | null;
 	examen_autorias: number;
+	coleccion: string | null;
 	biteso: number;
 	biteso_nombre: string | null;
 	tiene_tei: number;
@@ -970,6 +971,7 @@ const buildCatalogWorksFromRows = (
 			shortSummary: EMPTY_SHORT_SUMMARY,
 			hasSummaryFile: hasSummary,
 			inAuthorshipExam,
+			collection: row.coleccion ?? undefined,
 			traditionalAttribution,
 			stylometryAttribution,
 			textLinks: links,
@@ -1023,6 +1025,7 @@ const loadWorkRowsByIds = async (workIds: string[]): Promise<WorkRow[]> => {
 		 resultado1,
 		 resultado2,
 		 examen_autorias, biteso, biteso_nombre, tiene_acceso_externo,
+		 ${worksTableColumns.has('coleccion') ? 'coleccion' : 'NULL AS coleccion'},
 		 procede,
 		 CASE WHEN resultado1 IS NULL AND resultado2 IS NULL THEN 0 ELSE 1 END AS has_report,
 		 CASE WHEN resumen_breve IS NULL THEN 0 ELSE 1 END AS has_resumen_breve
@@ -1286,6 +1289,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 		 resultado1,
 		 resultado2,
 		 examen_autorias, biteso, biteso_nombre, tiene_acceso_externo,
+		 ${worksTableColumns.has('coleccion') ? 'coleccion' : 'NULL AS coleccion'},
 		 procede,
 		 CASE WHEN resultado1 IS NULL AND resultado2 IS NULL THEN 0 ELSE 1 END AS has_report,
 		 CASE WHEN resumen_breve IS NULL THEN 0 ELSE 1 END AS has_resumen_breve
@@ -1352,6 +1356,7 @@ const createSnapshot = async (): Promise<Snapshot> => {
 			shortSummary: EMPTY_SHORT_SUMMARY,
 			hasSummaryFile: hasSummary,
 			inAuthorshipExam,
+			collection: row.coleccion ?? undefined,
 			traditionalAttribution,
 			stylometryAttribution,
 			textLinks: links,

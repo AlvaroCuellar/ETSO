@@ -1,5 +1,6 @@
 import { isPersonAuthor } from '$lib/domain/catalog';
 import { TexoroSearchEngine, buildWorkMetaMap } from '$lib/search';
+import { getTexoroCollectionIds, TEXORO_COLLECTIONS } from '$lib/search/collections';
 import { getAllWorks, refreshCatalogSnapshot } from '$lib/server/catalog-runtime';
 import { clearPrivateTextCache, readPrivateTextByTextKey } from '$lib/server/r2-private';
 import { readPrivateTexoroIndexJson, TexoroIndexReleaseMissingError } from '$lib/server/texoro-index-private';
@@ -19,6 +20,7 @@ export interface TexoroOptions {
 	authors: TexoroTokenOption[];
 	genres: TexoroTokenOption[];
 	generalGenres: TexoroTokenOption[];
+	collections: TexoroTokenOption[];
 	states: TexoroTokenOption[];
 }
 
@@ -71,6 +73,7 @@ export const toTexoroWorkMeta = (work: CatalogWork): TexoroWorkMeta => ({
 	slug: work.slug,
 	genre: work.genre,
 	generalGenre: work.generalGenre || 'Teatro',
+	collectionIds: getTexoroCollectionIds(work),
 	collectionSize: work.collectionSize,
 	origin: work.origin,
 	textState: work.textState,
@@ -165,6 +168,7 @@ export const getTexoroOptions = async (): Promise<TexoroOptions> => {
 		authors: collectAuthorOptions(works),
 		genres: collectStringOptions(works.map((work) => work.genre)),
 		generalGenres: collectStringOptions(works.map((work) => work.generalGenre || 'Teatro')),
+		collections: TEXORO_COLLECTIONS,
 		states: collectStringOptions(works.map((work) => work.textState))
 	};
 	cachedTexoroOptions = { cachedAt: Date.now(), value };

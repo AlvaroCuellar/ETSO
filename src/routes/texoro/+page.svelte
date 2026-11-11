@@ -8,6 +8,7 @@
 	import MatchToggle from '$lib/components/search/MatchToggle.svelte';
 	import TokenMultiSelect from '$lib/components/search/TokenMultiSelect.svelte';
 	import InlineCodeHint from '$lib/components/search/InlineCodeHint.svelte';
+	import TexoroCollectionSelect from '$lib/components/search/TexoroCollectionSelect.svelte';
 	import Breadcrumbs from '$lib/components/ui/Breadcrumbs.svelte';
 	import AppButton from '$lib/components/ui/AppButton.svelte';
 	import SeoHead from '$lib/components/seo/SeoHead.svelte';
@@ -42,6 +43,7 @@
 	import X from 'lucide-svelte/icons/x';
 
 	import { normalizePattern, normalizePlainText } from '$lib/search';
+	import { TEXORO_COLLECTIONS } from '$lib/search/collections';
 	import { canSearchWithFrequencies } from '$lib/search/frequency-query';
 	import {
 		getTexoroClientWorkerManifest,
@@ -78,6 +80,7 @@
 
 	let { data }: { data: PageData } = $props();
 	const t = (value: string): string => translateText(data.locale, value);
+	const collectionLabelById = new Map<string, string>(TEXORO_COLLECTIONS.map(({ id, label }) => [id, label]));
 	const resultTextByLocale = {
 		es: {
 			count: (range: string, total: string) => `Mostrando ${range} de ${total} resultados`,
@@ -441,6 +444,7 @@
 		titleIds: string[];
 		titleLabels: string[];
 		generalGenres: string[];
+		collectionId?: string;
 		genres: string[];
 		traditionalAuthorIds: string[];
 		traditionalMatch: 'or' | 'and';
@@ -508,6 +512,7 @@
 	let nextProximityTermId = 1;
 	let selectedTitleIds = $state<string[]>([]);
 	let selectedGeneralGenres = $state<string[]>([]);
+	let selectedCollectionId = $state('');
 	let selectedGenres = $state<string[]>([]);
 	let selectedTradAuthors = $state<string[]>([]);
 	let tradMatch = $state<'or' | 'and'>('or');
@@ -743,6 +748,7 @@
 	const filtersHaveValues = (filters: TexoroSearchFilters): boolean =>
 		filters.titleIds.length > 0 ||
 		filters.generalGenres.length > 0 ||
+		Boolean(filters.collectionId) ||
 		filters.genres.length > 0 ||
 		filters.traditionalAuthorIds.length > 0 ||
 		filters.stylometryAuthorIds.length > 0 ||
@@ -755,6 +761,7 @@
 		titleIds: [...selectedTitleIds],
 		titleLabels: [...selectedTitleLabels],
 		generalGenres: [...selectedGeneralGenres],
+		collectionId: selectedCollectionId || undefined,
 		genres: [...selectedGenres],
 		traditionalAuthorIds: [...selectedTradAuthors],
 		traditionalMatch: tradMatch,
@@ -767,6 +774,7 @@
 		SearchOptions,
 		| 'workIds'
 		| 'generalGenres'
+		| 'collectionId'
 		| 'genres'
 		| 'states'
 		| 'traditionalAuthorIds'
@@ -776,6 +784,7 @@
 	> => ({
 		workIds: filters.titleIds,
 		generalGenres: filters.generalGenres,
+		collectionId: filters.collectionId,
 		genres: filters.genres,
 		states: filters.states,
 		traditionalAuthorIds: filters.traditionalAuthorIds,
@@ -1319,6 +1328,7 @@
 	interface InterpretedFilterView {
 		titles: string[];
 		generalGenres: string[];
+		collectionLabel?: string;
 		genres: string[];
 		traditionalAuthors: string[];
 		traditionalMatch: 'or' | 'and';
@@ -1392,6 +1402,7 @@
 		const hasFilters =
 			filters.titles.length > 0 ||
 			filters.generalGenres.length > 0 ||
+			Boolean(filters.collectionLabel) ||
 			filters.genres.length > 0 ||
 			filters.states.length > 0 ||
 			filters.traditionalAuthors.length > 0 ||
@@ -1416,6 +1427,10 @@
 			parts.push(textPart('de género '));
 			appendHumanTermList(parts, filters.generalGenres.map(quoteTerm), 'o');
 			parts.push(textPart(' '));
+		}
+		if (filters.collectionLabel) {
+			pushJoin();
+			parts.push(textPart('de la colección '), termPart(quoteTerm(filters.collectionLabel)), textPart(' '));
 		}
 		if (filters.genres.length > 0) {
 			pushJoin();
@@ -1579,9 +1594,11 @@
 	const interpretedQuery = $derived.by(() => {
 		const structuredQuery = buildCurrentStructuredQuery();
 		if (!structuredQuery.main) return null as InterpretedQueryView | null;
+		const collectionLabel = collectionLabelById.get(selectedCollectionId);
 		const interpretedFilters: InterpretedFilterView = {
 			titles: resolveFilterLabels(selectedTitleIds, titleLabelById),
 			generalGenres: resolveFilterLabels(selectedGeneralGenres, generalGenreLabelById).map(t),
+			collectionLabel: collectionLabel ? t(collectionLabel) : undefined,
 			genres: resolveFilterLabels(selectedGenres, genreLabelById).map(t),
 			traditionalAuthors: resolveFilterLabels(selectedTradAuthors, authorLabelById),
 			traditionalMatch: tradMatch,
@@ -1615,6 +1632,7 @@
 		proximityMode = 'all';
 		selectedTitleIds = [];
 		selectedGeneralGenres = [];
+		selectedCollectionId = '';
 		selectedGenres = [];
 		selectedTradAuthors = [];
 		tradMatch = 'or';
@@ -3164,23 +3182,26 @@
 			</div>
 
 
-			<div class="flex flex-wrap items-center gap-3">
-				<label for="texoro-main-genre" class="text-[0.88rem] font-semibold text-brand-blue-dark">{t('Género')}</label>
-				<select
-					id="texoro-main-genre"
-					name="texoro-genero-general"
-					value={selectedGeneralGenres[0] ?? ''}
-					class="h-[42px] w-full rounded-[10px] border border-border bg-white px-3 text-[15px] text-text-main outline-none transition focus:border-brand-blue/35 sm:w-52"
-					onchange={(event) => {
-						const genre = event.currentTarget.value;
-						selectedGeneralGenres = genre ? [genre] : [];
-					}}
-				>
-					<option value="">{t('Cualquiera')}</option>
-					<option value="Teatro">{t('Teatro')}</option>
-					<option value="Prosa">{t('Prosa')}</option>
-					<option value="Poesía">{t('Poesía')}</option>
-				</select>
+			<div class="flex flex-wrap items-center gap-x-6 gap-y-3">
+				<div class="flex w-full flex-wrap items-center gap-3 md:w-auto">
+					<label for="texoro-main-genre" class="text-[0.88rem] font-semibold text-brand-blue-dark">{t('Género')}</label>
+					<select
+						id="texoro-main-genre"
+						name="texoro-genero-general"
+						value={selectedGeneralGenres[0] ?? ''}
+						class="h-[42px] w-full rounded-[10px] border border-border bg-white px-3 text-[15px] text-text-main outline-none transition focus:border-brand-blue/35 md:w-52"
+						onchange={(event) => {
+							const genre = event.currentTarget.value;
+							selectedGeneralGenres = genre ? [genre] : [];
+						}}
+					>
+						<option value="">{t('Cualquiera')}</option>
+						<option value="Teatro">{t('Teatro')}</option>
+						<option value="Prosa">{t('Prosa')}</option>
+						<option value="Poesía">{t('Poesía')}</option>
+					</select>
+				</div>
+				<TexoroCollectionSelect locale={data.locale} bind:value={selectedCollectionId} />
 			</div>
 
 			<p class="m-0 text-[0.84rem] text-text-soft">

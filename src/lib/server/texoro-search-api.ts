@@ -68,6 +68,9 @@ export const executeTexoroSearchRequest = async (request: Request, { fromUi = fa
 	}
 
 	const rawOptions = body?.options ?? {};
+	if (rawOptions.collectionId !== undefined && typeof rawOptions.collectionId !== 'string') {
+		throw error(400, 'Colección no válida');
+	}
 	const options: SearchOptions = {
 		limit: asPositiveNumber(rawOptions.limit, 35, 100),
 		maxPhraseVerificationDocs: asPositiveNumber(rawOptions.maxPhraseVerificationDocs, 220, 500),
@@ -76,6 +79,7 @@ export const executeTexoroSearchRequest = async (request: Request, { fromUi = fa
 		workIds: normalizeStringList(rawOptions.workIds),
 		genres: normalizeStringList(rawOptions.genres),
 		generalGenres: normalizeStringList(rawOptions.generalGenres),
+		collectionId: rawOptions.collectionId?.trim(),
 		states: normalizeStringList(rawOptions.states),
 		traditionalAuthorIds: normalizeStringList(rawOptions.traditionalAuthorIds),
 		traditionalMatch: normalizeMatchMode(rawOptions.traditionalMatch),

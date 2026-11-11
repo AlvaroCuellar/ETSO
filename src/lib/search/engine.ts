@@ -80,6 +80,7 @@ interface PrimeQueryOptions {
 	workIds?: string[];
 	genres?: string[];
 	generalGenres?: string[];
+	collectionId?: string;
 	states?: string[];
 	traditionalAuthorIds?: string[];
 	traditionalMatch?: 'or' | 'and';
@@ -99,6 +100,7 @@ type AuthorSections = Map<number, boolean[]>;
 interface NormalizedSearchMetadataFilters {
 	genres: string[];
 	generalGenres: string[];
+	collectionId: string;
 	states: string[];
 	traditionalAuthorIds: string[];
 	traditionalMatch: 'or' | 'and';
@@ -131,12 +133,14 @@ const normalizeOptionList = (values: string[] | undefined): string[] =>
 const buildMetadataFilters = (options: SearchOptions): NormalizedSearchMetadataFilters => {
 	const genres = normalizeOptionList(options.genres);
 	const generalGenres = normalizeOptionList(options.generalGenres);
+	const collectionId = options.collectionId?.trim() ?? '';
 	const states = normalizeOptionList(options.states);
 	const traditionalAuthorIds = normalizeOptionList(options.traditionalAuthorIds);
 	const stylometryAuthorIds = normalizeOptionList(options.stylometryAuthorIds);
 	return {
 		genres,
 		generalGenres,
+		collectionId,
 		states,
 		traditionalAuthorIds,
 		traditionalMatch: options.traditionalMatch === 'and' ? 'and' : 'or',
@@ -145,6 +149,7 @@ const buildMetadataFilters = (options: SearchOptions): NormalizedSearchMetadataF
 		hasFilters:
 			genres.length > 0 ||
 			generalGenres.length > 0 ||
+			collectionId.length > 0 ||
 			states.length > 0 ||
 			traditionalAuthorIds.length > 0 ||
 			stylometryAuthorIds.length > 0
@@ -156,6 +161,7 @@ const matchesMetadataFilters = (meta: TexoroWorkMeta | undefined, filters: Norma
 	if (!meta) return false;
 	if (filters.genres.length > 0 && !filters.genres.includes(meta.genre)) return false;
 	if (filters.generalGenres.length > 0 && !filters.generalGenres.includes(meta.generalGenre || 'Teatro')) return false;
+	if (filters.collectionId && !meta.collectionIds?.includes(filters.collectionId)) return false;
 	if (filters.states.length > 0 && !filters.states.includes(meta.textState)) return false;
 	if (
 		!matchesByMode(

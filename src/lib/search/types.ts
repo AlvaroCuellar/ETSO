@@ -212,6 +212,7 @@ export interface TexoroWorkMeta {
 	slug: string;
 	genre: string;
 	generalGenre?: string;
+	collectionIds?: string[];
 	collectionSize?: number;
 	origin?: string;
 	textState: string;
@@ -353,6 +354,7 @@ export interface SearchOptions {
 	workIds?: string[];
 	genres?: string[];
 	generalGenres?: string[];
+	collectionId?: string;
 	states?: string[];
 	traditionalAuthorIds?: string[];
 	traditionalMatch?: 'or' | 'and';

@@ -7,6 +7,7 @@ import { formatAttribution } from '../src/lib/domain/catalog.ts';
 import { formatTraditionalAttributionCompact } from '../src/lib/utils/traditional-attribution-phrase.ts';
 import { buildWorkTitleSearchText, formatDisplayWorkTitle } from '../src/lib/utils/format-display-work-title.ts';
 import { normalizeResultSort, normalizeResultSortDirection, resultSortDirectionLabel, resultSortLabel, sortSearchResults } from '../src/lib/search/result-sort.ts';
+import { TEXORO_COLLECTIONS } from '../src/lib/search/collections.ts';
 
 // Run the real exporter, mock only search/index access, and inspect the generated XLSX.
 const source = await readFile(new URL('../src/routes/api/texoro/export.xlsx/+server.ts', import.meta.url), 'utf8');
@@ -23,18 +24,21 @@ const makeResult = (id, inAuthorshipExam) => ({
   // Empty non-Examen data must not be presented as an unperformed analysis.
   stylometryAttribution:inAuthorshipExam ? attribution('Estilométrico') : {connector:'and',groups:[]}}
 });
-const exportWorkbook = async (results) => {
+const exportWorkbook = async (results, filters, checkSearchOptions) => {
  const dependencies = {
-  ExcelJS, formatAttribution, formatTraditionalAttributionCompact, buildWorkTitleSearchText, formatDisplayWorkTitle,
+  ExcelJS, TEXORO_COLLECTIONS, formatAttribution, formatTraditionalAttributionCompact, buildWorkTitleSearchText, formatDisplayWorkTitle,
   normalizeResultSort, normalizeResultSortDirection, resultSortDirectionLabel, resultSortLabel, sortSearchResults,
   error:(status,message) => {throw new Error(`${status}: ${message}`);},
-  searchTexoroWithEngine:async () => ({
-   execution:{allResults:results,parsed:{warnings:[]},indexVersion:'fixture'},
-   engine:{getOccurrencesForMatch:async () => ({items:[{tokenIndex:1,tokenEndIndex:1,tokenCount:10,snippet:'un amor verdadero'}]})}
-  })
+  searchTexoroWithEngine:async (_query, options) => {
+   checkSearchOptions?.(options);
+   return {
+    execution:{allResults:results,parsed:{warnings:[]},indexVersion:'fixture'},
+    engine:{getOccurrencesForMatch:async () => ({items:[{tokenIndex:1,tokenEndIndex:1,tokenCount:10,snippet:'un amor verdadero'}]})}
+   };
+  }
  };
  const post = new Function(...Object.keys(dependencies),`${compiled}\nreturn POST;`)(...Object.values(dependencies));
- const response = await post({request:new Request('https://local.test/export',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({query:'amor',sort:'title'})})});
+ const response = await post({request:new Request('https://local.test/export',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({query:'amor',sort:'title',filters})})});
  assert.equal(response.status,200);
  const workbook = new ExcelJS.Workbook();
  await workbook.xlsx.load(await response.arrayBuffer());
@@ -90,4 +94,23 @@ test('empty exports remain valid and use neutral authorship columns consistently
   assert.ok(!headers.includes('Atribución estilométrica'));
   assert.deepEqual(records,[]);
  }
+});
+test('XLSX applies collection and genre filters to results and occurrences', async () => {
+ const chivalry = makeResult('chivalry', false);
+ chivalry.meta.collectionIds = ['libros-de-caballerias'];
+ const otherGenre = makeResult('other-genre', false);
+ Object.assign(otherGenre.meta, { collectionIds: ['libros-de-caballerias'], genre: 'Comedia', generalGenre: 'Teatro' });
+ const filters = { collectionId: 'libros-de-caballerias', generalGenres: ['Prosa'], genres: ['Novela'] };
+ const workbook = await exportWorkbook([chivalry, otherGenre, makeResult('outside-collection', false)], filters, (options) => {
+  assert.equal(options.collectionId, filters.collectionId);
+  assert.deepEqual(options.generalGenres, filters.generalGenres);
+  assert.deepEqual(options.genres, filters.genres);
+ });
+ for (const name of ['Resultados', 'Ocurrencias']) {
+  const { records } = sheetRecords(workbook.getWorksheet(name));
+  assert.deepEqual(records.map((record) => record.Título), ['chivalry']);
+ }
+ const querySheet = workbook.getWorksheet('Consulta');
+ const rows = querySheet.getRows(1, querySheet.rowCount).map((row) => row.values.slice(1));
+ assert.deepEqual(rows.find(([key]) => key === 'Filtro colección'), ['Filtro colección', 'Libros de caballerías']);
 });

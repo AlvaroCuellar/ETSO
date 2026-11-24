@@ -7,6 +7,43 @@
 	},
 	"rules": [
 		{
+			"id": "gaspar-avila",
+			"authorIds": [
+				"avila_gaspar_de"
+			],
+			"workIds": [
+				"DESCONOCIDO_Casamentero",
+				"ENCISO_CelosEnElCaballo",
+				"CALDERONdudosa_CodiciaRompeElSaco",
+				"LOPE_CompetenciaEnLosNobles",
+				"VELEZ_EmbusteAcreditado",
+				"LOPE_EnLosIndicios",
+				"DESCONOCIDO_FingirPorConservar",
+				"CALDERONdudosa_HonraConfusionYHonor(Transk-IMPR)",
+				"LOPEdudosa_LanzaPorLanza",
+				"LOPEdudosa_MilagrosDelDesprecioDiablosSonLasMujeres",
+				"ROJASdudosa_NoIntente",
+				"CALDERONdudosa_PalabraEnLaMujer",
+				"CALDERONdudosa_PedirConMalIntento",
+				"LOPEdudosa_PerdidasDelQueJuega",
+				"LOPEdudosa_PorfiaHastaElTemor",
+				"VILLAIZAN_VengaLoQueViniere",
+				"AVILA_DichaPorMalosMedios",
+				"AVILA_FamiliarSinDemonio",
+				"AVILA_FulleriasDeAmor(TerceraJornada)",
+				"AVILA_GobernadorPrudente",
+				"AVILA_IrisDeLasPendencias",
+				"AVILA_RespetoEnElAusencia(Transk-IMPR)",
+				"AVILA_SentenciaSinFirma",
+				"AVILA_ServirSinLisonja",
+				"AVILA_ValerosoEspanol",
+				"AVILA_VenerableBernardinoDeObregon"
+			],
+			"entryKeys": [
+				"cuellar-2027-gaspar-avila"
+			]
+		},
+		{
 			"id": "infante-aragon",
 			"workIds": [
 				"CLARAMONTE_Infante(Transk-IMPR)"

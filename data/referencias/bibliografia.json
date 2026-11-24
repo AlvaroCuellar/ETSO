@@ -1590,6 +1590,14 @@
 			"details": "38(1), pp. 39-58",
 			"url": "https://uvadoc.uva.es/handle/10324/59524"
 		},
+		"cuellar-2027-gaspar-avila": {
+			"entryType": "article",
+			"author": "Cuéllar, Álvaro",
+			"year": "2027",
+			"title": "«La singularidad estilométrica de Gaspar de Ávila: indicios para la ampliación de su corpus teatral»",
+			"journal": "Neophilologus",
+			"note": "En prensa"
+		},
 		"cuellar-2027-belmonte": {
 			"entryType": "article",
 			"author": "Cuéllar, Álvaro",
@@ -1686,6 +1694,7 @@
 					"id": "algunos-trabajos",
 					"title": "Nuestros trabajos",
 					"entryKeys": [
+						"cuellar-2027-gaspar-avila",
 						"cuellar-2027-belmonte",
 						"cuellar-2026-indignity-text",
 						"vega-2026-mujer-fuerza",
